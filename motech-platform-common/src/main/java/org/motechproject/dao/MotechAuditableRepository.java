@@ -31,13 +31,19 @@
  */
 package org.motechproject.dao;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.JsonProcessingException;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.ektorp.CouchDbConnector;
 import org.ektorp.ViewQuery;
+import org.ektorp.impl.StdObjectMapperFactory;
 import org.ektorp.support.GenerateView;
 import org.motechproject.model.Audit;
 import org.motechproject.model.MotechAuditableDataObject;
@@ -70,7 +76,22 @@ public abstract class MotechAuditableRepository <T extends MotechAuditableDataOb
 
     @Override
     public void update(T entity) {
-        super.update(entity);
+    	ObjectMapper mapper = (new StdObjectMapperFactory()).createObjectMapper(db);
+    	Map<String, Object> map = db.get(Map.class, entity.getId());
+    	try {
+    		JsonNode tree = mapper.valueToTree(entity);
+			mapper.updatingReader(map).readValue(tree);
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+//        super.update(entity);
+        db.update(map);
+        entity.setRevision(map.get("_rev").toString());
+        
         Audit audit = db.get(Audit.class, entity.getId() + AUDIT_ID_SUFFIX);
         audit.setLastUpdated(new Date());
         db.update(audit);
