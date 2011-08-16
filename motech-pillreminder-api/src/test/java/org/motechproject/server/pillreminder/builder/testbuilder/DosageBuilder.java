@@ -1,4 +1,4 @@
-package org.motechproject.server.pillreminder.builder.test;
+package org.motechproject.server.pillreminder.builder.testbuilder;
 
 import org.joda.time.LocalDate;
 import org.motechproject.model.Time;

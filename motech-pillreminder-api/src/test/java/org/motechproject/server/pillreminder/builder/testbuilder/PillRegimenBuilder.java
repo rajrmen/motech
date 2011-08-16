@@ -1,4 +1,4 @@
-package org.motechproject.server.pillreminder.builder.test;
+package org.motechproject.server.pillreminder.builder.testbuilder;
 
 import org.motechproject.server.pillreminder.domain.Dosage;
 import org.motechproject.server.pillreminder.domain.PillRegimen;
