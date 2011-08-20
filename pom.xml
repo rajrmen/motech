@@ -9,10 +9,16 @@
     <name>MOTECH</name>
 
     <distributionManagement>
-        <site>
-            <id>www.motechproject.org</id>
-            <url>file:////var/www/site</url>
-        </site>
+        <repository>
+            <id>motech.nexus</id>
+            <name>Motech Releases Repository</name>
+            <url>http://nexus.motechproject.org/content/repositories/releases</url>
+        </repository>
+        <snapshotRepository>
+            <id>motech.nexus</id>
+            <name>Motech Snapshots Repository</name>
+            <url>http://nexus.motechproject.org/content/repositories/snapshots</url>
+        </snapshotRepository>
     </distributionManagement>
 
     <repositories>
