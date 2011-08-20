@@ -222,9 +222,9 @@
     </mailingLists>
 
     <scm>
-        <connection>scm:git:http://github.com/motech/MOTECH.git</connection>
-        <developerConnection>scm:git:git@github.com:motech/MOTECH.git</developerConnection>
-        <url>http://github.com/motech/MOTECH</url>
+        <url>https://github.com/motech/MOTECH</url>
+        <connection>scm:git:ssh://git@github.com/motech/MOTECH.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/motech/MOTECH.git</developerConnection>
     </scm>
 
     <profiles>
