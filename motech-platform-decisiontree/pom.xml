@@ -4,11 +4,11 @@
 	<parent>
 		<artifactId>motech</artifactId>
 		<groupId>org.motechproject</groupId>
-		<version>0.1.1-SNAPSHOT</version>
+		<version>0.1</version>
 	</parent>
 	<groupId>org.motechproject</groupId>
 	<artifactId>motech-platform-decisiontree</artifactId>
-	<version>0.1.1-SNAPSHOT</version>
+	<version>0.1</version>
 	<name>Motech Platform Decision Tree</name>
 	<packaging>bundle</packaging>
 	<dependencies>
@@ -50,7 +50,7 @@
 		<dependency>
 			<groupId>org.motechproject</groupId>
 			<artifactId>motech-platform-server-api</artifactId>
-			<version>0.1.1-SNAPSHOT</version>
+			<version>0.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -88,7 +88,7 @@
 		<dependency>
 			<groupId>org.motechproject</groupId>
 			<artifactId>motech-platform-decisiontree-common</artifactId>
-			<version>0.1.1-SNAPSHOT</version>
+			<version>0.1</version>
 			<type>jar</type>
 		</dependency>
 	</dependencies>

@@ -4,13 +4,13 @@
     <parent>
         <artifactId>motech</artifactId>
         <groupId>org.motechproject</groupId>
-        <version>0.1.1-SNAPSHOT</version>
+        <version>0.1</version>
     </parent>
     <groupId>motech-mforms-api</groupId>
     <artifactId>motech-mforms-api</artifactId>
     <name>Motech MForms API</name>
     <description>Motech MForms API</description>
-    <version>0.1.1-SNAPSHOT</version>
+    <version>1.0</version>
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
@@ -26,7 +26,7 @@
         <dependency>
             <groupId>org.motechproject</groupId>
             <artifactId>motech-platform-common</artifactId>
-            <version>0.1.1-SNAPSHOT</version>
+            <version>0.1</version>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
