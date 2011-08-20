@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.motechproject</groupId>
     <artifactId>motech</artifactId>
-    <version>0.1</version>
+    <version>0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>MOTECH</name>
 
@@ -319,7 +320,7 @@
                         <version>1.2</version>
                         <executions>
                             <execution>
-                                <id>drop DB =&gt; rules</id>
+                                <id>drop DB => rules</id>
                                 <phase>post-integration-test</phase>
                                 <goals>
                                     <goal>exec</goal>
@@ -336,7 +337,7 @@
                                 </configuration>
                             </execution>
                             <execution>
-                                <id>drop DB =&gt; trees</id>
+                                <id>drop DB => trees</id>
                                 <phase>post-integration-test</phase>
                                 <goals>
                                     <goal>exec</goal>
@@ -353,7 +354,7 @@
                                 </configuration>
                             </execution>
                             <execution>
-                                <id>drop DB =&gt; test-tama</id>
+                                <id>drop DB => test-tama</id>
                                 <phase>post-integration-test</phase>
                                 <goals>
                                     <goal>exec</goal>
@@ -370,7 +371,7 @@
                                 </configuration>
                             </execution>
                             <execution>
-                                <id>drop DB =&gt; test-appointments</id>
+                                <id>drop DB => test-appointments</id>
                                 <phase>post-integration-test</phase>
                                 <goals>
                                     <goal>exec</goal>
@@ -387,7 +388,7 @@
                                 </configuration>
                             </execution>
                             <execution>
-                                <id>drop DB =&gt; test-outbox</id>
+                                <id>drop DB => test-outbox</id>
                                 <phase>post-integration-test</phase>
                                 <goals>
                                     <goal>exec</goal>
@@ -404,7 +405,7 @@
                                 </configuration>
                             </execution>
                             <execution>
-                                <id>drop DB =&gt; motech-pillreminder</id>
+                                <id>drop DB => motech-pillreminder</id>
                                 <phase>post-integration-test</phase>
                                 <goals>
                                     <goal>exec</goal>
@@ -421,7 +422,7 @@
                                 </configuration>
                             </execution>
                             <execution>
-                                <id>drop DB =&gt; motech-outbox</id>
+                                <id>drop DB => motech-outbox</id>
                                 <phase>post-integration-test</phase>
                                 <goals>
                                     <goal>exec</goal>
@@ -438,7 +439,7 @@
                                 </configuration>
                             </execution>
                             <execution>
-                                <id>drop DB =&gt; motech-cmslite</id>
+                                <id>drop DB => motech-cmslite</id>
                                 <phase>post-integration-test</phase>
                                 <goals>
                                     <goal>exec</goal>
