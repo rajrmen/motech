@@ -1,13 +1,14 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <artifactId>motech</artifactId>
         <groupId>org.motechproject</groupId>
-        <version>0.1</version>
+        <version>0.1-SNAPSHOT</version>
     </parent>
     <groupId>org.motechproject</groupId>
     <artifactId>motech-appointments</artifactId>
-    <version>0.1</version>
+    <version>0.1-SNAPSHOT</version>
     <name>Motech Appointments</name>
     <packaging>bundle</packaging>
     <description>Motech Appointments</description>
@@ -45,13 +46,13 @@
         <dependency>
             <groupId>org.motechproject</groupId>
             <artifactId>motech-platform-server-api</artifactId>
-            <version>0.1</version>
+            <version>0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.motechproject</groupId>
             <artifactId>motech-platform-common</artifactId>
-            <version>0.1</version>
+            <version>0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -85,7 +86,7 @@
         <dependency>
             <groupId>org.motechproject</groupId>
             <artifactId>motech-appointments-api</artifactId>
-            <version>0.1</version>
+            <version>0.1-SNAPSHOT</version>
             <type>jar</type>
         </dependency>
     </dependencies>
