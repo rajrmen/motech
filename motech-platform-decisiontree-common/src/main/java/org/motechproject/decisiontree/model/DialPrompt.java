@@ -6,18 +6,17 @@ package org.motechproject.decisiontree.model;
  */
 public class DialPrompt extends Prompt {
 
-    private String phoneNumber;
-    private boolean record = false;
+    private String[] phoneNumbers;
     private int limitTime = 1000;
+    private boolean record = false;
     private int timeout = 30;
     private String musicOnHold = "default";
 
-    public String getPhoneNumber() {
-        return phoneNumber;
+    public String[] getPhoneNumbers() {
+        return phoneNumbers;
     }
-
-    public Prompt setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
+    public Prompt setPhoneNumbers(String... phoneNumbers) {
+        this.phoneNumbers = phoneNumbers;
         return this;
     }
 }
