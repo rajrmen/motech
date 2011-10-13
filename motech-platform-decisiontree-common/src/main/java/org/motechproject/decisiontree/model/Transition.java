@@ -51,8 +51,9 @@ public class Transition {
         return destinationNode;
     }
 
-    public void setDestinationNode(Node destinationNode) {
+    public Transition setDestinationNode(Node destinationNode) {
         this.destinationNode = destinationNode;
+        return this;
     }
 
     public List<Action> getActions() {

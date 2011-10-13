@@ -42,6 +42,7 @@ public class Node {
 	    	obj.prompts = prompts;
 	    	return this;
 	    }
+	    
 	    /**
 	     * @param transitions an Object[][] array containing {Key,Transition} array pairs
 	     * @return a Builder
@@ -85,6 +86,12 @@ public class Node {
     public void setPrompts(List<Prompt> prompts) {
         this.prompts = prompts;
     }
+    
+    @JsonIgnore
+    public Node setPrompts(Prompt... prompts) {
+        setPrompts(Arrays.asList(prompts));
+        return this;
+    }
 
     public Map<String, Transition> getTransitions() {
         return transitions==null?Collections.<String, Transition>emptyMap():transitions;
@@ -92,6 +99,13 @@ public class Node {
 
     public void setTransitions(Map<String, Transition> transitions) {
         this.transitions = transitions;
+    }
+    
+    @JsonIgnore
+    @SuppressWarnings("unchecked")
+    public Node setTransitions(Object[][] transitions) {
+        this.transitions = ArrayUtils.toMap(transitions);
+        return this;
     }
 
     @JsonIgnore
