@@ -3,7 +3,7 @@
   <parent>
     <artifactId>motech</artifactId>
     <groupId>org.motechproject</groupId>
-    <version>DR1</version>
+    <version>0.4-SNAPSHOT</version>
     <relativePath>..</relativePath>
   </parent>
   <artifactId>motech-event-tracking-api</artifactId>

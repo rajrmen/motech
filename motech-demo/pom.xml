@@ -3,11 +3,11 @@
 	<parent>
 		<artifactId>motech</artifactId>
 		<groupId>org.motechproject</groupId>
-		<version>DR1</version>
+		<version>0.4-SNAPSHOT</version>
 	</parent>
 	<groupId>org.motechproject</groupId>
 	<artifactId>motech-demo</artifactId>
-	<version>DR1</version>
+	<version>0.4-SNAPSHOT</version>
 	<name>Motech Demo App</name>
 	<packaging>bundle</packaging>
 	<description>Motech Demo Application</description>
@@ -66,7 +66,7 @@
         <dependency>
             <groupId>org.motechproject</groupId>
             <artifactId>motech-platform-server-api</artifactId>
-            <version>DR1</version>
+            <version>0.4-SNAPSHOT</version>
         </dependency>
 	</dependencies>
 	<build>

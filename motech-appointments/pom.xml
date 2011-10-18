@@ -3,11 +3,11 @@
     <parent>
         <artifactId>motech</artifactId>
         <groupId>org.motechproject</groupId>
-        <version>DR1</version>
+        <version>0.4-SNAPSHOT</version>
     </parent>
     <groupId>org.motechproject</groupId>
     <artifactId>motech-appointments</artifactId>
-    <version>DR1</version>
+    <version>0.4-SNAPSHOT</version>
     <name>Motech Appointments</name>
     <packaging>bundle</packaging>
     <description>Motech Appointments</description>
@@ -45,13 +45,13 @@
         <dependency>
             <groupId>org.motechproject</groupId>
             <artifactId>motech-platform-server-api</artifactId>
-            <version>DR1</version>
+            <version>0.4-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.motechproject</groupId>
             <artifactId>motech-platform-common</artifactId>
-            <version>DR1</version>
+            <version>0.4-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -73,7 +73,7 @@
         <dependency>
             <groupId>org.motechproject</groupId>
             <artifactId>motech-appointments-api</artifactId>
-            <version>DR1</version>
+            <version>0.4-SNAPSHOT</version>
             <type>jar</type>
         </dependency>
     </dependencies>

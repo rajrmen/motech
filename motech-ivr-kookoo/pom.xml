@@ -2,7 +2,7 @@
     <parent>
         <artifactId>motech</artifactId>
         <groupId>org.motechproject</groupId>
-        <version>DR1</version>
+        <version>0.4-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -11,7 +11,7 @@
 
     <name>KooKoo IVR Provider</name>
     <description>KooKoo IVR Provider</description>
-    <version>DR1</version>
+    <version>0.4-SNAPSHOT</version>
 
     <repositories>
         <repository>
@@ -135,17 +135,17 @@
         <dependency>
             <groupId>org.motechproject</groupId>
             <artifactId>motech-platform-ivr</artifactId>
-            <version>DR1</version>
+            <version>0.4-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.motechproject</groupId>
             <artifactId>motech-event-tracking-api</artifactId>
-            <version>DR1</version>
+            <version>0.4-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.motechproject</groupId>
             <artifactId>motech-platform-decisiontree</artifactId>
-            <version>DR1</version>
+            <version>0.4-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.powermock</groupId>
