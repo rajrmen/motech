@@ -1,13 +1,15 @@
 package org.motechproject.mobileforms.api.callbacks;
 
-import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang.StringUtils;
 import org.fcitmuk.epihandy.DeserializationListenerAdapter;
 import org.fcitmuk.epihandy.FormData;
 import org.fcitmuk.epihandy.StudyData;
+import org.motechproject.MotechException;
 import org.motechproject.mobileforms.api.domain.Form;
 import org.motechproject.mobileforms.api.domain.FormBean;
 import org.motechproject.mobileforms.api.parser.FormDataParser;
 import org.motechproject.mobileforms.api.repository.AllMobileForms;
+import org.motechproject.mobileforms.api.utils.MapToBeanConvertor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +17,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -30,6 +33,9 @@ public class FormProcessor extends DeserializationListenerAdapter {
     @Autowired
     private AllMobileForms allMobileForms;
 
+    @Autowired
+    private MapToBeanConvertor mapToBeanConvertor;
+
     @Value("#{mobileFormsProperties['forms.xml.form.name']}")
     private String marker;
 
@@ -41,20 +47,31 @@ public class FormProcessor extends DeserializationListenerAdapter {
 
             FormBean formBean = (FormBean) Class.forName(form.bean()).newInstance();
             formBean.setValidator(form.validator());
-            formBean.setFormName(form.name());
+            formBean.setFormname(form.name());
             formBean.setStudyName(form.studyName());
             formBean.setXmlContent(formXml);
 
-            BeanUtils.populate(formBean, data);
+            mapToBeanConvertor.convert(formBean, handleEmptyStrings(data));
             formBeans.add(formBean);
 
         } catch (Exception e) {
-            log.error("Exception occurred while parsing form xml", e);
+            throw new MotechException("Exception occurred while parsing form xml", e);
         }
     }
 
     public List<FormBean> formBeans() {
         return formBeans;
     }
+
+    private Map<String, String> handleEmptyStrings(Map<String, String> attributes) {
+        Map<String, String> attributeWithOutEmptyStringValue = new HashMap<String, String>();
+        for (Map.Entry<String, String> entry : attributes.entrySet()) {
+            if (StringUtils.isNotEmpty(entry.getValue())) {
+                attributeWithOutEmptyStringValue.put(entry.getKey(), entry.getValue());
+            }
+        }
+        return attributeWithOutEmptyStringValue;
+    }
 }
+
 

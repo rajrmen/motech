@@ -92,7 +92,6 @@
             <artifactId>velocity</artifactId>
             <version>1.7</version>
         </dependency>
-
     </dependencies>
     <build>
         <finalName>motech-platform-server</finalName>

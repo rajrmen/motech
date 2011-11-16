@@ -14,7 +14,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"/testApplicationContext.xml"})
+@ContextConfiguration(locations = {"/testMessageCampaignApplicationContext.xml"})
 public class MessageCampaignServiceIT {
 
     @Autowired
@@ -57,7 +57,7 @@ public class MessageCampaignServiceIT {
         enrollRequest.setReferenceDate(DateUtil.today().plusDays(1));
         enrollRequest.setReminderTime(new Time(9, 30));
         messageCampaignService.startFor(enrollRequest);
-        assertEquals(scheduledJobsNum + 12, schedulerFactoryBean.getScheduler().getTriggerNames(MotechSchedulerServiceImpl.JOB_GROUP_NAME).length);
+        assertEquals(scheduledJobsNum + 3, schedulerFactoryBean.getScheduler().getTriggerNames(MotechSchedulerServiceImpl.JOB_GROUP_NAME).length);
     }
 
     @Test
