@@ -7,7 +7,7 @@
     </parent>
     <artifactId>motech-pillreminder</artifactId>
     <name>Motech Pill Reminder</name>
-    <packaging>bundle</packaging>
+    <packaging>jar</packaging>
     <description>Motech Pill Reminder</description>
     <dependencies>
         <dependency>
@@ -29,12 +29,7 @@
             <type>jar</type>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>1.6.1</version>
-            <scope>provided</scope>
-        </dependency>
+
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
@@ -82,55 +77,4 @@
             <version>1.0-m2</version>
         </dependency>
     </dependencies>
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <version>2.3.4</version>
-                <extensions>true</extensions>
-                <configuration>
-                    <instructions>
-                        <Export-Package>org.motechproject.pillreminder.api;org.motechproject.pillreminder.api.model
-                        </Export-Package>
-                        <Bundle-Activator>
-                            org.motechproject.server.pillreminder.Activator
-                        </Bundle-Activator>
-                        <Private-Package>
-                            org.motechproject.server.pillreminder.*
-                        </Private-Package>
-                        <Import-Package>
-                            *;org.motechproject.context;org.ektorp;org.ektorp.impl;org.ektorp.spring;resolution:=optional
-                        </Import-Package>
-                        <Embed-Dependency>!*</Embed-Dependency>
-                        <Embed-Transitive>true</Embed-Transitive>
-                    </instructions>
-                </configuration>
-            </plugin>
-            <plugin>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>2.5</version>
-                <executions>
-                    <execution>
-                        <id>copy-bundles</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${user.home}/.motech/bundles</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>target</directory>
-                                    <includes>
-                                        <include>*.jar</include>
-                                    </includes>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
 </project>

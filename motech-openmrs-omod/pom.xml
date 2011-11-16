@@ -1,0 +1,89 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <parent>
+        <artifactId>motech</artifactId>
+        <groupId>org.motechproject</groupId>
+        <version>0.3-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>motech-openmrs-omod</artifactId>
+    <packaging>omod</packaging>
+    <name>motech-openmrs-omod</name>
+    <url>http://maven.apache.org</url>
+    <description>Motech Platform</description>
+
+    <properties>
+        <moduleName>motech-platform</moduleName>
+        <corePackage>org.motechproject.openmrs.omod</corePackage>
+        <modulePackage>${corePackage}</modulePackage>
+        <springVersion>3.0.5.RELEASE</springVersion>
+    </properties>
+
+    <repositories>
+        <repository>
+            <id>openmrs-repo</id>
+            <url>http://mavenrepo.openmrs.org/nexus/content/repositories/public</url>
+        </repository>
+    </repositories>
+
+    <dependencies>
+        <!--OPENMRS-->
+        <dependency>
+            <groupId>org.openmrs.api</groupId>
+            <artifactId>openmrs-api</artifactId>
+            <version>1.8.2</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.openmrs.web</groupId>
+            <artifactId>openmrs-web</artifactId>
+            <version>1.8.2</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.openmrs.module</groupId>
+            <artifactId>idgen-core</artifactId>
+            <version>1.5.1</version>
+            <scope>provided</scope>
+        </dependency>
+         <dependency>
+            <groupId>org.motechproject</groupId>
+            <artifactId>motech-platform-common</artifactId>
+            <version>0.3-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.motechproject</groupId>
+            <artifactId>motech-platform-server-api</artifactId>
+            <version>0.3-SNAPSHOT</version>
+        </dependency>
+
+        <!--TEST-->
+        <dependency>
+            <groupId>org.openmrs.test</groupId>
+            <artifactId>openmrs-test</artifactId>
+            <version>1.8.2</version>
+            <type>pom</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-core</artifactId>
+            <version>1.9.4-mod</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.openmrs.maven.plugins</groupId>
+                <artifactId>maven-openmrs-plugin</artifactId>
+                <version>1.0.1</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <verifyOmod>false</verifyOmod>
+                </configuration>
+            </plugin>
+        </plugins>
+        <finalName>motech-openmrs</finalName>
+    </build>
+</project>
