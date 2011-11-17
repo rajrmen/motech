@@ -6,8 +6,6 @@ import org.motechproject.util.Cookies;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.HashMap;
-import java.util.Map;
 
 public class KooKooIVRContext {
     private KookooRequest kooKooRequest;
@@ -91,6 +89,10 @@ public class KooKooIVRContext {
 
     public String externalId() {
         return (String) request.getSession().getAttribute(EXTERNAL_ID);
+    }
+
+    public boolean isValidSession() {
+        return request.getSession(false) != null;
     }
 
     public void invalidateSession() {
