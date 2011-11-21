@@ -40,7 +40,7 @@
     <context:annotation-config/>
 
     <import resource="classpath:integrationCommon.xml"/>
-    <import resource="schedulerFiredEventChannelAdapter.xml"/>
+    <import resource="classpath:schedulerFiredEventChannelAdapter.xml"/>
 
     <bean id="schedulerFactoryBean" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
         <property name="configLocation">

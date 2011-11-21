@@ -40,7 +40,7 @@
 
     <context:annotation-config/>
 
-    <import resource="applicationPlatformCommon.xml"/>
+    <import resource="classpath:applicationPlatformCommon.xml"/>
 
     <bean id="voiceOutboxService" class="org.motechproject.outbox.api.VoiceOutboxServiceImpl">
         <property name="numDayskeepSavedMessages" value="10"/>
