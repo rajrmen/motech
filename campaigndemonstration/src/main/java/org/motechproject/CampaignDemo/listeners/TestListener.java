@@ -7,7 +7,6 @@ import org.motechproject.CampaignDemo.dao.PatientDAO;
 import org.motechproject.CampaignDemo.model.Patient;
 import org.motechproject.cmslite.api.repository.AllStringContents;
 import org.motechproject.cmslite.api.model.StringContent;
-import org.motechproject.gateway.OutboundEventGateway;
 import org.motechproject.ivr.service.CallRequest;
 import org.motechproject.ivr.service.IVRService;
 import org.motechproject.model.MotechEvent;
@@ -20,9 +19,6 @@ import org.motechproject.server.messagecampaign.service.MessageCampaignService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class TestListener {
-	
-	@Autowired
-	OutboundEventGateway outboundEventGateway;
 	
 	@Autowired
 	private AllMessageCampaigns campaigns;
@@ -38,6 +34,15 @@ public class TestListener {
 	
 	@Autowired
 	private MessageCampaignService service;
+	
+	public TestListener(AllMessageCampaigns campaigns, AllStringContents stringContent, PatientDAO patientDAO,
+			IVRService ivrService, MessageCampaignService service) {
+		this.campaigns = campaigns;
+		this.stringContent = stringContent;
+		this.patientDAO = patientDAO;
+		this.ivrService = ivrService;
+		this.service = service;
+	}
 	
 	@MotechListener(subjects={EventKeys.MESSAGE_CAMPAIGN_SEND_EVENT_SUBJECT})
 	public void execute(MotechEvent event) {

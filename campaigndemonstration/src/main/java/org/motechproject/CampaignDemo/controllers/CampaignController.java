@@ -21,6 +21,11 @@ public class CampaignController extends MultiActionController {
 	
 	@Autowired
 	private MessageCampaignService service;
+	
+	public CampaignController(MessageCampaignService service, PatientDAO patientDAO) {
+		this.patientDAO = patientDAO;
+		this.service = service;
+	}
 
 	public ModelAndView start(HttpServletRequest request, HttpServletResponse response) {
 

@@ -17,6 +17,10 @@ public class UserController extends MultiActionController {
 	@Autowired
 	private PatientDAO patientDAO;
 	
+	public UserController(PatientDAO patientDAO) {
+		this.patientDAO = patientDAO;
+	}
+
 	public ModelAndView add(HttpServletRequest request, HttpServletResponse response) {
 		
 		List<Patient> patientList = null;

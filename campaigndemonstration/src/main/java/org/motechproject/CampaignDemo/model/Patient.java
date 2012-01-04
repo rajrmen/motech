@@ -47,6 +47,12 @@ public class Patient extends MotechAuditableDataObject {
 		this.externalid = externalId;
 	}
 	
+	public boolean equals(Object o) {
+		Patient patient = (Patient) o;
+		if (patient.getExternalid().equals(externalid)) return true;
+		return false;
+	}
+	
 //	public String getFormat() {
 //		return format;
 //	}
