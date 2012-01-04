@@ -1,4 +1,4 @@
-\<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
@@ -9,15 +9,17 @@
 
     <context:annotation-config />
 
-    <import resource="classpath:applicationPlatformCommon.xml" />
 	<import resource="classpath:applicationPlatformServerAPI.xml" />
+	<import resource="classpath:campaignDemoResources.xml" />
+    <import resource="classpath:applicationPlatformCommon.xml" />
 
-	<bean id="knowledgeBaseManager" class="org.motechproject.server.ruleengine.KnowledgeBaseManager" />
+
+<!-- 	<bean id="knowledgeBaseManager" class="org.motechproject.server.ruleengine.KnowledgeBaseManager" /> -->
 	
-	<bean id="filesystemRuleLoader" class="org.motechproject.server.ruleengine.FilesystemRuleLoader" init-method="load">
+<!-- 	<bean id="filesystemRuleLoader" class="org.motechproject.server.ruleengine.FilesystemRuleLoader" init-method="load"> -->
 		<!-- <property name="internalRuleFolder" value="/rules" /> -->
-		<property name="externalRuleFolder" value="#{systemProperties['user.home']}/.motech/rules" />
-	</bean>
+<!-- 		<property name="externalRuleFolder" value="#{systemProperties['user.home']}/.motech/rules" /> -->
+<!-- 	</bean> -->
 
     <!-- <bean id="ivrService" class="org.motechproject.ivr.asterisk.IVRServiceAsteriskImpl" > -->
         <!--Asterisk Server host-->
