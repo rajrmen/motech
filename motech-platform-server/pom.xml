@@ -108,7 +108,7 @@
 		</dependency>
 	</dependencies>
 	<build>
-		<finalName>demo-motech-platform-server</finalName>
+		<finalName>motech-platform-server</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

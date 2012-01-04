@@ -19,7 +19,6 @@ public class CronBasedCampaign extends Campaign<CronBasedCampaignMessage> {
 
     @Override
     public MessageCampaignScheduler getScheduler(MotechSchedulerService schedulerService, CampaignRequest enrollRequest) {
-    	System.out.println("Returning the scheduler...");
     	return new CronBasedProgramScheduler(schedulerService, enrollRequest, this);
     }
 

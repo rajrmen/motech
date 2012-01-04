@@ -131,6 +131,7 @@
         <module>motech-sms-http</module>
         <module>motech-sms-smpp</module>
         <module>motech-testing-utils</module>
+        <module>campaigndemonstration</module>
     </modules>
 
     <build>

@@ -56,7 +56,6 @@ public class TestListener {
 		if (patientList.size() == 0) {
 			System.out.println("No patient by that id, unable to handle. Unscheduling the campaign job.");
 			CampaignRequest toRemove = new CampaignRequest();
-			System.out.println("Trying to remove: " + campaignName + " " + externalId);
 			toRemove.setCampaignName(campaignName);
 			toRemove.setExternalId(externalId);
 			service.stopAll(toRemove);
