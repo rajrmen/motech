@@ -9,7 +9,6 @@
 	<import resource="classpath:applicationMessageCampaign.xml" />
 	<import resource="applicationCmsLiteApi.xml" />
 
-
 	<bean id="testListener" class="org.motechproject.CampaignDemo.listeners.TestListener" />
 
 	<bean id="patientDatabase" class="org.ektorp.impl.StdCouchDbConnector">
@@ -22,6 +21,7 @@
 		<constructor-arg ref="patientDatabase" />
 	</bean>
 
+	<!-- For bootstrapping content at server startup -->
 	<bean id="contentInitiator" class="org.motechproject.CampaignDemo.dao.ContentInitiator" init-method="bootstrap">
 
 	</bean>

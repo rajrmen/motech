@@ -3,6 +3,11 @@ import org.codehaus.jackson.annotate.JsonProperty;
 import org.ektorp.support.TypeDiscriminator;
 import org.motechproject.model.MotechAuditableDataObject;
 
+/**
+ * Patients associate an external id with a phone number
+ * Classes stored in CouchDB should be marked as Json serializable 
+ * @author Russell Gillen
+ */
 
 @TypeDiscriminator("doc.type === 'PATIENT'")
 public class Patient extends MotechAuditableDataObject {

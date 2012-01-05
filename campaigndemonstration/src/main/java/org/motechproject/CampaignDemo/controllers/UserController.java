@@ -11,6 +11,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
 
+/**
+ * Spring controller for adding and removing users from a patient database using Couch
+ * Patients minimally need a phone number and external id in order to make calls from campaign messages
+ * @author Russell Gillen
+ *
+ */
 
 public class UserController extends MultiActionController {
 
@@ -28,25 +34,23 @@ public class UserController extends MultiActionController {
 		String phoneNum = request.getParameter("phoneNum");
 		String externalID = request.getParameter("externalId");
 		
-		if (phoneNum.length() == 0 || phoneNum.equals("") || phoneNum.trim().length() == 0) {
+		if (externalID.length() == 0 || externalID.equals("") || externalID.trim().length() == 0) {
 			//Don't register empty string IDs
 		} else {
-			patientList = patientDAO.findByExternalid(externalID);
-			if (patientList.size() > 0) {
+			patientList = patientDAO.findByExternalid(externalID); //Only one patient should be returned if ID is unique, but it is returned as list
+			if (patientList.size() > 0) { //Patient already exists, so it is updated
 				Patient thePatient = patientList.get(0);
 				thePatient.setPhoneNum(phoneNum);
 				patientDAO.update(thePatient);
-				System.out.println("Updated user");
 			} else {
 				patientDAO.add(new Patient(externalID, phoneNum));
-				System.out.println("Added user");
 			}
 		}
 		
 		patientList = patientDAO.findAllPatients();
 		
 		Map<String, Object> modelMap = new TreeMap<String, Object>();
-		modelMap.put("patients", patientList);
+		modelMap.put("patients", patientList); //List of patients is for display purposes only
 		
 		ModelAndView mv = new ModelAndView("formPage", modelMap);
 		
@@ -59,12 +63,10 @@ public class UserController extends MultiActionController {
 		
 		patientDAO.removePatient(externalID);
 		
-		System.out.println("Removed user");
-		
 		List<Patient> patientList = patientDAO.findAllPatients();
 		
 		Map<String, Object> modelMap = new TreeMap<String, Object>();
-		modelMap.put("patients", patientList);
+		modelMap.put("patients", patientList); //List of patients is for display purposes only
 		
 		ModelAndView mv = new ModelAndView("formPage", modelMap);
 		

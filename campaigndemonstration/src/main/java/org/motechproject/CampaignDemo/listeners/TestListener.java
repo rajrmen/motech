@@ -18,6 +18,20 @@ import org.motechproject.server.messagecampaign.domain.message.CampaignMessage;
 import org.motechproject.server.messagecampaign.service.MessageCampaignService;
 import org.springframework.beans.factory.annotation.Autowired;
 
+/**
+ * A listener class used to listen on fired campaign message events.
+ * This class demonstrates how to listen in on events and taking action based
+ * upon their payload. Payloads are stored as a String-Object mapping pair, where the String
+ * is found in an appropriate EventKey class and the Object is the relevant data or information
+ * associated with the key. The payload information should be known ahead of time.
+ * 
+ * AllMessageCampaigns accesses the simple-message-campaign.json file found
+ * in the resource package in the demo. The json file defines the characteristics
+ * of a campaign.
+ * 
+ * @author Russell Gillen
+ *
+ */
 public class TestListener {
 	
 	@Autowired
@@ -44,9 +58,17 @@ public class TestListener {
 		this.service = service;
 	}
 	
+	/**
+	 * Methods are registered as listeners on specific motech events. All motech events
+	 * have an associated subject, which is found in an appropriate EventKeys class.
+	 * When an event with that particular subject is relayed, this method will be invoked.
+	 * The payload parameters, in this case, campaign name, message key and external id, must be known
+	 * ahead of time.
+	 *
+	 * @param event The Motech event relayed by the EventRelay
+	 */
 	@MotechListener(subjects={EventKeys.MESSAGE_CAMPAIGN_SEND_EVENT_SUBJECT})
 	public void execute(MotechEvent event) {
-		System.out.println("Executing campaign message...");
 		
 		String campaignName = (String) event.getParameters().get(EventKeys.CAMPAIGN_NAME_KEY);
 		String messageKey = (String) event.getParameters().get(EventKeys.MESSAGE_KEY);
@@ -59,12 +81,12 @@ public class TestListener {
 		List<Patient> patientList = patientDAO.findByExternalid(externalId);
 		
 		if (patientList.size() == 0) {
-			System.out.println("No patient by that id, unable to handle. Unscheduling the campaign job.");
+			//In the event no patient was found, the campaign is unscheduled
 			CampaignRequest toRemove = new CampaignRequest();
 			toRemove.setCampaignName(campaignName);
 			toRemove.setExternalId(externalId);
 			service.stopAll(toRemove);
-			//service.stopFor(toRemove, messageKey);
+			//This will stop the specific message: service.stopFor(toRemove, messageKey);
 			return;
 		} else {
 		

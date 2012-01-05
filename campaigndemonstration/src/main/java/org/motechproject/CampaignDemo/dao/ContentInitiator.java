@@ -4,7 +4,12 @@ import org.motechproject.cmslite.api.repository.AllStringContents;
 import org.motechproject.cmslite.api.model.StringContent;
 import org.springframework.beans.factory.annotation.Autowired;
 
-
+/**
+ * Class to initialize CMSlite content in the DB upon server startup
+ * Currently, the content is the name of the voice XML file to be run by Voxeo
+ * @author Russell Gillen
+ *
+ */
 
 public class ContentInitiator {
 
@@ -14,7 +19,6 @@ public class ContentInitiator {
 	public void bootstrap() {
 		StringContent content = stringContent.getContent("en", "cron-message");
 		if (content == null) {
-			System.out.println("Adding content to DB");
 			stringContent.add(new StringContent("en", "cron-message", "demo.xml"));
 		}
 	}
