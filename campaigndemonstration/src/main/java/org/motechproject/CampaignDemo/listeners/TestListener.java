@@ -17,6 +17,7 @@ import org.motechproject.server.messagecampaign.dao.AllMessageCampaigns;
 import org.motechproject.server.messagecampaign.domain.message.CampaignMessage;
 import org.motechproject.server.messagecampaign.service.MessageCampaignService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 /**
  * A listener class used to listen on fired campaign message events.
@@ -34,20 +35,40 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 public class TestListener {
 	
+	/**
+	 * Defined in the motech-messagecampaign module, available from applicationMessageCampaign.xml import
+	 */
 	@Autowired
 	private AllMessageCampaigns campaigns;
 	
+	/**
+	 * Defined in the motech-cmslite-api module, available from applicationCmsLiteApi.xml import
+	 */
 	@Autowired 
 	private AllStringContents stringContent;
 	
+	/**
+	 * Defined in campaignDemoResource.xml
+	 */
 	@Autowired
 	private PatientDAO patientDAO;
 	
+	/**
+	 * Defined in the voxeo module, available from voxeoResources.xml import
+	 */
 	@Autowired
 	private IVRService ivrService;
 	
+	/**
+	 * Defined in the motech-messagecampaign module, available from applicationMessageCampaign.xml import
+	 */
 	@Autowired
 	private MessageCampaignService service;
+	
+	public TestListener() {
+		
+	}
+	
 	
 	public TestListener(AllMessageCampaigns campaigns, AllStringContents stringContent, PatientDAO patientDAO,
 			IVRService ivrService, MessageCampaignService service) {
@@ -74,19 +95,21 @@ public class TestListener {
 		String messageKey = (String) event.getParameters().get(EventKeys.MESSAGE_KEY);
 		String externalId = (String) event.getParameters().get(EventKeys.EXTERNAL_ID_KEY);
 		
+		//this will search the json file
 		CampaignMessage campaignMessage = campaigns.get(campaignName, messageKey);
 		
+		//document
 		StringContent content = stringContent.getContent("en", campaignMessage.messageKey());
 		
 		List<Patient> patientList = patientDAO.findByExternalid(externalId);
 		
-		if (patientList.size() == 0) {
-			//In the event no patient was found, the campaign is unscheduled
+		if (patientList.size() == 0) { //In the event no patient was found, the campaign is unscheduled
 			CampaignRequest toRemove = new CampaignRequest();
 			toRemove.setCampaignName(campaignName);
 			toRemove.setExternalId(externalId);
-			service.stopAll(toRemove);
-			//This will stop the specific message: service.stopFor(toRemove, messageKey);
+			
+			service.stopAll(toRemove); //See CampaignController for documentation on MessageCampaignService calls
+			//To stop a specific message: service.stopFor(toRemove, messageKey);
 			return;
 		} else {
 		
@@ -94,11 +117,20 @@ public class TestListener {
 
 		String phoneNum = thePatient.getPhoneNum();
 		String vxmlUrl = content.getValue();
-
-		System.out.println("Calling: " + phoneNum);
 		
+		/**
+		 * Call requests are used to place IVR calls. They contain a phone number, 
+		 * timeout duration, and vxml URL for content.
+		 */
 		CallRequest request = new CallRequest(phoneNum, 45, vxmlUrl);
-		
+
+		/**
+		 * The Voxeo module sends a request to the Voxeo website, at which point
+		 * control is passed to the ccxml file. The ccxml file will play
+		 * the vxmlUrl defined in the CallRequest. The vxmlUrl contains the content
+		 * of the voice message. The Voxeo website informs
+		 * the motech voxeo module of transition state changes in the phone call.
+		 */
 		ivrService.initiateCall(request);
 		}
 	}

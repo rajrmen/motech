@@ -23,6 +23,10 @@ public class UserController extends MultiActionController {
 	@Autowired
 	private PatientDAO patientDAO;
 	
+	public UserController() {
+		
+	}
+	
 	public UserController(PatientDAO patientDAO) {
 		this.patientDAO = patientDAO;
 	}

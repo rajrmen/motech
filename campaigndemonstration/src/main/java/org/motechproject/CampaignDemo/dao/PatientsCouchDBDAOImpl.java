@@ -14,6 +14,11 @@ import org.springframework.stereotype.Repository;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * See platform documentation for couch set up
+ * @author Russell
+ *
+ */
 @Component
 public class PatientsCouchDBDAOImpl extends MotechAuditableRepository<Patient> implements PatientDAO
 {
