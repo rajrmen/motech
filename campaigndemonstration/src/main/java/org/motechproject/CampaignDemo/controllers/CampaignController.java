@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.motechproject.CampaignDemo.dao.PatientDAO;
 import org.motechproject.CampaignDemo.model.Patient;
+import org.motechproject.model.Time;
 import org.motechproject.server.messagecampaign.EventKeys;
 import org.motechproject.server.messagecampaign.contract.CampaignRequest;
 import org.motechproject.server.messagecampaign.service.MessageCampaignService;
@@ -50,6 +51,15 @@ public class CampaignController extends MultiActionController {
 
 		String externalId = request.getParameter("externalId");
 		String campaignName = request.getParameter("campaignName");
+		String startoffset = request.getParameter("offset");
+		
+		int offsetValue = 0;
+		
+		try {
+			offsetValue = Integer.parseInt(startoffset);
+		} catch (NumberFormatException e) {
+			offsetValue = 0;
+		}
 
 		/**
 		 * The campaign name in the campaign request references the simple-message-campaign.json
@@ -60,6 +70,7 @@ public class CampaignController extends MultiActionController {
 		CampaignRequest campaignRequest = new CampaignRequest();
 		campaignRequest.setCampaignName(campaignName);
 		campaignRequest.setExternalId(externalId);
+		campaignRequest.setStartOffset(offsetValue); 
 		
 		/**
 		 * The startFor method schedules a periodic task that is executed every two minutes
@@ -91,6 +102,8 @@ public class CampaignController extends MultiActionController {
 		CampaignRequest campaignRequest = new CampaignRequest();
 		campaignRequest.setCampaignName(campaignName);
 		campaignRequest.setExternalId(externalId);
+		
+		
 		
 		/**
 		 * See comment for service.startFor(campaignRequest) in above method for a more detailed description.

@@ -47,8 +47,12 @@ public class WallTime {
         this.unit = unit;
     }
 
+    public int inMinutes() {
+        return this.unit.minutes * value;
+    }
+    
     public int inDays() {
-        return this.unit.days * value;
+    	return (this.unit.minutes * value)/1440;
     }
 
     public Period asPeriod() {

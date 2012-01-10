@@ -1,6 +1,11 @@
 package org.motechproject.server.messagecampaign.scheduler;
 
+import java.util.Date;
+
 import org.joda.time.LocalDate;
+import org.joda.time.LocalTime;
+import org.joda.time.Minutes;
+import org.joda.time.ReadablePeriod;
 import org.motechproject.model.Time;
 import org.motechproject.scheduler.MotechSchedulerService;
 import org.motechproject.server.messagecampaign.contract.CampaignRequest;
@@ -17,15 +22,45 @@ public class OffsetProgramScheduler extends MessageCampaignScheduler<OffsetCampa
 
     @Override
     protected void scheduleJobFor(OffsetCampaignMessage offsetCampaignMessage) {
-        Time reminderTime = campaignRequest.reminderTime();
+    	
+    	//Time reminderTime = campaignRequest.reminderTime();    
         LocalDate jobDate = jobDate(referenceDate(), offsetCampaignMessage.timeOffset());
-
-        scheduleJobOn(reminderTime, jobDate, jobParams(offsetCampaignMessage.messageKey()));
+        Time theTime = new Time();
+        LocalTime localTime = null;
+        if (campaignRequest.startOffset() == null) { //No offset specified, proceed as if offset is 0
+        	localTime = jobTime(offsetCampaignMessage.timeOffset(), 0);
+        } else {
+        	localTime = jobTime(offsetCampaignMessage.timeOffset(), campaignRequest.startOffset());
+        }
+        if (localTime == null) {
+        	return;
+        }
+        theTime.setHour(localTime.getHourOfDay());
+        theTime.setMinute(localTime.getMinuteOfHour());
+        scheduleJobOn(theTime, jobDate, jobParams(offsetCampaignMessage.messageKey()));
     }
 
     private LocalDate jobDate(LocalDate referenceDate, String timeOffset) {
         WallTime wallTime = WallTimeFactory.create(timeOffset);
-        int offSetDays = wallTime.inDays();
-        return referenceDate.plusDays(offSetDays);
+        int offSetMinutes = wallTime.inMinutes();
+        LocalTime time = new LocalTime();
+        LocalTime newTime = time.plusMinutes(offSetMinutes);
+        
+        LocalDate tempDate = referenceDate.plus(Minutes.minutes(offSetMinutes));
+        
+        return referenceDate.plus(Minutes.minutes(offSetMinutes));
+        
+    }
+    
+    private LocalTime jobTime(String timeOffset, int minutes) {
+        WallTime wallTime = WallTimeFactory.create(timeOffset);
+        int offSetMinutes = wallTime.inMinutes();
+        if (offSetMinutes - minutes < 0) {
+        	return null;
+        } else {
+    	   LocalTime time = new LocalTime();
+           LocalTime newTime = time.plusMinutes(offSetMinutes - minutes);
+           return newTime;
+        }
     }
 }
