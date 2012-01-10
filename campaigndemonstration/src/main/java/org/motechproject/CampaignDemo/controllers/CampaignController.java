@@ -89,7 +89,13 @@ public class CampaignController extends MultiActionController {
 		Map<String, Object> modelMap = new TreeMap<String, Object>();
 		modelMap.put("patients", patientList); //List of patients is for display purposes only
 		
-		ModelAndView mv = new ModelAndView("formPage", modelMap);
+		ModelAndView mv = null;
+		
+		if (campaignName.equals("Cron based Message Program")) {
+			mv = new ModelAndView("cronFormPage", modelMap);
+		} else {
+			mv = new ModelAndView("formPage", modelMap);
+		}
 		
 		return mv;
 	}
@@ -120,7 +126,13 @@ public class CampaignController extends MultiActionController {
 		Map<String, Object> modelMap = new TreeMap<String, Object>();
 		modelMap.put("patients", patientList); //List of patients is for display purposes only
 		
-		ModelAndView mv = new ModelAndView("formPage", modelMap);
+		ModelAndView mv = null;
+		
+		if (campaignName.equals("Cron based Message Program")) {
+			mv = new ModelAndView("cronFormPage", modelMap);
+		} else {
+			mv = new ModelAndView("formPage", modelMap);
+		}
 		
 		return mv;
 	}

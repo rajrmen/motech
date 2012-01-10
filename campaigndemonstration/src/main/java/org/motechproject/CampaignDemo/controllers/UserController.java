@@ -24,15 +24,13 @@ public class UserController extends MultiActionController {
 	private PatientDAO patientDAO;
 	
 	public UserController() {
-		
 	}
 	
 	public UserController(PatientDAO patientDAO) {
 		this.patientDAO = patientDAO;
 	}
-
-	public ModelAndView add(HttpServletRequest request, HttpServletResponse response) {
-		
+	
+	private ModelAndView add(String returnPage, HttpServletRequest request) {
 		List<Patient> patientList = null;
 		
 		String phoneNum = request.getParameter("phoneNum");
@@ -56,12 +54,12 @@ public class UserController extends MultiActionController {
 		Map<String, Object> modelMap = new TreeMap<String, Object>();
 		modelMap.put("patients", patientList); //List of patients is for display purposes only
 		
-		ModelAndView mv = new ModelAndView("formPage", modelMap);
+		ModelAndView mv = new ModelAndView(returnPage, modelMap);
 		
 		return mv;
 	}
 	
-	public ModelAndView remove(HttpServletRequest request, HttpServletResponse response) {
+	private ModelAndView remove(String returnPage, HttpServletRequest request) {
 		
 		String externalID = request.getParameter("externalId");
 		
@@ -72,9 +70,25 @@ public class UserController extends MultiActionController {
 		Map<String, Object> modelMap = new TreeMap<String, Object>();
 		modelMap.put("patients", patientList); //List of patients is for display purposes only
 		
-		ModelAndView mv = new ModelAndView("formPage", modelMap);
-		
+		ModelAndView mv = new ModelAndView(returnPage, modelMap);
+
 		return mv;
+	}
+
+	public ModelAndView addCronUser(HttpServletRequest request, HttpServletResponse response) {
+		return add("cronFormPage", request);
+	}
+	
+	public ModelAndView removeCronUser(HttpServletRequest request, HttpServletResponse response) {
+		return remove("cronFormPage", request);
+	}
+	
+	public ModelAndView addOffsetUser(HttpServletRequest request, HttpServletResponse response) {
+		return add("formPage", request);
+	}
+	
+	public ModelAndView removeOffsetUser(HttpServletRequest request, HttpServletResponse response) {
+		return remove("formPage", request);
 	}
 	
 }

@@ -31,7 +31,7 @@ public class ContentInitiator {
 	private AllStreamContents streamContent;
 	
 	public void bootstrap() throws CMSLiteException {
-        InputStream inputStreamToResource1 = this.getClass().getResourceAsStream("/background.wav");
+        InputStream inputStreamToResource1 = this.getClass().getResourceAsStream("/cronmessage.wav");
         StreamContent file1 = new StreamContent("en", "test", inputStreamToResource1, "checksum1", "audio/wav");
         
         InputStream inputStreamToResource2 = this.getClass().getResourceAsStream("/demo1.wav");

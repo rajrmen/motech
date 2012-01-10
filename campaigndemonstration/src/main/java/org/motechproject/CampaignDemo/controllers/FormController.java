@@ -13,8 +13,11 @@ import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
 public class FormController extends MultiActionController {
 
 	
-	public ModelAndView test(HttpServletRequest request, HttpServletResponse response) {
-		return new ModelAndView("formPage");
+	public ModelAndView cronCampaign(HttpServletRequest request, HttpServletResponse response) {
+		return new ModelAndView("cronFormPage");
 	}
 	
+	public ModelAndView offsetCampaign(HttpServletRequest request, HttpServletResponse response) {
+		return new ModelAndView("formPage");
+	}
 }

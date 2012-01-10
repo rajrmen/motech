@@ -46,9 +46,9 @@ public class UserControllerTest
     	Mockito.when(request.getParameter("externalId")).thenReturn(requestId);
     	Mockito.when(request.getParameter("phoneNum")).thenReturn(phoneNum);
     	
-    	ModelAndView modelAndView = userController.add(request, response);
+    	ModelAndView modelAndView = userController.addCronUser(request, response);
     	
-    	Assert.assertEquals("formPage", modelAndView.getViewName());
+    	Assert.assertEquals("cronFormPage", modelAndView.getViewName());
     	verify(patientDAO).findByExternalid(Matchers.anyString());
     	verify(patientDAO, Mockito.atMost(1)).add(Matchers.any(Patient.class));
     	verify(patientDAO, Mockito.atMost(1)).update(Matchers.any(Patient.class));
@@ -63,9 +63,9 @@ public class UserControllerTest
     	Mockito.when(request.getParameter("externalId")).thenReturn(requestId);
 
     	
-    	ModelAndView modelAndView = userController.remove(request, response);
+    	ModelAndView modelAndView = userController.removeCronUser(request, response);
     	
-    	Assert.assertEquals("formPage", modelAndView.getViewName());
+    	Assert.assertEquals("cronFormPage", modelAndView.getViewName());
     	verify(patientDAO).removePatient(Matchers.anyString());
     	verify(patientDAO, Mockito.atLeast(1)).removePatient(Matchers.any(String.class));
     	verify(patientDAO, Mockito.atMost(1)).removePatient(Matchers.any(String.class));
