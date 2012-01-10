@@ -29,17 +29,18 @@
 			type="submit" value="Unregister User" />
 	</form>
 
-	Register a user in a Cron campaign (Call every 2 minutes)
+	Register a user in an offset campaign (Call every 2 minutes)
 	<form method="post" action="/motech-platform-server/campaign/start">
 		ID:<input type="text" name="externalId" size="12" maxlength="12" /> 
-		<input type="hidden" name="campaignName" value="Cron based Message Program" />
+		Offset time:<input type="text" name="offset" size="12" maxlength="12" />
+		<input type="hidden" name="campaignName" value="Relative Dates Message Program" />
 		<input type="submit" value="Register in campaign" />
 	</form>
 
 	Unregister a user from the campaign
 	<form method="post" action="/motech-platform-server/campaign/stop">
 		ID:<input type="text" name="externalId" size="12" maxlength="12" /> 
-		<input type="hidden" name="campaignName" value="Cron based Message Program" />
+		<input type="hidden" name="campaignName" value="Relative Dates Message Program" />
 		<input type="submit" value="Unregister" />
 	</form>
 
