@@ -88,7 +88,7 @@ public class TestListener {
 	 *
 	 * @param event The Motech event relayed by the EventRelay
 	 */
-	@MotechListener(subjects={EventKeys.MESSAGE_CAMPAIGN_SEND_EVENT_SUBJECT})
+	@MotechListener(subjects={EventKeys.MESSAGE_CAMPAIGN_FIRED_EVENT_SUBJECT})
 	public void execute(MotechEvent event) {
 		
 		String campaignName = (String) event.getParameters().get(EventKeys.CAMPAIGN_NAME_KEY);
