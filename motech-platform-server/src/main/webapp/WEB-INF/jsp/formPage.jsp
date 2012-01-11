@@ -29,7 +29,7 @@
 			type="submit" value="Unregister User" />
 	</form>
 
-	Register a user in an offset campaign (Call every 2 minutes)
+	Register a user in an offset campaign 
 	<form method="post" action="/motech-platform-server/campaign/start">
 		ID:<input type="text" name="externalId" size="12" maxlength="12" /> 
 		Offset time:<input type="text" name="offset" size="12" maxlength="12" />
