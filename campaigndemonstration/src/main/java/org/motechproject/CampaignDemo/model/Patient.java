@@ -1,7 +1,7 @@
 package org.motechproject.CampaignDemo.model;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.ektorp.support.TypeDiscriminator;
-import org.motechproject.model.MotechAuditableDataObject;
+import org.motechproject.model.MotechBaseDataObject;
 
 /**
  * Patients associate an external id with a phone number
@@ -10,7 +10,7 @@ import org.motechproject.model.MotechAuditableDataObject;
  */
 
 @TypeDiscriminator("doc.type === 'PATIENT'")
-public class Patient extends MotechAuditableDataObject {
+public class Patient extends MotechBaseDataObject {
 	
 	@JsonProperty("type") 
 	private final String type = "PATIENT";

@@ -5,11 +5,10 @@ import org.ektorp.CouchDbConnector;
 import org.ektorp.support.GenerateView;
 import org.ektorp.support.View;
 import org.motechproject.CampaignDemo.model.Patient;
-import org.motechproject.dao.MotechAuditableRepository;
+import org.motechproject.dao.MotechBaseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Repository;
 
 import java.util.Collections;
 import java.util.List;
@@ -20,7 +19,7 @@ import java.util.List;
  *
  */
 @Component
-public class PatientsCouchDBDAOImpl extends MotechAuditableRepository<Patient> implements PatientDAO
+public class PatientsCouchDBDAOImpl extends MotechBaseRepository<Patient> implements PatientDAO
 {
 
     @Autowired
