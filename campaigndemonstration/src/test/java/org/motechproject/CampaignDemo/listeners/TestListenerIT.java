@@ -23,7 +23,6 @@ import org.motechproject.ivr.service.IVRService;
 import org.motechproject.model.MotechEvent;
 import org.motechproject.server.messagecampaign.EventKeys;
 import org.motechproject.server.messagecampaign.contract.CampaignRequest;
-import org.motechproject.server.messagecampaign.dao.AllMessageCampaigns;
 import org.motechproject.server.messagecampaign.domain.message.CampaignMessage;
 import org.motechproject.server.messagecampaign.service.MessageCampaignService;
 
@@ -33,9 +32,6 @@ import org.motechproject.server.messagecampaign.service.MessageCampaignService;
 public class TestListenerIT {
 	
 	private TestListener listener;
-
-	@Mock
-	private AllMessageCampaigns campaigns;
 	
 	@Mock
 	private AllStringContents stringContent;
@@ -52,19 +48,20 @@ public class TestListenerIT {
 	
     @Before
     public void initMocks() {
-    	listener = new TestListener(campaigns, stringContent, patientDAO, ivrService, service);
+    	listener = new TestListener(stringContent, patientDAO, ivrService, service);
      }
     
 	@Test
 	public void testWhenPatientExists() {
-
-		CampaignMessage message = new CampaignMessage();
-		message.messageKey("TestCampaignKey");
+		
+		List<String> formats = new ArrayList<String>();
+		formats.add("en");
 		
 		MotechEvent event = new MotechEvent(EventKeys.MESSAGE_CAMPAIGN_SEND_EVENT_SUBJECT);
 		event.getParameters().put(EventKeys.CAMPAIGN_NAME_KEY, "TestCampaign");
 		event.getParameters().put(EventKeys.MESSAGE_KEY, "TestCampaignKey");
 		event.getParameters().put(EventKeys.EXTERNAL_ID_KEY, "12345");
+		event.getParameters().put(EventKeys.MESSAGE_FORMATS, formats);
 		
 		List<Patient> patientList = new ArrayList<Patient>();
 		Patient testPatient = new Patient("12345", "207");
@@ -73,7 +70,6 @@ public class TestListenerIT {
 		
 		Mockito.when(patientDAO.findByExternalid("12345")).thenReturn(patientList);
 		Mockito.when(stringContent.getContent("en", "TestCampaignKey")).thenReturn(new StringContent("en", "cron-message", "demo.xml"));
-		Mockito.when(campaigns.get("TestCampaign", "TestCampaignKey")).thenReturn(message);
 		
 		listener.execute(event);
 		
@@ -83,17 +79,18 @@ public class TestListenerIT {
 	
 	@Test
 	public void testWhenPatientDoesNotExist() {
-		CampaignMessage message = new CampaignMessage();
-		message.messageKey("TestCampaignKey");
+		
+		List<String> formats = new ArrayList<String>();
+		formats.add("en");
 		
 		MotechEvent event = new MotechEvent(EventKeys.MESSAGE_CAMPAIGN_SEND_EVENT_SUBJECT);
 		event.getParameters().put(EventKeys.CAMPAIGN_NAME_KEY, "TestCampaign");
 		event.getParameters().put(EventKeys.MESSAGE_KEY, "TestCampaignKey");
 		event.getParameters().put(EventKeys.EXTERNAL_ID_KEY, "12345");
+		event.getParameters().put(EventKeys.MESSAGE_FORMATS, formats);
 		
 		Mockito.when(patientDAO.findByExternalid("12345")).thenReturn(new ArrayList<Patient>());
 		Mockito.when(stringContent.getContent("en", "TestCampaignKey")).thenReturn(new StringContent("en", "cron-message", "demo.xml"));
-		Mockito.when(campaigns.get("TestCampaign", "TestCampaignKey")).thenReturn(message);
 		
 		
 		listener.execute(event);
