@@ -13,11 +13,8 @@ import org.motechproject.model.MotechEvent;
 import org.motechproject.server.event.annotations.MotechListener;
 import org.motechproject.server.messagecampaign.EventKeys;
 import org.motechproject.server.messagecampaign.contract.CampaignRequest;
-import org.motechproject.server.messagecampaign.dao.AllMessageCampaigns;
-import org.motechproject.server.messagecampaign.domain.message.CampaignMessage;
 import org.motechproject.server.messagecampaign.service.MessageCampaignService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 /**
  * A listener class used to listen on fired campaign message events.
@@ -34,12 +31,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
  *
  */
 public class TestListener {
-	
-	/**
-	 * Defined in the motech-messagecampaign module, available from applicationMessageCampaign.xml import
-	 */
-	@Autowired
-	private AllMessageCampaigns campaigns;
 	
 	/**
 	 * Defined in the motech-cmslite-api module, available from applicationCmsLiteApi.xml import
@@ -70,9 +61,8 @@ public class TestListener {
 	}
 	
 	
-	public TestListener(AllMessageCampaigns campaigns, AllStringContents stringContent, PatientDAO patientDAO,
+	public TestListener(AllStringContents stringContent, PatientDAO patientDAO,
 			IVRService ivrService, MessageCampaignService service) {
-		this.campaigns = campaigns;
 		this.stringContent = stringContent;
 		this.patientDAO = patientDAO;
 		this.ivrService = ivrService;
@@ -94,12 +84,10 @@ public class TestListener {
 		String campaignName = (String) event.getParameters().get(EventKeys.CAMPAIGN_NAME_KEY);
 		String messageKey = (String) event.getParameters().get(EventKeys.MESSAGE_KEY);
 		String externalId = (String) event.getParameters().get(EventKeys.EXTERNAL_ID_KEY);
-		
-		//this will search the json file
-		CampaignMessage campaignMessage = campaigns.get(campaignName, messageKey);
+		String language = ((List<String>) event.getParameters().get(EventKeys.MESSAGE_FORMATS)).get(0);
 		
 		//document
-		StringContent content = stringContent.getContent("en", campaignMessage.messageKey());
+		StringContent content = stringContent.getContent(language, messageKey);
 		
 		List<Patient> patientList = patientDAO.findByExternalid(externalId);
 		
