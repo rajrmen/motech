@@ -90,6 +90,17 @@ public class AdherenceServiceTest {
     }
 
     @Test
+    public void shouldReportRunningAverageAdherenceOnGivenDate() {
+        AdherenceLog existingLog = AdherenceLog.create(externalId);
+        existingLog.setDosesTaken(1);
+        existingLog.setTotalDoses(2);
+        LocalDate date = DateUtil.newDate(2011, 12, 1);
+        when(allAdherenceLogs.findByDate(externalId, date)).thenReturn(existingLog);
+
+        assertEquals(0.5, adherenceService.getRunningAverageAdherence(externalId, date));
+    }
+
+    @Test
     public void shouldReportDeltaAdherence() {
         AdherenceLog existingLog = AdherenceLog.create(externalId);
         existingLog.setDosesTaken(1);

@@ -54,6 +54,15 @@ public class AdherenceService {
         }
     }
 
+    public double getRunningAverageAdherence(String externalId, LocalDate on) {
+        AdherenceLog log = allAdherenceLogs.findByDate(externalId, on);
+        if (log == null) {
+            return 0;
+        } else {
+            return ((double) log.getDosesTaken()) / log.getTotalDoses();
+        }
+    }
+
     public double getDeltaAdherence(String externalId) {
         AdherenceLog latestLog = allAdherenceLogs.findLatestLog(externalId);
         if (latestLog == null) {
