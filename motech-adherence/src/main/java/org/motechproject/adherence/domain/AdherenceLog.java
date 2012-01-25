@@ -5,6 +5,8 @@ import org.ektorp.support.TypeDiscriminator;
 import org.joda.time.LocalDate;
 import org.motechproject.model.MotechBaseDataObject;
 
+import java.util.Map;
+
 @TypeDiscriminator("doc.type === 'AdherenceLog'")
 public class AdherenceLog extends MotechBaseDataObject {
 
@@ -18,6 +20,7 @@ public class AdherenceLog extends MotechBaseDataObject {
     protected int deltaDosesTaken;
     protected int deltaTotalDoses;
     protected String conceptId = GENERIC_CONCEPT_ID;
+    private Map<String, Object> meta;
 
     public AdherenceLog() {
     }
@@ -119,6 +122,14 @@ public class AdherenceLog extends MotechBaseDataObject {
 
     public void setConceptId(String conceptId) {
         this.conceptId = conceptId;
+    }
+
+    public Map<String, Object> getMeta() {
+        return meta;
+    }
+
+    public void setMeta(Map<String, Object> meta) {
+        this.meta = meta;
     }
 
     public AdherenceLog cut(AdherenceLog otherLog) {

@@ -14,9 +14,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNull;
@@ -85,6 +83,19 @@ public class AllAdherenceLogsIT {
 
         assertHasDateRange(results.get(0), DateUtil.newDate(2011, 12, 1), DateUtil.newDate(2011, 12, 31));
         assertHasDateRange(results.get(1), DateUtil.newDate(2012, 1, 1), DateUtil.newDate(2012, 1, 1));
+    }
+
+    @Test
+    public void shouldPersistMetaInformation() {
+        LocalDate today = DateUtil.today();
+        Map<String, Object> meta = new HashMap<String, Object>() {{
+            put("label", "value");
+        }};
+        AdherenceLog adherenceLog = AdherenceLog.create("externalId", "conceptId", today);
+        adherenceLog.setMeta(meta);
+        allAdherenceLogs.add(adherenceLog);
+        entities.add(adherenceLog);
+        assertEquals("value", allAdherenceLogs.findByDate("externalId", "conceptId", today).getMeta().get("label"));
     }
 
     @Test
