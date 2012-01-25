@@ -35,6 +35,18 @@ public class AdherenceLog extends MotechBaseDataObject {
         this.deltaTotalDoses = that.deltaTotalDoses;
     }
 
+    public static AdherenceLog create(String externalId, LocalDate date) {
+        return create(externalId, date, date);
+    }
+
+    public static AdherenceLog create(String externalId, LocalDate fromDate, LocalDate toDate) {
+        AdherenceLog newLog = new AdherenceLog();
+        newLog.fromDate = fromDate;
+        newLog.toDate = toDate;
+        newLog.externalId = externalId;
+        return newLog;
+    }
+
     public String getExternalId() {
         return externalId;
     }
@@ -107,18 +119,6 @@ public class AdherenceLog extends MotechBaseDataObject {
 
     public boolean encloses(AdherenceLog entity) {
         return !this.fromDate.isAfter(entity.fromDate) && !this.toDate.isBefore(entity.toDate);
-    }
-
-    public static AdherenceLog create(String externalId, LocalDate date) {
-        return create(externalId, date, date);
-    }
-
-    public static AdherenceLog create(String externalId, LocalDate fromDate, LocalDate toDate) {
-        AdherenceLog newLog = new AdherenceLog();
-        newLog.fromDate = fromDate;
-        newLog.toDate = toDate;
-        newLog.externalId = externalId;
-        return newLog;
     }
 
     public AdherenceLog addAdherence(int dosesTaken, int totalDoses) {
