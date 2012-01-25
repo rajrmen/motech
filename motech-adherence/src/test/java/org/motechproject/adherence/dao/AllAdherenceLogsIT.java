@@ -107,7 +107,7 @@ public class AllAdherenceLogsIT {
 
         entities.addAll(Arrays.asList(currentLog, newerLog, olderLog));
 
-        assertEquals(currentLog, allAdherenceLogs.findByDate(externalId, DateUtil.newDate(2011, 12, 2)));
+        assertEquals(currentLog, allAdherenceLogs.findByDate(externalId, AdherenceLog.GENERIC_CONCEPT_ID, DateUtil.newDate(2011, 12, 2)));
     }
 
     @Test
@@ -118,7 +118,7 @@ public class AllAdherenceLogsIT {
         adherenceLog.setDateRange(fromDate, DateUtil.newDate(2011, 12, 31));
         allAdherenceLogs.add(adherenceLog);
         entities.add(adherenceLog);
-        assertNull(allAdherenceLogs.findByDate(externalId, DateUtil.newDate(2011, 11, 30)));
+        assertNull(allAdherenceLogs.findByDate(externalId, AdherenceLog.GENERIC_CONCEPT_ID, DateUtil.newDate(2011, 11, 30)));
     }
 
     @Test
@@ -130,7 +130,7 @@ public class AllAdherenceLogsIT {
         allAdherenceLogs.add(adherenceLog);
 
         entities.add(adherenceLog);
-        assertEquals(adherenceLog, allAdherenceLogs.findByDate(externalId, fromDate));
+        assertEquals(adherenceLog, allAdherenceLogs.findByDate(externalId, AdherenceLog.GENERIC_CONCEPT_ID, fromDate));
     }
 
     @Test
@@ -141,7 +141,7 @@ public class AllAdherenceLogsIT {
         adherenceLog.setDateRange(DateUtil.newDate(2011, 12, 1), toDate);
         allAdherenceLogs.add(adherenceLog);
         entities.add(adherenceLog);
-        assertNull(allAdherenceLogs.findByDate(externalId, DateUtil.newDate(2012, 1, 1)));
+        assertNull(allAdherenceLogs.findByDate(externalId, AdherenceLog.GENERIC_CONCEPT_ID, DateUtil.newDate(2012, 1, 1)));
     }
 
     @Test
@@ -152,7 +152,7 @@ public class AllAdherenceLogsIT {
         adherenceLog.setDateRange(DateUtil.newDate(2011, 12, 1), toDate);
         allAdherenceLogs.add(adherenceLog);
         entities.add(adherenceLog);
-        assertEquals(adherenceLog, allAdherenceLogs.findByDate(externalId, toDate));
+        assertEquals(adherenceLog, allAdherenceLogs.findByDate(externalId, AdherenceLog.GENERIC_CONCEPT_ID, toDate));
     }
 
     @Test
@@ -170,7 +170,7 @@ public class AllAdherenceLogsIT {
 
         entities.addAll(Arrays.asList(newerLog, olderLog));
 
-        assertEquals(newerLog, allAdherenceLogs.findLatestLog(externalId));
+        assertEquals(newerLog, allAdherenceLogs.findLatestLog(externalId, AdherenceLog.GENERIC_CONCEPT_ID));
     }
 
     @Test
@@ -193,8 +193,16 @@ public class AllAdherenceLogsIT {
 
         entities.addAll(Arrays.asList(currentLog, newerLog, olderLog));
 
-        assertEquals(olderLog, allAdherenceLogs.findLogsBetween(externalId, DateUtil.newDate(2011, 11, 3), DateUtil.newDate(2011, 12, 3)).get(0));
-        assertEquals(currentLog, allAdherenceLogs.findLogsBetween(externalId, DateUtil.newDate(2011, 11, 3), DateUtil.newDate(2011, 12, 3)).get(1));
+        assertEquals(olderLog, allAdherenceLogs.findLogsBetween(externalId, AdherenceLog.GENERIC_CONCEPT_ID, DateUtil.newDate(2011, 11, 3), DateUtil.newDate(2011, 12, 3)).get(0));
+        assertEquals(currentLog, allAdherenceLogs.findLogsBetween(externalId, AdherenceLog.GENERIC_CONCEPT_ID, DateUtil.newDate(2011, 11, 3), DateUtil.newDate(2011, 12, 3)).get(1));
+    }
+
+    @Test
+    public void shouldFetchLogWithGenericConceptIdGivenAConceptId() {
+        AdherenceLog adherenceLog = AdherenceLog.create(externalId, AdherenceLog.GENERIC_CONCEPT_ID, DateUtil.today());
+        entities.add(adherenceLog);
+        allAdherenceLogs.add(adherenceLog);
+        assertEquals(adherenceLog, allAdherenceLogs.findLatestLog(externalId, "someConceptId"));
     }
 
     @After

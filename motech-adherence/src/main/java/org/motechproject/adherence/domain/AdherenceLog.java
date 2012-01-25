@@ -8,6 +8,8 @@ import org.motechproject.model.MotechBaseDataObject;
 @TypeDiscriminator("doc.type === 'AdherenceLog'")
 public class AdherenceLog extends MotechBaseDataObject {
 
+    public static String GENERIC_CONCEPT_ID = null;
+
     protected String externalId;
     protected int dosesTaken;
     protected int totalDoses;
@@ -15,6 +17,7 @@ public class AdherenceLog extends MotechBaseDataObject {
     protected LocalDate toDate;
     protected int deltaDosesTaken;
     protected int deltaTotalDoses;
+    protected String conceptId = GENERIC_CONCEPT_ID;
 
     public AdherenceLog() {
     }
@@ -27,6 +30,7 @@ public class AdherenceLog extends MotechBaseDataObject {
 
     public AdherenceLog(AdherenceLog that) {
         this.externalId = that.externalId;
+        this.conceptId = that.conceptId;
         this.dosesTaken = that.dosesTaken;
         this.totalDoses = that.totalDoses;
         this.fromDate = that.fromDate;
@@ -35,15 +39,16 @@ public class AdherenceLog extends MotechBaseDataObject {
         this.deltaTotalDoses = that.deltaTotalDoses;
     }
 
-    public static AdherenceLog create(String externalId, LocalDate date) {
-        return create(externalId, date, date);
+    public static AdherenceLog create(String externalId, String conceptId, LocalDate date) {
+        return create(externalId, conceptId, date, date);
     }
 
-    public static AdherenceLog create(String externalId, LocalDate fromDate, LocalDate toDate) {
+    public static AdherenceLog create(String externalId, String conceptId, LocalDate fromDate, LocalDate toDate) {
         AdherenceLog newLog = new AdherenceLog();
         newLog.fromDate = fromDate;
         newLog.toDate = toDate;
         newLog.externalId = externalId;
+        newLog.conceptId = conceptId;
         return newLog;
     }
 
@@ -106,6 +111,14 @@ public class AdherenceLog extends MotechBaseDataObject {
 
     public void setDeltaTotalDoses(int deltaTotalDoses) {
         this.deltaTotalDoses = deltaTotalDoses;
+    }
+
+    public String getConceptId() {
+        return conceptId;
+    }
+
+    public void setConceptId(String conceptId) {
+        this.conceptId = conceptId;
     }
 
     public AdherenceLog cut(AdherenceLog otherLog) {

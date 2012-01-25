@@ -23,7 +23,7 @@ public class AllAdherenceLogs extends MotechBaseRepository<AdherenceLog> {
     }
 
     public void insert(AdherenceLog entity) {
-        AdherenceLog latestLog = findLatestLog(entity.getExternalId());
+        AdherenceLog latestLog = findLatestLog(entity.getExternalId(), entity.getConceptId());
         if (latestLog == null) {
             add(entity);
         } else if (latestLog.overlaps(entity)) {
@@ -34,9 +34,9 @@ public class AllAdherenceLogs extends MotechBaseRepository<AdherenceLog> {
         }
     }
 
-    @View(name = "find_by_date", map = "function(doc) {if(doc.type == 'AdherenceLog') {emit([doc.externalId, doc.toDate], doc._id);} }")
-    public AdherenceLog findByDate(String externalId, LocalDate date) {
-        ViewQuery query = createQuery("find_by_date").startKey(ComplexKey.of(externalId, date)).limit(1).includeDocs(true);
+    @View(name = "find_by_date", map = "function(doc) {if(doc.type == 'AdherenceLog') {emit([doc.externalId, doc.conceptId, doc.toDate], doc._id);} }")
+    public AdherenceLog findByDate(String externalId, String conceptId, LocalDate date) {
+        ViewQuery query = createQuery("find_by_date").startKey(ComplexKey.of(externalId, conceptId, date)).limit(1).includeDocs(true);
         List<AdherenceLog> adherenceLogs = db.queryView(query, AdherenceLog.class);
         if (CollectionUtils.isEmpty(adherenceLogs)) {
             return null;
@@ -49,15 +49,15 @@ public class AllAdherenceLogs extends MotechBaseRepository<AdherenceLog> {
         }
     }
 
-    public AdherenceLog findLatestLog(String externalId) {
-        ViewQuery query = createQuery("find_by_date").startKey(ComplexKey.of(externalId, ComplexKey.emptyObject())).limit(1).descending(true).includeDocs(true);
+    public AdherenceLog findLatestLog(String externalId, String conceptId) {
+        ViewQuery query = createQuery("find_by_date").startKey(ComplexKey.of(externalId, conceptId, ComplexKey.emptyObject())).limit(1).descending(true).includeDocs(true);
         List<AdherenceLog> adherenceLogs = db.queryView(query, AdherenceLog.class);
         return CollectionUtils.isEmpty(adherenceLogs) ? null : adherenceLogs.get(0);
     }
 
-    @View(name = "find_all_between_date_range", map = "function(doc) {if(doc.type == 'AdherenceLog') {emit([doc.externalId, doc.fromDate, doc.toDate], doc._id);} }")
-    public List<AdherenceLog> findLogsBetween(String externalId, LocalDate startDate, LocalDate endDate) {
-        ViewQuery query = createQuery("find_all_between_date_range").startKey(ComplexKey.of(externalId, null, startDate)).endKey(ComplexKey.of(externalId, endDate, ComplexKey.emptyObject())).inclusiveEnd(true).includeDocs(true);
+    @View(name = "find_all_between_date_range", map = "function(doc) {if(doc.type == 'AdherenceLog') {emit([doc.externalId, doc.conceptId, doc.fromDate, doc.toDate], doc._id);} }")
+    public List<AdherenceLog> findLogsBetween(String externalId, String conceptId, LocalDate startDate, LocalDate endDate) {
+        ViewQuery query = createQuery("find_all_between_date_range").startKey(ComplexKey.of(externalId, conceptId, null, startDate)).endKey(ComplexKey.of(externalId, conceptId, endDate, ComplexKey.emptyObject())).inclusiveEnd(true).includeDocs(true);
         return db.queryView(query, AdherenceLog.class);
     }
 }
