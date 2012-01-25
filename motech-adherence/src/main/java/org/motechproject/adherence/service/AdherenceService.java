@@ -1,8 +1,10 @@
-package org.motechproject.adherence.Service;
+package org.motechproject.adherence.service;
 
 import org.joda.time.LocalDate;
 import org.motechproject.adherence.dao.AllAdherenceLogs;
 import org.motechproject.adherence.domain.AdherenceLog;
+import org.motechproject.adherence.domain.ErrorFunction;
+import org.motechproject.util.DateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -18,30 +20,36 @@ public class AdherenceService {
         this.allAdherenceLogs = allAdherenceLogs;
     }
 
-    public void recordDoseTaken(String externalId, boolean taken) {
+    public void recordDoseTaken(String externalId, boolean taken, ErrorFunction errorFunction) {
         AdherenceLog latestLog = allAdherenceLogs.findLatestLog(externalId);
+        LocalDate today = DateUtil.today();
         int dosesTaken = taken ? 1 : 0;
         if (latestLog == null) {
-            AdherenceLog newLog = AdherenceLog.create(externalId).addAdherence(dosesTaken, 1);
-            allAdherenceLogs.add(newLog);
+            AdherenceLog newLog = AdherenceLog.create(externalId, today).addAdherence(dosesTaken, 1);
+            allAdherenceLogs.insert(newLog);
         } else {
+            AdherenceLog fillerLog = correctError(externalId, latestLog, errorFunction, today);
+            latestLog = (fillerLog == null) ? latestLog : fillerLog;
             AdherenceLog newLog = latestLog.addAdherence(dosesTaken, 1);
-            allAdherenceLogs.add(newLog);
+            allAdherenceLogs.insert(newLog);
         }
     }
 
-    public void recordAdherence(String externalId, int taken, int totalDoses, LocalDate fromDate, LocalDate toDate) {
+    public void recordAdherence(String externalId, int taken, int totalDoses, LocalDate fromDate, LocalDate toDate, ErrorFunction errorFunction) {
         AdherenceLog latestLog = allAdherenceLogs.findLatestLog(externalId);
+        LocalDate today = DateUtil.today();
         if (latestLog == null) {
-            AdherenceLog newLog = AdherenceLog.create(externalId).addAdherence(taken, totalDoses);
+            AdherenceLog newLog = AdherenceLog.create(externalId, today).addAdherence(taken, totalDoses);
             newLog.setFromDate(fromDate);
             newLog.setToDate(toDate);
-            allAdherenceLogs.add(newLog);
+            allAdherenceLogs.insert(newLog);
         } else {
+            AdherenceLog fillerLog = correctError(externalId, latestLog, errorFunction, today);
+            latestLog = (fillerLog == null) ? latestLog : fillerLog;
             AdherenceLog newLog = latestLog.addAdherence(taken, totalDoses);
             newLog.setFromDate(fromDate);
             newLog.setToDate(toDate);
-            allAdherenceLogs.add(newLog);
+            allAdherenceLogs.insert(newLog);
         }
     }
 
@@ -81,5 +89,22 @@ public class AdherenceService {
             totalDoses += adherenceLog.getDeltaTotalDoses();
         }
         return totalDoses == 0 ? 0 : dosesTaken / totalDoses;
+    }
+
+    public void updateLatestAdherence(String externalId, int dosesTaken, int totalDoses) {
+        AdherenceLog latestLog = allAdherenceLogs.findLatestLog(externalId);
+        latestLog.updateDeltaDosesTaken(dosesTaken);
+        latestLog.updateDeltaTotalDoses(totalDoses);
+        allAdherenceLogs.update(latestLog);
+    }
+
+    private AdherenceLog correctError(String externalId, AdherenceLog latestLog, ErrorFunction errorFunction, LocalDate fromDate) {
+        if (latestLog.isNotOn(fromDate.minusDays(1))) {
+            AdherenceLog fillerLog = AdherenceLog.create(externalId, latestLog.getFromDate().plusDays(1), fromDate.minusDays(1));
+            fillerLog = fillerLog.addAdherence(latestLog.getDosesTaken() + errorFunction.getDosesTaken(), latestLog.getTotalDoses() + errorFunction.getTotalDoses());
+            allAdherenceLogs.insert(fillerLog);
+            return fillerLog;
+        }
+        return null;
     }
 }

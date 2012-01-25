@@ -4,11 +4,6 @@ import org.apache.commons.lang.StringUtils;
 import org.ektorp.support.TypeDiscriminator;
 import org.joda.time.LocalDate;
 import org.motechproject.model.MotechBaseDataObject;
-import org.motechproject.util.DateUtil;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 @TypeDiscriminator("doc.type === 'AdherenceLog'")
 public class AdherenceLog extends MotechBaseDataObject {
@@ -114,10 +109,14 @@ public class AdherenceLog extends MotechBaseDataObject {
         return !this.fromDate.isAfter(entity.fromDate) && !this.toDate.isBefore(entity.toDate);
     }
 
-    public static AdherenceLog create(String externalId) {
+    public static AdherenceLog create(String externalId, LocalDate date) {
+        return create(externalId, date, date);
+    }
+
+    public static AdherenceLog create(String externalId, LocalDate fromDate, LocalDate toDate) {
         AdherenceLog newLog = new AdherenceLog();
-        newLog.fromDate = DateUtil.today();
-        newLog.toDate = DateUtil.today();
+        newLog.fromDate = fromDate;
+        newLog.toDate = toDate;
         newLog.externalId = externalId;
         return newLog;
     }
@@ -129,6 +128,22 @@ public class AdherenceLog extends MotechBaseDataObject {
         newLog.setDeltaDosesTaken(dosesTaken);
         newLog.setDeltaTotalDoses(totalDoses);
         return newLog;
+    }
+
+    public boolean isNotOn(LocalDate date) {
+        return date.isAfter(this.toDate);
+    }
+
+    public void updateDeltaDosesTaken(int deltaDosesTaken) {
+        this.dosesTaken -= this.deltaDosesTaken;
+        this.dosesTaken += deltaDosesTaken;
+        this.deltaDosesTaken = deltaDosesTaken;
+    }
+
+    public void updateDeltaTotalDoses(int deltaTotalDoses) {
+        this.totalDoses -= this.deltaTotalDoses;
+        this.totalDoses += deltaTotalDoses;
+        this.deltaTotalDoses = deltaTotalDoses;
     }
 
     @Override
