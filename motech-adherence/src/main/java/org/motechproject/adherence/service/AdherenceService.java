@@ -29,18 +29,15 @@ public class AdherenceService {
         LocalDate today = DateUtil.today();
         int dosesTaken = taken ? 1 : 0;
         if (latestLog == null) {
-            AdherenceLog newLog = AdherenceLog.create(externalId, conceptId, today).addAdherence(dosesTaken, 1);
-            newLog.setMeta(meta);
+            AdherenceLog newLog = AdherenceLog.create(externalId, conceptId, meta, today, dosesTaken);
             allAdherenceLogs.insert(newLog);
         } else if (latestLog.isResetLog()) {
-            AdherenceLog newLog = AdherenceLog.create(externalId, conceptId, today).addAdherence(dosesTaken, 1);
-            newLog.setMeta(meta);
+            AdherenceLog newLog = AdherenceLog.create(externalId, conceptId, meta, today, dosesTaken);
             restartAdherenceRecording(latestLog, newLog, errorFunction);
         } else {
             AdherenceLog fillerLog = correctError(externalId, conceptId, latestLog, errorFunction, today);
             latestLog = (fillerLog == null) ? latestLog : fillerLog;
-            AdherenceLog newLog = latestLog.addAdherence(dosesTaken, 1);
-            newLog.setMeta(meta);
+            AdherenceLog newLog = AdherenceLog.initialize(meta, latestLog, dosesTaken);
             allAdherenceLogs.insert(newLog);
         }
     }
@@ -53,24 +50,16 @@ public class AdherenceService {
         AdherenceLog latestLog = allAdherenceLogs.findLatestLog(externalId, conceptId);
         LocalDate today = DateUtil.today();
         if (latestLog == null) {
-            AdherenceLog newLog = AdherenceLog.create(externalId, conceptId, today).addAdherence(taken, totalDoses);
-            newLog.setFromDate(fromDate);
-            newLog.setToDate(toDate);
-            newLog.setMeta(meta);
+            AdherenceLog newLog = AdherenceLog.create(externalId, conceptId, taken, totalDoses, fromDate, toDate, meta, today);
             allAdherenceLogs.insert(newLog);
         } else if (latestLog.isResetLog()) {
-            AdherenceLog newLog = AdherenceLog.create(externalId, conceptId, today).addAdherence(taken, totalDoses);
-            newLog.setFromDate(fromDate);
-            newLog.setToDate(toDate);
-            newLog.setMeta(meta);
+            AdherenceLog newLog = AdherenceLog.create(externalId, conceptId, taken, totalDoses, fromDate, toDate, meta, today);
             restartAdherenceRecording(latestLog, newLog, errorFunction);
         } else {
             AdherenceLog fillerLog = correctError(externalId, conceptId, latestLog, errorFunction, today);
             latestLog = (fillerLog == null) ? latestLog : fillerLog;
             AdherenceLog newLog = latestLog.addAdherence(taken, totalDoses);
-            newLog.setFromDate(fromDate);
-            newLog.setToDate(toDate);
-            newLog.setMeta(meta);
+            AdherenceLog.initialize(fromDate, toDate, meta, newLog);
             allAdherenceLogs.insert(newLog);
         }
     }

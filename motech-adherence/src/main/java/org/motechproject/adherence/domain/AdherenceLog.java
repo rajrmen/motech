@@ -1,6 +1,7 @@
 package org.motechproject.adherence.domain;
 
 import org.apache.commons.lang.StringUtils;
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.ektorp.support.TypeDiscriminator;
 import org.joda.time.LocalDate;
 import org.motechproject.model.MotechBaseDataObject;
@@ -44,6 +45,12 @@ public class AdherenceLog extends MotechBaseDataObject {
         this.deltaTotalDoses = that.deltaTotalDoses;
     }
 
+    public static AdherenceLog create(String externalId, String conceptId, int taken, int totalDoses, LocalDate fromDate, LocalDate toDate, Map<String, Object> meta, LocalDate today) {
+        AdherenceLog newLog = AdherenceLog.create(externalId, conceptId, today).addAdherence(taken, totalDoses);
+        initialize(fromDate, toDate, meta, newLog);
+        return newLog;
+    }
+
     public static AdherenceLog create(String externalId, String conceptId, LocalDate date) {
         return create(externalId, conceptId, date, date);
     }
@@ -55,6 +62,23 @@ public class AdherenceLog extends MotechBaseDataObject {
         newLog.externalId = externalId;
         newLog.conceptId = conceptId;
         return newLog;
+    }
+
+    public static AdherenceLog create(String externalId, String conceptId, Map<String, Object> meta, LocalDate today, int dosesTaken) {
+        AdherenceLog newLog = initialize(meta, AdherenceLog.create(externalId, conceptId, today), dosesTaken);
+        return newLog;
+    }
+
+    public static AdherenceLog initialize(Map<String, Object> meta, AdherenceLog latestLog, int dosesTaken) {
+        AdherenceLog newLog = latestLog.addAdherence(dosesTaken, 1);
+        newLog.setMeta(meta);
+        return newLog;
+    }
+
+    public static void initialize(LocalDate fromDate, LocalDate toDate, Map<String, Object> meta, AdherenceLog newLog) {
+        newLog.setFromDate(fromDate);
+        newLog.setToDate(toDate);
+        newLog.setMeta(meta);
     }
 
     public String getExternalId() {
@@ -138,23 +162,29 @@ public class AdherenceLog extends MotechBaseDataObject {
         this.meta = meta;
     }
 
+    @JsonIgnore
     public AdherenceLog cut(AdherenceLog otherLog) {
         otherLog.setFromDate(this.getToDate().plusDays(1));
         return otherLog;
     }
 
+    @JsonIgnore
     public boolean cutBy(LocalDate tillDate) {
         return !this.fromDate.isAfter(tillDate) && this.toDate.isAfter(tillDate);
     }
+
+    @JsonIgnore
 
     public boolean overlaps(AdherenceLog that) {
         return !this.toDate.isBefore(that.fromDate) && that.toDate.isAfter(this.toDate);
     }
 
+    @JsonIgnore
     public boolean encloses(AdherenceLog entity) {
         return !this.fromDate.isAfter(entity.fromDate) && !this.toDate.isBefore(entity.toDate);
     }
 
+    @JsonIgnore
     public AdherenceLog addAdherence(int dosesTaken, int totalDoses) {
         AdherenceLog newLog = new AdherenceLog(this);
         newLog.setDosesTaken(this.dosesTaken + dosesTaken);
@@ -164,21 +194,25 @@ public class AdherenceLog extends MotechBaseDataObject {
         return newLog;
     }
 
+    @JsonIgnore
     public boolean isNotOn(LocalDate date) {
         return date.isAfter(this.toDate);
     }
 
+    @JsonIgnore
     public boolean isResetLog() {
         Object isResetLog = getMeta().get(RESET_LOG);
         return fromDate.equals(toDate) && isResetLog != null && isResetLog.equals(true);
     }
 
+    @JsonIgnore
     public void updateDeltaDosesTaken(int deltaDosesTaken) {
         this.dosesTaken -= this.deltaDosesTaken;
         this.dosesTaken += deltaDosesTaken;
         this.deltaDosesTaken = deltaDosesTaken;
     }
 
+    @JsonIgnore
     public void updateDeltaTotalDoses(int deltaTotalDoses) {
         this.totalDoses -= this.deltaTotalDoses;
         this.totalDoses += deltaTotalDoses;
