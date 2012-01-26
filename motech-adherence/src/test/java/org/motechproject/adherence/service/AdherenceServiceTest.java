@@ -41,7 +41,7 @@ public class AdherenceServiceTest extends BaseUnitTest {
     public void shouldStartRecordingAdherence() {
         when(allAdherenceLogs.findLatestLog(externalId, conceptId)).thenReturn(null);
 
-        adherenceService.recordDoseTaken(externalId, conceptId, true, new ErrorFunction(1, 1), null);
+        adherenceService.recordUnitAdherence(externalId, conceptId, true, new ErrorFunction(1, 1), null);
         ArgumentCaptor<AdherenceLog> logCapture = ArgumentCaptor.forClass(AdherenceLog.class);
         verify(allAdherenceLogs).insert(logCapture.capture());
         assertEquals(1, logCapture.getValue().getDosesTaken());
@@ -50,14 +50,14 @@ public class AdherenceServiceTest extends BaseUnitTest {
     }
 
     @Test
-    public void shouldRecordDoseTaken() {
+    public void shouldRecordUnitAdherence() {
         LocalDate today = DateUtil.today();
         AdherenceLog existingLog = AdherenceLog.create(externalId, conceptId, today);
         existingLog.setDosesTaken(1);
         existingLog.setTotalDoses(1);
         when(allAdherenceLogs.findLatestLog(externalId, conceptId)).thenReturn(existingLog);
 
-        adherenceService.recordDoseTaken(externalId, conceptId, true, new ErrorFunction(1, 1), null);
+        adherenceService.recordUnitAdherence(externalId, conceptId, true, new ErrorFunction(1, 1), null);
         ArgumentCaptor<AdherenceLog> logCapture = ArgumentCaptor.forClass(AdherenceLog.class);
         verify(allAdherenceLogs).insert(logCapture.capture());
         assertEquals(2, logCapture.getValue().getDosesTaken());
@@ -65,10 +65,10 @@ public class AdherenceServiceTest extends BaseUnitTest {
     }
 
     @Test
-    public void shouldRecordDoseNotTaken() {
+    public void shouldRecordUnitNotTaken() {
         when(allAdherenceLogs.findLatestLog(externalId, conceptId)).thenReturn(null);
 
-        adherenceService.recordDoseTaken(externalId, conceptId, false, new ErrorFunction(1, 1), null);
+        adherenceService.recordUnitAdherence(externalId, conceptId, false, new ErrorFunction(1, 1), null);
         ArgumentCaptor<AdherenceLog> logCapture = ArgumentCaptor.forClass(AdherenceLog.class);
         verify(allAdherenceLogs).insert(logCapture.capture());
         assertEquals(0, logCapture.getValue().getDosesTaken());
@@ -88,7 +88,7 @@ public class AdherenceServiceTest extends BaseUnitTest {
 
         when(allAdherenceLogs.findLatestLog(externalId, conceptId)).thenReturn(existingLog);
 
-        adherenceService.recordDoseTaken(externalId, conceptId, true, new ErrorFunction(0, 1), null);
+        adherenceService.recordUnitAdherence(externalId, conceptId, true, new ErrorFunction(0, 1), null);
         ArgumentCaptor<AdherenceLog> logCaptor = ArgumentCaptor.forClass(AdherenceLog.class);
         verify(allAdherenceLogs, times(2)).insert(logCaptor.capture());
         List<AdherenceLog> allLogs = logCaptor.getAllValues();
@@ -103,7 +103,7 @@ public class AdherenceServiceTest extends BaseUnitTest {
         Map<String, Object> meta = new HashMap<String, Object>() {{
             put("label", "value");
         }};
-        adherenceService.recordDoseTaken(externalId, conceptId, true, new ErrorFunction(0, 0), meta);
+        adherenceService.recordUnitAdherence(externalId, conceptId, true, new ErrorFunction(0, 0), meta);
         ArgumentCaptor<AdherenceLog> logCaptor = ArgumentCaptor.forClass(AdherenceLog.class);
         verify(allAdherenceLogs).insert(logCaptor.capture());
         assertEquals(meta, logCaptor.getValue().getMeta());
@@ -303,6 +303,57 @@ public class AdherenceServiceTest extends BaseUnitTest {
         when(allAdherenceLogs.findLogsBetween(externalId, conceptId, logStartDate.plusDays(1), logEndDate)).thenReturn(adherenceLogs);
         adherenceService.rollBack(externalId, conceptId, logStartDate.plusDays(1));
         verify(allAdherenceLogs, never()).remove(adherenceLogs.get(0));
+    }
+
+    @Test
+    public void shouldResetAdherence() {
+        adherenceService.reset(externalId, conceptId);
+        ArgumentCaptor<AdherenceLog> logCaptor = ArgumentCaptor.forClass(AdherenceLog.class);
+        verify(allAdherenceLogs).insert(logCaptor.capture());
+        assertEquals(true, logCaptor.getValue().getMeta().get(AdherenceLog.RESET_LOG));
+    }
+
+    @Test
+    public void shouldNotResetAdherenceWhenLogEndingTodayExists() {
+        DateTime now = DateUtil.now();
+        mockTime(now);
+        LocalDate today = now.toLocalDate();
+
+        AdherenceLog adherenceLog = AdherenceLog.create(externalId, conceptId, today);
+        when(allAdherenceLogs.findLatestLog(externalId, conceptId)).thenReturn(adherenceLog);
+        adherenceService.reset(externalId, conceptId);
+
+        ArgumentCaptor<AdherenceLog> logCaptor = ArgumentCaptor.forClass(AdherenceLog.class);
+        verify(allAdherenceLogs, never()).insert(logCaptor.capture());
+    }
+
+    @Test
+    public void shouldRemoveResetLogWhenRecordingUnitAdherence() {
+        DateTime now = DateUtil.now();
+        mockTime(now);
+        LocalDate today = now.toLocalDate();
+
+        AdherenceLog adherenceLog = AdherenceLog.create(externalId, conceptId, today);
+        adherenceLog.putMeta(AdherenceLog.RESET_LOG, true);
+
+        when(allAdherenceLogs.findLatestLog(externalId, conceptId)).thenReturn(adherenceLog);
+        adherenceService.recordUnitAdherence(externalId, conceptId, true, new ErrorFunction(0, 0), null);
+        verify(allAdherenceLogs).remove(adherenceLog);
+    }
+
+    @Test
+    public void shouldRemoveResetLogWhenRecordingAdherence() {
+        DateTime now = DateUtil.now();
+        mockTime(now);
+        LocalDate today = now.toLocalDate();
+
+        AdherenceLog adherenceLog = AdherenceLog.create(externalId, conceptId, today);
+        adherenceLog.setId("logId");
+        adherenceLog.putMeta(AdherenceLog.RESET_LOG, true);
+
+        when(allAdherenceLogs.findLatestLog(externalId, conceptId)).thenReturn(adherenceLog);
+        adherenceService.recordAdherence(externalId, conceptId, 1, 1, today, today.plusDays(7), new ErrorFunction(0, 0), null);
+        verify(allAdherenceLogs).remove(adherenceLog);
     }
 
     @After

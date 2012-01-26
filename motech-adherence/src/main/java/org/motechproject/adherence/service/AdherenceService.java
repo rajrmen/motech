@@ -16,7 +16,7 @@ import java.util.Map;
 @Component
 public class AdherenceService {
 
-    public static String ERROR_CORRECTION = "error_Correction";
+    public static final String ERROR_CORRECTION = "error_Correction";
     private AllAdherenceLogs allAdherenceLogs;
 
     @Autowired
@@ -24,7 +24,7 @@ public class AdherenceService {
         this.allAdherenceLogs = allAdherenceLogs;
     }
 
-    public void recordDoseTaken(String externalId, String conceptId, boolean taken, ErrorFunction errorFunction, Map<String, Object> meta) {
+    public void recordUnitAdherence(String externalId, String conceptId, boolean taken, ErrorFunction errorFunction, Map<String, Object> meta) {
         AdherenceLog latestLog = allAdherenceLogs.findLatestLog(externalId, conceptId);
         LocalDate today = DateUtil.today();
         int dosesTaken = taken ? 1 : 0;
@@ -32,6 +32,10 @@ public class AdherenceService {
             AdherenceLog newLog = AdherenceLog.create(externalId, conceptId, today).addAdherence(dosesTaken, 1);
             newLog.setMeta(meta);
             allAdherenceLogs.insert(newLog);
+        } else if (latestLog.isResetLog()) {
+            AdherenceLog newLog = AdherenceLog.create(externalId, conceptId, today).addAdherence(dosesTaken, 1);
+            newLog.setMeta(meta);
+            restartAdherenceRecording(latestLog, newLog, errorFunction);
         } else {
             AdherenceLog fillerLog = correctError(externalId, conceptId, latestLog, errorFunction, today);
             latestLog = (fillerLog == null) ? latestLog : fillerLog;
@@ -54,6 +58,12 @@ public class AdherenceService {
             newLog.setToDate(toDate);
             newLog.setMeta(meta);
             allAdherenceLogs.insert(newLog);
+        } else if (latestLog.isResetLog()) {
+            AdherenceLog newLog = AdherenceLog.create(externalId, conceptId, today).addAdherence(taken, totalDoses);
+            newLog.setFromDate(fromDate);
+            newLog.setToDate(toDate);
+            newLog.setMeta(meta);
+            restartAdherenceRecording(latestLog, newLog, errorFunction);
         } else {
             AdherenceLog fillerLog = correctError(externalId, conceptId, latestLog, errorFunction, today);
             latestLog = (fillerLog == null) ? latestLog : fillerLog;
@@ -133,6 +143,16 @@ public class AdherenceService {
         return removedLogs;
     }
 
+    public void reset(String externalId, String conceptId) {
+        AdherenceLog latestLog = allAdherenceLogs.findLatestLog(externalId, conceptId);
+        LocalDate today = DateUtil.today();
+        if (latestLog == null || latestLog.getToDate().isBefore(today)) {
+            AdherenceLog resetLog = AdherenceLog.create(externalId, conceptId, today);
+            resetLog.putMeta(AdherenceLog.RESET_LOG, true);
+            allAdherenceLogs.insert(resetLog);
+        }
+    }
+
     public Map<String, Object> getMetaOn(String externalId, String conceptId, LocalDate date) {
         AdherenceLog latestLog = allAdherenceLogs.findByDate(externalId, conceptId, date);
         if (latestLog == null) {
@@ -140,6 +160,13 @@ public class AdherenceService {
         } else {
             return latestLog.getMeta() == null ? Collections.<String, Object>emptyMap() : latestLog.getMeta();
         }
+    }
+
+    private void restartAdherenceRecording(AdherenceLog latestLog, AdherenceLog newLog, ErrorFunction errorFunction) {
+        allAdherenceLogs.remove(latestLog);
+        latestLog = allAdherenceLogs.findLatestLog(newLog.getExternalId(), newLog.getConceptId());
+        correctError(newLog.getExternalId(), newLog.getConceptId(), latestLog, errorFunction, newLog.getFromDate());
+        allAdherenceLogs.insert(newLog);
     }
 
     private AdherenceLog correctError(String externalId, String conceptId, AdherenceLog latestLog, ErrorFunction errorFunction, LocalDate fromDate) {

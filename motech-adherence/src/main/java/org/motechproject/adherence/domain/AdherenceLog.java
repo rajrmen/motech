@@ -12,6 +12,7 @@ import java.util.Map;
 public class AdherenceLog extends MotechBaseDataObject {
 
     public static String GENERIC_CONCEPT_ID = null;
+    public static final String RESET_LOG = "reset_log";
 
     protected String externalId;
     protected int dosesTaken;
@@ -165,6 +166,11 @@ public class AdherenceLog extends MotechBaseDataObject {
 
     public boolean isNotOn(LocalDate date) {
         return date.isAfter(this.toDate);
+    }
+
+    public boolean isResetLog() {
+        Object isResetLog = getMeta().get(RESET_LOG);
+        return fromDate.equals(toDate) && isResetLog != null && isResetLog.equals(true);
     }
 
     public void updateDeltaDosesTaken(int deltaDosesTaken) {
