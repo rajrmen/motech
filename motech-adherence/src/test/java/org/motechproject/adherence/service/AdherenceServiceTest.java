@@ -305,57 +305,6 @@ public class AdherenceServiceTest extends BaseUnitTest {
         verify(allAdherenceLogs, never()).remove(adherenceLogs.get(0));
     }
 
-    @Test
-    public void shouldResetAdherence() {
-        adherenceService.reset(externalId, conceptId);
-        ArgumentCaptor<AdherenceLog> logCaptor = ArgumentCaptor.forClass(AdherenceLog.class);
-        verify(allAdherenceLogs).insert(logCaptor.capture());
-        assertEquals(true, logCaptor.getValue().getMeta().get(AdherenceLog.RESET_LOG));
-    }
-
-    @Test
-    public void shouldNotResetAdherenceWhenLogEndingTodayExists() {
-        DateTime now = DateUtil.now();
-        mockTime(now);
-        LocalDate today = now.toLocalDate();
-
-        AdherenceLog adherenceLog = AdherenceLog.create(externalId, conceptId, today);
-        when(allAdherenceLogs.findLatestLog(externalId, conceptId)).thenReturn(adherenceLog);
-        adherenceService.reset(externalId, conceptId);
-
-        ArgumentCaptor<AdherenceLog> logCaptor = ArgumentCaptor.forClass(AdherenceLog.class);
-        verify(allAdherenceLogs, never()).insert(logCaptor.capture());
-    }
-
-    @Test
-    public void shouldRemoveResetLogWhenRecordingUnitAdherence() {
-        DateTime now = DateUtil.now();
-        mockTime(now);
-        LocalDate today = now.toLocalDate();
-
-        AdherenceLog adherenceLog = AdherenceLog.create(externalId, conceptId, today);
-        adherenceLog.putMeta(AdherenceLog.RESET_LOG, true);
-
-        when(allAdherenceLogs.findLatestLog(externalId, conceptId)).thenReturn(adherenceLog);
-        adherenceService.recordUnitAdherence(externalId, conceptId, true, new ErrorFunction(0, 0), null);
-        verify(allAdherenceLogs).remove(adherenceLog);
-    }
-
-    @Test
-    public void shouldRemoveResetLogWhenRecordingAdherence() {
-        DateTime now = DateUtil.now();
-        mockTime(now);
-        LocalDate today = now.toLocalDate();
-
-        AdherenceLog adherenceLog = AdherenceLog.create(externalId, conceptId, today);
-        adherenceLog.setId("logId");
-        adherenceLog.putMeta(AdherenceLog.RESET_LOG, true);
-
-        when(allAdherenceLogs.findLatestLog(externalId, conceptId)).thenReturn(adherenceLog);
-        adherenceService.recordAdherence(externalId, conceptId, 1, 1, today, today.plusDays(7), new ErrorFunction(0, 0), null);
-        verify(allAdherenceLogs).remove(adherenceLog);
-    }
-
     @After
     public void tearDown() {
         resetTime();

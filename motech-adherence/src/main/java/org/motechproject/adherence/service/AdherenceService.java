@@ -31,9 +31,6 @@ public class AdherenceService {
         if (latestLog == null) {
             AdherenceLog newLog = AdherenceLog.create(externalId, conceptId, meta, today, dosesTaken);
             allAdherenceLogs.insert(newLog);
-        } else if (latestLog.isResetLog()) {
-            AdherenceLog newLog = AdherenceLog.create(externalId, conceptId, meta, today, dosesTaken);
-            restartAdherenceRecording(latestLog, newLog, errorFunction);
         } else {
             AdherenceLog fillerLog = correctError(externalId, conceptId, latestLog, errorFunction, today);
             latestLog = (fillerLog == null) ? latestLog : fillerLog;
@@ -52,10 +49,7 @@ public class AdherenceService {
         if (latestLog == null) {
             AdherenceLog newLog = AdherenceLog.create(externalId, conceptId, taken, totalDoses, fromDate, toDate, meta, today);
             allAdherenceLogs.insert(newLog);
-        } else if (latestLog.isResetLog()) {
-            AdherenceLog newLog = AdherenceLog.create(externalId, conceptId, taken, totalDoses, fromDate, toDate, meta, today);
-            restartAdherenceRecording(latestLog, newLog, errorFunction);
-        } else {
+        }  else {
             AdherenceLog fillerLog = correctError(externalId, conceptId, latestLog, errorFunction, today);
             latestLog = (fillerLog == null) ? latestLog : fillerLog;
             AdherenceLog newLog = latestLog.addAdherence(taken, totalDoses);
@@ -132,15 +126,6 @@ public class AdherenceService {
         return removedLogs;
     }
 
-    public void reset(String externalId, String conceptId) {
-        AdherenceLog latestLog = allAdherenceLogs.findLatestLog(externalId, conceptId);
-        LocalDate today = DateUtil.today();
-        if (latestLog == null || latestLog.getToDate().isBefore(today)) {
-            AdherenceLog resetLog = AdherenceLog.create(externalId, conceptId, today);
-            resetLog.putMeta(AdherenceLog.RESET_LOG, true);
-            allAdherenceLogs.insert(resetLog);
-        }
-    }
 
     public Map<String, Object> getMetaOn(String externalId, String conceptId, LocalDate date) {
         AdherenceLog latestLog = allAdherenceLogs.findByDate(externalId, conceptId, date);
