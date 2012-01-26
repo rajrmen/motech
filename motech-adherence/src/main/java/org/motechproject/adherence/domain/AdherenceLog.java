@@ -4,6 +4,7 @@ import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.ektorp.support.TypeDiscriminator;
 import org.joda.time.LocalDate;
+import org.motechproject.adherence.service.AdherenceService;
 import org.motechproject.model.MotechBaseDataObject;
 
 import java.util.HashMap;
@@ -12,8 +13,6 @@ import java.util.Map;
 @TypeDiscriminator("doc.type === 'AdherenceLog'")
 public class AdherenceLog extends MotechBaseDataObject {
 
-    public static String GENERIC_CONCEPT_ID = null;
-
     protected String externalId;
     protected int dosesTaken;
     protected int totalDoses;
@@ -21,7 +20,7 @@ public class AdherenceLog extends MotechBaseDataObject {
     protected LocalDate toDate;
     protected int deltaDosesTaken;
     protected int deltaTotalDoses;
-    protected String conceptId = GENERIC_CONCEPT_ID;
+    protected Concept concept = AdherenceService.GENERIC_CONCEPT;
     private Map<String, Object> meta = new HashMap<String, Object>();
 
     public AdherenceLog() {
@@ -35,7 +34,7 @@ public class AdherenceLog extends MotechBaseDataObject {
 
     public AdherenceLog(AdherenceLog that) {
         this.externalId = that.externalId;
-        this.conceptId = that.conceptId;
+        this.concept = that.concept;
         this.dosesTaken = that.dosesTaken;
         this.totalDoses = that.totalDoses;
         this.fromDate = that.fromDate;
@@ -44,27 +43,27 @@ public class AdherenceLog extends MotechBaseDataObject {
         this.deltaTotalDoses = that.deltaTotalDoses;
     }
 
-    public static AdherenceLog create(String externalId, String conceptId, int taken, int totalDoses, LocalDate fromDate, LocalDate toDate, Map<String, Object> meta, LocalDate today) {
-        AdherenceLog newLog = AdherenceLog.create(externalId, conceptId, today).addAdherence(taken, totalDoses);
+    public static AdherenceLog create(String externalId, Concept concept, int taken, int totalDoses, LocalDate fromDate, LocalDate toDate, Map<String, Object> meta, LocalDate today) {
+        AdherenceLog newLog = AdherenceLog.create(externalId, concept, today).addAdherence(taken, totalDoses);
         initialize(fromDate, toDate, meta, newLog);
         return newLog;
     }
 
-    public static AdherenceLog create(String externalId, String conceptId, LocalDate date) {
-        return create(externalId, conceptId, date, date);
+    public static AdherenceLog create(String externalId, Concept concept, LocalDate date) {
+        return create(externalId, concept, date, date);
     }
 
-    public static AdherenceLog create(String externalId, String conceptId, LocalDate fromDate, LocalDate toDate) {
+    public static AdherenceLog create(String externalId, Concept concept, LocalDate fromDate, LocalDate toDate) {
         AdherenceLog newLog = new AdherenceLog();
         newLog.fromDate = fromDate;
         newLog.toDate = toDate;
         newLog.externalId = externalId;
-        newLog.conceptId = conceptId;
+        newLog.concept = concept;
         return newLog;
     }
 
-    public static AdherenceLog create(String externalId, String conceptId, Map<String, Object> meta, LocalDate today, int dosesTaken) {
-        AdherenceLog newLog = initialize(meta, AdherenceLog.create(externalId, conceptId, today), dosesTaken);
+    public static AdherenceLog create(String externalId, Concept concept, Map<String, Object> meta, LocalDate today, int dosesTaken) {
+        AdherenceLog newLog = initialize(meta, AdherenceLog.create(externalId, concept, today), dosesTaken);
         return newLog;
     }
 
@@ -141,12 +140,12 @@ public class AdherenceLog extends MotechBaseDataObject {
         this.deltaTotalDoses = deltaTotalDoses;
     }
 
-    public String getConceptId() {
-        return conceptId;
+    public Concept getConcept() {
+        return concept;
     }
 
-    public void setConceptId(String conceptId) {
-        this.conceptId = conceptId;
+    public void setConcept(Concept concept) {
+        this.concept = concept;
     }
 
     public void putMeta(String key, Object value) {

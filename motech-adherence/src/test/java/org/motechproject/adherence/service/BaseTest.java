@@ -3,11 +3,11 @@ package org.motechproject.adherence.service;
 import org.joda.time.DateTime;
 import org.motechproject.util.DateTimeSourceUtil;
 
-public class BaseUnitTest {
+public class BaseTest {
 
     private MockedDateTimeSource dateTimeSource = new MockedDateTimeSource();
 
-    public BaseUnitTest() {
+    public BaseTest() {
         DateTimeSourceUtil.SourceInstance = dateTimeSource;
     }
 

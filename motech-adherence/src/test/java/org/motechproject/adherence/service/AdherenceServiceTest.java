@@ -9,6 +9,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.motechproject.adherence.dao.AllAdherenceLogs;
 import org.motechproject.adherence.domain.AdherenceLog;
+import org.motechproject.adherence.domain.Concept;
 import org.motechproject.adherence.domain.ErrorFunction;
 import org.motechproject.util.DateUtil;
 
@@ -21,43 +22,43 @@ import static junit.framework.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 
-public class AdherenceServiceTest extends BaseUnitTest {
+public class AdherenceServiceTest extends BaseTest {
 
     @Mock
     private AllAdherenceLogs allAdherenceLogs;
     private AdherenceService adherenceService;
     private String externalId;
-    private String conceptId;
+    private Concept concept;
 
     @Before
     public void setUp() {
         initMocks(this);
         adherenceService = new AdherenceService(allAdherenceLogs);
         externalId = "externalId";
-        conceptId = "conceptId";
+        concept = new Concept("conceptId", "tokenId");
     }
 
     @Test
     public void shouldStartRecordingAdherence() {
-        when(allAdherenceLogs.findLatestLog(externalId, conceptId)).thenReturn(null);
+        when(allAdherenceLogs.findLatestLog(externalId, concept)).thenReturn(null);
 
-        adherenceService.recordUnitAdherence(externalId, conceptId, true, new ErrorFunction(1, 1), null);
+        adherenceService.recordUnitAdherence(externalId, concept, true, new ErrorFunction(1, 1), null);
         ArgumentCaptor<AdherenceLog> logCapture = ArgumentCaptor.forClass(AdherenceLog.class);
         verify(allAdherenceLogs).insert(logCapture.capture());
         assertEquals(1, logCapture.getValue().getDosesTaken());
-        assertEquals(conceptId, logCapture.getValue().getConceptId());
+        assertEquals(concept, logCapture.getValue().getConcept());
         assertEquals(1, logCapture.getValue().getTotalDoses());
     }
 
     @Test
     public void shouldRecordUnitAdherence() {
         LocalDate today = DateUtil.today();
-        AdherenceLog existingLog = AdherenceLog.create(externalId, conceptId, today);
+        AdherenceLog existingLog = AdherenceLog.create(externalId, concept, today);
         existingLog.setDosesTaken(1);
         existingLog.setTotalDoses(1);
-        when(allAdherenceLogs.findLatestLog(externalId, conceptId)).thenReturn(existingLog);
+        when(allAdherenceLogs.findLatestLog(externalId, concept)).thenReturn(existingLog);
 
-        adherenceService.recordUnitAdherence(externalId, conceptId, true, new ErrorFunction(1, 1), null);
+        adherenceService.recordUnitAdherence(externalId, concept, true, new ErrorFunction(1, 1), null);
         ArgumentCaptor<AdherenceLog> logCapture = ArgumentCaptor.forClass(AdherenceLog.class);
         verify(allAdherenceLogs).insert(logCapture.capture());
         assertEquals(2, logCapture.getValue().getDosesTaken());
@@ -66,9 +67,9 @@ public class AdherenceServiceTest extends BaseUnitTest {
 
     @Test
     public void shouldRecordUnitNotTaken() {
-        when(allAdherenceLogs.findLatestLog(externalId, conceptId)).thenReturn(null);
+        when(allAdherenceLogs.findLatestLog(externalId, concept)).thenReturn(null);
 
-        adherenceService.recordUnitAdherence(externalId, conceptId, false, new ErrorFunction(1, 1), null);
+        adherenceService.recordUnitAdherence(externalId, concept, false, new ErrorFunction(1, 1), null);
         ArgumentCaptor<AdherenceLog> logCapture = ArgumentCaptor.forClass(AdherenceLog.class);
         verify(allAdherenceLogs).insert(logCapture.capture());
         assertEquals(0, logCapture.getValue().getDosesTaken());
@@ -80,15 +81,15 @@ public class AdherenceServiceTest extends BaseUnitTest {
         DateTime now = new DateTime(2011, 12, 2, 10, 0, 0, 0);
         mockTime(now);
 
-        AdherenceLog existingLog = AdherenceLog.create(externalId, conceptId, now.toLocalDate());
+        AdherenceLog existingLog = AdherenceLog.create(externalId, concept, now.toLocalDate());
         existingLog.setDosesTaken(1);
         existingLog.setTotalDoses(2);
         existingLog.setFromDate(now.toLocalDate().minusDays(2));
         existingLog.setToDate(now.toLocalDate().minusDays(2));
 
-        when(allAdherenceLogs.findLatestLog(externalId, conceptId)).thenReturn(existingLog);
+        when(allAdherenceLogs.findLatestLog(externalId, concept)).thenReturn(existingLog);
 
-        adherenceService.recordUnitAdherence(externalId, conceptId, true, new ErrorFunction(0, 1), null);
+        adherenceService.recordUnitAdherence(externalId, concept, true, new ErrorFunction(0, 1), null);
         ArgumentCaptor<AdherenceLog> logCaptor = ArgumentCaptor.forClass(AdherenceLog.class);
         verify(allAdherenceLogs, times(2)).insert(logCaptor.capture());
         List<AdherenceLog> allLogs = logCaptor.getAllValues();
@@ -103,7 +104,7 @@ public class AdherenceServiceTest extends BaseUnitTest {
         Map<String, Object> meta = new HashMap<String, Object>() {{
             put("label", "value");
         }};
-        adherenceService.recordUnitAdherence(externalId, conceptId, true, new ErrorFunction(0, 0), meta);
+        adherenceService.recordUnitAdherence(externalId, concept, true, new ErrorFunction(0, 0), meta);
         ArgumentCaptor<AdherenceLog> logCaptor = ArgumentCaptor.forClass(AdherenceLog.class);
         verify(allAdherenceLogs).insert(logCaptor.capture());
         assertEquals(meta, logCaptor.getValue().getMeta());
@@ -115,7 +116,7 @@ public class AdherenceServiceTest extends BaseUnitTest {
         Map<String, Object> meta = new HashMap<String, Object>() {{
             put("label", "value");
         }};
-        adherenceService.recordAdherence(externalId, conceptId, 1, 2, today.minusDays(1), today, new ErrorFunction(0, 0), meta);
+        adherenceService.recordAdherence(externalId, concept, 1, 2, today.minusDays(1), today, new ErrorFunction(0, 0), meta);
         ArgumentCaptor<AdherenceLog> logCaptor = ArgumentCaptor.forClass(AdherenceLog.class);
         verify(allAdherenceLogs).insert(logCaptor.capture());
         assertEquals(meta, logCaptor.getValue().getMeta());
@@ -125,7 +126,7 @@ public class AdherenceServiceTest extends BaseUnitTest {
     public void shouldRecordAdherenceBetweenARange() {
         LocalDate fromDate = DateUtil.newDate(2011, 12, 1);
         LocalDate toDate = DateUtil.newDate(2011, 12, 31);
-        when(allAdherenceLogs.findLatestLog(externalId, conceptId)).thenReturn(null);
+        when(allAdherenceLogs.findLatestLog(externalId, concept)).thenReturn(null);
 
         adherenceService.recordAdherence(externalId, null, 1, 1, fromDate, toDate, new ErrorFunction(0, 0), null);
         ArgumentCaptor<AdherenceLog> logCapture = ArgumentCaptor.forClass(AdherenceLog.class);
@@ -139,15 +140,15 @@ public class AdherenceServiceTest extends BaseUnitTest {
         DateTime now = new DateTime(2011, 12, 2, 10, 0, 0, 0);
         mockTime(now);
 
-        AdherenceLog existingLog = AdherenceLog.create(externalId, conceptId, now.toLocalDate());
+        AdherenceLog existingLog = AdherenceLog.create(externalId, concept, now.toLocalDate());
         existingLog.setDosesTaken(1);
         existingLog.setTotalDoses(2);
         existingLog.setFromDate(now.toLocalDate().minusDays(2));
         existingLog.setToDate(now.toLocalDate().minusDays(2));
 
-        when(allAdherenceLogs.findLatestLog(externalId, conceptId)).thenReturn(existingLog);
+        when(allAdherenceLogs.findLatestLog(externalId, concept)).thenReturn(existingLog);
 
-        adherenceService.recordAdherence(externalId, conceptId, 1, 1, now.toLocalDate(), now.toLocalDate(), new ErrorFunction(0, 1), null);
+        adherenceService.recordAdherence(externalId, concept, 1, 1, now.toLocalDate(), now.toLocalDate(), new ErrorFunction(0, 1), null);
         ArgumentCaptor<AdherenceLog> logCaptor = ArgumentCaptor.forClass(AdherenceLog.class);
         verify(allAdherenceLogs, times(2)).insert(logCaptor.capture());
         List<AdherenceLog> allLogs = logCaptor.getAllValues();
@@ -162,15 +163,15 @@ public class AdherenceServiceTest extends BaseUnitTest {
         DateTime now = new DateTime(2011, 12, 2, 10, 0, 0, 0);
         mockTime(now);
 
-        AdherenceLog existingLog = AdherenceLog.create(externalId, conceptId, now.toLocalDate());
+        AdherenceLog existingLog = AdherenceLog.create(externalId, concept, now.toLocalDate());
         existingLog.setDosesTaken(1);
         existingLog.setTotalDoses(2);
         existingLog.setFromDate(now.toLocalDate().minusDays(2));
         existingLog.setToDate(now.toLocalDate().minusDays(2));
 
-        when(allAdherenceLogs.findLatestLog(externalId, conceptId)).thenReturn(existingLog);
+        when(allAdherenceLogs.findLatestLog(externalId, concept)).thenReturn(existingLog);
 
-        adherenceService.recordAdherence(externalId, conceptId, 1, 1, now.toLocalDate(), now.toLocalDate(), new ErrorFunction(0, 1), null);
+        adherenceService.recordAdherence(externalId, concept, 1, 1, now.toLocalDate(), now.toLocalDate(), new ErrorFunction(0, 1), null);
         ArgumentCaptor<AdherenceLog> logCaptor = ArgumentCaptor.forClass(AdherenceLog.class);
         verify(allAdherenceLogs, times(2)).insert(logCaptor.capture());
         List<AdherenceLog> allLogs = logCaptor.getAllValues();
@@ -180,67 +181,67 @@ public class AdherenceServiceTest extends BaseUnitTest {
     @Test
     public void shouldReportRunningAverageAdherence() {
         LocalDate today = DateUtil.today();
-        AdherenceLog existingLog = AdherenceLog.create(externalId, conceptId, today);
+        AdherenceLog existingLog = AdherenceLog.create(externalId, concept, today);
         existingLog.setDosesTaken(1);
         existingLog.setTotalDoses(2);
-        when(allAdherenceLogs.findLatestLog(externalId, conceptId)).thenReturn(existingLog);
+        when(allAdherenceLogs.findLatestLog(externalId, concept)).thenReturn(existingLog);
 
-        assertEquals(0.5, adherenceService.getRunningAverageAdherence(externalId, (String) conceptId));
+        assertEquals(0.5, adherenceService.getRunningAverageAdherence(externalId, concept));
     }
 
     @Test
     public void shouldReportRunningAverageAdherenceOnGivenDate() {
         LocalDate today = DateUtil.today();
-        AdherenceLog existingLog = AdherenceLog.create(externalId, conceptId, today);
+        AdherenceLog existingLog = AdherenceLog.create(externalId, concept, today);
         existingLog.setDosesTaken(1);
         existingLog.setTotalDoses(2);
         LocalDate date = DateUtil.newDate(2011, 12, 1);
-        when(allAdherenceLogs.findByDate(externalId, conceptId, date)).thenReturn(existingLog);
+        when(allAdherenceLogs.findByDate(externalId, concept, date)).thenReturn(existingLog);
 
-        assertEquals(0.5, adherenceService.getRunningAverageAdherence(externalId, conceptId, date));
+        assertEquals(0.5, adherenceService.getRunningAverageAdherence(externalId, concept, date));
     }
 
     @Test
     public void shouldReportDeltaAdherence() {
         LocalDate today = DateUtil.today();
-        AdherenceLog existingLog = AdherenceLog.create(externalId, conceptId, today);
+        AdherenceLog existingLog = AdherenceLog.create(externalId, concept, today);
         existingLog.setDosesTaken(1);
         existingLog.setTotalDoses(2);
         existingLog.setDeltaDosesTaken(1);
         existingLog.setDeltaTotalDoses(4);
-        when(allAdherenceLogs.findLatestLog(externalId, conceptId)).thenReturn(existingLog);
+        when(allAdherenceLogs.findLatestLog(externalId, concept)).thenReturn(existingLog);
 
-        assertEquals(0.25, adherenceService.getDeltaAdherence(externalId, conceptId));
+        assertEquals(0.25, adherenceService.getDeltaAdherence(externalId, concept));
     }
 
     @Test
     public void shouldReportDeltaAdherenceOverDateRange() {
         LocalDate today = DateUtil.today();
-        AdherenceLog log = AdherenceLog.create(externalId, conceptId, today);
+        AdherenceLog log = AdherenceLog.create(externalId, concept, today);
         log.setDeltaDosesTaken(1);
         log.setDeltaTotalDoses(1);
-        AdherenceLog secondLog = AdherenceLog.create(externalId, conceptId, today);
+        AdherenceLog secondLog = AdherenceLog.create(externalId, concept, today);
         secondLog.setDeltaDosesTaken(0);
         secondLog.setDeltaTotalDoses(1);
 
         LocalDate fromDate = DateUtil.newDate(2011, 12, 1);
         LocalDate toDate = DateUtil.newDate(2011, 12, 31);
 
-        when(allAdherenceLogs.findLogsBetween(externalId, conceptId, fromDate, toDate)).thenReturn(Arrays.asList(log, secondLog));
-        assertEquals(0.5, adherenceService.getDeltaAdherence(externalId, conceptId, fromDate, toDate));
+        when(allAdherenceLogs.findLogsBetween(externalId, concept, fromDate, toDate)).thenReturn(Arrays.asList(log, secondLog));
+        assertEquals(0.5, adherenceService.getDeltaAdherence(externalId, concept, fromDate, toDate));
     }
 
     @Test
     public void shouldUpdateLatestAdherenceForPositiveChangeInDeltas() {
         LocalDate today = DateUtil.today();
-        AdherenceLog existingLog = AdherenceLog.create(externalId, conceptId, today);
+        AdherenceLog existingLog = AdherenceLog.create(externalId, concept, today);
         existingLog.setDosesTaken(1);
         existingLog.setTotalDoses(2);
         existingLog.setDeltaDosesTaken(1);
         existingLog.setDeltaTotalDoses(2);
-        when(allAdherenceLogs.findLatestLog(externalId, conceptId)).thenReturn(existingLog);
+        when(allAdherenceLogs.findLatestLog(externalId, concept)).thenReturn(existingLog);
 
-        adherenceService.updateLatestAdherence(externalId, conceptId, 3, 4);
+        adherenceService.updateLatestAdherence(externalId, concept, 3, 4);
         ArgumentCaptor<AdherenceLog> logCaptor = ArgumentCaptor.forClass(AdherenceLog.class);
         verify(allAdherenceLogs, times(1)).update(logCaptor.capture());
         AdherenceLog allLog = logCaptor.getValue();
@@ -253,14 +254,14 @@ public class AdherenceServiceTest extends BaseUnitTest {
     @Test
     public void shouldUpdateLatestAdherenceForNegativeChangeInDeltas() {
         LocalDate today = DateUtil.today();
-        AdherenceLog existingLog = AdherenceLog.create(externalId, conceptId, today);
+        AdherenceLog existingLog = AdherenceLog.create(externalId, concept, today);
         existingLog.setDosesTaken(4);
         existingLog.setTotalDoses(5);
         existingLog.setDeltaDosesTaken(3);
         existingLog.setDeltaTotalDoses(4);
-        when(allAdherenceLogs.findLatestLog(externalId, conceptId)).thenReturn(existingLog);
+        when(allAdherenceLogs.findLatestLog(externalId, concept)).thenReturn(existingLog);
 
-        adherenceService.updateLatestAdherence(externalId, conceptId, 2, 3);
+        adherenceService.updateLatestAdherence(externalId, concept, 2, 3);
         ArgumentCaptor<AdherenceLog> logCaptor = ArgumentCaptor.forClass(AdherenceLog.class);
         verify(allAdherenceLogs, times(1)).update(logCaptor.capture());
         AdherenceLog allLog = logCaptor.getValue();
@@ -273,9 +274,9 @@ public class AdherenceServiceTest extends BaseUnitTest {
     @Test
     public void shouldFetchDateOfLatestAdherence() {
         LocalDate endDate = DateUtil.today();
-        AdherenceLog adherenceLog = AdherenceLog.create(externalId, conceptId, endDate.minusDays(1), endDate);
-        when(allAdherenceLogs.findLatestLog(externalId, conceptId)).thenReturn(adherenceLog);
-        assertEquals(endDate, adherenceService.getLatestAdherenceDate(externalId, conceptId));
+        AdherenceLog adherenceLog = AdherenceLog.create(externalId, concept, endDate.minusDays(1), endDate);
+        when(allAdherenceLogs.findLatestLog(externalId, concept)).thenReturn(adherenceLog);
+        assertEquals(endDate, adherenceService.getLatestAdherenceDate(externalId, concept));
     }
 
     @Test
@@ -283,11 +284,11 @@ public class AdherenceServiceTest extends BaseUnitTest {
         LocalDate logDate = DateUtil.newDate(2011, 1, 2);
         mockTime(DateUtil.newDateTime(logDate, 10, 0, 0));
 
-        AdherenceLog adherenceLog = AdherenceLog.create(externalId, conceptId, logDate);
+        AdherenceLog adherenceLog = AdherenceLog.create(externalId, concept, logDate);
         adherenceLog.setId("logId");
         List<AdherenceLog> adherenceLogs = Arrays.asList(adherenceLog);
-        when(allAdherenceLogs.findLogsBetween(externalId, conceptId, logDate, logDate)).thenReturn(adherenceLogs);
-        assertEquals(adherenceLogs.get(0), adherenceService.rollBack(externalId, conceptId, logDate.minusDays(1)).get(0));
+        when(allAdherenceLogs.findLogsBetween(externalId, concept, logDate, logDate)).thenReturn(adherenceLogs);
+        assertEquals(adherenceLogs.get(0), adherenceService.rollBack(externalId, concept, logDate.minusDays(1)).get(0));
         verify(allAdherenceLogs).remove(adherenceLogs.get(0));
     }
 
@@ -297,11 +298,11 @@ public class AdherenceServiceTest extends BaseUnitTest {
         LocalDate logEndDate = DateUtil.newDate(2011, 1, 31);
         mockTime(DateUtil.newDateTime(logEndDate, 10, 0, 0));
 
-        AdherenceLog adherenceLog = AdherenceLog.create(externalId, conceptId, logStartDate, logEndDate);
+        AdherenceLog adherenceLog = AdherenceLog.create(externalId, concept, logStartDate, logEndDate);
         adherenceLog.setId("logId");
         List<AdherenceLog> adherenceLogs = Arrays.asList(adherenceLog);
-        when(allAdherenceLogs.findLogsBetween(externalId, conceptId, logStartDate.plusDays(1), logEndDate)).thenReturn(adherenceLogs);
-        adherenceService.rollBack(externalId, conceptId, logStartDate.plusDays(1));
+        when(allAdherenceLogs.findLogsBetween(externalId, concept, logStartDate.plusDays(1), logEndDate)).thenReturn(adherenceLogs);
+        adherenceService.rollBack(externalId, concept, logStartDate.plusDays(1));
         verify(allAdherenceLogs, never()).remove(adherenceLogs.get(0));
     }
 
