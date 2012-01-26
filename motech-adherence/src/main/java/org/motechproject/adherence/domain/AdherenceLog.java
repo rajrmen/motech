@@ -5,6 +5,7 @@ import org.ektorp.support.TypeDiscriminator;
 import org.joda.time.LocalDate;
 import org.motechproject.model.MotechBaseDataObject;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @TypeDiscriminator("doc.type === 'AdherenceLog'")
@@ -20,7 +21,7 @@ public class AdherenceLog extends MotechBaseDataObject {
     protected int deltaDosesTaken;
     protected int deltaTotalDoses;
     protected String conceptId = GENERIC_CONCEPT_ID;
-    private Map<String, Object> meta;
+    private Map<String, Object> meta = new HashMap<String, Object>();
 
     public AdherenceLog() {
     }
@@ -124,6 +125,10 @@ public class AdherenceLog extends MotechBaseDataObject {
         this.conceptId = conceptId;
     }
 
+    public void putMeta(String key, Object value) {
+        meta.put(key, value);
+    }
+
     public Map<String, Object> getMeta() {
         return meta;
     }
@@ -135,6 +140,10 @@ public class AdherenceLog extends MotechBaseDataObject {
     public AdherenceLog cut(AdherenceLog otherLog) {
         otherLog.setFromDate(this.getToDate().plusDays(1));
         return otherLog;
+    }
+
+    public boolean cutBy(LocalDate tillDate) {
+        return !this.fromDate.isAfter(tillDate) && this.toDate.isAfter(tillDate);
     }
 
     public boolean overlaps(AdherenceLog that) {

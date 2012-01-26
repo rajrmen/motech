@@ -158,6 +158,26 @@ public class AdherenceServiceTest extends BaseUnitTest {
     }
 
     @Test
+    public void shouldSaveMetaWhenCorrectingError() {
+        DateTime now = new DateTime(2011, 12, 2, 10, 0, 0, 0);
+        mockTime(now);
+
+        AdherenceLog existingLog = AdherenceLog.create(externalId, conceptId, now.toLocalDate());
+        existingLog.setDosesTaken(1);
+        existingLog.setTotalDoses(2);
+        existingLog.setFromDate(now.toLocalDate().minusDays(2));
+        existingLog.setToDate(now.toLocalDate().minusDays(2));
+
+        when(allAdherenceLogs.findLatestLog(externalId, conceptId)).thenReturn(existingLog);
+
+        adherenceService.recordAdherence(externalId, conceptId, 1, 1, now.toLocalDate(), now.toLocalDate(), new ErrorFunction(0, 1), null);
+        ArgumentCaptor<AdherenceLog> logCaptor = ArgumentCaptor.forClass(AdherenceLog.class);
+        verify(allAdherenceLogs, times(2)).insert(logCaptor.capture());
+        List<AdherenceLog> allLogs = logCaptor.getAllValues();
+        assertEquals(true, allLogs.get(0).getMeta().get(AdherenceService.ERROR_CORRECTION));
+    }
+
+    @Test
     public void shouldReportRunningAverageAdherence() {
         LocalDate today = DateUtil.today();
         AdherenceLog existingLog = AdherenceLog.create(externalId, conceptId, today);
@@ -248,6 +268,41 @@ public class AdherenceServiceTest extends BaseUnitTest {
         assertEquals(4, allLog.getTotalDoses());
         assertEquals(2, allLog.getDeltaDosesTaken());
         assertEquals(3, allLog.getDeltaTotalDoses());
+    }
+
+    @Test
+    public void shouldFetchDateOfLatestAdherence() {
+        LocalDate endDate = DateUtil.today();
+        AdherenceLog adherenceLog = AdherenceLog.create(externalId, conceptId, endDate.minusDays(1), endDate);
+        when(allAdherenceLogs.findLatestLog(externalId, conceptId)).thenReturn(adherenceLog);
+        assertEquals(endDate, adherenceService.getLatestAdherenceDate(externalId, conceptId));
+    }
+
+    @Test
+    public void shouldRollbackAdherence() {
+        LocalDate logDate = DateUtil.newDate(2011, 1, 2);
+        mockTime(DateUtil.newDateTime(logDate, 10, 0, 0));
+
+        AdherenceLog adherenceLog = AdherenceLog.create(externalId, conceptId, logDate);
+        adherenceLog.setId("logId");
+        List<AdherenceLog> adherenceLogs = Arrays.asList(adherenceLog);
+        when(allAdherenceLogs.findLogsBetween(externalId, conceptId, logDate, logDate)).thenReturn(adherenceLogs);
+        assertEquals(adherenceLogs.get(0), adherenceService.rollBack(externalId, conceptId, logDate.minusDays(1)).get(0));
+        verify(allAdherenceLogs).remove(adherenceLogs.get(0));
+    }
+
+    @Test
+    public void shouldUpdateLogOnRollbackWhenTillDateCutsIt() {
+        LocalDate logStartDate = DateUtil.newDate(2011, 1, 1);
+        LocalDate logEndDate = DateUtil.newDate(2011, 1, 31);
+        mockTime(DateUtil.newDateTime(logEndDate, 10, 0, 0));
+
+        AdherenceLog adherenceLog = AdherenceLog.create(externalId, conceptId, logStartDate, logEndDate);
+        adherenceLog.setId("logId");
+        List<AdherenceLog> adherenceLogs = Arrays.asList(adherenceLog);
+        when(allAdherenceLogs.findLogsBetween(externalId, conceptId, logStartDate.plusDays(1), logEndDate)).thenReturn(adherenceLogs);
+        adherenceService.rollBack(externalId, conceptId, logStartDate.plusDays(1));
+        verify(allAdherenceLogs, never()).remove(adherenceLogs.get(0));
     }
 
     @After

@@ -8,6 +8,7 @@ import org.motechproject.util.DateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -15,6 +16,7 @@ import java.util.Map;
 @Component
 public class AdherenceService {
 
+    public static String ERROR_CORRECTION = "error_Correction";
     private AllAdherenceLogs allAdherenceLogs;
 
     @Autowired
@@ -37,6 +39,10 @@ public class AdherenceService {
             newLog.setMeta(meta);
             allAdherenceLogs.insert(newLog);
         }
+    }
+
+    public void recordAdherence(String externalId, String conceptId, int taken, int totalDoses, LocalDate logDate, ErrorFunction errorFunction, Map<String, Object> meta) {
+        recordAdherence(externalId, conceptId, taken, totalDoses, logDate, logDate, errorFunction, meta);
     }
 
     public void recordAdherence(String externalId, String conceptId, int taken, int totalDoses, LocalDate fromDate, LocalDate toDate, ErrorFunction errorFunction, Map<String, Object> meta) {
@@ -104,14 +110,27 @@ public class AdherenceService {
         allAdherenceLogs.update(latestLog);
     }
 
-    private AdherenceLog correctError(String externalId, String conceptId, AdherenceLog latestLog, ErrorFunction errorFunction, LocalDate fromDate) {
-        if (latestLog.isNotOn(fromDate.minusDays(1))) {
-            AdherenceLog fillerLog = AdherenceLog.create(externalId, conceptId, latestLog.getFromDate().plusDays(1), fromDate.minusDays(1));
-            fillerLog = fillerLog.addAdherence(latestLog.getDosesTaken() + errorFunction.getDosesTaken(), latestLog.getTotalDoses() + errorFunction.getTotalDoses());
-            allAdherenceLogs.insert(fillerLog);
-            return fillerLog;
+    public LocalDate getLatestAdherenceDate(String externalId, String conceptId) {
+        AdherenceLog latestAdherenceLog = allAdherenceLogs.findLatestLog(externalId, conceptId);
+        if (latestAdherenceLog == null)
+            return null;
+        else
+            return latestAdherenceLog.getToDate();
+    }
+
+    public List<AdherenceLog> rollBack(String externalId, String conceptId, LocalDate tillDate) {
+        List<AdherenceLog> adherenceLogs = allAdherenceLogs.findLogsBetween(externalId, conceptId, tillDate.plusDays(1), DateUtil.today());
+        List<AdherenceLog> removedLogs = new ArrayList<AdherenceLog>();
+        for (AdherenceLog adherenceLog : adherenceLogs) {
+            if (adherenceLog.cutBy(tillDate)) {
+                adherenceLog.setToDate(tillDate);
+                allAdherenceLogs.update(adherenceLog);
+            } else {
+                allAdherenceLogs.remove(adherenceLog);
+                removedLogs.add(adherenceLog);
+            }
         }
-        return null;
+        return removedLogs;
     }
 
     public Map<String, Object> getMetaOn(String externalId, String conceptId, LocalDate date) {
@@ -121,5 +140,16 @@ public class AdherenceService {
         } else {
             return latestLog.getMeta() == null ? Collections.<String, Object>emptyMap() : latestLog.getMeta();
         }
+    }
+
+    private AdherenceLog correctError(String externalId, String conceptId, AdherenceLog latestLog, ErrorFunction errorFunction, LocalDate fromDate) {
+        if (latestLog.isNotOn(fromDate.minusDays(1))) {
+            AdherenceLog fillerLog = AdherenceLog.create(externalId, conceptId, latestLog.getFromDate().plusDays(1), fromDate.minusDays(1));
+            fillerLog = fillerLog.addAdherence(latestLog.getDosesTaken() + errorFunction.getDosesTaken(), latestLog.getTotalDoses() + errorFunction.getTotalDoses());
+            fillerLog.putMeta(ERROR_CORRECTION, true);
+            allAdherenceLogs.insert(fillerLog);
+            return fillerLog;
+        }
+        return null;
     }
 }
