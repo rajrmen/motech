@@ -19,10 +19,7 @@ public class Patient extends MotechBaseDataObject {
 	private String externalid;
     @JsonProperty
 	private String phoneNum;
-//	private String format = "a";
-//	private String language = "b";
-	
-    
+
     public Patient() {
     	
     }
@@ -57,22 +54,4 @@ public class Patient extends MotechBaseDataObject {
 		if (patient.getExternalid().equals(externalid)) return true;
 		return false;
 	}
-	
-//	public String getFormat() {
-//		return format;
-//	}
-	
-//	private String getLanguage() {
-//		return language;
-//	}
-//	
-//	private void setFormat(String format) {
-//		this.format = format;
-//	}
-//	
-//	private void setLanguage(String language) {
-//		this.language = language;
-//	}
-	
-	
 }

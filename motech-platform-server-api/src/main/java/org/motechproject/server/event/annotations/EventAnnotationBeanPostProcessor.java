@@ -21,7 +21,7 @@ import java.util.Map;
  */
 @Component
 public class EventAnnotationBeanPostProcessor implements BeanPostProcessor {
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    //private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /* (non-Javadoc)
       * @see org.springframework.beans.factory.config.BeanPostProcessor#postProcessBeforeInitialization(java.lang.Object, java.lang.String)
@@ -61,7 +61,7 @@ public class EventAnnotationBeanPostProcessor implements BeanPostProcessor {
                             proxy = new MotechListenerNamedParametersProxy(beanName, bean, method);
                             break;
                     }
-                    logger.info(String.format("Registering listener type(%20s) bean: %s , method: %s, for subjects: %s", annotation.type().toString(), beanName, method.toGenericString(), subjects));
+                    //logger.info(String.format("Registering listener type(%20s) bean: %s , method: %s, for subjects: %s", annotation.type().toString(), beanName, method.toGenericString(), subjects));
                     Context.getInstance().getEventListenerRegistry().registerListener(proxy, subjects);
                 }
             }

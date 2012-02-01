@@ -44,8 +44,8 @@ import java.util.Map;
  */
 public class LoggingAgentBackendImpl implements MetricsAgentBackend
 {
-    private final Logger log = LoggerFactory.getLogger(this.getClass());
-  	private final Logger metrics = LoggerFactory.getLogger("metrics");
+    //private final Logger log = LoggerFactory.getLogger(this.getClass());
+  	//private final Logger metrics = LoggerFactory.getLogger("metrics");
 
     // Preset the prefix to limit the 'appends' I do later
     private String prefix;
@@ -60,7 +60,7 @@ public class LoggingAgentBackendImpl implements MetricsAgentBackend
             prefix = String.format("host=%s ip=%s ", hostName, ip);
         } catch (UnknownHostException e) {
             // bummer, but not very important.  Log an error and set them to null and we just won't log them later
-            log.info(String.format("Unable to get host information: %s", e.getMessage()));
+            //log.info(String.format("Unable to get host information: %s", e.getMessage()));
             prefix = "";
         }
     }
@@ -86,7 +86,7 @@ public class LoggingAgentBackendImpl implements MetricsAgentBackend
             }
         }
 
-        metrics.info(sb.toString());
+        //metrics.info(sb.toString());
     }
 
     /**
@@ -109,6 +109,6 @@ public class LoggingAgentBackendImpl implements MetricsAgentBackend
     @Override
     public void logTimedEvent(String metric, long time)
     {
-        metrics.info(String.format("%smetric=%s time=%d", prefix, metric, time));
+        //metrics.info(String.format("%smetric=%s time=%d", prefix, metric, time));
     }
 }

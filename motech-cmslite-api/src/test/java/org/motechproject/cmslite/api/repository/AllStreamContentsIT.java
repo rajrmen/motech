@@ -39,7 +39,7 @@ public class AllStreamContentsIT {
     public void shouldAddStreamContent() throws CMSLiteException {
         String pathToFile = "/testResource.png";
         InputStream inputStreamToResource = this.getClass().getResourceAsStream(pathToFile);
-        englishContent = new StreamContent("en", "test", inputStreamToResource, "checksum", "image/png");
+        englishContent = new StreamContent("en", "test", "ivr", inputStreamToResource, "checksum", "image/png");
 
         allStreamContents.addContent(englishContent);
 
@@ -53,7 +53,7 @@ public class AllStreamContentsIT {
     @Test
     public void shouldUpdateStreamContentAttachment() throws CMSLiteException {
         InputStream inputStreamToResource1 = this.getClass().getResourceAsStream("/background.wav");
-        StreamContent file1 = new StreamContent("en", "test", inputStreamToResource1, "checksum1", "audio/x-wav");
+        StreamContent file1 = new StreamContent("en", "test", "ivr", inputStreamToResource1, "checksum1", "audio/x-wav");
         allStreamContents.addContent(file1);
         StreamContent streamContent1 = couchDbConnector.get(StreamContent.class, file1.getId());
         assertNotNull(streamContent1);
@@ -63,7 +63,7 @@ public class AllStreamContentsIT {
 
         String id1 = file1.getId();
         InputStream inputStreamToResource = this.getClass().getResourceAsStream("/10.wav");
-        StreamContent file2 = new StreamContent("en", "test", inputStreamToResource, "checksum2", "audio/x-wav");
+        StreamContent file2 = new StreamContent("en", "test", "ivr", inputStreamToResource, "checksum2", "audio/x-wav");
         allStreamContents.addContent(file2);
         StreamContent streamContent = couchDbConnector.get(StreamContent.class, id1);
         assertNotNull(streamContent);
@@ -77,19 +77,19 @@ public class AllStreamContentsIT {
     @Test
     public void shouldReturnTrueIfStreamContentAvailable(){
         createStreamContent();
-        assertTrue(allStreamContents.isContentAvailable(englishContent.getLanguage(), englishContent.getName()));
+        assertTrue(allStreamContents.isContentAvailable(englishContent.getLanguage(), englishContent.getName(), englishContent.getFormat()));
     }
 
     @Test
     public void shouldReturnFalseIfStreamContentNotAvailable(){
-        assertFalse(allStreamContents.isContentAvailable("en", "unknownContent"));
+        assertFalse(allStreamContents.isContentAvailable("en", "unknownContent", "ivr"));
     }
 
     @Test
     public void shouldGetStreamContent() {
         createStreamContent();
 
-        StreamContent streamContent = allStreamContents.getContent(englishContent.getLanguage(), englishContent.getName());
+        StreamContent streamContent = allStreamContents.getContent(englishContent.getLanguage(), englishContent.getName(), englishContent.getFormat());
         assertNotNull(streamContent);
         assertEquals(englishContent.getName(), streamContent.getName());
         assertEquals(englishContent.getLanguage(), streamContent.getLanguage());
@@ -100,7 +100,7 @@ public class AllStreamContentsIT {
     private void createStreamContent() {
         String pathToFile = "/testResource.png";
         InputStream inputStreamToResource = this.getClass().getResourceAsStream(pathToFile);
-        englishContent = new StreamContent("en", "test", inputStreamToResource, "checksum", "image/png");
+        englishContent = new StreamContent("en", "test", "IVR", inputStreamToResource, "checksum", "image/png");
 
         couchDbConnector.create(englishContent);
         AttachmentInputStream attachmentInputStream = new AttachmentInputStream(englishContent.getId(), inputStreamToResource, englishContent.getContentType());

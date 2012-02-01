@@ -4,11 +4,11 @@
 	<parent>
 		<artifactId>motech</artifactId>
 		<groupId>org.motechproject</groupId>
-		<version>0.6-SNAPSHOT</version>
+		<version>0.8-SNAPSHOT</version>
 	</parent>
 	<groupId>org.motechproject</groupId>
 	<artifactId>campaigndemonstration</artifactId>
-	<version>0.6-SNAPSHOT</version>
+	<version>0.8-SNAPSHOT</version>
 	<name>campaigndemonstration</name>
 	<packaging>jar</packaging>
 	<description>Campaign Demo</description>
@@ -16,7 +16,7 @@
 	<url>http://maven.apache.org</url>
 
 	<properties>
-	    <springVersion>3.0.5.RELEASE</springVersion>
+		<springVersion>3.0.5.RELEASE</springVersion>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
@@ -38,11 +38,23 @@
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>voxeo</artifactId>
+			<artifactId>motech-ivr-voxeo</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 
-		
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>motech-sms-api</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>motech-sms-http</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context</artifactId>

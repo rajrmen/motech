@@ -2,12 +2,12 @@ package org.motechproject.scheduletracking.api.domain;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.motechproject.scheduletracking.api.BaseScheduleTrackingTest;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
+import static org.junit.Assert.*;
+import static org.motechproject.scheduletracking.api.utility.DateTimeUtil.daysAgo;
+import static org.motechproject.scheduletracking.api.utility.DateTimeUtil.wallTimeOf;
 
-public class MilestoneTest extends BaseScheduleTrackingTest {
+public class MilestoneTest {
     private Milestone milestone;
     private Milestone anotherMilestone;
 
@@ -19,25 +19,37 @@ public class MilestoneTest extends BaseScheduleTrackingTest {
 
     @Test
     public void window() {
-        assertNotNull(milestone.window(WindowName.Upcoming));
+        assertNotNull(milestone.getMilestoneWindow(WindowName.Upcoming));
     }
 
     @Test
     public void verifyTheStateOfAMilestone() {
-        assertEquals(WindowName.Waiting, milestone.applicableWindow(daysAgo(2)));
-        assertEquals(WindowName.Waiting, milestone.applicableWindow(daysAgo(7)));
-        assertEquals(WindowName.Upcoming, milestone.applicableWindow(daysAgo(8)));
-        assertEquals(WindowName.Upcoming, milestone.applicableWindow(daysAgo(9)));
-        assertEquals(WindowName.Upcoming, milestone.applicableWindow(daysAgo(14)));
-	    assertEquals(WindowName.Due, milestone.applicableWindow(daysAgo(15)));
-	    assertEquals(WindowName.Due, milestone.applicableWindow(daysAgo(16)));
-        assertEquals(WindowName.Due, milestone.applicableWindow(daysAgo(21)));
-        assertEquals(WindowName.Late, milestone.applicableWindow(daysAgo(22)));
-        assertEquals(WindowName.Late, milestone.applicableWindow(daysAgo(28)));
-        assertEquals(WindowName.Past, milestone.applicableWindow(daysAgo(29)));
+        assertEquals(WindowName.Waiting, milestone.getApplicableWindow(daysAgo(2)));
+        assertEquals(WindowName.Waiting, milestone.getApplicableWindow(daysAgo(6)));
+        assertEquals(WindowName.Upcoming, milestone.getApplicableWindow(daysAgo(7)));
+        assertEquals(WindowName.Upcoming, milestone.getApplicableWindow(daysAgo(9)));
+        assertEquals(WindowName.Upcoming, milestone.getApplicableWindow(daysAgo(13)));
+        assertEquals(WindowName.Due, milestone.getApplicableWindow(daysAgo(14)));
+	    assertEquals(WindowName.Due, milestone.getApplicableWindow(daysAgo(16)));
+        assertEquals(WindowName.Due, milestone.getApplicableWindow(daysAgo(20)));
+        assertEquals(WindowName.Late, milestone.getApplicableWindow(daysAgo(21)));
+        assertEquals(WindowName.Late, milestone.getApplicableWindow(daysAgo(27)));
+        assertEquals(WindowName.Past, milestone.getApplicableWindow(daysAgo(28)));
+        assertEquals(WindowName.Past, milestone.getApplicableWindow(daysAgo(35)));
 
-        assertEquals(WindowName.Due, anotherMilestone.applicableWindow(daysAgo(21)));
-        assertEquals(WindowName.Past, anotherMilestone.applicableWindow(daysAgo(22)));
-        assertEquals(WindowName.Past, anotherMilestone.applicableWindow(daysAgo(30)));
+        assertEquals(WindowName.Due, anotherMilestone.getApplicableWindow(daysAgo(19)));
+        assertEquals(WindowName.Late, anotherMilestone.getApplicableWindow(daysAgo(21)));
+        assertEquals(WindowName.Past, anotherMilestone.getApplicableWindow(daysAgo(22)));
+        assertEquals(WindowName.Past, anotherMilestone.getApplicableWindow(daysAgo(30)));
     }
+
+	@Test
+	public void shouldReturnTrueIfNameMatches() {
+		assertTrue("Name mismatch", milestone.hasName("M1"));
+	}
+
+	@Test
+	public void shouldReturnFalseIfNameDoesNotMatch() {
+		assertFalse("Name mismatch", milestone.hasName("M2"));
+	}
 }

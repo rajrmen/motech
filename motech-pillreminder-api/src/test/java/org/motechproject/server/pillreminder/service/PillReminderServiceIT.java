@@ -37,14 +37,14 @@ public class PillReminderServiceIT {
 
     @Before
     public void setUp() {
-        startDate = DateUtil.newDate(2011, 1, 20);
-        endDate = DateUtil.newDate(2012, 1, 20);
+        startDate = DateUtil.newDate(2020, 1, 20);
+        endDate = DateUtil.newDate(2021, 1, 20);
     }
 
     @Test
     public void shouldSaveTheDailyPillRegimenAndScheduleJob() throws SchedulerException {
         String externalId = "1234";
-        allPillRegimens.removeAll("ExternalId", externalId);
+        allPillRegimens.removeAll("externalId", externalId);
         int scheduledJobsNum = schedulerFactoryBean.getScheduler().getTriggerNames(MotechSchedulerServiceImpl.JOB_GROUP_NAME).length;
 
         ArrayList<MedicineRequest> medicineRequests = new ArrayList<MedicineRequest>();

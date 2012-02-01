@@ -10,19 +10,19 @@ public class Alert {
 
     public Alert(WindowName windowName, Milestone milestone) {
         this.windowName = windowName;
-        this.milestoneName = milestone.name();
-        data = milestone.data();
+        this.milestoneName = milestone.getName();
+        data = milestone.getData();
     }
 
-    public WindowName windowName() {
+    public WindowName getWindowName() {
         return windowName;
     }
 
-    public String milestoneName() {
+    public String getMilestoneName() {
         return milestoneName;
     }
 
-    public Map<String, String> data() {
+    public Map<String, String> getData() {
         return data;
     }
 }

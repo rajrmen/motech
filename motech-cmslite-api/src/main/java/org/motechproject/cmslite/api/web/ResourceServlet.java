@@ -48,7 +48,7 @@ public class ResourceServlet extends HttpServlet {
     private void addStringContentToResponse(HttpServletResponse response, CMSLiteService cmsLiteService, ResourceQuery resourceQuery) throws ContentNotFoundException, IOException {
         PrintWriter writer = response.getWriter();
         try {
-            StringContent stringContent = cmsLiteService.getStringContent(resourceQuery.getLanguage(), resourceQuery.getName());
+            StringContent stringContent = cmsLiteService.getStringContent(resourceQuery.getLanguage(), resourceQuery.getName(), resourceQuery.getFormat());
             long contentLength = stringContent.getValue().length();
 
             response.setStatus(HttpServletResponse.SC_OK);
@@ -68,7 +68,7 @@ public class ResourceServlet extends HttpServlet {
         AttachmentInputStream contentStream = null;
         OutputStream fo = null;
         try {
-            contentStream = (AttachmentInputStream) cmsLiteService.getStreamContent(resourceQuery.getLanguage(), resourceQuery.getName()).getInputStream();
+            contentStream = (AttachmentInputStream) cmsLiteService.getStreamContent(resourceQuery.getLanguage(), resourceQuery.getName(), resourceQuery.getFormat()).getInputStream();
             long contentLength = contentStream.getContentLength();
 
             response.setStatus(HttpServletResponse.SC_OK);
@@ -100,7 +100,8 @@ public class ResourceServlet extends HttpServlet {
         String[] resourcePaths = requestURL.replace(contextPathOnly, "").replace(servletPathOnly, "").substring(1).split("/");
         String type = resourcePaths[0];
         String language = resourcePaths[1];
-        String name = resourcePaths[2];
-        return new ResourceQuery(language, name, type);
+        String format = resourcePaths[2];
+        String name = resourcePaths[3];
+        return new ResourceQuery(language, name, type, format);
     }
 }

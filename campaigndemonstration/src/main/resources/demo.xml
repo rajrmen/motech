@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<vxml version="2.1">
-  <form>
-    <block>
-       <audio src="76.179.115.6:8080/motech-platform-server/cmslite/stream/en/test"/> 
-    </block>
-  </form>
-	
-</vxml>

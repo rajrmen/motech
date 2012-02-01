@@ -3,11 +3,11 @@
     <parent>
         <artifactId>motech</artifactId>
         <groupId>org.motechproject</groupId>
-        <version>0.6-SNAPSHOT</version>
+        <version>0.8-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>motech-mrs-api</artifactId>
-    <name>Motech MRS API</name>
+    <name>MoTeCH MRS API</name>
     <description>Motech interface to MRS</description>
     <properties>
         <spring.version>3.0.5.RELEASE</spring.version>

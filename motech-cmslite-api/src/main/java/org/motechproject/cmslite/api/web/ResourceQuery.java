@@ -4,11 +4,21 @@ public class ResourceQuery {
     private String language;
     private String name;
     private String type;
+    private String format;
 
-    public ResourceQuery(String language, String name, String type) {
+    public ResourceQuery(String language, String name, String type, String format) {
         this.language = language;
         this.name = name;
         this.type = type;
+        this.format = format;
+    }
+    
+    public String getFormat() {
+    	return format;
+    }
+    
+    public void setFormat(String format) {
+    	this.format = format;
     }
 
     public String getLanguage() {

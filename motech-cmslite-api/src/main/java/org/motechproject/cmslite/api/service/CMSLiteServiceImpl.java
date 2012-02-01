@@ -18,29 +18,29 @@ public class CMSLiteServiceImpl implements CMSLiteService {
     }
 
     @Override
-    public StringContent getStringContent(String language, String name) throws ContentNotFoundException {
-        return (StringContent) getContent(language, name, allStringContents);
+    public StringContent getStringContent(String language, String name, String format) throws ContentNotFoundException {
+        return (StringContent) getContent(language, name, format, allStringContents);
     }
 
     @Override
-    public StreamContent getStreamContent(String language, String name) throws ContentNotFoundException {
-        return (StreamContent) getContent(language, name, allStreamContents);
+    public StreamContent getStreamContent(String language, String name, String format) throws ContentNotFoundException {
+        return (StreamContent) getContent(language, name, format, allStreamContents);
     }
 
     @Override
-    public boolean isStreamContentAvailable(String language, String name) {
-        return allStreamContents.isContentAvailable(language, name);
+    public boolean isStreamContentAvailable(String language, String name, String format) {
+        return allStreamContents.isContentAvailable(language, name, format);
     }
 
     @Override
-    public boolean isStringContentAvailable(String language, String name) {
-        return allStringContents.isContentAvailable(language, name);
+    public boolean isStringContentAvailable(String language, String name, String format) {
+        return allStringContents.isContentAvailable(language, name, format);
     }
 
-    private Content getContent(String language, String name, BaseContentRepository contentRepository) throws ContentNotFoundException {
+    private Content getContent(String language, String name, String format, BaseContentRepository contentRepository) throws ContentNotFoundException {
         if (language == null || name == null)
             throw new IllegalArgumentException("Language and Name should not be null");
-        Content content = contentRepository.getContent(language, name);
+        Content content = contentRepository.getContent(language, name, format);
         if (content != null) return content;
 
         throw new ContentNotFoundException();

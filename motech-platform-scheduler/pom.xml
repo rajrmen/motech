@@ -4,15 +4,15 @@
     <parent>
         <artifactId>motech</artifactId>
         <groupId>org.motechproject</groupId>
-        <version>0.6-SNAPSHOT</version>
+        <version>0.8-SNAPSHOT</version>
     </parent>
     <artifactId>motech-platform-scheduler</artifactId>
     <packaging>jar</packaging>
-    <version>0.6-SNAPSHOT</version>
-    <name>Motech Platform Scheduler</name>
+    <version>0.8-SNAPSHOT</version>
+    <name>MoTeCH Platform Scheduler</name>
 
     <properties>
-        <spring.integration.version>2.0.2.BUILD-SNAPSHOT</spring.integration.version>
+        <spring.integration.version>2.0.3.RELEASE</spring.integration.version>
         <activemq.version>5.4.2</activemq.version>
     </properties>
     <dependencies>
@@ -55,7 +55,7 @@
         <dependency>
             <groupId>org.springframework.integration</groupId>
             <artifactId>spring-integration-jms</artifactId>
-            <version>2.0.3.RELEASE</version>
+            <version>${spring.integration.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>commons-codec</groupId>

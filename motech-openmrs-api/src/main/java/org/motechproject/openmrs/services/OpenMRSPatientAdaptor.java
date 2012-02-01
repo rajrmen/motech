@@ -18,7 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
 
-import static ch.lambdaj.Lambda.*;
+import static ch.lambdaj.Lambda.convert;
 
 public class OpenMRSPatientAdaptor implements MRSPatientAdaptor {
 
@@ -38,11 +38,20 @@ public class OpenMRSPatientAdaptor implements MRSPatientAdaptor {
 
     @Autowired
     PatientHelper patientHelper;
+    @Autowired
+    private OpenMRSConceptAdaptor openMrsConceptAdaptor;
 
     @Override
     public MRSPatient getPatient(String patientId) {
         org.openmrs.Patient openMrsPatient = getOpenMrsPatient(patientId);
         return (openMrsPatient == null) ? null : getMrsPatient(openMrsPatient);
+    }
+
+
+    @Override
+    public Integer getAgeOfPatientByMotechId(String motechId) {
+        Patient patient = getOpenmrsPatientByMotechId(motechId);
+        return (patient != null) ? patient.getAge() :null;
     }
 
     @Override
@@ -122,6 +131,8 @@ public class OpenMRSPatientAdaptor implements MRSPatientAdaptor {
             openMrsPatient.addAddress(personAddress);
         }
         openMrsPatient.getPatientIdentifier().setLocation(facilityAdaptor.getLocation(patient.getFacility().getId()));
+        openMrsPatient.setDead(person.isDead());
+        openMrsPatient.setDeathDate(person.deathDate());
 
         final Patient savedPatient = patientService.savePatient(openMrsPatient);
         if (savedPatient != null) {
@@ -177,5 +188,15 @@ public class OpenMRSPatientAdaptor implements MRSPatientAdaptor {
             }
         });
         return patients;
+    }
+
+    @Override
+    public void savePatientCauseOfDeathObservation(String patientId, String conceptName, Date dateOfDeath, String comment) {
+        Patient patient = getOpenMrsPatient(patientId);
+        patient.setDead(true);
+        Concept concept = openMrsConceptAdaptor.getConceptByName(conceptName);
+        patient.setCauseOfDeath(concept);
+        patientService.savePatient(patient);
+        patientService.saveCauseOfDeathObs(patient, dateOfDeath, concept, comment);
     }
 }

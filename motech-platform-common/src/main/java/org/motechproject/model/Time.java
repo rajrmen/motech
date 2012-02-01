@@ -5,7 +5,9 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 import org.joda.time.DateTime;
 import org.joda.time.LocalTime;
 
-public class Time implements Comparable<Time> {
+import java.io.Serializable;
+
+public class Time implements Comparable<Time>, Serializable {
     private Integer hour;
     private Integer minute;
 
@@ -35,6 +37,14 @@ public class Time implements Comparable<Time> {
 
     public void setMinute(Integer minute) {
         this.minute = minute;
+    }
+
+    public boolean le(Time toCompare) {
+        return (this.getHour() < toCompare.getHour() || (this.getHour().intValue() == toCompare.getHour() && this.getMinute() <= toCompare.getMinute()));
+    }
+    
+    public boolean ge(Time toCompare) {
+        return (this.getHour() > toCompare.getHour() || (this.getHour().intValue() == toCompare.getHour() && this.getMinute() >= toCompare.getMinute()));
     }
 
     @JsonIgnore

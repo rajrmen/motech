@@ -56,10 +56,13 @@ public class OpenMRSObservationAdaptorTest {
         Boolean hivValue = false;
         Date expectedDeliveryDateValue = new LocalDate(2012, 12, 21).toDate();
 
+        final Concept expectedConcept = new Concept(1);
+
         MRSObservation<String> fever = new MRSObservation<String>(observationDate, conceptName, feverValue);
         MRSObservation<Double> temperature = new MRSObservation<Double>(observationDate, conceptName, temperatureValue);
         MRSObservation<Boolean> hiv = new MRSObservation<Boolean>(observationDate, conceptName, hivValue);
         MRSObservation<Date> expectedDeliveryDate = new MRSObservation<Date>(observationDate, conceptName, expectedDeliveryDateValue);
+        MRSObservation<Concept> expectedDeliveryConcept = new MRSObservation<Concept>(observationDate, conceptName, expectedConcept);
 
         Concept concept = mock(Concept.class);
         when(mockConceptAdaptor.getConceptByName(conceptName)).thenReturn(concept);
@@ -79,6 +82,10 @@ public class OpenMRSObservationAdaptorTest {
         openMrsObservation = observationAdaptor.<Date>createOpenMRSObservationForEncounter(expectedDeliveryDate, encounter, patient, facility, creator);
         assertOpenMrsObservationProperties(openMrsObservation, expectedDeliveryDate, patient, facility, encounter, creator, concept);
         assertThat(openMrsObservation.getValueDatetime(), is(equalTo(expectedDeliveryDateValue)));
+
+        openMrsObservation = observationAdaptor.<Concept>createOpenMRSObservationForEncounter(expectedDeliveryConcept, encounter, patient, facility, creator);
+        assertOpenMrsObservationProperties(openMrsObservation, expectedDeliveryConcept, patient, facility, encounter, creator, concept);
+        assertThat(openMrsObservation.getValueCoded(), is(equalTo(expectedConcept)));
     }
 
     @Test
@@ -164,7 +171,7 @@ public class OpenMRSObservationAdaptorTest {
     }
 
     private MRSObservation observationBy(ConceptName conceptName1, Set<MRSObservation> actualMrsObservations) {
-        return (MRSObservation)selectFirst(actualMrsObservations, having(on(MRSObservation.class).getConceptName(), equalTo(conceptName1.getName())));
+        return (MRSObservation) selectFirst(actualMrsObservations, having(on(MRSObservation.class).getConceptName(), equalTo(conceptName1.getName())));
     }
 
     private void assertMRSObservation(MRSObservation actualObservation, MRSObservation expectedObservation) {
@@ -179,30 +186,34 @@ public class OpenMRSObservationAdaptorTest {
         Obs temperature = new Obs();
         Obs expectedDeliveryDate = new Obs();
         Obs HIV = new Obs();
+        Obs conceptObs = new Obs();
 
         String feverValue = "high";
         Double temperatureValue = 99.0;
         Boolean hivValue = false;
         Date expectedDeliveryDateValue = new LocalDate(2012, 12, 21).toDate();
+        final Concept concept = new Concept(1);
 
         observationAdaptor.writeValueToOpenMRSObservation(feverValue, fever);
         observationAdaptor.writeValueToOpenMRSObservation(temperatureValue, temperature);
         observationAdaptor.writeValueToOpenMRSObservation(expectedDeliveryDateValue, expectedDeliveryDate);
         observationAdaptor.writeValueToOpenMRSObservation(hivValue, HIV);
+        observationAdaptor.writeValueToOpenMRSObservation(concept, conceptObs);
 
         assertThat(fever.getValueText(), is(equalTo(feverValue)));
         assertThat(temperature.getValueNumeric(), is(equalTo(temperatureValue)));
         assertThat(expectedDeliveryDate.getValueDatetime(), is(equalTo(expectedDeliveryDateValue)));
         assertThat(HIV.getValueAsBoolean(), is(equalTo(hivValue)));
+        assertThat(conceptObs.getValueCoded(), is(equalTo(concept)));
 
     }
-    
-    @Test    
+
+    @Test
     public void shouldThrowExceptionIfInvalidArgumentIsSet() {
         try {
-            observationAdaptor.writeValueToOpenMRSObservation(new Object(),  new Obs());
+            observationAdaptor.writeValueToOpenMRSObservation(new Object(), new Obs());
             Assert.fail("should throw exception");
-        } catch(IllegalArgumentException e){               
+        } catch (IllegalArgumentException e) {
         }
     }
 
@@ -217,16 +228,15 @@ public class OpenMRSObservationAdaptorTest {
         Encounter encounter = new Encounter();
         Patient patient = new Patient();
         User creator = new User();
-        Location facility=new Location();
+        Location facility = new Location();
 
         doReturn(openMRSObservation).when(observationAdaptorSpy).createOpenMRSObservationForEncounter(mrsObservation, encounter, patient, facility, creator);
         when(mockObservationService.saveObs(openMRSObservation, null)).thenReturn(savedOpenMRSObservation);
         doReturn(savedMRSObservation).when(observationAdaptorSpy).convertOpenMRSToMRSObservation(savedOpenMRSObservation);
 
-        MRSObservation returnedMRSObservation = observationAdaptorSpy.saveObservation(mrsObservation, encounter,patient,facility,creator);
+        MRSObservation returnedMRSObservation = observationAdaptorSpy.saveObservation(mrsObservation, encounter, patient, facility, creator);
         Assert.assertThat(returnedMRSObservation, Matchers.is(equalTo(savedMRSObservation)));
     }
-
 
     private void assertOpenMrsObservationProperties(Obs openMrsObservation, MRSObservation mrsObservation, Patient patient,
                                                     Location facility, Encounter encounter, User creator, Concept concept) {

@@ -46,7 +46,7 @@ import java.util.*;
  * a specific set of event types.
  */
 public class EventListenerRegistry {
-    private final Logger log = LoggerFactory.getLogger(this.getClass());
+    //private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     private EventListenerTree listenerTree = new EventListenerTree();
 
@@ -70,13 +70,13 @@ public class EventListenerRegistry {
 
         if (listener == null) {
             String errorMessage = "Invalid attempt to register a null EventListener";
-            log.error(errorMessage);
+            //log.error(errorMessage);
             throw new IllegalArgumentException(errorMessage);
         }
 
         if (subjects == null) {
             String errorMessage = "Invalid attempt to register for null subjects";
-            log.error(errorMessage);
+            //log.error(errorMessage);
             throw new IllegalArgumentException(errorMessage);
         }
 
@@ -89,13 +89,13 @@ public class EventListenerRegistry {
     public void registerListener(org.motechproject.server.event.EventListener listener, String subject) {
         if (listener == null) {
             String errorMessage = "Invalid attempt to register a null EventListener";
-            log.error(errorMessage);
+            //log.error(errorMessage);
             throw new IllegalArgumentException(errorMessage);
         }
 
         if (subject == null) {
             String errorMessage = "Invalid attempt to register for null subject";
-            log.error(errorMessage);
+            //log.error(errorMessage);
             throw new IllegalArgumentException(errorMessage);
         }
 

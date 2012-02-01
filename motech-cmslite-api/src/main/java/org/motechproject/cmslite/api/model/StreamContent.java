@@ -7,21 +7,19 @@ import org.ektorp.support.TypeDiscriminator;
 
 import java.io.InputStream;
 
-@TypeDiscriminator("doc.type === 'STREAM_CONTENT'")
+@TypeDiscriminator("doc.type === 'StreamContent'")
 public class StreamContent extends Content {
     private InputStream inputStream;
     @JsonProperty
     private String checksum;
     @JsonProperty
     private String contentType;
-    @JsonProperty
-    private String type = "STREAM_CONTENT";
 
     public StreamContent() {
     }
 
-    public StreamContent(String language, String name, InputStream inputStream, String checksum, String contentType) {
-        super(language, name);
+    public StreamContent(String language, String name, String format, InputStream inputStream, String checksum, String contentType) {
+        super(language, name, format);
         this.inputStream = inputStream;
         this.checksum = checksum;
         this.contentType = contentType;

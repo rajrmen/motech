@@ -5,23 +5,13 @@
 	<parent>
 		<artifactId>motech</artifactId>
 		<groupId>org.motechproject</groupId>
-		<version>0.6-SNAPSHOT</version>
+		<version>0.8-SNAPSHOT</version>
 	</parent>
 	<artifactId>motech-platform-server</artifactId>
 	<packaging>war</packaging>
-	<name>Motech Platform Server</name>
+	<name>MoTeCH Platform Server</name>
 
 	<dependencies>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<version>1.6.4</version>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>campaigndemonstration</artifactId>
-			<version>${project.version}</version>
-		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>motech-platform-server-api</artifactId>
@@ -34,10 +24,15 @@
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>voxeo</artifactId>
+			<artifactId>campaigndemonstration</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-				<dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>motech-ivr-voxeo</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>motech-cmslite-api</artifactId>
 			<version>${project.version}</version>

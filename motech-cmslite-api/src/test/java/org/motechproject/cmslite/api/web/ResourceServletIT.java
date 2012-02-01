@@ -35,8 +35,9 @@ public class ResourceServletIT {
     public static final String NAME = "background.wav";
     public static final String SERVLET_PATH = "/wav";
     public static final String LANGUAGE = "en";
-    public static String STREAM_REQUEST_URI = CONTEXT_PATH + SERVLET_PATH + "/stream/" + LANGUAGE + "/" + NAME;
-    public static String STRING_REQUEST_URI = CONTEXT_PATH + SERVLET_PATH + "/string/" + LANGUAGE + "/" + NAME;
+    public static final String FORMAT = "format";
+    public static String STREAM_REQUEST_URI = CONTEXT_PATH + SERVLET_PATH + "/stream/" + LANGUAGE + "/" + FORMAT + "/" + NAME;
+    public static String STRING_REQUEST_URI = CONTEXT_PATH + SERVLET_PATH + "/string/" + LANGUAGE + "/" + FORMAT + "/" + NAME;
 
     @Mock
     HttpServletRequest httpServletRequest;
@@ -97,7 +98,7 @@ public class ResourceServletIT {
     }
 
     private void addStringContent(String stringValue) {
-        StringContent stringContent = new StringContent(LANGUAGE, NAME, stringValue);
+        StringContent stringContent = new StringContent(LANGUAGE, NAME, FORMAT, stringValue);
         try {
             allStringContents.addContent(stringContent);
         } catch (CMSLiteException e) {
@@ -109,7 +110,7 @@ public class ResourceServletIT {
     private void addStreamContent(String pathToFile) {
         InputStream inputStreamToResource = this.getClass().getResourceAsStream(pathToFile);
         try {
-            StreamContent streamContent = new StreamContent(LANGUAGE, NAME, inputStreamToResource, "checksum", "audio/x-wav");
+            StreamContent streamContent = new StreamContent(LANGUAGE, NAME, FORMAT, inputStreamToResource, "checksum", "audio/x-wav");
             allStreamContents.addContent(streamContent);
         } catch (CMSLiteException e) {
             e.printStackTrace();

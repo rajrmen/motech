@@ -1,22 +1,23 @@
 package org.motechproject.cmslite.api.model;
 
 import org.codehaus.jackson.annotate.JsonProperty;
-import org.ektorp.support.TypeDiscriminator;
-import org.motechproject.model.MotechAuditableDataObject;
+import org.motechproject.model.MotechBaseDataObject;
 
-@TypeDiscriminator("doc.type === 'CONTENT'")
-public abstract class Content extends MotechAuditableDataObject {
+public abstract class Content extends MotechBaseDataObject {
     @JsonProperty
     private String language;
     @JsonProperty
     private String name;
+    @JsonProperty
+    private String format;
 
     protected Content() {
     }
 
-    protected Content(String language, String name) {
+    protected Content(String language, String name, String format) {
         this.name = name;
         this.language = language;
+        this.format = format;
     }
 
     public String getLanguage() {
@@ -25,5 +26,9 @@ public abstract class Content extends MotechAuditableDataObject {
 
     public String getName() {
         return name;
+    }
+    
+    public String getFormat() {
+    	return format;
     }
 }

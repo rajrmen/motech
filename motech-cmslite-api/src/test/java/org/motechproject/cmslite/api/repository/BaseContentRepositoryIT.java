@@ -37,7 +37,7 @@ public class BaseContentRepositoryIT {
 
     @Test
     public void shouldReturnNullWhenNameOrLanguageIsNotPresentInTheDB() {
-        StreamContent streamContent = allStreamContents.getContent("ger", "name");
+        StreamContent streamContent = allStreamContents.getContent("ger", "name", "format");
         assertNull(streamContent);
     }
 
@@ -45,29 +45,29 @@ public class BaseContentRepositoryIT {
     public void shouldNotRetrieveAResourceIfCaseDoesNotMatch() {
         createStreamContent();
 
-        StreamContent streamContent = allStreamContents.getContent("En", "test");
+        StreamContent streamContent = allStreamContents.getContent("En", "test", "format");
         assertNull(streamContent);
 
-        streamContent = allStreamContents.getContent("en", "Test");
+        streamContent = allStreamContents.getContent("en", "Test", "format");
         assertNull(streamContent);
     }
 
     @Test
     public void shouldReturnNoResourceWhenNameIsNull() throws ContentNotFoundException {
-        StreamContent streamContent = allStreamContents.getContent("en", null);
+        StreamContent streamContent = allStreamContents.getContent("en", null, "format");
         assertNull(streamContent);
     }
 
     @Test
     public void shouldReturnNoResourceWhenLanguageIsNull() throws ContentNotFoundException {
-        StreamContent content = allStreamContents.getContent(null, "test");
+        StreamContent content = allStreamContents.getContent(null, "test", "format");
         assertNull(content);
     }
 
     private void createStreamContent() {
         String pathToFile = "/testResource.png";
         InputStream inputStreamToResource = this.getClass().getResourceAsStream(pathToFile);
-        englishContent = new StreamContent("en", "test", inputStreamToResource, "checksum", "image/png");
+        englishContent = new StreamContent("en", "test", "format", inputStreamToResource, "checksum", "image/png");
 
         couchDbConnector.create(englishContent);
         AttachmentInputStream attachmentInputStream = new AttachmentInputStream(englishContent.getId(), inputStreamToResource, englishContent.getContentType());

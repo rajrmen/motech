@@ -5,6 +5,7 @@ import org.joda.time.LocalDate;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.InOrder;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.motechproject.mrs.model.Attribute;
@@ -23,8 +24,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import static junit.framework.Assert.assertNull;
-import static junit.framework.Assert.assertTrue;
+import static junit.framework.Assert.*;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -42,6 +42,8 @@ public class OpenMRSPatientAdaptorTest {
     private PersonService mockPersonService;
     @Mock
     private OpenMRSFacilityAdaptor mockFacilityAdapter;
+    @Mock
+    private OpenMRSConceptAdaptor mockOpenMRSConceptAdaptor;
 
     OpenMRSPatientAdaptor openMRSPatientAdaptor;
     PatientTestUtil patientTestUtil;
@@ -59,6 +61,7 @@ public class OpenMRSPatientAdaptorTest {
         ReflectionTestUtils.setField(openMRSPatientAdaptor, "facilityAdaptor", mockFacilityAdapter);
         ReflectionTestUtils.setField(openMRSPatientAdaptor, "patientHelper", new PatientHelper());
         ReflectionTestUtils.setField(openMRSPatientAdaptor, "personAdaptor", mockPersonAdaptor);
+        ReflectionTestUtils.setField(openMRSPatientAdaptor, "openMrsConceptAdaptor", mockOpenMRSConceptAdaptor);
     }
 
     @Test
@@ -191,7 +194,7 @@ public class OpenMRSPatientAdaptorTest {
         when(mockPatient.getNames()).thenReturn(names);
         when(mockPatientService.savePatient(Matchers.<org.openmrs.Patient>any())).thenReturn(mockPatient);
 
-        when(mockPersonAdaptor.getFirstName(mockPatient.getNames())).thenReturn(new PersonName(first,middle,last));
+        when(mockPersonAdaptor.getFirstName(mockPatient.getNames())).thenReturn(new PersonName(first, middle, last));
         when(mockPersonAdaptor.getPreferredName(mockPatient.getNames())).thenReturn(first);
 
 
@@ -230,6 +233,20 @@ public class OpenMRSPatientAdaptorTest {
     }
 
     @Test
+    public void shouldGetAgeOfThePersonUsingMotechId() {
+        String motechId = "1234567";
+        Integer expectedAge = 4;
+        Patient mockOpenMRSPatient = mock(Patient.class);
+        OpenMRSPatientAdaptor openMRSPatientAdaptorSpy = spy(openMRSPatientAdaptor);
+
+        doReturn(mockOpenMRSPatient).when(openMRSPatientAdaptorSpy).getOpenmrsPatientByMotechId(motechId);
+        when(mockOpenMRSPatient.getAge()).thenReturn(expectedAge);
+        Integer age = openMRSPatientAdaptorSpy.getAgeOfPatientByMotechId(motechId);
+        verify(mockOpenMRSPatient).getAge();
+        assertEquals(age, expectedAge);
+    }
+
+    @Test
     public void shouldSearchByPatientNameOrId() {
         OpenMRSPatientAdaptor openMRSPatientAdaptorSpy = spy(openMRSPatientAdaptor);
         String name = "name";
@@ -249,6 +266,26 @@ public class OpenMRSPatientAdaptorTest {
         List<MRSPatient> returnedPatients = openMRSPatientAdaptorSpy.search(name, id);
         assertThat(returnedPatients, is(equalTo(Arrays.asList(mrsPatient2, mrsPatient1))));
 
+    }
+
+    @Test
+    public void shouldSaveCauseOfDeath() {
+        String patientId = "patientId";
+        Patient patient = new Patient();
+        Date dateOfDeath = mock(Date.class);
+        Concept concept = mock(Concept.class);
+        String conceptName = "NONE";
+
+        openMRSPatientAdaptor = spy(openMRSPatientAdaptor);
+        doReturn(patient).when(openMRSPatientAdaptor).getOpenMrsPatient(patientId);
+        when(mockOpenMRSConceptAdaptor.getConceptByName(conceptName)).thenReturn(concept);
+
+        openMRSPatientAdaptor.savePatientCauseOfDeathObservation(patientId, conceptName, dateOfDeath, null);
+
+        InOrder order = inOrder(mockPatientService);
+        order.verify(mockPatientService).savePatient(patient);
+        order.verify(mockPatientService).saveCauseOfDeathObs(patient, dateOfDeath, concept, null);
+        assertThat(patient.getCauseOfDeath(), is(concept));
     }
 
     @Test

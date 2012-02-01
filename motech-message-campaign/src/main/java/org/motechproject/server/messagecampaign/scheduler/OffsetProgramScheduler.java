@@ -28,7 +28,7 @@ public class OffsetProgramScheduler extends MessageCampaignScheduler<OffsetCampa
         Time theTime = new Time();
         LocalTime localTime = null;
         if (campaignRequest.startOffset() == null) { //No offset specified, proceed as if offset is 0
-        	localTime = jobTime(offsetCampaignMessage.timeOffset(), 0);
+        	localTime = jobTime(offsetCampaignMessage.timeOffset(), 1);
         } else {
         	localTime = jobTime(offsetCampaignMessage.timeOffset(), campaignRequest.startOffset());
         }
@@ -57,10 +57,14 @@ public class OffsetProgramScheduler extends MessageCampaignScheduler<OffsetCampa
         int offSetMinutes = wallTime.inMinutes();
         if (offSetMinutes - minutes < 0) {
         	return null;
+        } else if (offSetMinutes - minutes == 0){ //explicitly set so that start date is not in the past
+        	LocalTime time = new LocalTime().plusMinutes(1);
+        	return time;
         } else {
     	   LocalTime time = new LocalTime();
            LocalTime newTime = time.plusMinutes(offSetMinutes - minutes);
            return newTime;
         }
+		
     }
 }

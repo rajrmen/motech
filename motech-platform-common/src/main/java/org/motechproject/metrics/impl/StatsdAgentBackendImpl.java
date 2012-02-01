@@ -48,7 +48,7 @@ import java.util.Map;
  */
 public class StatsdAgentBackendImpl implements MetricsAgentBackend
 {
-    private final Logger log = LoggerFactory.getLogger(this.getClass());
+    //private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     private String serverHost;
     private int serverPort;
@@ -64,7 +64,7 @@ public class StatsdAgentBackendImpl implements MetricsAgentBackend
         } catch (UnknownHostException e)
         {
             // This is ok it just means host specific metrics will not be published
-	        log.error("Unable to get local hostname", e);
+	        //log.error("Unable to get local hostname", e);
         }
     }
 
@@ -125,7 +125,7 @@ public class StatsdAgentBackendImpl implements MetricsAgentBackend
 			sock = new DatagramSocket();
 		}
 		catch (SocketException e) {
-			log.error(e.getMessage());
+			//log.error(e.getMessage());
 			return false;
 		}
 
@@ -144,7 +144,7 @@ public class StatsdAgentBackendImpl implements MetricsAgentBackend
             try {
                 serverAddr = InetAddress.getByName(serverHost);
             } catch (UnknownHostException e) {
-			    log.error(e.getMessage());
+			    //log.error(e.getMessage());
 			    return false;
             }
         }
@@ -155,7 +155,7 @@ public class StatsdAgentBackendImpl implements MetricsAgentBackend
 			return true;
 		}
 		catch (IOException e) {
-			log.error(String.format("Could not send stat %s to host %s:%d", stat, serverHost, serverPort), e);
+			//log.error(String.format("Could not send stat %s to host %s:%d", stat, serverHost, serverPort), e);
 		}
 		return false;
 	}

@@ -17,6 +17,7 @@ import java.util.Set;
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -88,11 +89,13 @@ public class OpenMRSPersonAdaptorTest {
         boolean preferred = true;
         boolean birthdateEstimated = true;
         boolean dead = true;
+        Date deathDate = new Date();
 
         person.setId(patientId);
         personAddress.setAddress1(address);
         person.setGender(gender);
         person.setBirthdate(birthdate);
+        person.setDeathDate(deathDate);
 
         person.addName(new PersonName(firstName, middleName, familyName));
         PersonName nameSetAsPreferred = new PersonName(preferredName, middleName, familyName);
@@ -120,6 +123,7 @@ public class OpenMRSPersonAdaptorTest {
         assertThat(mrsPerson.attrValue(PERSON_ATTRIBUTE_TYPE_PHONE_NUMBER), is(equalTo(phoneNo)));
         assertThat(mrsPerson.attrValue(PERSON_ATTRIBUTE_TYPE_STAFF_TYPE), is(equalTo(staffType)));
         assertThat(mrsPerson.isDead(), is(equalTo(dead)));
+        assertThat(mrsPerson.deathDate(), is(equalTo(deathDate)));
     }
 
     @Test
@@ -130,6 +134,7 @@ public class OpenMRSPersonAdaptorTest {
         Person openMRSPerson = openMRSPersonAdaptor.getPersonById(id);
         assertThat(openMRSPerson, is(equalTo(person)));
     }
+    
 
     private Set<PersonAttribute> personAttributes(String staffType, String phoneNo, String email) {
         return new HashSet<PersonAttribute>(asList(new PersonAttribute(personAttributeType(PERSON_ATTRIBUTE_TYPE_STAFF_TYPE), staffType),

@@ -25,7 +25,7 @@ public class AllStringContentsIT {
 
     @Before
     public void setUp() {
-        stringContent = new StringContent("language", "name", "value");
+        stringContent = new StringContent("language", "name", "format", "value");
     }
 
     @Test
@@ -51,7 +51,7 @@ public class AllStringContentsIT {
         assertEquals(stringContent.getLanguage(), fetchedContent.getLanguage());
         assertEquals(stringContent.getValue(), fetchedContent.getValue());
 
-        StringContent newStringContent = new StringContent("language", "name", "newValue");
+        StringContent newStringContent = new StringContent("language", "name", "format", "newValue");
 
         allStringContents.addContent(newStringContent);
         fetchedContent = couchDbConnector.get(StringContent.class, stringContent.getId());
@@ -68,7 +68,7 @@ public class AllStringContentsIT {
     public void shouldGetStringContent() {
         couchDbConnector.create(stringContent);
 
-        StringContent fetchedContent = allStringContents.getContent(stringContent.getLanguage(), stringContent.getName());
+        StringContent fetchedContent = allStringContents.getContent(stringContent.getLanguage(), stringContent.getName(), stringContent.getFormat());
         assertNotNull(fetchedContent);
         assertEquals(stringContent.getName(), fetchedContent.getName());
         assertEquals(stringContent.getLanguage(), fetchedContent.getLanguage());
@@ -80,14 +80,14 @@ public class AllStringContentsIT {
     @Test
     public void shouldReturnTrueIfStringContentAvailable() throws CMSLiteException {
         allStringContents.addContent(stringContent);
-        assertTrue(allStringContents.isContentAvailable(stringContent.getLanguage(), stringContent.getName()));
+        assertTrue(allStringContents.isContentAvailable(stringContent.getLanguage(), stringContent.getName(), stringContent.getFormat()));
         couchDbConnector.delete(stringContent);
     }
 
     @Test
     public void shouldReturnFalseIfStringContentNotAvailable() throws CMSLiteException {
         allStringContents.addContent(stringContent);
-        assertFalse(allStringContents.isContentAvailable("en", "unknownContent"));
+        assertFalse(allStringContents.isContentAvailable("en", "unknownContent", "IVR"));
 	    couchDbConnector.delete(stringContent);
     }
 }

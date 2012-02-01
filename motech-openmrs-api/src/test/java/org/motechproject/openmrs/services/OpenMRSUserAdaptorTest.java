@@ -65,17 +65,18 @@ public class OpenMRSUserAdaptorTest {
         String email = "test@gmail.com";
         attributes.add(new Attribute("Email", email));
         MRSUser mrsUser = new MRSUser().userName(userName);
+        mrsUser.systemId("1");
         MRSPerson mrsPerson = new MRSPerson();
         mrsUser.person(mrsPerson.attributes(attributes));
-        User mockUser = mock(User.class);
         Person person = new Person();
+        User mockUser = new User(person);
+        mockUser.setSystemId("userName");
         person.addName(new PersonName("given", "middle", "family"));
 
-        when(mockUser.getSystemId()).thenReturn("1");
-        when(mockUser.getPerson()).thenReturn(person);
-        when(mockPersonAdaptor.openMRSToMRSPerson(person)).thenReturn(mrsPerson);
         when(mockUserService.getUserByUsername(email)).thenReturn(mockUser);
-        openMrsUserAdaptor.saveUser(mrsUser);
+        OpenMRSUserAdaptor spy = spy(openMrsUserAdaptor);
+        doReturn(mrsUser).when(spy).openMrsToMrsUser(mockUser);
+        spy.saveUser(mrsUser);
     }
 
     @Test
@@ -183,11 +184,14 @@ public class OpenMRSUserAdaptorTest {
         MRSUser expected = createAUser(id, systemId, firstName, middleName, lastName, email, staffType, phoneNumber);
         MRSPerson expectedMRSPerson = expected.getPerson();
 
-        List<org.openmrs.User> openMrsUsers = Arrays.asList(openMRSUser);
+        User admin = new User();
+        admin.setSystemId("admin");
+        List<org.openmrs.User> openMrsUsers = Arrays.asList(openMRSUser, admin);
         when(mockUserService.getAllUsers()).thenReturn(openMrsUsers);
         when(mockPersonAdaptor.openMRSToMRSPerson(person)).thenReturn(expectedMRSPerson);
         List<MRSUser> returnedMRSUsers = openMrsUserAdaptor.getAllUsers();
 
+        assertThat(returnedMRSUsers.size(), is(1));
         MRSUser actual = returnedMRSUsers.get(0);
         MRSPerson actualMRSPerson = actual.getPerson();
         assertEquals(expected.getId(), actual.getId());
@@ -208,6 +212,7 @@ public class OpenMRSUserAdaptorTest {
         MRSUser mrsUser = mock(MRSUser.class);
         OpenMRSUserAdaptor openMRSUserAdaptorSpy = spy(openMrsUserAdaptor);
 
+        when(mockOpenMrsUser.getSystemId()).thenReturn("345");
         doReturn(mrsUser).when(openMRSUserAdaptorSpy).openMrsToMrsUser(mockOpenMrsUser);
         doReturn(mockOpenMrsUser).when(openMRSUserAdaptorSpy).getOpenMrsUserByUserName(userId);
 
@@ -236,7 +241,7 @@ public class OpenMRSUserAdaptorTest {
         String userId = "1234567";
         MRSUser mrsUser = mock(MRSUser.class);
         OpenMRSUserAdaptor openMRSUserAdaptorSpy = spy(openMrsUserAdaptor);
-
+        when(mockOpenMrsUser.getSystemId()).thenReturn("345");
         when(mockUserService.getUserByUsername(userId)).thenReturn(mockOpenMrsUser);
         doReturn(mrsUser).when(openMRSUserAdaptorSpy).openMrsToMrsUser(mockOpenMrsUser);
 
@@ -245,6 +250,23 @@ public class OpenMRSUserAdaptorTest {
         when(mockUserService.getUserByUsername(userId)).thenReturn(null);
         assertThat(openMRSUserAdaptorSpy.getUserByUserName(userId), is(equalTo(null)));
 
+    }
+
+    @Test
+    public void shouldReturnMRSUserEvenIfTheUserIsSystemAdmin() {
+        String userName = "admin";
+        User mockUser = mock(User.class);
+        int id = 12;
+        when(mockUser.getSystemId()).thenReturn(userName);
+        when(mockUser.getId()).thenReturn(id);
+        final Person mockPerson = mock(Person.class);
+        when(mockPerson.getId()).thenReturn(11);
+        when(mockUser.getPerson()).thenReturn(mockPerson);
+        when(mockUserService.getUserByUsername(userName)).thenReturn(mockUser);
+        MRSUser actualMRSUser = openMrsUserAdaptor.getUserByUserName(userName);
+        
+        assertThat(actualMRSUser.getSystemId(), is(userName));
+        assertThat(actualMRSUser.getId(), is(String.valueOf(id)));
     }
 
     private MRSUser createAUser(String id, String systemId, String firstName, String middleName, String lastName, String email, String staffType, String phoneNumber) {

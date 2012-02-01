@@ -14,7 +14,7 @@ import java.util.*;
 */
 class EventListenerTree
 {
-    private final Logger log = LoggerFactory.getLogger(this.getClass());
+    //private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     private final String SPLIT_REGEX = "\\.";
 
@@ -260,8 +260,8 @@ class EventListenerTree
         if (!listeners.contains(listener)) {
             listeners.add(listener); // Add the listener to the list
         } else {
-            log.info(String.format("Ignoring second request to register listener %s for subject %s",
-                                   listener.getIdentifier(), getSubject()));
+            //log.info(String.format("Ignoring second request to register listener %s for subject %s",
+            //                       listener.getIdentifier(), getSubject()));
         }
     }
 
@@ -274,8 +274,8 @@ class EventListenerTree
         if (!wildcardListeners.contains(listener)) {
             wildcardListeners.add(listener); // Add the listener to the list
         } else {
-            log.info(String.format("Ignoring second request to register wildcardListeners %s for subject %s.*",
-                                   listener.getIdentifier(), getSubject()));
+            //log.info(String.format("Ignoring second request to register wildcardListeners %s for subject %s.*",
+                                   //listener.getIdentifier(), getSubject()));
         }
     }
 

@@ -11,17 +11,17 @@
 </head>
 <body>
 
-	This is a demonstration of message campaigns. It uses the core platform (server, server-api, common) along with scheduler, message-campaign, cmslite and voxeo.
+	This is a demonstration of message campaigns with voice calling and SMS messaging. It uses the core platform (server, server-api, common) along with scheduler, message-campaign, cmslite, sms-api, sms-http and voxeo.
 	<br><br>
 
-	Campaign registration demo, using Voxeo. Registering a duplicate id will overwrite its phone
+	Registering a duplicate id will overwrite its phone
 	number which would result in redirecting the campaign messages to that
-	number). The cron campaign will send a message every two minutes until the user is unregistered in the campaign or the user is removed from the system.
+	number. The cron campaign will send a message every two minutes until the user is unregistered in the campaign or the user is removed from the system.
 	<br><br>
 	Register a user into the system
 	<form method="post" action="/motech-platform-server/user/addCronUser">
 		ID:<input type="text" name="externalId" size="12" maxlength="12" />
-		Phone Number:<input type="text" name="phoneNum" size="24"
+		Phone Number (with no special characters, like in 2071234567):<input type="text" name="phoneNum" size="24"
 			maxlength="24" /> <input type="submit" value="Register User" />
 	</form>
 	Unregister a user from the system

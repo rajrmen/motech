@@ -3,16 +3,16 @@
 	<parent>
 		<artifactId>motech</artifactId>
 		<groupId>org.motechproject</groupId>
-		<version>0.6-SNAPSHOT</version>
+		<version>0.8-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
 	<artifactId>motech-platform-ivr</artifactId>
-	<name>Motech Platform Server IVR</name>
+	<name>MoTeCH Platform Server IVR</name>
     <dependencies>
 	    <dependency>
             <groupId>org.motechproject</groupId>
             <artifactId>motech-platform-common</artifactId>
-            <version>0.6-SNAPSHOT</version>
+            <version>0.8-SNAPSHOT</version>
         </dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>

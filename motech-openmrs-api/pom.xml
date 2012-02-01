@@ -3,11 +3,11 @@
     <parent>
         <artifactId>motech</artifactId>
         <groupId>org.motechproject</groupId>
-        <version>0.6-SNAPSHOT</version>
+        <version>0.8-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>motech-openmrs-api</artifactId>
-    <name>Motech OpenMRS API</name>
+    <name>MoTeCH OpenMRS API</name>
     <description>Motech interface to OpenMRS</description>
 
     <properties>
@@ -177,6 +177,7 @@
                                     </sqlCommand>
                                     <srcFiles>
                                         <srcFile>${project.basedir}/src/test/sql/openmrs-1.8.sql</srcFile>
+                                        <srcFile>${project.basedir}/src/test/sql/concept_cause_of_death.sql</srcFile>
                                         <srcFile>${project.basedir}/src/test/sql/insert_email_person_attribute_type_table.sql</srcFile>
                                     </srcFiles>
                                 </configuration>
