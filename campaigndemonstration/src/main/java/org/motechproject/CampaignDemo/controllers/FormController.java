@@ -20,4 +20,8 @@ public class FormController extends MultiActionController {
 	public ModelAndView offsetCampaign(HttpServletRequest request, HttpServletResponse response) {
 		return new ModelAndView("formPage");
 	}
+	
+	public ModelAndView openMRSPatients(HttpServletRequest request, HttpServletResponse response) {
+		return new ModelAndView("patientPage");
+	}
 }
