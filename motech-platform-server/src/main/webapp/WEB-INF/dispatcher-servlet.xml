@@ -48,7 +48,9 @@
 		class="org.motechproject.CampaignDemo.controllers.UserController">
 	</bean>
     
-    
+    	<bean name="mrsController"
+		class="org.motechproject.CampaignDemo.controllers.MrsController">
+	</bean>
 
 <!---->
 	<!-- <bean id="test" class="org.motechproject.tama.server.TestController"> -->
