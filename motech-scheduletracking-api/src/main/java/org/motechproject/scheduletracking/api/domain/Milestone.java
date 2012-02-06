@@ -1,75 +1,70 @@
 package org.motechproject.scheduletracking.api.domain;
 
-import org.codehaus.jackson.annotate.JsonProperty;
-import org.joda.time.LocalDate;
 import org.motechproject.valueobjects.WallTime;
 
 import java.io.Serializable;
-import java.util.EnumMap;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public class Milestone implements Serializable {
-	private static final long serialVersionUID = 5006000470852287833L;
 
-	@JsonProperty
-	private String name;
-	@JsonProperty
-	private Map<WindowName, MilestoneWindow> windows = new EnumMap<WindowName, MilestoneWindow>(WindowName.class);
-	@JsonProperty
-	private Map<String, String> data;
-	@JsonProperty
-	private Milestone nextMilestone;
+    private String name;
+    private Map<String, String> data = new HashMap<String, String>();
 
-	// For ektorp
-	private Milestone() {
-	}
+    private List<MilestoneWindow> windows = new ArrayList<MilestoneWindow>();
 
-	public Milestone(String name, Milestone nextMilestone, WallTime earliest, WallTime due, WallTime late, WallTime max) {
-		this.nextMilestone = nextMilestone;
-		this.name = name;
+    public Milestone(String name, WallTime earliest, WallTime due, WallTime late, WallTime max) {
+        this.name = name;
+        createMilestoneWindows(earliest, due, late, max);
+    }
 
-		windows.put(WindowName.Waiting, new MilestoneWindow(new WallTime(0, earliest.getUnit()), earliest));
-		windows.put(WindowName.Upcoming, new MilestoneWindow(earliest, due));
-		windows.put(WindowName.Due, new MilestoneWindow(due, late));
-		windows.put(WindowName.Late, new MilestoneWindow(late, max));
-	}
+    private void createMilestoneWindows(WallTime earliest, WallTime due, WallTime late, WallTime max) {
+        windows.add(new MilestoneWindow(WindowName.earliest, new WallTime(0, earliest.getUnit()), earliest));
+        windows.add(new MilestoneWindow(WindowName.due, earliest, due));
+        windows.add(new MilestoneWindow(WindowName.late, due, late));
+        windows.add(new MilestoneWindow(WindowName.max, late, max));
+    }
 
-	public Milestone(String name, WallTime earliest, WallTime due, WallTime late, WallTime max) {
-		this(name, null, earliest, due, late, max);
-	}
+    public List<MilestoneWindow> getMilestoneWindows() {
+        return windows;
+    }
 
-	public MilestoneWindow getMilestoneWindow(WindowName windowName) {
-		return windows.get(windowName);
-	}
+    public MilestoneWindow getMilestoneWindow(WindowName windowName) {
+        for (MilestoneWindow window : windows)
+            if (window.getName().equals(windowName))
+                return window;
+        return null;
+    }
 
-	public WindowName getApplicableWindow(LocalDate enrollmentDate) {
-		Set<Map.Entry<WindowName, MilestoneWindow>> entries = windows.entrySet();
-		for (Map.Entry<WindowName, MilestoneWindow> entry : entries) {
-			MilestoneWindow milestoneWindow = entry.getValue();
-			if (milestoneWindow.isApplicableTo(enrollmentDate))
-				return entry.getKey();
-		}
-		return WindowName.Past;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public void setData(Map<String, String> data) {
+        this.data = data;
+    }
 
-	public void setData(Map<String, String> data) {
-		this.data = data;
-	}
+    public Map<String, String> getData() {
+        return data;
+    }
 
-	public Map<String, String> getData() {
-		return data;
-	}
+    public void addAlert(WindowName windowName, Alert... alertList) {
+        getMilestoneWindow(windowName).addAlerts(alertList);
+    }
 
-	public Milestone getNextMilestone() {
-		return nextMilestone;
-	}
+    public List<Alert> getAlerts() {
+        List<Alert> alerts = new ArrayList<Alert>();
+        for (MilestoneWindow window : windows)
+            alerts.addAll(window.getAlerts());
+        return alerts;
+    }
 
-	public boolean hasName(String milestoneName) {
-		return name.equals(milestoneName);
-	}
+    public int getMaximumDurationInDays() {
+        int days = 0;
+        for (MilestoneWindow window : windows)
+            days += window.getEnd().inDays() - window.getStart().inDays();
+        return days;
+    }
 }

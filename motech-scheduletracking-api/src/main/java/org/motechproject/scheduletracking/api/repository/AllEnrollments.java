@@ -18,8 +18,25 @@ public class AllEnrollments extends MotechBaseRepository<Enrollment> {
         super(Enrollment.class, db);
     }
 
-    @View(name = "find_by_external_id_and_schedule_name", map = "function(doc) {{emit([doc.externalId, doc.schedule.name]);}}")
-    public List<Enrollment> findByExternalIdAndScheduleName(String externalId, String scheduleName) {
-        return queryView("find_by_external_id_and_schedule_name", ComplexKey.of(externalId, scheduleName));
+    @View(name = "find_by_external_id_and_schedule_name", map = "function(doc) {{emit([doc.externalId, doc.scheduleName]);}}")
+    public Enrollment findByExternalIdAndScheduleName(String externalId, String scheduleName) {
+        List<Enrollment> enrollments = queryView("find_by_external_id_and_schedule_name", ComplexKey.of(externalId, scheduleName));
+        return enrollments.isEmpty() ? null : enrollments.get(0);
+    }
+
+    public Enrollment addOrReplace(Enrollment enrollment) {
+        Enrollment existingEnrollment = findByExternalIdAndScheduleName(enrollment.getExternalId(), enrollment.getScheduleName());
+        if (existingEnrollment == null) {
+            add(enrollment);
+        } else {
+            update(existingEnrollment.copyFrom(enrollment));
+        }
+        return enrollment;
+    }
+
+    @View(name = "find_active_by_external_id_and_schedule_name", map = "function(doc) {{emit([doc.externalId, doc.scheduleName, doc.active]);}}")
+    public Enrollment findActiveByExternalIdAndScheduleName(String externalId, String scheduleName) {
+        List<Enrollment> enrollments = queryView("find_active_by_external_id_and_schedule_name", ComplexKey.of(externalId, scheduleName, true));
+        return enrollments.isEmpty() ? null : enrollments.get(0);
     }
 }

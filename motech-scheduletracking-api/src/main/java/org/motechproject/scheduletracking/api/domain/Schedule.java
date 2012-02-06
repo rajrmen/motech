@@ -1,64 +1,83 @@
 package org.motechproject.scheduletracking.api.domain;
 
-import org.codehaus.jackson.annotate.JsonProperty;
-import org.joda.time.LocalDate;
-import org.motechproject.valueobjects.WallTime;
-
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class Schedule implements Serializable {
-	private static final long serialVersionUID = 2783395208102730624L;
 
-	@JsonProperty
-	private String name;
-	@JsonProperty
-	private WallTime totalDuration;
-	@JsonProperty
-	private Milestone firstMilestone;
+    private String name;
+    private List<Milestone> milestones = new ArrayList<Milestone>();
 
-	// For ektorp
-	private Schedule() {
-	}
+    public Schedule(String name) {
+        this.name = name;
+    }
 
-	public Schedule(String name, WallTime totalDuration, Milestone firstMilestone) {
-		this.name = name;
-		this.totalDuration = totalDuration;
-		this.firstMilestone = firstMilestone;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public Milestone getFirstMilestone() {
-		return firstMilestone;
-	}
+    public void addMilestones(Milestone... milestonesList) {
+        milestones.addAll(Arrays.asList(milestonesList));
+    }
 
-	public String getName() {
-		return name;
-	}
+    public Milestone getFirstMilestone() {
+        return milestones.get(0);
+    }
 
-	public Milestone getMilestone(String milestoneName) {
-		Milestone milestone = firstMilestone;
-		while (milestone != null && !milestone.hasName(milestoneName))
-			milestone = milestone.getNextMilestone();
-		return milestone;
-	}
+    public List<Milestone> getMilestones() {
+        return milestones;
+    }
 
-	public LocalDate getEndDate(LocalDate startDate) {
-		return startDate.plusDays(totalDuration.inDays());
-	}
+    public Milestone getMilestone(String milestoneName) {
+        for (Milestone milestone : milestones)
+            if (milestone.getName().equals(milestoneName))
+                return milestone;
+        return null;
+    }
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
+    public Milestone getIdealMilestoneAsOf(int daysIntoSchedule) {
+        int idealDaysIntoSchedule = 0;
+        for (Milestone milestone : milestones) {
+            idealDaysIntoSchedule += milestone.getMaximumDurationInDays();
+            if (daysIntoSchedule <= idealDaysIntoSchedule)
+                return milestone;
+        }
+        return null;
+    }
 
-		Schedule schedule = (Schedule) o;
+    public int getIdealStartOffsetOfMilestoneInDays(String milestoneName) {
+        int offset = 0;
+        for (Milestone milestone : milestones) {
+            if (milestone.getName().equals(milestoneName))
+                break;
+            offset += milestone.getMaximumDurationInDays();
+        }
+        return offset;
+    }
 
-		if (name != null ? !name.equals(schedule.name) : schedule.name != null) return false;
+    public String getNextMilestoneName(String currentMilestoneName) {
+        int currentIndex = milestones.indexOf(getMilestone(currentMilestoneName));
+        if (currentIndex < milestones.size() - 1)
+            return milestones.get(currentIndex + 1).getName();
+        return null;
+    }
 
-		return true;
-	}
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
-	@Override
-	public int hashCode() {
-		return name != null ? name.hashCode() : 0;
-	}
+        Schedule schedule = (Schedule) o;
+
+        if (name != null ? !name.equals(schedule.name) : schedule.name != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return name != null ? name.hashCode() : 0;
+    }
 }

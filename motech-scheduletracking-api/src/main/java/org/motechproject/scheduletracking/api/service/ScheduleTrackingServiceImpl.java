@@ -1,59 +1,62 @@
 package org.motechproject.scheduletracking.api.service;
 
 import org.joda.time.LocalDate;
-import org.motechproject.model.CronSchedulableJob;
-import org.motechproject.model.MotechEvent;
-import org.motechproject.scheduler.MotechSchedulerService;
-import org.motechproject.scheduler.builder.CronJobExpressionBuilder;
-import org.motechproject.scheduletracking.api.domain.Enrollment;
-import org.motechproject.scheduletracking.api.domain.MilestoneNotPartOfScheduleException;
-import org.motechproject.scheduletracking.api.domain.Schedule;
-import org.motechproject.scheduletracking.api.domain.ScheduleTrackingException;
-import org.motechproject.scheduletracking.api.events.EnrolledEntityAlertEvent;
+import org.motechproject.scheduletracking.api.domain.*;
 import org.motechproject.scheduletracking.api.repository.AllEnrollments;
 import org.motechproject.scheduletracking.api.repository.AllTrackedSchedules;
+import org.motechproject.util.DateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-
-import static org.joda.time.LocalDate.now;
-
 @Component
 public class ScheduleTrackingServiceImpl implements ScheduleTrackingService {
-	private AllTrackedSchedules allTrackedSchedules;
-	private MotechSchedulerService schedulerService;
-	private AllEnrollments allEnrollments;
 
-	@Autowired
-	public ScheduleTrackingServiceImpl(MotechSchedulerService schedulerService, AllTrackedSchedules allTrackedSchedules, AllEnrollments allEnrollments) {
-		this.schedulerService = schedulerService;
-		this.allTrackedSchedules = allTrackedSchedules;
-		this.allEnrollments = allEnrollments;
-	}
+    private AllTrackedSchedules allTrackedSchedules;
+    private AllEnrollments allEnrollments;
+    private EnrollmentService enrollmentService;
 
-	@Override
-	public void enroll(EnrollmentRequest enrollmentRequest) throws MilestoneNotPartOfScheduleException {
-		String externalId = enrollmentRequest.getExternalId();
-		String scheduleName = enrollmentRequest.getScheduleName();
+    @Autowired
+    public ScheduleTrackingServiceImpl(AllTrackedSchedules allTrackedSchedules, AllEnrollments allEnrollments, EnrollmentService enrollmentService) {
+        this.allTrackedSchedules = allTrackedSchedules;
+        this.allEnrollments = allEnrollments;
+        this.enrollmentService = enrollmentService;
+    }
 
-		List<Enrollment> enrollments = allEnrollments.findByExternalIdAndScheduleName(externalId, scheduleName);
-		if (!enrollments.isEmpty()) return;
+    @Override
+    public void enroll(EnrollmentRequest enrollmentRequest) {
+        String externalId = enrollmentRequest.getExternalId();
+        String scheduleName = enrollmentRequest.getScheduleName();
+        LocalDate referenceDate = enrollmentRequest.getReferenceDate();
 
-		Schedule schedule = allTrackedSchedules.getByName(scheduleName);
-		if (schedule == null)
-			throw new ScheduleTrackingException("No schedule with name: %s", scheduleName);
+        Schedule schedule = allTrackedSchedules.getByName(scheduleName);
+        if (schedule == null) {
+            throw new ScheduleTrackingException("No schedule with name: %s", scheduleName);
+        }
 
-		LocalDate referenceDate = enrollmentRequest.getReferenceDate();
+        if (allEnrollments.findActiveByExternalIdAndScheduleName(enrollmentRequest.getExternalId(), enrollmentRequest.getScheduleName()) != null)
+            throw new ActiveEnrollmentExistsException("entity already has an active enrollment. unenroll the entity before enrolling in the same schedule.");
 
+        Enrollment enrollment;
         if (enrollmentRequest.enrollIntoMilestone())
-            allEnrollments.add(new Enrollment(externalId, schedule, now(), referenceDate, enrollmentRequest.getStartingMilestoneName()));
+            enrollment = new Enrollment(externalId, scheduleName, enrollmentRequest.getStartingMilestoneName(), referenceDate, DateUtil.today(), enrollmentRequest.getPreferredAlertTime());
         else
-            allEnrollments.add(new Enrollment(externalId, schedule, now(), referenceDate));
+            enrollment = new Enrollment(externalId, scheduleName, schedule.getFirstMilestone().getName(), referenceDate, DateUtil.today(), enrollmentRequest.getPreferredAlertTime());
+        allEnrollments.add(enrollment);
+        enrollmentService.scheduleAlertsForCurrentMilestone(enrollment);
+    }
 
-		MotechEvent motechEvent = new EnrolledEntityAlertEvent(schedule.getName(), new Enrollment(externalId, schedule, now(), referenceDate).getId()).toMotechEvent();
-		String cronJobExpression = new CronJobExpressionBuilder(enrollmentRequest.getPreferredAlertTime(), 0, 0).build();
-		CronSchedulableJob schedulableJob = new CronSchedulableJob(motechEvent, cronJobExpression, now().toDate(), schedule.getEndDate(referenceDate).toDate());
-		schedulerService.scheduleJob(schedulableJob);
-	}
+    @Override
+    public void fulfillCurrentMilestone(String externalId, String scheduleName) {
+        enrollmentService.fulfillCurrentMilestone(allEnrollments.findActiveByExternalIdAndScheduleName(externalId, scheduleName));
+    }
+
+    @Override
+    public void unenroll(String externalId, String scheduleName) {
+        Enrollment activeEnrollment = allEnrollments.findActiveByExternalIdAndScheduleName(externalId, scheduleName);
+        if (activeEnrollment == null)
+            throw new InvalidEnrollmentException("entity is not currently enrolled into the schedule.");
+        enrollmentService.unscheduleAllAlerts(activeEnrollment);
+        activeEnrollment.setActive(false);
+        allEnrollments.update(activeEnrollment);
+    }
 }

@@ -1,37 +1,55 @@
 package org.motechproject.scheduletracking.api.domain;
 
-import org.joda.time.LocalDate;
-import org.junit.Before;
 import org.junit.Test;
 
-import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
 import static org.motechproject.scheduletracking.api.utility.DateTimeUtil.wallTimeOf;
-import static org.motechproject.util.DateUtil.newDate;
 
 public class ScheduleTest {
-	private Schedule schedule;
-	private Milestone firstMilestone;
-	private Milestone secondMilestone;
-
-	@Before
-	public void setUp() {
-		secondMilestone = new Milestone("Second Shot", wallTimeOf(1), wallTimeOf(2), wallTimeOf(3), wallTimeOf(4));
-		firstMilestone = new Milestone("First Shot", secondMilestone, wallTimeOf(1), wallTimeOf(2), wallTimeOf(3), wallTimeOf(4));
-		schedule = new Schedule("Yellow Fever Vaccination", wallTimeOf(52), firstMilestone);
-	}
 
 	@Test
-	public void shouldGetAMilestoneBasedOnName() {
-		assertThat(schedule.getMilestone("First Shot"), is(equalTo(firstMilestone)));
-		assertThat(schedule.getMilestone("Second Shot"), is(equalTo(secondMilestone)));
-		assertThat(schedule.getMilestone("Non Existent"), is(nullValue()));
+	public void shouldGetMilestoneByName() {
+        Milestone secondMilestone = new Milestone("Second Shot", wallTimeOf(1), wallTimeOf(2), wallTimeOf(3), wallTimeOf(4));
+        Milestone firstMilestone = new Milestone("First Shot", wallTimeOf(1), wallTimeOf(2), wallTimeOf(3), wallTimeOf(4));
+        Schedule schedule = new Schedule("Yellow Fever Vaccination");
+        schedule.addMilestones(firstMilestone, secondMilestone);
+
+        assertEquals(firstMilestone, schedule.getMilestone("First Shot"));
+		assertEquals(secondMilestone, schedule.getMilestone("Second Shot"));
 	}
 
-	@Test
-	public void shouldDeriveEndDateBasedOnStartDateAndDuration() {
-		LocalDate endDate = schedule.getEndDate(newDate(2012, 1, 2));
-		assertEquals(newDate(2012, 12, 31), endDate);
-	}
+    @Test
+    public void shouldReturnIdealMilestoneAsOfGivenDays() {
+        Milestone secondMilestone = new Milestone("Second Shot", wallTimeOf(1), wallTimeOf(2), wallTimeOf(3), wallTimeOf(4));
+        Milestone firstMilestone = new Milestone("First Shot", wallTimeOf(1), wallTimeOf(2), wallTimeOf(3), wallTimeOf(4));
+        Schedule schedule = new Schedule("Yellow Fever Vaccination");
+        schedule.addMilestones(firstMilestone, secondMilestone);
+
+        assertEquals(firstMilestone, schedule.getIdealMilestoneAsOf(0));
+        assertEquals(firstMilestone, schedule.getIdealMilestoneAsOf(10));
+        assertEquals(firstMilestone, schedule.getIdealMilestoneAsOf(28));
+        assertEquals(secondMilestone, schedule.getIdealMilestoneAsOf(29));
+    }
+
+    @Test
+    public void shouldReturnIdealMilestoneStartOffset() {
+        Milestone secondMilestone = new Milestone("Second Shot", wallTimeOf(1), wallTimeOf(2), wallTimeOf(3), wallTimeOf(4));
+        Milestone firstMilestone = new Milestone("First Shot", wallTimeOf(1), wallTimeOf(2), wallTimeOf(3), wallTimeOf(4));
+        Schedule schedule = new Schedule("Yellow Fever Vaccination");
+        schedule.addMilestones(firstMilestone, secondMilestone);
+
+        assertEquals(0, schedule.getIdealStartOffsetOfMilestoneInDays("First Shot"));
+        assertEquals(28, schedule.getIdealStartOffsetOfMilestoneInDays("Second Shot"));
+    }
+
+    @Test
+    public void shouldReturnNextMilestone() {
+        Milestone secondMilestone = new Milestone("Second Shot", wallTimeOf(1), wallTimeOf(2), wallTimeOf(3), wallTimeOf(4));
+        Milestone firstMilestone = new Milestone("First Shot", wallTimeOf(1), wallTimeOf(2), wallTimeOf(3), wallTimeOf(4));
+        Schedule schedule = new Schedule("Yellow Fever Vaccination");
+        schedule.addMilestones(firstMilestone, secondMilestone);
+
+        assertEquals("Second Shot", schedule.getNextMilestoneName("First Shot"));
+        assertEquals(null, schedule.getNextMilestoneName("Second Shot"));
+    }
 }
