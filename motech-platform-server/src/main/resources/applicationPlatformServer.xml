@@ -11,6 +11,7 @@
 
 	<import resource="classpath:applicationPlatformServerAPI.xml" />
 	<import resource="classpath:campaignDemoResources.xml" />
+	<import resource="classpath:scheduleTrackingDemoResources.xml" />
     <import resource="classpath:applicationPlatformCommon.xml" />
 
 

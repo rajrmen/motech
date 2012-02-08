@@ -1,5 +1,6 @@
 package org.motechproject.scheduletracking.api.events;
 
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.motechproject.model.MotechEvent;
 import org.motechproject.scheduletracking.api.events.constants.EventDataKey;
@@ -15,11 +16,11 @@ public class MilestoneEvent {
     private String milestoneName;
     private String scheduleName;
     private String externalId;
-    private LocalDate referenceDate;
+    private DateTime referenceDate;
 
     private Map<String, String> data = new HashMap<String, String>();
 
-    public MilestoneEvent(String externalId, String scheduleName, String milestoneName, String windowName, LocalDate referenceDate) {
+    public MilestoneEvent(String externalId, String scheduleName, String milestoneName, String windowName, DateTime referenceDate) {
         this.scheduleName = scheduleName;
         this.milestoneName = milestoneName;
         this.windowName = windowName;
@@ -32,7 +33,7 @@ public class MilestoneEvent {
         this.milestoneName = (String) motechEvent.getParameters().get(EventDataKey.MILESTONE_NAME);
         this.windowName = (String) motechEvent.getParameters().get(EventDataKey.WINDOW_NAME);
         this.externalId = (String) motechEvent.getParameters().get(EventDataKey.EXTERNAL_ID);
-        this.referenceDate = (LocalDate) motechEvent.getParameters().get(EventDataKey.REFERENCE_DATE);
+        this.referenceDate = (DateTime) motechEvent.getParameters().get(EventDataKey.REFERENCE_DATE);
     }
 
     public MotechEvent toMotechEvent() {
@@ -64,7 +65,7 @@ public class MilestoneEvent {
         return externalId;
     }
 
-    public LocalDate getReferenceDate() {
+    public DateTime getReferenceDate() {
         return referenceDate;
     }
 

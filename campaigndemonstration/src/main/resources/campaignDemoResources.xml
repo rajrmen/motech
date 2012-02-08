@@ -13,10 +13,6 @@
 	<import resource="classpath:applicationMessageCampaign.xml" />
 	<import resource="applicationCmsLiteApi.xml" />
 	<import resource="applicationSmsHttp.xml" />
-	<import resource="classpath:applicationOpenmrsAPI.xml" />
-
-    <context:property-placeholder location="classpath:openmrs.properties"/>
-    <util:properties id="openmrsProperties" location="classpath:openmrs.properties"/>
 
 	<util:properties id="credentialProperties"
 		location="classpath:smscredentials.properties" />
@@ -24,8 +20,6 @@
 		location="classpath:pregnancymessages.properties" />
 
 	<bean id="testListener" class="org.motechproject.CampaignDemo.listeners.TestListener" />
-
-	<bean id="patientInitiator" class="org.motechproject.CampaignDemo.dao.PatientAuthentication"/>
 	
 	<bean id="patientDatabase" class="org.ektorp.impl.StdCouchDbConnector">
 		<constructor-arg value="patients" />
@@ -39,9 +33,6 @@
 
 	<!-- For bootstrapping content at server startup -->
 	<bean id="contentInitiator" class="org.motechproject.CampaignDemo.dao.ContentInitiator"
-		init-method="bootstrap">
-	</bean>
-	<bean id="openMRStest" class="org.motechproject.CampaignDemo.dao.OpenMRSInitiator"
 		init-method="bootstrap">
 	</bean>
 

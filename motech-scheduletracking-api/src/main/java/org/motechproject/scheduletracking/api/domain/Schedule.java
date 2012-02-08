@@ -46,6 +46,16 @@ public class Schedule implements Serializable {
         }
         return null;
     }
+    
+    public Milestone getIdealMilestoneAsOfMinuteBased(int minutesIntoSchedule) {
+    	int idealMinutesIntoSchedule = 0;
+    	for (Milestone milestone: milestones) {
+    		idealMinutesIntoSchedule += milestone.getMaximumDurationInMinutes();
+    		if (minutesIntoSchedule <= idealMinutesIntoSchedule) 
+    			return milestone;
+    	}
+    	return null;
+    }
 
     public int getIdealStartOffsetOfMilestoneInDays(String milestoneName) {
         int offset = 0;
@@ -55,6 +65,16 @@ public class Schedule implements Serializable {
             offset += milestone.getMaximumDurationInDays();
         }
         return offset;
+    }
+    
+    public int getIdealStartOffsetOfMilestoneInMinutes(String milestoneName) {
+    	int offset = 0;
+    	for (Milestone milestone: milestones) {
+    		if (milestone.getName().equals(milestoneName))
+    			break;
+    		offset += milestone.getMaximumDurationInMinutes();
+    	}
+    	return offset;
     }
 
     public String getNextMilestoneName(String currentMilestoneName) {

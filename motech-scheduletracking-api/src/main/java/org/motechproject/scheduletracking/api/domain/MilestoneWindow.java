@@ -1,7 +1,9 @@
 package org.motechproject.scheduletracking.api.domain;
 
+import org.joda.time.DateTime;
 import org.joda.time.Days;
 import org.joda.time.LocalDate;
+import org.joda.time.Minutes;
 import org.joda.time.Period;
 import org.motechproject.util.DateUtil;
 import org.motechproject.valueobjects.WallTime;
@@ -51,12 +53,26 @@ public class MilestoneWindow implements Serializable {
         int endOffsetInDays = getWindowEndInDays();
         return daysSinceStartOfMilestone >= endOffsetInDays;
     }
+    
+    public boolean hasElapsedInMinutes(DateTime milestoneStartDate) {
+    	int minutesSinceStartOfMilestone = Minutes.minutesBetween(milestoneStartDate, DateUtil.now()).getMinutes();
+    	int endOffsetInMinutes = getWindowEndInMinutes();
+    	return minutesSinceStartOfMilestone >= endOffsetInMinutes;
+    }
 
-    public int getWindowEndInDays() {
+    public int getWindowEndInMinutes() {
+		return end == null? toMinutes(start.asPeriod()) + 1 : toMinutes(end.asPeriod());
+	}
+
+	public int getWindowEndInDays() {
         return end == null? toDays(start.asPeriod()) + 1 : toDays(end.asPeriod());
     }
 
     private static int toDays(Period period) {
         return period.toStandardDays().getDays();
     }
-}
+    
+    private static int toMinutes(Period period) {
+    	return period.toStandardMinutes().getMinutes();
+    }
+ }

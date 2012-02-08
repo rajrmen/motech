@@ -47,9 +47,9 @@
 	<bean name="userController"
 		class="org.motechproject.CampaignDemo.controllers.UserController">
 	</bean>
-    
-    	<bean name="mrsController"
-		class="org.motechproject.CampaignDemo.controllers.MrsController">
+	
+	<bean name="enrollmentController"
+		class="org.motechproject.ScheduleTrackingDemo.controllers.EnrollController">
 	</bean>
 
 <!---->

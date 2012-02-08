@@ -67,4 +67,11 @@ public class Milestone implements Serializable {
             days += window.getEnd().inDays() - window.getStart().inDays();
         return days;
     }
+
+	public int getMaximumDurationInMinutes() {
+		int minutes = 0;
+		for (MilestoneWindow window: windows) 
+			minutes += window.getEnd().inMinutes() - window.getStart().inMinutes();
+		return minutes;
+	}
 }
