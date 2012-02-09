@@ -10,5 +10,6 @@
             http://www.springframework.org/schema/util/spring-util-3.0.xsd">
 
 	<import resource="classpath:applicationSchedulerTrackingAPI.xml" />
+	<import resource="classpath:applicationOpenmrsAPI.xml" />
 		<bean id="testListener" class="org.motechproject.ScheduleTrackingDemo.listeners.MilestoneListener" />
 </beans>
