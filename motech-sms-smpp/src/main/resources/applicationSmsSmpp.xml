@@ -9,7 +9,7 @@
 
     <import resource="classpath:applicationPlatformServerAPI.xml"/>
 
-    <context:property-placeholder location="classpath:activemq.properties"/>
+    <context:property-placeholder location="classpath:activemq.properties" ignore-unresolvable="true"/>
     <context:component-scan base-package="org.motechproject.sms.smpp"/>
     <context:annotation-config/>
 
