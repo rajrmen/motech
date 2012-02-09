@@ -33,7 +33,7 @@ public class EnrollmentDefaultmentService {
             return;
         DateTime startOfLateWindow = getCurrentMilestoneStartDate(enrollment).plusMinutes(currentMilestone.getMaximumDurationInMinutes());
         MotechEvent event = new DefaultmentCaptureEvent(enrollment.getId(), String.format("%s.%s.%s", EventSubject.BASE_SUBJECT, DEFAULTMENT_CAPTURE, enrollment.getId())).toMotechEvent();
-        schedulerService.scheduleRepeatingJob(new RepeatingSchedulableJob(event, startOfLateWindow.toDate(), null, 1, 1));
+        schedulerService.scheduleRepeatingJob(new RepeatingSchedulableJob(event, startOfLateWindow.toDate(), null, 0, 1));
         System.out.println("Scheduled defaultment event for: " + startOfLateWindow.toDate());
     }
 

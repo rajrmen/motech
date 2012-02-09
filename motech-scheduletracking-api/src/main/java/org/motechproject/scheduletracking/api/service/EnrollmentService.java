@@ -32,6 +32,7 @@ public class EnrollmentService {
     }
 
     public void fulfillCurrentMilestone(Enrollment enrollment) {
+    	System.out.println("Enrollment: " + enrollment.getCurrentMilestoneName() + " from " + enrollment.getScheduleName() + " for " + enrollment.getExternalId());
         Schedule schedule = allTrackedSchedules.getByName(enrollment.getScheduleName());
         if (enrollment.getFulfillments().size() >= schedule.getMilestones().size())
             throw new NoMoreMilestonesToFulfillException("all milestones in the schedule have been fulfilled.");
@@ -48,6 +49,7 @@ public class EnrollmentService {
 
         enrollmentAlertService.scheduleAlertsForCurrentMilestone(enrollment);
         enrollmentDefaultmentService.scheduleJobToCaptureDefaultment(enrollment);
+        allEnrollments.update(enrollment);
     }
 
     public void unenroll(Enrollment enrollment) {

@@ -5,10 +5,10 @@
             {
                 "name" : "IPTI 1",
                 "scheduleWindows" : {
-                    "earliest" : "5 minutes",
-                    "due" : "15 minutes",
-                    "late" : "35 minutes",
-                    "max" : "55 minutes"
+                    "earliest" : "1 minutes",
+                    "due" : "3 minutes",
+                    "late" : "5 minutes",
+                    "max" : "6 minutes"
                 },
                 "data" : {
                     "Foo" : "Bar"
@@ -34,14 +34,32 @@
             {
                 "name" : "IPTI 2",
                 "scheduleWindows" : {
-                    "earliest" : "1 Weeks",
-                    "due" : "2 Weeks",
-                    "late" : "3 Weeks",
-                    "max" : ""
+                    "earliest" : "1 minutes",
+                    "due" : "3 minutes",
+                    "late" : "5 minutes",
+                    "max" : "60 minutes"
                 },
                 "data" : {
                     "doo" : "Bar"
-                }
+                },
+                "alerts" : [
+                                    {
+                        "window" : "due",
+                        "interval" : "1 minute",
+                        "count" : "100"
+                    },
+                    {
+                        "window" : "late",
+                        "interval" : "1 minute",
+                        "count" : "100"
+                    }, 
+                    {
+                    	"window" : "max",
+ 						"interval" : "1 minute",
+ 						"count" : "100"
+                    }
+                
+                ]
             }
         ]
     }
