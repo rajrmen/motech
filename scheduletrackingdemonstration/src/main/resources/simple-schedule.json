@@ -5,13 +5,13 @@
             {
                 "name" : "IPTI 1",
                 "scheduleWindows" : {
-                    "earliest" : "5 minutes",
-                    "due" : "15 minutes",
-                    "late" : "35 minutes",
-                    "max" : "55 minutes"
+                    "earliest" : "1 minutes",
+                    "due" : "4 minutes",
+                    "late" : "7 minutes",
+                    "max" : "10 minutes"
                 },
                 "data" : {
-                    "Foo" : "Bar"
+                    "conceptName" : "Demo Concept Question"
                 },
                 "alerts" : [
                     {

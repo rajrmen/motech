@@ -18,7 +18,7 @@ public class EnrollController extends MultiActionController {
 	
 	public ModelAndView start(HttpServletRequest request, HttpServletResponse response) {
 
-		EnrollmentRequest enrollmentRequest = new EnrollmentRequest("Russell Gillen", "IPTI Schedule", null, DateUtil.now());
+		EnrollmentRequest enrollmentRequest = new EnrollmentRequest("RG-1", "IPTI Schedule", null, DateUtil.now());
 		
 		scheduleTrackingService.enroll(enrollmentRequest);
 		

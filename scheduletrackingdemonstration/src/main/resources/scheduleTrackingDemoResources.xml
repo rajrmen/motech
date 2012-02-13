@@ -11,5 +11,6 @@
 
 	<import resource="classpath:applicationSchedulerTrackingAPI.xml" />
 	<import resource="classpath:applicationOpenmrsAPI.xml" />
-		<bean id="testListener" class="org.motechproject.ScheduleTrackingDemo.listeners.MilestoneListener" />
+	<bean id="testListener" class="org.motechproject.ScheduleTrackingDemo.listeners.MilestoneListener" />
+	<bean class="org.motechproject.ScheduleTrackingDemo.OpenMrsClientImpl" />
 </beans>
