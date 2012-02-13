@@ -3,6 +3,12 @@ package org.motechproject.ScheduleTrackingDemo.controllers;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.motechproject.ScheduleTrackingDemo.OpenMrsClient;
+import org.motechproject.scheduletracking.api.domain.Enrollment;
+import org.motechproject.scheduletracking.api.domain.Milestone;
+import org.motechproject.scheduletracking.api.domain.Schedule;
+import org.motechproject.scheduletracking.api.repository.AllEnrollments;
+import org.motechproject.scheduletracking.api.repository.AllTrackedSchedules;
 import org.motechproject.scheduletracking.api.service.EnrollmentRequest;
 import org.motechproject.scheduletracking.api.service.ScheduleTrackingService;
 import org.motechproject.util.DateUtil;
@@ -16,9 +22,52 @@ public class EnrollController extends MultiActionController {
 	@Autowired
 	private ScheduleTrackingService scheduleTrackingService; 
 	
-	public ModelAndView start(HttpServletRequest request, HttpServletResponse response) {
+	@Autowired
+	private AllTrackedSchedules allSchedules;
+	
+	@Autowired
+	AllEnrollments allEnrollments;
+	
+	@Autowired
+	private OpenMrsClient openMrsClient;
+	
 
-		EnrollmentRequest enrollmentRequest = new EnrollmentRequest("RG-1", "IPTI Schedule", null, DateUtil.now());
+	public ModelAndView start(HttpServletRequest request, HttpServletResponse response) {
+			
+		String externalID = request.getParameter("externalID");
+		String scheduleName = request.getParameter("scheduleName");
+		
+		Schedule schedule = allSchedules.getByName(scheduleName);
+		
+		if (schedule == null) System.out.println("Schedule null");
+		
+		String lastConceptFulfilled = "";
+		String checkConcept;
+		
+		for (Milestone milestone : schedule.getMilestones()) {
+			checkConcept = milestone.getData().get("conceptName");
+			if (checkConcept != null) {
+				if (openMrsClient.hasConcept(externalID, checkConcept)) {
+					System.out.println(lastConceptFulfilled);
+					lastConceptFulfilled = checkConcept;
+					System.out.println(lastConceptFulfilled);
+				}
+			}
+		}
+		
+		EnrollmentRequest enrollmentRequest;
+		
+		if (lastConceptFulfilled.equals("")) { //enroll in new schedule
+			 enrollmentRequest = new EnrollmentRequest(externalID, scheduleName, null, DateUtil.now());
+		} else { //start at the next milestone
+			Enrollment enrollment = allEnrollments.findActiveByExternalIdAndScheduleName(externalID, scheduleName);
+			if (enrollment == null) {
+				enrollmentRequest = new EnrollmentRequest(externalID, scheduleName, null, DateUtil.now(), schedule.getNextMilestoneName(lastConceptFulfilled));
+			} else { //Enrollment already exists, but now re-enrolling to whatever their latest last milestone fulfillment was, based on OpenMRS
+				scheduleTrackingService.unenroll(externalID, scheduleName);
+				enrollmentRequest = new EnrollmentRequest(externalID, scheduleName, null, DateUtil.now(), schedule.getNextMilestoneName(lastConceptFulfilled));
+			}
+		}
 		
 		scheduleTrackingService.enroll(enrollmentRequest);
 		
@@ -26,11 +75,20 @@ public class EnrollController extends MultiActionController {
 
 	}
 	
+	/**
+	 * For testing purposes only
+	 * @param request
+	 * @param response
+	 * @return
+	 */
 	public ModelAndView fulfill(HttpServletRequest request, HttpServletResponse response) {
 
-		EnrollmentRequest enrollmentRequest = new EnrollmentRequest("Russell Gillen", "IPTI Schedule", null, DateUtil.now());
+		String externalID = request.getParameter("externalID");
+		String scheduleName = request.getParameter("scheduleName");
 		
-		scheduleTrackingService.fulfillCurrentMilestone("Russell Gillen", "IPTI Schedule");
+		EnrollmentRequest enrollmentRequest = new EnrollmentRequest(externalID, scheduleName, null, DateUtil.now());
+		
+		scheduleTrackingService.fulfillCurrentMilestone(externalID, scheduleName);
 		
 		return new ModelAndView("scheduleTrackingPage");
 

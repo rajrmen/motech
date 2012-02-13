@@ -1,12 +1,18 @@
 package org.motechproject.openmrs.services;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.motechproject.mrs.model.MRSObservation;
+import org.motechproject.openmrs.IdentifierType;
 import org.openmrs.*;
+import org.openmrs.api.ConceptService;
 import org.openmrs.api.ObsService;
+import org.openmrs.api.PatientService;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import static org.apache.commons.lang.math.NumberUtils.isNumber;
@@ -18,6 +24,12 @@ public class OpenMRSObservationAdapter {
 
     @Autowired
     ObsService obsService;
+    
+    @Autowired
+    PatientService patientService;
+    
+    @Autowired
+    ConceptService conceptService;
 
     <T> Obs createOpenMRSObservationForEncounter(MRSObservation<T> mrsObservation, Encounter encounter, Patient patient, Location location, User staff) {
         Obs openMrsObservation = new Obs();
@@ -100,4 +112,27 @@ public class OpenMRSObservationAdapter {
         }
         return mrsObservation;
     }
+    
+    public List<MRSObservation> getMRSObservationsByMotechPatientIdAndConceptName(String motechId, String conceptName) {
+    	
+        PatientIdentifierType motechIdType = patientService.getPatientIdentifierTypeByName(IdentifierType.IDENTIFIER_MOTECH_ID.getName());
+        List<PatientIdentifierType> idTypes = new ArrayList<PatientIdentifierType>();
+        idTypes.add(motechIdType);
+        List<org.openmrs.Patient> patients = patientService.getPatients(null, motechId, idTypes, true);
+        Patient patient = (CollectionUtils.isNotEmpty(patients)) ? patients.get(0) : null;
+    	
+    	Concept concept = conceptService.getConceptByName(conceptName);
+    	
+    	List<Obs> openMrsObsList = obsService.getObservationsByPersonAndConcept(patient, concept);
+    	
+    	List<MRSObservation> mrsObsList = new ArrayList<MRSObservation>();
+    	
+    	for (Obs openMRSObservation : openMrsObsList) {
+    		mrsObsList.add(convertOpenMRSToMRSObservation(openMRSObservation));
+    	}
+    	
+    	return mrsObsList;
+    }
+    
+
 }

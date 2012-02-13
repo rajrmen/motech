@@ -11,6 +11,28 @@
 
 	<import resource="classpath:applicationSchedulerTrackingAPI.xml" />
 	<import resource="classpath:applicationOpenmrsAPI.xml" />
-	<bean id="testListener" class="org.motechproject.ScheduleTrackingDemo.listeners.MilestoneListener" />
+	<import resource="classpath:voxeoResources.xml" />
+	<import resource="applicationCmsLiteApi.xml" />
+	<import resource="applicationSmsHttp.xml" />
+	
+	<bean id="patientMRSDatabase" class="org.ektorp.impl.StdCouchDbConnector">
+		<constructor-arg value="patientsMRS" />
+		<constructor-arg ref="couchDbInstance" />
+	</bean>
+
+	<bean id="patientMRSDAO"
+		class="org.motechproject.ScheduleTrackingDemo.DAO.MRSPatientsCouchDBDAOImpl">
+		<constructor-arg ref="patientMRSDatabase" />
+	</bean>
+	
+	<bean id="smsService" class="org.motechproject.sms.api.service.SmsServiceImpl">
+		<constructor-arg ref="messageSplitter" />
+	</bean>
+
+	<bean id="messageSplitter" class="org.motechproject.sms.api.MessageSplitter">
+	</bean>
+	
+	<bean id="milestoneListener" class="org.motechproject.ScheduleTrackingDemo.listeners.MilestoneListener" />
+	
 	<bean class="org.motechproject.ScheduleTrackingDemo.OpenMrsClientImpl" />
 </beans>

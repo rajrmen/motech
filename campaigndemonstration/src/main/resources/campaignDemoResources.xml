@@ -19,8 +19,6 @@
 	<util:properties id="pregnancyMessages"
 		location="classpath:pregnancymessages.properties" />
 
-	<bean id="testListener" class="org.motechproject.CampaignDemo.listeners.TestListener" />
-	
 	<bean id="patientDatabase" class="org.ektorp.impl.StdCouchDbConnector">
 		<constructor-arg value="patients" />
 		<constructor-arg ref="couchDbInstance" />
@@ -37,6 +35,8 @@
 	</bean>
 
 
+	<bean id="testListener" class="org.motechproject.CampaignDemo.listeners.TestListener" />
+	
 	<bean id="smsService" class="org.motechproject.sms.api.service.SmsServiceImpl">
 		<constructor-arg ref="messageSplitter" />
 	</bean>

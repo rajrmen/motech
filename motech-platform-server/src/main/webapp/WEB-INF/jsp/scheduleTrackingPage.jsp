@@ -13,11 +13,11 @@
 	Schedule Tracking
 	<br><br>
 
-	Register
+	Register a user ID (coincides with Open MRS patient ID) into the Demo Concept Schedule
 	<form method="post" action="/motech-platform-server/enroll/start">
 		ID:<input type="text" name="externalId" size="12" maxlength="12" />
-		Phone Number (with no special characters, like in 2071234567):<input type="text" name="phoneNum" size="24"
-			maxlength="24" /> <input type="submit" value="Register User" />
+		<input type="hidden" name="scheduleName" value="Demo Concept Schedule">
+		<input type="submit" value="Register User" />
 	</form>
 </body>
 </html>

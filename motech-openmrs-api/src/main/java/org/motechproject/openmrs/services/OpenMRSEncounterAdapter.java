@@ -89,4 +89,16 @@ public class OpenMRSEncounterAdapter implements MRSEncounterAdapter {
         return openMrsEncounter;
     }
 
+	@Override
+	public List<MRSEncounter> getAllEncountersByPatientMotechId(String motechId) {
+		
+		List<Encounter> openMRSEncounters = encounterService.getEncountersByPatientIdentifier(motechId);
+		List<MRSEncounter> MRSEncounters = new ArrayList<MRSEncounter>();
+		
+		for (Encounter openMrsEncounter : openMRSEncounters) {
+	        MRSEncounters.add(openmrsToMrsEncounter(openMrsEncounter));
+		}
+		return MRSEncounters;
+	}
+
 }

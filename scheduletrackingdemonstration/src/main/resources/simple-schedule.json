@@ -1,28 +1,32 @@
 [
     {
-        "name" : "IPTI Schedule",
+        "name" : "Demo Concept Schedule",
         "milestones" : [
             {
-                "name" : "IPTI 1",
+                "name" : "Demo Schedule Milestone 1",
                 "scheduleWindows" : {
                     "earliest" : "1 minutes",
                     "due" : "3 minutes",
-                    "late" : "5 minutes",
+                    "late" : "6 minutes",
                     "max" : "6 minutes"
                 },
                 "data" : {
-                    "conceptName" : "Demo Concept Question"
+                    "conceptName" : "Demo Concept Question",
+                    "IVRFormat" : "true",
+                    "SMSFormat" : "true",
+                    "language" : "en",
+                    "messageName" : "cron-message"
                 },
                 "alerts" : [
                     {
                         "window" : "due",
                         "interval" : "1 minute",
-                        "count" : "100"
+                        "count" : "1"
                     },
                     {
                         "window" : "late",
                         "interval" : "1 minute",
-                        "count" : "100"
+                        "count" : "2"
                     }, 
                     {
                     	"window" : "max",
@@ -32,26 +36,86 @@
                 ]
             },
             {
-                "name" : "IPTI 2",
+                "name" : "Demo Schedule Milestone 2",
                 "scheduleWindows" : {
                     "earliest" : "1 minutes",
                     "due" : "3 minutes",
-                    "late" : "5 minutes",
+                    "late" : "6 minutes",
                     "max" : "60 minutes"
                 },
                 "data" : {
-                    "doo" : "Bar"
+                    "conceptName" : "Demo Concept Question 2"
                 },
                 "alerts" : [
                                     {
                         "window" : "due",
                         "interval" : "1 minute",
-                        "count" : "100"
+                        "count" : "1"
                     },
                     {
                         "window" : "late",
                         "interval" : "1 minute",
-                        "count" : "100"
+                        "count" : "2"
+                    }, 
+                    {
+                    	"window" : "max",
+ 						"interval" : "1 minute",
+ 						"count" : "100"
+                    }
+                
+                ]
+            },
+            {
+                "name" : "Demo Schedule Milestone 3",
+                "scheduleWindows" : {
+                    "earliest" : "1 minutes",
+                    "due" : "3 minutes",
+                    "late" : "6 minutes",
+                    "max" : "60 minutes"
+                },
+                "data" : {
+                    "conceptNameWRONG" : "Demo Concept Question 3"
+                },
+                "alerts" : [
+                                    {
+                        "window" : "due",
+                        "interval" : "1 minute",
+                        "count" : "1"
+                    },
+                    {
+                        "window" : "late",
+                        "interval" : "1 minute",
+                        "count" : "2"
+                    }, 
+                    {
+                    	"window" : "max",
+ 						"interval" : "1 minute",
+ 						"count" : "100"
+                    }
+                
+                ]
+            },
+            {
+                "name" : "Demo Schedule Milestone 4",
+                "scheduleWindows" : {
+                    "earliest" : "1 minutes",
+                    "due" : "3 minutes",
+                    "late" : "6 minutes",
+                    "max" : "60 minutes"
+                },
+                "data" : {
+                    "conceptName" : "Demo Concept Question 4"
+                },
+                "alerts" : [
+                                    {
+                        "window" : "due",
+                        "interval" : "1 minute",
+                        "count" : "1"
+                    },
+                    {
+                        "window" : "late",
+                        "interval" : "1 minute",
+                        "count" : "2"
                     }, 
                     {
                     	"window" : "max",
