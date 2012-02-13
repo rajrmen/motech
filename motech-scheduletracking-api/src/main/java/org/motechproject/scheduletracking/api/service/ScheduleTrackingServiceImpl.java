@@ -43,7 +43,10 @@ public class ScheduleTrackingServiceImpl implements ScheduleTrackingService {
 
     @Override
     public void fulfillCurrentMilestone(String externalId, String scheduleName) {
-        enrollmentService.fulfillCurrentMilestone(allEnrollments.findActiveByExternalIdAndScheduleName(externalId, scheduleName));
+        Enrollment activeEnrollment = allEnrollments.findActiveByExternalIdAndScheduleName(externalId, scheduleName);
+        if (activeEnrollment == null)
+            throw new InvalidEnrollmentException("entity is not currently actively enrolled into the schedule.");
+    	enrollmentService.fulfillCurrentMilestone(activeEnrollment);
     }
 
     @Override

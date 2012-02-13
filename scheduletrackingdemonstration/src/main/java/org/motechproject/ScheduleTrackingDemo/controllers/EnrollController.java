@@ -25,5 +25,14 @@ public class EnrollController extends MultiActionController {
 		return new ModelAndView("scheduleTrackingPage");
 
 	}
+	
+	public ModelAndView fulfill(HttpServletRequest request, HttpServletResponse response) {
 
+		EnrollmentRequest enrollmentRequest = new EnrollmentRequest("Russell Gillen", "IPTI Schedule", null, DateUtil.now());
+		
+		scheduleTrackingService.fulfillCurrentMilestone("Russell Gillen", "IPTI Schedule");
+		
+		return new ModelAndView("scheduleTrackingPage");
+
+	}
 }

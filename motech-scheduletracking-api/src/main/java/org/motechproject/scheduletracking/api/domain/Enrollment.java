@@ -73,16 +73,18 @@ public class Enrollment extends MotechBaseDataObject {
         return fulfillments;
     }
 
+    @JsonIgnore
     public DateTime getLastFulfilledDate() {
         if (fulfillments.isEmpty())
             return null;
         return fulfillments.get(fulfillments.size() - 1).getDateFulfilled();
-    }
+    } 
 
     @JsonIgnore
     public boolean isActive() {
         return status.equals(EnrollmentStatus.Active);
     }
+   
 
     @JsonIgnore
     public boolean isCompleted() {
@@ -98,6 +100,10 @@ public class Enrollment extends MotechBaseDataObject {
         this.currentMilestoneName = currentMilestoneName;
     }
 
+    public EnrollmentStatus getStatus() {
+    	return status;
+    }
+    
     public void setStatus(EnrollmentStatus status) {
         this.status = status;
     }
