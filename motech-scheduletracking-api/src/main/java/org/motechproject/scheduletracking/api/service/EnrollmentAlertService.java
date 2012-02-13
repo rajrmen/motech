@@ -52,6 +52,8 @@ public class EnrollmentAlertService {
     private void scheduleAlertJob(Alert alert, Enrollment enrollment, Schedule schedule, Milestone milestone, MilestoneWindow milestoneWindow) {
         MotechEvent event = new MilestoneEvent(enrollment.getExternalId(), schedule.getName(), milestone.getName(), milestoneWindow.getName().toString(), enrollment.getReferenceDate()).toMotechEvent();
         event.getParameters().put(MotechSchedulerService.JOB_ID_KEY, String.format("%s.%s.%s.%d", EventSubject.BASE_SUBJECT, MILESTONE_ALERTS, enrollment.getId(), alert.getIndex()));
+        event.getParameters().putAll(milestone.getData());
+        
         DateTime startTime = getJobStartDate(enrollment, milestoneWindow);
         System.out.println("Scheduling alert for: " + startTime.toString());
         System.out.println(milestoneWindow.getName());
