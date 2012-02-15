@@ -1,9 +1,17 @@
 package org.motechproject.ScheduleTrackingDemo.controllers;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.motechproject.ScheduleTrackingDemo.OpenMrsClient;
+import org.motechproject.mrs.model.MRSEncounter;
+import org.motechproject.mrs.model.MRSObservation;
+import org.motechproject.openmrs.advice.ApiSession;
+import org.motechproject.openmrs.advice.LoginAsAdmin;
+import org.motechproject.openmrs.services.OpenMRSEncounterAdapter;
+import org.motechproject.openmrs.services.OpenMRSObservationAdapter;
 import org.motechproject.scheduletracking.api.domain.Enrollment;
 import org.motechproject.scheduletracking.api.domain.Milestone;
 import org.motechproject.scheduletracking.api.domain.Schedule;
@@ -30,6 +38,12 @@ public class EnrollController extends MultiActionController {
 	
 	@Autowired
 	private OpenMrsClient openMrsClient;
+	
+	@Autowired
+	private OpenMRSObservationAdapter observationAdapter;
+	
+	@Autowired
+	private OpenMRSEncounterAdapter encounterAdapter;
 	
 
 	public ModelAndView start(HttpServletRequest request, HttpServletResponse response) {
@@ -93,4 +107,19 @@ public class EnrollController extends MultiActionController {
 		return new ModelAndView("scheduleTrackingPage");
 
 	}
-}
+	
+	public ModelAndView obs(HttpServletRequest request, HttpServletResponse response) {
+		String externalID = request.getParameter("externalID");
+		String conceptName = request.getParameter("conceptName");
+		
+		openMrsClient.printValues(externalID, conceptName);
+		
+		openMrsClient.lastTimeFulfilledDateTimeObs(externalID, conceptName);
+
+		
+		return new ModelAndView("scheduleTrackingPage");
+	}
+	
+
+	}
+

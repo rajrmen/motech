@@ -12,6 +12,9 @@ import org.motechproject.cmslite.api.service.CMSLiteService;
 import org.motechproject.ivr.service.CallRequest;
 import org.motechproject.ivr.service.IVRService;
 import org.motechproject.model.MotechEvent;
+import org.motechproject.scheduletracking.api.domain.InvalidEnrollmentException;
+import org.motechproject.scheduletracking.api.domain.MilestoneFulfillmentException;
+import org.motechproject.scheduletracking.api.domain.NoMoreMilestonesToFulfillException;
 import org.motechproject.scheduletracking.api.events.MilestoneEvent;
 import org.motechproject.scheduletracking.api.events.constants.EventSubject;
 import org.motechproject.scheduletracking.api.service.ScheduleTrackingService;
@@ -51,26 +54,37 @@ public class MilestoneListener {
 	public void execute(MotechEvent event) {
 		logger.debug("Handled milestone event");
 		MilestoneEvent mEvent = new MilestoneEvent(event);
-		String milestoneConceptName = event.getParameters().get("conceptName")
-				.toString();
+		String milestoneConceptName = (String) event.getParameters().get("conceptName");
+		
+		if (milestoneConceptName == null) return; //This method does not handle events without conceptName
+		
+		
 		boolean hasFulfilledMilestone = openmrsClient.hasConcept(
 				mEvent.getExternalId(), milestoneConceptName);
 
-		if (hasFulfilledMilestone) {
+		if (hasFulfilledMilestone && mEvent.getReferenceDate().minusDays(1).isBefore(openmrsClient.lastTimeFulfilledDateTimeObs(mEvent.getExternalId(), milestoneConceptName))) {
 			logger.debug("Fulfilling milestone for: " + mEvent.getExternalId()
 					+ " with schedule: " + mEvent.getScheduleName());
-			scheduleTrackingService.fulfillCurrentMilestone(
-					mEvent.getExternalId(), mEvent.getScheduleName());
-		} else { //Place calls and/or text messages
+			try {
+				scheduleTrackingService.fulfillCurrentMilestone(
+						mEvent.getExternalId(), mEvent.getScheduleName());
+			} catch (InvalidEnrollmentException e) {
+				
+			} catch (MilestoneFulfillmentException e2) {
+				
+			} catch (NoMoreMilestonesToFulfillException e3) {
+				
+			}
+		} else if (!mEvent.getWindowName().equals("max")){ //Place calls and/or text messages, but not for the max alerts
 			
 			List<Patient> patientList = patientDAO.findByExternalid(mEvent.getExternalId());
 			
 			if (patientList.size() > 0) {
 				
-				String IVRFormat = event.getParameters().get("IVRFormat").toString();
-				String SMSFormat = event.getParameters().get("SMSFormat").toString();
-				String language = event.getParameters().get("language").toString();
-				String messageName = event.getParameters().get("messageName").toString();
+				String IVRFormat = (String) event.getParameters().get("IVRFormat");
+				String SMSFormat = (String) event.getParameters().get("SMSFormat");
+				String language = (String) event.getParameters().get("language");
+				String messageName = (String) event.getParameters().get("messageName");
 
 				if ("true".equals(IVRFormat) && language != null && messageName != null) {
 					this.placeCall(patientList.get(0), language, messageName);
@@ -84,7 +98,8 @@ public class MilestoneListener {
 
 	@MotechListener(subjects = { EventSubject.DEFAULTMENT_CAPTURE })
 	public void defaulted(MotechEvent event) {
-		System.out.println("Handled defaultment event");
+		System.out.println("Defaulted");
+		logger.debug("Handled milestone event"); //Currently do nothing with defaultment event
 	}
 
 	private void placeCall(Patient patient, String language, String messageName) {
@@ -96,6 +111,7 @@ public class MilestoneListener {
 				e.printStackTrace();
 			}
 			if (content != null) {
+				System.out.println("Calling");
 				CallRequest request = new CallRequest(patient.getPhoneNum(), 119, content.getValue());
 				voxeoService.initiateCall(request);
 			}
@@ -111,6 +127,7 @@ public class MilestoneListener {
 				content = cmsliteService.getStringContent(language, messageName, SMS_FORMAT);
 			} catch (ContentNotFoundException e) {
 			}
+			System.out.println("Texting");
 			smsService.sendSMS(patient.getPhoneNum(), content.getValue());
 		} else { //no content, don't send SMS
 			logger.error("No SMS content available");
