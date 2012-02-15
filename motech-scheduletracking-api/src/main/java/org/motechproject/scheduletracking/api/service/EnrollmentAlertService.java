@@ -22,6 +22,7 @@ import static org.motechproject.util.DateUtil.now;
 @Component
 public class EnrollmentAlertService {
 
+	public static final String JOB_ID_PREFIX = "milestone.alert";
     private int MILLIS_IN_A_DAY = 24 * 60 * 60 * 1000;
     private int MILLIS_IN_A_MINUTE = 60 * 1000;
     public static final String MILESTONE_ALERTS = "milestone_alerts";
@@ -51,7 +52,7 @@ public class EnrollmentAlertService {
 
     private void scheduleAlertJob(Alert alert, Enrollment enrollment, Schedule schedule, Milestone milestone, MilestoneWindow milestoneWindow) {
         MotechEvent event = new MilestoneEvent(enrollment.getExternalId(), schedule.getName(), milestone.getName(), milestoneWindow.getName().toString(), enrollment.getReferenceDate()).toMotechEvent();
-        event.getParameters().put(MotechSchedulerService.JOB_ID_KEY, String.format("%s.%s.%s.%d", EventSubject.BASE_SUBJECT, MILESTONE_ALERTS, enrollment.getId(), alert.getIndex()));
+        event.getParameters().put(MotechSchedulerService.JOB_ID_KEY, String.format("%s.%s.%d", JOB_ID_PREFIX, enrollment.getId(), alert.getIndex()));
         event.getParameters().putAll(milestone.getData());
         
         DateTime startTime = getJobStartDate(enrollment, milestoneWindow);
@@ -91,6 +92,6 @@ public class EnrollmentAlertService {
     }
 
     public void unscheduleAllAlerts(Enrollment enrollment) {
-        schedulerService.unscheduleAllJobs(EventSubject.BASE_SUBJECT + "." + enrollment.getId());
+    	schedulerService.unscheduleAllJobs(String.format("%s-%s.%s", EventSubject.MILESTONE_ALERT, JOB_ID_PREFIX, enrollment.getId()));
     }
 }
