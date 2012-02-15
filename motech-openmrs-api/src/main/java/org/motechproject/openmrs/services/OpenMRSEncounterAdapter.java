@@ -92,7 +92,8 @@ public class OpenMRSEncounterAdapter implements MRSEncounterAdapter {
 	@Override
 	public List<MRSEncounter> getAllEncountersByPatientMotechId(String motechId) {
 		
-		List<Encounter> openMRSEncounters = encounterService.getEncountersByPatientIdentifier(motechId);
+		Patient openMRSpatient = openMRSPatientAdapter.getOpenmrsPatientByMotechId(motechId);
+		List<Encounter> openMRSEncounters = encounterService.getEncountersByPatient(openMRSpatient);
 		List<MRSEncounter> MRSEncounters = new ArrayList<MRSEncounter>();
 		
 		for (Encounter openMrsEncounter : openMRSEncounters) {
