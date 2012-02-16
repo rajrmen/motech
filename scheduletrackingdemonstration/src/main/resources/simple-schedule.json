@@ -8,14 +8,14 @@
                     "earliest" : "1 minutes",
                     "due" : "3 minutes",
                     "late" : "6 minutes",
-                    "max" : "60 minutes"
+                    "max" : "15 minutes"
                 },
                 "data" : {
-                    "conceptName" : "Demo Concept Question",
+                    "conceptName" : "Demo Concept Question #1",
                     "IVRFormat" : "true",
                     "SMSFormat" : "true",
                     "language" : "en",
-                    "messageName" : "cron-message"
+                    "messageName" : "DemoConceptQuestion1"
                 },
                 "alerts" : [
                     {
@@ -41,14 +41,14 @@
                     "earliest" : "1 minutes",
                     "due" : "3 minutes",
                     "late" : "6 minutes",
-                    "max" : "60 minutes"
+                    "max" : "15 minutes"
                 },
                 "data" : {
-                    "conceptName" : "Demo Concept Question 2",
+                    "conceptName" : "Demo Concept Question #2",
                     "IVRFormat" : "true",
                     "SMSFormat" : "true",
                     "language" : "en",
-                    "messageName" : "cron-message"
+                    "messageName" : "DemoConceptQuestion2"
                 },
                 "alerts" : [
                                     {
@@ -75,14 +75,14 @@
                     "earliest" : "1 minutes",
                     "due" : "3 minutes",
                     "late" : "6 minutes",
-                    "max" : "60 minutes"
+                    "max" : "15 minutes"
                 },
                 "data" : {
-                    "conceptName" : "Demo Concept Question 3",
+                    "conceptName" : "Demo Concept Question #3",
                     "IVRFormat" : "true",
                     "SMSFormat" : "true",
                     "language" : "en",
-                    "messageName" : "cron-message"
+                    "messageName" : "DemoConceptQuestion3"
                 },
                 "alerts" : [
                                     {
@@ -109,14 +109,14 @@
                     "earliest" : "1 minutes",
                     "due" : "3 minutes",
                     "late" : "6 minutes",
-                    "max" : "60 minutes"
+                    "max" : "15 minutes"
                 },
                 "data" : {
-                    "conceptName" : "Demo Concept Question 4",
+                    "conceptName" : "Demo Concept Question #4",
                     "IVRFormat" : "true",
                     "SMSFormat" : "true",
                     "language" : "en",
-                    "messageName" : "cron-message"
+                    "messageName" : "DemoConceptQuestion4"
                 },
                 "alerts" : [
                                     {

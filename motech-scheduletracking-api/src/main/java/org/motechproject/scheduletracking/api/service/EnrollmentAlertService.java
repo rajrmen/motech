@@ -42,7 +42,6 @@ public class EnrollmentAlertService {
         if (currentMilestone == null)
             return;
         for (MilestoneWindow window : currentMilestone.getMilestoneWindows()) {
-        	System.out.println("Start: " + window.getStart().inMinutes() + " and end: " + window.getWindowEndInMinutes());
             if (!window.hasElapsedInMinutes(getCurrentMilestoneStartDate(enrollment))) {
                 for (Alert alert : window.getAlerts())
                     scheduleAlertJob(alert, enrollment, schedule, currentMilestone, window);
@@ -56,10 +55,7 @@ public class EnrollmentAlertService {
         event.getParameters().putAll(milestone.getData());
         
         DateTime startTime = getJobStartDate(enrollment, milestoneWindow);
-        System.out.println("Scheduling alert for: " + startTime.toString());
-        System.out.println(milestoneWindow.getName());
         RepeatingSchedulableJob job = new RepeatingSchedulableJob(event, startTime.toDate(), null, numberOfAlertsToRaise(alert, enrollment, milestoneWindow), alert.getInterval().inMinutes() * MILLIS_IN_A_MINUTE);
-        System.out.println("Number: " + job.getRepeatCount() + " + at this interval: " + job.getRepeatInterval());
         schedulerService.safeScheduleRepeatingJob(job);
     }
 
@@ -68,7 +64,6 @@ public class EnrollmentAlertService {
         DateTime endDateOfWindow = startDateOfWindow.plusMinutes(milestoneWindow.getWindowEndInMinutes() - milestoneWindow.getStart().inMinutes());
         //int daysToEndOfWindow = Days.daysBetween(today, endDateOfWindow).getDays();
         int minutesToEndOfWindow = Minutes.minutesBetween(startDateOfWindow, endDateOfWindow).getMinutes();
-        System.out.println("alleged minutes: " + minutesToEndOfWindow);
         int maximumAlerts = alert.getRepeatCount();
         return maximumAlerts <= minutesToEndOfWindow? maximumAlerts : minutesToEndOfWindow;
     }

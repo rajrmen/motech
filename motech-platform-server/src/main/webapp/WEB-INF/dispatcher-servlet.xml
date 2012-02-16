@@ -51,6 +51,10 @@
 	<bean name="enrollmentController"
 		class="org.motechproject.ScheduleTrackingDemo.controllers.EnrollController">
 	</bean>
+	
+		<bean name="patientController"
+		class="org.motechproject.ScheduleTrackingDemo.controllers.PatientController">
+	</bean>
 
 <!---->
 	<!-- <bean id="test" class="org.motechproject.tama.server.TestController"> -->

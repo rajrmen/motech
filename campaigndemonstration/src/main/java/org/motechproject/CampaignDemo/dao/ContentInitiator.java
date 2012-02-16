@@ -49,6 +49,7 @@ public class ContentInitiator {
         cmsliteService.addContent(cron);
         cmsliteService.addContent(new StringContent("en", "cron-message", "IVR", "english/cron.xml"));
         cmsliteService.addContent(new StringContent("en", "cron-message", "SMS", "This is an SMS cron message that will repeat every two minutes until you unenroll"));
+        
 	}
 
 	private String getPregnancyMessage(int messageNumber) {
