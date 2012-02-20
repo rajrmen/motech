@@ -89,6 +89,12 @@ public class OpenMrsClientImpl implements OpenMrsClient {
 		
 	}
 	
+	@LoginAsAdmin
+	@ApiSession
+	public MRSPatient getPatientByMotechId(String patientId) {
+		return patientAdapter.getPatientByMotechId(patientId);
+	}
+	
 	private class dateComparator implements Comparator<MRSObservation>{
 
 		@Override

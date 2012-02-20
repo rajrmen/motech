@@ -64,7 +64,7 @@ public class EnrollController extends MultiActionController {
 		String scheduleName = request.getParameter("scheduleName");
 
 		if (patientDAO.findByExternalid(externalID) != null && 
-				patientAdapter.getPatientByMotechId(externalID) != null) { //do not let users that aren't in both databases register
+				openMrsClient.getPatientByMotechId(externalID) != null) { //do not let users that aren't in both databases register
 			Schedule schedule = allSchedules.getByName(scheduleName);
 
 			if (schedule == null) return new ModelAndView("scheduleTrackingPage");
