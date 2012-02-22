@@ -38,7 +38,7 @@ public class EnrollmentAlertService {
         if (currentMilestone == null)
             return;
         for (MilestoneWindow window : currentMilestone.getMilestoneWindows()) {
-            if (!window.hasElapsed(getCurrentMilestoneStartDate(enrollment))) {
+            if (!currentMilestone.windowElapsed(window.getName(), getCurrentMilestoneStartDate(enrollment))) {
                 for (Alert alert : window.getAlerts())
                     scheduleAlertJob(alert, enrollment, schedule, currentMilestone, window);
             }
@@ -49,27 +49,27 @@ public class EnrollmentAlertService {
         final MilestoneAlert milestoneAlert = MilestoneAlert.fromMilestone(milestone, enrollment.getReferenceDate());
         MotechEvent event = new MilestoneEvent(enrollment.getExternalId(), schedule.getName(), milestoneAlert, milestoneWindow.getName().toString(), enrollment.getReferenceDate()).toMotechEvent();
         event.getParameters().put(MotechSchedulerService.JOB_ID_KEY, String.format("%s.%d", enrollment.getId(), alert.getIndex()));
-        DateTime startTime = newDateTime(getNextAlertStartDate(alert, enrollment, milestoneWindow), enrollment.getPreferredAlertTime());
+        DateTime startTime = newDateTime(getNextAlertStartDate(alert, enrollment, milestoneWindow, milestone), enrollment.getPreferredAlertTime());
         long repeatIntervalInMillis = (long) alert.getInterval().inDays() * (long) MILLIS_PER_DAY;
-        int numberOfAlertsToSchedule = numberOfAlertsToSchedule(alert, enrollment, milestoneWindow);
+        int numberOfAlertsToSchedule = numberOfAlertsToSchedule(alert, enrollment, milestoneWindow, milestone);
         if (numberOfAlertsToSchedule > 0)
             schedulerService.safeScheduleRepeatingJob(new RepeatingSchedulableJob(event, startTime.toDate(), null, numberOfAlertsToSchedule - 1, repeatIntervalInMillis));
     }
 
-    private LocalDate getNextAlertStartDate(Alert alert, Enrollment enrollment, MilestoneWindow milestoneWindow) {
-        LocalDate idealStartOfAlerts = getStartDateOfWindow(enrollment, milestoneWindow).plusDays(alert.getOffset().inDays());
-        int elapsedAlerts = elapsedAlertsAsOfNow(alert, enrollment, milestoneWindow);
+    private LocalDate getNextAlertStartDate(Alert alert, Enrollment enrollment, MilestoneWindow milestoneWindow, Milestone milestone) {
+        LocalDate idealStartOfAlerts = getStartDateOfWindow(enrollment, milestoneWindow, milestone).plusDays(alert.getOffset().inDays());
+        int elapsedAlerts = elapsedAlertsAsOfNow(alert, enrollment, milestoneWindow, milestone);
         return idealStartOfAlerts.plusDays(elapsedAlerts * alert.getInterval().inDays());
     }
 
-    private int numberOfAlertsToSchedule(Alert alert, Enrollment enrollment, MilestoneWindow milestoneWindow) {
-        return alert.getCount() - elapsedAlertsAsOfNow(alert, enrollment, milestoneWindow);
+    private int numberOfAlertsToSchedule(Alert alert, Enrollment enrollment, MilestoneWindow milestoneWindow, Milestone milestone) {
+        return alert.getCount() - elapsedAlertsAsOfNow(alert, enrollment, milestoneWindow, milestone);
     }
 
-    private int elapsedAlertsAsOfNow(Alert alert, Enrollment enrollment, MilestoneWindow milestoneWindow) {
+    private int elapsedAlertsAsOfNow(Alert alert, Enrollment enrollment, MilestoneWindow milestoneWindow, Milestone milestone) {
         DateTime now = now();
         LocalDate today = now.toLocalDate();
-        LocalDate idealStartOfAlerts = getStartDateOfWindow(enrollment, milestoneWindow).plusDays(alert.getOffset().inDays());
+        LocalDate idealStartOfAlerts = getStartDateOfWindow(enrollment, milestoneWindow, milestone).plusDays(alert.getOffset().inDays());
         int elapsedAlerts = 0;
         if (idealStartOfAlerts.isBefore(today)) {
             int daysSinceIdealStartOfAlert = daysBetween(idealStartOfAlerts, today).getDays();
@@ -80,8 +80,8 @@ public class EnrollmentAlertService {
         return min(elapsedAlerts, alert.getCount() + 1);
     }
 
-    private LocalDate getStartDateOfWindow(Enrollment enrollment, MilestoneWindow milestoneWindow) {
-        return getCurrentMilestoneStartDate(enrollment).plusDays(milestoneWindow.getStart().inDays());
+    private LocalDate getStartDateOfWindow(Enrollment enrollment, MilestoneWindow milestoneWindow, Milestone milestone) {
+        return getCurrentMilestoneStartDate(enrollment).plusDays(milestone.getWindowStartInDays(milestoneWindow.getName()));
     }
 
     public LocalDate getCurrentMilestoneStartDate(Enrollment enrollment) {

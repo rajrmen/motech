@@ -31,7 +31,7 @@ public class AllEnrollmentsIT {
 
     @Before
     public void setUp() {
-        milestone = new Milestone("first_milestone", new WallTime(13, WallTimeUnit.Week), new WallTime(14, WallTimeUnit.Week), new WallTime(16, WallTimeUnit.Week), null);
+        milestone = new Milestone("first_milestone", new WallTime(13, WallTimeUnit.Week), new WallTime(14, WallTimeUnit.Week), new WallTime(16, WallTimeUnit.Week), new WallTime(16, WallTimeUnit.Week));
         schedule = new Schedule("schedule_name");
         schedule.addMilestones(milestone);
     }

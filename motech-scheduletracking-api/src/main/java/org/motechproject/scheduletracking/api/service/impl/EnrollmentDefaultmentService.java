@@ -42,7 +42,7 @@ public class EnrollmentDefaultmentService {
     }
 
     // TODO: duplicated from EnrollmentAlertService
-    LocalDate getCurrentMilestoneStartDate(Enrollment enrollment) {
+    public LocalDate getCurrentMilestoneStartDate(Enrollment enrollment) {
         Schedule schedule = allTrackedSchedules.getByName(enrollment.getScheduleName());
         if (enrollment.getCurrentMilestoneName().equals(schedule.getFirstMilestone().getName()))
             return enrollment.getReferenceDate();
