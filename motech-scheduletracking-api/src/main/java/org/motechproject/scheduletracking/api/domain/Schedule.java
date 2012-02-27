@@ -8,6 +8,7 @@ import java.util.List;
 public class Schedule implements Serializable {
     private String name;
     private List<Milestone> milestones = new ArrayList<Milestone>();
+    private boolean isBasedOnAbsoluteWindows;
 
     public Schedule(String name) {
         this.name = name;
@@ -62,5 +63,14 @@ public class Schedule implements Serializable {
 
     public boolean maxMilestoneCountReached(int milestoneCount) {
         return milestoneCount >= milestones.size();
+    }
+
+    public Schedule isBasedOnAbsoluteWindows(boolean value) {
+        this.isBasedOnAbsoluteWindows = value;
+        return this;
+    }
+
+    public boolean isBasedOnAbsoluteWindows() {
+        return this.isBasedOnAbsoluteWindows;
     }
 }

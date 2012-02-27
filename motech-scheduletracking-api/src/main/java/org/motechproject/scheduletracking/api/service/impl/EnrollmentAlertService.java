@@ -2,7 +2,6 @@ package org.motechproject.scheduletracking.api.service.impl;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
-import org.joda.time.Period;
 import org.motechproject.model.MotechEvent;
 import org.motechproject.model.RepeatingSchedulableJob;
 import org.motechproject.scheduler.MotechSchedulerService;
@@ -34,7 +33,7 @@ public class EnrollmentAlertService {
             return;
 
         String firstMilestoneName = schedule.getFirstMilestone().getName();
-        LocalDate currentMilestoneStartDate = enrollment.getCurrentMilestoneStartDate(firstMilestoneName);
+        LocalDate currentMilestoneStartDate = enrollment.getCurrentMilestoneStartDate(firstMilestoneName, schedule.isBasedOnAbsoluteWindows());
         for (MilestoneWindow milestoneWindow : currentMilestone.getMilestoneWindows()) {
             if (currentMilestone.windowElapsed(milestoneWindow.getName(), currentMilestoneStartDate))
                 continue;

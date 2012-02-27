@@ -54,6 +54,8 @@ public class ScheduleFactory {
                 milestone.addAlert(WindowName.valueOf(alertRecord.window()), new Alert(parse(offset), parse(alertRecord.interval()), Integer.parseInt(alertRecord.count()), alertIndex++));
             }
             schedule.addMilestones(milestone);
+
+            schedule.isBasedOnAbsoluteWindows(scheduleRecord.hasAbsoluteWindows());
         }
         return schedule;
     }
