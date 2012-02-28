@@ -44,7 +44,6 @@ public class EnrollmentAlertService {
         }
     }
 
-
     private void scheduleAlertJob(Alert alert, Enrollment enrollment, Milestone currentMilestone, MilestoneWindow milestoneWindow, MilestoneAlert milestoneAlert, LocalDate currentMilestoneStartDate) {
         LocalDate milestoneWindowStartDate = currentMilestoneStartDate.plus(currentMilestone.getWindowStart(milestoneWindow.getName()));
         int numberOfAlertsToSchedule = alert.getRemainingAlertCount(milestoneWindowStartDate, enrollment.getPreferredAlertTime());
