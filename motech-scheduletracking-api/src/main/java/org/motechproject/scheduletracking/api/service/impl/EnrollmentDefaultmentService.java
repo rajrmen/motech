@@ -33,7 +33,7 @@ public class EnrollmentDefaultmentService {
         if (currentMilestone == null)
             return;
 
-        LocalDate currentMilestoneStartDate = enrollment.getCurrentMilestoneStartDate(schedule.getFirstMilestone().getName());
+        LocalDate currentMilestoneStartDate = enrollment.getCurrentMilestoneStartDate(schedule.getFirstMilestone().getName(), schedule.isBasedOnAbsoluteWindows());
         LocalDate milestoneEndDate = currentMilestoneStartDate.plus(currentMilestone.getMaximumDuration());
 
         if (milestoneEndDate.isBefore(DateUtil.today()))
