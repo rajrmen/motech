@@ -101,8 +101,8 @@ public class EnrollmentTest {
         String secondMilestoneName = "Second Milestone";
         LocalDate referenceDate = weeksAgo(5);
 
-        Enrollment enrollmentIntoFirstMilestone = new Enrollment("ID-074285", "Yellow Fever Vaccination", firstMilestoneName, referenceDate, weeksAgo(3), null);
-        Enrollment enrollmentIntoSecondMilestone = new Enrollment("ID-074285", "Yellow Fever Vaccination", secondMilestoneName, referenceDate, weeksAgo(3), null);
+        Enrollment enrollmentIntoFirstMilestone = new Enrollment("ID-074285", "Yellow Fever Vaccination", firstMilestoneName, referenceDate, weeksAgo(3), null, EnrollmentStatus.Active);
+        Enrollment enrollmentIntoSecondMilestone = new Enrollment("ID-074285", "Yellow Fever Vaccination", secondMilestoneName, referenceDate, weeksAgo(3), null, EnrollmentStatus.Active);
 
         assertEquals(referenceDate, enrollmentIntoFirstMilestone.getCurrentMilestoneStartDate(firstMilestoneName, true));
         assertEquals(referenceDate, enrollmentIntoSecondMilestone.getCurrentMilestoneStartDate(firstMilestoneName, true));

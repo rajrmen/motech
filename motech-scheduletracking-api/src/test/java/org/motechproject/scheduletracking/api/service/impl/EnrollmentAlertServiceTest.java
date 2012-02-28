@@ -25,11 +25,11 @@ import static junit.framework.Assert.assertEquals;
 import static org.joda.time.DateTimeConstants.MILLIS_PER_DAY;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.MockitoAnnotations.initMocks;
 import static org.motechproject.scheduletracking.api.utility.DateTimeUtil.*;
 import static org.motechproject.scheduletracking.api.utility.PeriodFactory.days;
-import static org.motechproject.scheduletracking.api.utility.PeriodFactory.months;
 import static org.motechproject.scheduletracking.api.utility.PeriodFactory.weeks;
 import static org.motechproject.util.DateUtil.newDateTime;
 import static org.motechproject.util.DateUtil.today;
@@ -291,7 +291,7 @@ public class EnrollmentAlertServiceTest {
         schedule.addMilestones(secondMilestone);
         when(allTrackedSchedules.getByName(scheduleName)).thenReturn(schedule);
 
-        Enrollment enrollmentIntoSecondMilestone = new Enrollment("some_id", scheduleName, secondMilestoneName, weeksAgo(1), weeksAgo(0), new Time(14, 0));
+        Enrollment enrollmentIntoSecondMilestone = new Enrollment("some_id", scheduleName, secondMilestoneName, weeksAgo(1), weeksAgo(0), new Time(14, 0), EnrollmentStatus.Active);
         enrollmentIntoSecondMilestone.fulfillCurrentMilestone(today());
         enrollmentAlertService.scheduleAlertsForCurrentMilestone(enrollmentIntoSecondMilestone);
 
