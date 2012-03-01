@@ -4,11 +4,11 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 import org.joda.time.DateTime;
 import org.motechproject.mrs.model.MRSEncounter;
 import org.motechproject.mrs.model.MRSObservation;
+import org.motechproject.mrs.model.MRSPatient;
 import org.motechproject.openmrs.advice.ApiSession;
 import org.motechproject.openmrs.advice.LoginAsAdmin;
 import org.motechproject.openmrs.services.OpenMRSEncounterAdapter;
@@ -110,5 +110,11 @@ public class OpenMrsClientImpl implements OpenMrsClient {
 			return 0;
 		}
 		
+	}
+
+	@LoginAsAdmin
+	@ApiSession
+	public void savePatient(MRSPatient patient) {
+		patientAdapter.savePatient(patient);
 	}
 }

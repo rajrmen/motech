@@ -33,6 +33,11 @@
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
+			<artifactId>motech-mobileforms-api</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>motech-message-campaign</artifactId>
 			<version>${project.version}</version>
 		</dependency>

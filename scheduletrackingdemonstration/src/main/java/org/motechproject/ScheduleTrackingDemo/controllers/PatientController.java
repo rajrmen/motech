@@ -3,10 +3,12 @@ package org.motechproject.ScheduleTrackingDemo.controllers;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.motechproject.ScheduleTracking.model.Patient;
+import org.motechproject.ScheduleTrackingDemo.PatientScheduler;
 import org.motechproject.ScheduleTrackingDemo.DAO.MRSPatientDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.ModelAndView;
@@ -24,6 +26,9 @@ public class PatientController extends MultiActionController {
 	@Autowired
 	private MRSPatientDAO patientDAO;
 	
+	@Autowired 
+	private PatientScheduler patientScheduler;
+	
 	public PatientController() {
 	}
 	
@@ -37,18 +42,7 @@ public class PatientController extends MultiActionController {
 		String phoneNum = request.getParameter("phoneNum");
 		String externalID = request.getParameter("externalId");
 		
-		if (externalID.length() == 0 || externalID.equals("") || externalID.trim().length() == 0) {
-			//Don't register empty string IDs
-		} else {
-			patientList = patientDAO.findByExternalid(externalID); //Only one patient should be returned if ID is unique, but it is returned as list
-			if (patientList.size() > 0) { //Patient already exists, so it is updated
-				Patient thePatient = patientList.get(0);
-				thePatient.setPhoneNum(phoneNum);
-				patientDAO.update(thePatient);
-			} else {
-				patientDAO.add(new Patient(externalID, phoneNum));
-			}
-		}
+		patientScheduler.saveMotechPatient(externalID, phoneNum);
 		
 		patientList = patientDAO.findAllPatients();
 		

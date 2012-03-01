@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<xf:xforms xmlns:xf="http://www.w3.org/2002/xforms" xmlns:xsd="http://www.w3.org/2001/XMLSchema" id="1">
+  <xf:model>
+    <xf:instance id="patient">
+      <patient id="1" name="Patient Registration">
+        <motechId />
+        <firstName />
+        <lastName />
+        <gender />
+        <dateOfBirth />
+        <phoneNumber />
+        <enrollPatient />
+        <formtype>data_entry</formtype>
+        <formname>DemoPatientRegistration</formname>
+      </patient>
+    </xf:instance>
+    <xf:bind id="motechId" nodeset="/patient/motechId" required="true()" type="xsd:int" constraint=". &lt; 2147483647" message="Number too large. Keep under 2147483647" />
+    <xf:bind id="firstName" nodeset="/patient/firstName" required="true()" type="xsd:string" />
+    <xf:bind id="lastName" nodeset="/patient/lastName" required="true()" type="xsd:string" />
+    <xf:bind id="gender" nodeset="/patient/gender" required="true()" type="xsd:string" />
+    <xf:bind constraint=". &lt; 'today()'" id="dateOfBirth" message="Invalid date: date specified is in the future" nodeset="/patient/dateOfBirth" required="true()" type="xsd:date" />
+    <xf:bind id="phoneNumber" nodeset="/patient/phoneNumber" required="true()" type="xsd:string" constraint="" message="" />
+    <xf:bind id="enrollPatient" nodeset="/patient/enrollPatient" required="true()" type="xsd:boolean" />
+    <xf:bind id="formtype" nodeset="/patient/formtype" required="true()" type="xsd:string" visible="false()" />
+    <xf:bind id="formname" nodeset="/patient/formname" required="true()" type="xsd:string" visible="false()" />
+  </xf:model>
+  <xf:group id="1">
+    <xf:label>Patient Registration</xf:label>
+    <xf:input bind="motechId">
+      <xf:label>MoTeCH ID</xf:label>
+    </xf:input>
+    <xf:input bind="firstName">
+      <xf:label>First Name</xf:label>
+    </xf:input>
+    <xf:input bind="lastName">
+      <xf:label>Last Name</xf:label>
+    </xf:input>
+    <xf:select1 bind="gender">
+      <xf:label>Gender</xf:label>
+      <xf:item>
+        <xf:label>Male</xf:label>
+        <xf:value>M</xf:value>
+      </xf:item>
+      <xf:item>
+        <xf:label>Female</xf:label>
+        <xf:value>F</xf:value>
+      </xf:item>
+    </xf:select1>
+    <xf:input bind="dateOfBirth">
+      <xf:label>Date of Birth</xf:label>
+    </xf:input>
+    <xf:input bind="phoneNumber">
+      <xf:label>Phone Number</xf:label>
+    </xf:input>
+    <xf:select1 bind="enrollPatient">
+      <xf:label>Enroll Patient in Demo Schedule?</xf:label>
+      <xf:item>
+        <xf:label>Yes</xf:label>
+        <xf:value>true</xf:value>
+      </xf:item>
+      <xf:item>
+        <xf:label>No</xf:label>
+        <xf:value>false</xf:value>
+      </xf:item>
+    </xf:select1>
+    <xf:input bind="formtype">
+      <xf:label>formType</xf:label>
+    </xf:input>
+    <xf:input bind="formname">
+      <xf:label>formName</xf:label>
+    </xf:input>
+  </xf:group>
+</xf:xforms>

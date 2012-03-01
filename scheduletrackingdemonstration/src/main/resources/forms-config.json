@@ -1,0 +1,19 @@
+[
+    {
+        "name" : "DemoGroup",
+        "forms" : [
+            {
+                "name" : "DemoPatientRegistration",
+                "fileName" :  "PatientRegistration.xml",
+                "bean":"org.motechproject.ScheduleTrackingDemo.beans.PatientRegistrationBean",
+                "validator": "org.motechproject.ScheduleTrackingDemo.validator.PatientRegistrationValidator"
+            },
+            {
+                "name" : "DemoPatientEnrollment",
+                "fileName" :  "PatientEnrollment.xml",
+                "bean":"org.motechproject.ScheduleTrackingDemo.beans.PatientEnrollmentBean",
+                "validator": "org.motechproject.ScheduleTrackingDemo.validator.PatientEnrollmentValidator"
+            }
+        ]
+    }
+]

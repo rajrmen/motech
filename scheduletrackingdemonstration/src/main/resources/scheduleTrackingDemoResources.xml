@@ -14,9 +14,16 @@
 	<import resource="classpath:voxeoResources.xml" />
 	<import resource="applicationCmsLiteApi.xml" />
 	<import resource="applicationSmsHttp.xml" />
-	
+    <import resource="classpath:applicationMobileFormsAPI.xml" />
+    	
 	<util:properties id="scheduleMessages"
 		location="classpath:schedulemessages.properties" />
+		
+    <bean class="org.motechproject.ScheduleTrackingDemo.FormValidatorRegister" />
+    <bean class="org.motechproject.ScheduleTrackingDemo.validator.PatientRegistrationValidator" />
+    <bean class="org.motechproject.ScheduleTrackingDemo.validator.PatientEnrollmentValidator" />
+    <bean class="org.motechproject.ScheduleTrackingDemo.listeners.MobileFormListener" />
+    <bean class="org.motechproject.ScheduleTrackingDemo.PatientScheduler" />
 		
 	<bean id="patientMRSDatabase" class="org.ektorp.impl.StdCouchDbConnector">
 		<constructor-arg value="patientsMRS" />

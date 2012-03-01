@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<xf:xforms xmlns:xf="http://www.w3.org/2002/xforms" xmlns:xsd="http://www.w3.org/2001/XMLSchema" id="1">
+  <xf:model>
+    <xf:instance id="patientEnrollment">
+      <patientEnrollment id="1" name="Patient Enrollment">
+        <motechId />
+        <phoneNumber />
+        <formtype>data_entry</formtype>
+        <formname>DemoPatientEnrollment</formname>
+      </patientEnrollment>
+    </xf:instance>
+    <xf:bind id="motechId" nodeset="/patientEnrollment/motechId" required="true()" type="xsd:int" constraint=". &lt; 2147483647" message="Number too large. Keep under 2147483647" />
+    <xf:bind id="phoneNumber" nodeset="/patientEnrollment/phoneNumber" required="true()" type="xsd:string" constraint="" message="" />
+    <xf:bind id="formtype" nodeset="/patientEnrollment/formtype" required="true()" type="xsd:string" visible="false()" />
+    <xf:bind id="formname" nodeset="/patientEnrollment/formname" required="true()" type="xsd:string" visible="false()" />
+  </xf:model>
+  <xf:group id="1">
+    <xf:label>Patient Enrollment</xf:label>
+    <xf:input bind="motechId">
+      <xf:label>MoTeCH ID</xf:label>
+    </xf:input>
+    <xf:input bind="phoneNumber">
+      <xf:label>Phone Number</xf:label>
+    </xf:input>
+    <xf:input bind="formtype">
+      <xf:label>formType</xf:label>
+    </xf:input>
+    <xf:input bind="formname">
+      <xf:label>formName</xf:label>
+    </xf:input>
+  </xf:group>
+</xf:xforms>
