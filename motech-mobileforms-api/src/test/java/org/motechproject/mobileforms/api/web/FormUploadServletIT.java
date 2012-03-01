@@ -1,33 +1,50 @@
 package org.motechproject.mobileforms.api.web;
 
-import com.jcraft.jzlib.ZInputStream;
-import org.fcitmuk.epihandy.EpihandyXformSerializer;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mock;
-import org.motechproject.mobileforms.api.callbacks.FormProcessor;
-import org.motechproject.mobileforms.api.callbacks.FormPublisher;
-import org.motechproject.mobileforms.api.domain.FormBean;
-import org.motechproject.mobileforms.api.validator.TestFormBean;
-import org.motechproject.mobileforms.api.validator.TestFormValidator;
-import org.motechproject.mobileforms.api.vo.Study;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
-import org.springframework.test.util.ReflectionTestUtils;
-
-import java.io.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import static junit.framework.Assert.assertFalse;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
-import static org.mockito.Mockito.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import org.fcitmuk.epihandy.EpihandyXformSerializer;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.motechproject.mobileforms.api.callbacks.FormProcessor;
+import org.motechproject.mobileforms.api.callbacks.FormPublisher;
+import org.motechproject.mobileforms.api.domain.FormBean;
+import org.motechproject.mobileforms.api.service.MobileFormsService;
+import org.motechproject.mobileforms.api.validator.TestFormBean;
+import org.motechproject.mobileforms.api.validator.TestFormValidator;
+import org.motechproject.mobileforms.api.vo.Study;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.mock.web.MockServletContext;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import com.jcraft.jzlib.ZInputStream;
+
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations="/applicationMobileFormsAPI.xml")
 public class FormUploadServletIT {
 
     private MockHttpServletRequest request;
@@ -37,6 +54,9 @@ public class FormUploadServletIT {
     FormPublisher formPublisher;
     @Mock
     private FormProcessor formProcessor;
+    
+    @Autowired 
+    MobileFormsService mobileFormsService;
 
     @Before
     public void setUp() {
@@ -48,9 +68,8 @@ public class FormUploadServletIT {
 
     @Test
     public void shouldProcessUploadedFormAndReturnValidationErrorsIfErrorsAreFound() throws Exception {
-        FormUploadServlet formUploadServlet = new FormUploadServlet();
-        ReflectionTestUtils.setField(formUploadServlet, "formProcessor", formProcessor);
-        ReflectionTestUtils.setField(formUploadServlet, "formPublisher", formPublisher);
+        FormUploadServlet formUploadServlet = new FormUploadServlet(mobileFormsService, null, formProcessor, formPublisher);
+        formUploadServlet.setServletContext(servletContext);
         FormUploadServlet servlet = spy(formUploadServlet);
 
         List<FormBean> formBeans = new ArrayList<FormBean>();
@@ -73,7 +92,7 @@ public class FormUploadServletIT {
 
         TestFormValidator testFormValidator = new TestFormValidator();
         servletContext.setAttribute(TestFormValidator.class.getName(), testFormValidator);
-        doReturn(servletContext).when(servlet).getServletContext();
+
 
 
         try {

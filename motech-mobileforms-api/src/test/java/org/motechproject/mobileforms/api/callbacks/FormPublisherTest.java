@@ -23,8 +23,7 @@ public class FormPublisherTest {
     @Before
     public void setUp() {
         initMocks(this);
-        publisher = new FormPublisher();
-        ReflectionTestUtils.setField(publisher, "eventRelay", eventRelay);
+        publisher = new FormPublisher(eventRelay);
     }
 
     @Test

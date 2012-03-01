@@ -1,13 +1,13 @@
 package org.motechproject.mobileforms.api.callbacks;
 
-import org.motechproject.context.EventContext;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.motechproject.event.EventRelay;
 import org.motechproject.mobileforms.api.domain.FormBean;
 import org.motechproject.model.MotechEvent;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @Component
 public class FormPublisher {
@@ -17,8 +17,9 @@ public class FormPublisher {
 
     private EventRelay eventRelay;
 
-    public FormPublisher() {
-        this.eventRelay = EventContext.getInstance().getEventRelay();
+    @Autowired
+    public FormPublisher(EventRelay eventRelay) {
+        this.eventRelay = eventRelay;
     }
 
     public void publish(FormBean formBean) {

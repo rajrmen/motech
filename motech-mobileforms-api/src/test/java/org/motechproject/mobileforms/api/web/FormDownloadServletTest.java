@@ -37,8 +37,6 @@ public class FormDownloadServletTest {
     private MockHttpServletRequest request;
     private MockHttpServletResponse response;
     @Mock
-    private ApplicationContext applicationContext;
-    @Mock
     private MobileFormsService mobileFormsService;
     @Mock
     private UsersService usersService;
@@ -50,10 +48,7 @@ public class FormDownloadServletTest {
         initMocks(this);
         request = new MockHttpServletRequest();
         response = new MockHttpServletResponse();
-        formDownloadServlet = spy(new FormDownloadServlet());
-        ReflectionTestUtils.setField(formDownloadServlet, "context", applicationContext);
-        ReflectionTestUtils.setField(formDownloadServlet, "mobileFormsService", mobileFormsService);
-        ReflectionTestUtils.setField(formDownloadServlet, "usersService", usersService);
+        formDownloadServlet = spy(new FormDownloadServlet(mobileFormsService, usersService, null, null));
         doReturn(epihandySerializer).when(formDownloadServlet).serializer();
     }
 

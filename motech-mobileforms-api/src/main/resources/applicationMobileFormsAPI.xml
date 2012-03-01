@@ -6,8 +6,14 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
     <context:annotation-config/>
-    <context:spring-configured/>
-    <context:component-scan base-package="org.motechproject.mobileforms.api"/>
+
+	<import resource="classpath:applicationPlatformServerAPI.xml" />
+	
+	<context:property-placeholder location="classpath:activemq.properties" ignore-unresolvable="true"/>
+	
+    <context:component-scan base-package="org.motechproject.mobileforms.api">
+    	<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller" />
+    </context:component-scan>
 
     <util:properties id="mobileFormsProperties" location="classpath:mobileForms.properties"/>
 

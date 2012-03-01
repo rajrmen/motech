@@ -8,7 +8,7 @@ public class FormDownloadTest {
 
     @Before
    public void setUp(){
-        formDownloadServlet = new FormDownloadServlet();
+        formDownloadServlet = new FormDownloadServlet(null, null, null, null);
    }
 
 

@@ -1,30 +1,53 @@
 package org.motechproject.mobileforms.api.web;
 
-import com.jcraft.jzlib.ZInputStream;
-import org.fcitmuk.epihandy.EpihandyXformSerializer;
-import org.junit.Before;
-import org.junit.Test;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletResponse;
-import java.io.*;
-import java.util.Arrays;
-import java.util.List;
-
 import static junit.framework.Assert.assertFalse;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.MockitoAnnotations.initMocks;
-import static org.motechproject.mobileforms.api.utils.TestUtilities.*;
+import static org.motechproject.mobileforms.api.utils.TestUtilities.readFully;
+import static org.motechproject.mobileforms.api.utils.TestUtilities.slice;
+import static org.motechproject.mobileforms.api.utils.TestUtilities.toObjectByteArray;
+import static org.motechproject.mobileforms.api.utils.TestUtilities.toPrimitive;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletResponse;
+
+import org.fcitmuk.epihandy.EpihandyXformSerializer;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.motechproject.mobileforms.api.service.MobileFormsService;
+import org.motechproject.mobileforms.api.service.UsersService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import com.jcraft.jzlib.ZInputStream;
+
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations="/applicationMobileFormsAPI.xml")
 public class FormDownloadServletIT {
 
     private MockHttpServletRequest request;
     private MockHttpServletResponse response;
+    
+    @Autowired
+    MobileFormsService mobileFormsService;
 
+    @Autowired
+    UsersService usersService;
+    
     @Before
     public void setUp() {
         initMocks(this);
@@ -34,7 +57,7 @@ public class FormDownloadServletIT {
 
     @Test
     public void shouldReturnTheListOfFormGroups() {
-        FormDownloadServlet servlet = new FormDownloadServlet();
+        FormDownloadServlet servlet = new FormDownloadServlet(mobileFormsService, null, null, null);
         List<Byte[]> responseSentToMobile = null;
         EpihandyXformSerializer serializer = new EpihandyXformSerializer();
         ByteArrayOutputStream expectedGroups = new ByteArrayOutputStream();
@@ -92,7 +115,7 @@ public class FormDownloadServletIT {
             assertFalse("Encountered exception while setting up expected result, error while serializing data", true);
         }
 
-        FormDownloadServlet servlet = new FormDownloadServlet();
+        FormDownloadServlet servlet = new FormDownloadServlet(mobileFormsService, usersService, null, null);
         List<Byte[]> responseSentToMobile = null;
         try {
             setupRequestWithActionAndOtherRequestParameters(request, "username", "password", FormDownloadServlet.ACTION_DOWNLOAD_USERS_AND_FORMS, groupIndex);

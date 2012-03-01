@@ -1,5 +1,10 @@
 package org.motechproject.mobileforms.api.web;
 
+import java.io.DataInputStream;
+import java.io.IOException;
+
+import javax.servlet.ServletContext;
+
 import org.fcitmuk.epihandy.EpihandyXformSerializer;
 import org.motechproject.mobileforms.api.callbacks.FormProcessor;
 import org.motechproject.mobileforms.api.callbacks.FormPublisher;
@@ -10,17 +15,10 @@ import org.motechproject.mobileforms.api.service.UsersService;
 import org.motechproject.mobileforms.api.validator.FormValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.context.ServletContextAware;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.DataInputStream;
-import java.io.IOException;
-
-public abstract class BaseFormServlet extends HttpServlet {
+public abstract class BaseFormServlet implements ServletContextAware {
 
     public static final byte RESPONSE_ERROR = 0;
     public static final byte RESPONSE_SUCCESS = 1;
@@ -28,19 +26,19 @@ public abstract class BaseFormServlet extends HttpServlet {
     public static final String FAILED_TO_SERIALIZE_DATA = "failed to serialize data";
     public static final String APPLICATION_OCTET_STREAM = "application/octet-stream";
     private final Logger log = LoggerFactory.getLogger(FormProcessor.class);
+    private ServletContext servletContext;
 
     protected UsersService usersService;
-    protected ApplicationContext context;
     protected FormProcessor formProcessor;
     protected FormPublisher formPublisher;
     protected MobileFormsService mobileFormsService;
 
-    protected BaseFormServlet() {
-        context =  new ClassPathXmlApplicationContext("applicationMobileFormsAPI.xml");
-        mobileFormsService = context.getBean("mobileFormsServiceImpl", MobileFormsService.class);
-        usersService = context.getBean("usersServiceImpl", UsersService.class);
-        formProcessor = context.getBean("formProcessor", FormProcessor.class);
-        formPublisher = context.getBean("formPublisher", FormPublisher.class);
+    @Autowired
+    public BaseFormServlet(MobileFormsService mobileFormsService, UsersService usersService, FormProcessor formProcessor, FormPublisher formPublisher) {
+        this.mobileFormsService = mobileFormsService;
+        this.usersService = usersService;
+        this.formProcessor = formProcessor;
+        this.formPublisher = formPublisher;
     }
 
     protected EpihandyXformSerializer serializer() {
@@ -54,11 +52,12 @@ public abstract class BaseFormServlet extends HttpServlet {
         String locale = dataInput.readUTF();
     }
 
-    @Override
-    protected abstract void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException;
-
     protected FormValidator getValidatorFor(FormBean formBean) throws ClassNotFoundException {
-        return (FormValidator) getServletContext().getAttribute(formBean.getValidator());
+        return (FormValidator) servletContext.getAttribute(formBean.getValidator());
+    }
+    
+    public void setServletContext(ServletContext servletContext) {
+    	this.servletContext = servletContext;
     }
 
     protected byte readActionByte(DataInputStream dataInput) throws IOException {
