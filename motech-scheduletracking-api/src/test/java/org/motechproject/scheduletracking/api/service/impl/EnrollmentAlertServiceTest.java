@@ -1,7 +1,6 @@
 package org.motechproject.scheduletracking.api.service.impl;
 
 import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,7 +30,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.MockitoAnnotations.initMocks;
 import static org.motechproject.scheduletracking.api.utility.DateTimeUtil.*;
 import static org.motechproject.scheduletracking.api.utility.PeriodFactory.*;
-import static org.motechproject.util.DateUtil.*;
+import static org.motechproject.util.DateUtil.newDateTime;
+import static org.motechproject.util.DateUtil.now;
 import static org.powermock.api.mockito.PowerMockito.spy;
 import static org.powermock.api.mockito.PowerMockito.when;
 
@@ -146,12 +146,6 @@ public class EnrollmentAlertServiceTest {
 
         enrollmentAlertService.scheduleAlertsForCurrentMilestone(enrollment);
 
-/*
-<<<<<<< HEAD
-        RepeatingSchedulableJob job = expectAndCaptureRepeatingJob();
-        assertEquals(newDateTime(daysAfter(2), new Time(8, 20)).toDate(), job.getStartTime());
-=======
-*/
         ArgumentCaptor<RepeatingSchedulableJob> repeatJobCaptor = ArgumentCaptor.forClass(RepeatingSchedulableJob.class);
         verify(schedulerService).safeScheduleRepeatingJob(repeatJobCaptor.capture());
 
@@ -172,12 +166,6 @@ public class EnrollmentAlertServiceTest {
         Enrollment enrollment = new Enrollment("entity_1", "my_schedule", "milestone", daysAgo(0), daysAgo(0), new Time(8, 10), EnrollmentStatus.Active);
         enrollmentAlertService.scheduleAlertsForCurrentMilestone(enrollment);
 
-/*
-<<<<<<< HEAD
-        RepeatingSchedulableJob job = expectAndCaptureRepeatingJob();
-        assertEquals(newDateTime(daysAfter(3), new Time(8, 10)).toDate(), job.getStartTime());
-=======
-*/
         ArgumentCaptor<RepeatingSchedulableJob> repeatJobCaptor = ArgumentCaptor.forClass(RepeatingSchedulableJob.class);
         verify(schedulerService).safeScheduleRepeatingJob(repeatJobCaptor.capture());
 
@@ -197,12 +185,6 @@ public class EnrollmentAlertServiceTest {
         Enrollment enrollment = new Enrollment("entity_1", "my_schedule", "milestone", daysAgo(0), daysAgo(0), new Time(8, 20), EnrollmentStatus.Active);
         enrollmentAlertService.scheduleAlertsForCurrentMilestone(enrollment);
 
-/*
-<<<<<<< HEAD
-        RepeatingSchedulableJob job = expectAndCaptureRepeatingJob();
-        assertEquals(newDateTime(daysAfter(0), new Time(8, 20)).toDate(), job.getStartTime());
-=======
-*/
         ArgumentCaptor<RepeatingSchedulableJob> repeatJobCaptor = ArgumentCaptor.forClass(RepeatingSchedulableJob.class);
         verify(schedulerService).safeScheduleRepeatingJob(repeatJobCaptor.capture());
 
@@ -236,12 +218,6 @@ public class EnrollmentAlertServiceTest {
 
         enrollmentAlertService.scheduleAlertsForCurrentMilestone(enrollment);
 
-/*
-<<<<<<< HEAD
-        RepeatingSchedulableJob job = expectAndCaptureRepeatingJob();
-        assertEquals(newDateTime(daysAfter(10), new Time(8, 20)).toDate(), job.getStartTime());
-=======
-*/
         ArgumentCaptor<RepeatingSchedulableJob> repeatJobCaptor = ArgumentCaptor.forClass(RepeatingSchedulableJob.class);
         verify(schedulerService).safeScheduleRepeatingJob(repeatJobCaptor.capture());
 
