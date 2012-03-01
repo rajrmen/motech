@@ -3,7 +3,9 @@ package org.motechproject.scheduletracking.api.domain;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.motechproject.scheduletracking.api.utility.PeriodFactory.hours;
 import static org.motechproject.scheduletracking.api.utility.PeriodFactory.weeks;
+import static org.motechproject.util.DateUtil.now;
 
 public class ScheduleTest {
     @Test
@@ -19,24 +21,46 @@ public class ScheduleTest {
 
     @Test
     public void shouldReturnNextMilestone() {
-        Milestone secondMilestone = new Milestone("Second Shot", weeks(1), weeks(1), weeks(1), weeks(1));
-        Milestone firstMilestone = new Milestone("First Shot", weeks(1), weeks(1), weeks(1), weeks(1));
+        String secondMilestoneName = "Second Shot";
+        Milestone secondMilestone = new Milestone(secondMilestoneName, weeks(1), weeks(1), weeks(1), weeks(1));
+        String firstMilestoneName = "First Shot";
+        Milestone firstMilestone = new Milestone(firstMilestoneName, weeks(1), weeks(1), weeks(1), weeks(1));
         Schedule schedule = new Schedule("Yellow Fever Vaccination");
         schedule.addMilestones(firstMilestone, secondMilestone);
 
-        assertEquals(false, schedule.maxMilestoneCountReached(0));
-        assertEquals(false, schedule.maxMilestoneCountReached(1));
-        assertEquals(true, schedule.maxMilestoneCountReached(2));
-        assertEquals(true, schedule.maxMilestoneCountReached(3));
+        assertEquals(secondMilestoneName, schedule.getNextMilestoneName(firstMilestoneName));
+        assertEquals(null, schedule.getNextMilestoneName(secondMilestoneName));
     }
 
     @Test
-    public void shouldReturnTheMaximumNumberOfDaysInTheMilestone() {
+    public void shouldReturnTheScheduleDuration() {
         Milestone secondMilestone = new Milestone("Second Shot", weeks(1), weeks(1), weeks(1), weeks(1));
         Milestone firstMilestone = new Milestone("First Shot", weeks(1), weeks(1), weeks(1), weeks(2));
         Schedule schedule = new Schedule("Yellow Fever Vaccination");
         schedule.addMilestones(firstMilestone, secondMilestone);
 
         assertEquals(weeks(9), schedule.getDuration());
+    }
+
+    @Test
+    public void shouldReturnTrueIfScheduleDurationHasAlreadyExpired() {
+        Milestone secondMilestone = new Milestone("Second Shot", weeks(1), weeks(1), weeks(1), weeks(1));
+        Milestone firstMilestone = new Milestone("First Shot", weeks(1), weeks(1), weeks(1), weeks(2));
+        Schedule schedule = new Schedule("Yellow Fever Vaccination");
+        schedule.addMilestones(firstMilestone, secondMilestone);
+
+        assertEquals(true, schedule.hasExpiredBy(now().minusWeeks(10)));
+        assertEquals(false, schedule.hasExpiredBy(now().minusWeeks(8)));
+    }
+
+    @Test
+    public void shouldReturnTrueIfScheduleDurationHasAlreadyExpired_TestingHourUnits() {
+        Milestone firstMilestone = new Milestone("First Shot", hours(1), hours(1), hours(2), hours(1));
+        Schedule schedule = new Schedule("Yellow Fever Vaccination");
+        schedule.addMilestones(firstMilestone);
+
+        assertEquals(true, schedule.hasExpiredBy(now().minusHours(6)));
+        assertEquals(false, schedule.hasExpiredBy(now().minusHours(5)));
+        assertEquals(false, schedule.hasExpiredBy(now().minusHours(4)));
     }
 }

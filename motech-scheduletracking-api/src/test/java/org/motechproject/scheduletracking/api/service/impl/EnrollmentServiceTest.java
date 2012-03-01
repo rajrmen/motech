@@ -1,5 +1,6 @@
 package org.motechproject.scheduletracking.api.service.impl;
 
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.junit.Assert;
 import org.junit.Before;
@@ -8,22 +9,21 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.motechproject.model.Time;
 import org.motechproject.scheduletracking.api.domain.*;
-import org.motechproject.scheduletracking.api.domain.exception.DefaultedMilestoneFulfillmentException;
 import org.motechproject.scheduletracking.api.domain.exception.NoMoreMilestonesToFulfillException;
 import org.motechproject.scheduletracking.api.repository.AllEnrollments;
 import org.motechproject.scheduletracking.api.repository.AllTrackedSchedules;
 import org.motechproject.util.DateUtil;
 
 import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
+import static org.motechproject.scheduletracking.api.domain.EnrollmentStatus.Active;
 import static org.motechproject.scheduletracking.api.utility.DateTimeUtil.daysAgo;
 import static org.motechproject.scheduletracking.api.utility.DateTimeUtil.weeksAgo;
 import static org.motechproject.scheduletracking.api.utility.PeriodFactory.days;
 import static org.motechproject.scheduletracking.api.utility.PeriodFactory.weeks;
+import static org.motechproject.util.DateUtil.now;
 
 public class EnrollmentServiceTest {
     private EnrollmentService enrollmentService;
@@ -47,8 +47,8 @@ public class EnrollmentServiceTest {
     public void shouldEnrollEntityIntoSchedule() {
         String externalId = "entity_1";
         String scheduleName = "my_schedule";
-        LocalDate referenceDate = weeksAgo(0);
-        LocalDate enrollmentDate = weeksAgo(0);
+        DateTime referenceDate = weeksAgo(0);
+        DateTime enrollmentDate = weeksAgo(0);
         Time preferredAlertTime = new Time(8, 10);
 
         Milestone milestone = new Milestone("milestone", weeks(1), weeks(1), weeks(1), weeks(1));
@@ -57,7 +57,7 @@ public class EnrollmentServiceTest {
         Schedule schedule = new Schedule(scheduleName);
         schedule.addMilestones(milestone);
         when(allTrackedSchedules.getByName(scheduleName)).thenReturn(schedule);
-        Enrollment dummyEnrollment = new Enrollment(externalId, scheduleName, milestone.getName(), referenceDate, enrollmentDate, preferredAlertTime, EnrollmentStatus.Active);
+        Enrollment dummyEnrollment = new Enrollment(externalId, scheduleName, milestone.getName(), referenceDate, enrollmentDate, preferredAlertTime, Active);
         dummyEnrollment.setId("enrollmentId");
         when(allEnrollments.addOrReplace(any(Enrollment.class))).thenReturn(dummyEnrollment);
 
@@ -65,21 +65,21 @@ public class EnrollmentServiceTest {
 
         ArgumentCaptor<Enrollment> enrollmentArgumentCaptor = ArgumentCaptor.forClass(Enrollment.class);
         verify(allEnrollments).addOrReplace(enrollmentArgumentCaptor.capture());
-        assertEnrollment(enrollmentArgumentCaptor.getValue(), externalId, scheduleName, milestone, EnrollmentStatus.Active);
+        assertEnrollment(enrollmentArgumentCaptor.getValue(), externalId, scheduleName, milestone, Active);
 
         verify(enrollmentAlertService).scheduleAlertsForCurrentMilestone(enrollmentArgumentCaptor.capture());
-        assertEnrollment(enrollmentArgumentCaptor.getValue(), externalId, scheduleName, milestone, EnrollmentStatus.Active);
+        assertEnrollment(enrollmentArgumentCaptor.getValue(), externalId, scheduleName, milestone, Active);
 
         verify(enrollmentDefaultmentService).scheduleJobToCaptureDefaultment(enrollmentArgumentCaptor.getValue());
-        assertEnrollment(enrollmentArgumentCaptor.getValue(), externalId, scheduleName, milestone, EnrollmentStatus.Active);
+        assertEnrollment(enrollmentArgumentCaptor.getValue(), externalId, scheduleName, milestone, Active);
     }
 
     @Test
     public void shouldEnrollEntityAsDefaultedOneIfScheduleDurationHasExpired() {
         String externalId = "entity_1";
         String scheduleName = "my_schedule";
-        LocalDate referenceDate = DateUtil.today().minusDays(29);
-        LocalDate enrollmentDate = DateUtil.today();
+        DateTime referenceDateTime = DateUtil.now().minusDays(29);
+        DateTime enrollmentDateTime = DateUtil.now();
         Time preferredAlertTime = new Time(8, 10);
         EnrollmentStatus enrollmentStatus = EnrollmentStatus.Defaulted;
 
@@ -87,11 +87,11 @@ public class EnrollmentServiceTest {
         Schedule schedule = new Schedule(scheduleName);
         schedule.addMilestones(milestone);
         when(allTrackedSchedules.getByName(scheduleName)).thenReturn(schedule);
-        Enrollment dummyEnrollment = new Enrollment(externalId, scheduleName, milestone.getName(), referenceDate, enrollmentDate, preferredAlertTime, EnrollmentStatus.Active);
+        Enrollment dummyEnrollment = new Enrollment(externalId, scheduleName, milestone.getName(), referenceDateTime, enrollmentDateTime, preferredAlertTime, EnrollmentStatus.Active);
         dummyEnrollment.setId("enrollmentId");
         when(allEnrollments.addOrReplace(any(Enrollment.class))).thenReturn(dummyEnrollment);
 
-        enrollmentService.enroll(externalId, scheduleName, milestone.getName(), referenceDate, enrollmentDate, preferredAlertTime);
+        enrollmentService.enroll(externalId, scheduleName, milestone.getName(), referenceDateTime, enrollmentDateTime, preferredAlertTime);
 
         ArgumentCaptor<Enrollment> enrollmentArgumentCaptor = ArgumentCaptor.forClass(Enrollment.class);
         verify(allEnrollments).addOrReplace(enrollmentArgumentCaptor.capture());
@@ -114,11 +114,12 @@ public class EnrollmentServiceTest {
         schedule.addMilestones(firstMilestone, secondMilestone);
         when(allTrackedSchedules.getByName("Yellow Fever Vaccination")).thenReturn(schedule);
 
-        Enrollment enrollment = new Enrollment("ID-074285", "Yellow Fever Vaccination", "First Shot", weeksAgo(4), weeksAgo(4), new Time(8, 20), EnrollmentStatus.Active);
-        enrollmentService.fulfillCurrentMilestone(enrollment, daysAgo(0));
+        Enrollment enrollment = new Enrollment("ID-074285", "Yellow Fever Vaccination", "First Shot", weeksAgo(4), weeksAgo(4), new Time(8, 20), Active);
+        DateTime now = now();
+        enrollmentService.fulfillCurrentMilestone(enrollment, now);
 
         assertEquals("Second Shot", enrollment.getCurrentMilestoneName());
-        assertEquals(daysAgo(0), enrollment.lastFulfilledDate());
+        assertEquals(now, enrollment.lastFulfilledDate());
 
         verify(allEnrollments).update(enrollment);
     }
@@ -132,7 +133,7 @@ public class EnrollmentServiceTest {
         schedule.addMilestones(firstMilestone, secondMilestone);
         when(allTrackedSchedules.getByName("Yellow Fever Vaccination")).thenReturn(schedule);
 
-        Enrollment enrollment = new Enrollment("ID-074285", "Yellow Fever Vaccination", "First Shot", weeksAgo(4), weeksAgo(4), new Time(8, 20), EnrollmentStatus.Active);
+        Enrollment enrollment = new Enrollment("ID-074285", "Yellow Fever Vaccination", "First Shot", weeksAgo(4), weeksAgo(4), new Time(8, 20), Active);
         enrollment.setId("enrollment_1");
         enrollmentService.fulfillCurrentMilestone(enrollment, null);
 
@@ -157,7 +158,7 @@ public class EnrollmentServiceTest {
         schedule.addMilestones(firstMilestone, secondMilestone);
         when(allTrackedSchedules.getByName("Yellow Fever Vaccination")).thenReturn(schedule);
 
-        Enrollment enrollment = new Enrollment("ID-074285", "Yellow Fever Vaccination", "First Shot", weeksAgo(4), weeksAgo(4), new Time(8, 20), EnrollmentStatus.Active);
+        Enrollment enrollment = new Enrollment("ID-074285", "Yellow Fever Vaccination", "First Shot", weeksAgo(4), weeksAgo(4), new Time(8, 20), Active);
         enrollmentService.fulfillCurrentMilestone(enrollment, null);
         enrollmentService.fulfillCurrentMilestone(enrollment, null);
         enrollmentService.fulfillCurrentMilestone(enrollment, null);
@@ -169,16 +170,16 @@ public class EnrollmentServiceTest {
     public void shouldCompleteEnrollmentWhenAllMilestonesAreFulfilled() {
         Milestone firstMilestone = new Milestone("First Shot", weeks(1), weeks(1), weeks(1), weeks(1));
         Milestone secondMilestone = new Milestone("Second Shot", weeks(1), weeks(1), weeks(1), weeks(1));
-        Schedule schedule = new Schedule("Yellow Fever Vaccination");
+        String scheduleName = "Yellow Fever Vaccination";
+        Schedule schedule = new Schedule(scheduleName);
         schedule.addMilestones(firstMilestone, secondMilestone);
-        when(allTrackedSchedules.getByName("Yellow Fever Vaccination")).thenReturn(schedule);
+        when(allTrackedSchedules.getByName(scheduleName)).thenReturn(schedule);
 
-        Enrollment enrollment = new Enrollment("ID-074285", "Yellow Fever Vaccination", "First Shot", weeksAgo(4), weeksAgo(4), new Time(8, 20), EnrollmentStatus.Active);
+        Enrollment enrollment = new Enrollment("ID-074285", scheduleName, "First Shot", weeksAgo(4), weeksAgo(4), new Time(8, 20), Active);
         enrollmentService.fulfillCurrentMilestone(enrollment, null);
         enrollmentService.fulfillCurrentMilestone(enrollment, null);
 
-        assertTrue(enrollment.isCompleted());
-
+        assertEquals(true, enrollment.isCompleted());
         verify(allEnrollments, times(2)).update(enrollment);
     }
 
@@ -189,7 +190,7 @@ public class EnrollmentServiceTest {
         schedule.addMilestones(firstMilestone);
         when(allTrackedSchedules.getByName("Yellow Fever Vaccination")).thenReturn(schedule);
 
-        Enrollment enrollment = new Enrollment("ID-074285", "Yellow Fever Vaccination", "First Shot", weeksAgo(4), weeksAgo(4), new Time(8, 20), EnrollmentStatus.Active);
+        Enrollment enrollment = new Enrollment("ID-074285", "Yellow Fever Vaccination", "First Shot", weeksAgo(4), weeksAgo(4), new Time(8, 20), Active);
         enrollmentService.fulfillCurrentMilestone(enrollment, null);
 
         verify(enrollmentAlertService).unscheduleAllAlerts(enrollment);
@@ -202,11 +203,12 @@ public class EnrollmentServiceTest {
     public void shouldUnenrollEntityFromTheSchedule() {
         Milestone milestone = new Milestone("milestone", weeks(1), weeks(1), weeks(1), weeks(1));
         milestone.addAlert(WindowName.earliest, new Alert(days(0), days(1), 3, 0));
-        Schedule schedule = new Schedule("my_schedule");
+        String scheduleName = "my_schedule";
+        Schedule schedule = new Schedule(scheduleName);
         schedule.addMilestones(milestone);
-        when(allTrackedSchedules.getByName("my_schedule")).thenReturn(schedule);
+        when(allTrackedSchedules.getByName(scheduleName)).thenReturn(schedule);
 
-        Enrollment enrollment = new Enrollment("entity_1", "my_schedule", "milestone", weeksAgo(4), weeksAgo(4), new Time(8, 10), EnrollmentStatus.Active);
+        Enrollment enrollment = new Enrollment("entity_1", scheduleName, "milestone", weeksAgo(4), weeksAgo(4), new Time(8, 10), Active);
         enrollment.setId("enrollment_1");
         enrollmentService.unenroll(enrollment);
 
@@ -215,8 +217,8 @@ public class EnrollmentServiceTest {
 
         enrollment = enrollmentCaptor.getValue();
         Assert.assertEquals("entity_1", enrollment.getExternalId());
-        Assert.assertEquals("my_schedule", enrollment.getScheduleName());
-        assertFalse(enrollment.isActive());
+        Assert.assertEquals(scheduleName, enrollment.getScheduleName());
+        assertEquals(false, enrollment.isActive());
 
         verify(enrollmentAlertService).unscheduleAllAlerts(enrollment);
         verify(enrollmentDefaultmentService).unscheduleDefaultmentCaptureJob(enrollment);
