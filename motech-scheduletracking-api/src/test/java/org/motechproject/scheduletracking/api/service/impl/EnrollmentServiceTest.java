@@ -1,7 +1,6 @@
 package org.motechproject.scheduletracking.api.service.impl;
 
 import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,7 +18,6 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 import static org.motechproject.scheduletracking.api.domain.EnrollmentStatus.Active;
-import static org.motechproject.scheduletracking.api.utility.DateTimeUtil.daysAgo;
 import static org.motechproject.scheduletracking.api.utility.DateTimeUtil.weeksAgo;
 import static org.motechproject.scheduletracking.api.utility.PeriodFactory.days;
 import static org.motechproject.scheduletracking.api.utility.PeriodFactory.weeks;
@@ -223,4 +221,46 @@ public class EnrollmentServiceTest {
         verify(enrollmentAlertService).unscheduleAllAlerts(enrollment);
         verify(enrollmentDefaultmentService).unscheduleDefaultmentCaptureJob(enrollment);
     }
+
+    @Test
+    public void shouldReturnReferenceDateWhenCurrentMilestoneIsTheFirstMilestone() {
+        Milestone milestone = new Milestone("milestone", weeks(1), weeks(1), weeks(1), weeks(1));
+        Schedule schedule = new Schedule("my_schedule");
+        schedule.addMilestones(milestone);
+        when(allTrackedSchedules.getByName("my_schedule")).thenReturn(schedule);
+
+        Enrollment enrollment = new Enrollment("ID-074285", "my_schedule", "milestone", weeksAgo(5), weeksAgo(3), new Time(8, 20), EnrollmentStatus.Active);
+        assertEquals(weeksAgo(5), enrollmentService.getCurrentMilestoneStartDate(enrollment));
+    }
+
+    @Test
+    public void shouldReturnEnrollmentDateWhenEnrolledIntoSecondMilestoneAndNoMilestonesFulfilled() {
+        Milestone firstMilestone = new Milestone("first_milestone", weeks(1), weeks(1), weeks(1), weeks(1));
+        Milestone secondMilestone = new Milestone("second_milestone", weeks(1), weeks(1), weeks(1), weeks(1));
+        Schedule schedule = new Schedule("my_schedule");
+        schedule.addMilestones(firstMilestone, secondMilestone);
+        when(allTrackedSchedules.getByName("my_schedule")).thenReturn(schedule);
+
+        Enrollment enrollment = new Enrollment("ID-074285", "my_schedule", "second_milestone", weeksAgo(5), weeksAgo(3), null, EnrollmentStatus.Active);
+        assertEquals(weeksAgo(3), enrollmentService.getCurrentMilestoneStartDate(enrollment));
+    }
+
+    @Test
+    public void shouldReturnReferenceDateAsTheMilestoneStartDateOfTheAnyMilestoneWhenTheScheduleIsBasedOnAbsoluteWindows() {
+        Milestone firstMilestone = new Milestone("First Milestone", weeks(1), weeks(1), weeks(1), weeks(1));
+        Milestone secondMilestone = new Milestone("Second Milestone", weeks(1), weeks(1), weeks(1), weeks(1));
+        Schedule schedule = new Schedule("my_schedule").isBasedOnAbsoluteWindows(true);
+        schedule.addMilestones(firstMilestone, secondMilestone);
+        when(allTrackedSchedules.getByName("my_schedule")).thenReturn(schedule);
+
+        DateTime referenceDateTime = weeksAgo(5);
+
+        Enrollment enrollment = new Enrollment("ID-074285", "my_schedule", "First Milestone", referenceDateTime, weeksAgo(3), null, EnrollmentStatus.Active);
+        assertEquals(referenceDateTime, enrollmentService.getCurrentMilestoneStartDate(enrollment));
+
+        Enrollment enrollmentIntoSecondMilestone = new Enrollment("ID-074285", "my_schedule", "Second Milestone", referenceDateTime, weeksAgo(3), null, EnrollmentStatus.Active);
+        assertEquals(referenceDateTime, enrollmentService.getCurrentMilestoneStartDate(enrollmentIntoSecondMilestone));
+    }
+
+
 }
