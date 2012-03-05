@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<xf:xforms xmlns:xf="http://www.w3.org/2002/xforms" xmlns:xsd="http://www.w3.org/2001/XMLSchema" id="1">
+<xf:xforms xmlns:xf="http://www.w3.org/2002/xforms" xmlns:xsd="http://www.w3.org/2001/XMLSchema" id="2">
   <xf:model>
     <xf:instance id="patientEnrollment">
-      <patientEnrollment id="1" name="Patient Enrollment">
+      <patientEnrollment id="2" name="Patient Enrollment">
         <motechId />
         <phoneNumber />
         <formtype>data_entry</formtype>
@@ -14,7 +14,7 @@
     <xf:bind id="formtype" nodeset="/patientEnrollment/formtype" required="true()" type="xsd:string" visible="false()" />
     <xf:bind id="formname" nodeset="/patientEnrollment/formname" required="true()" type="xsd:string" visible="false()" />
   </xf:model>
-  <xf:group id="1">
+  <xf:group id="2">
     <xf:label>Patient Enrollment</xf:label>
     <xf:input bind="motechId">
       <xf:label>MoTeCH ID</xf:label>

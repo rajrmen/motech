@@ -3,7 +3,9 @@ package org.motechproject.ScheduleTrackingDemo;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.joda.time.DateTime;
 import org.motechproject.mrs.model.MRSEncounter;
@@ -116,5 +118,17 @@ public class OpenMrsClientImpl implements OpenMrsClient {
 	@ApiSession
 	public void savePatient(MRSPatient patient) {
 		patientAdapter.savePatient(patient);
+	}
+
+	@LoginAsAdmin
+	@ApiSession
+	public void addEncounterForPatient(String motechId, String conceptName, Date observedDate) {
+		MRSObservation<Date> observation = new MRSObservation<Date>(observedDate, conceptName, observedDate);
+		Set<MRSObservation> observations = new HashSet<MRSObservation>();
+		observations.add(observation);
+		MRSPatient patient = patientAdapter.getPatientByMotechId(motechId);
+		// TODO: research a better way for pass in providerId, creatorId, facilityId, and
+		MRSEncounter encounter = new MRSEncounter("1", "1", "1", observedDate, patient.getId(), observations, "ADULTRETURN");
+		encounterAdapter.createEncounter(encounter);
 	}
 }

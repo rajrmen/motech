@@ -1,7 +1,9 @@
 package org.motechproject.ScheduleTrackingDemo.listeners;
 
 import org.motechproject.ScheduleTrackingDemo.OpenMrsClient;
+import org.motechproject.ScheduleTrackingDemo.OpenMrsConceptConverter;
 import org.motechproject.ScheduleTrackingDemo.PatientScheduler;
+import org.motechproject.ScheduleTrackingDemo.beans.PatientEncounterBean;
 import org.motechproject.ScheduleTrackingDemo.beans.PatientEnrollmentBean;
 import org.motechproject.ScheduleTrackingDemo.beans.PatientRegistrationBean;
 import org.motechproject.mobileforms.api.callbacks.FormPublisher;
@@ -50,5 +52,12 @@ public class MobileFormListener {
 		PatientEnrollmentBean bean = (PatientEnrollmentBean)event.getParameters().get(FormPublisher.FORM_BEAN);
 		patientScheduler.saveMotechPatient(bean.getMotechId(), bean.getPhoneNumber());
 		patientScheduler.enrollIntoSchedule(bean.getMotechId(), DEMO_SCHEDULE_NAME);
+	}
+	
+	@MotechListener(subjects = { FormPublisher.FORM_VALIDATION_SUCCESSFUL + ".DemoGroup.DemoPatientEncounter" })
+	public void handlePatientEncounter(MotechEvent event) {
+		PatientEncounterBean bean = (PatientEncounterBean)event.getParameters().get(FormPublisher.FORM_BEAN);
+		String conceptName = OpenMrsConceptConverter.convertToNameFromIndex(bean.getObservedConcept());
+		openmrsClient.addEncounterForPatient(bean.getMotechId(), conceptName, bean.getObservedDate());
 	}
 }

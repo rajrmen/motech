@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<xf:xforms xmlns:xf="http://www.w3.org/2002/xforms" xmlns:xsd="http://www.w3.org/2001/XMLSchema" id="1">
+  <xf:model>
+    <xf:instance id="patientEncounter">
+      <patientEncounter id="1" name="Patient Encounter">
+        <motechId />
+        <observedConcept />
+        <observedDate />
+        <formtype>data_entry</formtype>
+        <formname>DemoPatientEncounter</formname>
+      </patientEncounter>
+    </xf:instance>
+    <xf:bind id="motechId" nodeset="/patientEncounter/motechId" required="true()" type="xsd:int" constraint=". &lt; 2147483647" message="Number too large. Keep under 2147483647" />
+    <xf:bind constraint=". &lt;= 'today()'" id="observedDate" message="Invalid date: date specified is in the future" nodeset="/patientEncounter/observedDate" required="true()" type="xsd:date" />
+    <xf:bind id="observedConcept" nodeset="/patientEncounter/observedConcept" required="true()" type="xsd:int" />
+    <xf:bind id="formtype" nodeset="/patientEncounter/formtype" required="true()" type="xsd:string" visible="false()" />
+    <xf:bind id="formname" nodeset="/patientEncoutner/formname" required="true()" type="xsd:string" visible="false()" />
+  </xf:model>
+  <xf:group id="1">
+    <xf:label>Patient Registration</xf:label>
+    <xf:input bind="motechId">
+      <xf:label>MoTeCH ID</xf:label>
+    </xf:input>
+    <xf:input bind="observedDate">
+      <xf:label>Observation Date</xf:label>
+    </xf:input>
+    <xf:select1 bind="observedConcept">
+      <xf:label>Which concept was observed?</xf:label>
+      <xf:item>
+        <xf:label>Demo Concept #1</xf:label>
+        <xf:value>0</xf:value>
+      </xf:item>
+      <xf:item>
+        <xf:label>Demo Concept #2</xf:label>
+        <xf:value>1</xf:value>
+      </xf:item>
+      <xf:item>
+        <xf:label>Demo Concept #3</xf:label>
+        <xf:value>2</xf:value>
+      </xf:item>
+      <xf:item>
+        <xf:label>Demo Concept #4</xf:label>
+        <xf:value>3</xf:value>
+      </xf:item>
+    </xf:select1>
+    <xf:input bind="formtype">
+      <xf:label>formType</xf:label>
+    </xf:input>
+    <xf:input bind="formname">
+      <xf:label>formName</xf:label>
+    </xf:input>
+  </xf:group>
+</xf:xforms>

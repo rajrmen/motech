@@ -22,6 +22,8 @@
     <bean class="org.motechproject.ScheduleTrackingDemo.FormValidatorRegister" />
     <bean class="org.motechproject.ScheduleTrackingDemo.validator.PatientRegistrationValidator" />
     <bean class="org.motechproject.ScheduleTrackingDemo.validator.PatientEnrollmentValidator" />
+    <bean class="org.motechproject.ScheduleTrackingDemo.validator.PatientEncounterValidator" />
+    
     <bean class="org.motechproject.ScheduleTrackingDemo.listeners.MobileFormListener" />
     <bean class="org.motechproject.ScheduleTrackingDemo.PatientScheduler" />
 		
