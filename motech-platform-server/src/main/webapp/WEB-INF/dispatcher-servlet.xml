@@ -29,9 +29,18 @@
 
 	<context:annotation-config />
 
-	<bean id="controllerClassNameUrlMapping"
-		class="org.springframework.web.servlet.mvc.support.ControllerClassNameHandlerMapping">
+	<context:component-scan base-package="org.motechproject.mobileforms.api.web" />
+	<context:component-scan base-package="org.motechproject.ScheduleTrackingDemo.controllers" />
+	
+	<bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping">
+		<property name="order" value="1" />
 	</bean>
+	
+ 	<bean id="controllerClassNameUrlMapping"
+ 		class="org.springframework.web.servlet.mvc.support.ControllerClassNameHandlerMapping">
+		<property name="order" value="2" />
+		<property name="includeAnnotatedControllers" value="false" />
+ 	</bean>
 
 	<bean name="voxeoController" class="org.motechproject.server.voxeo.web.IvrController">
 	</bean>
