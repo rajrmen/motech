@@ -40,17 +40,21 @@ public class MobileFormListener {
 		MRSPatient patient = new MRSPatient(bean.getMotechId(), person, facility);
 		
 		openmrsClient.savePatient(patient);
-		patientScheduler.saveMotechPatient(bean.getMotechId(), bean.getPhoneNumber());
+		patientScheduler.saveMotechPatient(bean.getMotechId(), stripDashFromPhoneNumber(bean.getPhoneNumber()));
 		
 		if (bean.isEnrollPatient()) {
 			patientScheduler.enrollIntoSchedule(bean.getMotechId(), DEMO_SCHEDULE_NAME);
 		}
 	}
+
+	private String stripDashFromPhoneNumber(String phoneNum) {
+		return phoneNum.replaceAll("-", "");
+	}
 	
 	@MotechListener(subjects = { FormPublisher.FORM_VALIDATION_SUCCESSFUL + ".DemoGroup.DemoPatientEnrollment" })
 	public void handlePatientEnrollment(MotechEvent event) {
 		PatientEnrollmentBean bean = (PatientEnrollmentBean)event.getParameters().get(FormPublisher.FORM_BEAN);
-		patientScheduler.saveMotechPatient(bean.getMotechId(), bean.getPhoneNumber());
+		patientScheduler.saveMotechPatient(bean.getMotechId(), stripDashFromPhoneNumber(bean.getPhoneNumber()));
 		patientScheduler.enrollIntoSchedule(bean.getMotechId(), DEMO_SCHEDULE_NAME);
 	}
 	
