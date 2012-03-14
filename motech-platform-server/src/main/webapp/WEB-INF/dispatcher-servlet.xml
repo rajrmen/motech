@@ -42,6 +42,8 @@
 		<property name="includeAnnotatedControllers" value="false" />
  	</bean>
 
+
+
 	<bean name="voxeoController" class="org.motechproject.server.voxeo.web.IvrController">
 	</bean>
 
@@ -65,6 +67,10 @@
 		class="org.motechproject.ScheduleTrackingDemo.controllers.PatientController">
 	</bean>
 
+	<bean name="outboxController"
+		class="org.motechproject.server.outbox.web.VxmlOutboxController">
+	</bean>
+
 <!---->
 	<!-- <bean id="test" class="org.motechproject.tama.server.TestController"> -->
 	<!-- <property name="contextProvider" ref="contextProvider" /> -->
@@ -80,6 +86,9 @@
 		<property name="suffix">
 			<value>.jsp</value>
 		</property>
+		<property name="order">
+			<value>2</value>
+		</property>
 	</bean>
 	
 	
@@ -88,23 +97,22 @@
 	<!-- <context:component-scan base-package="org.motechproject.tama.server"/> -->
 	<!-- <context:component-scan base-package="org.motechproject.platform.server.web.controller"/> -->
 
+	 <bean id="velocityConfig" 
+	 class="org.springframework.web.servlet.view.velocity.VelocityConfigurer"> 
+	<property name="resourceLoaderPath" value="/WEB-INF/vm/" /> 
+	</bean> 
 
-	<!-- <bean id="velocityConfig" -->
-	<!-- class="org.springframework.web.servlet.view.velocity.VelocityConfigurer"> -->
-	<!-- <property name="resourceLoaderPath" value="" /> -->
-	<!-- </bean> -->
-<!---->
-	<!-- <bean id="viewResolver" -->
-	<!-- class="org.springframework.web.servlet.view.velocity.VelocityViewResolver"> -->
-	<!-- <property name="cache" value="true" /> -->
-	<!-- <property name="prefix" value="" /> -->
-	<!-- <property name="suffix" value=".vm" /> -->
-<!---->
-	<!-- if you want to use the Spring Velocity macros, set this property to -->
-	<!-- true -->
-	<!-- <property name="exposeSpringMacroHelpers" value="true" /> -->
-<!---->
-	<!-- </bean> -->
+<bean id="velocityViewResolver" class="org.springframework.web.servlet.view.velocity.VelocityViewResolver">
+  <property name="cache" value="true"/>
+  <property name="prefix" value=""/>
+  <property name="suffix" value=".vm"/>
+  		<property name="order">
+			<value>1</value>
+		</property>
+  <!-- if you want to use the Spring Velocity macros, set this property to true -->
+  <property name="exposeSpringMacroHelpers" value="true"/>
+
+</bean>
 <!---->
 	<!-- <bean id="contextProvider" class="org.motechproject.tama.server.ContextProvider"></bean> -->
 
