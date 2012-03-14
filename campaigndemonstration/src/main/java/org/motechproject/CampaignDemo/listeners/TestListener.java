@@ -123,7 +123,7 @@ public class TestListener {
 					 * Call requests are used to place IVR calls. They contain a phone number, 
 					 * timeout duration, and vxml URL for content.
 					 */
-					CallRequest request = new CallRequest(patientList.get(0).getExternalid(), phoneNum, 119, content.getValue());
+					CallRequest request = new CallRequest(phoneNum, 119, content.getValue());
 
 					request.getPayload().put("USER_ID", patientList.get(0).getExternalid()); //put Id in the payload
 					request.setOnBusyEvent(new MotechEvent("CALL_BUSY"));
