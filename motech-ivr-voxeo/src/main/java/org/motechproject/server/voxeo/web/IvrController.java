@@ -31,9 +31,11 @@
  */
 package org.motechproject.server.voxeo.web;
 
+import org.ektorp.DocumentNotFoundException;
 import org.ektorp.UpdateConflictException;
 import org.motechproject.context.EventContext;
 import org.motechproject.event.EventRelay;
+import org.motechproject.gateway.OutboundEventGateway;
 import org.motechproject.ivr.event.IVREventDelegate;
 import org.motechproject.ivr.model.CallDetailRecord;
 import org.motechproject.model.MotechEvent;
@@ -61,7 +63,12 @@ import java.util.Map;
  */
 public class IvrController extends MultiActionController
 {
-    private EventRelay eventRelay = EventContext.getInstance().getEventRelay();
+	@Autowired
+	private OutboundEventGateway eventRelay; 
+    //private EventRelay eventRelay = EventContext.getInstance().getEventRelay();
+    
+    public static final String CALL_RESULT_ID = "CallResultId";
+    public static final String CALL_CONTENT = "CallContent";
 
     @Autowired
     private AllPhoneCalls allPhoneCalls;
@@ -82,8 +89,15 @@ public class IvrController extends MultiActionController
 		logger.info("Recording event for inbound call from " + callerId + " [sessionId: " + sessionId + ", status: " + status + ", timestamp: " + timestamp + "]");
 
         // See if I can load a CallDetailRecord for this session
-        PhoneCall phoneCall = allPhoneCalls.findBySessionId(sessionId);
-
+		PhoneCall phoneCall = null;
+		
+		try {
+			 phoneCall = allPhoneCalls.findBySessionId(sessionId);
+		} catch (UpdateConflictException e) {
+		} catch (DocumentNotFoundException e) {
+			
+		}
+		
         if (null == phoneCall) {
             phoneCall = new PhoneCall();
             phoneCall.setId(sessionId);
@@ -122,7 +136,7 @@ public class IvrController extends MultiActionController
             allPhoneCalls.update(phoneCall);
         }
 
-        return mav;
+        return null;
     }
 
     public ModelAndView outgoing(HttpServletRequest request, HttpServletResponse response) {
@@ -184,7 +198,6 @@ public class IvrController extends MultiActionController
     {
         MotechEvent motechEvent = null;
 
-        System.out.println("Updating event status: " + event.getStatus());
         switch (event.getStatus()) {
             case ALERTING:
                 phoneCall.setStartDate(new Date(event.getTimestamp()));
@@ -226,8 +239,11 @@ public class IvrController extends MultiActionController
             CallDetailRecord cdr = new CallDetailRecord(phoneCall.getStartDate(), phoneCall.getEndDate(), phoneCall.getAnswerDate(),
                                                     phoneCall.getDisposition(), phoneCall.getDuration());
 
+            cdr.setPhoneNumber(phoneCall.getCallRequest().getPhone());
             Map<String, Object> parameters = motechEvent.getParameters();
             parameters.put(IVREventDelegate.CALL_DETAIL_RECORD_KEY, cdr);
+            parameters.put(CALL_RESULT_ID, phoneCall.getCallRequest().getPayload().get("USER_ID"));
+            parameters.put(CALL_CONTENT, phoneCall.getCallRequest().getCallBackUrl());
 
             eventRelay.sendEventMessage(motechEvent);
         }
