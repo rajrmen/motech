@@ -6,6 +6,7 @@ import org.apache.commons.lang.StringUtils;
 import org.motechproject.MotechObject;
 import org.motechproject.context.EventContext;
 import org.motechproject.event.EventRelay;
+import org.motechproject.gateway.OutboundEventGateway;
 import org.motechproject.model.MotechEvent;
 import org.motechproject.outbox.api.dao.OutboundVoiceMessageDao;
 import org.motechproject.outbox.api.model.OutboundVoiceMessage;
@@ -31,8 +32,11 @@ public class VoiceOutboxServiceImpl extends MotechObject implements VoiceOutboxS
      */
     private int maxNumberOfPendingMessages = Integer.MAX_VALUE;
 
-    @Autowired(required = false)
-    private EventRelay eventRelay = EventContext.getInstance().getEventRelay();
+    //@Autowired(required = false)
+    //private EventRelay eventRelay = EventContext.getInstance().getEventRelay();
+    
+    @Autowired
+    private OutboundEventGateway eventRelay;
 
     @Autowired
     private OutboundVoiceMessageDao outboundVoiceMessageDao;
@@ -116,6 +120,13 @@ public class VoiceOutboxServiceImpl extends MotechObject implements VoiceOutboxS
         logInfo("Get number of pending messages for the party ID: %s", partyId);
         assertArgumentNotEmpty("PartyID", partyId);
         return outboundVoiceMessageDao.getPendingMessagesCount(partyId);
+    }
+
+    @Override
+    public int getNumberPendingMessages(String partyId, String voiceMessageTypeName) {
+        logInfo("Get number of pending messages for the party ID: %s", partyId);
+        assertArgumentNotEmpty("PartyID", partyId);
+        return outboundVoiceMessageDao.getPendingMessagesCount(partyId, voiceMessageTypeName);
     }
 
     @Override
