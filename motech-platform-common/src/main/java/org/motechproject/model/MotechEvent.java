@@ -36,6 +36,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.codehaus.jackson.annotate.JsonProperty;
+
 /**
  * Motech Scheduled Event data carrier class,
  * Instance of this class with event specific data will be send by Motech Scheduler when a scheduled event is fired
@@ -49,13 +51,21 @@ public final class MotechEvent implements Serializable {
 
     private static final long serialVersionUID = 2L;
 
+    @JsonProperty
     public static final String EVENT_TYPE_KEY_NAME = "eventType";
 
+    @JsonProperty
     private String subject;
+    @JsonProperty
     private Map<String, Object> parameters;
+    @JsonProperty
     private Date endTime;
+    @JsonProperty
     private boolean isLastEvent;
 
+    public MotechEvent() {
+    	
+    }
     /**
      * Constructor with subject only (parameters can be added interactively)
      * @param subject - event destination

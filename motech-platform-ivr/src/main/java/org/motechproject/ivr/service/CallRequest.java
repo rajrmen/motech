@@ -31,7 +31,6 @@
  */
 package org.motechproject.ivr.service;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.motechproject.model.MotechEvent;
 
@@ -65,13 +64,13 @@ public class CallRequest implements Serializable {
 	@JsonProperty
     private Map<String, String> payload = new HashMap<String, String>();
 
-	@JsonIgnore
+	@JsonProperty
     private MotechEvent onSuccessEvent;
-	@JsonIgnore
+	@JsonProperty
     private MotechEvent onBusyEvent;
-	@JsonIgnore
+	@JsonProperty
     private MotechEvent onNoAnswerEvent;
-	@JsonIgnore
+	@JsonProperty
     private MotechEvent onFailureEvent;
 
     /**
