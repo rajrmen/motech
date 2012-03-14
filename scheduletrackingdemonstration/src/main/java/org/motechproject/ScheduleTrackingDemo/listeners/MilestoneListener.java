@@ -122,6 +122,11 @@ public class MilestoneListener {
 			if (content != null) {
 				System.out.println("Calling");
 				CallRequest request = new CallRequest(patient.getPhoneNum(), 119, content.getValue());
+				request.getPayload().put("USER_ID", patient.getExternalid()); //put Id in the payload
+				request.setOnBusyEvent(new MotechEvent("CALL_BUSY"));
+				request.setOnFailureEvent(new MotechEvent("CALL_FAIL"));
+				request.setOnNoAnswerEvent(new MotechEvent("CALL_NO_ANSWER"));
+				request.setOnSuccessEvent(new MotechEvent("CALL_SUCCESS"));
 				voxeoService.initiateCall(request);
 			}
 		} else {
