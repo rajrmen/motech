@@ -123,8 +123,14 @@ public class TestListener {
 					 * Call requests are used to place IVR calls. They contain a phone number, 
 					 * timeout duration, and vxml URL for content.
 					 */
-					CallRequest request = new CallRequest(phoneNum, 119, content.getValue());
+					CallRequest request = new CallRequest(patientList.get(0).getExternalid(), phoneNum, 119, content.getValue());
 
+					request.getPayload().put("USER_ID", patientList.get(0).getExternalid()); //put Id in the payload
+					request.setOnBusyEvent(new MotechEvent("CALL_BUSY"));
+					request.setOnFailureEvent(new MotechEvent("CALL_FAIL"));
+					request.setOnNoAnswerEvent(new MotechEvent("CALL_NO_ANSWER"));
+					request.setOnSuccessEvent(new MotechEvent("CALL_SUCCESS"));
+					
 					/**
 					 * The Voxeo module sends a request to the Voxeo website, at which point
 					 * control is passed to the ccxml file. The ccxml file will play
