@@ -3,24 +3,39 @@ package org.motechproject.ivr.model;
 import org.motechproject.ivr.event.CallEvent;
 import org.motechproject.util.DateUtil;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class CallDetailRecord {
-    public enum Disposition {
+public class CallDetailRecord implements Serializable {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public enum Disposition {
         ANSWERED, BUSY, FAILED, NO_ANSWER, UNKNOWN;
     }
 
+    
     private Date startDate;
+    
     private Date endDate;
+    
     private Date answerDate;
+    
     private Disposition disposition;
+    
     private Integer duration;
+    
     private String errorMessage;
+    
     private String phoneNumber;
 
+    
     private CallDirection callDirection;
+    
     private List<CallEvent> callEvents = new ArrayList<CallEvent>();
 
     private CallDetailRecord() {
