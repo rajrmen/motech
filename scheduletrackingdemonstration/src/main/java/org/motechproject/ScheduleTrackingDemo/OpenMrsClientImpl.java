@@ -74,17 +74,12 @@ public class OpenMrsClientImpl implements OpenMrsClient {
 		List<MRSObservation> mrsObservations = observationAdapter.getMRSObservationsByMotechPatientIdAndConceptName(patientId, conceptName);
 		Collections.sort(mrsObservations, new dateComparator());
 		
-		for (MRSObservation mrsObservation : mrsObservations) {
-			System.out.println("Hopefully in order?");
-			System.out.println(mrsObservation.getValue().toString());
-		}
 		if (mrsObservations.size() > 0) {
 		Date date = (Date) mrsObservations.get(0).getValue();
 		Date date2 = (Date) mrsObservations.get(mrsObservations.size() - 1).getValue();
 		DateTime dateTime = new DateTime(date);
 		DateTime dateTime2 = new DateTime(date2);
-		System.out.println("First is: " + dateTime.toString());
-		System.out.println("Last is: " + dateTime2.toString());
+
 		return dateTime;
 		}
 		return new DateTime();
