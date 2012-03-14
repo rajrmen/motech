@@ -64,13 +64,34 @@ public class VxmlOutboxController extends MultiActionController {
     public static final String MESSAGE_REMOVED_CONFIRMATION_TEMPLATE_NAME = "msgRemovedConf";
     public static final String SAVE_MESSAGE_ERROR_TEMPLATE_NAME = "saveMsgError";
     public static final String REMOVE_SAVED_MESSAGE_ERROR_TEMPLATE_NAME = "removeSavedMsgError";
-
+    public static final String MAIN_MENU_TEMPLATE_NAME = "mainMenu";
+    
      public static final String MESSAGE_ID_PARAM = "mId";
      
     public static final String LANGUAGE_PARAM = "ln";
 
     @Autowired
     VoiceOutboxService voiceOutboxService;
+    
+    public ModelAndView mainMenu(HttpServletRequest request, HttpServletResponse response) {
+    	
+    	ModelAndView mav = new ModelAndView();
+    	String contextPath = request.getContextPath();
+        mav.addObject("contextPath", contextPath);
+        mav.addObject("escape", new StringEscapeUtils());
+    	
+    	String partyId = request.getParameter("pId");
+    	OutboundVoiceMessage dummyVoiceMessage = new OutboundVoiceMessage();
+    	if (partyId == null) {
+            mav.setViewName(ERROR_MESSAGE_TEMPLATE_NAME);
+            return mav;
+    	} else {
+    		dummyVoiceMessage.setPartyId(partyId);
+    		mav.setViewName(MAIN_MENU_TEMPLATE_NAME);
+    		mav.addObject("message", dummyVoiceMessage);
+    		return mav;
+    	}
+    }
 
     /**
      * Handles Appointment Reminder HTTP requests and generates a VXML document based on a Velocity template.
@@ -165,6 +186,15 @@ public class VxmlOutboxController extends MultiActionController {
         mav.setViewName(templateName);
         mav.addObject("message", voiceMessage);
 
+        try {
+        	//Pending message should then be "PLAYED"
+            voiceOutboxService.setMessageStatus(voiceMessage.getId(), OutboundVoiceMessageStatus.PLAYED);
+        } catch (Exception e) {
+            logger.error("Can not mark the message with ID: " + messageId + " as PLAYED in the outbox", e);
+            mav.setViewName(ERROR_MESSAGE_TEMPLATE_NAME);
+            return mav;
+        }
+        
         return mav;
 
     }
