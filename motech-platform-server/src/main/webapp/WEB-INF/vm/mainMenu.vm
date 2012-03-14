@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<vxml version="2.1" xmlns="http://www.w3.org/2001/vxml">
+    #set( $messageContext = "message" )
+    <menu>
+    
+      <property name="inputmodes" value="dtmf"/>
+        #set ($saveUrl = "$contextPath/vxmloutbox/savedMessage?pId=$message.partyId")
+        #set ($nextUrl = "$contextPath/vxmloutbox/outboxMessage?pId=$message.partyId")
+      <prompt>
+              To listen to your pending messages press 1,
+              To listen to your saved messages press 2
+      </prompt>
+        <choice dtmf="1" next="$escape.escapeXml($nextUrl)"/>
+        <choice dtmf="2" next="$escape.escapeXml($saveUrl)"/>
+    </menu>
+</vxml>

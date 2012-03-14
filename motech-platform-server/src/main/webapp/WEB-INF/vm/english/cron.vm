@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<vxml version="2.1" xmlns="http://www.w3.org/2001/vxml">
+    #set( $messageContext = "message" )
+	<form>
+ 		<block>
+            <prompt>
+                This is cron content
+            </prompt>
+             #set ($url = "$contextPath/vxmloutbox/messageMenu?mId=$message.id")
+            <goto next="$escape.escapeXml($url)"/>
+		</block>
+	</form>
+</vxml>

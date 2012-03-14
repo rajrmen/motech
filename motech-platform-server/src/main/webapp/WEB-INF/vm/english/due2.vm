@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<vxml version="2.1" xmlns="http://www.w3.org/2001/vxml">
+<var name="audio_path" expr="session.connection.ccxml.values.base_url + '/cmslite/stream/en/IVR/DemoConceptQuestion2Due'" />
+
+    #set( $messageContext = "message" )
+	<form>
+ 		<block>
+            <audio expr="audio_path"/> 
+             #set ($url = "$contextPath/vxmloutbox/messageMenu?mId=$message.id")
+            <goto next="$escape.escapeXml($url)"/>
+		</block>
+	</form>
+</vxml>
