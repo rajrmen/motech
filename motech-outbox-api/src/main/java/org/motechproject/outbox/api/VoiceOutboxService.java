@@ -106,4 +106,6 @@ public interface VoiceOutboxService {
     public int getMaxNumberOfPendingMessages();
 
     public OutboundVoiceMessage nextMessage(String lastMessageId, String partyId);
+
+	int getNumberPendingMessages(String partyId, String voiceMessageTypeName);
 }
