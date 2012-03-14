@@ -10,7 +10,6 @@
 	<artifactId>motech-outbox</artifactId>
 	<version>0.8-SNAPSHOT</version>
 	<name>MoTeCH Outbox</name>
-	<packaging>bundle</packaging>
 	<dependencies>
 		<dependency>
 			<groupId>javax.servlet</groupId>
@@ -76,7 +75,7 @@
 			<type>jar</type>
 		</dependency>
 	</dependencies>
-	<build>
+	<!--  <build>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.felix</groupId>
@@ -125,5 +124,5 @@
 				</executions>
 			</plugin>
 		</plugins>
-	</build>
+	</build>-->
 </project>
