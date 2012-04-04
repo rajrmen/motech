@@ -70,6 +70,10 @@
 	<bean name="outboxController"
 		class="org.motechproject.server.outbox.web.VxmlOutboxController">
 	</bean>
+	
+	<bean name="commcareController"
+		class="org.motechproject.commcareintegration.controllers.CommcareController">
+	</bean>
 
 <!---->
 	<!-- <bean id="test" class="org.motechproject.tama.server.TestController"> -->

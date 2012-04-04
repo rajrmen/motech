@@ -7,6 +7,9 @@ import java.util.Map;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.joda.time.DateTime;
+import org.joda.time.DateTime.Property;
+import org.joda.time.DateTimeConstants;
 import org.motechproject.commcareintegration.service.CommcareService;
 import org.motechproject.commcareintegration.service.CommcareServiceImpl;
 import org.motechproject.dao.MotechJsonReader;
@@ -39,6 +42,30 @@ public class CaseInstance {
 		System.out.println(cases.size());
 		CommcareService commcareService = new CommcareServiceImpl(new HttpClient());
 		commcareService.getCasesByUserId("5d622c4336d118a9020d1c758e71f368", "usm-motech");
+	
+		
+		System.out.println(DateTime.now().dayOfWeek().get());
+		System.out.println(DateTime.now().minusDays(1).dayOfWeek().get());
+	
+		//day of week due is friday, at 5
+		
+		DateTimeConstants a;
+		System.out.println(nextDeadline(4, 3, 45, 22));
+	
+	}
+	
+
+	public static DateTime nextDeadline(int dayOfWeek, int hourOfDay, int minuteOfHour, int secondOfMinute) {
+		DateTime now = DateTime.now();
+		DateTime nextDeadline = now.withDayOfWeek(dayOfWeek)
+				.withHourOfDay(hourOfDay)
+				.withMinuteOfHour(minuteOfHour)
+				.withSecondOfMinute(secondOfMinute);
+		if (now.isBefore(nextDeadline)) { 
+			return nextDeadline;
+		} else {
+			return nextDeadline.plusWeeks(1);
+		}
 	}
 
 }

@@ -61,6 +61,9 @@ public class CommcareServiceImpl implements CommcareService {
 		}
 		status = commonsHttpClient.executeMethod(getMethod2);
 		response = getMethod2.getResponseBodyAsString();
+		
+		//do things with response
+		
 		System.out.println(response);
 		return null;
 	}
