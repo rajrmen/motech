@@ -197,18 +197,24 @@ public class AllAdherenceLogsIT {
     }
 
     @Test
-    public void shouldFindLogsBetweenTwoDates() {
+    public void shouldCountDeltaBetweenTwoDates() {
         AdherenceLog newerLog = new AdherenceLog();
         newerLog.setDateRange(DateUtil.newDate(2012, 1, 1), DateUtil.newDate(2012, 1, 30));
         newerLog.setExternalId(externalId);
+        newerLog.setDeltaDosesTaken(1);
+        newerLog.setDeltaTotalDoses(1);
 
         AdherenceLog currentLog = new AdherenceLog();
         currentLog.setDateRange(DateUtil.newDate(2011, 12, 1), DateUtil.newDate(2011, 12, 31));
         currentLog.setExternalId(externalId);
+        currentLog.setDeltaDosesTaken(2);
+        currentLog.setDeltaTotalDoses(2);
 
         AdherenceLog olderLog = new AdherenceLog();
         olderLog.setDateRange(DateUtil.newDate(2011, 11, 1), DateUtil.newDate(2011, 11, 30));
         olderLog.setExternalId(externalId);
+        olderLog.setDeltaDosesTaken(3);
+        olderLog.setDeltaTotalDoses(3);
 
         allAdherenceLogs.add(currentLog);
         allAdherenceLogs.add(newerLog);
@@ -216,8 +222,8 @@ public class AllAdherenceLogsIT {
 
         entities.addAll(Arrays.asList(currentLog, newerLog, olderLog));
 
-        assertEquals(olderLog, allAdherenceLogs.findLogsBetween(externalId, AdherenceService.GENERIC_CONCEPT, DateUtil.newDate(2011, 11, 3), DateUtil.newDate(2011, 12, 3)).get(0));
-        assertEquals(currentLog, allAdherenceLogs.findLogsBetween(externalId, AdherenceService.GENERIC_CONCEPT, DateUtil.newDate(2011, 11, 3), DateUtil.newDate(2011, 12, 3)).get(1));
+        assertEquals(olderLog.getDeltaDosesTaken(), allAdherenceLogs.getDeltaCounts(externalId, AdherenceService.GENERIC_CONCEPT, DateUtil.newDate(2011, 11, 3), DateUtil.newDate(2011, 12, 3)).get(1).getDeltaDosesTaken());
+        assertEquals(currentLog.getDeltaDosesTaken(), allAdherenceLogs.getDeltaCounts(externalId, AdherenceService.GENERIC_CONCEPT, DateUtil.newDate(2011, 11, 3), DateUtil.newDate(2011, 12, 3)).get(0).getDeltaDosesTaken());
     }
 
     @Test

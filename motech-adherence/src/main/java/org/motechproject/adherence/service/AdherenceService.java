@@ -9,7 +9,6 @@ import org.motechproject.util.DateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -88,7 +87,7 @@ public class AdherenceService {
     }
 
     public double getDeltaAdherence(String externalId, Concept concept, LocalDate fromDate, LocalDate toDate) {
-        List<AdherenceLog> logs = allAdherenceLogs.findLogsBetween(externalId, concept, fromDate, toDate);
+        List<AdherenceLog> logs = Collections.emptyList();
         double dosesTaken = 0;
         double totalDoses = 0;
         for (AdherenceLog adherenceLog : logs) {
@@ -112,22 +111,6 @@ public class AdherenceService {
         else
             return latestAdherenceLog.getToDate();
     }
-
-    public List<AdherenceLog> rollBack(String externalId, Concept concept, LocalDate tillDate) {
-        List<AdherenceLog> adherenceLogs = allAdherenceLogs.findLogsBetween(externalId, concept, tillDate.plusDays(1), DateUtil.today());
-        List<AdherenceLog> removedLogs = new ArrayList<AdherenceLog>();
-        for (AdherenceLog adherenceLog : adherenceLogs) {
-            if (adherenceLog.cutBy(tillDate)) {
-                adherenceLog.setToDate(tillDate);
-                allAdherenceLogs.update(adherenceLog);
-            } else {
-                allAdherenceLogs.remove(adherenceLog);
-                removedLogs.add(adherenceLog);
-            }
-        }
-        return removedLogs;
-    }
-
 
     public Map<String, Object> getMetaOn(String externalId, Concept concept, LocalDate date) {
         AdherenceLog latestLog = allAdherenceLogs.findByDate(externalId, concept, date);

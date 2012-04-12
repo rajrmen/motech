@@ -7,16 +7,14 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
+import org.motechproject.adherence.dao.AdherenceRecord;
 import org.motechproject.adherence.dao.AllAdherenceLogs;
 import org.motechproject.adherence.domain.AdherenceLog;
 import org.motechproject.adherence.domain.Concept;
 import org.motechproject.adherence.domain.ErrorFunction;
 import org.motechproject.util.DateUtil;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static junit.framework.Assert.assertEquals;
 import static org.mockito.Mockito.*;
@@ -227,7 +225,7 @@ public class AdherenceServiceTest extends BaseTest {
         LocalDate fromDate = DateUtil.newDate(2011, 12, 1);
         LocalDate toDate = DateUtil.newDate(2011, 12, 31);
 
-        when(allAdherenceLogs.findLogsBetween(externalId, concept, fromDate, toDate)).thenReturn(Arrays.asList(log, secondLog));
+        when(allAdherenceLogs.getDeltaCounts(externalId, concept, fromDate, toDate)).thenReturn(Collections.<AdherenceRecord>emptyList());
         assertEquals(0.5, adherenceService.getDeltaAdherence(externalId, concept, fromDate, toDate));
     }
 
@@ -277,33 +275,6 @@ public class AdherenceServiceTest extends BaseTest {
         AdherenceLog adherenceLog = AdherenceLog.create(externalId, concept, endDate.minusDays(1), endDate);
         when(allAdherenceLogs.findLatestLog(externalId, concept)).thenReturn(adherenceLog);
         assertEquals(endDate, adherenceService.getLatestAdherenceDate(externalId, concept));
-    }
-
-    @Test
-    public void shouldRollbackAdherence() {
-        LocalDate logDate = DateUtil.newDate(2011, 1, 2);
-        mockTime(DateUtil.newDateTime(logDate, 10, 0, 0));
-
-        AdherenceLog adherenceLog = AdherenceLog.create(externalId, concept, logDate);
-        adherenceLog.setId("logId");
-        List<AdherenceLog> adherenceLogs = Arrays.asList(adherenceLog);
-        when(allAdherenceLogs.findLogsBetween(externalId, concept, logDate, logDate)).thenReturn(adherenceLogs);
-        assertEquals(adherenceLogs.get(0), adherenceService.rollBack(externalId, concept, logDate.minusDays(1)).get(0));
-        verify(allAdherenceLogs).remove(adherenceLogs.get(0));
-    }
-
-    @Test
-    public void shouldUpdateLogOnRollbackWhenTillDateCutsIt() {
-        LocalDate logStartDate = DateUtil.newDate(2011, 1, 1);
-        LocalDate logEndDate = DateUtil.newDate(2011, 1, 31);
-        mockTime(DateUtil.newDateTime(logEndDate, 10, 0, 0));
-
-        AdherenceLog adherenceLog = AdherenceLog.create(externalId, concept, logStartDate, logEndDate);
-        adherenceLog.setId("logId");
-        List<AdherenceLog> adherenceLogs = Arrays.asList(adherenceLog);
-        when(allAdherenceLogs.findLogsBetween(externalId, concept, logStartDate.plusDays(1), logEndDate)).thenReturn(adherenceLogs);
-        adherenceService.rollBack(externalId, concept, logStartDate.plusDays(1));
-        verify(allAdherenceLogs, never()).remove(adherenceLogs.get(0));
     }
 
     @After
