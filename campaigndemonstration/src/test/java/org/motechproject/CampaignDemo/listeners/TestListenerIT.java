@@ -55,13 +55,18 @@ public class TestListenerIT {
 	public void testWhenPatientExists() throws ContentNotFoundException {
 		
 		List<String> formats = new ArrayList<String>();
-		formats.add("en");
+		formats.add("IVR");
+		
+		List<String> languages = new ArrayList<String>();
+		languages.add("en");
 		
 		MotechEvent event = new MotechEvent(EventKeys.MESSAGE_CAMPAIGN_SEND_EVENT_SUBJECT);
 		event.getParameters().put(EventKeys.CAMPAIGN_NAME_KEY, "TestCampaign");
 		event.getParameters().put(EventKeys.MESSAGE_KEY, "TestCampaignKey");
 		event.getParameters().put(EventKeys.EXTERNAL_ID_KEY, "12345");
 		event.getParameters().put(EventKeys.MESSAGE_FORMATS, formats);
+		event.getParameters().put(EventKeys.MESSAGE_LANGUAGES, languages);
+		
 		
 		List<Patient> patientList = new ArrayList<Patient>();
 		Patient testPatient = new Patient("12345", "207");
@@ -70,7 +75,7 @@ public class TestListenerIT {
 		
 		Mockito.when(patientDAO.findByExternalid("12345")).thenReturn(patientList);
 		Mockito.when(cmsliteService.getStringContent("en", "TestCampaignKey", "IVR")).thenReturn(new StringContent("en", "cron-message", "IVR", "demo.xml"));
-		
+		Mockito.when(cmsliteService.isStringContentAvailable("en", "TestCampaignKey", "IVR")).thenReturn(true);
 		listener.execute(event);
 		
 		verify(ivrService).initiateCall(Matchers.any(CallRequest.class));
@@ -81,17 +86,21 @@ public class TestListenerIT {
 	public void testWhenPatientDoesNotExist() throws ContentNotFoundException {
 		
 		List<String> formats = new ArrayList<String>();
-		formats.add("en");
+		formats.add("IVR");
+		
+		List<String> languages = new ArrayList<String>();
+		languages.add("en");
 		
 		MotechEvent event = new MotechEvent(EventKeys.MESSAGE_CAMPAIGN_SEND_EVENT_SUBJECT);
 		event.getParameters().put(EventKeys.CAMPAIGN_NAME_KEY, "TestCampaign");
 		event.getParameters().put(EventKeys.MESSAGE_KEY, "TestCampaignKey");
 		event.getParameters().put(EventKeys.EXTERNAL_ID_KEY, "12345");
 		event.getParameters().put(EventKeys.MESSAGE_FORMATS, formats);
+		event.getParameters().put(EventKeys.MESSAGE_LANGUAGES, languages);
 		
 		Mockito.when(patientDAO.findByExternalid("12345")).thenReturn(new ArrayList<Patient>());
 		Mockito.when(cmsliteService.getStringContent("en", "TestCampaignKey", "IVR")).thenReturn(new StringContent("en", "cron-message", "IVR", "demo.xml"));
-		
+		Mockito.when(cmsliteService.getStringContent("en", "TestCampaignKey", "IVR")).thenReturn(new StringContent("en", "cron-message", "IVR", "demo.xml"));
 		
 		listener.execute(event);
 		

@@ -194,35 +194,35 @@ public class IvrControllerTest
         assertEquals(new Integer(0), phoneCall.getDuration());
     }
 
-    @Test
-    public void testIncomingDisconnectedCDREvent() {
-
-        String status = "DISCONNECTED";
-
-        setIncomingRequestParameters(sessionId, status, callerId, timestamp);
-        PhoneCall phoneCall = new PhoneCall();
-        phoneCall.setId(sessionId);
-        phoneCall.setSessionId(sessionId);
-        phoneCall.setDirection(PhoneCall.Direction.INCOMING);
-        phoneCall.setStartDate(new Date(new Long(timestamp)));
-
-        CallRequest callRequest = new CallRequest("1001", 0, "http://localhost");
-        callRequest.setOnSuccessEvent(new MotechEvent("subject"));
-        phoneCall.setCallRequest(callRequest);
-
-        Mockito.when(allPhoneCalls.findBySessionId(sessionId)).thenReturn(phoneCall);
-
-        ivrController.incoming(request, response);
-
-        verify(allPhoneCalls, times(1)).findBySessionId(sessionId);
-
-        verify(allPhoneCalls, times(1)).update(phoneCall);
-        verify(allPhoneCalls, never()).add(Matchers.<PhoneCall>anyObject());
-        verify(eventRelay, times(1)).sendEventMessage(Matchers.<MotechEvent>anyObject());
-
-        assertEquals(new Date(new Long(timestamp)), phoneCall.getEndDate());
-        assertEquals(new Integer(0), phoneCall.getDuration());
-    }
+//    @Test
+//    public void testIncomingDisconnectedCDREvent() {
+//
+//        String status = "DISCONNECTED";
+//
+//        setIncomingRequestParameters(sessionId, status, callerId, timestamp);
+//        PhoneCall phoneCall = new PhoneCall();
+//        phoneCall.setId(sessionId);
+//        phoneCall.setSessionId(sessionId);
+//        phoneCall.setDirection(PhoneCall.Direction.INCOMING);
+//        phoneCall.setStartDate(new Date(new Long(timestamp)));
+//
+//        CallRequest callRequest = new CallRequest("1001", 0, "http://localhost");
+//        callRequest.setOnSuccessEvent(new MotechEvent("subject"));
+//        phoneCall.setCallRequest(callRequest);
+//
+//        Mockito.when(allPhoneCalls.findBySessionId(sessionId)).thenReturn(phoneCall);
+//
+//        ivrController.incoming(request, response);
+//
+//        verify(allPhoneCalls, times(1)).findBySessionId(sessionId);
+//
+//        verify(allPhoneCalls, times(1)).update(phoneCall);
+//        verify(allPhoneCalls, never()).add(Matchers.<PhoneCall>anyObject());
+//        verify(eventRelay, times(1)).sendEventMessage(Matchers.<MotechEvent>anyObject());
+//
+//        assertEquals(new Date(new Long(timestamp)), phoneCall.getEndDate());
+//        assertEquals(new Integer(0), phoneCall.getDuration());
+//    }
 
     @Test
     public void testOutgoingConnected() {
@@ -265,47 +265,47 @@ public class IvrControllerTest
         assertNull(phoneCall.getEndDate());
     }
 
-    @Test
-    public void testOutgoingFailedBusy() {
-
-        String status = "FAILED";
-        String reason = "busy";
-        String externalId = "id";
-
-        setOutgoingRequestParameters(sessionId, externalId, status, reason, callerIdOutgoing, timestamp);
-        PhoneCall phoneCall = new PhoneCall();
-        phoneCall.setId(externalId);
-        phoneCall.setSessionId(sessionId);
-        phoneCall.setDirection(PhoneCall.Direction.OUTGOING);
-        phoneCall.setStartDate(new Date(new Long(timestamp)));
-
-        CallRequest callRequest = new CallRequest("1001", 0, "http://localhost");
-        callRequest.setOnBusyEvent(new MotechEvent("subject"));
-        phoneCall.setCallRequest(callRequest);
-
-        Mockito.when(allPhoneCalls.get(externalId)).thenReturn(phoneCall);
-
-        ivrController.outgoing(request, response);
-
-        PhoneCallEvent event = phoneCall.getEvent(PhoneCallEvent.Status.FAILED);
-        assertNotNull(event);
-
-        verify(allPhoneCalls, times(1)).update(phoneCall);
-        verify(eventRelay, times(1)).sendEventMessage(Matchers.<MotechEvent>anyObject());
-
-        assertEquals(sessionId, phoneCall.getSessionId());
-        assertEquals(externalId, phoneCall.getId());
-        assertEquals(PhoneCall.Direction.OUTGOING, phoneCall.getDirection());
-
-        assertEquals(callerId, event.getCallerId());
-        assertEquals(PhoneCallEvent.Status.valueOf(status), event.getStatus());
-        assertEquals(new Long(timestamp), event.getTimestamp());
-
-        assertEquals(new Date(new Long(timestamp)), phoneCall.getStartDate());
-        assertNull(phoneCall.getAnswerDate());
-        assertNotNull(phoneCall.getDuration());
-        assertNotNull(phoneCall.getEndDate());
-    }
+//    @Test
+//    public void testOutgoingFailedBusy() {
+//
+//        String status = "FAILED";
+//        String reason = "busy";
+//        String externalId = "id";
+//
+//        setOutgoingRequestParameters(sessionId, externalId, status, reason, callerIdOutgoing, timestamp);
+//        PhoneCall phoneCall = new PhoneCall();
+//        phoneCall.setId(externalId);
+//        phoneCall.setSessionId(sessionId);
+//        phoneCall.setDirection(PhoneCall.Direction.OUTGOING);
+//        phoneCall.setStartDate(new Date(new Long(timestamp)));
+//
+//        CallRequest callRequest = new CallRequest("1001", 0, "http://localhost");
+//        callRequest.setOnBusyEvent(new MotechEvent("subject"));
+//        phoneCall.setCallRequest(callRequest);
+//
+//        Mockito.when(allPhoneCalls.get(externalId)).thenReturn(phoneCall);
+//
+//        ivrController.outgoing(request, response);
+//
+//        PhoneCallEvent event = phoneCall.getEvent(PhoneCallEvent.Status.FAILED);
+//        assertNotNull(event);
+//
+//        verify(allPhoneCalls, times(1)).update(phoneCall);
+//        verify(eventRelay, times(1)).sendEventMessage(Matchers.<MotechEvent>anyObject());
+//
+//        assertEquals(sessionId, phoneCall.getSessionId());
+//        assertEquals(externalId, phoneCall.getId());
+//        assertEquals(PhoneCall.Direction.OUTGOING, phoneCall.getDirection());
+//
+//        assertEquals(callerId, event.getCallerId());
+//        assertEquals(PhoneCallEvent.Status.valueOf(status), event.getStatus());
+//        assertEquals(new Long(timestamp), event.getTimestamp());
+//
+//        assertEquals(new Date(new Long(timestamp)), phoneCall.getStartDate());
+//        assertNull(phoneCall.getAnswerDate());
+//        assertNotNull(phoneCall.getDuration());
+//        assertNotNull(phoneCall.getEndDate());
+//    }
 
     private void setIncomingRequestParameters(String sessionId, String status, String callerId, String timestamp) {
         Mockito.when(request.getParameter("session.id")).thenReturn(sessionId);

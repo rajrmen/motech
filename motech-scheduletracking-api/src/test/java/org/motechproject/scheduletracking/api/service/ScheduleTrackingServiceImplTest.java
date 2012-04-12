@@ -46,9 +46,8 @@ public class ScheduleTrackingServiceImplTest {
         when(allTrackedSchedules.getByName("my_schedule")).thenReturn(schedule);
 
         ScheduleTrackingService scheduleTrackingService = new ScheduleTrackingServiceImpl(allTrackedSchedules, allEnrollments, enrollmentService);
-
-        when(allEnrollments.findActiveByExternalIdAndScheduleName("my_entity_1", "my_schedule")).thenReturn(new Enrollment("my_entity_1", "my_schedule", "firstMilestone", weeksAgo(0), weeksAgo(0), new Time(8, 10)));
-        scheduleTrackingService.enroll(new EnrollmentRequest("my_entity_1", "my_schedule", new Time(8, 10), new LocalDate(2012, 1, 2)));
+        when(allEnrollments.findActiveByExternalIdAndScheduleName("my_entity_1", "my_schedule")).thenReturn(new Enrollment("my_entity_1", "my_schedule", "firstMilestone", weeksAgo(0).toDateTimeAtCurrentTime(), weeksAgo(0).toDateTimeAtCurrentTime(), new Time(8, 10)));
+        scheduleTrackingService.enroll(new EnrollmentRequest("my_entity_1", "my_schedule", new Time(8, 10), new LocalDate(2012, 1, 2).toDateTimeAtCurrentTime()));
     }
 
     @Test
@@ -61,7 +60,7 @@ public class ScheduleTrackingServiceImplTest {
 
         ScheduleTrackingService scheduleTrackingService = new ScheduleTrackingServiceImpl(allTrackedSchedules, allEnrollments, enrollmentService);
 
-        scheduleTrackingService.enroll(new EnrollmentRequest("my_entity_1", "my_schedule", new Time(8, 10), new LocalDate(2012, 1, 2)));
+        scheduleTrackingService.enroll(new EnrollmentRequest("my_entity_1", "my_schedule", new Time(8, 10), new LocalDate(2012, 1, 2).toDateTimeAtCurrentTime()));
 
         ArgumentCaptor<Enrollment> enrollmentCaptor = ArgumentCaptor.forClass(Enrollment.class);
         verify(enrollmentService).enroll(enrollmentCaptor.capture());
@@ -81,7 +80,7 @@ public class ScheduleTrackingServiceImplTest {
 
         ScheduleTrackingService scheduleTrackingService = new ScheduleTrackingServiceImpl(allTrackedSchedules, allEnrollments, enrollmentService);
 
-        scheduleTrackingService.enroll(new EnrollmentRequest("entity_1", "my_schedule", new Time(8, 10), new LocalDate(2012, 11, 2), "second_milestone"));
+        scheduleTrackingService.enroll(new EnrollmentRequest("entity_1", "my_schedule", new Time(8, 10), new LocalDate(2012, 11, 2).toDateTimeAtCurrentTime(), "second_milestone"));
 
         ArgumentCaptor<Enrollment> enrollmentCaptor = ArgumentCaptor.forClass(Enrollment.class);
         verify(enrollmentService).enroll(enrollmentCaptor.capture());
@@ -99,8 +98,8 @@ public class ScheduleTrackingServiceImplTest {
         when(allTrackedSchedules.getByName(scheduleName)).thenReturn(schedule);
 
         ScheduleTrackingService scheduleTrackingService = new ScheduleTrackingServiceImpl(allTrackedSchedules, allEnrollments, enrollmentService);
-        scheduleTrackingService.enroll(new EnrollmentRequest("entity_1", scheduleName, new Time(8, 10), new LocalDate(2012, 11, 2)));
-        scheduleTrackingService.enroll(new EnrollmentRequest("entity_1", scheduleName, new Time(8, 10), new LocalDate(2012, 11, 2)));
+        scheduleTrackingService.enroll(new EnrollmentRequest("entity_1", scheduleName, new Time(8, 10), new LocalDate(2012, 11, 2).toDateTimeAtCurrentTime()));
+        scheduleTrackingService.enroll(new EnrollmentRequest("entity_1", scheduleName, new Time(8, 10), new LocalDate(2012, 11, 2).toDateTimeAtCurrentTime()));
         verify(enrollmentService, times(2)).enroll(Matchers.<Enrollment>any());
     }
 
@@ -113,7 +112,7 @@ public class ScheduleTrackingServiceImplTest {
         when(allTrackedSchedules.getByName("my_schedule")).thenReturn(schedule);
 
         ScheduleTrackingService scheduleTrackingService = new ScheduleTrackingServiceImpl(allTrackedSchedules, allEnrollments, enrollmentService);
-        scheduleTrackingService.enroll(new EnrollmentRequest("entity_1", "my_schedule", new Time(8, 10), new LocalDate(2012, 11, 2)));
+        scheduleTrackingService.enroll(new EnrollmentRequest("entity_1", "my_schedule", new Time(8, 10), new LocalDate(2012, 11, 2).toDateTimeAtCurrentTime()));
 
         ArgumentCaptor<Enrollment> enrollmentCaptor = ArgumentCaptor.forClass(Enrollment.class);
         verify(enrollmentService).enroll(enrollmentCaptor.capture());
@@ -133,7 +132,7 @@ public class ScheduleTrackingServiceImplTest {
         ScheduleTrackingService scheduleTrackingService = new ScheduleTrackingServiceImpl(allTrackedSchedules, allEnrollments, enrollmentService);
 
         when(allEnrollments.findActiveByExternalIdAndScheduleName("entity_1", "my_schedule")).thenReturn(null);
-        scheduleTrackingService.enroll(new EnrollmentRequest("entity_1", "my_schedule", new Time(8, 10), new LocalDate(2012, 11, 2)));
+        scheduleTrackingService.enroll(new EnrollmentRequest("entity_1", "my_schedule", new Time(8, 10), new LocalDate(2012, 11, 2).toDateTimeAtCurrentTime()));
 
         Enrollment enrollment = mock(Enrollment.class);
         when(allEnrollments.findActiveByExternalIdAndScheduleName("entity_1", "my_schedule")).thenReturn(enrollment);
@@ -153,7 +152,7 @@ public class ScheduleTrackingServiceImplTest {
 
         ScheduleTrackingService scheduleTrackingService = new ScheduleTrackingServiceImpl(allTrackedSchedules, allEnrollments, enrollmentService);
 
-        Enrollment enrollment = new Enrollment("entity_1", "my_schedule", "milestone", weeksAgo(4), weeksAgo(4), new Time(8, 10));
+        Enrollment enrollment = new Enrollment("entity_1", "my_schedule", "milestone", weeksAgo(4).toDateTimeAtCurrentTime(), weeksAgo(4).toDateTimeAtCurrentTime(), new Time(8, 10));
         when(allEnrollments.findActiveByExternalIdAndScheduleName("entity_1", "my_schedule")).thenReturn(enrollment);
         scheduleTrackingService.unenroll("entity_1", "my_schedule");
 

@@ -40,8 +40,11 @@ public class CampaignControllerTest
     public void testStartCampaign () {
 
     	String requestId = "12345";
+    	String campaignName = "12345";
     	
     	Mockito.when(request.getParameter("externalId")).thenReturn(requestId);
+    	Mockito.when(request.getParameter("campaignName")).thenReturn(campaignName);
+    	
     	
     	ModelAndView modelAndView = campaignController.start(request, response);
     	
@@ -52,8 +55,10 @@ public class CampaignControllerTest
     public void testStopCampaign() {
 
     	String requestId = "12345";
+    	String campaignName = "12345";
     	
     	Mockito.when(request.getParameter("externalId")).thenReturn(requestId);
+    	Mockito.when(request.getParameter("campaignName")).thenReturn(campaignName);
     	
     	ModelAndView modelAndView = campaignController.stop(request, response);
     	

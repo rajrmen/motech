@@ -13,7 +13,7 @@
 	<import resource="classpath:campaignDemoResources.xml" />
 	<import resource="classpath:scheduleTrackingDemoResources.xml" />
     <import resource="classpath:applicationPlatformCommon.xml" />
-
+	<import resource="classpath:commcareDemoResources.xml" />
 
 <!-- 	<bean id="knowledgeBaseManager" class="org.motechproject.server.ruleengine.KnowledgeBaseManager" /> -->
 	
