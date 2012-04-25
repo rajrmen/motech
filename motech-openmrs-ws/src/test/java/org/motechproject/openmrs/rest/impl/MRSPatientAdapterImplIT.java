@@ -6,8 +6,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import org.codehaus.jackson.JsonNode;
@@ -19,58 +17,19 @@ import org.motechproject.mrs.model.Attribute;
 import org.motechproject.mrs.model.MRSFacility;
 import org.motechproject.mrs.model.MRSPatient;
 import org.motechproject.mrs.model.MRSPerson;
-import org.motechproject.mrs.services.MRSFacilityAdapter;
-import org.motechproject.mrs.services.MRSPatientAdapter;
 import org.motechproject.openmrs.rest.HttpException;
-import org.motechproject.openmrs.rest.RestfulClient;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.web.client.RestOperations;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:applicationOpenMrsWS.xml" })
-public class MRSPatientAdapterImplIT {
+public class MRSPatientAdapterImplIT extends AbstractAdapterImplIT {
 
-	private static final String MOTECH_ID_1 = "200-08";
 	private static final String MOTECH_ID_2 = "200-09";
 	private static final String MOTECH_ID_3 = "300-10";
-	
-	private static final String ADDRESS = "5 Main St";
 	private static final String TEMPORARY_ATTRIBUTE_VALUE = "Temporary Value";
-	private static final String GENDER = "M";
-	private static final String LAST_NAME = "Trump";
-	private static final String MIDDLE_NAME = "E";
-	private static final String FIRST_NAME = "Donald";
 	private static final String TEMPORARY_ATTRIBUTE_TYPE_NAME = "Temporary Attribute Type";
-	private final Date currentDate;
-	
-	public MRSPatientAdapterImplIT() {
-		Calendar instance = Calendar.getInstance();
-		instance.set(Calendar.HOUR_OF_DAY, 0);
-		instance.set(Calendar.MINUTE, 0);
-		instance.set(Calendar.SECOND, 0);
-		instance.set(Calendar.MILLISECOND, 0);
-		
-		currentDate = instance.getTime();
-	}
 
-	@Autowired
-	MRSPatientAdapter patientAdapter;
-	
-	@Autowired
-	MRSFacilityAdapter facilityAdapter;
-	
-	@Autowired
-	RestfulClient restfulClient;
-	
-	@Autowired
-	RestOperations restOperations;
-	
-	@Value("${openmrs.url}")
-	String openmrsUrl;
-	
 	@Test
 	public void shouldCreatePatientWithAttributes() throws HttpException, URISyntaxException {
 		String attributeUuid = null;
@@ -102,45 +61,15 @@ public class MRSPatientAdapterImplIT {
 			assertEquals(TEMPORARY_ATTRIBUTE_VALUE, persistedPerson.getAttributes().get(0).value());
 		} finally {
 			deleteAttributeType(attributeUuid);	
-			deleteFacility(facility);
 			deletePatient(patient);
+			deleteFacility(facility);
 		}
-	}
-
-	private void deleteFacility(MRSFacility facility) {
-		deleteFacility(facility.getId());
 	}
 
 	private void addAttributeToPatient(MRSPerson person, String attributeName) {
 		person.addAttribute(new Attribute(attributeName, TEMPORARY_ATTRIBUTE_VALUE));	
 	}
 
-	private void deletePatient(MRSPatient patient) {
-		deletePatient(patient.getId());
-	}
-
-	private MRSPatient createTemporaryPatient(String motechId, MRSPerson person, MRSFacility facility) {
-		MRSPatient patient = new MRSPatient(motechId, person, facility);
-		
-		return patientAdapter.savePatient(patient);
-	}
-
-	private MRSPerson makePerson() {
-		MRSPerson person = new MRSPerson().firstName(FIRST_NAME).middleName(MIDDLE_NAME)
-				.lastName(LAST_NAME).gender(GENDER).address(ADDRESS)
-				.dateOfBirth(currentDate);
-		return person;
-	}
-
-	private MRSFacility createTemporaryLocation() throws HttpException, URISyntaxException {
-		ObjectNode obj = JsonNodeFactory.instance.objectNode();
-		obj.put("name", "Temporary Location");
-		obj.put("description", "Temporary Location");
-		JsonNode result = restfulClient.postForJsonNode(new URI(openmrsUrl + "/ws/rest/v1/location"), obj);
-		
-		return new MRSFacility(result.get("uuid").asText());
-	}
-	
 	private String createTemporaryAttributeType(String attributeName) throws HttpException, URISyntaxException {
 		ObjectNode obj = JsonNodeFactory.instance.objectNode();
 		obj.put("name", attributeName);
@@ -153,16 +82,8 @@ public class MRSPatientAdapterImplIT {
 	}	
 	
 	
-	private void deleteFacility(String id) {
-		restOperations.delete(openmrsUrl + "/ws/rest/v1/location/{uuid}", id);
-	}
-	
-	private void deletePatient(String id) {
-		restOperations.delete(openmrsUrl + "/ws/rest/v1/patient/{uuid}", id);
-	}
-	
 	private void deleteAttributeType(String attributeUuid) {
-		restOperations.delete(openmrsUrl + "/ws/rest/v1/personattributetype/{uuid}", attributeUuid);
+		restOperations.delete(openmrsUrl + "/ws/rest/v1/personattributetype/{uuid}?purge", attributeUuid);
 	}
 
 	@Test
@@ -177,8 +98,8 @@ public class MRSPatientAdapterImplIT {
 			MRSPatient persistedPatient = patientAdapter.getPatientByMotechId(MOTECH_ID_1);
 			assertNotNull(persistedPatient);
 		} finally {
-			deleteFacility(facility);
 			deletePatient(patient);
+			deleteFacility(facility);
 		}		
 	}
 	
@@ -197,8 +118,8 @@ public class MRSPatientAdapterImplIT {
 			assertTrue(persistedPatient.getPerson().isDead());
 			assertEquals(currentDate, persistedPatient.getPerson().deathDate());
 		} finally {
-			deleteFacility(facility);
 			deletePatient(patient);
+			deleteFacility(facility);
 		}			
 	}
 	
@@ -224,10 +145,10 @@ public class MRSPatientAdapterImplIT {
 			assertEquals(MOTECH_ID_2, patients.get(1).getMotechId());
 			assertEquals(MOTECH_ID_3, patients.get(2).getMotechId());
 		} finally {
-			deleteFacility(facility);
 			deletePatient(patient1);
 			deletePatient(patient2);
 			deletePatient(patient3);
+			deleteFacility(facility);
 		}			
 	}
 	
@@ -252,10 +173,10 @@ public class MRSPatientAdapterImplIT {
 			assertEquals(MOTECH_ID_1, patients.get(0).getMotechId());
 			assertEquals(MOTECH_ID_2, patients.get(1).getMotechId());
 		} finally {
-			deleteFacility(facility);
 			deletePatient(patient1);
 			deletePatient(patient2);
 			deletePatient(patient3);
+			deleteFacility(facility);
 		}			
 	}		
 	
@@ -289,10 +210,10 @@ public class MRSPatientAdapterImplIT {
 			assertEquals(1, persistedPerson.getAttributes().size());
 			assertEquals(TEMPORARY_ATTRIBUTE_TYPE_NAME + 2, persistedPerson.getAttributes().get(0).name());
 		} finally {
-			deleteFacility(facility);
 			deletePatient(patient);
 			deleteAttributeType(attributeUuid1);
 			deleteAttributeType(attributeUuid2);
+			deleteFacility(facility);
 		}	
 	}
 }

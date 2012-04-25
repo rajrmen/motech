@@ -11,6 +11,7 @@ import org.motechproject.mrs.model.MRSFacility;
 import org.motechproject.mrs.services.MRSException;
 import org.motechproject.mrs.services.MRSFacilityAdapter;
 import org.motechproject.openmrs.rest.HttpException;
+import org.motechproject.openmrs.rest.JsonConverterUtil;
 import org.motechproject.openmrs.rest.RestfulClient;
 import org.motechproject.openmrs.rest.url.OpenMrsLocationUrlHolder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,18 +35,11 @@ public class MRSFacilityAdapterImpl implements MRSFacilityAdapter {
 
 		List<MRSFacility> facilities = new ArrayList<MRSFacility>();
 		for (int i = 0; i < node.size(); i++) {
-			MRSFacility facility = convertJsonToMrsFacility(node.get(i));
+			MRSFacility facility = JsonConverterUtil.convertJsonToMrsFacility(node.get(i));
 			facilities.add(facility);
 		}
 
 		return facilities;
-	}
-
-	private MRSFacility convertJsonToMrsFacility(JsonNode location) {
-		MRSFacility facility = new MRSFacility(location.get("uuid").asText(), location.get("name").asText(), location
-		        .get("country").asText(), location.get("address6").asText(), location.get("countyDistrict").asText(),
-		        location.get("stateProvince").asText());
-		return facility;
 	}
 
 	@Override
@@ -56,7 +50,7 @@ public class MRSFacilityAdapterImpl implements MRSFacilityAdapter {
 
 		List<MRSFacility> facilities = new ArrayList<MRSFacility>();
 		for (int i = 0; i < results.size(); i++) {
-			MRSFacility facility = convertJsonToMrsFacility(results.get(i));
+			MRSFacility facility = JsonConverterUtil.convertJsonToMrsFacility(results.get(i));
 			facilities.add(facility);
 		}
 
@@ -77,7 +71,7 @@ public class MRSFacilityAdapterImpl implements MRSFacilityAdapter {
 	public MRSFacility getFacility(String facilityId) {
 		JsonNode obj = getJsonNode(urlHolder.getFacilityFindUri(facilityId));
 
-		return convertJsonToMrsFacility(obj);
+		return JsonConverterUtil.convertJsonToMrsFacility(obj);
 	}
 
 	@Override

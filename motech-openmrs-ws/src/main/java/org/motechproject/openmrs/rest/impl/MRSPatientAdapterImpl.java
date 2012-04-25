@@ -4,7 +4,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -16,6 +15,7 @@ import java.util.Map;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.JsonNodeFactory;
 import org.codehaus.jackson.node.ObjectNode;
 import org.motechproject.mrs.model.Attribute;
@@ -27,8 +27,9 @@ import org.motechproject.mrs.services.MRSFacilityAdapter;
 import org.motechproject.mrs.services.MRSPatientAdapter;
 import org.motechproject.openmrs.rest.DateUtil;
 import org.motechproject.openmrs.rest.HttpException;
+import org.motechproject.openmrs.rest.JsonConverterUtil;
 import org.motechproject.openmrs.rest.RestfulClient;
-import org.motechproject.openmrs.rest.url.OpenMrsPatientUrlHolder;
+import org.motechproject.openmrs.rest.url.OpenMrsUrlHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,14 +44,14 @@ public class MRSPatientAdapterImpl implements MRSPatientAdapter {
 
 	private final RestfulClient restfulClient;
 	private final MRSFacilityAdapter facilityAdapter;
-	private final OpenMrsPatientUrlHolder patientUrls;
+	private final OpenMrsUrlHolder patientUrls;
 	private Map<String, String> attributeTypeUuidCache = new HashMap<String, String>();
 
 	private final static String MOTECH_ID_NAME = "MoTeCH Id";
 
 	@Autowired
 	public MRSPatientAdapterImpl(RestfulClient restfulClient, MRSFacilityAdapter facilityAdapter,
-	        OpenMrsPatientUrlHolder patientUrls) {
+	        OpenMrsUrlHolder patientUrls) {
 		this.restfulClient = restfulClient;
 		this.facilityAdapter = facilityAdapter;
 		this.patientUrls = patientUrls;
@@ -97,13 +98,8 @@ public class MRSPatientAdapterImpl implements MRSPatientAdapter {
 		}
 
 		JsonNode motechIdentifier = getMotechIdentifier(responseNode);
+		MRSPerson person = JsonConverterUtil.convertJsonToMrsPerson(responseNode.get("person"));
 
-		MRSPerson person = new MRSPerson();
-		JsonNode personNode = responseNode.get("person");
-		setPreferredName(person, personNode);
-		setPersonProperties(person, personNode);
-		setPreferredAddress(person, personNode);
-		setAttributes(person, personNode);
 
 		MRSFacility facility = facilityAdapter.getFacility(motechIdentifier.get("location").get("uuid").asText());
 
@@ -139,6 +135,7 @@ public class MRSPatientAdapterImpl implements MRSPatientAdapter {
 		JsonNode results = null;
 		try {
 			results = restfulClient.getEntityByJsonNode(patientUrls.getPatientIdentifierTypeList());
+			results = results.get("results");
 		} catch (HttpException e) {
 			logger.error("There was an exception retrieving the MoTeCH Identifier Type UUID");
 			throw new MRSException(e);
@@ -161,62 +158,19 @@ public class MRSPatientAdapterImpl implements MRSPatientAdapter {
 		return motechIdTypeUuid;
 	}
 
-	private void setPreferredName(MRSPerson person, JsonNode personNode) {
-		JsonNode preferredNameObj = personNode.get("preferredName");
-
-		person.preferredName(preferredNameObj.get("display").asText())
-		        .firstName(preferredNameObj.get("givenName").asText())
-		        .middleName(preferredNameObj.get("middleName").asText())
-		        .lastName(preferredNameObj.get("familyName").asText());
-	}
-
-	private void setPersonProperties(MRSPerson person, JsonNode personNode) {
-		person.birthDateEstimated(personNode.get("birthdateEstimated").asBoolean())
-		        .gender(personNode.get("gender").asText()).dead(personNode.get("dead").asBoolean());
-
-		try {
-			person.dateOfBirth(DateUtil.parseOpenMrsDate(personNode.get("birthdate").asText()));
-		} catch (ParseException e) {
-			logger.warn("Could not parse the birthdate property on Person with uuid: "
-			        + personNode.get("uuid").asText());
-		}
-
-		if (!personNode.get("deathDate").isNull()) {
-			try {
-				person.deathDate(DateUtil.parseOpenMrsDate(personNode.get("deathDate").asText()));
-			} catch (ParseException e) {
-				logger.warn("Could not parse the deathDate property on Person with uuid: "
-				        + personNode.get("uuid").asText());
-			}
-		}
-	}
-
-	private void setPreferredAddress(MRSPerson person, JsonNode personNode) {
-		JsonNode preferredAddress = personNode.get("preferredAddress");
-		person.address(preferredAddress.get("address1").asText());
-	}
-
-	private void setAttributes(MRSPerson person, JsonNode personNode) {
-		JsonNode attributes = personNode.get("attributes");
-		if (attributes.size() == 0) {
-			return;
-		}
-
-		for (int i = 0; i < attributes.size(); i++) {
-			// extract name/value from the display property
-			// there is no explicit property for name attribute
-			// the display attribute is formatted as: name = value
-			String display = attributes.get(i).get("display").asText();
-			int index = display.indexOf("=");
-			String name = display.substring(0, index).trim();
-			String value = display.substring(index + 1).trim();
-			Attribute attr = new Attribute(name, value);
-			person.addAttribute(attr);
-		}
-	}
-
 	@Override
 	public MRSPatient savePatient(MRSPatient patient) {
+		JsonNode personJsonObj = makeJsonPersonObjFromMrsPatient(patient, true);
+		try {
+			JsonNode response = restfulClient.postForJsonNode(patientUrls.getPerson(), personJsonObj);
+			patient.getPerson().id(response.get("uuid").asText());
+		} catch(HttpException e) {
+			logger.error("Failed to create person for patient: " + patient.getMotechId());
+			throw new MRSException(e);
+		}
+		
+		saveAttributesForPerson(patient.getPerson(), patient.getPerson().getId());
+		
 		JsonNode patientJsonObj = makeJsonPatientObjFromMrsPatient(patient);
 		JsonNode response = null;
 		try {
@@ -226,29 +180,25 @@ public class MRSPatientAdapterImpl implements MRSPatientAdapter {
 			throw new MRSException(e);
 		}
 
-		String persistedPatientUuid = response.get("uuid").asText();
-		saveAttributesForPerson(patient.getPerson(), persistedPatientUuid);
-
-		patient.getPerson().id(persistedPatientUuid);
-		return new MRSPatient(persistedPatientUuid, patient.getMotechId(), patient.getPerson(), patient.getFacility());
+		return new MRSPatient(response.get("uuid").asText(), patient.getMotechId(), patient.getPerson(), patient.getFacility());
 	}
 
-	private JsonNode makeJsonPatientObjFromMrsPatient(MRSPatient patient) {
+	private JsonNode makeJsonPersonObjFromMrsPatient(MRSPatient patient, boolean creating) {
 		MRSPerson person = patient.getPerson();
 
-		ObjectNode patientObj = buildPatientObjFromPerson(person);
-		ObjectNode preferredIdentifier = buildPreferredIdentiferObj(patient);
-		ObjectNode preferredName = buildPreferredNameObj(person);
-		ObjectNode preferredAddress = buildPreferredAddressObj(person);
+		ObjectNode personObj = buildPersonObjFromPerson(person);
+		if (creating) {
+			personObj.put("names", buildNamesForPerson(person, true));
+			personObj.put("addresses", buildaddressesForPerson(person, true));
+		} else {
+			personObj.put("preferredName", buildNamesForPerson(person, false));
+			personObj.put("preferredAddress", buildaddressesForPerson(person, false));
+		}
 
-		patientObj.put("preferredIdentifier", preferredIdentifier);
-		patientObj.put("preferredName", preferredName);
-		patientObj.put("preferredAddress", preferredAddress);
-
-		return patientObj;
-	}
-
-	private ObjectNode buildPatientObjFromPerson(MRSPerson person) {
+		return personObj;
+    }
+	
+	private ObjectNode buildPersonObjFromPerson(MRSPerson person) {
 		ObjectNode patientObj = JsonNodeFactory.instance.objectNode();
 		patientObj.put("birthdate", DateUtil.formatToOpenMrsDate(person.getDateOfBirth()));
 		patientObj.put("gender", person.getGender());
@@ -257,8 +207,48 @@ public class MRSPatientAdapterImpl implements MRSPatientAdapter {
 		boolean dobEstimated = BooleanUtils.isTrue(person.getBirthDateEstimated()) ? true : false;
 		patientObj.put("birthdateEstimated", dobEstimated);
 		patientObj.put("dead", person.isDead());
-		patientObj.put("deathDate",
-		        (person.deathDate() == null ? null : DateUtil.formatToOpenMrsDate(person.deathDate())));
+		
+		if (person.deathDate() != null) {
+			patientObj.put("deathDate",	DateUtil.formatToOpenMrsDate(person.deathDate()));
+		}
+		
+		return patientObj;
+	}
+	
+	private JsonNode buildNamesForPerson(MRSPerson person, boolean withArray) {
+		ObjectNode preferredName = JsonNodeFactory.instance.objectNode();
+		preferredName.put("givenName", person.getFirstName());
+		preferredName.put("middleName", person.getMiddleName());
+		preferredName.put("familyName", person.getLastName());
+		
+		if (withArray) {
+			ArrayNode namesArray = JsonNodeFactory.instance.arrayNode();
+			namesArray.add(preferredName);
+			return namesArray;
+		} else {
+			return preferredName;
+		}
+	}
+	
+	private JsonNode buildaddressesForPerson(MRSPerson person, boolean withArray) {
+		ObjectNode preferredAddress = JsonNodeFactory.instance.objectNode();
+		preferredAddress.put("address1", person.getAddress());
+
+		if (withArray) {
+			ArrayNode addressArray = JsonNodeFactory.instance.arrayNode();			
+			addressArray.add(preferredAddress);
+			return addressArray;
+		} else {
+			return preferredAddress;
+		}
+	}
+
+	private JsonNode makeJsonPatientObjFromMrsPatient(MRSPatient patient) {
+		ObjectNode patientObj = JsonNodeFactory.instance.objectNode();
+		
+		patientObj.put("identifiers", buildPreferredIdentiferObj(patient));
+		patientObj.put("person", patient.getPerson().getId());
+		
 		return patientObj;
 	}
 
@@ -298,28 +288,17 @@ public class MRSPatientAdapterImpl implements MRSPatientAdapter {
 		return attributeTypeUuidCache.get(name);
 	}
 
-	private ObjectNode buildPreferredIdentiferObj(MRSPatient patient) {
+	private ArrayNode buildPreferredIdentiferObj(MRSPatient patient) {
+		ArrayNode identifiersArray = JsonNodeFactory.instance.arrayNode();
 		ObjectNode preferredIdentifier = JsonNodeFactory.instance.objectNode();
 		preferredIdentifier.put("identifier", patient.getMotechId());
 		preferredIdentifier.put("identifierType", getMotechIdUuid());
 		preferredIdentifier.put("location", patient.getFacility().getId());
-		return preferredIdentifier;
+		
+		identifiersArray.add(preferredIdentifier);
+		return identifiersArray;
 	}
 
-	private ObjectNode buildPreferredNameObj(MRSPerson person) {
-		ObjectNode preferredName = JsonNodeFactory.instance.objectNode();
-		preferredName.put("givenName", person.getFirstName());
-		preferredName.put("middleName", person.getMiddleName());
-		preferredName.put("familyName", person.getLastName());
-		return preferredName;
-	}
-
-	private ObjectNode buildPreferredAddressObj(MRSPerson person) {
-		ObjectNode preferredAddress = JsonNodeFactory.instance.objectNode();
-		preferredAddress.put("address1", person.getAddress());
-
-		return preferredAddress;
-	}
 
 	@Override
 	public void savePatientCauseOfDeathObservation(String patientId, String conceptName, Date dateOfDeath,
@@ -329,7 +308,7 @@ public class MRSPatientAdapterImpl implements MRSPatientAdapter {
 		obj.put("deathDate", DateUtil.formatToOpenMrsDate(dateOfDeath));
 		obj.put("causeOfDeath", conceptName);
 		try {
-			restfulClient.postWithEmptyResponseBody(patientUrls.getPatientUpdatePathByUuid(patientId), obj);
+			restfulClient.postWithEmptyResponseBody(patientUrls.getPersonUpdateByUuid(patientId), obj);
 		} catch (HttpException e) {
 			logger.error("Failed to save cause of death observation for patient id: " + patientId);
 			throw new MRSException(e);
@@ -387,14 +366,13 @@ public class MRSPatientAdapterImpl implements MRSPatientAdapter {
 		if (StringUtils.isEmpty(patient.getId())) {
 			throw new MRSException(new IllegalArgumentException("Patient must have an id to be updated"));
 		}
-
-		JsonNode patientJsonObj = makeJsonPatientObjFromMrsPatient(patient);
+		
+		JsonNode personJbonObj = makeJsonPersonObjFromMrsPatient(patient, false);
 		try {
-			restfulClient.postWithEmptyResponseBody(patientUrls.getPatientUpdatePathByUuid(patient.getId()),
-			        patientJsonObj);
-		} catch (HttpException e) {
+			restfulClient.postWithEmptyResponseBody(patientUrls.getPersonUpdateByUuid(patient.getId()), personJbonObj);
+		} catch(HttpException e) {
 			logger.error("Failed to update a patient in OpenMRS with MoTeCH Id: " + patient.getMotechId());
-			throw new MRSException(e);
+			throw new MRSException(e);			
 		}
 
 		// the openmrs web service requires an explicit delete request to remove
