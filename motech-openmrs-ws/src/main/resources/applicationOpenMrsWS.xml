@@ -8,7 +8,7 @@
   <context:annotation-config />
   <context:component-scan base-package="org.motechproject.openmrs" />
 
-  <context:property-placeholder location="classpath:openmrs.properties"
+  <context:property-placeholder location="classpath:openmrs.properties,classpath:openmrs-urls.properties"
     ignore-unresolvable="true" />
     
   <bean id="httpClient" class="org.motechproject.openmrs.rest.HttpClientFactoryBean">

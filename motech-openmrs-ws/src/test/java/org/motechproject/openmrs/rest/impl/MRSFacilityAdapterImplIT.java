@@ -10,6 +10,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.motechproject.mrs.model.MRSFacility;
 import org.motechproject.mrs.services.MRSFacilityAdapter;
+import org.motechproject.openmrs.rest.util.OpenMrsUrlHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
@@ -28,6 +29,9 @@ public class MRSFacilityAdapterImplIT {
 	
 	@Value("${openmrs.url}")
 	String openmrsUrl;
+	
+	@Autowired
+	OpenMrsUrlHolder holder;
 	
 	@Test
 	public void shouldCreateNewFacility() {

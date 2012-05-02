@@ -24,11 +24,11 @@ import org.motechproject.mrs.model.MRSPerson;
 import org.motechproject.mrs.services.MRSEncounterAdapter;
 import org.motechproject.mrs.services.MRSException;
 import org.motechproject.mrs.services.MRSPatientAdapter;
-import org.motechproject.openmrs.rest.DateUtil;
 import org.motechproject.openmrs.rest.HttpException;
-import org.motechproject.openmrs.rest.JsonConverterUtil;
 import org.motechproject.openmrs.rest.RestfulClient;
-import org.motechproject.openmrs.rest.url.OpenMrsEncounterUrlHolder;
+import org.motechproject.openmrs.rest.util.DateUtil;
+import org.motechproject.openmrs.rest.util.JsonConverterUtil;
+import org.motechproject.openmrs.rest.util.OpenMrsUrlHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,14 +40,14 @@ public class MRSEncounterAdapterImpl implements MRSEncounterAdapter {
 
 	private final MRSPatientAdapter patientAdapter;
 	private final RestfulClient restfulClient;
-	private final OpenMrsEncounterUrlHolder encounterUrl;
+	private final OpenMrsUrlHolder urlHolder;
 
 	@Autowired
 	public MRSEncounterAdapterImpl(RestfulClient restfulClient, MRSPatientAdapter patientAdapter,
-			OpenMrsEncounterUrlHolder encounterUrl) {
+			OpenMrsUrlHolder encounterUrl) {
 		this.restfulClient = restfulClient;
 		this.patientAdapter = patientAdapter;
-		this.encounterUrl = encounterUrl;
+		this.urlHolder = encounterUrl;
 	}
 
 	@Override
@@ -64,7 +64,7 @@ public class MRSEncounterAdapterImpl implements MRSEncounterAdapter {
 		
 		encounterObj.put("obs", observationsToJson(encounter.getObservations()));
 		try {
-			JsonNode response = restfulClient.postForJsonNode(encounterUrl.getEncounterPath(), encounterObj);
+			JsonNode response = restfulClient.postForJsonNode(urlHolder.getEncounterPath(), encounterObj);
 			return new MRSEncounter(response.get("uuid").asText(), encounter.getProvider(), encounter.getCreator(),
 					encounter.getFacility(), encounter.getDate(), encounter.getPatient(), encounter.getObservations(),
 					encounter.getEncounterType());
@@ -95,7 +95,7 @@ public class MRSEncounterAdapterImpl implements MRSEncounterAdapter {
 	private String resolveConceptUuidFromConceptName(String conceptName) {
 		try {
 			String encodedConceptName = URLEncoder.encode(conceptName, "UTF-8");
-			JsonNode response = restfulClient.getEntityByJsonNode(encounterUrl
+			JsonNode response = restfulClient.getEntityByJsonNode(urlHolder
 					.getConceptSearchByName(encodedConceptName));
 			JsonNode results = response.get("results");
 			if (results.size() == 0) {
@@ -131,7 +131,7 @@ public class MRSEncounterAdapterImpl implements MRSEncounterAdapter {
 	private List<MRSEncounter> getEncountersForPatient(MRSPatient patient) {
 		List<MRSEncounter> encounters = new ArrayList<MRSEncounter>();
 		try {
-			JsonNode resultObj = restfulClient.getEntityByJsonNode(encounterUrl.getEncountersByPatientUuid(patient
+			JsonNode resultObj = restfulClient.getEntityByJsonNode(urlHolder.getEncountersByPatientUuid(patient
 					.getId()));
 			JsonNode resultArray = resultObj.get("results");
 			for (int i = 0; i < resultArray.size(); i++) {
@@ -167,7 +167,7 @@ public class MRSEncounterAdapterImpl implements MRSEncounterAdapter {
 
 	private JsonNode getPerson(String providerUuid) {
 		try {
-			return restfulClient.getEntityByJsonNode(encounterUrl.getProviderByUuid(providerUuid));
+			return restfulClient.getEntityByJsonNode(urlHolder.getProviderByUuid(providerUuid));
 		} catch (HttpException e) {
 			throw new MRSException(e);
 		}
@@ -175,7 +175,7 @@ public class MRSEncounterAdapterImpl implements MRSEncounterAdapter {
 
 	private JsonNode getCreator(String asText) {
 		try {
-			return restfulClient.getEntityByJsonNode(encounterUrl.getCreatorByUuid(asText));
+			return restfulClient.getEntityByJsonNode(urlHolder.getCreatorByUuid(asText));
 		} catch (HttpException e) {
 			throw new MRSException(e);
 		}

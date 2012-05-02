@@ -19,7 +19,7 @@ import org.mockito.Mock;
 import org.motechproject.mrs.model.MRSFacility;
 import org.motechproject.openmrs.rest.HttpException;
 import org.motechproject.openmrs.rest.RestfulClient;
-import org.motechproject.openmrs.rest.url.OpenMrsLocationUrlHolder;
+import org.motechproject.openmrs.rest.util.OpenMrsUrlHolder;
 
 public class MRSFacilityAdapterImplTest {
 
@@ -38,7 +38,7 @@ public class MRSFacilityAdapterImplTest {
 	@Before
 	public void setUp() {
 		initMocks(this);
-		impl = new MRSFacilityAdapterImpl(client, new OpenMrsLocationUrlHolder("http://www.openmrs.org"));
+		impl = new MRSFacilityAdapterImpl(client, new OpenMrsUrlHolder());
 	}
 	
 	@Test

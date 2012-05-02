@@ -1,4 +1,4 @@
-package org.motechproject.openmrs.rest;
+package org.motechproject.openmrs.rest.util;
 
 import java.text.ParseException;
 

@@ -11,9 +11,9 @@ import org.motechproject.mrs.model.MRSFacility;
 import org.motechproject.mrs.services.MRSException;
 import org.motechproject.mrs.services.MRSFacilityAdapter;
 import org.motechproject.openmrs.rest.HttpException;
-import org.motechproject.openmrs.rest.JsonConverterUtil;
 import org.motechproject.openmrs.rest.RestfulClient;
-import org.motechproject.openmrs.rest.url.OpenMrsLocationUrlHolder;
+import org.motechproject.openmrs.rest.util.JsonConverterUtil;
+import org.motechproject.openmrs.rest.util.OpenMrsUrlHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -21,10 +21,10 @@ import org.springframework.stereotype.Component;
 public class MRSFacilityAdapterImpl implements MRSFacilityAdapter {
 
 	private RestfulClient restClient;
-	private OpenMrsLocationUrlHolder urlHolder;
+	private OpenMrsUrlHolder urlHolder;
 
 	@Autowired
-	public MRSFacilityAdapterImpl(RestfulClient restClient, OpenMrsLocationUrlHolder urlHolder) {
+	public MRSFacilityAdapterImpl(RestfulClient restClient, OpenMrsUrlHolder urlHolder) {
 		this.restClient = restClient;
 		this.urlHolder = urlHolder;
 	}
