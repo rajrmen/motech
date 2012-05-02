@@ -31,7 +31,7 @@ public class MRSFacilityAdapterImpl implements MRSFacilityAdapter {
 
 	@Override
 	public List<MRSFacility> getFacilities() {
-		JsonNode node = getJsonNode(urlHolder.getFacilityListUri());
+		JsonNode node = getJsonNode(urlHolder.getFacilityListUri()).get("results");
 
 		List<MRSFacility> facilities = new ArrayList<MRSFacility>();
 		for (int i = 0; i < node.size(); i++) {
