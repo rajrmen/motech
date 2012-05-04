@@ -6,6 +6,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.motechproject.event.EventRelay;
 import org.motechproject.model.MotechEvent;
 import org.motechproject.sms.api.constants.EventDataKeys;
 import org.motechproject.sms.api.constants.EventSubjects;
@@ -25,6 +26,8 @@ public class SmsSendByHttpIT {
 
     private SmsSendHandler smsSendHandler;
 
+    @Autowired
+    EventRelay eventRelay;
     @Autowired
     private TemplateReader templateReader;
     @Mock
@@ -47,5 +50,14 @@ public class SmsSendByHttpIT {
             put(EventDataKeys.MESSAGE, "business analyst");
         }});
         smsSendHandler.handle(motechEvent);
+    }
+
+    @Test
+    public void triggerHandle() throws InterruptedException {
+        HashMap<String, Object> sms = new HashMap<String, Object>();
+        sms.put(EventDataKeys.RECIPIENTS,"1234");
+        sms.put(EventDataKeys.MESSAGE,"message");
+        eventRelay.sendEventMessage(new MotechEvent(EventSubjects.SEND_SMS, sms));
+        Thread.sleep(200000);
     }
 }

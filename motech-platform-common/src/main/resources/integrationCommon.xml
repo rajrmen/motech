@@ -20,6 +20,10 @@
         <property name="cacheProducers" value="false"/>
     </bean>
 
+    <bean id="deadLetterQueue" class="org.apache.activemq.command.ActiveMQQueue">
+        <constructor-arg value="ActiveMQ.DLQ"/>
+    </bean>
+
     <bean id="schedulerQueue" class="org.apache.activemq.command.ActiveMQQueue">
         <constructor-arg value="${queue.for.scheduler}"/>
     </bean>

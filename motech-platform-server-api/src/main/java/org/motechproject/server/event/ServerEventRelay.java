@@ -124,6 +124,12 @@ public class ServerEventRelay implements EventRelay
         parameters.put("listeners", String.format("%d", listeners.size()));
         metricsAgent.logEvent("motech.event-relay.relayEvent", parameters);
     }
+
+    public void relayPoisonEvent(Object exception) throws Exception {
+      //  MotechEvent event = (MotechEvent) exception.getFailedMessage().getPayload();
+        System.out.println(exception);
+        throw new Exception();
+    }
     
     /**
      * Split a given message into multiple messages with specific message destination

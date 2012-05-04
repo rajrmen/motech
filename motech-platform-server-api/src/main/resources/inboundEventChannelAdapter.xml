@@ -15,8 +15,14 @@
     <context:property-placeholder location="classpath:activemq.properties"/>
     <jms:message-driven-channel-adapter id="jmsin"
                                         destination="eventQueue"
-                                        channel="eventChannel" acknowledge="transacted" concurrent-consumers= "${concurrentConsumers:1}" max-concurrent-consumers="${maxConcurrentConsumers:10}"/>
+                                        channel="eventChannel" acknowledge="transacted" concurrent-consumers= "${concurrentConsumers:1}" max-concurrent-consumers="${maxConcurrentConsumers:10}" />
+
+    <jms:message-driven-channel-adapter id="jmsdlqin"
+                                        destination="deadLetterQueue"
+                                        channel="dlqChannel" acknowledge="transacted" />
     <channel id="eventChannel"/>
+    <channel id="dlqChannel"/>
 
     <outbound-channel-adapter id="outboundChannelAdapter" channel="eventChannel" ref="eventRelay" method="relayEvent" />
+    <outbound-channel-adapter id="dlqOutboundChannelAdapter" channel="dlqChannel" ref="eventRelay" method="relayPoisonEvent" />
 </beans:beans>
