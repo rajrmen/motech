@@ -53,4 +53,6 @@ public class AllTrees extends MotechBaseRepository<Tree> {
         return queryView("by_name", name);
     }
 
+
+
 }
