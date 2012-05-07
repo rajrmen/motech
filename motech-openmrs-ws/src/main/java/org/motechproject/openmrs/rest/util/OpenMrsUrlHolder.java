@@ -37,6 +37,12 @@ public class OpenMrsUrlHolder implements InitializingBean {
 	@Value("${openmrs.rest.resource.personattribute.search}")
 	private String PERSON_ATTRIBUTE_TYPE;
 	
+	@Value("${openmrs.rest.resource.person.element.name}")
+	private String personName;
+	
+	@Value("${openmrs.rest.resource.person.element.address}")
+	private String personAddress;
+	
 	@Value("${openmrs.rest.resource.location}")
 	private String FACILITY_PATH;
 	
@@ -67,6 +73,8 @@ public class OpenMrsUrlHolder implements InitializingBean {
 	private UriTemplate personAttributeAdd;
 	private UriTemplate personUpdateTemplate;
 	private UriTemplate personAttributeType;
+	private UriTemplate personNameTemplate;
+	private UriTemplate personAddressTemplate;
 	
 	private URI facilityListUri;
 	private URI facilityCreateUri;
@@ -100,6 +108,8 @@ public class OpenMrsUrlHolder implements InitializingBean {
 		personAttributeAdd = new UriTemplate(openmrsUrl + PERSON_ATTRIBUTE_PATH);
 		personAttributeType = new UriTemplate(openmrsUrl + PERSON_ATTRIBUTE_TYPE);
 		personUpdateTemplate = new UriTemplate(openmrsUrl + PERSON_UPDATE_PATH);
+		personNameTemplate = new UriTemplate(openmrsUrl + personName);
+		personAddressTemplate = new UriTemplate(openmrsUrl + personAddress);
     }
 	
 	private void createFacilityUris() throws URISyntaxException {
@@ -146,8 +156,16 @@ public class OpenMrsUrlHolder implements InitializingBean {
 		return person;
 	}
 	
-	public URI getPersonUpdateByUuid(String uuid) {
+	public URI getPersonByUuid(String uuid) {
 		return personUpdateTemplate.expand(uuid);
+	}
+	
+	public URI getPersonNameByUuid(String personUuid, String nameUuid) {
+		return personNameTemplate.expand(personUuid, nameUuid);
+	}
+	
+	public URI getPersonAddressByUuid(String personUuid, String addressUuid) {
+		return personAddressTemplate.expand(personUuid, addressUuid);
 	}
 	
 	public URI getFacilityListUri() {

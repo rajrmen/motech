@@ -60,8 +60,8 @@ public class MRSPatientAdapterImplIT extends AbstractAdapterImplIT {
 			assertEquals(TEMPORARY_ATTRIBUTE_TYPE_NAME, persistedPerson.getAttributes().get(0).name());
 			assertEquals(TEMPORARY_ATTRIBUTE_VALUE, persistedPerson.getAttributes().get(0).value());
 		} finally {
-			deleteAttributeType(attributeUuid);	
 			deletePatient(patient);
+			deleteAttributeType(attributeUuid);
 			deleteFacility(facility);
 		}
 	}
