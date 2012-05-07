@@ -1,9 +1,12 @@
 package org.motechproject.decisiontree.repository;
 
+import org.ektorp.CouchDbConnector;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.motechproject.decisiontree.model.*;
+import org.motechproject.testing.utils.SpringIntegrationTest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -14,10 +17,12 @@ import static org.junit.Assert.assertNotNull;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:testDecisionTreeCommon.xml"})
-public class AllTreesTest {
+public class AllTreesTest extends SpringIntegrationTest {
 
     @Autowired
     AllTrees allTrees;
+    @Autowired @Qualifier("treesDatabase")
+    private CouchDbConnector connector;
 
     @Test
     public void shouldStoreTree() throws Exception {
@@ -26,9 +31,10 @@ public class AllTreesTest {
         final Node textToSpeechNode = new Node().addPrompts(new TextToSpeechPrompt().setName("Say this"));
         transitions.put("1", new Transition().setDestinationNode(textToSpeechNode));
         final Node audioPromptNode = new Node().addPrompts(new AudioPrompt().setName("abc")).setTransitions(transitions);
-        tree.setRootNode(audioPromptNode);
+        tree.setName("tree").setRootNode(audioPromptNode);
 
-        allTrees.add(tree);
+        allTrees.addOrReplace(tree);
+        markForDeletion(tree);
 
         Tree fromDb = allTrees.get(tree.getId());
         assertNotNull(fromDb);
@@ -44,8 +50,9 @@ public class AllTreesTest {
     @Test
     public void shouldStoreTreeWithCommands() throws Exception {
         Tree tree = new Tree();
-        tree.setRootNode(new Node().addPrompts(new AudioPrompt().setCommand(new TestCommand())));
-        allTrees.add(tree);
+        tree.setName("tree").setRootNode(new Node().addPrompts(new AudioPrompt().setCommand(new TestCommand())));
+        allTrees.addOrReplace(tree);
+        markForDeletion(tree);
 
         Tree fromDb = allTrees.get(tree.getId());
         assertNotNull(fromDb);
@@ -56,5 +63,39 @@ public class AllTreesTest {
 
     }
 
+    @Test
+    public void shouldFindTreeByName() throws Exception {
+        Tree tree = new Tree();
+        tree.setName("someTree");
+        tree.setRootNode(new Node().addPrompts(new AudioPrompt().setName("audioFile")));
+        allTrees.addOrReplace(tree);
+        markForDeletion(tree);
 
+        final Tree fromDb = allTrees.findByName("someTree");
+        assertNotNull(fromDb);
+        assertEquals("audioFile", fromDb.getRootNode().getPrompts().get(0).getName());
+    }
+
+    @Test
+    public void shouldAddOrReplaceTree() throws Exception {
+        Tree tree = new Tree();
+        tree.setName("someTree");
+        tree.setRootNode(new Node().addPrompts(new AudioPrompt().setName("audioFile1")));
+        allTrees.addOrReplace(tree);
+        markForDeletion(tree);
+
+        tree = new Tree();
+        tree.setName("someTree");
+        tree.setRootNode(new Node().addPrompts(new AudioPrompt().setName("audioFile2")));
+        allTrees.addOrReplace(tree);
+
+        final Tree someTree = allTrees.findByName("someTree");
+        assertEquals("audioFile2", someTree.getRootNode().getPrompts().get(0).getName());
+    }
+
+    @Override
+    public CouchDbConnector getDBConnector() {
+        return connector;
+    }
 }
+
