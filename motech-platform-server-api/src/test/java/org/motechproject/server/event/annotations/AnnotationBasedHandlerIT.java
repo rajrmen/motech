@@ -5,6 +5,7 @@ import org.junit.runner.RunWith;
 import org.motechproject.MotechException;
 import org.motechproject.context.Context;
 import org.motechproject.model.MotechEvent;
+import org.motechproject.server.event.EventListener;
 import org.motechproject.server.event.EventListenerRegistry;
 import org.motechproject.server.event.ServerEventRelay;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,8 +14,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.util.Assert;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import static org.junit.Assert.*;
 
@@ -63,6 +63,11 @@ public class AnnotationBasedHandlerIT {
 
         @MotechListener(subjects = {"named"}, type = MotechListenerType.NAMED_PARAMETERS)
         public void namedParams(@MotechParam("id") String id, @MotechParam("key") String key) {
+            test = true;
+		}
+
+        @MotechErrorListener(subjects = "error")
+        public void fooErrorHandler(MotechEvent event) {
             test = true;
 		}
 	}
@@ -130,4 +135,19 @@ public class AnnotationBasedHandlerIT {
 		eventRelay.relayEvent(event);
 		assertTrue(test);
 	}
+
+    @Test
+    public void testErrorListenerRegistration() {
+        EventListenerRegistry registry = Context.getInstance().getEventErrorListenerRegistry();
+        List<EventListener> listeners = new ArrayList<EventListener>(registry.getListeners("error"));
+        assertEquals(1, listeners.size());
+        assertEquals("annotationBasedHandlerIT.MyHandler", listeners.get(0).getIdentifier());
+    }
+
+    @Test
+    public void testErrorHandling() {
+        clear();
+        eventRelay.relayErrorEvent(new MotechEvent("error"));
+        assertTrue(test);
+    }
 }

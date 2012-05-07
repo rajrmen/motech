@@ -18,6 +18,7 @@
     <bean id="eventRelay" class="org.motechproject.server.event.ServerEventRelay" />
 
 	<bean id="eventListenerRegistry" class="org.motechproject.server.event.EventListenerRegistry"/>
+	<bean id="eventErrorListenerRegistry" class="org.motechproject.server.event.EventListenerRegistry"/>
 
     <bean id="motechContext" class="org.motechproject.context.Context" factory-method="getInstance"/>
     <bean id="eventContext"  class="org.motechproject.context.EventContext" factory-method="getInstance"/>

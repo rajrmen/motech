@@ -7,12 +7,18 @@ import org.motechproject.metrics.MetricsAgent;
 import org.motechproject.server.ruleengine.KnowledgeBaseManager;
 import org.motechproject.ivr.service.IVRService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 public class Context {
 	
 	@Autowired
+    @Qualifier("eventListenerRegistry")
 	private EventListenerRegistry eventListenerRegistry;
-	
+
+    @Autowired
+    @Qualifier("eventErrorListenerRegistry")
+    private EventListenerRegistry eventErrorListenerRegistry;
+
 	@Autowired(required=false)
 	private KnowledgeBaseManager knowledgeBaseManager;
 	
@@ -59,7 +65,7 @@ public class Context {
 	}
 
 	public void setMotechSchedulerGateway(
-			MotechSchedulerGateway motechSchedulerGateway) {
+        MotechSchedulerGateway motechSchedulerGateway) {
 		this.motechSchedulerGateway = motechSchedulerGateway;
 	}
 
@@ -79,13 +85,20 @@ public class Context {
 		this.eventListenerRegistry = eventListenerRegistry;
 	}
 
+    public EventListenerRegistry getEventErrorListenerRegistry() {
+        return eventErrorListenerRegistry;
+    }
+
+    public void setEventErrorListenerRegistry(EventListenerRegistry eventErrorListenerRegistry) {
+        this.eventErrorListenerRegistry = eventErrorListenerRegistry;
+    }
+
 	public static Context getInstance(){
 		return instance;
 	}
-	
-	private static Context instance = new Context();
-	
-	private Context(){}
 
-	
+	private static Context instance = new Context();
+
+
+	private Context(){}
 }

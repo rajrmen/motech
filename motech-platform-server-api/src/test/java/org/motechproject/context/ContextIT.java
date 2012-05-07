@@ -39,6 +39,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"/testPlatformServerApplicationContext.xml"})
@@ -54,5 +55,18 @@ public class ContextIT {
 	public void testEventListenerRegistry(){
 		EventListenerRegistry eventListenerRegistry = Context.getInstance().getEventListenerRegistry();
 		assertNotNull(eventListenerRegistry);
+	}
+
+    @Test
+	public void testEventErrorListenerRegistry(){
+		EventListenerRegistry eventErrorListenerRegistry = Context.getInstance().getEventErrorListenerRegistry();
+		assertNotNull(eventErrorListenerRegistry);
+	}
+
+    @Test
+	public void testThereIsASeparateRegistryForErrorHandler(){
+        EventListenerRegistry eventListenerRegistry = Context.getInstance().getEventListenerRegistry();
+		EventListenerRegistry eventErrorListenerRegistry = Context.getInstance().getEventErrorListenerRegistry();
+		assertNotSame(eventListenerRegistry, eventErrorListenerRegistry);
 	}
 }

@@ -15,10 +15,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import static org.springframework.util.ReflectionUtils.doWithMethods;
+import static org.springframework.util.ReflectionUtils.findMethod;
+
 /**
  * Responsible for registering handlers based on annotations
- *
- * @author yyonkov
  */
 @Component
 public class EventAnnotationBeanPostProcessor implements BeanPostProcessor {
@@ -36,38 +37,59 @@ public class EventAnnotationBeanPostProcessor implements BeanPostProcessor {
       * @see org.springframework.beans.factory.config.BeanPostProcessor#postProcessAfterInitialization(java.lang.Object, java.lang.String)
       */
     @Override
-    public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
-        processAnnotations(bean, beanName);
-        return bean;
-    }
-
-    private void processAnnotations(final Object bean, final String beanName) {
-        ReflectionUtils.doWithMethods(bean.getClass(), new ReflectionUtils.MethodCallback() {
-
+    public Object postProcessAfterInitialization(final Object bean, final String beanName) throws BeansException {
+        doWithMethods(bean.getClass(), new ReflectionUtils.MethodCallback() {
             @Override
             public void doWith(Method method) throws IllegalArgumentException, IllegalAccessException {
-                MotechListener annotation;
-                Method methodOfOriginalClassIfProxied = ReflectionUtils.findMethod(AopUtils.getTargetClass(bean), method.getName(), method.getParameterTypes());
-                if (methodOfOriginalClassIfProxied != null && (annotation = methodOfOriginalClassIfProxied.getAnnotation(MotechListener.class)) != null) {
-                    final List<String> subjects = Arrays.asList(annotation.subjects());
-                    MotechListenerAbstractProxy proxy = null;
-                    switch (annotation.type()) {
-                        case ORDERED_PARAMETERS:
-                            proxy = new MotechListenerOrderedParametersProxy(beanName, bean, method);
-                            break;
-                        case MOTECH_EVENT:
-                            proxy = new MotechListenerEventProxy(beanName, bean, method);
-                            break;
-                        case NAMED_PARAMETERS:
-                            proxy = new MotechListenerNamedParametersProxy(beanName, bean, method);
-                            break;
+                Method methodOfOriginalClassIfProxied = findMethod(AopUtils.getTargetClass(bean), method.getName(), method.getParameterTypes());
+                if (methodOfOriginalClassIfProxied != null) {
+                    MotechListener motechListenerAnnotation;
+                    if ((motechListenerAnnotation = methodOfOriginalClassIfProxied.getAnnotation(MotechListener.class)) != null) {
+                        RegisterEventListener(method, motechListenerAnnotation, beanName, bean);
                     }
-                    logger.info(String.format("Registering listener type(%20s) bean: %s , method: %s, for subjects: %s", annotation.type().toString(), beanName, method.toGenericString(), subjects));
-                    EventListenerRegistry eventListenerRegistry = Context.getInstance().getEventListenerRegistry();
-                    if (eventListenerRegistry != null) eventListenerRegistry.registerListener(proxy, subjects);
+
+                    MotechErrorListener motechErrorListenerAnnotation;
+                    if ((motechErrorListenerAnnotation = methodOfOriginalClassIfProxied.getAnnotation(MotechErrorListener.class)) != null) {
+                        RegisterErrorEventListener(method, motechErrorListenerAnnotation, beanName, bean);
+                    }
                 }
             }
         });
+        return bean;
+    }
+
+    private void RegisterErrorEventListener(Method method, MotechErrorListener motechListenerAnnotation, String beanName, Object bean) {
+        final List<String> subjects = Arrays.asList(motechListenerAnnotation.subjects());
+        MotechListenerAbstractProxy proxy = getProxy(method, beanName, bean, motechListenerAnnotation.type());
+        logger.info(String.format("Registering event error listener type(%20s) bean: %s , method: %s, for subjects: %s", motechListenerAnnotation.type().toString(), beanName, method.toGenericString(), subjects));
+        EventListenerRegistry eventErrorListenerRegistry = Context.getInstance().getEventErrorListenerRegistry();
+        if (eventErrorListenerRegistry != null)
+            eventErrorListenerRegistry.registerListener(proxy, subjects);
+    }
+
+    private void RegisterEventListener(Method method, MotechListener motechListenerAnnotation, String beanName, Object bean) {
+        final List<String> subjects = Arrays.asList(motechListenerAnnotation.subjects());
+        MotechListenerAbstractProxy proxy = getProxy(method, beanName, bean, motechListenerAnnotation.type());
+        logger.info(String.format("Registering listener type(%20s) bean: %s , method: %s, for subjects: %s", motechListenerAnnotation.type().toString(), beanName, method.toGenericString(), subjects));
+        EventListenerRegistry eventListenerRegistry = Context.getInstance().getEventListenerRegistry();
+        if (eventListenerRegistry != null)
+            eventListenerRegistry.registerListener(proxy, subjects);
+    }
+
+    private MotechListenerAbstractProxy getProxy(Method method, String beanName, Object bean, MotechListenerType motechListenerType) {
+        MotechListenerAbstractProxy proxy = null;
+        switch (motechListenerType) {
+            case ORDERED_PARAMETERS:
+                proxy = new MotechListenerOrderedParametersProxy(beanName, bean, method);
+                break;
+            case MOTECH_EVENT:
+                proxy = new MotechListenerEventProxy(beanName, bean, method);
+                break;
+            case NAMED_PARAMETERS:
+                proxy = new MotechListenerNamedParametersProxy(beanName, bean, method);
+                break;
+        }
+        return proxy;
     }
 
     /**
