@@ -1,4 +1,4 @@
-package org.motechproject.decisiontree.repository;
+package org.motechproject.decisiontree.it;
 
 import org.motechproject.decisiontree.model.ITreeCommand;
 

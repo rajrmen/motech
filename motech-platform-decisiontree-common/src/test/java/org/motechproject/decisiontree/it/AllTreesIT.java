@@ -1,9 +1,10 @@
-package org.motechproject.decisiontree.repository;
+package org.motechproject.decisiontree.it;
 
 import org.ektorp.CouchDbConnector;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.motechproject.decisiontree.model.*;
+import org.motechproject.decisiontree.repository.AllTrees;
 import org.motechproject.testing.utils.SpringIntegrationTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -17,7 +18,7 @@ import static org.junit.Assert.assertNotNull;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:testDecisionTreeCommon.xml"})
-public class AllTreesTest extends SpringIntegrationTest {
+public class AllTreesIT extends SpringIntegrationTest {
 
     @Autowired
     AllTrees allTrees;
