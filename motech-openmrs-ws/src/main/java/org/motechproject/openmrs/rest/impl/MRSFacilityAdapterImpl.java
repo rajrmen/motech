@@ -4,6 +4,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.Validate;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.JsonNodeFactory;
 import org.codehaus.jackson.node.ObjectNode;
@@ -44,6 +45,8 @@ public class MRSFacilityAdapterImpl implements MRSFacilityAdapter {
 
 	@Override
 	public List<MRSFacility> getFacilities(String locationName) {
+		Validate.notEmpty(locationName, "Location name cannot be empty");
+		
 		JsonNode obj = getJsonNode(urlHolder.getFacilityListUri(locationName));
 		
 		JsonNode results = obj.get("results");
@@ -69,6 +72,8 @@ public class MRSFacilityAdapterImpl implements MRSFacilityAdapter {
 
 	@Override
 	public MRSFacility getFacility(String facilityId) {
+		Validate.notEmpty(facilityId, "Facility id cannot be empty");
+		
 		JsonNode obj = getJsonNode(urlHolder.getFacilityFindUri(facilityId));
 
 		return JsonConverterUtil.convertJsonToMrsFacility(obj);
@@ -76,6 +81,8 @@ public class MRSFacilityAdapterImpl implements MRSFacilityAdapter {
 
 	@Override
 	public MRSFacility saveFacility(MRSFacility facility) {
+		Validate.notNull(facility, "Facility cannot be null");
+		
 		ObjectNode node = JsonNodeFactory.instance.objectNode();
 		node.put("name", facility.getName());
 		node.put("country", facility.getCountry());

@@ -14,6 +14,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.Validate;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.JsonNodeFactory;
@@ -64,6 +65,8 @@ public class MRSPatientAdapterImpl implements MRSPatientAdapter {
 
 	@Override
 	public MRSPatient getPatientByMotechId(String motechId) {
+		Validate.notEmpty(motechId, "Motech Id cannot be empty");
+
 		JsonNode resultObj = null;
 		try {
 			resultObj = restfulClient.getEntityByJsonNode(urlHolder.getSearchPathWithTerm(motechId));
@@ -89,6 +92,8 @@ public class MRSPatientAdapterImpl implements MRSPatientAdapter {
 
 	@Override
 	public MRSPatient getPatient(String patientId) {
+		Validate.notEmpty(patientId, "Patient Id cannot be empty");
+
 		JsonNode responseNode = null;
 		try {
 			responseNode = restfulClient.getEntityByJsonNode(urlHolder.getFullPatientByUuid(patientId));
@@ -159,6 +164,10 @@ public class MRSPatientAdapterImpl implements MRSPatientAdapter {
 
 	@Override
 	public MRSPatient savePatient(MRSPatient patient) {
+		Validate.notNull(patient, "Patient cannot be null");
+		Validate.isTrue(patient.getId() != null || patient.getMotechId() != null,
+		        "You must provide a patient id or motech id to save a patient");
+		
 		JsonNode personJsonObj = makeJsonPersonObjFromMrsPatient(patient, true);
 		try {
 			JsonNode response = restfulClient.postForJsonNode(urlHolder.getPerson(), personJsonObj);
@@ -302,6 +311,8 @@ public class MRSPatientAdapterImpl implements MRSPatientAdapter {
 	@Override
 	public void savePatientCauseOfDeathObservation(String patientId, String conceptName, Date dateOfDeath,
 	        String comment) {
+		Validate.notEmpty(patientId, "Patient id cannot be empty");
+		
 		ObjectNode obj = JsonNodeFactory.instance.objectNode();
 		obj.put("dead", true);
 		obj.put("deathDate", DateUtil.formatToOpenMrsDate(dateOfDeath));
@@ -316,6 +327,8 @@ public class MRSPatientAdapterImpl implements MRSPatientAdapter {
 
 	@Override
 	public List<MRSPatient> search(String name, String id) {
+		Validate.notEmpty(name, "Name cannot be empty");
+		
 		JsonNode resultObj = null;
 		try {
 			resultObj = restfulClient.getEntityByJsonNode(urlHolder.getSearchPathWithTerm(name));
@@ -362,13 +375,13 @@ public class MRSPatientAdapterImpl implements MRSPatientAdapter {
 
 	@Override
 	public String updatePatient(MRSPatient patient) {
-		if (StringUtils.isEmpty(patient.getId())) {
-			throw new MRSException(new IllegalArgumentException("Patient must have an id to be updated"));
-		}
+		Validate.notNull(patient, "Patient cannot be null");
+		Validate.notEmpty(patient.getId(), "Patient Id may not be empty");
 
 		ObjectNode personJsonObj = makeJsonPersonObjFromMrsPatient(patient, false);
 		try {
-			// must update the name and address separately when updating a person
+			// must update the name and address separately when updating a
+			// person
 			// this requires finding the uuid's of the name/address elements
 			JsonNode personResponse = restfulClient.getEntityByJsonNode(urlHolder.getPersonByUuid(patient.getId()));
 			ObjectNode preferredName = (ObjectNode) personJsonObj.remove("preferredName");
@@ -377,8 +390,8 @@ public class MRSPatientAdapterImpl implements MRSPatientAdapter {
 			        urlHolder.getPersonNameByUuid(patient.getId(), personResponse.get("preferredName").get("uuid")
 			                .asText()), preferredName);
 			restfulClient.postWithEmptyResponseBody(
-			        urlHolder.getPersonAddressByUuid(patient.getId(),
-			                personResponse.get("preferredAddress").get("uuid").asText()), preferredAddress);
+			        urlHolder.getPersonAddressByUuid(patient.getId(), personResponse.get("preferredAddress")
+			                .get("uuid").asText()), preferredAddress);
 			restfulClient.postWithEmptyResponseBody(urlHolder.getPersonByUuid(patient.getId()), personJsonObj);
 		} catch (HttpException e) {
 			logger.error("Failed to update a patient in OpenMRS with MoTeCH Id: " + patient.getMotechId());
