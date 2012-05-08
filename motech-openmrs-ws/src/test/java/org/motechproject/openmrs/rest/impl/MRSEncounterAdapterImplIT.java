@@ -171,9 +171,18 @@ public class MRSEncounterAdapterImplIT extends AbstractAdapterImplIT {
 	}
 
 	private String createTemporaryConcept() throws URISyntaxException, HttpException {
+		//{"names":[{"name":"test concept", "locale": "en", "conceptNameType": "FULLY_SPECIFIED"}],"datatype":"Text","conceptClass":"Test"}
 		URI uri = new URI(openmrsUrl + CONCEPT_PATH);
 		ObjectNode conceptObj = JsonNodeFactory.instance.objectNode();
-		conceptObj.put("name", TEST_CONCEPT_NAME);
+		
+		ArrayNode names = JsonNodeFactory.instance.arrayNode();
+		ObjectNode name = JsonNodeFactory.instance.objectNode();
+		name.put("name", TEST_CONCEPT_NAME);
+		name.put("locale", "en");
+		name.put("conceptNameType", "FULLY_SPECIFIED");
+		names.add(name);
+		
+		conceptObj.put("names", names);
 		conceptObj.put("datatype", "Text");
 		conceptObj.put("conceptClass", "Test");
 		JsonNode result = restfulClient.postForJsonNode(uri, conceptObj);

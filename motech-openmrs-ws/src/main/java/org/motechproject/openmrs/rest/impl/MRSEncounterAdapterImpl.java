@@ -167,7 +167,7 @@ public class MRSEncounterAdapterImpl implements MRSEncounterAdapter {
 
 	private JsonNode getPerson(String providerUuid) {
 		try {
-			return restfulClient.getEntityByJsonNode(urlHolder.getProviderByUuid(providerUuid));
+			return restfulClient.getEntityByJsonNode(urlHolder.getPersonFullByUuid(providerUuid));
 		} catch (HttpException e) {
 			throw new MRSException(e);
 		}

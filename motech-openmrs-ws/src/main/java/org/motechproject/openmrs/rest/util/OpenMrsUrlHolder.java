@@ -28,6 +28,9 @@ public class OpenMrsUrlHolder implements InitializingBean {
 	@Value("${openmrs.rest.resource.person}")
 	private String PERSON_PATH;
 	
+	@Value("${openmrs.rest.resource.person.element.full}")
+	private String PERSON_FULL_PATH;
+	
 	@Value("${openmrs.rest.resource.person.element}")
 	private String PERSON_UPDATE_PATH;
 	
@@ -62,7 +65,7 @@ public class OpenMrsUrlHolder implements InitializingBean {
 	private String ENCOUNTER_BY_PATIENT_UUID_PATH;
 	
 	@Value("${openmrs.rest.resource.concept.search}")
-	private final static String CONCEPT_PATH = "/ws/rest/v1/concept?q={conceptName}";
+	private String CONCEPT_PATH;
 	
 	private URI patient;
 	private URI patientIdentifierTypeList;
@@ -72,6 +75,7 @@ public class OpenMrsUrlHolder implements InitializingBean {
 	private URI person;
 	private UriTemplate personAttributeAdd;
 	private UriTemplate personUpdateTemplate;
+	private UriTemplate personFullTemplate;
 	private UriTemplate personAttributeType;
 	private UriTemplate personNameTemplate;
 	private UriTemplate personAddressTemplate;
@@ -83,7 +87,6 @@ public class OpenMrsUrlHolder implements InitializingBean {
 	
 	private UriTemplate encounterByPatientUuidTemplate;
 	private UriTemplate conceptSearchByNameTemplate;
-	private UriTemplate providerByUuidTemplate;
 	private UriTemplate creatorByUuidTemplate;
 	private URI encounterPathUri;
 	
@@ -108,6 +111,7 @@ public class OpenMrsUrlHolder implements InitializingBean {
 		personAttributeAdd = new UriTemplate(openmrsUrl + PERSON_ATTRIBUTE_PATH);
 		personAttributeType = new UriTemplate(openmrsUrl + PERSON_ATTRIBUTE_TYPE);
 		personUpdateTemplate = new UriTemplate(openmrsUrl + PERSON_UPDATE_PATH);
+		personFullTemplate = new UriTemplate(openmrsUrl + PERSON_FULL_PATH);
 		personNameTemplate = new UriTemplate(openmrsUrl + personName);
 		personAddressTemplate = new UriTemplate(openmrsUrl + personAddress);
     }
@@ -160,6 +164,11 @@ public class OpenMrsUrlHolder implements InitializingBean {
 		return personUpdateTemplate.expand(uuid);
 	}
 	
+	public URI getPersonFullByUuid(String personUuid) {
+		return personFullTemplate.expand(personUuid);
+	}
+
+	
 	public URI getPersonNameByUuid(String personUuid, String nameUuid) {
 		return personNameTemplate.expand(personUuid, nameUuid);
 	}
@@ -196,11 +205,8 @@ public class OpenMrsUrlHolder implements InitializingBean {
 		return conceptSearchByNameTemplate.expand(name);
 	}
 	
-	public URI getProviderByUuid(String uuid) {
-		return providerByUuidTemplate.expand(uuid);
-	}
-	
 	public URI getCreatorByUuid(String uuid) {
 		return creatorByUuidTemplate.expand(uuid);
 	}
+
 }
