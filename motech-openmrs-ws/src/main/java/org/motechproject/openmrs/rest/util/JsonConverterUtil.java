@@ -2,9 +2,14 @@ package org.motechproject.openmrs.rest.util;
 
 import java.text.ParseException;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.node.ArrayNode;
+import org.codehaus.jackson.node.JsonNodeFactory;
+import org.codehaus.jackson.node.ObjectNode;
 import org.motechproject.mrs.model.Attribute;
 import org.motechproject.mrs.model.MRSFacility;
+import org.motechproject.mrs.model.MRSPatient;
 import org.motechproject.mrs.model.MRSPerson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -92,6 +97,64 @@ public class JsonConverterUtil {
 			String value = display.substring(index + 1).trim();
 			Attribute attr = new Attribute(name, value);
 			person.addAttribute(attr);
+		}
+	}
+	
+	public static ObjectNode makeJsonPersonObjFromMrsPerson(MRSPerson person, boolean creating) {
+		ObjectNode personObj = buildPersonObjFromPerson(person);
+		if (creating) {
+			personObj.put("names", buildNamesForPerson(person, true));
+			personObj.put("addresses", buildaddressesForPerson(person, true));
+		} else {
+			personObj.put("preferredName", buildNamesForPerson(person, false));
+			personObj.put("preferredAddress", buildaddressesForPerson(person, false));
+		}
+
+		return personObj;
+	}
+	
+	private static ObjectNode buildPersonObjFromPerson(MRSPerson person) {
+		ObjectNode patientObj = JsonNodeFactory.instance.objectNode();
+		patientObj.put("birthdate", DateUtil.formatToOpenMrsDate(person.getDateOfBirth()));
+		patientObj.put("gender", person.getGender());
+
+		// guard against birthDateEstimated being null
+		boolean dobEstimated = BooleanUtils.isTrue(person.getBirthDateEstimated()) ? true : false;
+		patientObj.put("birthdateEstimated", dobEstimated);
+		patientObj.put("dead", person.isDead());
+
+		if (person.deathDate() != null) {
+			patientObj.put("deathDate", DateUtil.formatToOpenMrsDate(person.deathDate()));
+		}
+
+		return patientObj;
+	}
+
+	private static JsonNode buildNamesForPerson(MRSPerson person, boolean withArray) {
+		ObjectNode preferredName = JsonNodeFactory.instance.objectNode();
+		preferredName.put("givenName", person.getFirstName());
+		preferredName.put("middleName", person.getMiddleName());
+		preferredName.put("familyName", person.getLastName());
+
+		if (withArray) {
+			ArrayNode namesArray = JsonNodeFactory.instance.arrayNode();
+			namesArray.add(preferredName);
+			return namesArray;
+		} else {
+			return preferredName;
+		}
+	}
+
+	private static JsonNode buildaddressesForPerson(MRSPerson person, boolean withArray) {
+		ObjectNode preferredAddress = JsonNodeFactory.instance.objectNode();
+		preferredAddress.put("address1", person.getAddress());
+
+		if (withArray) {
+			ArrayNode addressArray = JsonNodeFactory.instance.arrayNode();
+			addressArray.add(preferredAddress);
+			return addressArray;
+		} else {
+			return preferredAddress;
 		}
 	}
 }
