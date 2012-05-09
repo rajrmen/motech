@@ -55,9 +55,9 @@ import java.util.Set;
 
 /**
  * Spring MVC controller implementation provides method to handle HTTP requests and generate
- * VXML documents based on a Decision Tree Node model object and the corresponding Velocity template.
+ * Markup document based on a Decision Tree Node model object and the corresponding Velocity template.
  */
-public class VxmlController extends MultiActionController {
+public class DecisionTreeController extends MultiActionController {
 
     private Logger logger = LoggerFactory.getLogger((this.getClass()));
 
@@ -66,6 +66,7 @@ public class VxmlController extends MultiActionController {
     public static final String TRANSITION_PATH_PARAM = "trP";
     public static final String PATIENT_ID_PARAM = "pId";
     public static final String LANGUAGE_PARAM = "ln";
+    public static final String TYPE_PARAM = "type";
 
     public static final String NODE_TEMPLATE_NAME = "node";
     public static final String LEAF_TEMPLATE_NAME = "leaf";
@@ -104,11 +105,12 @@ public class VxmlController extends MultiActionController {
     }
 
     /**
-     * Handles Decision Tree Node HTTP requests and generates a VXML document based on a Velocity template.
+     * Handles Decision Tree Node HTTP requests and generates a Markup document based on a Velocity template and type (vxml or verboice etc).
      * The HTTP request should contain the Tree ID, Node ID, Patient ID and Selected Transition Key (optional) parameters
      */
     public ModelAndView node(HttpServletRequest request, HttpServletResponse response) {
-        logger.info("Generating decision tree node VXML");
+        System.out.println(request.getParameterMap());
+        logger.info("Generating decision tree node xml");
 
         response.setContentType("text/plain");
         response.setCharacterEncoding("UTF-8");
@@ -122,6 +124,7 @@ public class VxmlController extends MultiActionController {
         String treeNameString = request.getParameter(TREE_NAME_PARAM);
         String encodedParentTransitionPath = request.getParameter(TRANSITION_PATH_PARAM);
         String transitionKey = request.getParameter(TRANSITION_KEY_PARAM);
+        String type = request.getParameter(TYPE_PARAM);
 
 
         logger.info(" Node HTTP  request parameters: "
@@ -182,7 +185,7 @@ public class VxmlController extends MultiActionController {
                     if (treeNames.length > 1) {
                         //reduce the current tree and redirect to the next tree
                         treeNames = (String[]) ArrayUtils.remove(treeNames, 0);
-                        String view = String.format("redirect:/tree/vxml/node?" + PATIENT_ID_PARAM + "=%s&" + TREE_NAME_PARAM + "=%s&" + LANGUAGE_PARAM + "=%s", patientId, StringUtils.join(treeNames, TREE_NAME_SEPARATOR), language);
+                        String view = String.format("redirect:/decisiontree/node?" + PATIENT_ID_PARAM + "=%s&" + TREE_NAME_PARAM + "=%s&" + LANGUAGE_PARAM + "=%s", patientId, StringUtils.join(treeNames, TREE_NAME_SEPARATOR), language);
                         return new ModelAndView(view);
                     } else {
                         //TODO: Add support for return url
@@ -227,20 +230,22 @@ public class VxmlController extends MultiActionController {
 
             ModelAndView mav = new ModelAndView();
             if (node.getTransitions().size() > 0) {
-                mav.setViewName(NODE_TEMPLATE_NAME);
+                mav.setViewName(templateNameFor(type, NODE_TEMPLATE_NAME));
                 mav.addObject("treeName", treeNameString);
             } else { // leaf
                 //reduce the current tree and redirect to the next tree
                 treeNames = (String[]) ArrayUtils.remove(treeNames, 0);
-                mav.setViewName(LEAF_TEMPLATE_NAME);
+                mav.setViewName(templateNameFor(type, LEAF_TEMPLATE_NAME));
                 mav.addObject("treeName", StringUtils.join(treeNames, TREE_NAME_SEPARATOR));
             }
             mav.addObject("contentPath", request.getContextPath());
             mav.addObject("node", node);
             mav.addObject("patientId", patientId);
             mav.addObject("language", language);
+            mav.addObject("type", type);
             mav.addObject("transitionPath", Base64.encodeBase64URLSafeString(transitionPath.getBytes()));
             mav.addObject("escape", new StringEscapeUtils());
+
 
             return mav;
         } else {
@@ -248,6 +253,10 @@ public class VxmlController extends MultiActionController {
         }
 
 
+    }
+
+    private String templateNameFor(String type, String templateName) {
+        return templateName + "-" + type;
     }
 
     private ModelAndView getErrorModelAndView(Errors errorCode) {

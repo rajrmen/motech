@@ -52,7 +52,7 @@
 		class="org.springframework.web.servlet.mvc.support.ControllerClassNameHandlerMapping">
 	</bean>
 
-	<bean id="decisionTreeVxmlController" class="org.motechproject.server.decisiontree.web.VxmlController" />
+	<bean id="decisionTreeVxmlController" class="org.motechproject.server.decisiontree.web.DecisionTreeController" />
     <bean id="decisionTreeService" class="org.motechproject.server.decisiontree.service.DecisionTreeServiceImpl"/>
 
 	<bean id="velocityConfig"
