@@ -4,19 +4,18 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.ektorp.support.TypeDiscriminator;
-import org.hamcrest.Matcher;
 import org.motechproject.model.MotechBaseDataObject;
 
 import java.util.HashMap;
 import java.util.Map;
 
+@TypeDiscriminator("doc.type === 'CallSessionRecord'")
 public class CallSessionRecord extends MotechBaseDataObject {
 
     @JsonProperty
     private Map<String, String> data;
 
     @JsonProperty
-    @TypeDiscriminator
     private String sessionId;
 
     CallSessionRecord() {
@@ -26,7 +25,6 @@ public class CallSessionRecord extends MotechBaseDataObject {
         this.sessionId = sessionId;
         data = new HashMap<String, String>();
     }
-
 
     @Override
     public boolean equals(Object o) {
