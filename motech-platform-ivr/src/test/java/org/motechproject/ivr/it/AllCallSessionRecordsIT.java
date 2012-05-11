@@ -1,15 +1,17 @@
-package org.motechproject.ivr.repository;
+package org.motechproject.ivr.it;
 
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.motechproject.ivr.domain.CallSessionRecord;
+import org.motechproject.ivr.repository.AllCallSessionRecords;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.List;
 
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -38,9 +40,30 @@ public class AllCallSessionRecordsIT {
     }
 
     @Test
+    public void shouldFindOrCreateACallSessionRecord() {
+        assertThat(allCallSessionRecords.getAll().size(), is(0));
+        CallSessionRecord newRecord = allCallSessionRecords.findOrCreate("session1");
+        assertThat(allCallSessionRecords.getAll().size(), is(1));
+
+        CallSessionRecord existingRecord = allCallSessionRecords.findOrCreate("session1");
+        assertThat(allCallSessionRecords.getAll().size(), is(1));
+        assertThat(existingRecord, is(equalTo(newRecord)));
+    }
+
+    @Test
+    public void shouldIgnoreCaseWhileFindOrCreateACallSessionRecord() {
+        assertThat(allCallSessionRecords.getAll().size(), is(0));
+        allCallSessionRecords.findOrCreate("Session1");
+        assertThat(allCallSessionRecords.getAll().size(), is(1));
+
+        allCallSessionRecords.findOrCreate("SESSION1");
+        assertThat(allCallSessionRecords.getAll().size(), is(1));
+    }
+
+    @Test
     public void shouldFindBySessionId() {
-        CallSessionRecord callSessionRecord1 = new CallSessionRecord("s1");
-        CallSessionRecord callSessionRecord2 = new CallSessionRecord("s2");
+        CallSessionRecord callSessionRecord1 = new CallSessionRecord("S1");
+        CallSessionRecord callSessionRecord2 = new CallSessionRecord("S2");
 
         allCallSessionRecords.add(callSessionRecord1);
         allCallSessionRecords.add(callSessionRecord2);
@@ -55,8 +78,20 @@ public class AllCallSessionRecordsIT {
     }
 
     @Test
+    public void shouldIgnoreCaseWhileFindingBySessionId() {
+        CallSessionRecord callSessionRecord = new CallSessionRecord("IGNORE-CASE");
+
+        allCallSessionRecords.add(callSessionRecord);
+
+        CallSessionRecord actualRecord = allCallSessionRecords.findBySessionId("ignore-CASE");
+
+        assertNotNull(actualRecord);
+        assertThat(actualRecord, is(callSessionRecord));
+    }
+
+    @Test
     public void shouldUpdateTheExistingRecord() {
-        CallSessionRecord callSessionRecord1 = new CallSessionRecord("s1");
+        CallSessionRecord callSessionRecord1 = new CallSessionRecord("S1");
 
         allCallSessionRecords.add(callSessionRecord1);
         CallSessionRecord actualRecord = allCallSessionRecords.findBySessionId("s1");
@@ -67,8 +102,8 @@ public class AllCallSessionRecordsIT {
 
         CallSessionRecord updatedRecord = allCallSessionRecords.findBySessionId("s1");
         assertNotNull(updatedRecord.valueFor("k1"));
-
     }
+
     @After
     public void tearDown() {
         allCallSessionRecords.removeAll();

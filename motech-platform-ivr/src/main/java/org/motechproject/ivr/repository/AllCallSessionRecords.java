@@ -18,6 +18,16 @@ public class AllCallSessionRecords extends MotechBaseRepository<CallSessionRecor
 
     @View(name = "by_session_id", map = "function(doc) { emit(doc.sessionId); }")
     public CallSessionRecord findBySessionId(String sessionId) {
-        return singleResult(queryView("by_session_id", sessionId));
+        return singleResult(queryView("by_session_id", sessionId.toUpperCase()));
+    }
+
+
+    public CallSessionRecord findOrCreate(String sessionId) {
+        CallSessionRecord callSessionRecord = findBySessionId(sessionId);
+        if(callSessionRecord == null) {
+            callSessionRecord = new CallSessionRecord(sessionId.toUpperCase());
+            add(callSessionRecord);
+        }
+        return callSessionRecord;
     }
 }
