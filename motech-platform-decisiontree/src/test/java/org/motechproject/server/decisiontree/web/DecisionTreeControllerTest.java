@@ -69,7 +69,6 @@ public class DecisionTreeControllerTest {
         node.addTransition("1", transition);
 
         when(request.getParameter(TREE_NAME_PARAM)).thenReturn(treeName);
-        when(request.getParameter(PATIENT_ID_PARAM)).thenReturn("PATIENT_ID");
         when(request.getParameter(LANGUAGE_PARAM)).thenReturn("en");
         when(request.getParameter(TYPE_PARAM)).thenReturn("verboice");
         when(request.getParameter(TRANSITION_KEY_PARAM)).thenReturn("1");
@@ -97,7 +96,6 @@ public class DecisionTreeControllerTest {
 
 
         when(request.getParameter(TREE_NAME_PARAM)).thenReturn(treeName);
-        when(request.getParameter(PATIENT_ID_PARAM)).thenReturn("PATIENT_ID");
         when(request.getParameter(LANGUAGE_PARAM)).thenReturn("en");
         when(request.getParameter(TYPE_PARAM)).thenReturn("vxml");
         when(request.getParameter(TRANSITION_KEY_PARAM)).thenReturn("1");
@@ -124,7 +122,6 @@ public class DecisionTreeControllerTest {
         node.addTransition("2", transition);
 
         when(request.getParameter(TREE_NAME_PARAM)).thenReturn(treeName);
-        when(request.getParameter(PATIENT_ID_PARAM)).thenReturn("PATIENT_ID");
         when(request.getParameter(LANGUAGE_PARAM)).thenReturn("en");
         when(request.getParameter(TRANSITION_KEY_PARAM)).thenReturn(transitionKey);
         when(request.getParameter(TRANSITION_PATH_PARAM)).thenReturn(Base64.encodeBase64URLSafeString(transitionPath.getBytes()));
@@ -158,7 +155,6 @@ public class DecisionTreeControllerTest {
 
 
         when(request.getParameter(TREE_NAME_PARAM)).thenReturn(treeName);
-        when(request.getParameter(PATIENT_ID_PARAM)).thenReturn("PATIENT_ID");
         when(request.getParameter(LANGUAGE_PARAM)).thenReturn("en");
         when(request.getParameter(TRANSITION_KEY_PARAM)).thenReturn(transitionKey);
         when(request.getParameter(TRANSITION_PATH_PARAM)).thenReturn(Base64.encodeBase64URLSafeString(transitionPath.getBytes()));
@@ -178,7 +174,6 @@ public class DecisionTreeControllerTest {
     public void nodeTestNoTree() {
 
         when(request.getParameter(TREE_NAME_PARAM)).thenReturn(treeName);
-        when(request.getParameter(PATIENT_ID_PARAM)).thenReturn("PATIENT_ID");
         when(request.getParameter(LANGUAGE_PARAM)).thenReturn("en");
         when(request.getParameter(TRANSITION_KEY_PARAM)).thenReturn("1");
         when(request.getParameter(TRANSITION_PATH_PARAM)).thenReturn(Base64.encodeBase64URLSafeString(transitionPath.getBytes()));
@@ -198,7 +193,6 @@ public class DecisionTreeControllerTest {
     public void nodeTestException() {
 
         when(request.getParameter(TREE_NAME_PARAM)).thenReturn(treeName);
-        when(request.getParameter(PATIENT_ID_PARAM)).thenReturn("PATIENT_ID");
         when(request.getParameter(LANGUAGE_PARAM)).thenReturn("en");
         when(request.getParameter(DecisionTreeController.TRANSITION_KEY_PARAM)).thenReturn("1");
         when(request.getParameter(DecisionTreeController.TRANSITION_PATH_PARAM)).thenReturn(Base64.encodeBase64URLSafeString(transitionPath.getBytes()));
@@ -222,7 +216,6 @@ public class DecisionTreeControllerTest {
         node.addTransition("1", transition);
 
         when(request.getParameter(TREE_NAME_PARAM)).thenReturn(treeName);
-        when(request.getParameter(PATIENT_ID_PARAM)).thenReturn("PATIENT_ID");
         when(request.getParameter(LANGUAGE_PARAM)).thenReturn("en");
         when(request.getParameter(TYPE_PARAM)).thenReturn("vxml");
         when(decisionTreeService.getNode(treeName, TreeNodeLocator.PATH_DELIMITER)).thenReturn(node);
@@ -239,7 +232,6 @@ public class DecisionTreeControllerTest {
     public void rootNodeTestNoNode() {
 
         when(request.getParameter(TREE_NAME_PARAM)).thenReturn(treeName);
-        when(request.getParameter(PATIENT_ID_PARAM)).thenReturn("PATIENT_ID");
         when(request.getParameter(LANGUAGE_PARAM)).thenReturn("en");
         when(decisionTreeService.getNode(treeName, transitionPath)).thenReturn(null);
 
@@ -256,7 +248,6 @@ public class DecisionTreeControllerTest {
     public void rootNodeTestException() {
 
         when(request.getParameter(TREE_NAME_PARAM)).thenReturn(treeName);
-        when(request.getParameter(PATIENT_ID_PARAM)).thenReturn("PATIENT_ID");
         when(request.getParameter(LANGUAGE_PARAM)).thenReturn("en");
         when(decisionTreeService.getNode(treeName, transitionPath)).thenThrow(new RuntimeException());
 
@@ -284,7 +275,6 @@ public class DecisionTreeControllerTest {
     public void nodeTestMissingTransitionPathsParameter() {
 
         when(request.getParameter(TREE_NAME_PARAM)).thenReturn(treeName);
-        when(request.getParameter(PATIENT_ID_PARAM)).thenReturn("PATIENT_ID");
         when(request.getParameter(LANGUAGE_PARAM)).thenReturn("en");
         when(request.getParameter(DecisionTreeController.TRANSITION_KEY_PARAM)).thenReturn("1");
 
@@ -314,7 +304,6 @@ public class DecisionTreeControllerTest {
 
 
         when(request.getParameter(TREE_NAME_PARAM)).thenReturn(treeName);
-        when(request.getParameter(PATIENT_ID_PARAM)).thenReturn(patientId);
         when(request.getParameter(LANGUAGE_PARAM)).thenReturn("en");
         when(request.getParameter(DecisionTreeController.TRANSITION_KEY_PARAM)).thenReturn(transitionKey);
         when(request.getParameter(DecisionTreeController.TRANSITION_PATH_PARAM)).thenReturn(Base64.encodeBase64URLSafeString(transitionPath.getBytes()));
@@ -342,7 +331,6 @@ public class DecisionTreeControllerTest {
 
 
         when(request.getParameter(TREE_NAME_PARAM)).thenReturn(treeName);
-        when(request.getParameter(PATIENT_ID_PARAM)).thenReturn(patientId);
         when(request.getParameter(LANGUAGE_PARAM)).thenReturn("en");
         when(request.getParameter(DecisionTreeController.TRANSITION_KEY_PARAM)).thenReturn(transitionKey);
         when(request.getParameter(DecisionTreeController.TRANSITION_PATH_PARAM)).thenReturn(Base64.encodeBase64URLSafeString(transitionPath.getBytes()));
@@ -372,7 +360,6 @@ public class DecisionTreeControllerTest {
 
 
         when(request.getParameter(TREE_NAME_PARAM)).thenReturn(treeName);
-        when(request.getParameter(PATIENT_ID_PARAM)).thenReturn(patientId);
         when(request.getParameter(LANGUAGE_PARAM)).thenReturn("en");
         when(request.getParameter(TYPE_PARAM)).thenReturn("vxml");
         when(request.getParameter(TRANSITION_KEY_PARAM)).thenReturn("1");
@@ -395,7 +382,6 @@ public class DecisionTreeControllerTest {
         Node node = new Node();
 
         when(request.getParameter(TREE_NAME_PARAM)).thenReturn(treeName);
-        when(request.getParameter(PATIENT_ID_PARAM)).thenReturn(patientId);
         when(request.getParameter(LANGUAGE_PARAM)).thenReturn("en");
         when(request.getParameter(TYPE_PARAM)).thenReturn("vxml");
         when(decisionTreeService.getNode(treeName, TreeNodeLocator.PATH_DELIMITER)).thenReturn(node);

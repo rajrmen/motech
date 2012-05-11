@@ -1,34 +1,3 @@
-/*
- * MOTECH PLATFORM OPENSOURCE LICENSE AGREEMENT
- *
- * Copyright (c) 2011 Grameen Foundation USA.  All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *
- * 1. Redistributions of source code must retain the above copyright notice,
- * this list of conditions and the following disclaimer.
- *
- * 2. Redistributions in binary form must reproduce the above copyright notice,
- * this list of conditions and the following disclaimer in the documentation
- * and/or other materials provided with the distribution.
- *
- * 3. Neither the name of Grameen Foundation USA, nor its respective contributors
- * may be used to endorse or promote products derived from this software without
- * specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY GRAMEEN FOUNDATION USA AND ITS CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
- * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED.  IN NO EVENT SHALL GRAMEEN FOUNDATION USA OR ITS CONTRIBUTORS
- * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
- * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
- * OF SUCH DAMAGE.
- */
 package org.motechproject.server.decisiontree.web;
 
 import org.apache.commons.codec.binary.Base64;
@@ -59,19 +28,19 @@ import java.util.Set;
  */
 public class DecisionTreeController extends MultiActionController {
 
+    public static final String TEMPLATE_BASE_PATH = "/vm/";
     private Logger logger = LoggerFactory.getLogger((this.getClass()));
 
-    public static final String TREE_NAME_PARAM = "tNm";
+    public static final String TREE_NAME_PARAM = "tree";
     public static final String TRANSITION_KEY_PARAM = "trK";
     public static final String TRANSITION_PATH_PARAM = "trP";
-    public static final String PATIENT_ID_PARAM = "pId";
     public static final String LANGUAGE_PARAM = "ln";
     public static final String TYPE_PARAM = "type";
 
-    public static final String NODE_TEMPLATE_NAME = "node";
-    public static final String LEAF_TEMPLATE_NAME = "leaf";
-    public static final String ERROR_MESSAGE_TEMPLATE_NAME = "node_error";
-    public static final String EXIT_TEMPLATE_NAME = "exit";
+    public static final String NODE_TEMPLATE_NAME = TEMPLATE_BASE_PATH + "node";
+    public static final String LEAF_TEMPLATE_NAME = TEMPLATE_BASE_PATH + "leaf";
+    public static final String ERROR_MESSAGE_TEMPLATE_NAME = TEMPLATE_BASE_PATH + "node-error";
+    public static final String EXIT_TEMPLATE_NAME = TEMPLATE_BASE_PATH + "exit";
 
     public static final String TREE_NAME_SEPARATOR = ",";
 
@@ -112,14 +81,14 @@ public class DecisionTreeController extends MultiActionController {
         System.out.println(request.getParameterMap());
         logger.info("Generating decision tree node xml");
 
+
         response.setContentType("text/plain");
         response.setCharacterEncoding("UTF-8");
 
         Node node = null;
-        String transitionPath = null;
+        String transitionPath = TreeNodeLocator.PATH_DELIMITER;
         Map<String, Object> params = convertParams(request.getParameterMap());
 
-        String patientId = request.getParameter(PATIENT_ID_PARAM);
         String language = request.getParameter(LANGUAGE_PARAM);
         String treeNameString = request.getParameter(TREE_NAME_PARAM);
         String encodedParentTransitionPath = request.getParameter(TRANSITION_PATH_PARAM);
@@ -128,17 +97,16 @@ public class DecisionTreeController extends MultiActionController {
 
 
         logger.info(" Node HTTP  request parameters: "
-                + PATIENT_ID_PARAM + ": " + patientId + ", "
                 + LANGUAGE_PARAM + ": " + language + ", "
                 + TREE_NAME_PARAM + ": " + treeNameString + ", "
                 + TRANSITION_PATH_PARAM + ": " + encodedParentTransitionPath + ", "
                 + TRANSITION_KEY_PARAM + ": " + transitionKey);
 
 
-        if (StringUtils.isBlank(patientId) || StringUtils.isBlank(language) || StringUtils.isBlank(treeNameString)) {
+        if (StringUtils.isBlank(language) || StringUtils.isBlank(treeNameString)) {
 
             logger.error("Invalid HTTP request - the following parameters: "
-                    + PATIENT_ID_PARAM + ", " + LANGUAGE_PARAM + " and " + TREE_NAME_PARAM + " are mandatory");
+                    + ", " + LANGUAGE_PARAM + " and " + TREE_NAME_PARAM + " are mandatory");
             return getErrorModelAndView(Errors.NULL_PATIENTID_LANGUAGE_OR_TREENAME_PARAM);
         }
 
@@ -146,46 +114,34 @@ public class DecisionTreeController extends MultiActionController {
         String currentTree = treeNames[0];
         // put only one tree name in params
         params.put(TREE_NAME_PARAM, currentTree);
+        try {
+            if (transitionKey == null) {  // get root node
+                node = decisionTreeService.getNode(currentTree, TreeNodeLocator.PATH_DELIMITER);
+            } else { // get not root node
+                String parentTransitionPath = null;
 
-        if (transitionKey == null) {  // get root node
-            try {
-                String rootTransitionPath = TreeNodeLocator.PATH_DELIMITER;
-                node = decisionTreeService.getNode(currentTree, rootTransitionPath);
-                transitionPath = rootTransitionPath;
-            } catch (Exception e) {
-                logger.error("Can not get node by Tree Name: " + currentTree + " transition path: " + patientId, e);
-            }
-        } else { // get not root node
-            String parentTransitionPath = null;
-            try {
-                if (encodedParentTransitionPath == null) {
-
-                    logger.error("Invalid HTTP request - the  " + TRANSITION_PATH_PARAM + " parameter is mandatory");
-                    return getErrorModelAndView(Errors.NULL_TRANSITION_PATH_PARAM);
-                }
-
-                parentTransitionPath = new String(Base64.decodeBase64(encodedParentTransitionPath));
+                parentTransitionPath = getParentTransitionPath(encodedParentTransitionPath);
                 Node parentNode = decisionTreeService.getNode(currentTree, parentTransitionPath);
 
                 Transition transition = parentNode.getTransitions().get(transitionKey);
 
                 if (transition == null) {
-                    logger.error("Invalid Transition Key. There is no transition with key: " + transitionKey + " in the Node: " + parentNode);
-                    return getErrorModelAndView(Errors.INVALID_TRANSITION_KEY);
+                    throw new DecisionTreeException(Errors.INVALID_TRANSITION_KEY,
+                            "Invalid Transition Key. There is no transition with key: " + transitionKey + " in the Node: " + parentNode);
                 }
 
                 treeEventProcessor.sendActionsAfter(parentNode, parentTransitionPath, params);
 
                 treeEventProcessor.sendTransitionActions(transition, params);
-
                 node = transition.getDestinationNode();
+
 
                 if (node == null ||
                         (node.getPrompts().isEmpty() && node.getActionsAfter().isEmpty() && node.getActionsBefore().isEmpty() && node.getTransitions().isEmpty())) {
                     if (treeNames.length > 1) {
                         //reduce the current tree and redirect to the next tree
                         treeNames = (String[]) ArrayUtils.remove(treeNames, 0);
-                        String view = String.format("redirect:/decisiontree/node?" + PATIENT_ID_PARAM + "=%s&" + TREE_NAME_PARAM + "=%s&" + LANGUAGE_PARAM + "=%s", patientId, StringUtils.join(treeNames, TREE_NAME_SEPARATOR), language);
+                        String view = String.format("redirect:/decisiontree/node?" + TREE_NAME_PARAM + "=%s&" + LANGUAGE_PARAM + "=%s", StringUtils.join(treeNames, TREE_NAME_SEPARATOR), language);
                         return new ModelAndView(view);
                     } else {
                         //TODO: Add support for return url
@@ -198,12 +154,16 @@ public class DecisionTreeController extends MultiActionController {
                             + transitionKey;
                 }
 
-            } catch (Exception e) {
-                logger.error("Can not get node by Tree ID : " + currentTree +
-                        " and Transition Path: " + parentTransitionPath, e);
-            }
-        }
 
+            }
+
+        } catch (DecisionTreeException exception) {
+            logger.error(exception.getMessage());
+            return getErrorModelAndView(exception.subject);
+        } catch (Exception e) {
+            logger.error("Can not get node by Tree ID : " + currentTree +
+                    " and Transition Path: " + encodedParentTransitionPath, e);
+        }
 
         if (node != null) {
 
@@ -240,12 +200,13 @@ public class DecisionTreeController extends MultiActionController {
             }
             mav.addObject("contentPath", request.getContextPath());
             mav.addObject("node", node);
-            mav.addObject("patientId", patientId);
             mav.addObject("language", language);
             mav.addObject("type", type);
             mav.addObject("transitionPath", Base64.encodeBase64URLSafeString(transitionPath.getBytes()));
             mav.addObject("escape", new StringEscapeUtils());
-
+            mav.addObject("maxDigits", maxDigits(node.getTransitions()));
+            mav.addObject("host", request.getHeader("Host"));
+            mav.addObject("scheme", request.getScheme());
 
             return mav;
         } else {
@@ -253,6 +214,22 @@ public class DecisionTreeController extends MultiActionController {
         }
 
 
+    }
+
+    private String getParentTransitionPath(String encodedParentTransitionPath) {
+        if (encodedParentTransitionPath == null) {
+            throw new DecisionTreeException(Errors.NULL_TRANSITION_PATH_PARAM,
+                    "Invalid HTTP request - the  " + TRANSITION_PATH_PARAM + " parameter is mandatory");
+        }
+        return  new String(Base64.decodeBase64(encodedParentTransitionPath));
+    }
+
+    private String maxDigits(Map<String, Transition> transitions) {
+        int maxDigits = 1;
+        for (String key : transitions.keySet()) {
+            if (maxDigits < key.length()) maxDigits = key.length();
+        }
+        return Integer.toString(maxDigits);
     }
 
     private String templateNameFor(String type, String templateName) {
@@ -267,4 +244,12 @@ public class DecisionTreeController extends MultiActionController {
     }
 
 
+    private class DecisionTreeException extends RuntimeException {
+        private Errors subject;
+
+        public DecisionTreeException(Errors subject, String message) {
+            super(message);
+            this.subject = subject;
+        }
+    }
 }
