@@ -1,5 +1,6 @@
 package org.motechproject.scheduletracking.api.it;
 
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.junit.After;
 import org.junit.Before;
@@ -49,7 +50,7 @@ public class AllEnrollmentsIT {
         Milestone milestone = new Milestone("first_milestone", new WallTime(13, WallTimeUnit.Week), new WallTime(14, WallTimeUnit.Week), new WallTime(16, WallTimeUnit.Week), null);
         Schedule schedule = new Schedule("schedule_name");
         schedule.addMilestones(milestone);
-        Enrollment enrollment = createEnrollment("1324324", "schedule_name", "first_milestone", DateUtil.today(), DateUtil.today(), new Time(DateUtil.now().toLocalTime()), Enrollment.EnrollmentStatus.Active);
+        Enrollment enrollment = createEnrollment("1324324", "schedule_name", "first_milestone", DateUtil.today().toDateTimeAtCurrentTime(), DateUtil.today().toDateTimeAtCurrentTime(), new Time(DateUtil.now().toLocalTime()), Enrollment.EnrollmentStatus.Active);
 
         String enrollmentId = enrollment.getId();
         assertNotNull(enrollmentId);
@@ -61,12 +62,12 @@ public class AllEnrollmentsIT {
         Milestone milestone = new Milestone("first_milestone", new WallTime(13, WallTimeUnit.Week), new WallTime(14, WallTimeUnit.Week), new WallTime(16, WallTimeUnit.Week), null);
         Schedule schedule = new Schedule("schedule_name");
         schedule.addMilestones(milestone);
-        createEnrollment("entity_1", "schedule_name", "first_milestone", DateUtil.today(), DateUtil.today(), new Time(DateUtil.now().toLocalTime()), Enrollment.EnrollmentStatus.Unenrolled);
+        createEnrollment("entity_1", "schedule_name", "first_milestone", DateUtil.today().toDateTimeAtCurrentTime(), DateUtil.today().toDateTimeAtCurrentTime(), new Time(DateUtil.now().toLocalTime()), Enrollment.EnrollmentStatus.Unenrolled);
 
         assertNull(allEnrollments.findActiveByExternalIdAndScheduleName("entity_1", "schedule_name"));
     }
 
-    private Enrollment createEnrollment(String externalId, String scheduleName, String milestoneName, LocalDate referenceDate, LocalDate enrollmentDate, Time preferredTime, Enrollment.EnrollmentStatus status) {
+    private Enrollment createEnrollment(String externalId, String scheduleName, String milestoneName, DateTime referenceDate, DateTime enrollmentDate, Time preferredTime, Enrollment.EnrollmentStatus status) {
         Enrollment enrollment = new Enrollment(externalId, scheduleName, milestoneName, referenceDate, enrollmentDate, preferredTime);
         enrollment.setStatus(status);
         allEnrollments.add(enrollment);

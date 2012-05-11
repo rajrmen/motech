@@ -129,7 +129,6 @@
         <module>motech-testing-utils</module>
         <module>campaigndemonstration</module>
         <module>scheduletrackingdemonstration</module>
-	  <module>commcareintegration</module>
     </modules>
 
     <build>
