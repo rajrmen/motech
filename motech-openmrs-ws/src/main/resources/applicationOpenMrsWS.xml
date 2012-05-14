@@ -11,13 +11,13 @@
   <context:property-placeholder location="classpath:openmrs.properties,classpath:openmrs-urls.properties"
     ignore-unresolvable="true" />
     
-  <bean id="httpClient" class="org.motechproject.openmrs.rest.HttpClientFactoryBean">
+  <bean id="openMrshttpClient" class="org.motechproject.openmrs.rest.HttpClientFactoryBean">
     <constructor-arg value="${openmrs.user}" />
     <constructor-arg value="${openmrs.password}" />
   </bean>
 
   <bean id="requestFactory" class="org.springframework.http.client.CommonsClientHttpRequestFactory">
-    <constructor-arg ref="httpClient" />
+    <constructor-arg ref="openMrshttpClient" />
   </bean>
 
   <bean id="restTemplate" class="org.springframework.web.client.RestTemplate">
