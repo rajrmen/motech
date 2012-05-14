@@ -36,7 +36,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:applicationOpenMrsWS.xml" })
-public class MRSEncounterAdapterImplIT extends AbstractAdapterImplIT {
+public class MRSEncounterAdapterImplIT {
 
 	private static final String TEST_CONCEPT_NAME = "Test Concept";
 	private static final String CONCEPT_PATH = "/ws/rest/v1/concept";
@@ -52,6 +52,9 @@ public class MRSEncounterAdapterImplIT extends AbstractAdapterImplIT {
 
 	@Autowired
 	RestfulClient restfulClient;
+	
+	@Autowired
+	AdapterHelper adapterHelper;
 
 	@Value("${openmrs.url}")
 	String openmrsUrl;
@@ -84,7 +87,7 @@ public class MRSEncounterAdapterImplIT extends AbstractAdapterImplIT {
 		MRSObservation ob = new MRSObservation(Calendar.getInstance().getTime(), TEST_CONCEPT_NAME, "Test Value");
 		obs.add(ob);
 
-		persistedEncounter = createEncounter(obs, currentDate);
+		persistedEncounter = createEncounter(obs, TestUtils.CURRENT_DATE);
 		return persistedEncounter;
 	}
 	
@@ -95,7 +98,7 @@ public class MRSEncounterAdapterImplIT extends AbstractAdapterImplIT {
 			createRequiredEntities();
 			persistedEncounter = createEncounterWithSingleObservation();
 			
-			List<MRSEncounter> encounters = encounterAdapter.getAllEncountersByPatientMotechId(MOTECH_ID_1);
+			List<MRSEncounter> encounters = encounterAdapter.getAllEncountersByPatientMotechId(TestUtils.MOTECH_ID_1);
 			assertEquals(1, encounters.size());
 			
 			MRSEncounter fetchedEncounter = encounters.get(0);
@@ -118,8 +121,8 @@ public class MRSEncounterAdapterImplIT extends AbstractAdapterImplIT {
 			createRequiredEntities();
 			persistedEncounters = createMultipleEncounterWithObservation();
 			
-			MRSEncounter encounter = encounterAdapter.getLatestEncounterByPatientMotechId(MOTECH_ID_1, null);
-			assertEquals(currentDate, encounter.getDate());
+			MRSEncounter encounter = encounterAdapter.getLatestEncounterByPatientMotechId(TestUtils.MOTECH_ID_1, null);
+			assertEquals(TestUtils.CURRENT_DATE, encounter.getDate());
 		} finally {
 			deleteEncounter(persistedEncounters.get(0));
 			deleteEncounter(persistedEncounters.get(1));
@@ -134,7 +137,7 @@ public class MRSEncounterAdapterImplIT extends AbstractAdapterImplIT {
 		MRSObservation ob = new MRSObservation(Calendar.getInstance().getTime(), TEST_CONCEPT_NAME, "Test Value");
 		obs.add(ob);
 
-		persistedEncounter = createEncounter(obs, currentDate);
+		persistedEncounter = createEncounter(obs, TestUtils.CURRENT_DATE);
 		encounters.add(persistedEncounter);
 		
 		Calendar pastDate = Calendar.getInstance();
@@ -157,17 +160,17 @@ public class MRSEncounterAdapterImplIT extends AbstractAdapterImplIT {
 	}
 
 	private void createRequiredEntities() throws HttpException, URISyntaxException {
-		facility = createTemporaryLocation();
-		patient = createTemporaryPatient(MOTECH_ID_1, makePerson(), facility);
+		facility = adapterHelper.createTemporaryLocation();
+		patient = adapterHelper.createTemporaryPatient(TestUtils.MOTECH_ID_1, TestUtils.makePerson(), facility);
 		tempConceptUuid = createTemporaryConcept();
 		creator = createTemporaryProvider();
 	}	
 	
 	private void deleteCreatedEntities() throws HttpException, URISyntaxException {
 		deleteConcept(tempConceptUuid);
-		deletePatient(patient);
+		adapterHelper.deletePatient(patient);
 		deleteUser(creator);
-		deleteFacility(facility);
+		adapterHelper.deleteFacility(facility);
 	}
 
 	private String createTemporaryConcept() throws URISyntaxException, HttpException {

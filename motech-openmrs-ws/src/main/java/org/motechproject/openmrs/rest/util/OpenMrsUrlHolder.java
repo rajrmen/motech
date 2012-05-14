@@ -67,6 +67,24 @@ public class OpenMrsUrlHolder implements InitializingBean {
 	@Value("${openmrs.rest.resource.concept.search}")
 	private String CONCEPT_PATH;
 	
+	@Value("${openmrs.rest.resource.user}")
+	private String userResourcePath; 
+	
+	@Value("${openmrs.rest.resource.user.list.full}")
+	private String userListFull;
+	
+	@Value("${openmrs.rest.resource.user.list.full.query}")
+	private String userListFullQuery;
+	
+	@Value("${openmrs.rest.resource.user.query}")
+	private String userQuery;
+	
+	@Value("${openmrs.rest.resource.user.full}")
+	private String userResourceFull;
+	
+	@Value("${openmrs.rest.resource.role.list.full}")
+	private String roleResourcePath;
+	
 	private URI patient;
 	private URI patientIdentifierTypeList;
 	private UriTemplate patientSearchPathTemplate;
@@ -90,6 +108,14 @@ public class OpenMrsUrlHolder implements InitializingBean {
 	private UriTemplate creatorByUuidTemplate;
 	private URI encounterPathUri;
 	
+	private URI userResource;
+	private URI userListFullUri;
+	private UriTemplate userListFullQueryTemplate;
+	private UriTemplate userQueryTemplate;
+	private UriTemplate userResourceFullTemplate;
+	
+	private URI roleResourceListFull;
+	
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		createPatientUris();
@@ -97,6 +123,14 @@ public class OpenMrsUrlHolder implements InitializingBean {
 		createFacilityUris();
 		createEncounterUris();
 		createConceptUris();
+		
+		userResource = new URI(openmrsUrl + userResourcePath);
+		userListFullUri = new URI(openmrsUrl + userListFull);
+		userListFullQueryTemplate = new UriTemplate(openmrsUrl + userListFullQuery);
+		userQueryTemplate = new UriTemplate(openmrsUrl + userQuery);
+		userResourceFullTemplate = new UriTemplate(openmrsUrl + userResourceFull);
+		
+		roleResourceListFull = new URI(openmrsUrl + roleResourcePath);
 	}
 
 	private void createPatientUris() throws URISyntaxException {
@@ -208,5 +242,28 @@ public class OpenMrsUrlHolder implements InitializingBean {
 	public URI getCreatorByUuid(String uuid) {
 		return creatorByUuidTemplate.expand(uuid);
 	}
+	
+	public URI getUserResource() {
+		return userResource;
+	}
+	
+	public URI getUserListFullPath() {
+		return userListFullUri;
+	}
 
+	public URI getUserListFullByTerm(String term) {
+		return userListFullQueryTemplate.expand(term);
+	}
+	
+	public URI getUserByUsername(String username) {
+		return userQueryTemplate.expand(username);
+	}
+	
+	public URI getUserResourceById(String uuid) {
+		return userResourceFullTemplate.expand(uuid);
+	}
+	
+	public URI getRoleResourceListFull() {
+		return roleResourceListFull;
+	}
 }

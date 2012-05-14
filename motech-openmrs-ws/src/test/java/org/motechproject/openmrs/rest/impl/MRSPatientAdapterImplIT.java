@@ -17,18 +17,38 @@ import org.motechproject.mrs.model.Attribute;
 import org.motechproject.mrs.model.MRSFacility;
 import org.motechproject.mrs.model.MRSPatient;
 import org.motechproject.mrs.model.MRSPerson;
+import org.motechproject.mrs.services.MRSPatientAdapter;
 import org.motechproject.openmrs.rest.HttpException;
+import org.motechproject.openmrs.rest.RestfulClient;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.web.client.RestOperations;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:applicationOpenMrsWS.xml" })
-public class MRSPatientAdapterImplIT extends AbstractAdapterImplIT {
+public class MRSPatientAdapterImplIT {
 
 	private static final String MOTECH_ID_2 = "200-09";
 	private static final String MOTECH_ID_3 = "300-10";
 	private static final String TEMPORARY_ATTRIBUTE_VALUE = "Temporary Value";
 	private static final String TEMPORARY_ATTRIBUTE_TYPE_NAME = "Temporary Attribute Type";
+	
+	@Autowired
+	AdapterHelper adapterHelper;
+	
+	@Autowired
+	MRSPatientAdapter patientAdapter;
+	
+	@Autowired
+    protected RestfulClient restfulClient;
+	
+	@Autowired
+    protected RestOperations restOperations;
+	
+	@Value("${openmrs.url}")
+    protected String openmrsUrl;
 
 	@Test
 	public void shouldCreatePatientWithAttributes() throws HttpException, URISyntaxException {
@@ -36,33 +56,33 @@ public class MRSPatientAdapterImplIT extends AbstractAdapterImplIT {
 		MRSFacility facility = null;
 		MRSPatient patient = null;
 		try {
-			facility = createTemporaryLocation();
+			facility = adapterHelper.createTemporaryLocation();
 			attributeUuid = createTemporaryAttributeType(TEMPORARY_ATTRIBUTE_TYPE_NAME);
 			
-			MRSPerson person = makePerson();
+			MRSPerson person = TestUtils.makePerson();
 			addAttributeToPatient(person, TEMPORARY_ATTRIBUTE_TYPE_NAME);
 			
-			patient = createTemporaryPatient(MOTECH_ID_1, person, facility);
+			patient = adapterHelper.createTemporaryPatient(TestUtils.MOTECH_ID_1, person, facility);
 			
 			MRSPatient persistedPatient = patientAdapter.getPatient(patient.getId());
 			MRSPerson persistedPerson = persistedPatient.getPerson();
 			
 			assertNotNull(persistedPatient);
-			assertEquals(MOTECH_ID_1, persistedPatient.getMotechId());
+			assertEquals(TestUtils.MOTECH_ID_1, persistedPatient.getMotechId());
 			
-			assertEquals(FIRST_NAME, persistedPerson.getFirstName());
-			assertEquals(MIDDLE_NAME, persistedPerson.getMiddleName());
-			assertEquals(LAST_NAME, persistedPerson.getLastName());
-			assertEquals(GENDER, persistedPerson.getGender());
-			assertEquals(ADDRESS, persistedPerson.getAddress());
-			assertEquals(currentDate, persistedPerson.getDateOfBirth());
+			assertEquals(TestUtils.TEST_PERSON_FIRST_NAME, persistedPerson.getFirstName());
+			assertEquals(TestUtils.TEST_PERSON_MIDDLE_NAME, persistedPerson.getMiddleName());
+			assertEquals(TestUtils.TEST_PERSON_LAST_NAME, persistedPerson.getLastName());
+			assertEquals(TestUtils.TEST_PERSON_GENDER, persistedPerson.getGender());
+			assertEquals(TestUtils.TEST_PERSON_ADDRESS, persistedPerson.getAddress());
+			assertEquals(TestUtils.CURRENT_DATE, persistedPerson.getDateOfBirth());
 			assertEquals(1, persistedPerson.getAttributes().size());
 			assertEquals(TEMPORARY_ATTRIBUTE_TYPE_NAME, persistedPerson.getAttributes().get(0).name());
 			assertEquals(TEMPORARY_ATTRIBUTE_VALUE, persistedPerson.getAttributes().get(0).value());
 		} finally {
-			deletePatient(patient);
+			adapterHelper.deletePatient(patient);
 			deleteAttributeType(attributeUuid);
-			deleteFacility(facility);
+			adapterHelper.deleteFacility(facility);
 		}
 	}
 
@@ -91,15 +111,15 @@ public class MRSPatientAdapterImplIT extends AbstractAdapterImplIT {
 		MRSFacility facility = null;
 		MRSPatient patient = null;
 		try {
-			facility = createTemporaryLocation();
-			MRSPerson person = makePerson();
-			patient = createTemporaryPatient(MOTECH_ID_1, person, facility);
+			facility = adapterHelper.createTemporaryLocation();
+			MRSPerson person = TestUtils.makePerson();
+			patient = adapterHelper.createTemporaryPatient(TestUtils.MOTECH_ID_1, person, facility);
 			
-			MRSPatient persistedPatient = patientAdapter.getPatientByMotechId(MOTECH_ID_1);
+			MRSPatient persistedPatient = patientAdapter.getPatientByMotechId(TestUtils.MOTECH_ID_1);
 			assertNotNull(persistedPatient);
 		} finally {
-			deletePatient(patient);
-			deleteFacility(facility);
+			adapterHelper.deletePatient(patient);
+			adapterHelper.deleteFacility(facility);
 		}		
 	}
 	
@@ -108,18 +128,18 @@ public class MRSPatientAdapterImplIT extends AbstractAdapterImplIT {
 		MRSFacility facility = null;
 		MRSPatient patient = null;
 		try {
-			facility = createTemporaryLocation();
-			MRSPerson person = makePerson();
-			patient = createTemporaryPatient(MOTECH_ID_1, person, facility);
+			facility = adapterHelper.createTemporaryLocation();
+			MRSPerson person = TestUtils.makePerson();
+			patient = adapterHelper.createTemporaryPatient(TestUtils.MOTECH_ID_1, person, facility);
 			
-			patientAdapter.savePatientCauseOfDeathObservation(patient.getId(), "NONE", currentDate, null);
+			patientAdapter.savePatientCauseOfDeathObservation(patient.getId(), "NONE", TestUtils.CURRENT_DATE, null);
 			MRSPatient persistedPatient = patientAdapter.getPatient(patient.getId());
 			
 			assertTrue(persistedPatient.getPerson().isDead());
-			assertEquals(currentDate, persistedPatient.getPerson().deathDate());
+			assertEquals(TestUtils.CURRENT_DATE, persistedPatient.getPerson().deathDate());
 		} finally {
-			deletePatient(patient);
-			deleteFacility(facility);
+			adapterHelper.deletePatient(patient);
+			adapterHelper.deleteFacility(facility);
 		}			
 	}
 	
@@ -130,25 +150,25 @@ public class MRSPatientAdapterImplIT extends AbstractAdapterImplIT {
 		MRSPatient patient2 = null;
 		MRSPatient patient3 = null;
 		try {
-			facility = createTemporaryLocation();
-			MRSPerson person1 = makePerson();
-			patient1 = createTemporaryPatient(MOTECH_ID_1, person1, facility);
-			MRSPerson person2 = makePerson();
-			patient2 = createTemporaryPatient(MOTECH_ID_2, person2, facility);
-			MRSPerson person3 = makePerson();
-			patient3 = createTemporaryPatient(MOTECH_ID_3, person3, facility);
+			facility = adapterHelper.createTemporaryLocation();
+			MRSPerson person1 = TestUtils.makePerson();
+			patient1 = adapterHelper.createTemporaryPatient(TestUtils.MOTECH_ID_1, person1, facility);
+			MRSPerson person2 = TestUtils.makePerson();
+			patient2 = adapterHelper.createTemporaryPatient(MOTECH_ID_2, person2, facility);
+			MRSPerson person3 = TestUtils.makePerson();
+			patient3 = adapterHelper.createTemporaryPatient(MOTECH_ID_3, person3, facility);
 
-			List<MRSPatient> patients = patientAdapter.search(FIRST_NAME, null);
+			List<MRSPatient> patients = patientAdapter.search(TestUtils.TEST_PERSON_FIRST_NAME, null);
 			
 			assertEquals(3, patients.size());
-			assertEquals(MOTECH_ID_1, patients.get(0).getMotechId());
+			assertEquals(TestUtils.MOTECH_ID_1, patients.get(0).getMotechId());
 			assertEquals(MOTECH_ID_2, patients.get(1).getMotechId());
 			assertEquals(MOTECH_ID_3, patients.get(2).getMotechId());
 		} finally {
-			deletePatient(patient1);
-			deletePatient(patient2);
-			deletePatient(patient3);
-			deleteFacility(facility);
+			adapterHelper.deletePatient(patient1);
+			adapterHelper.deletePatient(patient2);
+			adapterHelper.deletePatient(patient3);
+			adapterHelper.deleteFacility(facility);
 		}			
 	}
 	
@@ -159,24 +179,24 @@ public class MRSPatientAdapterImplIT extends AbstractAdapterImplIT {
 		MRSPatient patient2 = null;
 		MRSPatient patient3 = null;
 		try {
-			facility = createTemporaryLocation();
-			MRSPerson person1 = makePerson();
-			patient1 = createTemporaryPatient(MOTECH_ID_1, person1, facility);
-			MRSPerson person2 = makePerson();
-			patient2 = createTemporaryPatient(MOTECH_ID_2, person2, facility);
-			MRSPerson person3 = makePerson();
-			patient3 = createTemporaryPatient(MOTECH_ID_3, person3, facility);
+			facility = adapterHelper.createTemporaryLocation();
+			MRSPerson person1 = TestUtils.makePerson();
+			patient1 = adapterHelper.createTemporaryPatient(TestUtils.MOTECH_ID_1, person1, facility);
+			MRSPerson person2 = TestUtils.makePerson();
+			patient2 = adapterHelper.createTemporaryPatient(MOTECH_ID_2, person2, facility);
+			MRSPerson person3 = TestUtils.makePerson();
+			patient3 = adapterHelper.createTemporaryPatient(MOTECH_ID_3, person3, facility);
 
-			List<MRSPatient> patients = patientAdapter.search(FIRST_NAME, "200");
+			List<MRSPatient> patients = patientAdapter.search(TestUtils.TEST_PERSON_FIRST_NAME, "200");
 			
 			assertEquals(2, patients.size());
-			assertEquals(MOTECH_ID_1, patients.get(0).getMotechId());
+			assertEquals(TestUtils.MOTECH_ID_1, patients.get(0).getMotechId());
 			assertEquals(MOTECH_ID_2, patients.get(1).getMotechId());
 		} finally {
-			deletePatient(patient1);
-			deletePatient(patient2);
-			deletePatient(patient3);
-			deleteFacility(facility);
+			adapterHelper.deletePatient(patient1);
+			adapterHelper.deletePatient(patient2);
+			adapterHelper.deletePatient(patient3);
+			adapterHelper.deleteFacility(facility);
 		}			
 	}		
 	
@@ -187,14 +207,14 @@ public class MRSPatientAdapterImplIT extends AbstractAdapterImplIT {
 		MRSFacility facility = null;
 		MRSPatient patient = null;
 		try {
-			facility = createTemporaryLocation();
+			facility = adapterHelper.createTemporaryLocation();
 			attributeUuid1 = createTemporaryAttributeType(TEMPORARY_ATTRIBUTE_TYPE_NAME);
 			attributeUuid2 = createTemporaryAttributeType(TEMPORARY_ATTRIBUTE_TYPE_NAME + 2);
 			
-			MRSPerson person = makePerson();
+			MRSPerson person = TestUtils.makePerson();
 			addAttributeToPatient(person, TEMPORARY_ATTRIBUTE_TYPE_NAME);
 			
-			patient = createTemporaryPatient(MOTECH_ID_1, person, facility);	
+			patient = adapterHelper.createTemporaryPatient(TestUtils.MOTECH_ID_1, person, facility);	
 			
 			patient.getPerson().firstName("Changed First");
 			patient.getPerson().lastName("Changed Last");
@@ -210,10 +230,10 @@ public class MRSPatientAdapterImplIT extends AbstractAdapterImplIT {
 			assertEquals(1, persistedPerson.getAttributes().size());
 			assertEquals(TEMPORARY_ATTRIBUTE_TYPE_NAME + 2, persistedPerson.getAttributes().get(0).name());
 		} finally {
-			deletePatient(patient);
+			adapterHelper.deletePatient(patient);
 			deleteAttributeType(attributeUuid1);
 			deleteAttributeType(attributeUuid2);
-			deleteFacility(facility);
+			adapterHelper.deleteFacility(facility);
 		}	
 	}
 }

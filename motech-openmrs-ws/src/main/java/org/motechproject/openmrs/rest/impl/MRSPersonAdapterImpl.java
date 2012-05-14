@@ -38,6 +38,15 @@ public class MRSPersonAdapterImpl {
 		this.restfulClient = restfulClient;
 		this.urlHolder = urlHolder;
 	}
+	
+	MRSPerson getPerson(String uuid) {
+		try {
+			JsonNode providerObj =  restfulClient.getEntityByJsonNode(urlHolder.getPersonFullByUuid(uuid));
+			 return JsonConverterUtil.convertJsonToMrsPerson(providerObj);
+		} catch (HttpException e) {
+			throw new MRSException(e);
+		}
+	}
 
 	MRSPerson savePerson(MRSPerson person) {
 		JsonNode personJsonObj = JsonConverterUtil.makeJsonPersonObjFromMrsPerson(person, true);

@@ -41,13 +41,15 @@ public class MRSEncounterAdapterImpl implements MRSEncounterAdapter {
 	private final MRSPatientAdapter patientAdapter;
 	private final RestfulClient restfulClient;
 	private final OpenMrsUrlHolder urlHolder;
+	private final MRSPersonAdapterImpl personAdapter;
 
 	@Autowired
 	public MRSEncounterAdapterImpl(RestfulClient restfulClient, MRSPatientAdapter patientAdapter,
-			OpenMrsUrlHolder encounterUrl) {
+			OpenMrsUrlHolder encounterUrl, MRSPersonAdapterImpl personAdapter) {
 		this.restfulClient = restfulClient;
 		this.patientAdapter = patientAdapter;
 		this.urlHolder = encounterUrl;
+		this.personAdapter = personAdapter;
 	}
 
 	@Override
@@ -141,8 +143,7 @@ public class MRSEncounterAdapterImpl implements MRSEncounterAdapter {
 
 				MRSFacility facility = JsonConverterUtil.convertJsonToMrsFacility(encounterObj.get("location"));
 
-				JsonNode providerObj = getPerson(encounterObj.get("provider").get("uuid").asText());
-				MRSPerson provider = JsonConverterUtil.convertJsonToMrsPerson(providerObj);
+				MRSPerson provider = personAdapter.getPerson(encounterObj.get("provider").get("uuid").asText());
 
 				//JsonNode creatorObj = getCreator(encounterObj.get("auditInfo").get("creator").get("uuid").asText());
 				//JsonNode creatorPersonObj = getPerson(creatorObj.get("person").get("uuid").asText());
@@ -163,14 +164,6 @@ public class MRSEncounterAdapterImpl implements MRSEncounterAdapter {
 		}
 
 		return encounters;
-	}
-
-	private JsonNode getPerson(String providerUuid) {
-		try {
-			return restfulClient.getEntityByJsonNode(urlHolder.getPersonFullByUuid(providerUuid));
-		} catch (HttpException e) {
-			throw new MRSException(e);
-		}
 	}
 
 	private JsonNode getCreator(String asText) {
