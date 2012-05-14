@@ -57,7 +57,6 @@ public class IVRController {
 
     String reply(KooKooIVRContext ivrContext) {
         try {
-            logger.info(ivrContext.allCookies());
             ivrContext.setDefaults();
             IVREvent ivrEvent = Enum.valueOf(IVREvent.class, ivrContext.ivrEvent());
             switch (ivrEvent) {

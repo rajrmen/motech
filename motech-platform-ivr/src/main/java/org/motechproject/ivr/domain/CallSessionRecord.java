@@ -48,7 +48,7 @@ public class CallSessionRecord extends MotechBaseDataObject {
         data.put(key, value);
     }
 
-    public Object valueFor(String key) {
-        return data.get(key);
+    public <T> T valueFor(String key) {
+        return (T) data.get(key);
     }
 }

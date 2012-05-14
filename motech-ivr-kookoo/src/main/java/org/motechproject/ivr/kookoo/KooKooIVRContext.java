@@ -2,11 +2,9 @@ package org.motechproject.ivr.kookoo;
 
 import org.apache.commons.lang.StringUtils;
 import org.motechproject.ivr.domain.CallSessionRecord;
-import org.motechproject.ivr.kookoo.domain.KookooCallDetailRecord;
 import org.motechproject.ivr.kookoo.eventlogging.CallEventConstants;
 import org.motechproject.ivr.model.CallDirection;
 import org.motechproject.ivr.model.IVRStatus;
-import org.motechproject.util.Cookies;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -20,7 +18,6 @@ import java.util.List;
 public class KooKooIVRContext {
     private KookooRequest kooKooRequest;
     private HttpServletRequest request;
-    private Cookies cookies;
 
     private static final String CURRENT_DECISION_TREE_POSITION = "current_decision_tree_position";
     public static final String PREFERRED_LANGUAGE_CODE = "preferred_lang_code";
@@ -40,7 +37,6 @@ public class KooKooIVRContext {
         this.kooKooRequest = kooKooRequest;
         this.request = request;
         this.callSessionRecord = callSessionRecord;
-        cookies = new Cookies(request, response);
     }
 
     public HttpServletRequest httpRequest() {
@@ -49,6 +45,7 @@ public class KooKooIVRContext {
 
     /**
      * Get Current user input (dtmf digit pressed on phone)
+     *
      * @return return DTMF value as String
      */
     public String userInput() {
@@ -56,41 +53,42 @@ public class KooKooIVRContext {
     }
 
     public String currentTreePosition() {
-        String currentPosition = cookies.getValue(CURRENT_DECISION_TREE_POSITION);
+        String currentPosition = callSessionRecord.valueFor(CURRENT_DECISION_TREE_POSITION);
         return currentPosition == null ? "" : currentPosition;
     }
 
     public void currentDecisionTreePath(String path) {
-        cookies.add(CURRENT_DECISION_TREE_POSITION, path);
+        addToRequestAndSession(CURRENT_DECISION_TREE_POSITION, path);
     }
 
     /**
      * Get current call id
+     *
      * @return
      */
     public String callId() {
-        String callId = cookies.getValue(CALL_ID);
+        String callId = callSessionRecord.valueFor(CALL_ID);
         return callId == null ? kooKooRequest.getSid() : callId;
     }
 
     public void callId(String callid) {
-        cookies.add(CALL_ID, callid);
+        addToRequestAndSession(CALL_ID, callid);
     }
 
     public String preferredLanguage() {
-        return cookies.getValue(PREFERRED_LANGUAGE_CODE);
+        return callSessionRecord.valueFor(PREFERRED_LANGUAGE_CODE);
     }
 
     public void preferredLanguage(String languageCode) {
-        cookies.add(PREFERRED_LANGUAGE_CODE, languageCode);
+        addToRequestAndSession(PREFERRED_LANGUAGE_CODE, languageCode);
     }
 
     public void callDetailRecordId(String kooKooCallDetailRecordId) {
-        cookies.add(CALL_DETAIL_RECORD_ID, kooKooCallDetailRecordId);
+        addToRequestAndSession(CALL_DETAIL_RECORD_ID, kooKooCallDetailRecordId);
     }
 
     public String callDetailRecordId() {
-        return cookies.getValue(CALL_DETAIL_RECORD_ID);
+        return callSessionRecord.valueFor(CALL_DETAIL_RECORD_ID);
     }
 
     public void treeName(String treeName) {
@@ -105,12 +103,12 @@ public class KooKooIVRContext {
     }
 
     public HashMap<String, String> dataToLog() {
-        HashMap<String, String> map = (HashMap<String, String>) callSessionRecord.valueFor(DATA_TO_LOG);
+        HashMap<String, String> map = callSessionRecord.valueFor(DATA_TO_LOG);
         return (map == null) ? new HashMap<String, String>() : map;
     }
 
     public void dataToLog(HashMap<String, String> map) {
-        HashMap<String, String> dataMap = (HashMap<String, String>) callSessionRecord.valueFor(DATA_TO_LOG);
+        HashMap<String, String> dataMap = callSessionRecord.valueFor(DATA_TO_LOG);
         if (dataMap == null) {
             callSessionRecord.add(DATA_TO_LOG, map);
         } else {
@@ -119,11 +117,11 @@ public class KooKooIVRContext {
     }
 
     public List<String> getListOfCompletedTrees() {
-        return (List<String>) callSessionRecord.valueFor(LIST_OF_COMPLETED_TREES);
+        return callSessionRecord.valueFor(LIST_OF_COMPLETED_TREES);
     }
 
     public void addToListOfCompletedTrees(String lastCompletedTreeName) {
-        Object listOfCompletedTreesSoFar = callSessionRecord.valueFor(LIST_OF_COMPLETED_TREES);
+        List<String> listOfCompletedTreesSoFar = callSessionRecord.valueFor(LIST_OF_COMPLETED_TREES);
         ArrayList<String> listOfCompletedTrees = listOfCompletedTreesSoFar == null ? new ArrayList<String>() : (ArrayList<String>) listOfCompletedTreesSoFar;
         listOfCompletedTrees.add(lastCompletedTreeName);
         callSessionRecord.add(LIST_OF_COMPLETED_TREES, listOfCompletedTrees);
@@ -133,16 +131,9 @@ public class KooKooIVRContext {
         return kooKooRequest;
     }
 
-    public Cookies cookies() {
-        return cookies;
-    }
-
     public String externalId() {
-        return kooKooRequest.externalId() == null ? (String) callSessionRecord.valueFor(EXTERNAL_ID) : kooKooRequest.externalId();
-    }
-
-    public void invalidateSession() {
-        request.getSession().invalidate();
+        String externalId = callSessionRecord.valueFor(EXTERNAL_ID);
+        return kooKooRequest.externalId() == null ? externalId : kooKooRequest.externalId();
     }
 
     public String ivrEvent() {
@@ -166,15 +157,16 @@ public class KooKooIVRContext {
         kooKooRequest.setDefaults();
     }
 
-    public String allCookies() {
-        return cookies.toString();
-    }
-
     public boolean isAnswered() {
         return IVRStatus.isAnswered(kooKooRequest.getStatus());
     }
 
     public CallSessionRecord getCallSessionRecord() {
         return callSessionRecord;
+    }
+
+    private void addToRequestAndSession(String key, String kooKooCallDetailRecordId) {
+        request.setAttribute(key, kooKooCallDetailRecordId);
+        callSessionRecord.add(key, kooKooCallDetailRecordId);
     }
 }
