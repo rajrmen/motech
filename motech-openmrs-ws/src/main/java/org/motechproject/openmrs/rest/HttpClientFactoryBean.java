@@ -1,6 +1,7 @@
 package org.motechproject.openmrs.rest;
 
 import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.auth.AuthScope;
 import org.springframework.beans.factory.FactoryBean;
@@ -26,7 +27,7 @@ public class HttpClientFactoryBean implements FactoryBean<HttpClient> {
 	}
 
 	private void initializeHttpClient() {
-		httpClient = new HttpClient();
+		httpClient = new HttpClient(new MultiThreadedHttpConnectionManager());
 		httpClient.getState().setCredentials(
 				new AuthScope(AuthScope.ANY_HOST, AuthScope.ANY_PORT,
 						AuthScope.ANY_REALM),
