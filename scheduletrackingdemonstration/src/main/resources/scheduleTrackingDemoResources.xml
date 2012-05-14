@@ -10,7 +10,7 @@
             http://www.springframework.org/schema/util/spring-util-3.0.xsd">
 
 	<import resource="classpath:applicationSchedulerTrackingAPI.xml" />
-	<import resource="classpath:applicationOpenmrsAPI.xml" />
+	<import resource="classpath:applicationOpenMrsWS.xml" />
 	<import resource="classpath:voxeoResources.xml" />
 	<import resource="applicationCmsLiteApi.xml" />
 	<import resource="applicationSmsHttp.xml" />

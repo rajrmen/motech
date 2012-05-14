@@ -11,30 +11,26 @@ import org.joda.time.DateTime;
 import org.motechproject.mrs.model.MRSEncounter;
 import org.motechproject.mrs.model.MRSObservation;
 import org.motechproject.mrs.model.MRSPatient;
-import org.motechproject.openmrs.advice.ApiSession;
-import org.motechproject.openmrs.advice.LoginAsAdmin;
-import org.motechproject.openmrs.services.OpenMRSEncounterAdapter;
-import org.motechproject.openmrs.services.OpenMRSObservationAdapter;
-import org.motechproject.openmrs.services.OpenMRSPatientAdapter;
+import org.motechproject.mrs.services.MRSEncounterAdapter;
+import org.motechproject.mrs.services.MRSObservationAdapter;
+import org.motechproject.mrs.services.MRSPatientAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class OpenMrsClientImpl implements OpenMrsClient {
 	private static Logger logger = LoggerFactory.getLogger(OpenMrsClientImpl.class);
-	private OpenMRSEncounterAdapter encounterAdapter;
-	private OpenMRSPatientAdapter patientAdapter;
-	private OpenMRSObservationAdapter observationAdapter;
+	private MRSEncounterAdapter encounterAdapter;
+	private MRSPatientAdapter patientAdapter;
+	private MRSObservationAdapter observationAdapter;
 
 	@Autowired
-	public OpenMrsClientImpl(OpenMRSEncounterAdapter encounterAdapter, OpenMRSPatientAdapter patientAdapter, OpenMRSObservationAdapter observationAdapter) {
+	public OpenMrsClientImpl(MRSEncounterAdapter encounterAdapter, MRSPatientAdapter patientAdapter, MRSObservationAdapter observationAdapter) {
 		this.encounterAdapter = encounterAdapter;
 		this.patientAdapter = patientAdapter;
 		this.observationAdapter = observationAdapter;
 	}
 	
-	@LoginAsAdmin
-	@ApiSession
 	public boolean hasConcept(String patientId, String conceptName) {
 		logger.debug(conceptName);
 		List<MRSObservation> observationList = observationAdapter.getMRSObservationsByMotechPatientIdAndConceptName(patientId, conceptName);
@@ -50,8 +46,6 @@ public class OpenMrsClientImpl implements OpenMrsClient {
 		
 	}
 	
-	@LoginAsAdmin
-	@ApiSession
 	public void printValues(String externalID, String conceptName) {
 		List<MRSObservation> mrsObservations = observationAdapter.getMRSObservationsByMotechPatientIdAndConceptName(externalID, conceptName);
 		
@@ -68,8 +62,6 @@ public class OpenMrsClientImpl implements OpenMrsClient {
 		}
 	}
 	
-	@LoginAsAdmin
-	@ApiSession
 	public DateTime lastTimeFulfilledDateTimeObs(String patientId, String conceptName) {
 		List<MRSObservation> mrsObservations = observationAdapter.getMRSObservationsByMotechPatientIdAndConceptName(patientId, conceptName);
 		Collections.sort(mrsObservations, new dateComparator());
@@ -86,8 +78,6 @@ public class OpenMrsClientImpl implements OpenMrsClient {
 		
 	}
 	
-	@LoginAsAdmin
-	@ApiSession
 	public MRSPatient getPatientByMotechId(String patientId) {
 		return patientAdapter.getPatientByMotechId(patientId);
 	}
@@ -109,14 +99,10 @@ public class OpenMrsClientImpl implements OpenMrsClient {
 		
 	}
 
-	@LoginAsAdmin
-	@ApiSession
 	public void savePatient(MRSPatient patient) {
 		patientAdapter.savePatient(patient);
 	}
 
-	@LoginAsAdmin
-	@ApiSession
 	public void addEncounterForPatient(String motechId, String conceptName, Date observedDate) {
 		MRSObservation<Date> observation = new MRSObservation<Date>(observedDate, conceptName, observedDate);
 		Set<MRSObservation> observations = new HashSet<MRSObservation>();

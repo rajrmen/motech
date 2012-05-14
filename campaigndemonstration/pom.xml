@@ -48,7 +48,7 @@
 		</dependency>
 				<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>motech-openmrs-api</artifactId>
+			<artifactId>motech-openmrs-ws</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 
