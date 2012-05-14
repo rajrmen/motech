@@ -97,14 +97,14 @@ public class MRSUserAdapterImpl implements MRSUserAdapter {
 	}
 
 	private MRSUser createMrsUserFromJson(JsonNode userObj) {
-		MRSPerson person = personAdapter.getPerson(userObj.get("person").get("uuid").asText());
+		MRSPerson person = personAdapter.getPerson(userObj.get("person").get("uuid").getValueAsText());
 
 		MRSUser user = new MRSUser();
 		user.person(person);
-		user.id(userObj.get("uuid").asText());
-		user.userName(userObj.get("username").asText());
-		user.systemId(userObj.get("systemId").asText());
-		user.securityRole(userObj.get("roles").get(0).get("name").asText());
+		user.id(userObj.get("uuid").getValueAsText());
+		user.userName(userObj.get("username").getValueAsText());
+		user.systemId(userObj.get("systemId").getValueAsText());
+		user.securityRole(userObj.get("roles").get(0).get("name").getValueAsText());
 
 		return user;
 	}
@@ -126,9 +126,9 @@ public class MRSUserAdapterImpl implements MRSUserAdapter {
 
 		try {
 			JsonNode response = restfulClient.postForJsonNode(urlHolder.getUserResource(), userObj);
-			user.id(response.get("uuid").asText());
-			user.systemId(response.get("systemId").asText());
-			user.getPerson().id(response.get("person").get("uuid").asText());
+			user.id(response.get("uuid").getValueAsText());
+			user.systemId(response.get("systemId").getValueAsText());
+			user.getPerson().id(response.get("person").get("uuid").getValueAsText());
 		} catch (HttpException e) {
 			logger.error("Failed to save user: " + e.getMessage());
 			throw new MRSException(e);
@@ -177,7 +177,7 @@ public class MRSUserAdapterImpl implements MRSUserAdapter {
 			JsonNode response = restfulClient.getEntityByJsonNode(urlHolder.getRoleResourceListFull()).get("results");
 			for (int i = 0; i < response.size(); i++) {
 				JsonNode roleObj = response.get(i);
-				cachedRoles.put(roleObj.get("name").asText(), roleObj.get("uuid").asText());
+				cachedRoles.put(roleObj.get("name").getValueAsText(), roleObj.get("uuid").getValueAsText());
 			}
 		} catch (HttpException e) {
 			logger.error("Failed to retrieve the list of roles: " + e.getMessage());
@@ -200,7 +200,7 @@ public class MRSUserAdapterImpl implements MRSUserAdapter {
 				throw new UsernameNotFoundException("No user found with username: " + username);
 			}
 
-			String uuid = resultArray.get(0).get("uuid").asText();
+			String uuid = resultArray.get(0).get("uuid").getValueAsText();
 			ObjectNode userObj = JsonNodeFactory.instance.objectNode();
 			userObj.put("password", newPassword);
 			restfulClient.postWithEmptyResponseBody(urlHolder.getUserResourceById(uuid), userObj);

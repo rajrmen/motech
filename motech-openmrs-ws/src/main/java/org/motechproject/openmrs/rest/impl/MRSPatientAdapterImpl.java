@@ -77,7 +77,7 @@ public class MRSPatientAdapterImpl implements MRSPatientAdapter {
 		}
 
 		JsonNode resultObj1 = resultArray.get(0);
-		String uuid = resultObj1.get("uuid").asText();
+		String uuid = resultObj1.get("uuid").getValueAsText();
 
 		return getPatient(uuid);
 	}
@@ -97,9 +97,9 @@ public class MRSPatientAdapterImpl implements MRSPatientAdapter {
 		JsonNode motechIdentifier = getMotechIdentifier(responseNode);
 		MRSPerson person = JsonConverterUtil.convertJsonToMrsPerson(responseNode.get("person"));
 
-		MRSFacility facility = facilityAdapter.getFacility(motechIdentifier.get("location").get("uuid").asText());
+		MRSFacility facility = facilityAdapter.getFacility(motechIdentifier.get("location").get("uuid").getValueAsText());
 
-		MRSPatient patient = new MRSPatient(patientId, motechIdentifier.get("identifier").asText(), person, facility);
+		MRSPatient patient = new MRSPatient(patientId, motechIdentifier.get("identifier").getValueAsText(), person, facility);
 
 		return patient;
 	}
@@ -114,7 +114,7 @@ public class MRSPatientAdapterImpl implements MRSPatientAdapter {
 		for (int i = 0; i < identifiers.size(); i++) {
 			JsonNode identifier = identifiers.get(i);
 			JsonNode identifierType = identifier.get("identifierType");
-			if (motechIdTypeUuid.equals(identifierType.get("uuid").asText())) {
+			if (motechIdTypeUuid.equals(identifierType.get("uuid").getValueAsText())) {
 				return identifier;
 			}
 		}
@@ -139,8 +139,8 @@ public class MRSPatientAdapterImpl implements MRSPatientAdapter {
 
 		for (int i = 0; i < results.size(); i++) {
 			JsonNode obj = results.get(i);
-			if (MOTECH_ID_NAME.equals(obj.get("name").asText())) {
-				motechIdTypeUuid = obj.get("uuid").asText();
+			if (MOTECH_ID_NAME.equals(obj.get("name").getValueAsText())) {
+				motechIdTypeUuid = obj.get("uuid").getValueAsText();
 				break;
 			}
 		}
@@ -171,7 +171,7 @@ public class MRSPatientAdapterImpl implements MRSPatientAdapter {
 			throw new MRSException(e);
 		}
 
-		return new MRSPatient(response.get("uuid").asText(), patient.getMotechId(), savedPerson,
+		return new MRSPatient(response.get("uuid").getValueAsText(), patient.getMotechId(), savedPerson,
 		        patient.getFacility());
 	}
 
@@ -218,7 +218,7 @@ public class MRSPatientAdapterImpl implements MRSPatientAdapter {
 		List<MRSPatient> searchResults = new ArrayList<MRSPatient>();
 		JsonNode resultArray = resultObj.get("results");
 		for (int i = 0; i < resultArray.size(); i++) {
-			MRSPatient patient = getPatient(resultArray.get(i).get("uuid").asText());
+			MRSPatient patient = getPatient(resultArray.get(i).get("uuid").getValueAsText());
 			if (id == null) {
 				searchResults.add(patient);
 			} else {

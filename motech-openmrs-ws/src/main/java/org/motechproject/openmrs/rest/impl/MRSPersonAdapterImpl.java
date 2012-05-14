@@ -52,7 +52,7 @@ public class MRSPersonAdapterImpl {
 		JsonNode personJsonObj = JsonConverterUtil.makeJsonPersonObjFromMrsPerson(person, true);
 		try {
 			JsonNode response = restfulClient.postForJsonNode(urlHolder.getPerson(), personJsonObj);
-			person.id(response.get("uuid").asText());
+			person.id(response.get("uuid").getValueAsText());
 		} catch (HttpException e) {
 			logger.error("Failed to create person for patient: " + person.getFullName());
 			throw new MRSException(e);
@@ -90,7 +90,7 @@ public class MRSPersonAdapterImpl {
 					logger.warn("No attribute found with name: " + name);
 				}
 
-				String attrUuid = resultArray.get(0).get("uuid").asText();
+				String attrUuid = resultArray.get(0).get("uuid").getValueAsText();
 				attributeTypeUuidCache.put(name, attrUuid);
 			} catch (HttpException e) {
 			}
@@ -111,13 +111,13 @@ public class MRSPersonAdapterImpl {
 		JsonNode attributesArray = patientObj.get("person").get("attributes");
 		for (int i = 0; i < attributesArray.size(); i++) {
 			JsonNode attribute = attributesArray.get(i);
-			String attributeUri = attribute.get("links").get(0).get("uri").asText();
+			String attributeUri = attribute.get("links").get(0).get("uri").getValueAsText();
 			try {
 				restfulClient.deleteEntity(new URI(attributeUri));
 			} catch (HttpException e) {
-				logger.warn("Failed to delete attribute with uuid: " + attribute.get("uuid").asText());
+				logger.warn("Failed to delete attribute with uuid: " + attribute.get("uuid").getValueAsText());
 			} catch (URISyntaxException e) {
-				logger.warn("Error with patient attribute uri: " + attribute.get("uri").asText());
+				logger.warn("Error with patient attribute uri: " + attribute.get("uri").getValueAsText());
 			}
 		}
 	}
@@ -133,10 +133,10 @@ public class MRSPersonAdapterImpl {
 			ObjectNode preferredAddress = (ObjectNode) personJsonObj.remove("preferredAddress");
 			restfulClient.postWithEmptyResponseBody(
 			        urlHolder.getPersonNameByUuid(person.getId(), personResponse.get("preferredName").get("uuid")
-			                .asText()), preferredName);
+			                .getValueAsText()), preferredName);
 			restfulClient.postWithEmptyResponseBody(
 			        urlHolder.getPersonAddressByUuid(person.getId(), personResponse.get("preferredAddress")
-			                .get("uuid").asText()), preferredAddress);
+			                .get("uuid").getValueAsText()), preferredAddress);
 			restfulClient.postWithEmptyResponseBody(urlHolder.getPersonByUuid(person.getId()), personJsonObj);
 		} catch (HttpException e) {
 			logger.error("Failed to update a person in OpenMRS with id: " + person.getId());

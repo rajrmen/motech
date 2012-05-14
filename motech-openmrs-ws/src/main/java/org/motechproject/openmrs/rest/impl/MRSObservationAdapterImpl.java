@@ -48,11 +48,11 @@ public class MRSObservationAdapterImpl {
 					.get("results");
 			for(int i = 0; i < results.size(); i++) {
 				JsonNode obj = results.get(i);
-				if (!conceptUuid.equals(obj.get("concept").get("uuid").asText())) {
+				if (!conceptUuid.equals(obj.get("concept").get("uuid").getValueAsText())) {
 					continue;
 				}
-				MRSObservation ob = new MRSObservation(obj.get("uuid").asText(), DateUtil.parseOpenMrsDate(obj.get(
-						"obsDatetime").asText()), conceptName, obj.get("value").asText());
+				MRSObservation ob = new MRSObservation(obj.get("uuid").getValueAsText(), DateUtil.parseOpenMrsDate(obj.get(
+						"obsDatetime").getValueAsText()), conceptName, obj.get("value").getValueAsText());
 				
 				obs.add(ob);
 			}

@@ -52,7 +52,7 @@ public class MRSConceptAdapterImpl {
 				logger.warn("Found more than 1 concept with name: " + conceptName + " (" + encodedConceptName + ")");
 			}
 
-			String conceptUuid = results.get(0).get("uuid").asText();
+			String conceptUuid = results.get(0).get("uuid").getValueAsText();
 			conceptCache.put(conceptName, conceptUuid);
 			return conceptUuid;
 		} catch (UnsupportedEncodingException e) {

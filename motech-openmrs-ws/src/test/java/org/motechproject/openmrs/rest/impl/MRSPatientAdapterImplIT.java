@@ -98,7 +98,7 @@ public class MRSPatientAdapterImplIT {
 		
 		JsonNode response = restfulClient.postForJsonNode(new URI(openmrsUrl + "/ws/rest/v1/personattributetype"), obj);
 		
-		return response.get("uuid").asText();
+		return response.get("uuid").getValueAsText();
 	}	
 	
 	

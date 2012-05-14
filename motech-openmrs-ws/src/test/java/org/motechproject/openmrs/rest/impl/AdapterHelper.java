@@ -63,7 +63,7 @@ public class AdapterHelper {
     	obj.put("description", "Temporary Location");
     	JsonNode result = restfulClient.postForJsonNode(new URI(openmrsUrl + "/ws/rest/v1/location"), obj);
     	
-    	return new MRSFacility(result.get("uuid").asText());
+    	return new MRSFacility(result.get("uuid").getValueAsText());
     }
 
 	public void deleteUser(MRSUser user) throws HttpException, URISyntaxException {
@@ -92,7 +92,7 @@ public class AdapterHelper {
 		conceptObj.put("conceptClass", "Test");
 		JsonNode result = restfulClient.postForJsonNode(uri, conceptObj);
 
-		return result.get("uuid").asText();
+		return result.get("uuid").getValueAsText();
 	}
 
 	public MRSUser createTemporaryProvider() throws URISyntaxException, HttpException {
@@ -108,7 +108,7 @@ public class AdapterHelper {
 
 		URI personUri = new URI(openmrsUrl + "/ws/rest/v1/person");
 		JsonNode response = restfulClient.postForJsonNode(personUri, person);
-		String personUuid = response.get("uuid").asText();
+		String personUuid = response.get("uuid").getValueAsText();
 
 		ObjectNode userNode = JsonNodeFactory.instance.objectNode();
 		userNode.put("username", "troy");
@@ -118,7 +118,7 @@ public class AdapterHelper {
 		URI userUri = new URI(openmrsUrl + "/ws/rest/v1/user");
 		response = restfulClient.postForJsonNode(userUri, userNode);
 
-		return new MRSUser().id(response.get("uuid").asText()).person(new MRSPerson().id(personUuid));
+		return new MRSUser().id(response.get("uuid").getValueAsText()).person(new MRSPerson().id(personUuid));
 	}
 
 	public void deleteEncounter(MRSEncounter persistedEncounter) throws HttpException, URISyntaxException {

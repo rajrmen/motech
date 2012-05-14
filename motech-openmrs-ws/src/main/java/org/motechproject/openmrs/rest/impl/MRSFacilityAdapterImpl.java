@@ -97,7 +97,7 @@ public class MRSFacilityAdapterImpl implements MRSFacilityAdapter {
 			throw new MRSException(e);
 		}
 
-		facility.setId(result.get("uuid").asText());
+		facility.setId(result.get("uuid").getValueAsText());
 
 		return facility;
 	}

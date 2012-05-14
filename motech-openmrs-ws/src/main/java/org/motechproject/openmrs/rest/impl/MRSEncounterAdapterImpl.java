@@ -67,7 +67,7 @@ public class MRSEncounterAdapterImpl implements MRSEncounterAdapter {
 		encounterObj.put("obs", observationsToJson(encounter.getObservations()));
 		try {
 			JsonNode response = restfulClient.postForJsonNode(urlHolder.getEncounterPath(), encounterObj);
-			return new MRSEncounter(response.get("uuid").asText(), encounter.getProvider(), encounter.getCreator(),
+			return new MRSEncounter(response.get("uuid").getValueAsText(), encounter.getProvider(), encounter.getCreator(),
 					encounter.getFacility(), encounter.getDate(), encounter.getPatient(), encounter.getObservations(),
 					encounter.getEncounterType());
 		} catch (HttpException e) {
@@ -114,12 +114,12 @@ public class MRSEncounterAdapterImpl implements MRSEncounterAdapter {
 			JsonNode resultArray = resultObj.get("results");
 			for (int i = 0; i < resultArray.size(); i++) {
 				JsonNode encounterObj = resultArray.get(i);
-				String encounterType = encounterObj.get("encounterType").get("name").asText();
-				Date encounterDate = DateUtil.parseOpenMrsDate(encounterObj.get("encounterDatetime").asText());
+				String encounterType = encounterObj.get("encounterType").get("name").getValueAsText();
+				Date encounterDate = DateUtil.parseOpenMrsDate(encounterObj.get("encounterDatetime").getValueAsText());
 
 				MRSFacility facility = JsonConverterUtil.convertJsonToMrsFacility(encounterObj.get("location"));
 
-				MRSPerson provider = personAdapter.getPerson(encounterObj.get("provider").get("uuid").asText());
+				MRSPerson provider = personAdapter.getPerson(encounterObj.get("provider").get("uuid").getValueAsText());
 
 				//JsonNode creatorObj = getCreator(encounterObj.get("auditInfo").get("creator").get("uuid").asText());
 				//JsonNode creatorPersonObj = getPerson(creatorObj.get("person").get("uuid").asText());
@@ -127,7 +127,7 @@ public class MRSEncounterAdapterImpl implements MRSEncounterAdapter {
 //				MRSUser user = new MRSUser().id(creatorObj.get("uuid").asText()).person(creatorPerson)
 //						.systemId(creatorObj.get("systemId").asText()).userName(creatorObj.get("username").asText());
 
-				MRSEncounter encounter = new MRSEncounter(encounterObj.get("uuid").asText(), provider, null, facility,
+				MRSEncounter encounter = new MRSEncounter(encounterObj.get("uuid").getValueAsText(), provider, null, facility,
 						encounterDate, patient, getObservations(encounterObj.get("obs")), encounterType);
 				encounters.add(encounter);
 			}
@@ -154,9 +154,9 @@ public class MRSEncounterAdapterImpl implements MRSEncounterAdapter {
 		Set<MRSObservation> observations = new HashSet<MRSObservation>();
 		for (int i = 0; i < observationArray.size(); i++) {
 			JsonNode obsObj = observationArray.get(i);
-			observations.add(new MRSObservation(obsObj.get("uuid").asText(), DateUtil.parseOpenMrsDate(obsObj.get(
-					"obsDatetime").asText()), obsObj.get("concept").get("display").asText(), obsObj.get("value")
-					.asText()));
+			observations.add(new MRSObservation(obsObj.get("uuid").getValueAsText(), DateUtil.parseOpenMrsDate(obsObj.get(
+					"obsDatetime").getValueAsText()), obsObj.get("concept").get("display").getValueAsText(), obsObj.get("value")
+					.getValueAsText()));
 		}
 
 		return observations;

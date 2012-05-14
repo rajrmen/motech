@@ -19,9 +19,9 @@ public class JsonConverterUtil {
 	private static Logger logger = LoggerFactory.getLogger(JsonConverterUtil.class);
 
 	public static MRSFacility convertJsonToMrsFacility(JsonNode facilityObj) {
-		MRSFacility facility = new MRSFacility(facilityObj.get("uuid").asText(), facilityObj.get("name").asText(),
-				facilityObj.get("country").asText(), facilityObj.get("address6").asText(), facilityObj.get(
-						"countyDistrict").asText(), facilityObj.get("stateProvince").asText());
+		MRSFacility facility = new MRSFacility(facilityObj.get("uuid").getValueAsText(), facilityObj.get("name").getValueAsText(),
+				facilityObj.get("country").getValueAsText(), facilityObj.get("address6").getValueAsText(), facilityObj.get(
+						"countyDistrict").getValueAsText(), facilityObj.get("stateProvince").getValueAsText());
 		return facility;
 	}
 
@@ -38,38 +38,38 @@ public class JsonConverterUtil {
 	private static void setPreferredName(MRSPerson person, JsonNode personNode) {
 		JsonNode preferredNameObj = personNode.get("preferredName");
 
-		person.preferredName(preferredNameObj.get("display").asText());
+		person.preferredName(preferredNameObj.get("display").getValueAsText());
 		
 		if (!preferredNameObj.get("givenName").isNull()) {
-			person.firstName(preferredNameObj.get("givenName").asText());
+			person.firstName(preferredNameObj.get("givenName").getValueAsText());
 		}
 		
 		if (!preferredNameObj.get("middleName").isNull()) {
-			person.middleName(preferredNameObj.get("middleName").asText());
+			person.middleName(preferredNameObj.get("middleName").getValueAsText());
 		}
 		 
 		if (!preferredNameObj.get("familyName").isNull()) {
-			person.lastName(preferredNameObj.get("familyName").asText());
+			person.lastName(preferredNameObj.get("familyName").getValueAsText());
 		}
 	}
 
 	private static void setPersonProperties(MRSPerson person, JsonNode personNode) {
-		person.birthDateEstimated(personNode.get("birthdateEstimated").asBoolean())
-				.gender(personNode.get("gender").asText()).dead(personNode.get("dead").asBoolean());
+		person.birthDateEstimated(personNode.get("birthdateEstimated").getValueAsBoolean())
+				.gender(personNode.get("gender").getValueAsText()).dead(personNode.get("dead").getValueAsBoolean());
 
 		try {
-			person.dateOfBirth(DateUtil.parseOpenMrsDate(personNode.get("birthdate").asText()));
+			person.dateOfBirth(DateUtil.parseOpenMrsDate(personNode.get("birthdate").getValueAsText()));
 		} catch (ParseException e) {
 			logger.warn("Could not parse the birthdate property on Person with uuid: "
-					+ personNode.get("uuid").asText());
+					+ personNode.get("uuid").getValueAsText());
 		}
 
 		if (!personNode.get("deathDate").isNull()) {
 			try {
-				person.deathDate(DateUtil.parseOpenMrsDate(personNode.get("deathDate").asText()));
+				person.deathDate(DateUtil.parseOpenMrsDate(personNode.get("deathDate").getValueAsText()));
 			} catch (ParseException e) {
 				logger.warn("Could not parse the deathDate property on Person with uuid: "
-						+ personNode.get("uuid").asText());
+						+ personNode.get("uuid").getValueAsText());
 			}
 		}
 	}
@@ -77,7 +77,7 @@ public class JsonConverterUtil {
 	private static void setPreferredAddress(MRSPerson person, JsonNode personNode) {
 		JsonNode preferredAddress = personNode.get("preferredAddress");
 		if (!preferredAddress.isNull()) {
-			person.address(preferredAddress.get("address1").asText());
+			person.address(preferredAddress.get("address1").getValueAsText());
 		}
 	}
 
@@ -91,7 +91,7 @@ public class JsonConverterUtil {
 			// extract name/value from the display property
 			// there is no explicit property for name attribute
 			// the display attribute is formatted as: name = value
-			String display = attributes.get(i).get("display").asText();
+			String display = attributes.get(i).get("display").getValueAsText();
 			int index = display.indexOf("=");
 			String name = display.substring(0, index).trim();
 			String value = display.substring(index + 1).trim();
