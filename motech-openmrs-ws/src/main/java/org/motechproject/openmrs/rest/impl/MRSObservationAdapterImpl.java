@@ -8,6 +8,7 @@ import org.apache.commons.lang.Validate;
 import org.codehaus.jackson.JsonNode;
 import org.motechproject.mrs.model.MRSObservation;
 import org.motechproject.mrs.model.MRSPatient;
+import org.motechproject.mrs.services.MRSObservationAdapter;
 import org.motechproject.mrs.services.MRSPatientAdapter;
 import org.motechproject.openmrs.rest.HttpException;
 import org.motechproject.openmrs.rest.RestfulClient;
@@ -17,7 +18,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriTemplate;
 
 @Component
-public class MRSObservationAdapterImpl {
+public class MRSObservationAdapterImpl implements MRSObservationAdapter {
 
 	private final MRSPatientAdapter patientAdapter;
 	private final RestfulClient restfulClient;
