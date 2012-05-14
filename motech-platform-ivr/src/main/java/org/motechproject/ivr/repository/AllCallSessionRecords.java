@@ -10,9 +10,8 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public class AllCallSessionRecords extends MotechBaseRepository<CallSessionRecord> {
-
     @Autowired
-    protected AllCallSessionRecords(@Qualifier("platformIVRDbConnector")CouchDbConnector db) {
+    protected AllCallSessionRecords(@Qualifier("platformIVRDbConnector") CouchDbConnector db) {
         super(CallSessionRecord.class, db);
     }
 
@@ -21,10 +20,9 @@ public class AllCallSessionRecords extends MotechBaseRepository<CallSessionRecor
         return singleResult(queryView("by_session_id", sessionId.toUpperCase()));
     }
 
-
     public CallSessionRecord findOrCreate(String sessionId) {
         CallSessionRecord callSessionRecord = findBySessionId(sessionId);
-        if(callSessionRecord == null) {
+        if (callSessionRecord == null) {
             callSessionRecord = new CallSessionRecord(sessionId.toUpperCase());
             add(callSessionRecord);
         }
