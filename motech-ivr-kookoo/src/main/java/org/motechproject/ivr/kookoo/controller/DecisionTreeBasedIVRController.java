@@ -10,6 +10,7 @@ import org.motechproject.ivr.kookoo.domain.DecisionTreeBasedResponseBuilder;
 import org.motechproject.ivr.kookoo.extensions.CallFlowController;
 import org.motechproject.ivr.kookoo.service.KookooCallDetailRecordsService;
 import org.motechproject.ivr.message.IVRMessage;
+import org.motechproject.ivr.service.IVRSessionManagementService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,8 +23,8 @@ public class DecisionTreeBasedIVRController extends SafeIVRController {
     private CallFlowController callFlowController;
 
     @Autowired
-    public DecisionTreeBasedIVRController(CallFlowController callFlowController, IVRMessage ivrMessage, KookooCallDetailRecordsService callDetailRecordsService, StandardResponseController standardResponseController) {
-        super(ivrMessage, callDetailRecordsService, standardResponseController);
+    public DecisionTreeBasedIVRController(CallFlowController callFlowController, IVRMessage ivrMessage, KookooCallDetailRecordsService callDetailRecordsService, StandardResponseController standardResponseController, IVRSessionManagementService ivrSessionManagementService) {
+        super(ivrMessage, callDetailRecordsService, standardResponseController, ivrSessionManagementService);
         this.callFlowController = callFlowController;
     }
 

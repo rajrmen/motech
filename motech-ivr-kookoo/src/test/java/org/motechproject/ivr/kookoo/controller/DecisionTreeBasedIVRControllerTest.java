@@ -8,8 +8,10 @@ import org.motechproject.ivr.kookoo.KooKooIVRContextForTest;
 import org.motechproject.ivr.kookoo.extensions.CallFlowController;
 import org.motechproject.ivr.kookoo.service.KookooCallDetailRecordsService;
 import org.motechproject.ivr.message.IVRMessage;
+import org.motechproject.ivr.service.IVRSessionManagementService;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
@@ -22,10 +24,13 @@ public class DecisionTreeBasedIVRControllerTest {
     private KookooCallDetailRecordsService callDetailRecordsService;
     @Mock
     private StandardResponseController standardResponseController;
+    @Mock
+    private IVRSessionManagementService ivrSessionManagementService;
 
     KooKooIVRContextForTest ivrContext;
     private DecisionTreeBasedIVRController controller;
     private DecisionTreeBasedIVRControllerTest.CommandForTamaIvrActionTest commandForTamaIvrActionTest;
+    private static final String CALL_ID = "12312";
 
     @Before
     public void setup() {
@@ -33,11 +38,12 @@ public class DecisionTreeBasedIVRControllerTest {
         ivrContext = new KooKooIVRContextForTest();
         String treeName = "TestTree";
         ivrContext.treeName(treeName);
-        ivrContext.callId("12312");
+        ivrContext.callId(CALL_ID);
         commandForTamaIvrActionTest = new CommandForTamaIvrActionTest();
 
         when(callFlowController.getTree(treeName, ivrContext)).thenReturn(new TestTreeForTamaIvrActionTest().getTree());
-        controller = new DecisionTreeBasedIVRController(callFlowController, ivrMessage, callDetailRecordsService, standardResponseController);
+        controller = new DecisionTreeBasedIVRController(callFlowController, ivrMessage, callDetailRecordsService,
+                standardResponseController, ivrSessionManagementService);
     }
 
     @Test
@@ -74,6 +80,13 @@ public class DecisionTreeBasedIVRControllerTest {
         ivrContext.currentDecisionTreePath("/");
         controller.gotDTMF(ivrContext);
         assertFalse(commandForTamaIvrActionTest.isCalled());
+    }
+
+    @Test
+    public void shouldClearSessionAfterHangingUp() {
+        controller.hangup(ivrContext);
+
+        verify(ivrSessionManagementService).removeCallSession(CALL_ID);
     }
 
     class TestTreeForTamaIvrActionTest {
