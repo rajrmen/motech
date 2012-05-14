@@ -38,8 +38,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @ContextConfiguration(locations = { "classpath:applicationOpenMrsWS.xml" })
 public class MRSEncounterAdapterImplIT {
 
-	private static final String TEST_CONCEPT_NAME = "Test Concept";
-	private static final String CONCEPT_PATH = "/ws/rest/v1/concept";
 	private static final String ENCOUNTER_TYPE = "ADULTINITIAL";
 
 	private MRSFacility facility;
@@ -49,6 +47,9 @@ public class MRSEncounterAdapterImplIT {
 	
 	@Autowired
 	MRSEncounterAdapter encounterAdapter;
+	
+	@Autowired
+	MRSConceptAdapterImpl conceptAdapter;
 
 	@Autowired
 	RestfulClient restfulClient;
@@ -65,6 +66,7 @@ public class MRSEncounterAdapterImplIT {
 		patient = null;
 		tempConceptUuid = null;
 		creator = null;		
+		conceptAdapter.clearCachedConcepts();
 	}
 	
 	@Test
@@ -76,7 +78,7 @@ public class MRSEncounterAdapterImplIT {
 			persistedEncounter = createEncounterWithSingleObservation();
 			assertNotNull(persistedEncounter.getId());
 		} finally {
-			deleteEncounter(persistedEncounter);
+			adapterHelper.deleteEncounter(persistedEncounter);
 			deleteCreatedEntities();
 		}
 	}
@@ -84,7 +86,7 @@ public class MRSEncounterAdapterImplIT {
 	private MRSEncounter createEncounterWithSingleObservation() {
 		MRSEncounter persistedEncounter;
 		Set<MRSObservation> obs = new HashSet<MRSObservation>();
-		MRSObservation ob = new MRSObservation(Calendar.getInstance().getTime(), TEST_CONCEPT_NAME, "Test Value");
+		MRSObservation ob = new MRSObservation(Calendar.getInstance().getTime(), AdapterHelper.TEST_CONCEPT_NAME, "Test Value");
 		obs.add(ob);
 
 		persistedEncounter = createEncounter(obs, TestUtils.CURRENT_DATE);
@@ -109,7 +111,7 @@ public class MRSEncounterAdapterImplIT {
 			assertNotNull(fetchedEncounter.getFacility());
 			assertNotNull(fetchedEncounter.getPatient());
 		} finally {
-			deleteEncounter(persistedEncounter);
+			adapterHelper.deleteEncounter(persistedEncounter);
 			deleteCreatedEntities();
 		}
 	}
@@ -124,8 +126,8 @@ public class MRSEncounterAdapterImplIT {
 			MRSEncounter encounter = encounterAdapter.getLatestEncounterByPatientMotechId(TestUtils.MOTECH_ID_1, null);
 			assertEquals(TestUtils.CURRENT_DATE, encounter.getDate());
 		} finally {
-			deleteEncounter(persistedEncounters.get(0));
-			deleteEncounter(persistedEncounters.get(1));
+			adapterHelper.deleteEncounter(persistedEncounters.get(0));
+			adapterHelper.deleteEncounter(persistedEncounters.get(1));
 			deleteCreatedEntities();
 		}		
 	}
@@ -134,7 +136,7 @@ public class MRSEncounterAdapterImplIT {
 		List<MRSEncounter> encounters = new ArrayList<MRSEncounter>();
 		MRSEncounter persistedEncounter;
 		Set<MRSObservation> obs = new HashSet<MRSObservation>();
-		MRSObservation ob = new MRSObservation(Calendar.getInstance().getTime(), TEST_CONCEPT_NAME, "Test Value");
+		MRSObservation ob = new MRSObservation(Calendar.getInstance().getTime(), AdapterHelper.TEST_CONCEPT_NAME, "Test Value");
 		obs.add(ob);
 
 		persistedEncounter = createEncounter(obs, TestUtils.CURRENT_DATE);
@@ -143,7 +145,7 @@ public class MRSEncounterAdapterImplIT {
 		Calendar pastDate = Calendar.getInstance();
 		pastDate.add(Calendar.DATE, -100);
 		obs = new HashSet<MRSObservation>();
-		ob = new MRSObservation(Calendar.getInstance().getTime(), TEST_CONCEPT_NAME, "Test Value");
+		ob = new MRSObservation(Calendar.getInstance().getTime(), AdapterHelper.TEST_CONCEPT_NAME, "Test Value");
 		obs.add(ob);
 		
 		persistedEncounter = createEncounter(obs, pastDate.getTime());
@@ -162,77 +164,14 @@ public class MRSEncounterAdapterImplIT {
 	private void createRequiredEntities() throws HttpException, URISyntaxException {
 		facility = adapterHelper.createTemporaryLocation();
 		patient = adapterHelper.createTemporaryPatient(TestUtils.MOTECH_ID_1, TestUtils.makePerson(), facility);
-		tempConceptUuid = createTemporaryConcept();
-		creator = createTemporaryProvider();
+		tempConceptUuid = adapterHelper.createTemporaryConcept(AdapterHelper.TEST_CONCEPT_NAME);
+		creator = adapterHelper.createTemporaryProvider();
 	}	
 	
 	private void deleteCreatedEntities() throws HttpException, URISyntaxException {
-		deleteConcept(tempConceptUuid);
+		adapterHelper.deleteConcept(tempConceptUuid);
 		adapterHelper.deletePatient(patient);
-		deleteUser(creator);
+		adapterHelper.deleteUser(creator);
 		adapterHelper.deleteFacility(facility);
-	}
-
-	private String createTemporaryConcept() throws URISyntaxException, HttpException {
-		//{"names":[{"name":"test concept", "locale": "en", "conceptNameType": "FULLY_SPECIFIED"}],"datatype":"Text","conceptClass":"Test"}
-		URI uri = new URI(openmrsUrl + CONCEPT_PATH);
-		ObjectNode conceptObj = JsonNodeFactory.instance.objectNode();
-		
-		ArrayNode names = JsonNodeFactory.instance.arrayNode();
-		ObjectNode name = JsonNodeFactory.instance.objectNode();
-		name.put("name", TEST_CONCEPT_NAME);
-		name.put("locale", "en");
-		name.put("conceptNameType", "FULLY_SPECIFIED");
-		names.add(name);
-		
-		conceptObj.put("names", names);
-		conceptObj.put("datatype", "Text");
-		conceptObj.put("conceptClass", "Test");
-		JsonNode result = restfulClient.postForJsonNode(uri, conceptObj);
-
-		return result.get("uuid").asText();
-	}
-
-	private MRSUser createTemporaryProvider() throws URISyntaxException, HttpException {
-		ObjectNode person = JsonNodeFactory.instance.objectNode();
-		person.put("birthdate", "1970-01-01");
-		person.put("gender", "M");
-		ArrayNode node = JsonNodeFactory.instance.arrayNode();
-		ObjectNode preferredName = JsonNodeFactory.instance.objectNode();
-		preferredName.put("givenName", "Troy");
-		preferredName.put("familyName", "Parks");
-		node.add(preferredName);
-		person.put("names", node);
-
-		URI personUri = new URI(openmrsUrl + "/ws/rest/v1/person");
-		JsonNode response = restfulClient.postForJsonNode(personUri, person);
-		String personUuid = response.get("uuid").asText();
-
-		ObjectNode userNode = JsonNodeFactory.instance.objectNode();
-		userNode.put("username", "troy");
-		userNode.put("password", "Testing123");
-		userNode.put("person", personUuid);
-
-		URI userUri = new URI(openmrsUrl + "/ws/rest/v1/user");
-		response = restfulClient.postForJsonNode(userUri, userNode);
-
-		return new MRSUser().id(response.get("uuid").asText()).person(new MRSPerson().id(personUuid));
-	}
-
-	private void deleteEncounter(MRSEncounter persistedEncounter) throws HttpException, URISyntaxException {
-		if (persistedEncounter == null) return;
-		restfulClient.deleteEntity(new URI(openmrsUrl + "/ws/rest/v1/encounter/" + persistedEncounter.getId() + "?purge"));
-	}	
-	
-	private void deleteConcept(String tempConceptUuid) throws HttpException, URISyntaxException {
-		if (tempConceptUuid == null) return;
-		restfulClient.deleteEntity(new URI(openmrsUrl + CONCEPT_PATH + "/" + tempConceptUuid + "?purge"));
-	}
-	
-
-	private void deleteUser(MRSUser creator) throws HttpException, URISyntaxException {
-		if(creator == null) return;
-		restfulClient.deleteEntity(new URI(openmrsUrl + "/ws/rest/v1/user/" + creator.getId() + "?purge"));
-		restfulClient.deleteEntity(new URI(openmrsUrl + "/ws/rest/v1/person/" + creator.getPerson().getId() + "?purge"));
 	}
 }

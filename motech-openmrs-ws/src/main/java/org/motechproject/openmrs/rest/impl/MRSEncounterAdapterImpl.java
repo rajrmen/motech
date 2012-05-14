@@ -1,7 +1,5 @@
 package org.motechproject.openmrs.rest.impl;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -42,14 +40,16 @@ public class MRSEncounterAdapterImpl implements MRSEncounterAdapter {
 	private final RestfulClient restfulClient;
 	private final OpenMrsUrlHolder urlHolder;
 	private final MRSPersonAdapterImpl personAdapter;
+	private final MRSConceptAdapterImpl conceptAdapter;
 
 	@Autowired
 	public MRSEncounterAdapterImpl(RestfulClient restfulClient, MRSPatientAdapter patientAdapter,
-			OpenMrsUrlHolder encounterUrl, MRSPersonAdapterImpl personAdapter) {
+			OpenMrsUrlHolder encounterUrl, MRSPersonAdapterImpl personAdapter, MRSConceptAdapterImpl conceptAdapter) {
 		this.restfulClient = restfulClient;
 		this.patientAdapter = patientAdapter;
 		this.urlHolder = encounterUrl;
 		this.personAdapter = personAdapter;
+		this.conceptAdapter = conceptAdapter;
 	}
 
 	@Override
@@ -81,7 +81,7 @@ public class MRSEncounterAdapterImpl implements MRSEncounterAdapter {
 		for (MRSObservation obs : observations) {
 			ObjectNode obsObj = JsonNodeFactory.instance.objectNode();
 
-			obsObj.put("concept", resolveConceptUuidFromConceptName(obs.getConceptName()));
+			obsObj.put("concept", conceptAdapter.resolveConceptUuidFromConceptName(obs.getConceptName()));
 			obsObj.put("value", obs.getValue().toString());
 			obsObj.put("obsDatetime", DateUtil.formatToOpenMrsDate(obs.getDate()));
 			if (CollectionUtils.isNotEmpty(obs.getDependantObservations())) {
@@ -92,30 +92,6 @@ public class MRSEncounterAdapterImpl implements MRSEncounterAdapter {
 		}
 
 		return obsArray;
-	}
-
-	private String resolveConceptUuidFromConceptName(String conceptName) {
-		try {
-			String encodedConceptName = URLEncoder.encode(conceptName, "UTF-8");
-			JsonNode response = restfulClient.getEntityByJsonNode(urlHolder
-					.getConceptSearchByName(encodedConceptName));
-			JsonNode results = response.get("results");
-			if (results.size() == 0) {
-				logger.error("No concept found with name: " + conceptName + " (" + encodedConceptName + ")");
-				throw new MRSException(new RuntimeException(
-						"Can't create an encounter because no concept was found with name: " + conceptName));
-			} else if (results.size() > 1) {
-				logger.warn("Found more than 1 concept with name: " + conceptName + " (" + encodedConceptName + ")");
-			}
-
-			return results.get(0).get("uuid").asText();
-		} catch (UnsupportedEncodingException e) {
-			logger.error("Could not URL Encode the concept name: " + conceptName);
-			throw new MRSException(e);
-		} catch (HttpException e) {
-			logger.error("There was an error retrieving the uuid of the concept with concept name: " + conceptName);
-			throw new MRSException(e);
-		}
 	}
 
 	@Override

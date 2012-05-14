@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
 
@@ -13,6 +14,7 @@ import org.motechproject.mrs.exception.UserAlreadyExistsException;
 import org.motechproject.mrs.model.MRSPerson;
 import org.motechproject.mrs.model.MRSUser;
 import org.motechproject.mrs.services.MRSUserAdapter;
+import org.motechproject.openmrs.rest.HttpException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -28,7 +30,7 @@ public class MRSUserAdapterImplIT {
 	AdapterHelper adapterHelper;
 
 	@Test
-	public void shouldCreateUser() throws UserAlreadyExistsException {
+	public void shouldCreateUser() throws UserAlreadyExistsException, HttpException, URISyntaxException {
 		MRSUser user = null;
 		try {
 			Map values = createUser();
@@ -59,7 +61,7 @@ public class MRSUserAdapterImplIT {
 	}
 
 	@Test(expected = UserAlreadyExistsException.class)
-	public void shouldThrowDuplicateUserException() throws UserAlreadyExistsException {
+	public void shouldThrowDuplicateUserException() throws UserAlreadyExistsException, HttpException, URISyntaxException {
 		MRSUser user = null;
 		try {
 			user = getCreatedUser();
@@ -74,7 +76,7 @@ public class MRSUserAdapterImplIT {
 	}
 
 	@Test
-	public void shouldFindUser() throws UserAlreadyExistsException {
+	public void shouldFindUser() throws UserAlreadyExistsException, HttpException, URISyntaxException {
 		MRSUser originalUser = null;
 		try {
 			Map values = createUser();
@@ -97,7 +99,7 @@ public class MRSUserAdapterImplIT {
 	}
 
 	@Test
-	public void shouldUpdateUserPassword() throws UserAlreadyExistsException {
+	public void shouldUpdateUserPassword() throws UserAlreadyExistsException, HttpException, URISyntaxException {
 		MRSUser user = null;
 		try {
 			Map values = createUser();
@@ -113,7 +115,7 @@ public class MRSUserAdapterImplIT {
 	}
 
 	@Test
-	public void shouldListAllUsers() throws UserAlreadyExistsException {
+	public void shouldListAllUsers() throws UserAlreadyExistsException, HttpException, URISyntaxException {
 		MRSUser user = null;
 		try {
 			user = getCreatedUser();
@@ -128,7 +130,7 @@ public class MRSUserAdapterImplIT {
 	}
 
 	@Test
-	public void shouldUpdateUser() throws UserAlreadyExistsException {
+	public void shouldUpdateUser() throws UserAlreadyExistsException, HttpException, URISyntaxException {
 		MRSUser user = null;
 		try {
 			Map values = createUser();
