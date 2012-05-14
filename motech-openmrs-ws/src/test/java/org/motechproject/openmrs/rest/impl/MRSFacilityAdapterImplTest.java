@@ -43,11 +43,14 @@ public class MRSFacilityAdapterImplTest {
 	
 	@Test
 	public void shouldMapJsonObjectIntoMrsFacility() throws HttpException {
+		
 		JsonNode facilityObj = getJsonObject();
 		ArrayNode facilities = JsonNodeFactory.instance.arrayNode();
 		facilities.add(facilityObj);
+		ObjectNode obj = JsonNodeFactory.instance.objectNode();
+		obj.put("results", facilities);
 		
-		when(client.getEntityByJsonNode(any(URI.class))).thenReturn(facilities);
+		when(client.getEntityByJsonNode(any(URI.class))).thenReturn(obj);
 		
 		List<MRSFacility> mrsFacilities = impl.getFacilities();
 		
