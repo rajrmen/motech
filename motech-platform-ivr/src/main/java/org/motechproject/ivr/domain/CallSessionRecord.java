@@ -1,11 +1,14 @@
 package org.motechproject.ivr.domain;
 
+import com.google.gson.JsonSerializer;
+import org.apache.commons.lang.SerializationUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.ektorp.support.TypeDiscriminator;
 import org.motechproject.model.MotechBaseDataObject;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,7 +16,7 @@ import java.util.Map;
 public class CallSessionRecord extends MotechBaseDataObject {
 
     @JsonProperty
-    private Map<String, String> data;
+    private Map<String, Object> data;
 
     @JsonProperty
     private String sessionId;
@@ -23,7 +26,7 @@ public class CallSessionRecord extends MotechBaseDataObject {
 
     public CallSessionRecord(String sessionId) {
         this.sessionId = sessionId;
-        data = new HashMap<String, String>();
+        data = new HashMap<String, Object>();
     }
 
     @Override
@@ -41,11 +44,11 @@ public class CallSessionRecord extends MotechBaseDataObject {
         return new HashCodeBuilder().append(sessionId).toHashCode();
     }
 
-    public void add(String key, String value) {
+    public <T extends Serializable> void add(String key, T value) {
         data.put(key, value);
     }
 
-    public String valueFor(String key) {
+    public Object valueFor(String key) {
         return data.get(key);
     }
 }

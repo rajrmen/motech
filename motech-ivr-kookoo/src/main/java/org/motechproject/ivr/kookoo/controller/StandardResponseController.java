@@ -32,7 +32,7 @@ public class StandardResponseController {
     @RequestMapping(value = AllIVRURLs.HANGUP_RESPONSE, method = RequestMethod.GET)
     @ResponseBody
     public String hangup(KookooRequest kookooRequest, HttpServletRequest request, HttpServletResponse response) {
-        KooKooIVRContext ivrContext = new KooKooIVRContext(kookooRequest, request, response);
+        KooKooIVRContext ivrContext = new KooKooIVRContext(kookooRequest, request, response, null); // TODO implement callSessionHandler [V2|Sanchit]
         return hangup(ivrContext);
     }
 

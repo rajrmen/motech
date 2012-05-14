@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
+import org.motechproject.ivr.domain.CallSessionRecord;
 import org.motechproject.ivr.kookoo.eventlogging.CallEventConstants;
 
 import javax.servlet.http.Cookie;
@@ -25,65 +26,57 @@ import static org.powermock.api.mockito.PowerMockito.when;
 public class KooKooIVRContextTest {
     @Mock
     private HttpServletRequest request;
-    @Mock
-    private HttpSession session;
-
 
     @Before
     public void setUp() {
         initMocks(this);
-        when(request.getSession()).thenReturn(session);
     }
 
     @Test
     public void shouldAddTreeToListOfCompletedTrees(){
-        List<String> completedTrees = new ArrayList<String>() {{
+        ArrayList<String> completedTrees = new ArrayList<String>() {{
             this.add("tree1");
         }};
-        when(session.getAttribute(KooKooIVRContext.LIST_OF_COMPLETED_TREES)).thenReturn(completedTrees);
-        KooKooIVRContext kooKooIVRContext = new KooKooIVRContext(null, request, null);
+        CallSessionRecord callSessionRecord = new CallSessionRecord("sessionId");
+        callSessionRecord.add(KooKooIVRContext.LIST_OF_COMPLETED_TREES, completedTrees);
+        KooKooIVRContext kooKooIVRContext = new KooKooIVRContext(null, request, null, callSessionRecord);
+
         kooKooIVRContext.addToListOfCompletedTrees("lastTreeName");
-        verify(session).setAttribute(KooKooIVRContext.LIST_OF_COMPLETED_TREES, completedTrees);
-        assertTrue(completedTrees.contains("tree1"));
-        assertTrue(completedTrees.contains("lastTreeName"));
+
+        List<String> updatedTreeList = (List<String>) callSessionRecord.valueFor(KooKooIVRContext.LIST_OF_COMPLETED_TREES);
+        assertTrue(updatedTreeList.contains("tree1"));
+        assertTrue(updatedTreeList.contains("lastTreeName"));
     }
 
     @Test
     public void shouldAddFirstTreeToListOfCompletedTrees(){
-        when(session.getAttribute(KooKooIVRContext.LIST_OF_COMPLETED_TREES)).thenReturn(null);
-        ArgumentCaptor<ArrayList> valueCaptor = ArgumentCaptor.forClass(ArrayList.class);
-        ArgumentCaptor<String> keyCaptor = ArgumentCaptor.forClass(String.class);
+        CallSessionRecord callSessionRecord = new CallSessionRecord("sessionId");
 
-        KooKooIVRContext kooKooIVRContext = new KooKooIVRContext(null, request, null);
+        KooKooIVRContext kooKooIVRContext = new KooKooIVRContext(null, request, null, callSessionRecord);
         kooKooIVRContext.addToListOfCompletedTrees("lastTreeName");
 
-        verify(session).setAttribute(keyCaptor.capture(), valueCaptor.capture());
-        assertEquals(KooKooIVRContext.LIST_OF_COMPLETED_TREES, keyCaptor.getAllValues().get(0));
-        assertEquals(1, valueCaptor.getValue().size());
-        assertTrue(valueCaptor.getValue().contains("lastTreeName"));
+        List<String> updatedTreeList = (List<String>) callSessionRecord.valueFor(KooKooIVRContext.LIST_OF_COMPLETED_TREES);
+        assertEquals(1, updatedTreeList.size());
+        assertTrue(updatedTreeList.contains("lastTreeName"));
     }
 
     @Test
     public void shouldStoreTreeName_InTheDataBucket(){
-        when(session.getAttribute(KooKooIVRContext.DATA_TO_LOG)).thenReturn(null);
-        KooKooIVRContext kooKooIVRContext = new KooKooIVRContext(null, request, null);
+        CallSessionRecord callSessionRecord = new CallSessionRecord("sessionId");
+        KooKooIVRContext kooKooIVRContext = new KooKooIVRContext(null, request, null, callSessionRecord);
 
         kooKooIVRContext.treeName("symptomTree");
 
-        ArgumentCaptor<Map> dataBucketMapCaptor = ArgumentCaptor.forClass(Map.class);
-        ArgumentCaptor<String> keyCaptor = ArgumentCaptor.forClass(String.class);
-
-        verify(session).setAttribute(keyCaptor.capture(), dataBucketMapCaptor.capture());
-        assertEquals(KooKooIVRContext.DATA_TO_LOG, keyCaptor.getValue());
-        assertEquals(1, dataBucketMapCaptor.getValue().size());
-        assertEquals("symptomTree", dataBucketMapCaptor.getValue().get(CallEventConstants.TREE_NAME));
+        Map<String, String> updatedLogData = (Map<String, String>) callSessionRecord.valueFor(KooKooIVRContext.DATA_TO_LOG);
+        assertEquals(1, updatedLogData.size());
+        assertEquals("symptomTree", updatedLogData.get(CallEventConstants.TREE_NAME));
     }
 
     @Test
     public void shouldSetSid_WhenInitialized() {
         KookooRequest kookooRequest = new KookooRequest("sid", " cid", "event", "data", "status");
         HttpServletResponse response = mock(HttpServletResponse.class);
-        KooKooIVRContext kooKooIVRContext = new KooKooIVRContext(kookooRequest, request, response);
+        KooKooIVRContext kooKooIVRContext = new KooKooIVRContext(kookooRequest, request, response, null);
         kooKooIVRContext.initialize();
         verify(request).setAttribute(KooKooIVRContext.CALL_ID, "sid");
         ArgumentCaptor<Cookie> cookieArgumentCaptor = ArgumentCaptor.forClass(Cookie.class);
@@ -97,7 +90,7 @@ public class KooKooIVRContextTest {
         KookooRequest kookooRequest = new KookooRequest("sid", " cid", "event", "data", "status");
         kookooRequest.setParameter(KooKooIVRContext.CALL_DETAIL_RECORD_ID, "1234");
         HttpServletResponse response = mock(HttpServletResponse.class);
-        KooKooIVRContext kooKooIVRContext = new KooKooIVRContext(kookooRequest, request, response);
+        KooKooIVRContext kooKooIVRContext = new KooKooIVRContext(kookooRequest, request, response, null);
 
         kooKooIVRContext.initialize();
         verify(request, times(1)).setAttribute(KooKooIVRContext.CALL_DETAIL_RECORD_ID, "1234");

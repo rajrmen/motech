@@ -6,6 +6,8 @@ import org.mockito.Mock;
 import org.motechproject.ivr.domain.CallSessionRecord;
 import org.motechproject.ivr.repository.AllCallSessionRecords;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 
@@ -13,16 +15,16 @@ public class IVRSessionManagementServiceImplTest {
 
     @Mock
     private AllCallSessionRecords allCallSessionRecords;
+    private IVRSessionManagementServiceImpl ivrSessionManagementService;
 
     @Before
     public void setUp() {
         initMocks(this);
+        ivrSessionManagementService = new IVRSessionManagementServiceImpl(allCallSessionRecords);
     }
 
     @Test
-    public void shouldGetAnCallSessionRecordBasedOnSessionId() {
-        IVRSessionManagementServiceImpl ivrSessionManagementService = new IVRSessionManagementServiceImpl(allCallSessionRecords);
-
+    public void shouldGetACallSessionRecordBasedOnSessionId() {
         ivrSessionManagementService.getCallSession("session1");
 
         verify(allCallSessionRecords, times(1)).findOrCreate("session1");
@@ -30,8 +32,6 @@ public class IVRSessionManagementServiceImplTest {
 
     @Test
     public void shouldUpdateAnExistingSessionRecord()  {
-        IVRSessionManagementServiceImpl ivrSessionManagementService = new IVRSessionManagementServiceImpl(allCallSessionRecords);
-
         CallSessionRecord callSessionRecord = mock(CallSessionRecord.class);
         ivrSessionManagementService.updateCallSession(callSessionRecord);
 
@@ -40,7 +40,6 @@ public class IVRSessionManagementServiceImplTest {
 
     @Test
     public void shouldRemoveAnExistingSessionRecordBasedOnSessionId()  {
-        IVRSessionManagementServiceImpl ivrSessionManagementService = new IVRSessionManagementServiceImpl(allCallSessionRecords);
         CallSessionRecord callSessionRecord = new CallSessionRecord("session1");
         when(allCallSessionRecords.findBySessionId("session1")).thenReturn(callSessionRecord);
 
@@ -51,11 +50,19 @@ public class IVRSessionManagementServiceImplTest {
 
     @Test
     public void shouldNotRemoveASessionIfNotFound()  {
-        IVRSessionManagementServiceImpl ivrSessionManagementService = new IVRSessionManagementServiceImpl(allCallSessionRecords);
         when(allCallSessionRecords.findBySessionId("session1")).thenReturn(null);
 
         ivrSessionManagementService.removeCallSession("session1");
 
         verify(allCallSessionRecords, times(0)).remove(any(CallSessionRecord.class));
+    }
+
+    @Test
+    public void shouldFigureOutWhetherASessionIsValidOrNot() {
+        when(allCallSessionRecords.findBySessionId("session1")).thenReturn(null);
+        assertThat(ivrSessionManagementService.isValidSession("session1"), is(false));
+
+        when(allCallSessionRecords.findBySessionId("session2")).thenReturn(new CallSessionRecord("session2"));
+        assertThat(ivrSessionManagementService.isValidSession("session2"), is(true));
     }
 }

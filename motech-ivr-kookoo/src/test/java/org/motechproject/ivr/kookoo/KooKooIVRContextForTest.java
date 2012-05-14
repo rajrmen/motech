@@ -101,10 +101,6 @@ public class KooKooIVRContextForTest extends KooKooIVRContext {
         sessionInvalidated = true;
     }
 
-    public boolean sessionInvalidated() {
-        return sessionInvalidated;
-    }
-
     @Override
     public String ivrEvent() {
         return ivrEvent.toString();
@@ -166,11 +162,6 @@ public class KooKooIVRContextForTest extends KooKooIVRContext {
     public KooKooIVRContextForTest isValidSession(boolean isValidSession) {
         this.isValidSession = isValidSession;
         return this;
-    }
-
-    @Override
-    public boolean isValidSession() {
-        return isValidSession;
     }
 
     public void setAnswered(boolean answered) {

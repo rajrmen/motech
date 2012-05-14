@@ -47,4 +47,5 @@ public interface IVRSessionManagementService {
 
     public void removeCallSession(String sessionId);
 
+    public boolean isValidSession(String sessionId);
 }

@@ -9,8 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertNotNull;
@@ -27,7 +29,11 @@ public class AllCallSessionRecordsIT {
     @Test
     public void shouldCreateACallSessionRecordInDb() {
         CallSessionRecord callSessionRecord = new CallSessionRecord("session1");
-        callSessionRecord.add("key", "value");
+        ArrayList<String> value = new ArrayList<String>();
+        value.add("value1");
+        value.add("value2");
+        value.add("value3");
+        callSessionRecord.add("key", value);
 
         allCallSessionRecords.add(callSessionRecord);
 
@@ -36,7 +42,11 @@ public class AllCallSessionRecordsIT {
 
         CallSessionRecord actualRecord = callSessionRecords.get(0);
         assertThat(actualRecord, is(callSessionRecord));
-        assertThat(actualRecord.valueFor("key"), is("value"));
+        List<String> values = (List<String>) actualRecord.valueFor("key");
+        assertThat(values.size(), is(3));
+        assertThat(values.get(0), is("value1"));
+        assertThat(values.get(1), is("value2"));
+        assertThat(values.get(2), is("value3"));
     }
 
     @Test

@@ -32,4 +32,9 @@ public class IVRSessionManagementServiceImpl implements IVRSessionManagementServ
         if(callSessionRecord != null)
             allCallSessionRecords.remove(callSessionRecord);
     }
+
+    @Override
+    public boolean isValidSession(String sessionId) {
+        return allCallSessionRecords.findBySessionId(sessionId) != null;
+    }
 }
