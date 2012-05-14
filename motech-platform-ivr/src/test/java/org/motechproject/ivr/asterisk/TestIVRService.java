@@ -38,7 +38,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
-import org.motechproject.ivr.model.CallInitiationException;
+import org.motechproject.ivr.domain.CallInitiationException;
 import org.motechproject.ivr.service.CallRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;

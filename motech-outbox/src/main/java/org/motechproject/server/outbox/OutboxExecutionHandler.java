@@ -33,7 +33,7 @@ package org.motechproject.server.outbox;
 
 import org.motechproject.context.Context;
 import org.motechproject.gateway.MotechSchedulerGateway;
-import org.motechproject.ivr.model.CallInitiationException;
+import org.motechproject.ivr.domain.CallInitiationException;
 import org.motechproject.ivr.service.CallRequest;
 import org.motechproject.ivr.service.IVRService;
 import org.motechproject.model.CronSchedulableJob;

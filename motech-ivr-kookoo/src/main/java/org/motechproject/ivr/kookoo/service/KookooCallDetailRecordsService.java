@@ -3,10 +3,9 @@ package org.motechproject.ivr.kookoo.service;
 import org.motechproject.ivr.event.CallEvent;
 import org.motechproject.ivr.event.IVREvent;
 import org.motechproject.ivr.kookoo.domain.KookooCallDetailRecord;
-import org.motechproject.ivr.model.CallDetailRecord;
-import org.motechproject.ivr.model.CallDirection;
+import org.motechproject.ivr.domain.CallDetailRecord;
+import org.motechproject.ivr.domain.CallDirection;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**

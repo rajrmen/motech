@@ -33,7 +33,7 @@ package org.motechproject.server.demo.service;
 
 import org.motechproject.context.Context;
 import org.motechproject.gateway.MotechSchedulerGateway;
-import org.motechproject.ivr.model.CallInitiationException;
+import org.motechproject.ivr.domain.CallInitiationException;
 import org.motechproject.model.MotechEvent;
 import org.motechproject.server.demo.EventKeys;
 import org.motechproject.server.event.annotations.MotechListener;

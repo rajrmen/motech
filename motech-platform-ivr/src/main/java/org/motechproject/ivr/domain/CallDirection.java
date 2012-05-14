@@ -1,4 +1,4 @@
-package org.motechproject.ivr.model;
+package org.motechproject.ivr.domain;
 
 /**
  * Call direction, Incoming(Inbound) or outgoing(outbound)

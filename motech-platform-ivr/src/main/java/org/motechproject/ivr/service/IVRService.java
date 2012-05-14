@@ -32,8 +32,6 @@
 package org.motechproject.ivr.service;
 
 
-import org.motechproject.ivr.domain.CallSessionRecord;
-
 /**
  *  Interface to IVR Dial out call. Originates call as per given call request.
  *  See implementation module for more configuration information.
@@ -49,7 +47,7 @@ public interface IVRService {
      *
      *
      * @param callRequest - data required by IVR phone system to start outbound call
-     * @throws org.motechproject.ivr.model.CallInitiationException if the call can not be initiated
+     * @throws org.motechproject.ivr.domain.CallInitiationException if the call can not be initiated
      */
     public void initiateCall(CallRequest callRequest);
 

@@ -9,7 +9,7 @@ import org.motechproject.ivr.kookoo.KookooRequest;
 import org.motechproject.ivr.kookoo.KookooResponseFactory;
 import org.motechproject.ivr.kookoo.eventlogging.CallEventConstants;
 import org.motechproject.ivr.kookoo.service.KookooCallDetailRecordsService;
-import org.motechproject.ivr.message.IVRMessage;
+import org.motechproject.ivr.domain.IVRMessage;
 import org.motechproject.ivr.service.IVRSessionManagementService;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;

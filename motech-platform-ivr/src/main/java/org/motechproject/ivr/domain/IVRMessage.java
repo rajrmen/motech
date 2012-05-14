@@ -1,4 +1,4 @@
-package org.motechproject.ivr.message;
+package org.motechproject.ivr.domain;
 
 import org.springframework.stereotype.Component;
 

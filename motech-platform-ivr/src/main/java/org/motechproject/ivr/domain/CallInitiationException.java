@@ -29,7 +29,7 @@
  * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
  * OF SUCH DAMAGE.
  */
-package org.motechproject.ivr.model;
+package org.motechproject.ivr.domain;
 
 /**
  * Thrown when IVR can not initiate phone call due to some issue

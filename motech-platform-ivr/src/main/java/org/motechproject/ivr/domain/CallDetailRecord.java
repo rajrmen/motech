@@ -1,4 +1,4 @@
-package org.motechproject.ivr.model;
+package org.motechproject.ivr.domain;
 
 import org.motechproject.ivr.event.CallEvent;
 import org.motechproject.util.DateUtil;

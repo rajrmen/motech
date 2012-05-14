@@ -1,4 +1,4 @@
-package org.motechproject.ivr.model;
+package org.motechproject.ivr.domain;
 
 /**
  * Call status - answered or busy/not reachable etc
