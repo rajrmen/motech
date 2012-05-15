@@ -49,9 +49,9 @@ public class FormUploadServletIT {
     @Test
     public void shouldProcessUploadedFormAndReturnValidationErrorsIfErrorsAreFound() throws Exception {
         FormUploadServlet formUploadServlet = new FormUploadServlet();
-        ReflectionTestUtils.setField(formUploadServlet, "formProcessor", formProcessor);
         ReflectionTestUtils.setField(formUploadServlet, "formPublisher", formPublisher);
         FormUploadServlet servlet = spy(formUploadServlet);
+        doReturn(formProcessor).when(servlet).createFormProcessor();
 
         List<FormBean> formBeans = new ArrayList<FormBean>();
         TestFormBean formBeanWithOutValidationErrors = new TestFormBean();
@@ -80,12 +80,12 @@ public class FormUploadServletIT {
             setupRequestWithActionAndOtherRequestParameters(request, "username", "password", FormDownloadServlet.ACTION_DOWNLOAD_STUDY_LIST);
             servlet.doPost(request, response);
             DataInputStream responseSentToMobile = readResponse(response);
-            int expectedNoOfSuccessfullyUploadedForms = 1;
+            int expectedNoOfUploadedForms = formBeans.size();
             int expectedNoOfFailedForms = 1;
             int expectedStudyIndex = 0;
             int expectedFormIndex = 1;
             assertThat(responseSentToMobile.readByte(), is(equalTo(FormDownloadServlet.RESPONSE_SUCCESS)));
-            assertThat(responseSentToMobile.readInt(), is(equalTo(expectedNoOfSuccessfullyUploadedForms)));
+            assertThat(responseSentToMobile.readInt(), is(equalTo(expectedNoOfUploadedForms)));
             assertThat(responseSentToMobile.readInt(), is(equalTo(expectedNoOfFailedForms)));
             assertThat(responseSentToMobile.readByte(), is(equalTo((byte) expectedStudyIndex)));
             assertThat(responseSentToMobile.readShort(), is(equalTo((short) expectedFormIndex)));
@@ -96,9 +96,7 @@ public class FormUploadServletIT {
         }
 
         verify(formPublisher).publish(formBeanWithOutValidationErrors);
-
     }
-
 
     private DataInputStream readResponse(MockHttpServletResponse response) {
         return new DataInputStream(new ZInputStream(new ByteArrayInputStream(response.getContentAsByteArray())));

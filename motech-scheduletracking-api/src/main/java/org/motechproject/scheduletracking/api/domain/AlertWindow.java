@@ -1,9 +1,8 @@
-package org.motechproject.scheduletracking.api.service.impl;
+package org.motechproject.scheduletracking.api.domain;
 
 import org.joda.time.DateTime;
 import org.joda.time.Period;
 import org.motechproject.model.Time;
-import org.motechproject.scheduletracking.api.domain.Alert;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -11,7 +10,6 @@ import java.util.List;
 
 import static ch.lambdaj.Lambda.filter;
 import static org.motechproject.util.DateUtil.*;
-
 
 public class AlertWindow {
     private DateTime enrolledOn;
@@ -78,15 +76,11 @@ public class AlertWindow {
 
     private List<DateTime> alertsFallingInAlertWindow(List<DateTime> alertTimings) {
         List<DateTime> alertsWithInEndDate = filterAlertsBeyondEndDate(alertTimings);
+        return filterElapsedAlerts(alertsWithInEndDate);
+    }
 
-        DateTime alertToBeStartedOn = alertStartDateTime();
-        List<DateTime> nonElapsedAlerts = filter(greaterThanOrEqualTo(alertToBeStartedOn), alertsWithInEndDate);
-
-        if (hasAllAlertsElapsed(alertsWithInEndDate, nonElapsedAlerts)) {
-            //todo [katta/v2] based on config, send one or none. Right now this sends one by default
-            nonElapsedAlerts.add(0, toPreferredTime(alertToBeStartedOn, preferredAlertTime));
-        }
-        return nonElapsedAlerts;
+    private List<DateTime> filterElapsedAlerts(List<DateTime> alertsWithInEndDate) {
+        return filter(greaterThanOrEqualTo(alertStartDateTime()), alertsWithInEndDate);
     }
 
     private List<DateTime> filterAlertsBeyondEndDate(List<DateTime> alertTimings) {
@@ -100,9 +94,5 @@ public class AlertWindow {
 
     private DateTime alertStartDateTime() {
         return now().isBefore(enrolledOn) ? enrolledOn : now();
-    }
-
-    private boolean hasAllAlertsElapsed(List<DateTime> alertsWithInEndDate, List<DateTime> nonElapsedAlerts) {
-        return nonElapsedAlerts.size() == 0 && alertsWithInEndDate.size() > 0;
     }
 }
