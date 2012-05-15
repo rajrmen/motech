@@ -17,30 +17,37 @@ public abstract class AggregatedVerboiceAction implements VerboiceVerb {
     }
 
 
-    public void playUrl(String url) {
+    public AggregatedVerboiceAction playUrl(String url) {
         verboiceVerbs.add(new Play(url));
+        return this;
     }
 
-    public void playInLoopUrl(String url, int loopCount) {
+    public AggregatedVerboiceAction playInLoopUrl(String url, int loopCount) {
         verboiceVerbs.add(new Play(url, loopCount));
+        return this;
     }
 
-    public void say(String text){
+    public AggregatedVerboiceAction say(String text){
         verboiceVerbs.add(new Say(text));
+        return this;
     }
 
-    public void say(String text,String voice, int loop){
+    public AggregatedVerboiceAction say(String text,String voice, int loop){
         verboiceVerbs.add(new Say(text,voice,loop));
+        return this;
     }
 
-    public void gather(String action, int numDigits, char finishOnKey, int timeout){
+    public AggregatedVerboiceAction gather(String action, int numDigits, char finishOnKey, int timeout){
         verboiceVerbs.add(new Gather(action, numDigits, finishOnKey, timeout));
+        return this;
     }
 
-    public void redirect(String url) {
+    public AggregatedVerboiceAction redirect(String url) {
         verboiceVerbs.add(new Redirect(url));
+        return this;
     }
-    public void hangup(){
+    public AggregatedVerboiceAction hangup(){
         verboiceVerbs.add(new Hangup());
+        return this;
     }
 }

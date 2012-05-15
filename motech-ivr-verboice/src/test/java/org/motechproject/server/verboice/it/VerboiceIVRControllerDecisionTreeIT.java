@@ -77,7 +77,6 @@ public class VerboiceIVRControllerDecisionTreeIT extends SpringIntegrationTest {
 
     @Test
     public void shouldTestVerboiceXMLResponse() throws Exception {
-
         HttpClient client = new DefaultHttpClient();
         final String rootUrl = "http://localhost:8080/verboice/ivr?tree=someTree&trP=Lw&ln=en";
         final String response = client.execute(new HttpGet(rootUrl), new BasicResponseHandler());
@@ -86,6 +85,14 @@ public class VerboiceIVRControllerDecisionTreeIT extends SpringIntegrationTest {
         final String transitionUrl = "http://localhost:8080/verboice/ivr?tree=someTree&trP=Lw&ln=en&Digits=1";
         final String response2 = client.execute(new HttpGet(transitionUrl), new BasicResponseHandler());
         Assert.assertTrue(response2.contains("<Say>Say this</Say>"));
+    }
+
+    @Test
+    public void shouldCallCallerIfCallbackEnabled() throws Exception {
+        HttpClient client = new DefaultHttpClient();
+        final String rootUrl = "http://localhost:8080/verboice/ivr?tree=someTree&trP=Lw&ln=en&flash=true";
+        final String response = client.execute(new HttpGet(rootUrl), new BasicResponseHandler());
+        Assert.assertTrue(response.contains("<Response><Hangup/><Redirect method=\"POST\">null</Redirect></Response>"));
     }
 
     @Test

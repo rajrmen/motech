@@ -76,6 +76,11 @@ public class DecisionTreeController extends MultiActionController {
     /**
      * Handles Decision Tree Node HTTP requests and generates a Markup document based on a Velocity template and type (vxml or verboice etc).
      * The HTTP request should contain the Tree ID, Node ID, Patient ID and Selected Transition Key (optional) parameters
+     * type : ivr implementation type
+     * tree : initial / default decision tree
+     * trP : path in tree
+     * ln  : language
+     * trK : transition key, usually key pressed.
      */
     public ModelAndView node(HttpServletRequest request, HttpServletResponse response) {
         System.out.println(request.getParameterMap());
