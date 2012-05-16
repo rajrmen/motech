@@ -24,7 +24,6 @@ import static java.lang.String.format;
 @Component
 @Qualifier("VerboiceIVRService")
 public class VerboiceIVRService implements IVRService {
-
     private static Logger log = LoggerFactory.getLogger(VerboiceIVRService.class);
 
     private Properties verboiceProperties;

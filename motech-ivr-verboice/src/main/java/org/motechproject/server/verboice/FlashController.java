@@ -19,6 +19,8 @@ public class FlashController {
     @Autowired
     IVRService ivrService;
 
+    @Value("#{verboiceProperties['flash.waitTimeInMillis']}")
+    private String flashWaitTime;
     @Value("#{verboiceProperties['outgoing.channel']}")
     String outgoingChannel;
 
@@ -32,7 +34,7 @@ public class FlashController {
             public void run() {
                 ivrService.initiateCall(callRequest);
             }
-        }, 5000);
+        }, Integer.valueOf(flashWaitTime));
 
         return new VerboiceResponse().hangup().toXMLString();
     }
