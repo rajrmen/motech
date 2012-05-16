@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -43,7 +44,8 @@ public class KooKooIVRContextTest {
 
         kooKooIVRContext.addToListOfCompletedTrees("lastTreeName");
 
-        List<String> updatedTreeList = callSessionRecord.valueFor(KooKooIVRContext.LIST_OF_COMPLETED_TREES);
+        List<String> updatedTreeList = callSessionRecord.<ArrayList<String>>valueFor(KooKooIVRContext
+                .LIST_OF_COMPLETED_TREES);
         assertTrue(updatedTreeList.contains("tree1"));
         assertTrue(updatedTreeList.contains("lastTreeName"));
     }
@@ -55,7 +57,8 @@ public class KooKooIVRContextTest {
         KooKooIVRContext kooKooIVRContext = new KooKooIVRContext(null, request, null, callSessionRecord);
         kooKooIVRContext.addToListOfCompletedTrees("lastTreeName");
 
-        List<String> updatedTreeList = callSessionRecord.valueFor(KooKooIVRContext.LIST_OF_COMPLETED_TREES);
+        List<String> updatedTreeList = callSessionRecord.<ArrayList<String>>valueFor(KooKooIVRContext
+                .LIST_OF_COMPLETED_TREES);
         assertEquals(1, updatedTreeList.size());
         assertTrue(updatedTreeList.contains("lastTreeName"));
     }
@@ -67,7 +70,7 @@ public class KooKooIVRContextTest {
 
         kooKooIVRContext.treeName("symptomTree");
 
-        Map<String, String> updatedLogData = callSessionRecord.valueFor(KooKooIVRContext.DATA_TO_LOG);
+        Map<String, String> updatedLogData = callSessionRecord.<HashMap<String, String>>valueFor(KooKooIVRContext.DATA_TO_LOG);
         assertEquals(1, updatedLogData.size());
         assertEquals("symptomTree", updatedLogData.get(CallEventConstants.TREE_NAME));
     }

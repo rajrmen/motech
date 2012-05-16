@@ -11,6 +11,7 @@ import org.motechproject.ivr.kookoo.eventlogging.CallEventConstants;
 import org.motechproject.ivr.kookoo.service.KookooCallDetailRecordsService;
 import org.motechproject.ivr.domain.IVRMessage;
 import org.motechproject.ivr.service.IVRSessionManagementService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -30,17 +31,25 @@ public abstract class SafeIVRController {
     protected Logger logger = Logger.getLogger(this.getClass());
     protected IVRMessage ivrMessage;
     private StandardResponseController standardResponseController;
-    private IVRSessionManagementService ivrSessionManagementService;
     private KookooCallDetailRecordsService callDetailRecordsService;
 
-    protected SafeIVRController(IVRMessage ivrMessage, KookooCallDetailRecordsService callDetailRecordsService,
-                                StandardResponseController standardResponseController, IVRSessionManagementService ivrSessionManagementService) {
+    @Autowired
+    private IVRSessionManagementService ivrSessionManagementService;
+
+    protected SafeIVRController(IVRMessage ivrMessage, KookooCallDetailRecordsService callDetailRecordsService, StandardResponseController standardResponseController) {
         this.ivrMessage = ivrMessage;
         this.standardResponseController = standardResponseController;
-        this.ivrSessionManagementService = ivrSessionManagementService;
-        if (callDetailRecordsService == null)
+        if (callDetailRecordsService == null) {
             throw new NullPointerException(String.format("%s cannot be null", KookooCallDetailRecordsService.class.getName()));
+        }
         this.callDetailRecordsService = callDetailRecordsService;
+    }
+
+    protected SafeIVRController(IVRMessage ivrMessage, KookooCallDetailRecordsService callDetailRecordsService,
+                                StandardResponseController standardResponseController,
+                                IVRSessionManagementService ivrSessionManagementService) {
+        this(ivrMessage, callDetailRecordsService, standardResponseController);
+        this.ivrSessionManagementService = ivrSessionManagementService;
     }
 
     @RequestMapping(value = NEW_CALL_URL_ACTION, method = RequestMethod.GET)

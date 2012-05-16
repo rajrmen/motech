@@ -34,7 +34,7 @@ public class KooKooIVRContextForTest extends KooKooIVRContext {
     }
 
     @Override
-    public String currentTreePosition() {
+    public String currentDecisionTreePath() {
         return currentTreePosition;
     }
 

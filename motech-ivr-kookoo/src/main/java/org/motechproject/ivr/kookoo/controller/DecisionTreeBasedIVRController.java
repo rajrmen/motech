@@ -32,7 +32,7 @@ public class DecisionTreeBasedIVRController extends SafeIVRController {
     public KookooIVRResponseBuilder gotDTMF(KooKooIVRContext kooKooIVRContext) {
         String currentTreeName = kooKooIVRContext.treeName();
         String userInput = kooKooIVRContext.userInput();
-        String currentPosition = kooKooIVRContext.currentTreePosition();
+        String currentPosition = kooKooIVRContext.currentDecisionTreePath();
         Tree tree = callFlowController.getTree(currentTreeName, kooKooIVRContext);
 
         NodeInfo nodeInfo = tree.nextNodeInfo(currentPosition, userInput);

@@ -65,14 +65,14 @@ public class DecisionTreeBasedIVRControllerTest {
     public void shouldChangeCurrentNodePath() {
         ivrContext.userInput("1");
         controller.gotDTMF(ivrContext);
-        assertEquals("/1", ivrContext.currentTreePosition());
+        assertEquals("/1", ivrContext.currentDecisionTreePath());
     }
 
     @Test
     public void shouldNotChangeCurrentTreePositionWhenUserInputIsInvalid() {
         ivrContext.userInput("56").currentDecisionTreePath("/1");
         controller.gotDTMF(ivrContext);
-        assertEquals("/1", ivrContext.currentTreePosition());
+        assertEquals("/1", ivrContext.currentDecisionTreePath());
     }
 
     @Test

@@ -8,6 +8,7 @@ import org.motechproject.ivr.domain.IVRStatus;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,7 +16,7 @@ import java.util.List;
 /**
  * KooKoo IVR context includes user session information such as caller information, request info, etc.
  */
-public class KooKooIVRContext {
+public class KooKooIVRContext implements IvrContext {
     private KookooRequest kooKooRequest;
     private HttpServletRequest request;
 
@@ -39,6 +40,7 @@ public class KooKooIVRContext {
         this.callSessionRecord = callSessionRecord;
     }
 
+    @Override
     public HttpServletRequest httpRequest() {
         return request;
     }
@@ -48,15 +50,18 @@ public class KooKooIVRContext {
      *
      * @return return DTMF value as String
      */
+    @Override
     public String userInput() {
         return StringUtils.remove(kooKooRequest.getData(), POUND_SYMBOL);
     }
 
-    public String currentTreePosition() {
+    @Override
+    public String currentDecisionTreePath() {
         String currentPosition = callSessionRecord.valueFor(CURRENT_DECISION_TREE_POSITION);
         return currentPosition == null ? "" : currentPosition;
     }
 
+    @Override
     public void currentDecisionTreePath(String path) {
         addToRequestAndSession(CURRENT_DECISION_TREE_POSITION, path);
     }
@@ -66,31 +71,38 @@ public class KooKooIVRContext {
      *
      * @return
      */
+    @Override
     public String callId() {
         String callId = callSessionRecord.valueFor(CALL_ID);
         return callId == null ? kooKooRequest.getSid() : callId;
     }
 
+    @Override
     public void callId(String callid) {
         addToRequestAndSession(CALL_ID, callid);
     }
 
+    @Override
     public String preferredLanguage() {
         return callSessionRecord.valueFor(PREFERRED_LANGUAGE_CODE);
     }
 
+    @Override
     public void preferredLanguage(String languageCode) {
         addToRequestAndSession(PREFERRED_LANGUAGE_CODE, languageCode);
     }
 
+    @Override
     public void callDetailRecordId(String kooKooCallDetailRecordId) {
         addToRequestAndSession(CALL_DETAIL_RECORD_ID, kooKooCallDetailRecordId);
     }
 
+    @Override
     public String callDetailRecordId() {
         return callSessionRecord.valueFor(CALL_DETAIL_RECORD_ID);
     }
 
+    @Override
     public void treeName(String treeName) {
         request.setAttribute(TREE_NAME_KEY, treeName);
         HashMap<String, String> hashMap = new HashMap<String, String>();
@@ -98,15 +110,18 @@ public class KooKooIVRContext {
         dataToLog(hashMap);
     }
 
+    @Override
     public String treeName() {
         return (String) request.getAttribute(TREE_NAME_KEY);
     }
 
+    @Override
     public HashMap<String, String> dataToLog() {
         HashMap<String, String> map = callSessionRecord.valueFor(DATA_TO_LOG);
         return (map == null) ? new HashMap<String, String>() : map;
     }
 
+    @Override
     public void dataToLog(HashMap<String, String> map) {
         HashMap<String, String> dataMap = callSessionRecord.valueFor(DATA_TO_LOG);
         if (dataMap == null) {
@@ -116,34 +131,42 @@ public class KooKooIVRContext {
         }
     }
 
+    @Override
     public List<String> getListOfCompletedTrees() {
-        return callSessionRecord.valueFor(LIST_OF_COMPLETED_TREES);
+        return callSessionRecord.<ArrayList<String>>valueFor(LIST_OF_COMPLETED_TREES);
     }
 
+    @Override
     public void addToListOfCompletedTrees(String lastCompletedTreeName) {
-        List<String> listOfCompletedTreesSoFar = callSessionRecord.valueFor(LIST_OF_COMPLETED_TREES);
+        List<String> listOfCompletedTreesSoFar = callSessionRecord.<ArrayList<String>>valueFor
+                (LIST_OF_COMPLETED_TREES);
         ArrayList<String> listOfCompletedTrees = listOfCompletedTreesSoFar == null ? new ArrayList<String>() : (ArrayList<String>) listOfCompletedTreesSoFar;
         listOfCompletedTrees.add(lastCompletedTreeName);
         callSessionRecord.add(LIST_OF_COMPLETED_TREES, listOfCompletedTrees);
     }
 
+    @Override
     public KookooRequest kooKooRequest() {
         return kooKooRequest;
     }
 
+    @Override
     public String externalId() {
         String externalId = callSessionRecord.valueFor(EXTERNAL_ID);
         return kooKooRequest.externalId() == null ? externalId : kooKooRequest.externalId();
     }
 
+    @Override
     public String ivrEvent() {
         return kooKooRequest.getEvent();
     }
 
+    @Override
     public String callerId() {
         return kooKooRequest.getCid();
     }
 
+    @Override
     public CallDirection callDirection() {
         return kooKooRequest.getCallDirection();
     }
@@ -159,6 +182,16 @@ public class KooKooIVRContext {
 
     public boolean isAnswered() {
         return IVRStatus.isAnswered(kooKooRequest.getStatus());
+    }
+
+    @Override
+    public <T extends Serializable> void addToCallSession(String key, T value) {
+        callSessionRecord.add(key, value);
+    }
+
+    @Override
+    public <T extends Serializable> T getFromCallSession(String key) {
+        return (T) callSessionRecord.valueFor(key);
     }
 
     public CallSessionRecord getCallSessionRecord() {

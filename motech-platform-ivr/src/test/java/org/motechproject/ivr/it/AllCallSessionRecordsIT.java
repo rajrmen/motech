@@ -42,7 +42,7 @@ public class AllCallSessionRecordsIT {
 
         CallSessionRecord actualRecord = callSessionRecords.get(0);
         assertThat(actualRecord, is(callSessionRecord));
-        List<String> values = actualRecord.valueFor("key");
+        List<String> values = actualRecord.<ArrayList<String>>valueFor("key");
         assertThat(values.size(), is(3));
         assertThat(values.get(0), is("value1"));
         assertThat(values.get(1), is("value2"));
