@@ -1,4 +1,4 @@
-package org.motechproject.sms.http;
+package org.motechproject.sms.http.web;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -8,11 +8,15 @@ import org.motechproject.event.EventRelay;
 import org.motechproject.model.MotechEvent;
 import org.motechproject.sms.api.constants.EventDataKeys;
 import org.motechproject.sms.api.constants.EventSubjects;
+import org.motechproject.sms.http.SmsHttpTemplate;
+import org.motechproject.sms.http.TemplateReader;
 
 import javax.servlet.http.HttpServletRequest;
 
 import static junit.framework.Assert.assertEquals;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 public class InboundSmsControllerTest {
