@@ -9,7 +9,8 @@ import org.springframework.stereotype.Component;
 public class TemplateReader {
 
     public SmsHttpTemplate getTemplate(String filename) {
-        return (SmsHttpTemplate) new MotechJsonReader().readFromFile(filename, new TypeToken<SmsHttpTemplate>() {
-        }.getType());
+        return (SmsHttpTemplate) new MotechJsonReader().readFromStream(getClass().getResourceAsStream(filename),
+                new TypeToken<SmsHttpTemplate>() {}.getType());
     }
+
 }

@@ -1,0 +1,20 @@
+{
+    "outgoing" : {
+        "request":{
+            "urlPath":"http://smshost.com/sms/send",
+            "queryParameters":{
+                "recipients":"$recipients",
+                "message":"$message"
+            },
+            "recipientsSeparator":"+"
+        },
+        "response":{
+            "success":"<status>success</status>"
+        }
+},
+    "incoming": {
+        "messageKey": "message",
+        "senderKey": "sender",
+        "timestampKey": "sent_at"
+    }
+}
