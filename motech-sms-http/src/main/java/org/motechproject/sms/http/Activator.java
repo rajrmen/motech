@@ -92,9 +92,9 @@ public class Activator implements BundleActivator {
         }
     }
 
-    public static class SmsApiApplicationContext extends OsgiBundleXmlWebApplicationContext {
+    public static class SmsHttpApplicationContext extends OsgiBundleXmlWebApplicationContext {
 
-        public SmsApiApplicationContext() {
+        public SmsHttpApplicationContext() {
             super();
             setBundleContext(Activator.bundleContext);
         }
@@ -105,7 +105,7 @@ public class Activator implements BundleActivator {
         try {
             DispatcherServlet dispatcherServlet = new DispatcherServlet();
             dispatcherServlet.setContextConfigLocation(CONTEXT_CONFIG_LOCATION);
-            dispatcherServlet.setContextClass(SmsApiApplicationContext.class);
+            dispatcherServlet.setContextClass(SmsHttpApplicationContext.class);
             ClassLoader old = Thread.currentThread().getContextClassLoader();
 
             try {
