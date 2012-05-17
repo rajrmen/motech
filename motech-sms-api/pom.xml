@@ -87,8 +87,7 @@
                         <Export-Package>
                             org.motechproject.sms.api,
                             org.motechproject.sms.api.constants,
-                            org.motechproject.sms.api.service,
-                            org.motechproject.sms.http.constants
+                            org.motechproject.sms.api.service
                         </Export-Package>
                         <Bundle-Activator>
                             org.motechproject.sms.api.Activator
