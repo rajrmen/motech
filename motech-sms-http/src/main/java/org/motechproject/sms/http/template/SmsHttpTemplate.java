@@ -71,4 +71,12 @@ public class SmsHttpTemplate {
     public void setIncoming(Incoming incoming) {
         this.incoming = incoming;
     }
+
+    public Authentication getAuthentication() {
+        return outgoing.getRequest().getAuthentication();
+    }
+
+    public String getResponseSuccessCode() {
+        return outgoing.getResponse().getSuccess();
+    }
 }

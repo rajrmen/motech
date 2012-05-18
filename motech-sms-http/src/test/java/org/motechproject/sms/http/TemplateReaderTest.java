@@ -16,7 +16,7 @@ public class TemplateReaderTest {
     @Test
     public void shouldReadFromTemplate() {
         TemplateReader templateReader = new TemplateReader();
-        SmsHttpTemplate smsHttpTemplate = templateReader.getTemplate("/sample-template.json");
+        SmsHttpTemplate smsHttpTemplate = templateReader.getTemplate("/templates/sample-template.json");
 
         Request request = smsHttpTemplate.getOutgoing().getRequest();
         assertEquals("http://smshost.com/sms/send", (String) getField(request, "urlPath"));

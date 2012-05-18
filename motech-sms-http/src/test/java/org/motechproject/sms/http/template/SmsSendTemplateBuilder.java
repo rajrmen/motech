@@ -1,10 +1,8 @@
-package org.motechproject.sms.http;
+package org.motechproject.sms.http.template;
 
 import org.motechproject.sms.http.domain.HttpMethodType;
-import org.motechproject.sms.http.template.Request;
-import org.motechproject.sms.http.template.Response;
-import org.motechproject.sms.http.template.SmsHttpTemplate;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class SmsSendTemplateBuilder {
@@ -17,6 +15,17 @@ public class SmsSendTemplateBuilder {
 
         public static RequestBuilder create() {
             return new RequestBuilder();
+        }
+
+        public RequestBuilder withDefaults() {
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("recipients", "$recipients");
+            params.put("message", "$message");
+            withQueryParameters(params);
+            withUrlPath("http://sms.gateway.com");
+            withType(HttpMethodType.GET);
+            withRecipientSeperator(",");
+            return this;
         }
 
         public RequestBuilder withUrlPath(String urlPath) {
@@ -36,6 +45,11 @@ public class SmsSendTemplateBuilder {
 
         public RequestBuilder withQueryParameters(Map<String, String> queryParameters) {
             request.setQueryParameters(queryParameters);
+            return this;
+        }
+
+        public RequestBuilder withAuthentication(String username, String password) {
+            request.setAuthentication(new Authentication(username, password));
             return this;
         }
 

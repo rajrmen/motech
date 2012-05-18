@@ -2,22 +2,25 @@ package org.motechproject.sms.http.service;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
+import org.apache.commons.httpclient.UsernamePasswordCredentials;
+import org.apache.commons.httpclient.auth.AuthScope;
 import org.drools.core.util.StringUtils;
 import org.motechproject.sms.http.SmsDeliveryFailureException;
+import org.motechproject.sms.http.template.Authentication;
 import org.motechproject.sms.http.template.SmsHttpTemplate;
 import org.motechproject.sms.http.TemplateReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.util.Collection;
 import java.util.List;
 
-@Component
+@Service
 public class SmsHttpService {
-
     private SmsHttpTemplate template;
     private HttpClient commonsHttpClient;
     private static Logger log = LoggerFactory.getLogger(SmsHttpService.class);
@@ -37,19 +40,27 @@ public class SmsHttpService {
         HttpMethod httpMethod = null;
         try {
             httpMethod = template.generateRequestFor(recipients, message);
+            setAuthenticationInfo(template.getAuthentication());
             int status = commonsHttpClient.executeMethod(httpMethod);
             response = httpMethod.getResponseBodyAsString();
             log.info("HTTP Status:" + status + "|Response:" + response);
         } catch (Exception e) {
-            log.debug("SMSDeliveryFailure due to : ", e);
+            log.error("SMSDeliveryFailure due to : ", e);
             throw new SmsDeliveryFailureException(e);
         } finally {
             if (httpMethod != null) httpMethod.releaseConnection();
         }
 
-        if (response == null || !response.toLowerCase().contains(template.getOutgoing().getResponse().getSuccess().toLowerCase())) {
-            log.info("SMSDeliveryFailed retrying...");
+        if (response == null || !response.toLowerCase().contains(template.getResponseSuccessCode().toLowerCase())) {
+            log.error("SMSDeliveryFailed retrying...");
             throw new SmsDeliveryFailureException();
         }
+    }
+
+    private void setAuthenticationInfo(Authentication authentication) {
+        if (authentication == null) return;
+
+        commonsHttpClient.getParams().setAuthenticationPreemptive(true);
+        commonsHttpClient.getState().setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(authentication.getUsername(), authentication.getPassword()));
     }
 }

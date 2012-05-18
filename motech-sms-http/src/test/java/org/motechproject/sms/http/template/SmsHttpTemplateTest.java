@@ -1,17 +1,14 @@
-package org.motechproject.sms.http;
+package org.motechproject.sms.http.template;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.motechproject.sms.http.TemplateReader;
 import org.motechproject.sms.http.domain.HttpMethodType;
-import org.motechproject.sms.http.template.Outgoing;
-import org.motechproject.sms.http.template.Request;
-import org.motechproject.sms.http.template.SmsHttpTemplate;
 import sun.misc.BASE64Encoder;
 
 import java.io.IOException;
