@@ -2,14 +2,17 @@ package org.motechproject.sms.http.service;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
+import org.drools.core.util.StringUtils;
 import org.motechproject.sms.http.SmsDeliveryFailureException;
-import org.motechproject.sms.http.SmsHttpTemplate;
+import org.motechproject.sms.http.template.SmsHttpTemplate;
 import org.motechproject.sms.http.TemplateReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 
+import java.util.Collection;
 import java.util.List;
 
 @Component
@@ -27,6 +30,9 @@ public class SmsHttpService {
     }
 
     public void sendSms(List<String> recipients, String message) throws SmsDeliveryFailureException {
+        if (CollectionUtils.isEmpty(recipients) || StringUtils.isEmpty(message))
+            throw new IllegalArgumentException("Recipients or Message should not be empty");
+
         String response;
         HttpMethod httpMethod = null;
         try {
