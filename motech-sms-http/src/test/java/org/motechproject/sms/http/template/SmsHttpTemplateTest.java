@@ -101,27 +101,6 @@ public class SmsHttpTemplateTest {
         assertEquals("someMessage", httpMethod.getParameter("message").getValue());
     }
 
-    @Test
-//    @Ignore
-    public void shouldSendSmsUsingHttpPost() throws IOException {
-        byte[] encodedPassword = ("sanchit.bahal" + ":" + "spleen.african87").getBytes();
-        BASE64Encoder encoder = new BASE64Encoder();
-
-        String url = "http://api.messaging.staging.voxeo.net/1.0/messaging";
-        PostMethod postMethod = new PostMethod(url);
-        postMethod.setRequestHeader("Authorization", "Basic " + encoder.encode(encodedPassword));
-        postMethod.setParameter("botkey", "362374");
-        postMethod.setParameter("apimethod", "send");
-        postMethod.setParameter("msg", "Hello Platform World");
-        postMethod.setParameter("user", "017732345337");
-        postMethod.setParameter("network", "SMS");
-        postMethod.setParameter("from", "4159062932");
-        HttpClient httpClient = new HttpClient();
-        int status = httpClient.executeMethod(postMethod);
-        String responseBodyAsString = postMethod.getResponseBodyAsString();
-        System.out.println(String.format("Status:%s; Response:%s", status, responseBodyAsString));
-    }
-
     private SmsHttpTemplate createSmsHttpTemplate(Request request) {
         SmsHttpTemplate smsHttpTemplate = new SmsHttpTemplate();
         Outgoing outgoing = new Outgoing();
