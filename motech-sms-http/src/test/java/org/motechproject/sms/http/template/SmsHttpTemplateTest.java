@@ -102,7 +102,7 @@ public class SmsHttpTemplateTest {
     }
 
     @Test
-    @Ignore
+//    @Ignore
     public void shouldSendSmsUsingHttpPost() throws IOException {
         byte[] encodedPassword = ("sanchit.bahal" + ":" + "spleen.african87").getBytes();
         BASE64Encoder encoder = new BASE64Encoder();

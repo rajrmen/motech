@@ -30,7 +30,6 @@ public class SmsSendHandler implements SmsEventHandler {
     @Override
     @MotechListener(subjects = EventSubjects.SEND_SMS)
     public void handle(MotechEvent event) throws SmsDeliveryFailureException {
-
         List<String> recipients = (List<String>) event.getParameters().get(EventDataKeys.RECIPIENTS);
         DateTime deliveryTime = (DateTime) event.getParameters().get(EventDataKeys.DELIVERY_TIME);
         String message = (String) event.getParameters().get(EventDataKeys.MESSAGE);

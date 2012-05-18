@@ -6,11 +6,13 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.lang.StringUtils;
 import org.motechproject.sms.http.domain.HttpMethodType;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+@Component
 public class SmsHttpTemplate {
     public static final String MESSAGE_PLACEHOLDER = "$message";
     public static final String RECIPIENTS_PLACEHOLDER = "$recipients";
