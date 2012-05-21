@@ -20,41 +20,54 @@ public class SmsHttpTemplate {
     private Outgoing outgoing;
     private Incoming incoming;
 
-    public HttpMethod generateRequestFor(List<String> recipients, String message) {
+    public List<HttpMethod> generateRequestFor(List<String> recipients, String message) {
+        List<HttpMethod> httpMethods = new ArrayList<HttpMethod>();
+
+        if (isMultiRecipientSupported()) {
+            String recipientList = StringUtils.join(recipients.iterator(), outgoing.getRequest().getRecipientsSeparator());
+            httpMethods.add(generateRequestFor(recipientList, message));
+        } else {
+            for (String recipient : recipients)
+                httpMethods.add(generateRequestFor(recipient, message));
+        }
+        return httpMethods;
+    }
+
+    private HttpMethod generateRequestFor(String recipient, String message) {
         HttpMethod httpMethod;
         if (HttpMethodType.POST.equals(outgoing.getRequest().getType())) {
             httpMethod = new PostMethod(outgoing.getRequest().getUrlPath());
-            addBodyParameters((PostMethod) httpMethod, recipients, message);
+            addBodyParameters((PostMethod) httpMethod, recipient, message);
         } else
             httpMethod = new GetMethod(outgoing.getRequest().getUrlPath());
 
-        httpMethod.setQueryString(addQueryParameters(recipients, message));
+        httpMethod.setQueryString(addQueryParameters(recipient, message));
         return httpMethod;
     }
 
-    private NameValuePair[] addQueryParameters(List<String> recipients, String message) {
+    private NameValuePair[] addQueryParameters(String recipient, String message) {
         List<NameValuePair> queryStringValues = new ArrayList<NameValuePair>();
         Map<String, String> queryParameters = outgoing.getRequest().getQueryParameters();
         for (String key : queryParameters.keySet()) {
-            String value = placeHolderOrLiteral(queryParameters.get(key), recipients, message);
+            String value = placeHolderOrLiteral(queryParameters.get(key), recipient, message);
             queryStringValues.add(new NameValuePair(key, value));
         }
         return queryStringValues.toArray(new NameValuePair[queryStringValues.size()]);
     }
 
-    private void addBodyParameters(PostMethod postMethod, List<String> recipients, String message) {
-        Map<String,String> bodyParameters = outgoing.getRequest().getBodyParameters();
-        for(String key : bodyParameters.keySet()) {
-            String value = placeHolderOrLiteral(bodyParameters.get(key), recipients, message);
+    private void addBodyParameters(PostMethod postMethod, String recipient, String message) {
+        Map<String, String> bodyParameters = outgoing.getRequest().getBodyParameters();
+        for (String key : bodyParameters.keySet()) {
+            String value = placeHolderOrLiteral(bodyParameters.get(key), recipient, message);
             postMethod.setParameter(key, value);
         }
     }
 
-    private String placeHolderOrLiteral(String value, List<String> recipients, String message) {
+    private String placeHolderOrLiteral(String value, String recipient, String message) {
         if (value.equals(MESSAGE_PLACEHOLDER))
             return message;
         if (value.equals(RECIPIENTS_PLACEHOLDER))
-            return StringUtils.join(recipients.iterator(), outgoing.getRequest().getRecipientsSeparator());
+            return recipient;
         return value;
     }
 
@@ -80,5 +93,9 @@ public class SmsHttpTemplate {
 
     public String getResponseSuccessCode() {
         return outgoing.getResponse().getSuccess();
+    }
+
+    public boolean isMultiRecipientSupported() {
+        return outgoing.getRequest().isMultiRecipientSupported();
     }
 }

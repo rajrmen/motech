@@ -3,13 +3,9 @@
         "request":{
             "urlPath":"http://smshost.com/sms/send",
             "type":"GET",
-            "queryParameters":{
-                "recipients":"$recipients",
-                "message":"$message"
-            },
-            "multiRecipientSupported":"true",
             "recipientsSeparator":"+",
-            "bodyParameters":{
+            "multiRecipientSupported": "false",
+            "queryParameters":{
                 "recipients":"$recipients",
                 "message":"$message"
             },
