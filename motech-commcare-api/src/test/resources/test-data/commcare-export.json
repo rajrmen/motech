@@ -1,0 +1,53 @@
+{
+    "userName": "someUser@gmail.com",
+    "password": "somePassword",
+    "modules": [
+        {
+            "forms": [
+                {
+                    "name": "1_Registration",
+                    "url": {
+                        "base": "1_https://www.commcarehq.org/a/abhilasha/reports/export/",
+                        "queryParams": {
+                            "nameSpace": "http://openrosa.org/formdesigner/4FBE07FF-2434-40B3-B151-D2EBE2F4FB4F"
+                        }
+                    },
+                    "mappings": {
+                        "form|path|to|field": "1_FieldInOutput",
+                        "form|path|to|another|field": "1_AnotherFieldInOutput"
+                    }
+                },
+                {
+                    "name": "2_Registration",
+                    "url": {
+                        "base": "2_https://www.commcarehq.org/a/abhilasha/reports/export/",
+                        "queryParams": {
+                            "nameSpace": "http://openrosa.org/formdesigner/4FBE07FF-2434-40B3-B151-D2EBE2F4FB4F"
+                        }
+                    },
+                    "mappings": {
+                        "form|path|to|field": "2_FieldInOutput",
+                        "form|path|to|another|field": "2_AnotherFieldInOutput"
+                    }
+                }
+            ]
+        },
+        {
+            "forms": [
+                {
+                    "name": "3_Registration",
+                    "url": {
+                        "base": "3_https://www.commcarehq.org/a/abhilasha/reports/export/",
+                        "queryParams": {
+                            "nameSpace": "http://openrosa.org/formdesigner/4FBE07FF-2434-40B3-B151-D2EBE2F4FB4F"
+                        }
+                    },
+                    "mappings": {
+                        "form|path|to|field": "3_FieldInOutput",
+                        "form|path|to|another|field": "3_AnotherFieldInOutput"
+                    }
+                }
+            ]
+        }
+    ]
+}
