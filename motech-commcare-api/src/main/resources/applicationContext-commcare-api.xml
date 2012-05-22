@@ -38,8 +38,11 @@
 	<osgi:service id="commcareUserServiceOsgi" auto-export="interfaces"
 		ref="commcareUserService" interface="org.motechproject.commcare.service.CommcareUserService" />
 
-    <osgi:reference id="outboundEventGatewayOsgi" cardinality="0..1"
+    <osgi:reference id="outboundEventGatewayOsgi" cardinality="1..1"
                     interface="org.motechproject.gateway.OutboundEventGateway"/>
 
+    <bean id="commcareController" class="org.motechproject.commcare.web.CommcareController">
+        <property name="outboundEventGateway" ref="outboundEventGatewayOsgi"/>
+    </bean>
 
 </beans>
