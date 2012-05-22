@@ -45,7 +45,6 @@ public class CommcareController  {
 	private static final String PARTIAL_DATA_EVENT = "partial";
 	private static final String MINIMAL_DATA_EVENT = "minimal";
 	
-	@Autowired
 	private OutboundEventGateway outboundEventGateway;
 
 	private Logger logger = LoggerFactory.getLogger((this.getClass()));
@@ -113,6 +112,8 @@ public class CommcareController  {
 				motechCaseEvent = caseEvent.toMotechEventWihoutData();
 			}
 			
+			System.out.println("About to call...");
+			
 			outboundEventGateway.sendEventMessage(motechCaseEvent);
 		} else {
 			System.out.println("Case null");
@@ -120,7 +121,11 @@ public class CommcareController  {
 		return null;
 	}
 
+	public void setOutboundEventGateway(OutboundEventGateway outboundEventGateway) {
+		this.outboundEventGateway = outboundEventGateway;
+	}
 
+	
 
 
 }
