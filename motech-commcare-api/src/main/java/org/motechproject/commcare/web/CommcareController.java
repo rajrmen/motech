@@ -45,8 +45,8 @@ public class CommcareController  {
 	private static final String PARTIAL_DATA_EVENT = "partial";
 	private static final String MINIMAL_DATA_EVENT = "minimal";
 	
-//	@Autowired
-//	private OutboundEventGateway outboundEventGateway;
+	@Autowired
+	private OutboundEventGateway outboundEventGateway;
 
 	private Logger logger = LoggerFactory.getLogger((this.getClass()));
 
@@ -66,8 +66,7 @@ public class CommcareController  {
 	
 
 	@RequestMapping("/forms")
-	public ModelAndView testForms(HttpServletRequest request,
-			HttpServletResponse response) {
+	public ModelAndView testForms(HttpServletRequest request, HttpServletResponse response) {
 		String formXml = "";
 		
 		try {
@@ -81,10 +80,8 @@ public class CommcareController  {
 
 
 	@RequestMapping("/cases")
-	public ModelAndView testCases(HttpServletRequest request,
-			HttpServletResponse response) {
-		
-		String caseXml = "";
+	public ModelAndView testCases(HttpServletRequest request, HttpServletResponse response) {
+        String caseXml = "";
 
 		try {
 			caseXml = getRequestBodyAsString(request);
@@ -116,7 +113,7 @@ public class CommcareController  {
 				motechCaseEvent = caseEvent.toMotechEventWihoutData();
 			}
 			
-//			outboundEventGateway.sendEventMessage(motechCaseEvent);
+			outboundEventGateway.sendEventMessage(motechCaseEvent);
 		} else {
 			System.out.println("Case null");
 		}

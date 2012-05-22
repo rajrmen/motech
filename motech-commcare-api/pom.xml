@@ -33,11 +33,6 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>motech-platform-common-api</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.8.2</version>
@@ -139,9 +134,7 @@
 				<configuration>
 					<instructions>
 						<Export-Package>
-							org.motechproject.commcare,
-							org.motechproject.commcare.*,
-							org.motechproject.commcare.service
+							org.motechproject.commcare.*
 						</Export-Package>
 						<Bundle-Activator>
 							org.motechproject.commcare.osgi.Activator
