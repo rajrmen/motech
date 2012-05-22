@@ -7,7 +7,6 @@
                 "recipients":"$recipients",
                 "message":"$message"
             },
-            "multiRecipientSupported":"true",
             "recipientsSeparator":"+",
             "bodyParameters":{
                 "recipients":"$recipients",

@@ -50,7 +50,7 @@ public class SmsHttpService {
         String response;
         HttpMethod httpMethod = null;
         try {
-            httpMethod = template.generateRequestFor(recipients, message).get(0);
+            httpMethod = template.generateRequestFor(recipients, message);
             setAuthenticationInfo(template.getAuthentication());
             int status = commonsHttpClient.executeMethod(httpMethod);
             response = httpMethod.getResponseBodyAsString();

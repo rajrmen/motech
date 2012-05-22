@@ -1,20 +1,22 @@
 package org.motechproject.sms.http.template;
 
+import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.motechproject.sms.http.TemplateReader;
 import org.motechproject.sms.http.domain.HttpMethodType;
+import sun.misc.BASE64Encoder;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertFalse;
 
 public class SmsHttpTemplateTest {
 
@@ -29,8 +31,8 @@ public class SmsHttpTemplateTest {
 
         SmsHttpTemplate smsHttpTemplate = createSmsHttpTemplate(request);
 
-        List<HttpMethod> httpMethods = smsHttpTemplate.generateRequestFor(Arrays.asList("123"), "some Message");
-        assertEquals("http://smshost.com/sms/send?to=foobar", httpMethods.get(0).getURI().getURI());
+        HttpMethod httpMethod = smsHttpTemplate.generateRequestFor(Arrays.asList("123"), "some Message");
+        assertEquals("http://smshost.com/sms/send?to=foobar", httpMethod.getURI().getURI());
     }
 
     @Test
@@ -44,12 +46,12 @@ public class SmsHttpTemplateTest {
 
         SmsHttpTemplate smsHttpTemplate = createSmsHttpTemplate(request);
 
-        HttpMethod httpMethod = smsHttpTemplate.generateRequestFor(Arrays.asList("123"), "foobar").get(0);
+        HttpMethod httpMethod = smsHttpTemplate.generateRequestFor(Arrays.asList("123"), "foobar");
         assertEquals("http://smshost.com/sms/send?message=foobar", httpMethod.getURI().getURI());
     }
 
     @Test
-    public void shouldReplaceRecipientsVariableWithValue() throws URIException {
+    public void shouldReplaceReciepientsVariableWithValue() throws URIException {
         Request request = new Request();
         request.setUrlPath("http://smshost.com/sms/send");
         request.setRecipientsSeparator(",");
@@ -60,7 +62,7 @@ public class SmsHttpTemplateTest {
 
         SmsHttpTemplate smsHttpTemplate = createSmsHttpTemplate(request);
 
-        HttpMethod httpMethod = smsHttpTemplate.generateRequestFor(Arrays.asList("123", "456", "789"), "some message").get(0);
+        HttpMethod httpMethod = smsHttpTemplate.generateRequestFor(Arrays.asList("123", "456", "789"), "some message");
         assertEquals("http://smshost.com/sms/send?recipients=123,456,789", httpMethod.getURI().getURI());
     }
 
@@ -69,21 +71,11 @@ public class SmsHttpTemplateTest {
         TemplateReader templateReader = new TemplateReader();
         SmsHttpTemplate smsHttpPOSTTemplate = templateReader.getTemplate("/templates/sms-http-post-template.json");
         assertEquals(PostMethod.class, smsHttpPOSTTemplate.generateRequestFor(Arrays.asList("123", "456", "789"),
-                "Hello World").get(0).getClass());
+                "Hello World").getClass());
 
         SmsHttpTemplate smsHttpGETTemplate = templateReader.getTemplate("/templates/sms-http-get-template.json");
         assertEquals(GetMethod.class, smsHttpGETTemplate.generateRequestFor(Arrays.asList("123", "456", "789"),
-                "Hello World").get(0).getClass());
-    }
-
-    @Test
-    public void shouldReturnMultipleHttpMethodsIfMultiRecipientsNotSupported() {
-        TemplateReader templateReader = new TemplateReader();
-        SmsHttpTemplate smsHttpGETTemplate = templateReader.getTemplate("/templates/sms-http-single-recipient-template.json");
-
-        assertFalse(smsHttpGETTemplate.isMultiRecipientSupported());
-        List<HttpMethod> httpMethods = smsHttpGETTemplate.generateRequestFor(Arrays.asList("123", "456"), "some message");
-        assertEquals(2, httpMethods.size());
+                "Hello World").getClass());
     }
 
     @Test
@@ -101,8 +93,7 @@ public class SmsHttpTemplateTest {
 
         SmsHttpTemplate smsHttpTemplate = createSmsHttpTemplate(request);
 
-        PostMethod httpMethod = (PostMethod) smsHttpTemplate.generateRequestFor(Arrays.asList("123", "456", "789"),
-                "someMessage").get(0);
+        PostMethod httpMethod = (PostMethod) smsHttpTemplate.generateRequestFor(Arrays.asList("123", "456", "789"), "someMessage");
         assertEquals(4, httpMethod.getParameters().length);
         assertEquals("value1", httpMethod.getParameter("key1").getValue());
         assertEquals("value2", httpMethod.getParameter("key2").getValue());
