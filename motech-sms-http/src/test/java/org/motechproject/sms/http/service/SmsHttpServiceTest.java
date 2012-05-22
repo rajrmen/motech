@@ -49,7 +49,7 @@ public class SmsHttpServiceTest {
 
         when(template.generateRequestFor(Arrays.asList("0987654321"), "foo bar")).thenReturn(httpMethod);
         when(template.getResponseSuccessCode()).thenReturn("sent");
-        when(templateReader.getTemplate(anyString())).thenReturn(template);
+        when(templateReader.getTemplate()).thenReturn(template);
         when(httpMethod.getResponseBodyAsString()).thenReturn("sent");
 
         SmsHttpService smsHttpService = new SmsHttpService(templateReader, httpClient);
@@ -66,7 +66,7 @@ public class SmsHttpServiceTest {
         when(httpMethod.getResponseBodyAsString()).thenReturn("message senT successfully");
         when(template.getResponseSuccessCode()).thenReturn("sent successfully");
         when(template.generateRequestFor(anyList(), anyString())).thenReturn(httpMethod);
-        when(templateReader.getTemplate(Matchers.<String>any())).thenReturn(template);
+        when(templateReader.getTemplate()).thenReturn(template);
 
         SmsHttpService smsHttpService = new SmsHttpService(templateReader, httpClient);
         smsHttpService.sendSms(asList("0987654321"), "foo bar");
@@ -80,7 +80,7 @@ public class SmsHttpServiceTest {
         when(httpMethod.getResponseBodyAsString()).thenReturn("boom");
         when(template.getResponseSuccessCode()).thenReturn("sent");
         when(template.generateRequestFor(anyList(), anyString())).thenReturn(httpMethod);
-        when(templateReader.getTemplate(Matchers.<String>any())).thenReturn(template);
+        when(templateReader.getTemplate()).thenReturn(template);
 
         SmsHttpService smsHttpService = new SmsHttpService(templateReader, httpClient);
         smsHttpService.sendSms(asList("0987654321"), "foo bar");
@@ -93,7 +93,7 @@ public class SmsHttpServiceTest {
         GetMethod httpMethod = mock(GetMethod.class);
         when(httpMethod.getResponseBodyAsString()).thenReturn(null);
         when(template.generateRequestFor(anyList(), anyString())).thenReturn(httpMethod);
-        when(templateReader.getTemplate(Matchers.<String>any())).thenReturn(template);
+        when(templateReader.getTemplate()).thenReturn(template);
 
         SmsHttpService smsHttpService = new SmsHttpService(templateReader, httpClient);
         smsHttpService.sendSms(asList("123", "456"), "foobar");
@@ -138,7 +138,7 @@ public class SmsHttpServiceTest {
         when(smsHttpTemplate.getResponseSuccessCode()).thenReturn("success");
         when(smsHttpTemplate.generateRequestFor(Arrays.asList("123"), "message")).thenReturn(httpMethod);
         when(smsHttpTemplate.getAuthentication()).thenReturn(new Authentication("username", "password"));
-        when(templateReader.getTemplate(anyString())).thenReturn(smsHttpTemplate);
+        when(templateReader.getTemplate()).thenReturn(smsHttpTemplate);
         when(httpClient.getParams()).thenReturn(httpClientParams);
         when(httpClient.getState()).thenReturn(httpClientState);
 

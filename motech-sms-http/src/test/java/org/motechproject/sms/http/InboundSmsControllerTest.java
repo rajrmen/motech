@@ -38,7 +38,7 @@ public class InboundSmsControllerTest {
         incoming.setSenderKey("sender");
         incoming.setTimestampKey("timestamp");
         template.setIncoming(incoming);
-        when(templateReader.getTemplate("/sms-http-template.json")).thenReturn(template);
+        when(templateReader.getTemplate()).thenReturn(template);
 
         HttpServletRequest httpServletRequest = mock(HttpServletRequest.class);
         when(httpServletRequest.getParameter(template.getIncoming().getMessageKey())).thenReturn("some text message");
@@ -64,7 +64,7 @@ public class InboundSmsControllerTest {
         incoming.setMessageKey("message");
         incoming.setSenderKey("sender");
         template.setIncoming(incoming);
-        when(templateReader.getTemplate("/sms-http-template.json")).thenReturn(template);
+        when(templateReader.getTemplate()).thenReturn(template);
 
         HttpServletRequest httpServletRequest = mock(HttpServletRequest.class);
         when(httpServletRequest.getParameter(template.getIncoming().getMessageKey())).thenReturn("some text message");

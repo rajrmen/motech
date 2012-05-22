@@ -21,26 +21,19 @@ import java.util.List;
 
 @Service
 public class SmsHttpService {
-    @Autowired
-    private TemplateReader templateReader;
-    @Autowired
     private HttpClient commonsHttpClient;
 
     private SmsHttpTemplate template;
 
-    private static final String DEFAULT_TEMPLATE_FILE = "/sms-http-template.json";
     private static Logger log = LoggerFactory.getLogger(SmsHttpService.class);
 
     private SmsHttpService(){
     }
 
-    public SmsHttpService(TemplateReader templateReader, HttpClient commonsHttpClient, String templateFile) {
-        this.template = templateReader.getTemplate(templateFile);
-        this.commonsHttpClient = commonsHttpClient;
-    }
-
+    @Autowired
     public SmsHttpService(TemplateReader templateReader, HttpClient commonsHttpClient) {
-        this(templateReader, commonsHttpClient, DEFAULT_TEMPLATE_FILE);
+        this.template = templateReader.getTemplate();
+        this.commonsHttpClient = commonsHttpClient;
     }
 
     public void sendSms(List<String> recipients, String message) throws SmsDeliveryFailureException {

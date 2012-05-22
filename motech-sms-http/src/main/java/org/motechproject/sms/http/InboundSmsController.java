@@ -21,8 +21,7 @@ public class InboundSmsController {
 
     @Autowired
     public InboundSmsController(TemplateReader templateReader, EventRelay eventRelay) {
-        String templateFile = "/sms-http-template.json";
-        this.template = templateReader.getTemplate(templateFile);
+        this.template = templateReader.getTemplate();
         this.eventRelay = eventRelay;
     }
 

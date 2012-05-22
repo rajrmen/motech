@@ -67,18 +67,22 @@ public class SmsHttpTemplateTest {
     }
 
     @Test
-    public void shouldCreateCorrectRequestTypeBasedOnConfiguration() {
-        TemplateReader templateReader = new TemplateReader();
-        SmsHttpTemplate smsHttpPOSTTemplate = templateReader.getTemplate("/templates/sms-http-post-template.json");
+    public void shouldCreateCorrectRequestTypeBasedOnConfiguration_POST() {
+        TemplateReader templateReader = new TemplateReader("/templates/sms-http-post-template.json");
+        SmsHttpTemplate smsHttpPOSTTemplate = templateReader.getTemplate();
         assertEquals(PostMethod.class, smsHttpPOSTTemplate.generateRequestFor(Arrays.asList("123", "456", "789"),
-                "Hello World").getClass());
-
-        SmsHttpTemplate smsHttpGETTemplate = templateReader.getTemplate("/templates/sms-http-get-template.json");
-        assertEquals(GetMethod.class, smsHttpGETTemplate.generateRequestFor(Arrays.asList("123", "456", "789"),
                 "Hello World").getClass());
     }
 
     @Test
+    public void shouldCreateCorrectRequestTypeBasedOnConfiguration_GET() {
+        TemplateReader templateReader = new TemplateReader("/templates/sms-http-get-template.json");
+        SmsHttpTemplate smsHttpGETTemplate = templateReader.getTemplate();
+        assertEquals(GetMethod.class, smsHttpGETTemplate.generateRequestFor(Arrays.asList("123", "456", "789"),
+                "Hello World").getClass());
+    }
+
+        @Test
     public void shouldSetBodyParametersForPOSTRequestType() {
         Map<String, String> params = new HashMap<String, String>();
         params.put("key1", "value1");

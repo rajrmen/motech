@@ -18,8 +18,6 @@ import java.util.Arrays;
 @ContextConfiguration(locations = {"/applicationSmsHttp.xml"})
 public class SmsSendByHttpIT {
     @Autowired
-    private TemplateReader templateReader;
-    @Autowired
     private HttpClient commonsHttpClient;
 
     private SmsHttpService smsHttpService;
@@ -27,14 +25,16 @@ public class SmsSendByHttpIT {
     @Test
     @Ignore("Test for Kookoo")
     public void shouldSendSmsThroughKookoo() throws IOException, SmsDeliveryFailureException {
-        smsHttpService = new SmsHttpService(templateReader, commonsHttpClient, "/templates/sample-kookoo-template.json");
+        TemplateReader templateReader = new TemplateReader("/templates/sample-kookoo-template.json");
+        smsHttpService = new SmsHttpService(templateReader, commonsHttpClient);
         smsHttpService.sendSms(Arrays.asList("9686202448"), "business analyst");
     }
 
     @Test
     @Ignore("Test for Voxeo")
     public void shouldSendSmsThroughVoxeo() throws IOException, SmsDeliveryFailureException {
-        smsHttpService = new SmsHttpService(templateReader, commonsHttpClient, "/templates/sample-voxeo-template.json");
+        TemplateReader templateReader = new TemplateReader("/templates/sample-voxeo-template.json");
+        smsHttpService = new SmsHttpService(templateReader, commonsHttpClient);
         smsHttpService.sendSms(Arrays.asList("017732345337"), "Test Voxeo");
     }
 }
