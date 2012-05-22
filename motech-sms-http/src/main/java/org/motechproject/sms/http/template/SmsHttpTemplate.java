@@ -80,4 +80,8 @@ public class SmsHttpTemplate {
     public String getResponseSuccessCode() {
         return outgoing.getResponse().getSuccess();
     }
+
+    public boolean isMultiRecipientSupported(){
+        return outgoing.getRequest().isMultiRecipientSupported();
+    }
 }

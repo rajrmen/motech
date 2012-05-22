@@ -12,6 +12,7 @@ public class Request {
     private Map<String, String> bodyParameters = new HashMap<String, String>();
     private HttpMethodType type;
     private Authentication authentication;
+    private boolean multiRecipientSupported;
 
     public String getUrlPath() {
         return urlPath;
@@ -59,5 +60,13 @@ public class Request {
 
     public Authentication getAuthentication() {
         return authentication;
+    }
+
+    public boolean isMultiRecipientSupported() {
+        return multiRecipientSupported;
+    }
+
+    public void setMultiRecipientSupported(boolean multiRecipientSupported) {
+        this.multiRecipientSupported = multiRecipientSupported;
     }
 }

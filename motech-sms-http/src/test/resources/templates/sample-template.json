@@ -7,7 +7,8 @@
                 "message":"$message",
                 "apiKey":"jdhf7yelkjae"
             },
-            "recipientsSeparator":"+"
+            "recipientsSeparator":"+",
+            "multiRecipientSupported":"true"
         },
         "response":{
             "success":"sent"

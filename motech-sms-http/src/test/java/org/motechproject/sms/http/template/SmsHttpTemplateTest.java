@@ -11,6 +11,7 @@ import org.motechproject.sms.http.TemplateReader;
 import org.motechproject.sms.http.domain.HttpMethodType;
 import sun.misc.BASE64Encoder;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
