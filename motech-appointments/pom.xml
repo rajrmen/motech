@@ -105,7 +105,8 @@
                             org.motechproject.server.appointments.Activator
                         </Bundle-Activator>
                         <Private-Package>
-                            org.motechproject.server.appointments.*
+                            org.motechproject.server.appointments.*,
+                            org.springframework.context.config
                         </Private-Package>
                         <Embed-Dependency>
                             motech-appointments-api;inline=applicationAppointmentsAPI.xml

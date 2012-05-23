@@ -98,7 +98,8 @@
                             org.motechproject.outbox.api.service.*,
                             org.motechproject.outbox.api.repository,
                             org.motechproject.outbox.api.domain,
-                            org.motechproject.outbox.api.contract
+                            org.motechproject.outbox.api.contract,
+                            org.springframework.context.config
                         </Private-Package>
 						<Embed-Dependency>!*</Embed-Dependency>
 						<Embed-Transitive>true</Embed-Transitive>

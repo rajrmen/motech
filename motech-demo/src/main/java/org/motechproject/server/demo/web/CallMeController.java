@@ -153,6 +153,8 @@ public class CallMeController {
     public void setIvrServices(List<IVRService> ivrServices) {
         this.ivrServices = ivrServices;
 
-        demoEventHandler.setIvrService(ivrServices.isEmpty() ? null : ivrServices.get(0));
+        if (ivrServices != null && demoEventHandler.getIvrService() == null) {
+            demoEventHandler.setIvrService(ivrServices.get(0));
+        }
     }
 }

@@ -119,6 +119,43 @@
             <artifactId>aopalliance</artifactId>
             <version>1.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.osgi</groupId>
+            <artifactId>spring-osgi-core</artifactId>
+            <version>1.2.1</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>org.springframework.aop</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>org.springframework.beans</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>org.springframework.context</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>org.springframework.core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>javax.servlet</groupId>
+                    <artifactId>com.springsource.javax.servlet</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.osgi</groupId>
+            <artifactId>spring-osgi-extender</artifactId>
+            <version>1.2.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.osgi</groupId>
+            <artifactId>spring-osgi-io</artifactId>
+            <version>1.2.1</version>
+        </dependency>
     </dependencies>
     <build>
         <finalName>motech-platform-server</finalName>
@@ -134,7 +171,7 @@
                         </goals>
                         <configuration>
                             <includeArtifactIds>
-                                org.apache.felix.http.bridge,org.apache.felix.webconsole,org.apache.felix.scr,org.apache.felix.shell
+                                org.apache.felix.http.bridge,org.apache.felix.webconsole,org.apache.felix.scr,org.apache.felix.shell,spring-osgi-core,spring-osgi-io,spring-osgi-extender
                             </includeArtifactIds>
                             <stripVersion>true</stripVersion>
                             <outputDirectory>
