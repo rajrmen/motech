@@ -94,13 +94,17 @@
                         <Bundle-Activator>
                             org.motechproject.sms.http.Activator
                         </Bundle-Activator>
+                        <Import-Package>
+                            *,
+                            org.springframework.beans.factory.xml,
+                            org.springframework.context.config,
+                            org.springframework.osgi.config
+                        </Import-Package>
                         <Private-Package>
                             org.motechproject.scheduler,
                             org.motechproject.scheduler.domain,
                             org.motechproject.sms.api,
                             org.motechproject.sms.api.service,
-                            org.springframework.context.config,
-                            org.springframework.osgi.config,
                             org.springframework.scheduling.quartz
                         </Private-Package>
                         <Embed-Dependency>!*</Embed-Dependency>

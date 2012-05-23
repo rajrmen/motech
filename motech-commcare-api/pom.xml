@@ -139,11 +139,15 @@
 						<Bundle-Activator>
 							org.motechproject.commcare.osgi.Activator
 						</Bundle-Activator>
+                        <Import-Package>
+                            *,
+                            org.springframework.beans.factory.xml,
+                            org.springframework.context.config,
+                            org.springframework.osgi.config
+                        </Import-Package>
 						<Private-Package>
 							org.ektorp.impl,
-							org.ektorp.spring,
-							org.springframework.context.config,
-							org.springframework.osgi.config
+							org.ektorp.spring
 						</Private-Package>
 						<Embed-Dependency>!*</Embed-Dependency>
 						<Embed-Transitive>true</Embed-Transitive>

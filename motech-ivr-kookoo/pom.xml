@@ -183,12 +183,16 @@
                         <Bundle-Activator>
                             org.motechproject.ivr.kookoo.Activator
                         </Bundle-Activator>
+                        <Import-Package>
+                            *,
+                            org.springframework.beans.factory.xml,
+                            org.springframework.context.config,
+                            org.springframework.context.support,
+                            org.springframework.osgi.config
+                        </Import-Package>
                         <Private-Package>
                             org.motechproject.ivr.kookoo,
                             com.ozonetel.kookoo;version=1.1,
-                            org.springframework.context.config,
-                            org.springframework.context.support,
-                            org.springframework.osgi.config,
                             org.springframework.web.servlet.mvc,
                             org.ektorp.spring,
                             org.ektorp.impl,

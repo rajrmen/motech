@@ -101,6 +101,11 @@
                         <Bundle-Activator>
                             org.motechproject.osgi.Activator
                         </Bundle-Activator>
+                        <Import-Package>
+                            *,
+                            org.springframework.context.config,
+                            org.springframework.osgi.config
+                        </Import-Package>
                         <Private-Package>
                             org.apache.activemq,
                             org.ektorp.impl,
@@ -116,7 +121,6 @@
                             org.springframework.integration.gateway,
                             org.springframework.integration.jms.config,
                             org.springframework.jms.connection,
-                            org.springframework.osgi.config,
                             org.springframework.scheduling.concurrent
                         </Private-Package>
                         <Embed-Dependency>!*</Embed-Dependency>

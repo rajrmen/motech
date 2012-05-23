@@ -78,14 +78,18 @@
                         <Export-Package>
                             org.motechproject.server.asterisk.*;
                         </Export-Package>
+                        <Import-Package>
+                            *,
+                            org.springframework.beans.factory.xml,
+                            org.springframework.context.config,
+                            org.springframework.context.support,
+                            org.springframework.osgi.config
+                        </Import-Package>
                         <Private-Package>
                             org.motechproject.server.asterisk.callback.*,
                             org.asteriskjava.*,
                             org.asteriskjava.live.*,
                             org.apache.log4j.*,
-                            org.springframework.context.config,
-                            org.springframework.context.support,
-                            org.springframework.osgi.config,
                             org.springframework.web.servlet.mvc,
                             org.ektorp.spring,
                             org.ektorp.impl

@@ -126,18 +126,23 @@
                         <Bundle-Activator>
                             org.motechproject.scheduler.Activator
                         </Bundle-Activator>
-                        <Private-Package>
-                            org.apache.activemq,
+                        <Import-Package>
+                            *,
+                            org.aopalliance.aop,
                             org.springframework.aop,
                             org.springframework.aop.framework,
                             org.springframework.aop.support,
+                            org.springframework.beans.factory.xml,
                             org.springframework.context.config,
+                            org.springframework.osgi.config
+                        </Import-Package>
+                        <Private-Package>
+                            org.apache.activemq,
                             org.springframework.integration.config,
                             org.springframework.integration.config.xml,
                             org.springframework.integration.gateway,
                             org.springframework.integration.jms.config,
                             org.springframework.jms.connection,
-                            org.springframework.osgi.config,
                             org.springframework.scheduling.concurrent,
                             org.quartz.simpl
                         </Private-Package>

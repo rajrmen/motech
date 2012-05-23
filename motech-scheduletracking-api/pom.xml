@@ -115,6 +115,12 @@
                         <Bundle-Activator>
                             org.motechproject.scheduletracking.api.Activator
                         </Bundle-Activator>
+                        <Import-Package>
+                            *,
+                            org.springframework.beans.factory.xml,
+                            org.springframework.context.config,
+                            org.springframework.osgi.config
+                        </Import-Package>
                         <Private-Package>
                             org.ektorp.impl,
                             org.ektorp.spring,
@@ -128,8 +134,6 @@
                             org.motechproject.scheduletracking.api.events,
                             org.motechproject.scheduletracking.api.repository,
                             org.motechproject.scheduletracking.api.service.contract,
-                            org.springframework.context.config,
-                            org.springframework.osgi.config,
                             org.quartz.simpl
                         </Private-Package>
                         <Embed-Dependency>!*</Embed-Dependency>

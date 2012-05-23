@@ -92,10 +92,12 @@
                         <Bundle-Activator>
                             org.motechproject.sms.api.Activator
                         </Bundle-Activator>
-                        <Private-Package>
+                        <Import-Package>
+                            *,
+                            org.springframework.beans.factory.xml,
                             org.springframework.context.config,
                             org.springframework.osgi.config
-                        </Private-Package>
+                        </Import-Package>
                         <Embed-Dependency>!*</Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>
                     </instructions>
