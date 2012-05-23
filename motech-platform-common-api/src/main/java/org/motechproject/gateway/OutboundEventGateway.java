@@ -10,5 +10,5 @@ public interface OutboundEventGateway {
      *
      * @param motechEvent
      */
-    public abstract void sendEventMessage(MotechEvent motechEvent);
+    public void sendEventMessage(MotechEvent motechEvent);
 }
