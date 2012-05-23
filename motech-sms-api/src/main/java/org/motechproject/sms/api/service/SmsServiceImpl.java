@@ -13,16 +13,14 @@ import org.motechproject.sms.api.constants.EventSubjects;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class SmsServiceImpl implements SmsService {
     private EventRelay eventRelay;
     private MotechSchedulerService motechSchedulerService;
     private MessageSplitter messageSplitter;
+    private Properties smsApiProperties;
 
     private static final Logger log = Logger.getLogger(SmsServiceImpl.class);
 
@@ -31,9 +29,10 @@ public class SmsServiceImpl implements SmsService {
     private static final String PART_MESSAGE_FOOTER = "...";
 
     @Autowired
-    public SmsServiceImpl(MotechSchedulerService motechSchedulerService, MessageSplitter messageSplitter) {
+    public SmsServiceImpl(MotechSchedulerService motechSchedulerService, MessageSplitter messageSplitter, Properties smsApiProperties) {
         this.motechSchedulerService = motechSchedulerService;
         this.messageSplitter = messageSplitter;
+        this.smsApiProperties = smsApiProperties;
         this.eventRelay = EventContext.getInstance().getEventRelay();
     }
 
@@ -59,17 +58,35 @@ public class SmsServiceImpl implements SmsService {
 
     private void scheduleOrRaiseSendSmsEvent(final List<String> recipients, final String message, final DateTime deliveryTime) {
         List<String> partMessages = messageSplitter.split(message, PART_MESSAGE_SIZE, PART_MESSAGE_HEADER_TEMPLATE, PART_MESSAGE_FOOTER);
+        if(multiRecipientSupported()) {
+            generateOneSendSmsEvent(recipients, partMessages, deliveryTime);
+        } else {
+            generateSendSmsEventsForEachRecipient(recipients, partMessages, deliveryTime);
+        }
+    }
+
+    private void generateSendSmsEventsForEachRecipient(List<String> recipients, List<String> partMessages, DateTime deliveryTime) {
+        for (String recipient : recipients) {
+            generateOneSendSmsEvent(Arrays.asList(recipient), partMessages, deliveryTime);
+        }
+    }
+
+    private void generateOneSendSmsEvent(List<String> recipients, List<String> partMessages, DateTime deliveryTime) {
         for (String partMessage : partMessages) {
             if (deliveryTime == null)
-                raiseSendSmsEvent(recipients, message, deliveryTime, partMessage);
+                raiseSendSmsEvent(recipients, partMessage, deliveryTime);
             else
                 scheduleSendSmsEvent(recipients, partMessage, deliveryTime);
         }
     }
 
-    private void raiseSendSmsEvent(List<String> recipients, String message, DateTime deliveryTime, String partMessage) {
+    private boolean multiRecipientSupported() {
+        return Boolean.valueOf(smsApiProperties.getProperty("sms.multi.recipient.supported"));
+    }
+
+    private void raiseSendSmsEvent(List<String> recipients, String message, DateTime deliveryTime) {
         log.info(String.format("Sending message [%s] to number %s.", message, recipients));
-        eventRelay.sendEventMessage(sendSmsEvent(recipients, partMessage, deliveryTime));
+        eventRelay.sendEventMessage(sendSmsEvent(recipients, message, deliveryTime));
     }
 
     private void scheduleSendSmsEvent(final List<String> recipients, final String message, final DateTime deliveryTime) {

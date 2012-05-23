@@ -18,10 +18,7 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import static junit.framework.Assert.assertEquals;
 import static org.mockito.Mockito.times;
@@ -38,6 +35,8 @@ public class SmsServiceImplTest {
     private EventRelay eventRelay;
     @Mock
     private MotechSchedulerService motechSchedulerService;
+    @Mock
+    private Properties smsApiProperties;
 
     private SmsService smsService;
     private MessageSplitter messageSplitter;
@@ -49,13 +48,14 @@ public class SmsServiceImplTest {
         PowerMockito.mockStatic(EventContext.class);
         when(EventContext.getInstance()).thenReturn(eventContext);
         when(eventContext.getEventRelay()).thenReturn(eventRelay);
+        when(smsApiProperties.getProperty("sms.multi.recipient.supported")).thenReturn("true");
 
         messageSplitter = new MessageSplitter();
-        smsService = new SmsServiceImpl(motechSchedulerService, messageSplitter);
+        smsService = new SmsServiceImpl(motechSchedulerService, messageSplitter, smsApiProperties);
     }
 
     @Test
-    public void shouldRaiseASendSmsEventWithMessageAndRecipient() {
+    public void shouldRaiseSendSmsEventWithMessageAndRecipient() {
         smsService.sendSMS("9876543210", "This is a test message");
 
         ArgumentCaptor<MotechEvent> motechEventArgumentCaptor = ArgumentCaptor.forClass(MotechEvent.class);
@@ -67,7 +67,7 @@ public class SmsServiceImplTest {
     }
 
     @Test
-    public void shouldRaiseASendSmsEventWithMessageMulitpleRecipients() {
+    public void shouldRaiseSendSmsEventWithMessageMulitpleRecipients() {
         ArrayList<String> recipients = new ArrayList<String>() {{
             add("123");
             add("456");
@@ -138,4 +138,27 @@ public class SmsServiceImplTest {
         assertEquals("Msg 1 of 2: " + part1 + "...", schedulableJobs.get(0).getMotechEvent().getParameters().get(EventDataKeys.MESSAGE));
         assertEquals("Msg 2 of 2: " + part2, schedulableJobs.get(1).getMotechEvent().getParameters().get(EventDataKeys.MESSAGE));
     }
+
+    @Test
+    public void shouldRaiseMultipleSendSmsEvents_WhenMultiRecipientNotSupported() {
+        when(smsApiProperties.getProperty("sms.multi.recipient.supported")).thenReturn("false");
+        String message = "This is a test message";
+
+        smsService.sendSMS(Arrays.asList("100", "200", "300"), message);
+
+        ArgumentCaptor<MotechEvent> motechEventArgumentCaptor = ArgumentCaptor.forClass(MotechEvent.class);
+        verify(eventRelay, times(3)).sendEventMessage(motechEventArgumentCaptor.capture());
+
+        List<MotechEvent> events = motechEventArgumentCaptor.getAllValues();
+        assertEquals(Arrays.asList("100"), events.get(0).getParameters().get(EventDataKeys.RECIPIENTS));
+        assertEquals(message, events.get(0).getParameters().get(EventDataKeys.MESSAGE));
+
+        assertEquals(Arrays.asList("200"), events.get(1).getParameters().get(EventDataKeys.RECIPIENTS));
+        assertEquals(message, events.get(1).getParameters().get(EventDataKeys.MESSAGE));
+
+        assertEquals(Arrays.asList("300"), events.get(2).getParameters().get(EventDataKeys.RECIPIENTS));
+        assertEquals(message, events.get(2).getParameters().get(EventDataKeys.MESSAGE));
+    }
+
+
 }
