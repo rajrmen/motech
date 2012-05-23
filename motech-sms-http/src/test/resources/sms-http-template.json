@@ -8,7 +8,6 @@
                 "message":"$message"
             },
             "recipientsSeparator":"+",
-            "multiRecipientSupported":"true",
             "bodyParameters":{
                 "recipients":"$recipients",
                 "message":"$message"

@@ -6,7 +6,6 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.lang.StringUtils;
 import org.motechproject.sms.http.domain.HttpMethodType;
-import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -79,9 +78,5 @@ public class SmsHttpTemplate {
 
     public String getResponseSuccessCode() {
         return outgoing.getResponse().getSuccess();
-    }
-
-    public boolean isMultiRecipientSupported(){
-        return outgoing.getRequest().isMultiRecipientSupported();
     }
 }
