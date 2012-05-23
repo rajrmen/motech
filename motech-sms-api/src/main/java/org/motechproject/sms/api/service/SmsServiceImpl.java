@@ -28,6 +28,9 @@ public class SmsServiceImpl implements SmsService {
     private static final String PART_MESSAGE_HEADER_TEMPLATE = "Msg %d of %d: ";
     private static final String PART_MESSAGE_FOOTER = "...";
 
+    public static final String SMS_MULTI_RECIPIENT_SUPPORTED = "sms.multi.recipient.supported";
+    public static final String SMS_SCHEDULE_FUTURE_SMS = "sms.schedule.future.sms";
+
     @Autowired
     public SmsServiceImpl(MotechSchedulerService motechSchedulerService, MessageSplitter messageSplitter, Properties smsApiProperties) {
         this.motechSchedulerService = motechSchedulerService;
@@ -58,7 +61,7 @@ public class SmsServiceImpl implements SmsService {
 
     private void scheduleOrRaiseSendSmsEvent(final List<String> recipients, final String message, final DateTime deliveryTime) {
         List<String> partMessages = messageSplitter.split(message, PART_MESSAGE_SIZE, PART_MESSAGE_HEADER_TEMPLATE, PART_MESSAGE_FOOTER);
-        if(multiRecipientSupported()) {
+        if (getBooleanPropertyValue(SMS_MULTI_RECIPIENT_SUPPORTED)) {
             generateOneSendSmsEvent(recipients, partMessages, deliveryTime);
         } else {
             generateSendSmsEventsForEachRecipient(recipients, partMessages, deliveryTime);
@@ -73,15 +76,15 @@ public class SmsServiceImpl implements SmsService {
 
     private void generateOneSendSmsEvent(List<String> recipients, List<String> partMessages, DateTime deliveryTime) {
         for (String partMessage : partMessages) {
-            if (deliveryTime == null)
-                raiseSendSmsEvent(recipients, partMessage, deliveryTime);
-            else
+            if (getBooleanPropertyValue(SMS_SCHEDULE_FUTURE_SMS) && deliveryTime != null)
                 scheduleSendSmsEvent(recipients, partMessage, deliveryTime);
+            else
+                raiseSendSmsEvent(recipients, partMessage, deliveryTime);
         }
     }
 
-    private boolean multiRecipientSupported() {
-        return Boolean.valueOf(smsApiProperties.getProperty("sms.multi.recipient.supported"));
+    private boolean getBooleanPropertyValue(String property) {
+        return Boolean.valueOf(smsApiProperties.getProperty(property));
     }
 
     private void raiseSendSmsEvent(List<String> recipients, String message, DateTime deliveryTime) {

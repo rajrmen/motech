@@ -6,6 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.motechproject.context.EventContext;
 import org.motechproject.event.EventRelay;
@@ -21,8 +22,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import java.util.*;
 
 import static junit.framework.Assert.assertEquals;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 import static org.powermock.api.mockito.PowerMockito.when;
 
@@ -48,6 +48,7 @@ public class SmsServiceImplTest {
         PowerMockito.mockStatic(EventContext.class);
         when(EventContext.getInstance()).thenReturn(eventContext);
         when(eventContext.getEventRelay()).thenReturn(eventRelay);
+        when(smsApiProperties.getProperty("sms.schedule.future.sms")).thenReturn("true");
         when(smsApiProperties.getProperty("sms.multi.recipient.supported")).thenReturn("true");
 
         messageSplitter = new MessageSplitter();
@@ -122,6 +123,16 @@ public class SmsServiceImplTest {
 
         Date scheduledDeliveryDate = scheduledJobCaptor.getValue().getStartDate();
         assertEquals(deliveryTime.toDate(), scheduledDeliveryDate);
+    }
+
+    @Test
+    public void shouldNotScheduleSendSmsEvent_WhenScheduleFutureSmsIsSetToBeFalse() {
+        when(smsApiProperties.getProperty("sms.schedule.future.sms")).thenReturn("false");
+        DateTime deliveryTime = new DateTime(2011, 12, 23, 13, 50, 0, 0);
+        smsService.sendSMS("123", "This is a test message", deliveryTime);
+
+        verify(motechSchedulerService, never()).safeScheduleRunOnceJob(Matchers.<RunOnceSchedulableJob>any());
+        verify(eventRelay).sendEventMessage(Matchers.<MotechEvent>any());
     }
 
     @Test
