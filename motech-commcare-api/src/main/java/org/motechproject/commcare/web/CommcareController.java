@@ -31,6 +31,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -112,8 +113,14 @@ public class CommcareController  {
 				motechCaseEvent = caseEvent.toMotechEventWihoutData();
 			}
 			
-			System.out.println("About to call...");
-			
+			for (Class<?> i : outboundEventGateway.getClass().getInterfaces()) {
+				System.out.println(i.getName());
+				Method m[] = i.getDeclaredMethods();
+				for (int j = 0; j < m.length; j++) {
+					System.out.println(m[j].getName() + " " + m[j].getTypeParameters());
+				}
+				
+			}
 			outboundEventGateway.sendEventMessage(motechCaseEvent);
 		} else {
 			System.out.println("Case null");
