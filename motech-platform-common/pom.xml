@@ -96,35 +96,38 @@
                     <instructions>
                         <Export-Package>
                             org.motechproject.event,
-                            org.motechproject.gateway
                         </Export-Package>
                         <Bundle-Activator>
                             org.motechproject.osgi.Activator
                         </Bundle-Activator>
                         <Import-Package>
-                            *,
-                            org.springframework.context.config,
-                            org.springframework.osgi.config
-                        </Import-Package>
-                        <Private-Package>
+                        	org.aopalliance.aop,
                             org.apache.activemq,
+                            org.apache.activemq.command,
                             org.ektorp.impl,
                             org.ektorp.spring,
-                            org.motechproject.osgi,
+                            org.motechproject.gateway,
+                            org.motechproject.model,
                             org.springframework.aop,
-                            org.springframework.aop.framework.*,
+                            org.springframework.aop.framework,
                             org.springframework.aop.support,
-                            org.springframework.aop.target,
+                            org.springframework.beans.factory.xml,
                             org.springframework.context.config,
+                            org.springframework.integration.channel,
                             org.springframework.integration.config,
                             org.springframework.integration.config.xml,
+                            org.springframework.integration.core,
+                            org.springframework.integration.endpoint,
                             org.springframework.integration.gateway,
+                            org.springframework.integration.handler,
+                            org.springframework.integration.jms,
                             org.springframework.integration.jms.config,
                             org.springframework.jms.connection,
-                            org.springframework.scheduling.concurrent
-                        </Private-Package>
+                            org.springframework.osgi.config,
+                            org.springframework.scheduling.concurrent,
+                            *
+                        </Import-Package>
                         <Embed-Dependency>!*</Embed-Dependency>
-                        <Embed-Transitive>true</Embed-Transitive>
                     </instructions>
                 </configuration>
             </plugin>
