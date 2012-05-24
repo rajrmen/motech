@@ -36,5 +36,7 @@
     <osgi:service id="smsAuditServiceOsgi" auto-export="interfaces" ref="smsAuditService"
                   interface="org.motechproject.sms.api.service.SmsAuditService"/>
 
+    <bean class="org.motechproject.server.event.annotations.EventAnnotationBeanPostProcessor"/>
+
 </beans>
 

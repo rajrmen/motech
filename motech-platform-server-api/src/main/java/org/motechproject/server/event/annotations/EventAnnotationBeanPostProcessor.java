@@ -46,11 +46,13 @@ public class EventAnnotationBeanPostProcessor implements BeanPostProcessor {
 
             @Override
             public void doWith(Method method) throws IllegalArgumentException, IllegalAccessException {
-                MotechListener annotation;
                 Method methodOfOriginalClassIfProxied = ReflectionUtils.findMethod(AopUtils.getTargetClass(bean), method.getName(), method.getParameterTypes());
-                if (methodOfOriginalClassIfProxied != null && (annotation = methodOfOriginalClassIfProxied.getAnnotation(MotechListener.class)) != null) {
+                MotechListener annotation = methodOfOriginalClassIfProxied.getAnnotation(MotechListener.class);
+
+                if (methodOfOriginalClassIfProxied != null && annotation != null) {
                     final List<String> subjects = Arrays.asList(annotation.subjects());
                     MotechListenerAbstractProxy proxy = null;
+
                     switch (annotation.type()) {
                         case ORDERED_PARAMETERS:
                             proxy = new MotechListenerOrderedParametersProxy(beanName, bean, method);
@@ -62,9 +64,13 @@ public class EventAnnotationBeanPostProcessor implements BeanPostProcessor {
                             proxy = new MotechListenerNamedParametersProxy(beanName, bean, method);
                             break;
                     }
+
                     logger.info(String.format("Registering listener type(%20s) bean: %s , method: %s, for subjects: %s", annotation.type().toString(), beanName, method.toGenericString(), subjects));
                     EventListenerRegistry eventListenerRegistry = Context.getInstance().getEventListenerRegistry();
-                    if (eventListenerRegistry != null) eventListenerRegistry.registerListener(proxy, subjects);
+
+                    if (eventListenerRegistry != null) {
+                        eventListenerRegistry.registerListener(proxy, subjects);
+                    }
                 }
             }
         });
