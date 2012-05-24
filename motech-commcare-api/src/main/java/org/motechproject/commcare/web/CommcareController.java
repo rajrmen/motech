@@ -113,14 +113,6 @@ public class CommcareController  {
 				motechCaseEvent = caseEvent.toMotechEventWihoutData();
 			}
 			
-			for (Class<?> i : outboundEventGateway.getClass().getInterfaces()) {
-				System.out.println(i.getName());
-				Method m[] = i.getDeclaredMethods();
-				for (int j = 0; j < m.length; j++) {
-					System.out.println(m[j].getName() + " " + m[j].getTypeParameters());
-				}
-				
-			}
 			outboundEventGateway.sendEventMessage(motechCaseEvent);
 		} else {
 			System.out.println("Case null");
