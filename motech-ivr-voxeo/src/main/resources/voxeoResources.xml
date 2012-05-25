@@ -47,5 +47,8 @@
             <entry key="Host" value="localhost"/>
         </osgi:service-properties>
     </osgi:service>
+    
+    <bean class="org.motechproject.server.event.annotations.EventAnnotationBeanPostProcessor" />
+    
 
 </beans>

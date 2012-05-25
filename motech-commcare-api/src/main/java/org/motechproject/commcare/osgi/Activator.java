@@ -84,6 +84,7 @@ public class Activator implements BundleActivator {
     }
 
     public void stop(BundleContext context) throws Exception {
+    	
         this.tracker.close();
 
         if (httpService != null) {
@@ -115,9 +116,6 @@ public class Activator implements BundleActivator {
             } finally {
                 Thread.currentThread().setContextClassLoader(old);
             }
-
-            // register all annotated handlers
-            EventAnnotationBeanPostProcessor.registerHandlers(BeanFactoryUtils.beansOfTypeIncludingAncestors(dispatcherServlet.getWebApplicationContext(), Object.class));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

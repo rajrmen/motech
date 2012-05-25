@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
+import org.springframework.beans.factory.config.DestructionAwareBeanPostProcessor;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ReflectionUtils;
 
@@ -21,7 +22,7 @@ import java.util.Map;
  * @author yyonkov
  */
 @Component
-public class EventAnnotationBeanPostProcessor implements BeanPostProcessor {
+public class EventAnnotationBeanPostProcessor implements DestructionAwareBeanPostProcessor {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /* (non-Javadoc)
@@ -85,4 +86,15 @@ public class EventAnnotationBeanPostProcessor implements BeanPostProcessor {
             processor.postProcessAfterInitialization(entry.getValue(), entry.getKey());
         }
     }
+
+	@Override
+	public void postProcessBeforeDestruction(Object bean, String beanName)
+			throws BeansException {
+		System.out.println("This bean is being destroyed " + beanName);
+        EventListenerRegistry eventListenerRegistry = Context.getInstance().getEventListenerRegistry();
+
+        if (eventListenerRegistry != null) {
+            eventListenerRegistry.clearListenersForBean(beanName);
+        }
+	}
 }

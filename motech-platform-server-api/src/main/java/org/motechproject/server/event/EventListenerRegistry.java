@@ -143,4 +143,9 @@ public class EventListenerRegistry {
 
         return ret;
     }
+
+	public void clearListenersForBean(String beanName) {
+		listenerTree.removeAllListeners(beanName);
+		
+	}
 }
