@@ -2,7 +2,7 @@ package org.motechproject.ivr.kookoo.domain;
 
 import org.ektorp.support.TypeDiscriminator;
 import org.motechproject.ivr.event.CallEvent;
-import org.motechproject.ivr.domain.CallDetailRecord;
+import org.motechproject.ivr.model.CallDetailRecord;
 import org.motechproject.model.MotechBaseDataObject;
 import org.motechproject.util.DateUtil;
 

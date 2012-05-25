@@ -42,6 +42,7 @@ import org.osgi.util.tracker.ServiceTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactoryUtils;
+import org.springframework.osgi.web.context.support.OsgiBundleXmlWebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
 
 /**
@@ -50,12 +51,17 @@ import org.springframework.web.servlet.DispatcherServlet;
  */
 public class Activator implements BundleActivator {
 	private static Logger logger = LoggerFactory.getLogger(Activator.class);
-	private static final String CONTEXT_CONFIG_LOCATION = "classpath:voxeoResources.xml";
+	private static final String CONTEXT_CONFIG_LOCATION = "voxeoResources.xml";
 	private static final String SERVLET_URL_MAPPING = "/voxeo";
 	private ServiceTracker tracker;
+    private ServiceReference httpService;
+
+    private static BundleContext bundleContext = null;
 
 	@Override
 	public void start(BundleContext context) throws Exception {
+        bundleContext = context;
+
 		this.tracker = new ServiceTracker(context,
 				HttpService.class.getName(), null) {
 			
@@ -73,16 +79,35 @@ public class Activator implements BundleActivator {
 			}
 		};
 		this.tracker.open();
+        httpService = context.getServiceReference(HttpService.class.getName());
+        if (httpService != null) {
+            HttpService service = (HttpService) context.getService(httpService);
+            serviceAdded(service);
+        }
 	}
 
 	public void stop(BundleContext context) throws Exception {
 		this.tracker.close();
+        if (httpService != null) {
+            HttpService service = (HttpService) context.getService(httpService);
+            serviceRemoved(service);
+        }
 	}
+
+    public static class VoxeoApplicationContext extends OsgiBundleXmlWebApplicationContext {
+
+        public VoxeoApplicationContext() {
+            super();
+            setBundleContext(Activator.bundleContext);
+        }
+
+    }
 
 	private void serviceAdded(HttpService service) {
 		try {
 			DispatcherServlet dispatcherServlet = new DispatcherServlet();
 			dispatcherServlet.setContextConfigLocation(CONTEXT_CONFIG_LOCATION);
+            dispatcherServlet.setContextClass(VoxeoApplicationContext.class);
 			ClassLoader old = Thread.currentThread().getContextClassLoader();
 			try {
 				Thread.currentThread().setContextClassLoader(getClass().getClassLoader());

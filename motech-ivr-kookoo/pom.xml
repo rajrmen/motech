@@ -3,13 +3,15 @@
     <parent>
         <artifactId>motech</artifactId>
         <groupId>org.motechproject</groupId>
-        <version>0.10-SNAPSHOT</version>
+        <version>0.11-SNAPSHOT</version>
     </parent>
-
+    <groupId>org.motechproject</groupId>
     <artifactId>motech-ivr-kookoo</artifactId>
+
     <name>MoTeCH IVR KooKoo</name>
+    <packaging>bundle</packaging>
     <description>KooKoo IVR Provider</description>
-    <version>0.10-SNAPSHOT</version>
+    <version>0.11-SNAPSHOT</version>
 
     <properties>
         <spring.version>3.0.5.RELEASE</spring.version>
@@ -19,14 +21,23 @@
 
     <dependencies>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>motech-platform-ivr</artifactId>
-            <version>${project.version}</version>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <version>2.5</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>motech-platform-decisiontree</artifactId>
-            <version>${project.version}</version>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.compendium</artifactId>
+            <version>4.2.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.core</artifactId>
+            <version>4.2.0</version>
+            <type>jar</type>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.ozonetel.kookoo</groupId>
@@ -126,6 +137,22 @@
             <version>20080701</version>
         </dependency>
         <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>motech-platform-server-api</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>motech-platform-ivr-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>motech-platform-decisiontree</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.powermock</groupId>
             <artifactId>powermock-module-junit4</artifactId>
             <version>1.4.9</version>
@@ -144,4 +171,58 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <version>2.3.4</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <instructions>
+                        <Bundle-Activator>
+                            org.motechproject.ivr.kookoo.Activator
+                        </Bundle-Activator>
+                        <Private-Package>
+                            org.motechproject.ivr.kookoo,
+                            com.ozonetel.kookoo;version=1.1,
+                            org.springframework.context.config,
+                            org.springframework.context.support,
+                            org.springframework.osgi.config,
+                            org.springframework.web.servlet.mvc,
+                            org.ektorp.spring,
+                            org.ektorp.impl,
+                            org.motechproject.decisiontree.model
+                        </Private-Package>
+                        <Embed-Dependency>!*</Embed-Dependency>
+                        <Embed-Transitive>true</Embed-Transitive>
+                    </instructions>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>2.5</version>
+                <executions>
+                    <execution>
+                        <id>copy-bundles</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${user.home}/.motech/bundles</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>target</directory>
+                                    <includes>
+                                        <include>*.jar</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>

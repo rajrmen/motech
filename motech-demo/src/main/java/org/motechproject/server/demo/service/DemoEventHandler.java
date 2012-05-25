@@ -31,14 +31,12 @@
  */
 package org.motechproject.server.demo.service;
 
-import org.motechproject.context.Context;
-import org.motechproject.gateway.MotechSchedulerGateway;
-import org.motechproject.ivr.domain.CallInitiationException;
+import org.motechproject.ivr.model.CallInitiationException;
+import org.motechproject.ivr.service.CallRequest;
+import org.motechproject.ivr.service.IVRService;
 import org.motechproject.model.MotechEvent;
 import org.motechproject.server.demo.EventKeys;
 import org.motechproject.server.event.annotations.MotechListener;
-import org.motechproject.ivr.service.CallRequest;
-import org.motechproject.ivr.service.IVRService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,13 +47,15 @@ public class DemoEventHandler
 {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private IVRService ivrService = Context.getInstance().getIvrService();
-    private MotechSchedulerGateway schedulerGateway = Context.getInstance().getMotechSchedulerGateway();
-
-    private String vxmlUrl;
+    private IVRService ivrService;
 
 	@MotechListener(subjects = { EventKeys.CALL_EVENT_SUBJECT })
 	public void call(MotechEvent event) {
+        if (ivrService == null ) {
+            logger.error("IVR service is not available!");
+            return;
+        }
+
 
         String phoneNumber = EventKeys.getPhoneNumber(event);
         if (null == phoneNumber || 0 == phoneNumber.length()) {
@@ -66,11 +66,19 @@ public class DemoEventHandler
         }
 
 		try {
-			CallRequest callRequest = new CallRequest(phoneNumber, 30, vxmlUrl);
+			CallRequest callRequest = new CallRequest(phoneNumber, 30, "vxml.url");
 
 			ivrService.initiateCall(callRequest);
 		} catch (CallInitiationException e) {
 			logger.error("Unable to initiate call to PhoneNumber:" + phoneNumber, e);
 		}
+    }
+
+    public IVRService getIvrService() {
+        return ivrService;
+    }
+
+    public void setIvrService(IVRService ivrService) {
+        this.ivrService = ivrService;
     }
 }

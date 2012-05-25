@@ -38,7 +38,7 @@ import org.asteriskjava.live.DefaultAsteriskServer;
 import org.asteriskjava.live.ManagerCommunicationException;
 import org.asteriskjava.live.NoSuchChannelException;
 import org.asteriskjava.live.OriginateCallback;
-import org.motechproject.ivr.domain.CallInitiationException;
+import org.motechproject.ivr.model.CallInitiationException;
 import org.motechproject.ivr.service.CallRequest;
 import org.motechproject.ivr.service.IVRService;
 import org.slf4j.Logger;

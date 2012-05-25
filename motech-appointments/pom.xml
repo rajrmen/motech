@@ -3,11 +3,11 @@
     <parent>
         <artifactId>motech</artifactId>
         <groupId>org.motechproject</groupId>
-        <version>0.10-SNAPSHOT</version>
+        <version>0.11-SNAPSHOT</version>
     </parent>
     <groupId>org.motechproject</groupId>
     <artifactId>motech-appointments</artifactId>
-    <version>0.10-SNAPSHOT</version>
+    <version>0.11-SNAPSHOT</version>
     <name>MoTeCH Appointments</name>
     <packaging>bundle</packaging>
     <description>Motech Appointments</description>
@@ -37,15 +37,21 @@
             <version>3.0.5.RELEASE</version>
         </dependency>
         <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-beans</artifactId>
+            <version>3.0.5.RELEASE</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>org.motechproject</groupId>
             <artifactId>motech-platform-server-api</artifactId>
-            <version>0.10-SNAPSHOT</version>
+            <version>0.11-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.motechproject</groupId>
             <artifactId>motech-platform-common</artifactId>
-            <version>0.10-SNAPSHOT</version>
+            <version>0.11-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -79,7 +85,7 @@
         <dependency>
             <groupId>org.motechproject</groupId>
             <artifactId>motech-appointments-api</artifactId>
-            <version>0.10-SNAPSHOT</version>
+            <version>0.11-SNAPSHOT</version>
             <type>jar</type>
         </dependency>
     </dependencies>
@@ -93,7 +99,7 @@
                 <configuration>
                     <instructions>
                         <Export-Package>
-                            org.motechproject.appointments.api;org.motechproject.appointments.api.model;org.motechproject.appointments.api.context
+                            org.motechproject.appointments.api;org.motechproject.appointments.api.model
                         </Export-Package>
                         <Bundle-Activator>
                             org.motechproject.server.appointments.Activator
@@ -101,10 +107,9 @@
                         <Private-Package>
                             org.motechproject.server.appointments.*
                         </Private-Package>
-                        <Import-Package>
-                            *;org.ektorp;org.ektorp.impl;org.ektorp.spring;resolution:=optional
-                        </Import-Package>
-                        <Embed-Dependency>!*</Embed-Dependency>
+                        <Embed-Dependency>
+                            motech-appointments-api;inline=applicationAppointmentsAPI.xml
+                        </Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>
                     </instructions>
                 </configuration>

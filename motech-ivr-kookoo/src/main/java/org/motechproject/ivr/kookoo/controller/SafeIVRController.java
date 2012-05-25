@@ -22,11 +22,11 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 
 public abstract class SafeIVRController {
-    static final String NEW_CALL_URL_ACTION = "newcall";
-    static final String GOT_DTMF_URL_ACTION = "gotdtmf";
-    static final String DIAL_URL_ACTION = "dial";
-    static final String HANGUP_URL_ACTION = "hangup";
-    static final String DISCONNECT_URL_ACTION = "disconnect";
+    static final String NEW_CALL_URL_ACTION = "/newcall";
+    static final String GOT_DTMF_URL_ACTION = "/gotdtmf";
+    static final String DIAL_URL_ACTION = "/dial";
+    static final String HANGUP_URL_ACTION = "/hangup";
+    static final String DISCONNECT_URL_ACTION = "/disconnect";
 
     protected Logger logger = Logger.getLogger(this.getClass());
     protected IVRMessage ivrMessage;

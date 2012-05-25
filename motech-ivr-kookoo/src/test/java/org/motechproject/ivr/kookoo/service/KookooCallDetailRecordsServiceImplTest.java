@@ -16,8 +16,8 @@ import org.motechproject.ivr.kookoo.KookooIVRResponseBuilder;
 import org.motechproject.ivr.kookoo.domain.KookooCallDetailRecord;
 import org.motechproject.ivr.kookoo.eventlogging.CallEventConstants;
 import org.motechproject.ivr.kookoo.repository.AllKooKooCallDetailRecords;
-import org.motechproject.ivr.domain.CallDetailRecord;
-import org.motechproject.ivr.domain.CallDirection;
+import org.motechproject.ivr.model.CallDetailRecord;
+import org.motechproject.ivr.model.CallDirection;
 import org.motechproject.model.MotechEvent;
 import org.motechproject.util.DateUtil;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -66,7 +66,7 @@ public class KookooCallDetailRecordsServiceImplTest {
         when(DateUtil.newDateTime(now.toDate())).thenReturn(now);
         when(DateUtil.setTimeZone(now)).thenReturn(now.toDateTime(DateTimeZone.forTimeZone(Calendar.getInstance().getTimeZone())));
 
-        kookooCallDetailRecordsService = new KookooCallDetailRecordsServiceImpl(allKooKooCallDetailRecords, allKooKooCallDetailRecords, eventRelay);
+        kookooCallDetailRecordsService = new KookooCallDetailRecordsServiceImpl(allKooKooCallDetailRecords, allKooKooCallDetailRecords);
         CallDetailRecord callDetailRecord = CallDetailRecord.create("85437", CallDirection.Inbound, CallDetailRecord.Disposition.ANSWERED);
         kookooCallDetailRecord = new KookooCallDetailRecord(callDetailRecord, "fdsfdsf");
         Mockito.when(allKooKooCallDetailRecords.get(callDetailRecordId)).thenReturn(kookooCallDetailRecord);

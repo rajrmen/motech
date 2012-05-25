@@ -8,7 +8,7 @@ import org.junit.Test;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mock;
 import org.motechproject.ivr.kookoo.service.KookooCallDetailRecordsService;
-import org.motechproject.ivr.domain.CallDetailRecord;
+import org.motechproject.ivr.model.CallDetailRecord;
 import org.motechproject.ivr.service.CallRequest;
 import org.motechproject.ivr.service.IVRService;
 

@@ -1,7 +1,9 @@
-/*
+package org.motechproject.ivr.kookoo.extensions;
+
+/**
  * MOTECH PLATFORM OPENSOURCE LICENSE AGREEMENT
  *
- * Copyright (c) 2011 Grameen Foundation USA.  All rights reserved.
+ * Copyright (c) 2012 Grameen Foundation USA.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -29,18 +31,27 @@
  * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
  * OF SUCH DAMAGE.
  */
-package org.motechproject.ivr.domain;
 
-/**
- * Thrown when IVR can not initiate phone call due to some issue
- */
-public class CallInitiationException extends RuntimeException {
+import org.motechproject.decisiontree.model.Tree;
+import org.motechproject.ivr.kookoo.KooKooIVRContext;
 
-    public CallInitiationException(String message) {
-        super(message);
+public class CallFlowControllerImpl implements CallFlowController {
+    @Override
+    public String urlFor(KooKooIVRContext kooKooIVRContext) {
+        return null;
     }
 
-    public CallInitiationException(String message, Throwable cause) {
-        super(message, cause);
+    @Override
+    public String decisionTreeName(KooKooIVRContext kooKooIVRContext) {
+        return null;
+    }
+
+    @Override
+    public Tree getTree(String treeName, KooKooIVRContext kooKooIVRContext) {
+        return null;
+    }
+
+    @Override
+    public void treeComplete(String treeName, KooKooIVRContext kooKooIVRContext) {
     }
 }

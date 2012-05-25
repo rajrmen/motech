@@ -43,7 +43,10 @@ import org.motechproject.server.decisiontree.service.TreeEventProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.util.Assert;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
 
@@ -57,6 +60,7 @@ import java.util.Set;
  * Spring MVC controller implementation provides method to handle HTTP requests and generate
  * VXML documents based on a Decision Tree Node model object and the corresponding Velocity template.
  */
+@Controller
 public class VxmlController extends MultiActionController {
 
     private Logger logger = LoggerFactory.getLogger((this.getClass()));
@@ -107,6 +111,7 @@ public class VxmlController extends MultiActionController {
      * Handles Decision Tree Node HTTP requests and generates a VXML document based on a Velocity template.
      * The HTTP request should contain the Tree ID, Node ID, Patient ID and Selected Transition Key (optional) parameters
      */
+    @RequestMapping(value = "/node")
     public ModelAndView node(HttpServletRequest request, HttpServletResponse response) {
         logger.info("Generating decision tree node VXML");
 

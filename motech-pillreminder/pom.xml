@@ -3,10 +3,12 @@
     <parent>
         <artifactId>motech</artifactId>
         <groupId>org.motechproject</groupId>
-        <version>0.10-SNAPSHOT</version>
+        <version>0.11-SNAPSHOT</version>
     </parent>
+    <groupId>org.motechproject</groupId>
     <artifactId>motech-pillreminder</artifactId>
     <name>MoTeCH Pill Reminder</name>
+    <version>0.11-SNAPSHOT</version>
     <packaging>bundle</packaging>
     <description>Motech Pill Reminder</description>
     <dependencies>
@@ -87,6 +89,11 @@
             <artifactId>spring-oxm-tiger</artifactId>
             <version>1.0-m2</version>
         </dependency>
+        <dependency>
+            <groupId>aopalliance</groupId>
+            <artifactId>aopalliance</artifactId>
+            <version>1.0</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
@@ -97,17 +104,19 @@
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
-                        <Export-Package>org.motechproject.pillreminder.api;org.motechproject.pillreminder.api.model
+                        <Export-Package>
+                            org.motechproject.pillreminder.api,
+                            org.motechproject.pillreminder.api.model
                         </Export-Package>
                         <Bundle-Activator>
                             org.motechproject.server.pillreminder.Activator
                         </Bundle-Activator>
                         <Private-Package>
-                            org.motechproject.server.pillreminder.*
+                            org.ektorp.spring,
+                            org.ektorp.impl,
+                            org.motechproject.server.pillreminder,
+                            org.springframework.context.config
                         </Private-Package>
-                        <Import-Package>
-                            *;org.motechproject.context;org.ektorp;org.ektorp.impl;org.ektorp.spring;resolution:=optional
-                        </Import-Package>
                         <Embed-Dependency>!*</Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>
                     </instructions>

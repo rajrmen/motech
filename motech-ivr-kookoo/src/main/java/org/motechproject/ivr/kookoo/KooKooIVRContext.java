@@ -3,8 +3,8 @@ package org.motechproject.ivr.kookoo;
 import org.apache.commons.lang.StringUtils;
 import org.motechproject.ivr.domain.CallSessionRecord;
 import org.motechproject.ivr.kookoo.eventlogging.CallEventConstants;
-import org.motechproject.ivr.domain.CallDirection;
-import org.motechproject.ivr.domain.IVRStatus;
+import org.motechproject.ivr.model.CallDirection;
+import org.motechproject.ivr.model.IVRStatus;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

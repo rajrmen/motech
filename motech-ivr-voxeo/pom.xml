@@ -3,11 +3,11 @@
 	<parent>
 		<artifactId>motech</artifactId>
 		<groupId>org.motechproject</groupId>
-		<version>0.10-SNAPSHOT</version>
+		<version>0.11-SNAPSHOT</version>
 	</parent>
 	<groupId>org.motechproject</groupId>
 	<artifactId>motech-ivr-voxeo</artifactId>
-	<version>0.10-SNAPSHOT</version>
+	<version>0.11-SNAPSHOT</version>
 	<name>MoTeCH IVR Voxeo</name>
 	<packaging>bundle</packaging>
 	<description>Voxeo IVR Provider</description>
@@ -49,7 +49,7 @@
         </dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>motech-platform-ivr</artifactId>
+			<artifactId>motech-platform-ivr-api</artifactId>
 			<version>${project.version}</version>
 			<scope>provided</scope>
 		</dependency>
@@ -70,11 +70,6 @@
                 </exclusion>
             </exclusions>
 		</dependency>
-        <dependency>
-            <groupId>commons-httpclient</groupId>
-            <artifactId>commons-httpclient</artifactId>
-            <version>3.1</version>
-        </dependency>
         <dependency>
             <groupId>org.mortbay.jetty</groupId>
             <artifactId>jetty</artifactId>
@@ -105,11 +100,16 @@
                             org.motechproject.server.voxeo.Activator
                         </Bundle-Activator>
 						<Private-Package>
-                            org.motechproject.server.voxeo.*
+                            org.motechproject.server.voxeo.*,
+                            org.motechproject.server.verboice.*,
+                            org.springframework.context.config,
+                            org.springframework.context.support,
+                            org.springframework.osgi.config,
+                            org.springframework.web.servlet.config,
+                            org.springframework.web.servlet.mvc,
+                            org.ektorp.spring,
+                            org.ektorp.impl
                         </Private-Package>
-						<Import-Package>
-							*;org.ektorp;org.ektorp.impl;org.ektorp.spring;resolution:=optional
-                        </Import-Package>
 						<Embed-Dependency>!*</Embed-Dependency>
 						<Embed-Transitive>true</Embed-Transitive>
 					</instructions>

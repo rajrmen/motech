@@ -31,8 +31,6 @@
  */
 package org.motechproject.server.appointments;
 
-import org.motechproject.appointments.api.EventKeys;
-import org.motechproject.context.Context;
 import org.motechproject.server.event.annotations.EventAnnotationBeanPostProcessor;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
@@ -52,9 +50,10 @@ import org.springframework.web.servlet.DispatcherServlet;
  */
 public class Activator implements BundleActivator {
 	private static Logger logger = LoggerFactory.getLogger(Activator.class);
-	private static final String CONTEXT_CONFIG_LOCATION = "applicationAppointments.xml";
+	private static final String CONTEXT_CONFIG_LOCATION = "classpath:applicationAppointmentsBundle.xml";
 	private static final String SERVLET_URL_MAPPING = "/appointments";
 	private ServiceTracker tracker;
+    private ServiceReference httpService;
 
 	@Override
 	public void start(BundleContext context) throws Exception {
@@ -75,10 +74,19 @@ public class Activator implements BundleActivator {
 			}
 		};
 		this.tracker.open();
+        httpService = context.getServiceReference(HttpService.class.getName());
+        if (httpService != null) {
+            HttpService service = (HttpService) context.getService(httpService);
+            serviceAdded(service);
+        }
 	}
 
 	public void stop(BundleContext context) throws Exception {
 		this.tracker.close();
+        if (httpService != null) {
+            HttpService service = (HttpService) context.getService(httpService);
+            serviceRemoved(service);
+        }
 	}
 
 	private void serviceAdded(HttpService service) {

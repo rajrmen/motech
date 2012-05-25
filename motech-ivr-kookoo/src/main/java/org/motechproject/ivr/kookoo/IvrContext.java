@@ -1,6 +1,6 @@
 package org.motechproject.ivr.kookoo;
 
-import org.motechproject.ivr.domain.CallDirection;
+import org.motechproject.ivr.model.CallDirection;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;

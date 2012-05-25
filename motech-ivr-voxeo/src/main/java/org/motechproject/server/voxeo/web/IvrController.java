@@ -4,7 +4,7 @@ import org.ektorp.UpdateConflictException;
 import org.motechproject.context.EventContext;
 import org.motechproject.event.EventRelay;
 import org.motechproject.ivr.event.IVREventDelegate;
-import org.motechproject.ivr.domain.CallDetailRecord;
+import org.motechproject.ivr.model.CallDetailRecord;
 import org.motechproject.ivr.service.CallRequest;
 import org.motechproject.ivr.service.IVRService;
 import org.motechproject.model.MotechEvent;
@@ -28,7 +28,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * IVR Event handler for Voxeo handles flash and incoming call events and records it in  {@link PhoneCall}
+ * IVR Event handler for Voxeo handles flash and incoming call events and records it in  {@link org.motechproject.server.voxeo.domain.PhoneCall PhoneCall}
  */
 @Controller
 public class IvrController extends MultiActionController {
@@ -66,6 +66,7 @@ public class IvrController extends MultiActionController {
      * @param response
      * @return
      */
+    @RequestMapping(value = "/incoming")
     public ModelAndView incoming(HttpServletRequest request, HttpServletResponse response) {
         response.setContentType("text/plain");
         response.setCharacterEncoding("UTF-8");
@@ -124,6 +125,7 @@ public class IvrController extends MultiActionController {
         return mav;
     }
 
+    @RequestMapping(value = "/outgoing")
     public ModelAndView outgoing(HttpServletRequest request, HttpServletResponse response) {
         response.setContentType("text/plain");
         response.setCharacterEncoding("UTF-8");

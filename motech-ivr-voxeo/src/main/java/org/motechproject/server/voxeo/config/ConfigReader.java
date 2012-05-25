@@ -1,7 +1,10 @@
 package org.motechproject.server.voxeo.config;
 import com.google.gson.reflect.TypeToken;
+import org.motechproject.MotechException;
 import org.motechproject.dao.MotechJsonReader;
 import org.springframework.stereotype.Component;
+
+import java.io.InputStream;
 
 /**
  * JSON based Configuration file reader.
@@ -14,7 +17,13 @@ public class ConfigReader {
      * @return VoxeoConfig object with configuration from json file.
      */
     public VoxeoConfig getConfig(String filename) {
-        return (VoxeoConfig) new MotechJsonReader().readFromFile(filename, new TypeToken<VoxeoConfig>() {
+        InputStream stream = getClass().getResourceAsStream(filename);
+
+        if (stream == null) {
+            throw new MotechException("File not found in classpath: " + filename);
+        }
+
+        return (VoxeoConfig) new MotechJsonReader().readFromStream(stream, new TypeToken<VoxeoConfig>() {
         }.getType());
     }
 }

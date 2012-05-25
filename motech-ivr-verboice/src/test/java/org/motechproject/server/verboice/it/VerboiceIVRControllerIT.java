@@ -3,9 +3,9 @@ package org.motechproject.server.verboice.it;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.motechproject.server.verboice.VerboiceIVRController;
 import org.motechproject.server.verboice.VerboiceIVRService;
 import org.motechproject.server.verboice.domain.VerboiceHandler;
+import org.motechproject.server.verboice.web.VerboiceIVRController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -20,7 +20,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"/ivrVerboiceContext.xml"})
+@ContextConfiguration(locations = {"/ivrVerboiceTestContext.xml"})
 public class VerboiceIVRControllerIT {
     @Autowired
     private VerboiceIVRService verboiceIVRService;

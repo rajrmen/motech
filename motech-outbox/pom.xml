@@ -4,11 +4,11 @@
 	<parent>
 		<artifactId>motech</artifactId>
 		<groupId>org.motechproject</groupId>
-		<version>0.10-SNAPSHOT</version>
+		<version>0.11-SNAPSHOT</version>
 	</parent>
 	<groupId>org.motechproject</groupId>
 	<artifactId>motech-outbox</artifactId>
-	<version>0.10-SNAPSHOT</version>
+	<version>0.11-SNAPSHOT</version>
 	<name>MoTeCH Outbox</name>
 	<packaging>bundle</packaging>
 	<dependencies>
@@ -85,16 +85,21 @@
 				<extensions>true</extensions>
 				<configuration>
 					<instructions>
-                        <Export-Package>org.motechproject.outbox.api;org.motechproject.outbox.api.model;org.motechproject.outbox.api.context</Export-Package>
-						<Bundle-Activator>
+                        <Export-Package>
+                            org.motechproject.outbox.api,
+                            org.motechproject.outbox.api.model,
+                            org.motechproject.outbox.api.context
+                        </Export-Package>
+                        <Bundle-Activator>
                             org.motechproject.server.outbox.Activator
                         </Bundle-Activator>
-						<Private-Package>
-							org.motechproject.server.outbox.*
+                        <Private-Package>
+                            org.motechproject.server.outbox.*,
+                            org.motechproject.outbox.api.service.*,
+                            org.motechproject.outbox.api.repository,
+                            org.motechproject.outbox.api.domain,
+                            org.motechproject.outbox.api.contract
                         </Private-Package>
-						<Import-Package>
-							*;org.ektorp;org.ektorp.impl;org.ektorp.spring;resolution:=optional
-                        </Import-Package>
 						<Embed-Dependency>!*</Embed-Dependency>
 						<Embed-Transitive>true</Embed-Transitive>
 					</instructions>

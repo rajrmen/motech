@@ -1,22 +1,21 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <artifactId>motech</artifactId>
         <groupId>org.motechproject</groupId>
-        <version>0.10-SNAPSHOT</version>
+        <version>0.11-SNAPSHOT</version>
     </parent>
 
-    <artifactId>motech-platform-ivr</artifactId>
-    <name>MoTeCH Platform Server IVR</name>
-    <version>0.10-SNAPSHOT</version>
+    <artifactId>motech-platform-ivr-api</artifactId>
+    <name>MoTeCH Platform Server IVR API</name>
+    <version>0.11-SNAPSHOT</version>
 
     <properties>
         <spring.version>3.0.5.RELEASE</spring.version>
     </properties>
 
     <dependencies>
-        <dependency>
+	    <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>motech-platform-common</artifactId>
             <version>${project.version}</version>
@@ -66,5 +65,21 @@
             <version>2.6</version>
             <scope>provided</scope>
         </dependency>
-    </dependencies>
+	</dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.1</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

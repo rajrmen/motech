@@ -1,7 +1,7 @@
 /*
  * MOTECH PLATFORM OPENSOURCE LICENSE AGREEMENT
  *
- * Copyright (c) 2011 Grameen Foundation USA.  All rights reserved.
+ * Copyright (c) 2012 Grameen Foundation USA.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -68,6 +68,8 @@ public class OsgiFrameworkService implements ApplicationContextAware {
     private List<BundleLoader> bundleLoaders;
     
     private Map<String, ClassLoader> bundleClassLoaderLookup = new HashMap<String, ClassLoader>();
+    
+    private Map<String, String> bundleLocationMapping = new HashMap<String, String>();
 
 	public static final String BUNDLE_ACTIVATOR_HEADER = "Bundle-Activator";
 
@@ -134,22 +136,18 @@ public class OsgiFrameworkService implements ApplicationContextAware {
      * @param bundleSymbolicName
      * @return The ClassLoader of the bundle
      */
-    public ClassLoader getClassLoaderBySymbolicName(String bundleSymbolicName){
+    public ClassLoader getClassLoaderBySymbolicName(String bundleSymbolicName) {
         return bundleClassLoaderLookup.get(bundleSymbolicName);
     }
-    
-    /**
-     * 
-     * @return
-     */
+
+    public String getBundleLocationByBundleId(String bundleId) {
+        return bundleLocationMapping.get(bundleId);
+    }
+
     public Map<String, ClassLoader> getBundleClassLoaderLookup() {
 		return bundleClassLoaderLookup;
 	}    
-    
-    /**
-     * @param bundle
-     * @throws Exception
-     */
+
     private void storeClassCloader(Bundle bundle) throws Exception {
         String key = bundle.getSymbolicName();
         String activator = (String)bundle.getHeaders().get(BUNDLE_ACTIVATOR_HEADER);
@@ -158,6 +156,10 @@ public class OsgiFrameworkService implements ApplicationContextAware {
             Class activatorClass = bundle.loadClass(activator);
             if (activatorClass != null) {
                 bundleClassLoaderLookup.put(key, activatorClass.getClassLoader());
+                String bundleLocation = bundle.getLocation();
+                if (bundleLocation.startsWith("file:")) { // we do not want any jndi locations
+                    bundleLocationMapping.put(bundle.getBundleId() + ".0", bundleLocation);
+                }
             }
         }
     }
@@ -243,4 +245,26 @@ public class OsgiFrameworkService implements ApplicationContextAware {
         this.bundleLoaders = bundleLoaders;
     }
 
+    public String getInternalBundleFolder() {
+        return internalBundleFolder;
+    }
+
+    public String getExternalBundleFolder() {
+        return externalBundleFolder;
+    }
+    
+    public List<JarInformation> getBundledModules() {
+        ServletContext servletContext = ((WebApplicationContext) applicationContext).getServletContext();
+        JarInformationHandler jarsHandler = new JarInformationHandler(servletContext.getRealPath("/"));
+        jarsHandler.initHandler();
+        return jarsHandler.getJarList();
+    }
+    
+    public List<BundleInformation> getExternalBundles() {
+        List<BundleInformation> bundles = new ArrayList<BundleInformation>();
+        for (Bundle bundle : osgiFramework.getBundleContext().getBundles()) {
+            bundles.add(new BundleInformation(bundle));
+        }
+        return bundles;
+    }
 }

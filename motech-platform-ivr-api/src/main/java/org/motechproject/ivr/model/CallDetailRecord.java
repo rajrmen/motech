@@ -1,4 +1,4 @@
-package org.motechproject.ivr.domain;
+package org.motechproject.ivr.model;
 
 import org.motechproject.ivr.event.CallEvent;
 import org.motechproject.util.DateUtil;
@@ -11,8 +11,8 @@ import static org.motechproject.util.DateUtil.newDateTime;
 import static org.motechproject.util.DateUtil.setTimeZone;
 
 /**
- * Call Detail Record represents call events and data captured in a call along with call metrics.
- */
+* Call Detail Record represents call events and data captured in a call along with call metrics.
+*/
 public class CallDetailRecord {
     /**
      * Call status

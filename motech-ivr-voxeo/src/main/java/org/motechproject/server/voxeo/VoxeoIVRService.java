@@ -35,8 +35,8 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.methods.GetMethod;
-import org.motechproject.ivr.domain.CallDetailRecord;
-import org.motechproject.ivr.domain.CallInitiationException;
+import org.motechproject.ivr.model.CallDetailRecord;
+import org.motechproject.ivr.model.CallInitiationException;
 import org.motechproject.ivr.service.CallRequest;
 import org.motechproject.ivr.service.IVRService;
 import org.motechproject.server.voxeo.config.ConfigReader;
@@ -68,7 +68,7 @@ public class VoxeoIVRService implements IVRService
     public static final String SUCCESS = "success";
     private static Logger log = LoggerFactory.getLogger(VoxeoIVRService.class);
 
-    @Autowired
+    @Autowired(required = false)
     private AllPhoneCalls allPhoneCalls;
 
     private ConfigReader configReader;

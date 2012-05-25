@@ -12,8 +12,8 @@ import org.motechproject.ivr.kookoo.KookooCallbackRequest;
 import org.motechproject.ivr.kookoo.KookooRequest;
 import org.motechproject.ivr.kookoo.extensions.CallFlowController;
 import org.motechproject.ivr.kookoo.service.KookooCallDetailRecordsService;
-import org.motechproject.ivr.domain.CallDetailRecord;
-import org.motechproject.ivr.domain.CallDirection;
+import org.motechproject.ivr.model.CallDetailRecord;
+import org.motechproject.ivr.model.CallDirection;
 import org.motechproject.ivr.service.IVRService;
 import org.motechproject.ivr.service.IVRSessionManagementService;
 

@@ -39,6 +39,9 @@ import org.motechproject.outbox.api.domain.VoiceMessageType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
 
@@ -49,6 +52,7 @@ import javax.servlet.http.HttpServletResponse;
  * Spring MVC controller implementation provides method to handle HTTP requests and generate
  * VXML documents based on stored in outbox objects and the corresponding Velocity template
  */
+@Controller
 public class VxmlOutboxController extends MultiActionController {
 
     private Logger logger = LoggerFactory.getLogger((this.getClass()));
@@ -78,8 +82,9 @@ public class VxmlOutboxController extends MultiActionController {
      * <p></p>
      * <p></p>
      * URL to request appointment reminder VoiceXML:
-     * http://<host>:<port>/<motech-platform-server>/module/outbox/vxml/outboxMessage?mId=<messageId>
+     * http://{host}:{port}/{motech-platform-server{/module/outbox/vxml/outboxMessage?mId={messageId}
      */
+    @RequestMapping(value = "/vxml/outboxMessage")
     public ModelAndView outboxMessage(HttpServletRequest request, HttpServletResponse response) {
         logger.info("Generate appointment reminder VXML");
 
@@ -167,6 +172,7 @@ public class VxmlOutboxController extends MultiActionController {
 
     }
 
+    @RequestMapping(value = "/vxml/messageMenu")
     public ModelAndView messageMenu(HttpServletRequest request, HttpServletResponse response) {
         logger.info("Generating the message menu VXML...");
 
@@ -232,6 +238,7 @@ public class VxmlOutboxController extends MultiActionController {
 
     }
 
+    @RequestMapping(value = "/vxml/save")
     public ModelAndView save(HttpServletRequest request, HttpServletResponse response) {
         logger.info("Saving messageL...");
 
@@ -296,8 +303,9 @@ public class VxmlOutboxController extends MultiActionController {
      * <p></p>
      * <p></p>
      * URL to request a saved VoiceXML message from outbox :
-     * http://<host>:<port>/<motech-platform-server>/module/outbox/vxml/remove?mId=$message.id&ln=$language>
+     * http://{host}:{port}>/{motech-platform-server}>/module/outbox/vxml/remove?mId=$message.id&ln={language}
      */
+     @RequestMapping(value = "/vxml/remove")
      public ModelAndView remove(HttpServletRequest request, HttpServletResponse response) {
         logger.info("Removing saved message message...");
 
@@ -355,8 +363,9 @@ public class VxmlOutboxController extends MultiActionController {
      * <p></p>
      * <p></p>
      * URL to request a saved VoiceXML message from outbox :
-     * http://<host>:<port>/<motech-platform-server>/module/outbox/vxml/savedMessage>
+     * http://{host}:{port}/{motech-platform-server}/module/outbox/vxml/savedMessage
      */
+    @RequestMapping(value = "/vxml/savedMessage")
     public ModelAndView savedMessage(HttpServletRequest request, HttpServletResponse response) {
         logger.info("Generate VXML for the next saved in the outbox message");
 
