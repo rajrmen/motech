@@ -29,13 +29,13 @@ public class AllStringContentsIT {
     @Before
     public void setUp() {
         stringContent = new StringContent("language", "name", "value");
-
+        couchDbConnector.create(stringContent);
     }
+   
 
     @Test
     public void shouldAddStringContent() throws CMSLiteException {
         allStringContents.addContent(stringContent);
-
         StringContent fetchedContent = couchDbConnector.get(StringContent.class, stringContent.getId());
         assertNotNull(fetchedContent);
         assertEquals(stringContent.getName(), fetchedContent.getName());
@@ -51,57 +51,46 @@ public class AllStringContentsIT {
         metadata.put("duration", "100");
         stringContent = new StringContent("language", "name", "value", metadata);
         allStringContents.addContent(stringContent);
-
+        couchDbConnector.create(stringContent);
         StringContent fetchedContent = couchDbConnector.get(StringContent.class, stringContent.getId());
         assertNotNull(fetchedContent);
         Map<String,String> savedMetaData = stringContent.getMetadata();
         assertEquals(savedMetaData.size(),1 );
         assertEquals(savedMetaData.get("duration"), "100");
-
-        couchDbConnector.delete(fetchedContent);
     }
-
+    @Test
+    public void shouldGetStringContent() {
+        StringContent fetchedContent = allStringContents.getContent(stringContent.getLanguage(), stringContent.getName());
+        assertNotNull(fetchedContent);
+        assertEquals(stringContent.getName(), fetchedContent.getName());
+        assertEquals(stringContent.getLanguage(), fetchedContent.getLanguage());
+        assertEquals(stringContent.getValue(), fetchedContent.getValue());
+    }
+    
     @Test
     public void shouldUpdateStringContent() throws CMSLiteException {
         allStringContents.addContent(stringContent);
-
         StringContent fetchedContent = couchDbConnector.get(StringContent.class, stringContent.getId());
         assertNotNull(fetchedContent);
         assertEquals(stringContent.getName(), fetchedContent.getName());
         assertEquals(stringContent.getLanguage(), fetchedContent.getLanguage());
         assertEquals(stringContent.getValue(), fetchedContent.getValue());
 
-        StringContent newStringContent = new StringContent("language", "name", "newValue");
-
-        allStringContents.addContent(newStringContent);
-        fetchedContent = couchDbConnector.get(StringContent.class, stringContent.getId());
-        assertNotNull(fetchedContent);
-        assertEquals(newStringContent.getName(), fetchedContent.getName());
-        assertEquals(newStringContent.getLanguage(), fetchedContent.getLanguage());
-        assertEquals(newStringContent.getValue(), fetchedContent.getValue());
-
-        couchDbConnector.delete(fetchedContent);
-
-    }
-
-    @Test
-    public void shouldGetStringContent() {
+        stringContent = new StringContent("language", "name", "newValue");
         couchDbConnector.create(stringContent);
-
-        StringContent fetchedContent = allStringContents.getContent(stringContent.getLanguage(), stringContent.getName());
+        allStringContents.addContent(stringContent);
+        fetchedContent = couchDbConnector.get(StringContent.class, stringContent.getId());
         assertNotNull(fetchedContent);
         assertEquals(stringContent.getName(), fetchedContent.getName());
         assertEquals(stringContent.getLanguage(), fetchedContent.getLanguage());
         assertEquals(stringContent.getValue(), fetchedContent.getValue());
-
-        couchDbConnector.delete(fetchedContent);
+        couchDbConnector.delete(stringContent);        
     }
 
     @Test
     public void shouldReturnTrueIfStringContentAvailable() throws CMSLiteException {
         allStringContents.addContent(stringContent);
         assertTrue(allStringContents.isContentAvailable(stringContent.getLanguage(), stringContent.getName()));
-        couchDbConnector.delete(stringContent);
     }
 
     @Test
@@ -109,5 +98,19 @@ public class AllStringContentsIT {
         allStringContents.addContent(stringContent);
         assertFalse(allStringContents.isContentAvailable("en", "unknownContent"));
 	    couchDbConnector.delete(stringContent);
+    }
+    
+    @Test
+    public void shouldReturnNullWhenLanguageOrNameNotPresent() {
+        StringContent sContent = allStringContents.getContent("notALanguage", "notAName");
+        assertNull(sContent);
+    }
+    
+    @Test
+    public void shouldNotRetrieveAResourceIfCaseDoesNotMatch() throws CMSLiteException {
+    	allStringContents.addContent(stringContent);   	
+        StringContent sContent = allStringContents.getContent("Language", "Name");
+        assertNull(sContent);
+        couchDbConnector.delete(stringContent);
     }
 }
