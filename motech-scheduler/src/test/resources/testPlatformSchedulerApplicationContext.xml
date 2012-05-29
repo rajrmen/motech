@@ -9,6 +9,5 @@
         <property name="ignoreUnresolvablePlaceholders" value="true"/>
     </bean>
 
-    <import resource="classpath:applicationPlatformScheduler.xml"/>
     <import resource="classpath:applicationPlatformServerAPI.xml"/>
 </beans>
