@@ -11,10 +11,12 @@
 
     <artifactId>motech-rules-api</artifactId>
     <name>MoTeCH Rules API</name>
-    <description>Motech Rules API</description>
+    <description>MoTeCH Rules API</description>
+    <packaging>bundle</packaging>
 
     <properties>
         <drools.version>5.1.1</drools.version>
+        <spring.version>3.0.5.RELEASE</spring.version>
     </properties>
 
     <dependencies>
@@ -31,14 +33,108 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
-            <version>3.0.5.RELEASE</version>
+            <version>${spring.version}</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
+            <version>${spring.version}</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.drools</groupId>-->
+            <!--<artifactId>drools-osgi-bundles</artifactId>-->
+            <!--<version>5.4.0.Final</version>-->
+            <!--<type>pom</type>-->
+        <!--</dependency>-->
         <dependency>
             <groupId>org.drools</groupId>
             <artifactId>drools-api</artifactId>
             <version>${drools.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.core</artifactId>
+            <version>4.2.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.xml.bind</groupId>
+            <artifactId>jaxb-xjc</artifactId>
+            <version>2.2.6-b31</version>
+        </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.compendium</artifactId>
+            <version>4.2.0</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <version>2.3.4</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <instructions>
+                        <Bundle-Activator>
+                            org.motechproject.rules.Activator
+                        </Bundle-Activator>
+                        <Import-Package>
+                            *,
+                            org.ektorp.spring,
+                            org.ektorp.impl
+                        </Import-Package>
+                        <Private-Package>
+                            <!--com.sun.codemodel,-->
+                            <!--com.sun.codemodel.util,-->
+                            <!--com.sun.codemodel.writer,-->
+                            com.sun.tools.xjc,
+                            <!--com.sun.istack,-->
+                            org.springframework.context.config,
+                            org.springframework.osgi.config,
+                            org.motechproject.rules.domain,
+                            org.motechproject.rules.repository
+                        </Private-Package>
+                        <Embed-Dependency>!*</Embed-Dependency>
+                        <Embed-Transitive>true</Embed-Transitive>
+                    </instructions>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>2.5</version>
+                <executions>
+                    <execution>
+                        <id>copy-bundles</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${user.home}/.motech/bundles</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>target</directory>
+                                    <includes>
+                                        <include>*.jar</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>

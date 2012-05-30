@@ -67,7 +67,7 @@ public class RuleBundleLoaderTest {
         when(bundle.findEntries(ruleFolder, "*", false)).thenReturn(Collections.enumeration(urls));
         when(bundle.getSymbolicName()).thenReturn(bundleSymbolicName);
         
-        KnowledgeBaseManager kbm = mock(KnowledgeBaseManager.class);
+        KnowledgeBaseManagerInterface kbm = mock(KnowledgeBaseManagerInterface.class);
 
         doAnswer(new Answer() {
             public Object answer(InvocationOnMock invocation) throws IOException {

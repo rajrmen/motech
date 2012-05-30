@@ -41,7 +41,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class AllRules extends MotechBaseRepository<Rule> {
     @Autowired
-    public AllRules(@Qualifier("ruleDatabase") CouchDbConnector db) {
+    public AllRules(@Qualifier("rulesDatabase") CouchDbConnector db) {
         super(Rule.class, db);
     }
 }

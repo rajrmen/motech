@@ -39,7 +39,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.felix.framework.ServiceRegistry;
+import org.motechproject.rules.Activator;
 import org.motechproject.server.osgi.OsgiFrameworkService;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,17 +62,17 @@ public class FilesystemRuleLoader {
     private String externalRuleFolder;
 
 	@Autowired
-    private KnowledgeBaseManager knowledgeBaseManager;
+    private KnowledgeBaseManagerInterface knowledgeBaseManager;
     
-    @Autowired
-    private OsgiFrameworkService osgiFrameworkService;
+//    @Autowired
+//    private OsgiFrameworkService osgiFrameworkService;
 
     /**
      * Load rule files from the internal and external rule folders
      * @throws Exception
      */
 	public void load() throws Exception {
-    	List<File> ruleFiles = new ArrayList<File>();
+        List<File> ruleFiles = new ArrayList<File>();
     	if (internalRuleFolder != null) {
     		File[] internalRuleFiles = new File(URLDecoder.decode(getClass().getResource(internalRuleFolder).getFile(), "UTF-8")).listFiles();
     		ruleFiles.addAll(Arrays.asList(internalRuleFiles));
@@ -84,10 +88,10 @@ public class FilesystemRuleLoader {
 			}
 		}
         
-        Map<String, ClassLoader> bundleClassLoaderLookup = osgiFrameworkService.getBundleClassLoaderLookup();
+//        Map<String, ClassLoader> bundleClassLoaderLookup = osgiFrameworkService.getBundleClassLoaderLookup();
         List<ClassLoader> classLoaders = new ArrayList<ClassLoader>();
         classLoaders.add(Thread.currentThread().getContextClassLoader());
-        classLoaders.addAll(bundleClassLoaderLookup.values());
+//        classLoaders.addAll(bundleClassLoaderLookup.values());
         
         for (File file : ruleFiles) {
             if (file.getName().toLowerCase().endsWith(".drl")) {
@@ -109,11 +113,11 @@ public class FilesystemRuleLoader {
     	this.externalRuleFolder = externalRuleFolder;
     }
 
-    public void setKnowledgeBaseManager(KnowledgeBaseManager knowledgeBaseManager) {
+    public void setKnowledgeBaseManager(KnowledgeBaseManagerInterface knowledgeBaseManager) {
         this.knowledgeBaseManager = knowledgeBaseManager;
     }
     
-    public void setOsgiFrameworkService(OsgiFrameworkService osgiFrameworkService) {
-    	this.osgiFrameworkService = osgiFrameworkService;
-    }
+//    public void setOsgiFrameworkService(OsgiFrameworkService osgiFrameworkService) {
+//    	this.osgiFrameworkService = osgiFrameworkService;
+//    }
 }

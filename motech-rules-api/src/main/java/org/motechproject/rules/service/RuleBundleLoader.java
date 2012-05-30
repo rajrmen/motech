@@ -55,7 +55,7 @@ public class RuleBundleLoader implements BundleLoader {
     private String ruleFolder = "/rules";
     
     @Autowired
-    private KnowledgeBaseManager knowledgeBaseManager;
+    private KnowledgeBaseManagerInterface knowledgeBaseManager;
 
     @SuppressWarnings("unchecked")
     @Override
@@ -77,7 +77,7 @@ public class RuleBundleLoader implements BundleLoader {
         this.ruleFolder = ruleFolder;
     }
 
-    public void setKnowledgeBaseManager(KnowledgeBaseManager knowledgeBaseManager) {
+    public void setKnowledgeBaseManager(KnowledgeBaseManagerInterface knowledgeBaseManager) {
         this.knowledgeBaseManager = knowledgeBaseManager;
     }
     

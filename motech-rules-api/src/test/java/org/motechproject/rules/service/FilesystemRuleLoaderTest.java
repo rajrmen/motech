@@ -15,9 +15,9 @@ public class FilesystemRuleLoaderTest {
     public void loadTest() throws Exception {
 		FilesystemRuleLoader loader = new FilesystemRuleLoader();
 		OsgiFrameworkService ofs = mock(OsgiFrameworkService.class);
-		KnowledgeBaseManager kbm = mock(KnowledgeBaseManager.class);
+		KnowledgeBaseManagerInterface kbm = mock(KnowledgeBaseManagerInterface.class);
 		loader.setInternalRuleFolder("/rules");
-		loader.setOsgiFrameworkService(ofs);
+//		loader.setOsgiFrameworkService(ofs);
 		loader.setKnowledgeBaseManager(kbm);
 		loader.load();
 		verify(kbm).addOrUpdateRule(any(File.class), any(ClassLoader.class));

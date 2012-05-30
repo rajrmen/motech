@@ -39,22 +39,28 @@ import java.io.StringReader;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.felix.framework.ServiceRegistry;
+import org.drools.KnowledgeBaseFactoryService;
+import org.drools.builder.*;
+import org.motechproject.rules.Activator;
 import org.motechproject.rules.domain.Rule;
 import org.apache.commons.io.IOUtils;
 import org.drools.KnowledgeBase;
 import org.drools.KnowledgeBaseConfiguration;
 import org.drools.KnowledgeBaseFactory;
-import org.drools.builder.KnowledgeBuilder;
-import org.drools.builder.KnowledgeBuilderConfiguration;
-import org.drools.builder.KnowledgeBuilderFactory;
-import org.drools.builder.ResourceType;
 import org.drools.io.ResourceFactory;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.motechproject.rules.repository.AllRules;
+import org.springframework.stereotype.Service;
 
-public class KnowledgeBaseManager {
+@Service
+public class KnowledgeBaseManager implements KnowledgeBaseManagerInterface {
 
     private static Logger logger = LoggerFactory.getLogger(KnowledgeBaseManager.class);
 
@@ -63,11 +69,18 @@ public class KnowledgeBaseManager {
     @Autowired
     private AllRules allRules;
 
+    @Autowired
+    private KnowledgeBaseFactoryService knowledgeBaseFactoryService;
+
+    @Autowired
+    private KnowledgeBuilderFactoryService knowledgeBuilderFactoryService;
+
     /**
      * 
      * @param ruleFile
      * @throws IOException
      */
+    @Override
     public void addOrUpdateRule(File ruleFile, ClassLoader... cl) throws IOException {
         addOrUpdateRule(ruleFile, null, cl);
     }
@@ -78,6 +91,7 @@ public class KnowledgeBaseManager {
      * @param bundleSymbolicName
      * @throws IOException
      */
+    @Override
     public void addOrUpdateRule(File ruleFile, String bundleSymbolicName, ClassLoader... cl) throws IOException {
         InputStream inputStream = new FileInputStream(ruleFile);
         addOrUpdateRule(ruleFile.getName(), bundleSymbolicName, inputStream, cl);
@@ -94,8 +108,22 @@ public class KnowledgeBaseManager {
      * @param inputStream
      * @throws IOException
      */
+    @Override
     public void addOrUpdateRule(String ruleId, String bundleSymbolicName, InputStream inputStream, ClassLoader... cl) throws IOException {
         logger.debug("Adding rule [" + ruleId + "," + bundleSymbolicName + "]");
+
+//        Bundle bundle = FrameworkUtil.getBundle(Activator.class);
+//        BundleContext bundleContext = bundle.getBundleContext();
+//
+//        ServiceReference serviceRef = bundleContext.getServiceReference( ServiceRegistry.class.getName() );
+//        ServiceReference serviceRefKBFS = bundleContext.getServiceReference( KnowledgeBaseFactoryService.class.getName() );
+//        ServiceRegistry registry = (ServiceRegistry) bundleContext.getService( serviceRef );
+//
+//        KnowledgeBuilderFactoryService knowledgeBuilderFactoryService = (KnowledgeBuilderFactoryService) registry.getService(bundle, serviceRefKBFS);
+
+//        KnowledgeBaseFactoryService knowledgeBaseFactoryService = registry.get( KnowledgeBaseFactoryService.class );
+//
+//        KnowledgeBuilderConfiguration kbConf = knowledgeBuilderFactoryService.newKnowledgeBuilderConfiguration( null,  getClass().getClassLoader() );
 
         Rule rule = null;
         if (allRules.contains(ruleId)) {
@@ -114,14 +142,14 @@ public class KnowledgeBaseManager {
         }
 
         // update the in-memory knowledgeBaseLookup
-        KnowledgeBuilderConfiguration kbuilderConf = KnowledgeBuilderFactory.newKnowledgeBuilderConfiguration(null, cl);
-        KnowledgeBuilder kbuilder = KnowledgeBuilderFactory.newKnowledgeBuilder(kbuilderConf);
+        KnowledgeBuilderConfiguration kbuilderConf = knowledgeBuilderFactoryService.newKnowledgeBuilderConfiguration(null, cl);
+        KnowledgeBuilder kbuilder = knowledgeBuilderFactoryService.newKnowledgeBuilder(kbuilderConf);
         kbuilder.add(ResourceFactory.newReaderResource(new StringReader(rule.getContent())), ResourceType.DRL);
         if (kbuilder.hasErrors()) {
             logger.error(kbuilder.getErrors().toString());
         } else {
-            KnowledgeBaseConfiguration kbaseConf = KnowledgeBaseFactory.newKnowledgeBaseConfiguration(null, cl);
-            KnowledgeBase kbase = KnowledgeBaseFactory.newKnowledgeBase(kbaseConf);
+            KnowledgeBaseConfiguration kbaseConf = knowledgeBaseFactoryService.newKnowledgeBaseConfiguration(null, cl);
+            KnowledgeBase kbase = knowledgeBaseFactoryService.newKnowledgeBase(kbaseConf);
             kbase.addKnowledgePackages(kbuilder.getKnowledgePackages());
             knowledgeBaseLookup.put(rule.getId(), kbase);
         }
@@ -133,6 +161,7 @@ public class KnowledgeBaseManager {
      * @param ruleId
      * @return
      */
+    @Override
     public KnowledgeBase getKnowledgeBase(String ruleId) {
     	if (ruleId != null) {
     		return knowledgeBaseLookup.get(ruleId);
@@ -141,6 +170,7 @@ public class KnowledgeBaseManager {
 		}
     }
     
+    @Override
     public void setAllRules(AllRules allRules) {
         this.allRules = allRules;
     }

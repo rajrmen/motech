@@ -4,16 +4,12 @@ import org.ektorp.CouchDbInstance;
 import org.motechproject.server.event.EventListenerRegistry;
 import org.motechproject.gateway.MotechSchedulerGateway;
 import org.motechproject.metrics.MetricsAgent;
-import org.motechproject.server.ruleengine.KnowledgeBaseManager;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class Context {
 	
 	@Autowired
 	private EventListenerRegistry eventListenerRegistry;
-	
-	@Autowired(required=false)
-	private KnowledgeBaseManager knowledgeBaseManager;
 	
 	@Autowired(required=false)
 	private MotechSchedulerGateway motechSchedulerGateway;
@@ -47,14 +43,6 @@ public class Context {
 	public void setMotechSchedulerGateway(
 			MotechSchedulerGateway motechSchedulerGateway) {
 		this.motechSchedulerGateway = motechSchedulerGateway;
-	}
-
-	public KnowledgeBaseManager getKnowledgeBaseManager() {
-		return knowledgeBaseManager;
-	}
-
-	public void setKnowledgeBaseManager(KnowledgeBaseManager knowledgeBaseManager) {
-		this.knowledgeBaseManager = knowledgeBaseManager;
 	}
 
 	public EventListenerRegistry getEventListenerRegistry() {
