@@ -10,6 +10,7 @@
             },
             {
                 "name" : "MForm-II",
+                "depends" : ["MForm-I"],
                 "fileName" :  "ANCVisit-1.xml",
                 "bean":"org.motechproject.mobileforms.api.domain.ANCVisitFormBean",
                 "validator": "org.motechproject.mobileforms.api.validator.TestANCVisitFormValidator"
