@@ -54,7 +54,7 @@ public class JsonConverterUtil {
 	}
 
 	private static void setPersonProperties(MRSPerson person, JsonNode personNode) {
-		person.birthDateEstimated(personNode.get("birthdateEstimated").getValueAsBoolean())
+		person.id(personNode.get("uuid").getValueAsText()).birthDateEstimated(personNode.get("birthdateEstimated").getValueAsBoolean())
 				.gender(personNode.get("gender").getValueAsText()).dead(personNode.get("dead").getValueAsBoolean());
 
 		try {
