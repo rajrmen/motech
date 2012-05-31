@@ -16,7 +16,7 @@
 
     <bean id="httpClient" class="org.ektorp.spring.HttpClientFactoryBean"/>
 
-    <import resource="classpath*:applicationPlatformCommon.xml"/>
+    <import resource="classpath*:applicationPlatformCommonAPI.xml"/>
 
     <bean id="couchDbInstance" class="org.ektorp.impl.StdCouchDbInstance">
         <constructor-arg ref="httpClient"/>
@@ -38,11 +38,5 @@
 
     <bean id="ivrServiceVerboice" class="org.motechproject.server.verboice.VerboiceIVRService"/>
 
-    <osgi:service id="ivrServiceOsgi" interface="org.motechproject.ivr.service.IVRService" auto-export="interfaces" ref="ivrServiceVerboice">
-        <osgi:service-properties>
-            <entry key="IvrProvider" value="Verboice"/>
-            <entry key="Host" value="localhost"/>
-        </osgi:service-properties>
-    </osgi:service>
-
+    <context:component-scan base-package="org.motechproject.server.verboice"/>
 </beans>
