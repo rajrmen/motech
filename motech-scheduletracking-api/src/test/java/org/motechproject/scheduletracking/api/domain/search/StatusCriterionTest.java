@@ -19,7 +19,7 @@ import static org.mockito.Mockito.when;
 public class StatusCriterionTest {
 
     @Test
-    public void shouldFilterByExternalId() {
+    public void shouldFilterByEnrollmentStatus() {
         Schedule schedule = new Schedule("some_schedule");
         List<Enrollment> allEnrollments = new ArrayList<Enrollment>();
         allEnrollments.add(new Enrollment(null, schedule, null, null, null, null, EnrollmentStatus.COMPLETED, null));
@@ -32,7 +32,7 @@ public class StatusCriterionTest {
     }
 
     @Test
-    public void shouldFetchByExternalIdFromDb() {
+    public void shouldFetchByEnrollmentStatusFromDb() {
         List<Enrollment> enrollments = mock(List.class);
         AllEnrollments allEnrollments = mock(AllEnrollments.class);
 

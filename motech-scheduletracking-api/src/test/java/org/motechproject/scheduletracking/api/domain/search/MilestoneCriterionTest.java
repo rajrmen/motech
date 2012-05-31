@@ -32,7 +32,7 @@ public class MilestoneCriterionTest {
     }
 
     @Test
-    public void shouldFetchBySchedule() {
+    public void shouldFetchByMilestoneName() {
         List<Enrollment> enrollments = mock(List.class);
         when(allEnrollments.findByCurrentMilestone("milestone")).thenReturn(enrollments);
 

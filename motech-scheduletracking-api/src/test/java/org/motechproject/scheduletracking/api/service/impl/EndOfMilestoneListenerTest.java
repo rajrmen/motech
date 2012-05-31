@@ -6,10 +6,12 @@ import org.mockito.Mock;
 import org.motechproject.model.MotechEvent;
 import org.motechproject.model.Time;
 import org.motechproject.scheduletracking.api.domain.Enrollment;
+import org.motechproject.scheduletracking.api.domain.EnrollmentStatus;
 import org.motechproject.scheduletracking.api.domain.Schedule;
 import org.motechproject.scheduletracking.api.events.DefaultmentCaptureEvent;
 import org.motechproject.scheduletracking.api.repository.AllEnrollments;
 
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
@@ -37,5 +39,18 @@ public class EndOfMilestoneListenerTest {
         MotechEvent event = new DefaultmentCaptureEvent("enrollment_1", "job_id").toMotechEvent();
         endOfMilestoneListener.handle(event);
         verify(allEnrollments).update(enrollment);
+    }
+    
+    @Test
+    public void shouldMarkStatusAsDefaulted(){
+    	Schedule schedule = new Schedule("new_schedule");
+        Enrollment enrollment = new Enrollment("enrollment_1", schedule, "milestone_1", weeksAgo(2), weeksAgo(2), new Time(2, 4), EnrollmentStatus.ACTIVE, null);
+        enrollment.setId("enrollment_1");
+        when(allEnrollments.get("enrollment_1")).thenReturn(enrollment);
+        assertEquals(enrollment.getStatus(), EnrollmentStatus.ACTIVE);
+        
+        MotechEvent event = new DefaultmentCaptureEvent("enrollment_1", "job_id").toMotechEvent();
+        endOfMilestoneListener.handle(event);
+        assertEquals(enrollment.getStatus(), EnrollmentStatus.DEFAULTED);
     }
 }
