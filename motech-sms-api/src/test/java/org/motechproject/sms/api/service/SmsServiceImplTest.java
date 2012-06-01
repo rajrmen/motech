@@ -60,7 +60,7 @@ public class SmsServiceImplTest {
     }
 
     @Test
-    public void shouldRaiseASendSmsEventWithMessageMulitpleRecipients() {
+    public void shouldRaiseASendSmsEventWithMessageMultipleRecipients() {
         ArrayList<String> recipients = new ArrayList<String>() {{
             add("123");
             add("456");

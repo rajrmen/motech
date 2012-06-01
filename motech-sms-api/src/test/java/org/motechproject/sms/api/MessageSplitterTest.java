@@ -32,7 +32,7 @@ public class MessageSplitterTest {
     }
 
     @Test
-    public void shouldSplitMessageInto3Parts() {
+    public void shouldSplitMessageInto6Parts() {
         List<String> parts = messageSplitter.split("this message should be split into six parts.", 16, "(%d/%d):", "..");
         assertEquals(6, parts.size());
         assertEquals("(1/6):this mes..", parts.get(0));
