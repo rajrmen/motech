@@ -1,7 +1,7 @@
 package org.motechproject.scheduler;
 
-import org.motechproject.model.MotechEvent;
 import org.motechproject.model.CronSchedulableJob;
+import org.motechproject.model.MotechEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,14 +28,8 @@ public class MotechScheduler {
     private final static String TEST_EVENT_NAME = "testEvent";
     public static final String SUBJECT = "test";
 
-    /**
-     *
-     * @param args
-     */
     public static void main(String[] args) {
-
-        AbstractApplicationContext ctx
-                = new ClassPathXmlApplicationContext(new String[]{"/applicationPlatformScheduler.xml"});
+        AbstractApplicationContext ctx = new ClassPathXmlApplicationContext("/applicationPlatformScheduler.xml");
 
         // add a shutdown hook for the above context...
         ctx.registerShutdownHook();
@@ -59,8 +53,8 @@ public class MotechScheduler {
     }
 
 
-     @Autowired
-     private MotechSchedulerService schedulerService;
+    @Autowired
+    private MotechSchedulerService schedulerService;
 
     private void scheduleTestEvent() {
 
