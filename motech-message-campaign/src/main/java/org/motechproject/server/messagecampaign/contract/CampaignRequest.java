@@ -97,7 +97,7 @@ public class CampaignRequest {
     }
 
     public Integer startOffset() {
-        return startOffset;
+        return startOffset == null ? 0 : startOffset;
     }
 
     public void setStartOffset(Integer startOffset) {
