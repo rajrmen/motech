@@ -7,6 +7,8 @@ import org.joda.time.*;
 import org.motechproject.model.DayOfWeek;
 import org.motechproject.model.Time;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -28,6 +30,14 @@ public class DateUtil {
 
     public static LocalDate newDate(int year, int month, int day) {
         return new LocalDate(DateTimeSourceUtil.SourceInstance.timeZone()).withYear(year).withMonthOfYear(month).withDayOfMonth(day);
+    }
+
+    public static Date date(String date) throws IllegalArgumentException {
+        try {
+            return new SimpleDateFormat("dd-MM-yyyy hh:mm:ss").parse(date);
+        } catch (ParseException e) {
+            throw new IllegalArgumentException(e);
+        }
     }
 
     public static DateTime newDateTime(LocalDate localDate, int hour, int minute, int second) {
