@@ -1,5 +1,7 @@
 package org.motechproject.scheduler;
 
+import com.google.gson.reflect.TypeToken;
+import org.motechproject.dao.MotechJsonReader;
 import org.motechproject.model.CronSchedulableJob;
 import org.motechproject.model.MotechEvent;
 import org.slf4j.Logger;
@@ -21,7 +23,7 @@ import java.util.Map;
  */
 public class MotechScheduler {
     private final static Logger log = LoggerFactory.getLogger(MotechSchedulerServiceImpl.class);
-    public static final String CONFIG_LOCATION = "/applicationPlatformScheduler.xml";
+    private static final String CONFIG_LOCATION = "/applicationPlatformScheduler.xml";
 
     private final static String SCHEDULE_TEST_INPUT_PARAM = "-t";
     private final static String UNSCHEDULE_TEST_INPUT_PARAM = "-c";
@@ -29,12 +31,16 @@ public class MotechScheduler {
     private final static String EVENT_MESSAGE_INPUT_PARAM = "-e";
 
     private final static String SUBJECT = "-s";
+    private final static String PARAMETERS = "-p";
 
     private final static String TEST_EVENT_NAME = "testEvent";
     private static final String TEST_SUBJECT = "test";
 
     @Autowired
     private MotechSchedulerService schedulerService;
+
+    @Autowired
+    private SchedulerFireEventGateway schedulerFireEventGateway;
 
     public static void main(String[] args) {
         AbstractApplicationContext ctx = new ClassPathXmlApplicationContext(CONFIG_LOCATION);
@@ -55,10 +61,14 @@ public class MotechScheduler {
                 } else if (EVENT_MESSAGE_INPUT_PARAM.equals(args[0])) {
                     Map<String, String> map = motechScheduler.getParams(args);
 
-                    if (map.containsKey(SUBJECT)) {
+                    if (map.containsKey(SUBJECT) && map.containsKey(PARAMETERS)) {
+                        motechScheduler.sendEventMessage(map.get(SUBJECT),
+                                motechScheduler.getEventParameters(map.get(PARAMETERS)));
+                    } else if (map.containsKey(SUBJECT)) {
                         motechScheduler.sendEventMessage(map.get(SUBJECT), null);
                     } else {
-                        log.info(String.format("Usage: java MotechScheduler %s %s", EVENT_MESSAGE_INPUT_PARAM, SUBJECT));
+                        log.info(String.format("Usage: java MotechScheduler %s %s [%s]", EVENT_MESSAGE_INPUT_PARAM,
+                                SUBJECT, PARAMETERS));
                     }
                 } else {
                     log.warn(String.format("Unknown parameter: %s - ignored", args[0]));
@@ -70,11 +80,9 @@ public class MotechScheduler {
     }
 
     public void sendEventMessage(String subject, Map<String, Object> parameters) {
-        ApplicationContext context = new ClassPathXmlApplicationContext(CONFIG_LOCATION);
-        SchedulerFireEventGateway gateway = context.getBean(SchedulerFireEventGateway.class);
         MotechEvent event = new MotechEvent(subject, parameters);
 
-        gateway.sendEventMessage(event);
+        schedulerFireEventGateway.sendEventMessage(event);
 
         log.info(String.format("Sending Motech Event Message: %s", event));
     }
@@ -110,6 +118,16 @@ public class MotechScheduler {
         }
 
         return params;
+    }
+
+    private Map<String, Object> getEventParameters(final String parametersAsJSON) {
+        Map<String, Object> map = new HashMap<String, Object>();
+        MotechJsonReader reader = new MotechJsonReader();
+
+        Object obj = reader.readFromString(parametersAsJSON, new TypeToken<Map<String, String>>(){ }.getType());
+        map.putAll((Map<String, Object>) obj);
+
+        return map;
     }
 
 }
