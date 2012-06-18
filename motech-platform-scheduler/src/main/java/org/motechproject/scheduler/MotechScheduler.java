@@ -9,6 +9,9 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,12 +29,11 @@ public class MotechScheduler {
     private final static String SCHEDULE_TEST_INPUT_PARAM = "-t";
     private final static String UNSCHEDULE_TEST_INPUT_PARAM = "-c";
 
-    private final static String EVENT_MESSAGE_INPUT_PARAM = "-e";
-
-    private final static String SUBJECT = "-s";
+    private final static String STANDALONE_PROCESS_INPUT_PARAM = "-s";
 
     private final static String TEST_EVENT_NAME = "testEvent";
-    private static final String TEST_SUBJECT = "test";
+    private static final String SUBJECT = "test";
+    private static final String CRON_EXPRESSION = "0/5 * * * * ?";
 
     @Autowired
     private MotechSchedulerService schedulerService;
@@ -52,14 +54,10 @@ public class MotechScheduler {
                     motechScheduler.scheduleTestEvent();
                 } else if (UNSCHEDULE_TEST_INPUT_PARAM.equals(args[0])) {
                     motechScheduler.unscheduleTestEvent();
-                } else if (EVENT_MESSAGE_INPUT_PARAM.equals(args[0])) {
-                    Map<String, String> map = motechScheduler.getParams(args);
+                } else if (STANDALONE_PROCESS_INPUT_PARAM.equals(args[0])) {
+                    String subject = motechScheduler.getEventSubject();
 
-                    if (map.containsKey(SUBJECT)) {
-                        motechScheduler.sendEventMessage(map.get(SUBJECT), null);
-                    } else {
-                        log.info(String.format("Usage: java MotechScheduler %s %s", EVENT_MESSAGE_INPUT_PARAM, SUBJECT));
-                    }
+                    motechScheduler.sendEventMessage(subject, null);
                 } else {
                     log.warn(String.format("Unknown parameter: %s - ignored", args[0]));
                 }
@@ -82,8 +80,8 @@ public class MotechScheduler {
     private void scheduleTestEvent() {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put(MotechSchedulerService.JOB_ID_KEY, TEST_EVENT_NAME);
-        MotechEvent motechEvent = new MotechEvent(TEST_SUBJECT, params);
-        CronSchedulableJob cronSchedulableJob = new CronSchedulableJob(motechEvent, "0/5 * * * * ?");
+        MotechEvent motechEvent = new MotechEvent(SUBJECT, params);
+        CronSchedulableJob cronSchedulableJob = new CronSchedulableJob(motechEvent, CRON_EXPRESSION);
 
         try {
             log.info(String.format("Scheduling test job: %s", cronSchedulableJob));
@@ -96,20 +94,27 @@ public class MotechScheduler {
     private void unscheduleTestEvent() {
         try {
             log.info(String.format("Unscheduling the test job: %s", TEST_EVENT_NAME));
-            schedulerService.unscheduleJob(TEST_SUBJECT, TEST_EVENT_NAME);
+            schedulerService.unscheduleJob(SUBJECT, TEST_EVENT_NAME);
         } catch (Exception e) {
             log.warn(String.format("Can not unschedule the test job: %s %s", TEST_EVENT_NAME, e.getMessage()));
         }
     }
 
-    private Map<String, String> getParams(final String[] args) {
-        Map<String, String> params = new HashMap<String, String>(args.length - 1);
+    private String getEventSubject() {
+        String subject = "";
 
-        for (int i = 1; i < args.length; i += 2) {
-            params.put(args[i], args[i + 1]);
+        try {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+
+            do {
+                System.out.print("Please enter motech event subject: ");
+                subject = reader.readLine();
+            } while (subject == null || subject.equalsIgnoreCase(""));
+        } catch (IOException e) {
+            log.error("Error: ", e);
         }
 
-        return params;
+        return subject;
     }
 
 }
