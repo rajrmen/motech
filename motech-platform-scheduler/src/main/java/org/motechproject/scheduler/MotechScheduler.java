@@ -1,7 +1,6 @@
 package org.motechproject.scheduler;
 
 import com.google.gson.reflect.TypeToken;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.motechproject.dao.MotechJsonReader;
 import org.motechproject.model.CronSchedulableJob;
 import org.motechproject.model.MotechEvent;
@@ -13,36 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.ServerSocket;
-import java.net.Socket;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.motechproject.scheduler.MotechSchedulerConstants.CONNECTION_CLOSE_INPUT_PARAM;
-import static org.motechproject.scheduler.MotechSchedulerConstants.CRON_EXPRESSION;
-import static org.motechproject.scheduler.MotechSchedulerConstants.CRON_SCHEDULABLE_JOB_CODE;
-import static org.motechproject.scheduler.MotechSchedulerConstants.CRON_SCHEDULABLE_JOB_INPUT_PARAM;
-import static org.motechproject.scheduler.MotechSchedulerConstants.END_DATE;
-import static org.motechproject.scheduler.MotechSchedulerConstants.EVENT_MESSAGE_CODE;
-import static org.motechproject.scheduler.MotechSchedulerConstants.EVENT_MESSAGE_INPUT_PARAM;
-import static org.motechproject.scheduler.MotechSchedulerConstants.PARAMETERS;
-import static org.motechproject.scheduler.MotechSchedulerConstants.PREFFIX_ERROR;
-import static org.motechproject.scheduler.MotechSchedulerConstants.REPEATING_SCHEDULABLE_JOB_CODE;
-import static org.motechproject.scheduler.MotechSchedulerConstants.REPEATING_SCHEDULABLE_JOB_INPUT_PARAM;
-import static org.motechproject.scheduler.MotechSchedulerConstants.REPEAT_COUNT;
-import static org.motechproject.scheduler.MotechSchedulerConstants.REPEAT_INTERVAL;
-import static org.motechproject.scheduler.MotechSchedulerConstants.RUN_ONCE_SCHEDULABLE_JOB_CODE;
-import static org.motechproject.scheduler.MotechSchedulerConstants.RUN_ONCE_SCHEDULABLE_JOB_INPUT_PARAM;
-import static org.motechproject.scheduler.MotechSchedulerConstants.SCHEDULE_TEST_INPUT_PARAM;
-import static org.motechproject.scheduler.MotechSchedulerConstants.START_DATE;
-import static org.motechproject.scheduler.MotechSchedulerConstants.SUBJECT;
-import static org.motechproject.scheduler.MotechSchedulerConstants.UNKNOWN_CODE;
-import static org.motechproject.scheduler.MotechSchedulerConstants.UNSCHEDULE_TEST_INPUT_PARAM;
 import static org.motechproject.util.DateUtil.date;
 
 /**
@@ -52,30 +25,35 @@ import static org.motechproject.util.DateUtil.date;
  *
  * @author Igor (iopushnyev@2paths.com)
  */
-public class MotechScheduler implements Runnable {
+public class MotechScheduler {
     private final static Logger log = LoggerFactory.getLogger(MotechSchedulerServiceImpl.class);
     private static final String CONFIG_LOCATION = "/applicationPlatformScheduler.xml";
 
-    private static final String TEST_EVENT_NAME = "testEvent";
+    private final static String SCHEDULE_TEST_INPUT_PARAM = "-st";
+    private final static String UNSCHEDULE_TEST_INPUT_PARAM = "-ust";
+
+    private final static String EVENT_MESSAGE_INPUT_PARAM = "-e";
+    private final static String CRON_SCHEDULABLE_JOB_INPUT_PARAM = "-csj";
+    private final static String REPEATING_SCHEDULABLE_JOB_INPUT_PARAM = "-rsj";
+    private final static String RUN_ONCE_SCHEDULABLE_JOB_INPUT_PARAM = "-rosj";
+
+    private final static String SUBJECT = "-s";
+    private final static String PARAMETERS = "-p";
+    private final static String CRON_EXPRESSION = "-ce";
+    private final static String START_DATE = "-sd";
+    private final static String END_DATE = "-ed";
+    private final static String REPEAT_COUNT = "-rc";
+    private final static String REPEAT_INTERVAL = "-ri";
+
+    private final static String TEST_EVENT_NAME = "testEvent";
     private static final String TEST_SUBJECT = "test";
     private static final String TEST_CRON_EXPRESSION = "0/5 * * * * ?";
 
+    @Autowired
     private MotechSchedulerService schedulerService;
-    private SchedulerFireEventGateway schedulerFireEventGateway;
-    private Long waitInMilliSeconds = 1000L;
 
     @Autowired
-    public MotechScheduler(final MotechSchedulerService service, final SchedulerFireEventGateway gateway) {
-        schedulerService = service;
-        schedulerFireEventGateway = gateway;
-    }
-
-    public MotechScheduler(final MotechSchedulerService service, final SchedulerFireEventGateway gateway,
-                           final Long waitInMilliSeconds) {
-        schedulerService = service;
-        schedulerFireEventGateway = gateway;
-        this.waitInMilliSeconds = waitInMilliSeconds;
-    }
+    private SchedulerFireEventGateway schedulerFireEventGateway;
 
     public static void main(final String[] args) {
         AbstractApplicationContext ctx = new ClassPathXmlApplicationContext(CONFIG_LOCATION);
@@ -106,83 +84,7 @@ public class MotechScheduler implements Runnable {
                 }
             }
         } catch (Exception e) {
-            log.error(PREFFIX_ERROR, e);
-        }
-    }
-
-    public static String createEventMessageArgs(final String subject, final Map<String, Object> params) {
-        StringBuilder builder = new StringBuilder();
-
-        builder = builder.append(EVENT_MESSAGE_INPUT_PARAM).append(" ");
-
-        if (subject != null) {
-            builder = builder.append(SUBJECT).append(" ").append(subject).append(" ");
-        }
-
-        String paramsAsJSON = convertParamsToJSON(params);
-
-        if (!paramsAsJSON.equalsIgnoreCase("")) {
-            builder = builder.append(PARAMETERS).append(" ").append(paramsAsJSON).append(" ");
-        }
-
-        return builder.toString().trim();
-    }
-
-    @Override
-    public void run() {
-        boolean close = false;
-        ServerSocket serverSocket;
-        Socket clientSocket;
-        PrintWriter out;
-        BufferedReader in;
-        String input;
-
-        try {
-            serverSocket = new ServerSocket(5000);
-            clientSocket = serverSocket.accept();
-            out = new PrintWriter(clientSocket.getOutputStream(), true);
-            in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-
-            out.println("Motech Scheduler started...");
-
-            while (!close) {
-                if ((input = in.readLine()) != null) {
-                    String[] args = input.split(" ");
-                    Map<String, String> map = convertArguments(args);
-
-                    if (CONNECTION_CLOSE_INPUT_PARAM.equals(args[0])) {
-                        close = true;
-                    } else if (EVENT_MESSAGE_INPUT_PARAM.equals(args[0])) {
-                        sendEventMessage(map);
-                        out.println(EVENT_MESSAGE_CODE);
-                    } else if (CRON_SCHEDULABLE_JOB_INPUT_PARAM.equals(args[0])) {
-                        scheduleCronSchedulableJob(map);
-                        out.println(CRON_SCHEDULABLE_JOB_CODE);
-                    } else if (REPEATING_SCHEDULABLE_JOB_INPUT_PARAM.equals(args[0])) {
-                        scheduleRepeatingSchedulableJob(map);
-                        out.println(REPEATING_SCHEDULABLE_JOB_CODE);
-                    } else if (RUN_ONCE_SCHEDULABLE_JOB_INPUT_PARAM.equals(args[0])) {
-                        scheduleRunOnceSchedulableJob(map);
-                        out.println(RUN_ONCE_SCHEDULABLE_JOB_CODE);
-                    } else {
-                        log.warn(String.format("Unknown parameter: %s - ignored", args[0]));
-                        out.println(UNKNOWN_CODE);
-                    }
-                }
-
-                // wait for next request
-                // default waiting time equals 1 seconds
-                Thread.sleep(waitInMilliSeconds);
-            }
-
-            out.println("Motech Scheduler stopped...");
-
-            in.close();
-            out.close();
-            clientSocket.close();
-            serverSocket.close();
-        } catch (Exception e) {
-            log.error(PREFFIX_ERROR, e);
+            log.error("Error: ", e);
         }
     }
 
@@ -196,24 +98,10 @@ public class MotechScheduler implements Runnable {
         return params;
     }
 
-    private static String convertParamsToJSON(final Map<String, Object> params) {
-        String json = "";
-
-        try {
-            if (params != null && !params.isEmpty()) {
-                json = new ObjectMapper().writeValueAsString(params);
-            }
-        } catch (IOException e) {
-            log.error(PREFFIX_ERROR, e);
-        }
-
-        return json;
-    }
-
     private void sendEventMessage(final Map<String, String> map) {
         if (map.containsKey(SUBJECT)) {
             MotechEvent event = createMotechEvent(map);
-            schedulerFireEventGateway.sendEventMessage(event);
+            schedulerFireEventGateway.sendEventMessage(createMotechEvent(map));
 
             log.info(String.format("Sending Motech Event Message: %s", event));
         } else {
@@ -325,9 +213,5 @@ public class MotechScheduler implements Runnable {
         }
 
         return event;
-    }
-
-    public void setWaitInMilliSeconds(final Long waitInMilliSeconds) {
-        this.waitInMilliSeconds = waitInMilliSeconds;
     }
 }
