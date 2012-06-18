@@ -5,7 +5,6 @@ import org.motechproject.dao.MotechJsonReader;
 import org.motechproject.model.CronSchedulableJob;
 import org.motechproject.model.MotechEvent;
 import org.motechproject.model.RepeatingSchedulableJob;
-import org.motechproject.model.RunOnceSchedulableJob;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +34,6 @@ public class MotechScheduler {
     private final static String EVENT_MESSAGE_INPUT_PARAM = "-e";
     private final static String CRON_SCHEDULABLE_JOB_INPUT_PARAM = "-csj";
     private final static String REPEATING_SCHEDULABLE_JOB_INPUT_PARAM = "-rsj";
-    private final static String RUN_ONCE_SCHEDULABLE_JOB_INPUT_PARAM = "-rosj";
 
     private final static String SUBJECT = "-s";
     private final static String PARAMETERS = "-p";
@@ -112,17 +110,6 @@ public class MotechScheduler {
                                 REPEATING_SCHEDULABLE_JOB_INPUT_PARAM, SUBJECT, PARAMETERS, START_DATE, END_DATE,
                                 REPEAT_COUNT, REPEAT_INTERVAL));
                     }
-                } else if (RUN_ONCE_SCHEDULABLE_JOB_INPUT_PARAM.equals(args[0])) {
-                    Map<String, String> map = motechScheduler.getParams(args);
-                    Date startDate = map.containsKey(START_DATE) ? date(map.get(START_DATE)) : null;
-
-                    if (map.containsKey(SUBJECT) && startDate != null) {
-                        motechScheduler.scheduleRunOnceSchedulableJob(map.get(SUBJECT),
-                                motechScheduler.getEventParameters(map.get(PARAMETERS)), startDate);
-                    } else {
-                        log.info(String.format("Usage: java MotechScheduler %s %s [%s] %s ",
-                                CRON_SCHEDULABLE_JOB_INPUT_PARAM, SUBJECT, PARAMETERS, START_DATE));
-                    }
                 } else {
                     log.warn(String.format("Unknown parameter: %s - ignored", args[0]));
                 }
@@ -149,7 +136,7 @@ public class MotechScheduler {
             log.info(String.format("Scheduling job: %s", cronSchedulableJob));
             schedulerService.safeScheduleJob(cronSchedulableJob);
         } catch (Exception e) {
-            log.warn(String.format("Can not schedule job. %s", e.getMessage()));
+            log.warn(String.format("Can not schedule test job. %s", e.getMessage()));
         }
     }
 
@@ -163,20 +150,7 @@ public class MotechScheduler {
             log.info(String.format("Scheduling job: %s", repeatingSchedulableJob));
             schedulerService.safeScheduleRepeatingJob(repeatingSchedulableJob);
         } catch (Exception e) {
-            log.warn(String.format("Can not schedule job. %s", e.getMessage()));
-        }
-    }
-
-    private void scheduleRunOnceSchedulableJob(final String subject, final Map<String, Object> parameters,
-                                               final Date startDate) {
-        MotechEvent motechEvent = new MotechEvent(subject, parameters);
-        RunOnceSchedulableJob runOnceSchedulableJob = new RunOnceSchedulableJob(motechEvent, startDate);
-
-        try {
-            log.info(String.format("Scheduling job: %s", runOnceSchedulableJob));
-            schedulerService.safeScheduleRunOnceJob(runOnceSchedulableJob);
-        } catch (Exception e) {
-            log.warn(String.format("Can not schedule job. %s", e.getMessage()));
+            log.warn(String.format("Can not schedule test job. %s", e.getMessage()));
         }
     }
 
@@ -211,10 +185,7 @@ public class MotechScheduler {
         MotechJsonReader reader = new MotechJsonReader();
 
         Object obj = reader.readFromString(parametersAsJSON, new TypeToken<Map<String, String>>(){ }.getType());
-
-        if (obj != null) {
-            map.putAll((Map<String, Object>) obj);
-        }
+        map.putAll((Map<String, Object>) obj);
 
         return map;
     }
