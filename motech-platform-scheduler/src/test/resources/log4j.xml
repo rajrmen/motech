@@ -9,6 +9,10 @@
 		</layout>
 	</appender>
 
+	<logger name="metrics">
+		<level value="WARN" />
+	</logger>
+
 	<logger name="org.motechproject">
 		<level value="WARN" />
 	</logger>
