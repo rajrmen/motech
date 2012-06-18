@@ -51,17 +51,16 @@ import java.util.Map;
  * @author Igor (iopushnyev@2paths.com)
  */
 public class MotechScheduler {
-
     private final static Logger log = LoggerFactory.getLogger(MotechSchedulerServiceImpl.class);
 
     private final static String SCHEDULE_TEST_INPUT_PARAM = "-t";
     private final static String UNSCHEDULE_TEST_INPUT_PARAM = "-c";
 
     private final static String TEST_EVENT_NAME = "testEvent";
-    public static final String SUBJECT = "test";
+    private final static String SUBJECT = "test";
 
-    public static void main(String[] args) {
-        AbstractApplicationContext ctx = new ClassPathXmlApplicationContext("/applicationPlatformScheduler.xml");
+    public static void main(final String[] args) {
+        AbstractApplicationContext ctx = new ClassPathXmlApplicationContext("/applicationScheduler.xml");
 
         // add a shutdown hook for the above context...
         ctx.registerShutdownHook();

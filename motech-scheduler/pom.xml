@@ -142,6 +142,7 @@
                             org.springframework.integration.jms,
                             org.springframework.integration.jms.config,
                             org.springframework.jms.connection,
+                            org.springframework.jms.listener,
                             org.springframework.scheduling.concurrent,
                             org.springframework.osgi.config,
                             org.quartz.simpl
