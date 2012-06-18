@@ -4,7 +4,6 @@ import com.google.gson.reflect.TypeToken;
 import org.motechproject.dao.MotechJsonReader;
 import org.motechproject.model.CronSchedulableJob;
 import org.motechproject.model.MotechEvent;
-import org.motechproject.model.RepeatingSchedulableJob;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,15 +32,12 @@ public class MotechScheduler {
 
     private final static String EVENT_MESSAGE_INPUT_PARAM = "-e";
     private final static String CRON_SCHEDULABLE_JOB_INPUT_PARAM = "-csj";
-    private final static String REPEATING_SCHEDULABLE_JOB_INPUT_PARAM = "-rsj";
 
     private final static String SUBJECT = "-s";
     private final static String PARAMETERS = "-p";
     private final static String CRON_EXPRESSION = "-ce";
     private final static String START_DATE = "-sd";
     private final static String END_DATE = "-ed";
-    private final static String REPEAT_COUNT = "-rc";
-    private final static String REPEAT_INTERVAL = "-ri";
 
     private final static String TEST_EVENT_NAME = "testEvent";
     private static final String TEST_SUBJECT = "test";
@@ -94,22 +90,6 @@ public class MotechScheduler {
                                 CRON_SCHEDULABLE_JOB_INPUT_PARAM, SUBJECT, PARAMETERS, CRON_EXPRESSION, START_DATE,
                                 END_DATE));
                     }
-                } else if (REPEATING_SCHEDULABLE_JOB_INPUT_PARAM.equals(args[0])) {
-                    Map<String, String> map = motechScheduler.getParams(args);
-                    Date endTime = map.containsKey(END_DATE) ? date(map.get(END_DATE)) : null;
-                    Integer repeatCount = map.containsKey(REPEAT_COUNT) ? Integer.valueOf(map.get(REPEAT_COUNT)) : null;
-                    Long repeatInterval = map.containsKey(REPEAT_INTERVAL) ? Long.valueOf(map.get(REPEAT_INTERVAL)) : null;
-
-                    if (map.containsKey(SUBJECT) && map.containsKey(START_DATE) &&
-                            (repeatCount != null || repeatInterval != null)) {
-                        motechScheduler.scheduleRepeatingSchedulableJob(map.get(SUBJECT),
-                                motechScheduler.getEventParameters(map.get(PARAMETERS)), date(map.get(START_DATE)),
-                                endTime, repeatCount, repeatInterval);
-                    } else {
-                        log.info(String.format("Usage: java MotechScheduler %s %s [%s] %s [%s] [%s] %s",
-                                REPEATING_SCHEDULABLE_JOB_INPUT_PARAM, SUBJECT, PARAMETERS, START_DATE, END_DATE,
-                                REPEAT_COUNT, REPEAT_INTERVAL));
-                    }
                 } else {
                     log.warn(String.format("Unknown parameter: %s - ignored", args[0]));
                 }
@@ -119,7 +99,7 @@ public class MotechScheduler {
         }
     }
 
-    private void sendEventMessage(final String subject, final Map<String, Object> parameters) {
+    private void sendEventMessage(String subject, Map<String, Object> parameters) {
         MotechEvent event = new MotechEvent(subject, parameters);
 
         schedulerFireEventGateway.sendEventMessage(event);
@@ -135,20 +115,6 @@ public class MotechScheduler {
         try {
             log.info(String.format("Scheduling job: %s", cronSchedulableJob));
             schedulerService.safeScheduleJob(cronSchedulableJob);
-        } catch (Exception e) {
-            log.warn(String.format("Can not schedule test job. %s", e.getMessage()));
-        }
-    }
-
-    private void scheduleRepeatingSchedulableJob(final String subject, final Map<String, Object> parameters,
-                                                 final Date startTime, final Date endTime, final Integer repeatCount,
-                                                 final Long repeatIntervalInMilliSeconds) {
-        MotechEvent motechEvent = new MotechEvent(subject, parameters);
-        RepeatingSchedulableJob repeatingSchedulableJob = new RepeatingSchedulableJob(motechEvent, startTime, endTime, repeatCount, repeatIntervalInMilliSeconds);
-
-        try {
-            log.info(String.format("Scheduling job: %s", repeatingSchedulableJob));
-            schedulerService.safeScheduleRepeatingJob(repeatingSchedulableJob);
         } catch (Exception e) {
             log.warn(String.format("Can not schedule test job. %s", e.getMessage()));
         }
