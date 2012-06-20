@@ -42,9 +42,17 @@
 		</layout>
 	</appender>
 
-	<logger name="org.motechproject">
+	<logger name="org.motechproject.scheduler.MotechScheduler">
 		<level value="INFO" />
 	</logger>
+
+    <logger name="org.motechproject.scheduler.MotechScheduledJob">
+        <level value="INFO" />
+    </logger>
+
+    <logger name="org.motechproject.scheduler.MotechSchedulerServiceImpl">
+        <level value="INFO" />
+    </logger>
 	
 	<root>
 		<priority value="WARN" />
