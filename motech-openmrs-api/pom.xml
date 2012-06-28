@@ -4,13 +4,16 @@
     <parent>
         <artifactId>motech</artifactId>
         <groupId>org.motechproject</groupId>
-        <version>0.11-SNAPSHOT</version>
+        <version>0.11</version>
     </parent>
     <artifactId>motech-openmrs-api</artifactId>
     <name>MoTeCH OpenMRS API</name>
     <packaging>bundle</packaging>
     <description>Motech interface to OpenMRS</description>
-    <version>0.11-SNAPSHOT</version>
+
+    <properties>
+        <modules.root.dir>${basedir}/..</modules.root.dir>
+    </properties>
 
     <dependencies>
         <dependency>

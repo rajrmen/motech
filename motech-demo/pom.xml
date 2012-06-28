@@ -3,14 +3,17 @@
     <parent>
         <artifactId>motech</artifactId>
         <groupId>org.motechproject</groupId>
-        <version>0.11-SNAPSHOT</version>
+        <version>0.11</version>
     </parent>
     <groupId>org.motechproject</groupId>
     <artifactId>motech-demo</artifactId>
-    <version>0.11-SNAPSHOT</version>
+    <version>0.11</version>
     <name>MoTeCH Demo App</name>
     <packaging>bundle</packaging>
     <description>Motech Demo Application</description>
+    <properties>
+        <modules.root.dir>${basedir}/..</modules.root.dir>
+    </properties>
     <dependencies>
         <dependency>
             <groupId>javax.servlet</groupId>

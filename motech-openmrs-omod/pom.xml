@@ -2,7 +2,7 @@
     <parent>
         <artifactId>motech</artifactId>
         <groupId>org.motechproject</groupId>
-        <version>0.11-SNAPSHOT</version>
+        <version>0.11</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>motech-openmrs-omod</artifactId>
@@ -16,6 +16,7 @@
         <corePackage>org.motechproject.openmrs.omod</corePackage>
         <modulePackage>${corePackage}</modulePackage>
         <springVersion>${spring.version}</springVersion>
+        <modules.root.dir>${basedir}/..</modules.root.dir>
     </properties>
 
     <dependencies>
