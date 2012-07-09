@@ -1,23 +1,27 @@
 package org.motechproject.openmrs.atomfeed;
 
-import org.apache.commons.lang.StringUtils;
-import org.motechproject.openmrs.atomfeed.model.Feed;
-import org.motechproject.openmrs.atomfeed.model.Link;
+import java.util.List;
 
-import com.sun.corba.se.impl.encoding.OSFCodeSetRegistry.Entry;
+import org.apache.commons.lang.StringUtils;
+import org.motechproject.openmrs.atomfeed.model.Entry;
+import org.motechproject.openmrs.atomfeed.model.Feed;
+import org.motechproject.scheduler.domain.MotechEvent;
+import org.motechproject.scheduler.gateway.OutboundEventGateway;
+
 import com.thoughtworks.xstream.XStream;
 
 public class AtomFeedClient {
 
     private final OpenMrsHttpClient client;
     private final XStream xstream;
-    
-    public AtomFeedClient(OpenMrsHttpClient client) {
+    private final OutboundEventGateway outboundGateway;
+
+    public AtomFeedClient(OpenMrsHttpClient client, OutboundEventGateway outboundGateway) {
         this.client = client;
-        this.xstream = new XStream();
-        xstream.alias("feed", Feed.class);
-        xstream.alias("entry", Entry.class);
-        xstream.alias("link", Link.class);
+        this.outboundGateway = outboundGateway;
+        xstream = new XStream();
+        xstream.processAnnotations(Feed.class);
+        xstream.omitField(Entry.class, "summary");
     }
 
     public void fetchNewOpenMrsEvents() {
@@ -25,13 +29,32 @@ public class AtomFeedClient {
         if (StringUtils.isEmpty(feed)) {
             return;
         }
-        
+
         parseEvents(feed);
     }
 
     private void parseEvents(String feedXml) {
         Feed feed = (Feed) xstream.fromXML(feedXml);
-        feed.getClass();
+        List<Entry> entries = feed.getEntry();
+
+        for (Entry entry : entries) {
+            MotechEvent event = null;
+            if ("org.openmrs.Patient".equals(entry.getClassname())) {
+                event = handlePatientEntry(entry);
+            } else if ("org.openmrs.Concept".equals(entry.getClassname())) {
+                event = handleConceptEntry(entry);
+            }
+
+            outboundGateway.sendEventMessage(event);
+        }
+    }
+
+    private MotechEvent handlePatientEntry(Entry entry) {
+        return new PatientEvent(entry).toEvent();
+    }
+
+    private MotechEvent handleConceptEntry(Entry entry) {
+        return new ConceptEvent(entry).toEvent();
     }
 
 }

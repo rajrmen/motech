@@ -1,5 +1,8 @@
 package org.motechproject.openmrs.atomfeed.model;
 
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+
+@XStreamAlias("entry")
 public class Entry {
     private String title;
     private Link link;
@@ -7,6 +10,22 @@ public class Entry {
     private String updated;
     private String action;
     private String classname;
+    
+    Author author;
+
+    @XStreamAlias("author")
+    public static class Author {
+        private String name;
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+    }
+    
 
     public String getTitle() {
         return title;
@@ -54,5 +73,14 @@ public class Entry {
 
     public void setClassname(String classname) {
         this.classname = classname;
+    }
+    
+
+    public Author getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(Author author) {
+        this.author = author;
     }
 }

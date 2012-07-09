@@ -3,13 +3,23 @@ package org.motechproject.openmrs.atomfeed.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamImplicit;
+
+@XStreamAlias("feed")
 public class Feed {
     String updated;
     String versionId;
     String title;
-    List<Link> link = new ArrayList<Link>();
-    List<Entry> entry = new ArrayList<Entry>();
+    String id;
+    String entriesSize;
 
+    @XStreamImplicit(itemFieldName = "link")
+    List<Link> link = new ArrayList<Link>();
+
+    @XStreamImplicit(itemFieldName = "entry")
+    List<Entry> entry = new ArrayList<Entry>();
+    
     public String getUpdated() {
         return updated;
     }
@@ -53,8 +63,24 @@ public class Feed {
     public void setLink(List<Link> link) {
         this.link = link;
     }
-    
+
     public void add(Link link) {
         this.link.add(link);
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getEntriesSize() {
+        return entriesSize;
+    }
+
+    public void setEntriesSize(String entriesSize) {
+        this.entriesSize = entriesSize;
     }
 }
