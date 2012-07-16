@@ -17,7 +17,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath:testDecisionTreeCommon.xml"})
+@ContextConfiguration(locations = {"classpath:testDecisionTreeStore.xml"})
 public class AllTreesIT extends SpringIntegrationTest {
 
     @Autowired

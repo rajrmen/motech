@@ -1,6 +1,5 @@
 package org.motechproject.server.verboice.it;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.BasicResponseHandler;
@@ -22,14 +21,13 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.web.servlet.DispatcherServlet;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import static junit.framework.Assert.assertTrue;
 import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"/testVerboiceContext.xml"})
+@ContextConfiguration(locations = {"/testVerboiceContext.xml", "classpath:applicationContextTreeStore.xml"})
 public class VerboiceIVRControllerDecisionTreeIT extends SpringIntegrationTest {
     static private Server server;
     public static final String CONTEXT_PATH = "/motech";
@@ -53,7 +51,7 @@ public class VerboiceIVRControllerDecisionTreeIT extends SpringIntegrationTest {
         Context context = new Context(server, CONTEXT_PATH);//new Context(server, "/", Context.SESSIONS);
 
         DispatcherServlet dispatcherServlet = new DispatcherServlet();
-        dispatcherServlet.setContextConfigLocation("classpath:testVerboiceContext.xml");
+        dispatcherServlet.setContextConfigLocation("classpath:testVerboiceContext.xml,classpath:applicationContextTreeStore.xml");
 
         ServletHolder servletHolder = new ServletHolder(dispatcherServlet);
         context.addServlet(servletHolder, "/*");

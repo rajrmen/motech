@@ -10,13 +10,11 @@ import org.junit.runner.RunWith;
 import org.mortbay.jetty.Server;
 import org.mortbay.jetty.servlet.Context;
 import org.mortbay.jetty.servlet.ServletHolder;
-import org.mortbay.jetty.webapp.WebAppContext;
 import org.motechproject.decisiontree.model.*;
 import org.motechproject.decisiontree.repository.AllTrees;
 import org.motechproject.testing.utils.SpringIntegrationTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Component;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.web.servlet.DispatcherServlet;
@@ -24,7 +22,7 @@ import org.springframework.web.servlet.DispatcherServlet;
 import java.util.HashMap;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath:applicationDecisionTree.xml"})
+@ContextConfiguration(locations = {"classpath:testDecisionTree.xml"})
 public class DecisionTreeControllerIT extends SpringIntegrationTest {
 
     public static final String AUDIO_FILE_URL = "https://tamaproject.in/tama/wav/stream/en/signature_music.wav";
@@ -44,7 +42,7 @@ public class DecisionTreeControllerIT extends SpringIntegrationTest {
         Context context = new Context(server, CONTEXT_PATH);
 
         DispatcherServlet dispatcherServlet = new DispatcherServlet();
-        dispatcherServlet.setContextConfigLocation("classpath:applicationDecisionTree.xml");
+        dispatcherServlet.setContextConfigLocation("classpath:applicationDecisionTree.xml,classpath:applicationContextTreeStore.xml");
 
         ServletHolder servletHolder = new ServletHolder(dispatcherServlet);
         context.addServlet(servletHolder, "/*");
