@@ -24,7 +24,7 @@
         </dependency>
         <dependency>
             <groupId>org.motechproject</groupId>
-            <artifactId>motech-platform-platform-scheduler</artifactId>
+            <artifactId>motech-platform-scheduler</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -86,6 +86,7 @@
                 <configuration>
                     <instructions>
                         <Export-Package>
+                            org.motechproject.openmrs.atomfeed.service
                         </Export-Package>
                         <Bundle-Activator>
                         </Bundle-Activator>

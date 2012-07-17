@@ -1,4 +1,4 @@
-package org.motechproject.openmrs.atomfeed;
+package org.motechproject.openmrs.atomfeed.service.impl;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
@@ -15,13 +15,16 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
+import org.motechproject.openmrs.atomfeed.OpenMrsHttpClient;
 import org.motechproject.openmrs.atomfeed.events.EventDataKeys;
 import org.motechproject.openmrs.atomfeed.events.EventSubjects;
+import org.motechproject.openmrs.atomfeed.service.AtomFeedService;
+import org.motechproject.openmrs.atomfeed.service.impl.AtomFeedServiceImpl;
 import org.motechproject.scheduler.domain.MotechEvent;
 import org.motechproject.scheduler.gateway.OutboundEventGateway;
 import org.springframework.core.io.ClassPathResource;
 
-public class AtomFeedTest {
+public class AtomFeedClientImplTest {
 
     @Mock
     OutboundEventGateway outboundGateway;
@@ -36,13 +39,13 @@ public class AtomFeedTest {
 
     private final static String PATIENT_LINK = "http://localhost:8092/openmrs/ws/rest/v1/person/64f6f0e2-1acc-4a00-8a54-6adcd8cbfdfc";
     private final static String PATIENT_UUID = "64f6f0e2-1acc-4a00-8a54-6adcd8cbfdfc";
-    
+
     private static final String CONCEPT_UUID = "a8f54bd7-429a-43d1-b47a-5ee56f18f0f2";
     private static final String CONCEPT_LINK = "http://localhost:8092/openmrs/ws/rest/v1/concept/a8f54bd7-429a-43d1-b47a-5ee56f18f0f2";
 
     @Test
     public void shouldNotRaiseAnyEventsOnEmptyXml() throws IOException {
-        AtomFeedClient atomFeedClient = new AtomFeedClient(client, outboundGateway);
+        AtomFeedService atomFeedClient = new AtomFeedServiceImpl(client, outboundGateway);
 
         when(client.getOpenMrsAtomFeed()).thenReturn("");
         atomFeedClient.fetchNewOpenMrsEvents();
@@ -52,7 +55,7 @@ public class AtomFeedTest {
 
     @Test
     public void shouldRaisePatientCreateEvent() throws IOException {
-        AtomFeedClient atomFeedClient = new AtomFeedClient(client, outboundGateway);
+        AtomFeedService atomFeedClient = new AtomFeedServiceImpl(client, outboundGateway);
 
         when(client.getOpenMrsAtomFeed()).thenReturn(readXmlFile("patient-create.xml"));
 
@@ -61,7 +64,8 @@ public class AtomFeedTest {
         ArgumentCaptor<MotechEvent> event = ArgumentCaptor.forClass(MotechEvent.class);
         verify(outboundGateway, times(1)).sendEventMessage(event.capture());
 
-        assertEquals(expectedMotechEventForPatient(EventSubjects.PATIENT_CREATE, "create", PATIENT_LINK, PATIENT_UUID), event.getValue());
+        assertEquals(expectedMotechEventForPatient(EventSubjects.PATIENT_CREATE, "create", PATIENT_LINK, PATIENT_UUID),
+                event.getValue());
     }
 
     private Object expectedMotechEventForPatient(String subject, String action, String link, String uuid) {
@@ -84,7 +88,7 @@ public class AtomFeedTest {
 
     @Test
     public void shouldRaisePatientUpdateEvent() throws IOException {
-        AtomFeedClient atomFeedClient = new AtomFeedClient(client, outboundGateway);
+        AtomFeedService atomFeedClient = new AtomFeedServiceImpl(client, outboundGateway);
 
         when(client.getOpenMrsAtomFeed()).thenReturn(readXmlFile("patient-update.xml"));
 
@@ -93,12 +97,13 @@ public class AtomFeedTest {
         ArgumentCaptor<MotechEvent> event = ArgumentCaptor.forClass(MotechEvent.class);
         verify(outboundGateway, times(1)).sendEventMessage(event.capture());
 
-        assertEquals(expectedMotechEventForPatient(EventSubjects.PATIENT_UPDATE, "update", PATIENT_LINK, PATIENT_UUID), event.getValue());
+        assertEquals(expectedMotechEventForPatient(EventSubjects.PATIENT_UPDATE, "update", PATIENT_LINK, PATIENT_UUID),
+                event.getValue());
     }
 
     @Test
     public void shouldRaisePatientVoidEvent() throws IOException {
-        AtomFeedClient atomFeedClient = new AtomFeedClient(client, outboundGateway);
+        AtomFeedService atomFeedClient = new AtomFeedServiceImpl(client, outboundGateway);
 
         when(client.getOpenMrsAtomFeed()).thenReturn(readXmlFile("patient-void.xml"));
 
@@ -107,12 +112,13 @@ public class AtomFeedTest {
         ArgumentCaptor<MotechEvent> event = ArgumentCaptor.forClass(MotechEvent.class);
         verify(outboundGateway, times(1)).sendEventMessage(event.capture());
 
-        assertEquals(expectedMotechEventForPatient(EventSubjects.PATIENT_VOIDED, "void", PATIENT_LINK, PATIENT_UUID), event.getValue());
+        assertEquals(expectedMotechEventForPatient(EventSubjects.PATIENT_VOIDED, "void", PATIENT_LINK, PATIENT_UUID),
+                event.getValue());
     }
 
     @Test
     public void shouldRaisePatientDeleteEvent() throws IOException {
-        AtomFeedClient atomFeedClient = new AtomFeedClient(client, outboundGateway);
+        AtomFeedService atomFeedClient = new AtomFeedServiceImpl(client, outboundGateway);
 
         when(client.getOpenMrsAtomFeed()).thenReturn(readXmlFile("patient-delete.xml"));
 
@@ -121,12 +127,14 @@ public class AtomFeedTest {
         ArgumentCaptor<MotechEvent> event = ArgumentCaptor.forClass(MotechEvent.class);
         verify(outboundGateway, times(1)).sendEventMessage(event.capture());
 
-        assertEquals(expectedMotechEventForPatient(EventSubjects.PATIENT_DELETED, "delete", PATIENT_LINK, PATIENT_UUID), event.getValue());
+        assertEquals(
+                expectedMotechEventForPatient(EventSubjects.PATIENT_DELETED, "delete", PATIENT_LINK, PATIENT_UUID),
+                event.getValue());
     }
 
     @Test
     public void shouldRaiseConceptEvent() throws IOException {
-        AtomFeedClient atomFeedClient = new AtomFeedClient(client, outboundGateway);
+        AtomFeedService atomFeedClient = new AtomFeedServiceImpl(client, outboundGateway);
 
         when(client.getOpenMrsAtomFeed()).thenReturn(readXmlFile("concept.xml"));
 
@@ -135,6 +143,7 @@ public class AtomFeedTest {
         ArgumentCaptor<MotechEvent> event = ArgumentCaptor.forClass(MotechEvent.class);
         verify(outboundGateway, times(1)).sendEventMessage(event.capture());
 
-        assertEquals(expectedMotechEventForPatient(EventSubjects.CONCEPT_CREATE, "create", CONCEPT_LINK, CONCEPT_UUID), event.getValue());
+        assertEquals(expectedMotechEventForPatient(EventSubjects.CONCEPT_CREATE, "create", CONCEPT_LINK, CONCEPT_UUID),
+                event.getValue());
     }
 }

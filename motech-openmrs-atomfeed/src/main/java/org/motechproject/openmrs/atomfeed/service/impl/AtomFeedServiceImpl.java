@@ -1,22 +1,26 @@
-package org.motechproject.openmrs.atomfeed;
+package org.motechproject.openmrs.atomfeed.service.impl;
 
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.motechproject.openmrs.atomfeed.ConceptEvent;
+import org.motechproject.openmrs.atomfeed.OpenMrsHttpClient;
+import org.motechproject.openmrs.atomfeed.PatientEvent;
 import org.motechproject.openmrs.atomfeed.model.Entry;
 import org.motechproject.openmrs.atomfeed.model.Feed;
+import org.motechproject.openmrs.atomfeed.service.AtomFeedService;
 import org.motechproject.scheduler.domain.MotechEvent;
 import org.motechproject.scheduler.gateway.OutboundEventGateway;
 
 import com.thoughtworks.xstream.XStream;
 
-public class AtomFeedClient {
+public class AtomFeedServiceImpl implements AtomFeedService {
 
     private final OpenMrsHttpClient client;
     private final XStream xstream;
     private final OutboundEventGateway outboundGateway;
 
-    public AtomFeedClient(OpenMrsHttpClient client, OutboundEventGateway outboundGateway) {
+    public AtomFeedServiceImpl(OpenMrsHttpClient client, OutboundEventGateway outboundGateway) {
         this.client = client;
         this.outboundGateway = outboundGateway;
         xstream = new XStream();
@@ -24,6 +28,10 @@ public class AtomFeedClient {
         xstream.omitField(Entry.class, "summary");
     }
 
+    /* (non-Javadoc)
+     * @see org.motechproject.openmrs.atomfeed.AtomFeedClient#fetchNewOpenMrsEvents()
+     */
+    @Override
     public void fetchNewOpenMrsEvents() {
         String feed = client.getOpenMrsAtomFeed();
         if (StringUtils.isEmpty(feed)) {
