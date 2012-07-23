@@ -1,17 +1,14 @@
 package org.motechproject.decisiontree.model;
 
-import org.ektorp.support.TypeDiscriminator;
-import org.motechproject.model.MotechBaseDataObject;
 import org.motechproject.server.decisiontree.TreeNodeLocator;
 
 /**
  * Represents a decision tree.
  */
-public class Tree extends MotechBaseDataObject {
+public class Tree {
 
     private static final long serialVersionUID = 1L;
 
-    @TypeDiscriminator
     private String name;
     private String description;
     private Node rootNode;

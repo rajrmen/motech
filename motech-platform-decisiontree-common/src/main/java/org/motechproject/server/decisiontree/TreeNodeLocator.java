@@ -2,7 +2,6 @@ package org.motechproject.server.decisiontree;
 
 import org.motechproject.decisiontree.model.ITransition;
 import org.motechproject.decisiontree.model.Node;
-import org.motechproject.decisiontree.model.Transition;
 import org.motechproject.decisiontree.model.Tree;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;

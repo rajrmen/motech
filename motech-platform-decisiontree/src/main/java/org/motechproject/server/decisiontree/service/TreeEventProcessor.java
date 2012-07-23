@@ -3,9 +3,9 @@ package org.motechproject.server.decisiontree.service;
 import org.motechproject.decisiontree.model.Action;
 import org.motechproject.decisiontree.model.Node;
 import org.motechproject.decisiontree.model.Transition;
-import org.motechproject.scheduler.context.EventContext;
+/*import org.motechproject.scheduler.context.EventContext;
 import org.motechproject.scheduler.domain.MotechEvent;
-import org.motechproject.scheduler.event.EventRelay;
+import org.motechproject.scheduler.event.EventRelay;*/
 import org.springframework.util.Assert;
 
 import java.util.List;
@@ -15,11 +15,11 @@ import java.util.Map;
  * Responsible for emitting various tree events, e.g., before landing on to a node, after landing on to a node, whenever a transition happens, etc.
  */
 public class TreeEventProcessor {
-    private EventRelay eventRelay = EventContext.getInstance().getEventRelay();
+    //private EventRelay eventRelay = EventContext.getInstance().getEventRelay();
 
     private void sendActions(List<Action> actions, Map<String, Object> params) {
         for (Action action : actions) {
-            eventRelay.sendEventMessage(new MotechEvent(action.getEventId(), params));
+            //eventRelay.sendEventMessage(new MotechEvent(action.getEventId(), params));
         }
     }
 
