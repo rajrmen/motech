@@ -9,12 +9,15 @@ import org.motechproject.server.messagecampaign.domain.campaign.CampaignEnrollme
 import org.motechproject.server.messagecampaign.domain.message.CampaignMessage;
 import org.motechproject.server.messagecampaign.scheduler.MessageCampaignScheduler;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
-@Service
+@Service(value = "messageCampaignService")
 public class MessageCampaignServiceImpl implements MessageCampaignService {
     private MotechSchedulerService schedulerService;
     private AllMessageCampaigns allMessageCampaigns;
@@ -51,6 +54,14 @@ public class MessageCampaignServiceImpl implements MessageCampaignService {
         for (CampaignEnrollment campaignEnrollment : campaignEnrollmentService.search(query))
             campaignEnrollmentRecords.add(campaignEnrollmentRecordMapper.map(campaignEnrollment));
         return campaignEnrollmentRecords;
+    }
+
+    @Override
+    public Map<String, List<Date>> getCampaignTimings(String externalId, String campaignName, Date startDate, Date endDate) {
+        MessageCampaignScheduler messageCampaignScheduler =
+                getScheduler(new CampaignRequest(externalId, campaignName, null, null));
+
+        return messageCampaignScheduler.getCampaignTimings(startDate, endDate);
     }
 
     private MessageCampaignScheduler getScheduler(CampaignRequest enrollRequest) {

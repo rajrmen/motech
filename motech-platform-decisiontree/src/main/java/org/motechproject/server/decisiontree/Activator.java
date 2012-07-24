@@ -1,6 +1,5 @@
 package org.motechproject.server.decisiontree;
 
-import org.motechproject.context.Context;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
@@ -8,18 +7,22 @@ import org.osgi.service.http.HttpService;
 import org.osgi.util.tracker.ServiceTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.osgi.web.context.support.OsgiBundleXmlWebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
 
 public class Activator implements BundleActivator {
     private static Logger logger = LoggerFactory.getLogger(Activator.class);
-    private static final String CONTEXT_CONFIG_LOCATION = "classpath:applicationDecisionTree.xml";
+    private static final String CONTEXT_CONFIG_LOCATION = "classpath:applicationDecisionTreeBundle.xml";
     private static final String SERVLET_URL_MAPPING = "/tree";
     private ServiceTracker tracker;
     private ServiceReference httpService;
 
+    private static BundleContext bundleContext;
 
     @Override
     public void start(BundleContext context) throws Exception {
+        bundleContext = context;
+
         this.tracker = new ServiceTracker(context,
                 HttpService.class.getName(), null) {
 
@@ -52,10 +55,20 @@ public class Activator implements BundleActivator {
         }
     }
 
+    public static class DecisionTreeApplicationContext extends OsgiBundleXmlWebApplicationContext {
+
+        public DecisionTreeApplicationContext() {
+            super();
+            setBundleContext(Activator.bundleContext);
+        }
+
+    }
+
     private void serviceAdded(HttpService service) {
         try {
             DispatcherServlet dispatcherServlet = new DispatcherServlet();
             dispatcherServlet.setContextConfigLocation(CONTEXT_CONFIG_LOCATION);
+            dispatcherServlet.setContextClass(DecisionTreeApplicationContext.class);
             ClassLoader old = Thread.currentThread().getContextClassLoader();
             try {
                 Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
@@ -64,12 +77,6 @@ public class Activator implements BundleActivator {
             } finally {
                 Thread.currentThread().setContextClassLoader(old);
             }
-
-            // I need to access Context so maven-bundle-plugin lists it in my manifest.
-            // If I don't actually need to reference it then this access should be removed and we should
-            // explicitly list the dependency in the bundle plugin config
-            Context context = Context.getInstance();
-            logger.info("Using Context: " + context.toString());
 
         } catch (Exception e) {
             throw new RuntimeException(e);

@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.motechproject</groupId>
     <artifactId>motech</artifactId>
-    <version>0.11</version>
+    <version>0.12-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>MoTeCH</name>
 
@@ -120,6 +120,11 @@
             <version>3.1</version>
         </dependency>
         <dependency>
+            <groupId>commons-fileupload</groupId>
+            <artifactId>commons-fileupload</artifactId>
+            <version>1.2.2</version>
+        </dependency>
+        <dependency>
             <groupId>findbugs</groupId>
             <artifactId>annotations</artifactId>
             <version>1.0.0</version>
@@ -136,6 +141,7 @@
         <module>motech-outbox-api</module>
         <module>motech-appointments</module>
         <module>motech-appointments-api</module>
+        <module>motech-commcare-api</module>
         <module>motech-platform-decisiontree</module>
         <module>motech-platform-decisiontree-common</module>
         <module>motech-pillreminder</module>
@@ -146,13 +152,14 @@
         <module>motech-mobileforms-api</module>
         <module>motech-alerts-api</module>
         <module>motech-ivr-asterisk</module>
-        <module>motech-ivr-kookoo</module>
+        <module>motech-ivr-kookoo-v2</module>
         <module>motech-ivr-voxeo</module>
         <module>motech-ivr-verboice</module>
         <module>motech-demo</module>
         <module>motech-mrs-api</module>
         <module>motech-openmrs-api</module>
         <module>motech-openmrs-omod</module>
+        <module>motech-openmrs-ws</module>
         <module>motech-sms-api</module>
         <module>motech-sms-http</module>
         <module>motech-sms-smpp</module>
@@ -162,6 +169,13 @@
         <module>motech-rpm</module>
         <module>motech-rules-api</module>
         <module>motech-rules</module>
+        <module>motech-platform-server-config</module>
+        <module>motech-platform-server-startup</module>
+        <module>motech-web-security</module>
+        <module>motech-admin</module>
+        <module>motech-admin-UI</module>
+        <!-- Keep this module in last, the module checks if everything is alright after deploy motech on tomcat server -->
+        <module>motech-deployment-tests</module>
     </modules>
 
     <build>
@@ -268,6 +282,8 @@
                     <configLocation>${modules.root.dir}/checkstyle.xml</configLocation>
                     <includeTestSourceDirectory>false</includeTestSourceDirectory>
                     <enableFilesSummary>true</enableFilesSummary>
+                    <failsOnError>true</failsOnError>
+                    <consoleOutput>true</consoleOutput>
                     <skip>${maven.test.skip}</skip>
                 </configuration>
                 <executions>
@@ -287,6 +303,22 @@
             <id>IT</id>
             <build>
                 <plugins>
+                    <plugin>
+                        <artifactId>maven-clean-plugin</artifactId>
+                        <version>2.5</version>
+                        <inherited>false</inherited>
+                        <configuration>
+                            <filesets>
+                                <fileset>
+                                    <directory>${user.home}/.motech/bundles</directory>
+                                    <includes>
+                                        <include>**/*.jar</include>
+                                    </includes>
+                                    <followSymlinks>false</followSymlinks>
+                                </fileset>
+                            </filesets>
+                        </configuration>
+                    </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-failsafe-plugin</artifactId>
@@ -460,6 +492,6 @@
         <connection>${scm.connection}</connection>
         <developerConnection>${scm.developerConnection}</developerConnection>
         <url>${scm.url}</url>
-      <tag>motech-0.11</tag>
+      <tag>HEAD</tag>
   </scm>
 </project>

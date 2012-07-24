@@ -31,6 +31,8 @@ public class OsgiFrameworkServiceTestIT {
     @Autowired
     private ApplicationContext applicationContext;
 
+    private List<String> expectedBundles = Arrays.asList("org.apache.felix.framework", "org.apache.felix.http.bridge");
+
     @Test
     public void startStopTest() throws Exception {
         service.setApplicationContext(getWebApplicationContext());
@@ -40,8 +42,6 @@ public class OsgiFrameworkServiceTestIT {
         service.start();
         assertEquals(Bundle.ACTIVE, framework.getState());
 
-        List<String> expectedBundles = Arrays.asList("org.apache.felix.framework", "org.apache.felix.http.bridge");
-
         Bundle[] bundles = framework.getBundleContext().getBundles();
         assertEquals(expectedBundles.size(), bundles.length);
         for (Bundle bundle : bundles) {
@@ -50,7 +50,7 @@ public class OsgiFrameworkServiceTestIT {
             assertEquals(Bundle.ACTIVE, bundle.getState());
         }
 
-        assertNotNull(service.getClassLoaderBySymbolicName("org.apache.felix.http.bridge"));
+        assertNotNull(service.getClassLoaderBySymbolicName(expectedBundles.get(1)));
 
         service.stop();
         assertEquals(Bundle.STOPPING, framework.getState());

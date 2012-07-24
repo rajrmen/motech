@@ -51,7 +51,10 @@ import org.quartz.SimpleScheduleBuilder;
 import org.quartz.SimpleTrigger;
 import org.quartz.Trigger;
 import org.quartz.TriggerKey;
+import org.quartz.*;
+import org.quartz.impl.calendar.BaseCalendar;
 import org.quartz.impl.matchers.GroupMatcher;
+import org.quartz.spi.OperableTrigger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
@@ -99,7 +102,7 @@ public class MotechSchedulerServiceImpl extends MotechObject implements MotechSc
     public void scheduleJob(CronSchedulableJob cronSchedulableJob) {
         MotechEvent motechEvent = assertCronJob(cronSchedulableJob);
 
-        JobId jobId = new JobId(motechEvent);
+        JobId jobId = new JobId(motechEvent, false);
 
         JobDetail jobDetail = newJob(MotechScheduledJob.class)
                 .withIdentity(jobKey(jobId.value(), JOB_GROUP_NAME))
@@ -164,7 +167,7 @@ public class MotechSchedulerServiceImpl extends MotechObject implements MotechSc
     @Override
     public void safeScheduleJob(CronSchedulableJob cronSchedulableJob) {
         assertCronJob(cronSchedulableJob);
-        JobId jobId = new JobId(cronSchedulableJob.getMotechEvent());
+        JobId jobId = new JobId(cronSchedulableJob.getMotechEvent(), false);
         try {
             unscheduleJob(jobId.value());
         } catch (MotechSchedulerException ignored) {
@@ -177,7 +180,7 @@ public class MotechSchedulerServiceImpl extends MotechObject implements MotechSc
         logInfo("Updating the scheduled job: %s", motechEvent);
         assertArgumentNotNull("MotechEvent", motechEvent);
 
-        JobId jobId = new JobId(motechEvent);
+        JobId jobId = new JobId(motechEvent, false);
         Trigger trigger;
 
         try {
@@ -214,7 +217,7 @@ public class MotechSchedulerServiceImpl extends MotechObject implements MotechSc
         assertArgumentNotNull("ExternalId", externalId);
         assertArgumentNotNull("Cron expression", cronExpression);
 
-        JobId jobId = new JobId(subject, externalId);
+        JobId jobId = new JobId(subject, externalId, false);
         logInfo("Rescheduling the Job: %s new cron expression: %s", jobId, cronExpression);
 
         CronTrigger trigger = null;
@@ -279,7 +282,7 @@ public class MotechSchedulerServiceImpl extends MotechObject implements MotechSc
             jobRepeatCount = MAX_REPEAT_COUNT;
         }
 
-        JobId jobId = new JobId(motechEvent);
+        JobId jobId = new JobId(motechEvent, true);
         JobDetail jobDetail = newJob(MotechScheduledJob.class)
                 .withIdentity(jobKey(jobId.repeatingId(), JOB_GROUP_NAME))
                 .build();
@@ -303,7 +306,8 @@ public class MotechSchedulerServiceImpl extends MotechObject implements MotechSc
         scheduleJob(jobDetail, trigger);
     }
 
-    private SimpleScheduleBuilder setMisfirePolicyForSimpleTrigger(SimpleScheduleBuilder simpleSchedule, String misfirePolicy) {
+    private SimpleScheduleBuilder setMisfirePolicyForSimpleTrigger(SimpleScheduleBuilder simpleSchedule, String newMisfirePolicy) {
+        String misfirePolicy = newMisfirePolicy;
         if (isEmpty(misfirePolicy))
             misfirePolicy = String.valueOf(SimpleTrigger.MISFIRE_INSTRUCTION_RESCHEDULE_NOW_WITH_EXISTING_REPEAT_COUNT);
         if (misfirePolicy.equals(SimpleTrigger.MISFIRE_INSTRUCTION_FIRE_NOW))
@@ -324,7 +328,7 @@ public class MotechSchedulerServiceImpl extends MotechObject implements MotechSc
     @Override
     public void safeScheduleRepeatingJob(RepeatingSchedulableJob repeatingSchedulableJob) {
         assertArgumentNotNull(repeatingSchedulableJob);
-        JobId jobId = new JobId(repeatingSchedulableJob.getMotechEvent());
+        JobId jobId = new JobId(repeatingSchedulableJob.getMotechEvent(), true);
         try {
             unscheduleJob(jobId.repeatingId());
         } catch (MotechSchedulerException ignored) {
@@ -347,7 +351,7 @@ public class MotechSchedulerServiceImpl extends MotechObject implements MotechSc
             throw new IllegalArgumentException();
         }
 
-        JobId jobId = new JobId(motechEvent);
+        JobId jobId = new JobId(motechEvent, false);
         JobDetail jobDetail = newJob(MotechScheduledJob.class)
                 .withIdentity(jobId.value(), JOB_GROUP_NAME)
                 .build();
@@ -388,7 +392,7 @@ public class MotechSchedulerServiceImpl extends MotechObject implements MotechSc
 
     public void safeScheduleRunOnceJob(RunOnceSchedulableJob schedulableJob) {
         assertArgumentNotNull(schedulableJob);
-        JobId jobId = new JobId(schedulableJob.getMotechEvent());
+        JobId jobId = new JobId(schedulableJob.getMotechEvent(), false);
         try {
             unscheduleJob(jobId.value());
         } catch (MotechSchedulerException ignored) {
@@ -398,7 +402,7 @@ public class MotechSchedulerServiceImpl extends MotechObject implements MotechSc
 
     @Override
     public void unscheduleRepeatingJob(String subject, String externalId) {
-        JobId jobId = new JobId(subject, externalId);
+        JobId jobId = new JobId(subject, externalId, true);
         logInfo("Unscheduling repeating the Job: %s", jobId);
         unscheduleJob(jobId.repeatingId());
     }
@@ -413,13 +417,18 @@ public class MotechSchedulerServiceImpl extends MotechObject implements MotechSc
 
     @Override
     public void unscheduleJob(String subject, String externalId) {
-        unscheduleJob(new JobId(subject, externalId));
+        unscheduleJob(new JobId(subject, externalId, false));
     }
 
     @Override
     public void unscheduleJob(JobId job) {
         logInfo("Unscheduling the Job: %s", job);
-        unscheduleJob(job.value());
+
+        if (job.isRepeatingJob()) {
+            unscheduleJob(job.repeatingId());
+        } else {
+            unscheduleJob(job.value());
+        }
     }
 
     @Override
@@ -460,6 +469,75 @@ public class MotechSchedulerServiceImpl extends MotechObject implements MotechSc
             }
         } catch (SchedulerException ignored) {
         }
+    }
+
+    private List<Date> computeFireTimesForTrigger(String name, String group, Date startDate, Date endDate)
+            throws SchedulerException {
+        Trigger trigger;
+        List<Date> messageTimings;
+
+        trigger = scheduler.getTrigger(triggerKey(name, group));
+        messageTimings = TriggerUtils.computeFireTimesBetween(
+                (OperableTrigger) trigger, new BaseCalendar(), startDate, endDate);
+
+        return messageTimings;
+    }
+
+    /*
+     * Assumes that the externalJobId is non-repeating in nature. Thus the fetch is for jobId.value() and not
+     * jobId.repeatingId()
+     * Uses quartz API to fetch the exact triggers. Fast
+     */
+    @Override
+    public List<Date> getScheduledJobTimings(String subject, String externalJobId, Date startDate, Date endDate) {
+        Scheduler scheduler = schedulerFactoryBean.getScheduler();
+
+        JobId jobId = new JobId(subject, externalJobId, false);
+        Trigger trigger;
+        List<Date> messageTimings = null;
+        try {
+
+            trigger = scheduler.getTrigger(triggerKey(jobId.value(), JOB_GROUP_NAME));
+            messageTimings = TriggerUtils.computeFireTimesBetween(
+                    (OperableTrigger) trigger, new BaseCalendar(), startDate, endDate);
+
+        } catch (SchedulerException e) {
+            handleException(String.format(
+                    "Can not get scheduled job timings given subject and externalJobId for dates : %s %s %s %s %s",
+                    subject, externalJobId, startDate.toString(), endDate.toString(), e.getMessage()), e);
+        }
+
+        return messageTimings;
+    }
+
+    /*
+     * Loads all triggers and then loops over them to find the applicable trigger using string comparison. This
+     * will work regardless of the jobId being cron or repeating.
+     */
+    @Override
+    public List<Date> getScheduledJobTimingsWithPrefix(
+            String subject, String externalJobIdPrefix, Date startDate, Date endDate) {
+
+        JobId jobId = new JobId(subject, externalJobIdPrefix, false);
+        List<Date> messageTimings = new ArrayList<>();
+        try {
+            List<TriggerKey> triggerKeys = new ArrayList<TriggerKey>(
+                    scheduler.getTriggerKeys(GroupMatcher.triggerGroupContains(JOB_GROUP_NAME)));
+            for (TriggerKey triggerKey : triggerKeys) {
+                if (StringUtils.isNotEmpty(externalJobIdPrefix) && triggerKey.getName().contains(jobId.value())) {
+                    Trigger trigger = scheduler.getTrigger(triggerKey);
+                    messageTimings.addAll(TriggerUtils.computeFireTimesBetween(
+                            (OperableTrigger) trigger, new BaseCalendar(), startDate, endDate));
+                }
+            }
+
+        } catch (SchedulerException e) {
+            handleException(String.format(
+                    "Can not get scheduled job timings given subject and externalJobIdPrefix for dates : %s %s %s %s %s",
+                    subject, externalJobIdPrefix, startDate.toString(), endDate.toString(), e.getMessage()), e);
+        }
+
+        return messageTimings;
     }
 
     @Override

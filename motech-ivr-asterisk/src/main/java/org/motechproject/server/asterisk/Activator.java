@@ -1,6 +1,5 @@
 package org.motechproject.server.asterisk;
 
-import org.motechproject.ivr.service.IVRService;
 import org.motechproject.server.event.annotations.EventAnnotationBeanPostProcessor;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
@@ -13,8 +12,6 @@ import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.osgi.web.context.support.OsgiBundleXmlWebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
 
-import java.util.Hashtable;
-
 public class Activator implements BundleActivator {
     private static Logger logger = LoggerFactory.getLogger(Activator.class);
     private static final String CONTEXT_CONFIG_LOCATION = "applicationAsteriskBundle.xml";
@@ -22,7 +19,7 @@ public class Activator implements BundleActivator {
     private ServiceTracker tracker;
     private ServiceReference httpService;
 
-    private static BundleContext bundleContext = null;
+    private static BundleContext bundleContext;
 
     @Override
     public void start(BundleContext context) throws Exception {

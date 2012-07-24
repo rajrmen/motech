@@ -1,7 +1,7 @@
 package org.motechproject.ivr.kookoo.controller;
 
 import org.apache.log4j.Logger;
-import org.motechproject.ivr.domain.CallSessionRecord;
+import org.motechproject.decisiontree.domain.FlowSessionRecord;
 import org.motechproject.ivr.event.IVREvent;
 import org.motechproject.ivr.kookoo.KooKooIVRContext;
 import org.motechproject.ivr.kookoo.KookooIVRResponseBuilder;
@@ -10,7 +10,7 @@ import org.motechproject.ivr.kookoo.KookooResponseFactory;
 import org.motechproject.ivr.kookoo.eventlogging.CallEventConstants;
 import org.motechproject.ivr.kookoo.service.KookooCallDetailRecordsService;
 import org.motechproject.ivr.domain.IVRMessage;
-import org.motechproject.ivr.service.IVRSessionManagementService;
+import org.motechproject.decisiontree.service.FlowSessionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,13 +28,13 @@ public abstract class SafeIVRController {
     static final String HANGUP_URL_ACTION = "/hangup";
     static final String DISCONNECT_URL_ACTION = "/disconnect";
 
-    protected Logger logger = Logger.getLogger(this.getClass());
-    protected IVRMessage ivrMessage;
+    private Logger logger = Logger.getLogger(this.getClass());
+    private IVRMessage ivrMessage;
     private StandardResponseController standardResponseController;
     private KookooCallDetailRecordsService callDetailRecordsService;
 
     @Autowired
-    private IVRSessionManagementService ivrSessionManagementService;
+    private FlowSessionService flowSessionService;
 
     protected SafeIVRController(IVRMessage ivrMessage, KookooCallDetailRecordsService callDetailRecordsService, StandardResponseController standardResponseController) {
         this.ivrMessage = ivrMessage;
@@ -47,9 +47,9 @@ public abstract class SafeIVRController {
 
     protected SafeIVRController(IVRMessage ivrMessage, KookooCallDetailRecordsService callDetailRecordsService,
                                 StandardResponseController standardResponseController,
-                                IVRSessionManagementService ivrSessionManagementService) {
+                                FlowSessionService flowSessionService) {
         this(ivrMessage, callDetailRecordsService, standardResponseController);
-        this.ivrSessionManagementService = ivrSessionManagementService;
+        this.flowSessionService = flowSessionService;
     }
 
     @RequestMapping(value = NEW_CALL_URL_ACTION, method = RequestMethod.GET)
@@ -87,8 +87,8 @@ public abstract class SafeIVRController {
         return "";
     }
 
-    private CallSessionRecord getCallSessionRecord(String sessionId) {
-        return ivrSessionManagementService.getCallSession(sessionId);
+    private FlowSessionRecord getCallSessionRecord(String sessionId) {
+        return (FlowSessionRecord) flowSessionService.getSession(sessionId);
     }
 
     private String safeCall(KooKooIVRContext ivrContext) {
@@ -109,7 +109,7 @@ public abstract class SafeIVRController {
             HashMap<String, String> map = new HashMap<String, String>();
             map.put(CallEventConstants.CUSTOM_DATA_LIST, responseXML);
             callDetailRecordsService.appendToLastCallEvent(ivrContext.callDetailRecordId(), map);
-            if (kookooIVRResponseBuilder.isHangUp()) standardResponseController.prepareForHangup(ivrContext);
+            if (kookooIVRResponseBuilder.isHangUp()) { standardResponseController.prepareForHangup(ivrContext); }
             logger.info(String.format(" XML returned: %s", responseXML));
             return responseXML;
         } catch (Exception e) {
@@ -131,7 +131,7 @@ public abstract class SafeIVRController {
     }
 
     public String hangup(KooKooIVRContext kooKooIVRContext) {
-        ivrSessionManagementService.removeCallSession(kooKooIVRContext.callId());
+        flowSessionService.removeCallSession(kooKooIVRContext.callId());
         return KookooResponseFactory.empty(kooKooIVRContext.callId()).create(null);
     }
 }

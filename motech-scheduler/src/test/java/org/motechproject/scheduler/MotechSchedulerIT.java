@@ -306,7 +306,7 @@ public class MotechSchedulerIT {
 
         GroupMatcher<TriggerKey> bar = GroupMatcher.triggerGroupEquals(MotechSchedulerServiceImpl.JOB_GROUP_NAME);
         Set<TriggerKey> foo = schedulerFactoryBean.getScheduler().getTriggerKeys(bar);
-        final List<? extends Trigger> triggersOfJob = schedulerFactoryBean.getScheduler().getTriggersOfJob(JobKey.jobKey(new JobId(motechEvent).repeatingId(), "default"));
+        final List<? extends Trigger> triggersOfJob = schedulerFactoryBean.getScheduler().getTriggersOfJob(JobKey.jobKey(new JobId(motechEvent, true).repeatingId(), "default"));
         assertEquals(new Date(start.getTime() + 5 * 5000), triggersOfJob.get(0).getFinalFireTime());
         assertEquals(scheduledJobsNum + 1, foo.size());
     }
@@ -382,6 +382,30 @@ public class MotechSchedulerIT {
         motechScheduler.unscheduleAllJobs("testJobId");
 
         assertEquals(numOfScheduledJobs - 3, schedulerFactoryBean.getScheduler().getTriggerKeys(GroupMatcher.triggerGroupEquals(MotechSchedulerServiceImpl.JOB_GROUP_NAME)).size());
+    }
+
+    @Test
+    public void shouldGetJobTimingsForJobId() {
+        String jobId = "testJob";
+        CronSchedulableJob job = getJob(jobId);
+        motechScheduler.scheduleJob(job);
+
+        List<Date> dateList = motechScheduler.getScheduledJobTimings(job.getMotechEvent().getSubject(),
+                jobId, DateTime.now().toDate(), DateTime.now().plusDays(10).toDate());
+
+        assertEquals(10, dateList.size());
+    }
+
+    @Test
+    public void shouldGetJobTimingsForJobIdPrefix() {
+        String jobId = "testJob-repeat";
+        CronSchedulableJob job = getJob(jobId);
+        motechScheduler.scheduleJob(job);
+
+        List<Date> dateList = motechScheduler.getScheduledJobTimingsWithPrefix(job.getMotechEvent().getSubject(),
+                jobId, DateTime.now().toDate(), DateTime.now().plusDays(10).toDate());
+
+        assertEquals(10, dateList.size());
     }
 
     private CronSchedulableJob getJob(String jobId) {

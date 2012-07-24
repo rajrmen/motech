@@ -1,14 +1,14 @@
 package org.motechproject.server.outbox.web;
 
 import org.apache.commons.lang.StringEscapeUtils;
-import org.motechproject.outbox.api.service.VoiceOutboxService;
 import org.motechproject.outbox.api.domain.OutboundVoiceMessage;
 import org.motechproject.outbox.api.domain.OutboundVoiceMessageStatus;
 import org.motechproject.outbox.api.domain.VoiceMessageType;
+import org.motechproject.outbox.api.service.VoiceOutboxService;
+import org.motechproject.server.config.service.PlatformSettingsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
@@ -43,6 +43,9 @@ public class VxmlOutboxController extends MultiActionController {
     @Autowired
     VoiceOutboxService voiceOutboxService;
 
+    @Autowired
+    PlatformSettingsService platformSettingsService;
+
     /**
      * Handles Appointment Reminder HTTP requests and generates a VXML document based on a Velocity template.
      * The HTTP request may contain an optional 'mId' parameter with value of ID of the message for which
@@ -69,7 +72,7 @@ public class VxmlOutboxController extends MultiActionController {
         String language = request.getParameter(LANGUAGE_PARAM);
 
         if (language == null) {
-            language = "en";
+            language = platformSettingsService.getPlatformLanguage("en");
         }
 
         String contextPath = request.getContextPath();

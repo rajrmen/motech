@@ -19,7 +19,11 @@ import org.motechproject.server.messagecampaign.service.CampaignEnrollmentServic
 import org.motechproject.valueobjects.WallTime;
 import org.springframework.util.CollectionUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static java.lang.String.format;
 import static org.motechproject.util.DateUtil.endOfDay;
@@ -35,6 +39,14 @@ public class RepeatingProgramScheduler extends MessageCampaignScheduler<Repeatin
         this.dispatchMessagesEvery24Hours = dispatchMessagesEvery24Hours;
     }
 
+    @Override
+    public void stop(String messageKey) {
+        for (RepeatingCampaignMessage message : campaign.messages()) {
+            if (message.messageKey().equals(messageKey)) {
+                schedulerService.safeUnscheduleRepeatingJob(getCampaignMessageSubject(message), getMessageJobId(messageKey));
+            }
+        }
+    }
 
     @Override
     protected void scheduleJobFor(RepeatingCampaignMessage message) {
@@ -53,11 +65,11 @@ public class RepeatingProgramScheduler extends MessageCampaignScheduler<Repeatin
         params.put(Constants.REPEATING_PROGRAM_24HRS_MESSAGE_DISPATCH_STRATEGY, dispatchMessagesEvery24Hours);
 
         // Bug 0058
-        if (RepeatingMessageMode.REPEAT_INTERVAL.name().equals(message.mode().name()) && !dispatchMessagesEvery24Hours) {
+        if (badFunctionConditionToBeRefactored(message)) {
             Integer offsetInDays = campaignRequest.startOffset();
             if (offsetInDays == null)
                 offsetInDays = new Integer(0);
-            scheduleRepeatingJob(message, params, newDateTime(startDate.plusDays(offsetInDays), message.deliverTime()).toDate(), endDate);
+            scheduleRepeatingJob(message, params, newDateTime(startDate.plusDays(offsetInDays), getDeliveryTime(message)).toDate(), endDate);
             return;
         }
 
@@ -66,6 +78,16 @@ public class RepeatingProgramScheduler extends MessageCampaignScheduler<Repeatin
         } else {
             scheduleRepeatingJob(startDate, getDeliveryTime(message), endDate, params, getCronExpression(message));
         }
+    }
+
+    private boolean badFunctionConditionToBeRefactored(RepeatingCampaignMessage message) {
+        return RepeatingMessageMode.REPEAT_INTERVAL.name().equals(message.mode().name()) && !dispatchMessagesEvery24Hours;
+    }
+
+    @Override
+    protected String getCampaignMessageSubject(RepeatingCampaignMessage repeatingCampaignMessage) {
+        if (badFunctionConditionToBeRefactored(repeatingCampaignMessage)) return EventKeys.MESSAGE_CAMPAIGN_SEND_EVENT_SUBJECT;
+        return INTERNAL_REPEATING_MESSAGE_CAMPAIGN_SUBJECT;
     }
 
     private void scheduleRepeatingJob(RepeatingCampaignMessage message, Map<String, Object> params, Date startDate, Date endDate) {
