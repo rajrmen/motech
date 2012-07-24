@@ -10,6 +10,7 @@ import org.junit.runner.RunWith;
 import org.mortbay.jetty.Server;
 import org.mortbay.jetty.servlet.Context;
 import org.mortbay.jetty.servlet.ServletHolder;
+import org.motechproject.decisiontree.domain.TreeDao;
 import org.motechproject.decisiontree.model.*;
 import org.motechproject.decisiontree.repository.AllTrees;
 import org.motechproject.testing.utils.SpringIntegrationTest;
@@ -62,8 +63,9 @@ public class DecisionTreeControllerIT extends SpringIntegrationTest {
             new TextToSpeechPrompt().setMessage("Hello Welcome to motech")
             ,new AudioPrompt().setAudioFileUrl(AUDIO_FILE_URL).setName("audioFile")
         ).setTransitions(transitions));
-        allTrees.addOrReplace(tree);
-        markForDeletion(tree);
+        final TreeDao treeDao = new TreeDao(tree);
+        allTrees.addOrReplace(treeDao);
+        markForDeletion(treeDao);
     }
 
     @AfterClass

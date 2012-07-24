@@ -1,7 +1,7 @@
 package org.motechproject.ivr.kookoo.controller;
 
 import org.apache.log4j.Logger;
-import org.motechproject.ivr.domain.CallSessionRecord;
+import org.motechproject.ivr.domain.FlowSession;
 import org.motechproject.ivr.event.IVREvent;
 import org.motechproject.ivr.kookoo.KooKooIVRContext;
 import org.motechproject.ivr.kookoo.KookooIVRResponseBuilder;
@@ -87,7 +87,7 @@ public abstract class SafeIVRController {
         return "";
     }
 
-    private CallSessionRecord getCallSessionRecord(String sessionId) {
+    private FlowSession getCallSessionRecord(String sessionId) {
         return ivrSessionManagementService.getCallSession(sessionId);
     }
 

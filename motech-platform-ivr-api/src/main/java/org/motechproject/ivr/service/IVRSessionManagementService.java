@@ -1,7 +1,7 @@
 package org.motechproject.ivr.service;
 
 
-import org.motechproject.ivr.domain.CallSessionRecord;
+import org.motechproject.ivr.domain.FlowSession;
 
 /**
  * Interface to IVR Dial out call. Originates call as per given call request.
@@ -9,9 +9,9 @@ import org.motechproject.ivr.domain.CallSessionRecord;
  */
 public interface IVRSessionManagementService {
 
-    public CallSessionRecord getCallSession(String sessionId);
+    public FlowSession getCallSession(String sessionId);
 
-    public void updateCallSession(CallSessionRecord callSessionRecord);
+    public void updateCallSession(FlowSession flowSession);
 
     public void removeCallSession(String sessionId);
 

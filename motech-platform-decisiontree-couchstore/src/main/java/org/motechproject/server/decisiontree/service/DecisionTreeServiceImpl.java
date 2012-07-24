@@ -1,5 +1,6 @@
 package org.motechproject.server.decisiontree.service;
 
+import org.motechproject.decisiontree.domain.TreeDao;
 import org.motechproject.decisiontree.model.Node;
 import org.motechproject.decisiontree.model.Tree;
 import org.motechproject.decisiontree.repository.AllTrees;
@@ -25,7 +26,9 @@ public class DecisionTreeServiceImpl implements DecisionTreeService {
     @Override
     public Node getNode(String treeName, String path) {
         Node node = null;
-        Tree tree = allTrees.findByName(treeName);
+        final TreeDao treeDao = allTrees.findByName(treeName);
+        if (treeDao == null) throw new TreeNotFoundException(treeName);
+        Tree tree = treeDao.getTree();
         logger.info("Looking for tree by name: " + treeName + ", found: " + tree);
         node = treeNodeLocator.findNode(tree, path);
         logger.info("Looking for node by path: " + path + ", found: " + node);

@@ -1,7 +1,7 @@
 package org.motechproject.ivr.kookoo.controller;
 
 import org.apache.log4j.Logger;
-import org.motechproject.ivr.domain.CallSessionRecord;
+import org.motechproject.ivr.domain.FlowSession;
 import org.motechproject.ivr.event.CallEvent;
 import org.motechproject.ivr.event.IVREvent;
 import org.motechproject.ivr.kookoo.IVRException;
@@ -36,8 +36,8 @@ public class StandardResponseController {
     @RequestMapping(value = AllIVRURLs.HANGUP_RESPONSE, method = RequestMethod.GET)
     @ResponseBody
     public String hangup(KookooRequest kookooRequest, HttpServletRequest request, HttpServletResponse response) {
-        CallSessionRecord callSessionRecord = ivrSessionManagementService.getCallSession(kookooRequest.getSid());
-        KooKooIVRContext ivrContext = new KooKooIVRContext(kookooRequest, request, response, callSessionRecord);
+        FlowSession flowSession = ivrSessionManagementService.getCallSession(kookooRequest.getSid());
+        KooKooIVRContext ivrContext = new KooKooIVRContext(kookooRequest, request, response, flowSession);
         return hangup(ivrContext);
     }
 

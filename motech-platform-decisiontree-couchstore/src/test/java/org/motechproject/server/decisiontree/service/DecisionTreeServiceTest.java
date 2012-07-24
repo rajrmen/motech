@@ -4,6 +4,7 @@ package org.motechproject.server.decisiontree.service;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.motechproject.decisiontree.domain.TreeDao;
 import org.motechproject.decisiontree.model.ITreeCommand;
 import org.motechproject.decisiontree.model.Node;
 import org.motechproject.decisiontree.model.Transition;
@@ -25,7 +26,7 @@ public class DecisionTreeServiceTest {
 
     private DecisionTreeService decisionTreeService;
 
-    private Tree pillReminderTree;
+    private TreeDao pillReminderTree;
     private Node rootNode;
     private Node nextNode;
 
@@ -44,25 +45,25 @@ public class DecisionTreeServiceTest {
                         }
                 });
 
-        pillReminderTree = new Tree()
+        pillReminderTree = new TreeDao( new Tree()
                 .setName("PillReminderTree")
-                .setRootNode(rootNode);
+                .setRootNode(rootNode));
 
-        when(allTrees.findByName(pillReminderTree.getName())).thenReturn(pillReminderTree);
+        when(allTrees.findByName(pillReminderTree.name())).thenReturn(pillReminderTree);
         decisionTreeService = new DecisionTreeServiceImpl(allTrees, treeNodeLocator);
     }
 
     @Test
     public void shouldFetchCommandForRootNode() {
-        when(treeNodeLocator.findNode(pillReminderTree, "")).thenReturn(rootNode);
-        Node nextNode = decisionTreeService.getNode(pillReminderTree.getName(), "");
+        when(treeNodeLocator.findNode(pillReminderTree.getTree(), "")).thenReturn(rootNode);
+        Node nextNode = decisionTreeService.getNode(pillReminderTree.name(), "");
         assertEquals(RootNodeCommand.class, nextNode.getTreeCommands().get(0).getClass());
     }
 
     @Test
     public void shouldFetchNextCommand() {
-        when(treeNodeLocator.findNode(pillReminderTree, "/1")).thenReturn(nextNode);
-        Node nextNode = decisionTreeService.getNode(pillReminderTree.getName(), "/1");
+        when(treeNodeLocator.findNode(pillReminderTree.getTree(), "/1")).thenReturn(nextNode);
+        Node nextNode = decisionTreeService.getNode(pillReminderTree.name(), "/1");
         assertEquals(NextCommand.class, nextNode.getTreeCommands().get(0).getClass());
     }
 

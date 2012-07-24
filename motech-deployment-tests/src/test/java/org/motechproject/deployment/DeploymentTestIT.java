@@ -39,12 +39,13 @@ public class DeploymentTestIT {
 
     @Test
     public void shouldNotFoundExceptionsDuringStartup() throws Exception {
-        List<String> errors = new ArrayList<>();
+        List<String> errors = new ArrayList();
         File file = new File(LOG_FILE);
 
         assertTrue(String.format("File not found: %s.", file.getAbsolutePath()), file.exists());
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(file));
             Pattern pattern = Pattern.compile(EXCEPTION_PATTERN);
             String currentLine = "";
 
@@ -53,6 +54,8 @@ public class DeploymentTestIT {
                     errors.add(currentLine);
                 }
             }
+        } finally {
+
         }
 
         assertEquals("Errors appeared during MoTeCH project startup: " + createErrorsList(errors), 0, errors.size());

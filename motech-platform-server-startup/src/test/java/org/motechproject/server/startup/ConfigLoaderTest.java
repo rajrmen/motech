@@ -15,7 +15,7 @@ public class ConfigLoaderTest {
 
     @Test
     public void testConfigLoading() {
-        List<Resource> configLocations = new ArrayList<>();
+        List<Resource> configLocations = new ArrayList();
         configLocations.add(new ClassPathResource("settings.properties"));
         ConfigLoader configLoader = new ConfigLoader(configLocations);
 

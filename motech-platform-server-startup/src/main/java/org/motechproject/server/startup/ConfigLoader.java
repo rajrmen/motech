@@ -35,7 +35,7 @@ public class ConfigLoader {
 
     public void addConfigLocation(Resource location) {
         if (configLocations == null) {
-            configLocations = new ArrayList<>();
+            configLocations = new ArrayList();
         }
         configLocations.add(location);
     }
@@ -64,7 +64,9 @@ public class ConfigLoader {
         try {
             MessageDigest digest = MessageDigest.getInstance("MD5");
 
-            try (DigestInputStream dis = new DigestInputStream(is, digest)) {
+            try {
+                DigestInputStream dis = new DigestInputStream(is, digest);
+
                 //load configFileSettings and calculate MD5 hash
                 ConfigFileSettings configFileSettings = new ConfigFileSettings();
                 configFileSettings.load(dis);

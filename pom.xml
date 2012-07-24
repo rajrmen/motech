@@ -147,6 +147,7 @@
         <module>motech-alerts-api</module>
         <module>motech-ivr-asterisk</module>
         <module>motech-ivr-kookoo</module>
+        <module>motech-ivr-kookoo-v2</module>
         <module>motech-ivr-voxeo</module>
         <module>motech-ivr-verboice</module>
         <module>motech-demo</module>
@@ -162,11 +163,12 @@
         <module>motech-rpm</module>
         <module>motech-rules-api</module>
         <module>motech-rules</module>
-        <module>motech-platform-server-startup</module>
         <module>motech-web-security</module>
         <!-- Keep this module in last, the module checks if everything is alright after deploy motech on tomcat server -->
         <module>motech-deployment-tests</module>
         <module>motech-platform-decisiontree-couchstore</module>
+        <module>motech-platoform-ivr-session</module>
+        <module>motech-platform-common-dateutil</module>
     </modules>
 
     <build>

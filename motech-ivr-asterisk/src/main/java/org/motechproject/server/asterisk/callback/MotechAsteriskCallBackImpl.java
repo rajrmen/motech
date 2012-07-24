@@ -33,7 +33,7 @@ public class MotechAsteriskCallBackImpl implements OriginateCallback {
 
     @Override
     public void onSuccess(AsteriskChannel asteriskChannel) {
-        MotechEvent event = callRequest.getOnSuccessEvent();
+        MotechEvent event = null;//callRequest.getOnSuccessEvent();
 
         if (event != null) {
             org.asteriskjava.live.CallDetailRecord aCDR = asteriskChannel.getCallDetailRecord();
@@ -49,7 +49,7 @@ public class MotechAsteriskCallBackImpl implements OriginateCallback {
 
     @Override
     public void onNoAnswer(AsteriskChannel asteriskChannel) {
-        MotechEvent event = callRequest.getOnNoAnswerEvent();
+        MotechEvent event = null;//callRequest.getOnNoAnswerEvent();
 
         if (event != null) {
             org.asteriskjava.live.CallDetailRecord aCDR = asteriskChannel.getCallDetailRecord();
@@ -63,7 +63,7 @@ public class MotechAsteriskCallBackImpl implements OriginateCallback {
 
     @Override
     public void onBusy(AsteriskChannel asteriskChannel) {
-        MotechEvent event = callRequest.getOnBusyEvent();
+        MotechEvent event = null;//callRequest.getOnBusyEvent();
 
         if (event != null) {
             org.asteriskjava.live.CallDetailRecord aCDR = asteriskChannel.getCallDetailRecord();
@@ -77,7 +77,7 @@ public class MotechAsteriskCallBackImpl implements OriginateCallback {
 
     @Override
     public void onFailure(LiveException e) {
-        MotechEvent event = callRequest.getOnFailureEvent();
+        MotechEvent event = null;//callRequest.getOnFailureEvent();
 
         if (event != null) {
             CallDetailRecord cdr = new CallDetailRecord(CallDetailRecord.Disposition.FAILED, e.getMessage());

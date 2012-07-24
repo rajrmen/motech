@@ -11,8 +11,10 @@ import org.junit.runner.RunWith;
 import org.mortbay.jetty.Server;
 import org.mortbay.jetty.servlet.Context;
 import org.mortbay.jetty.servlet.ServletHolder;
+import org.motechproject.decisiontree.domain.TreeDao;
 import org.motechproject.decisiontree.model.*;
 import org.motechproject.decisiontree.repository.AllTrees;
+import org.motechproject.ivr.domain.FlowSession;
 import org.motechproject.testing.utils.SpringIntegrationTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -71,7 +73,7 @@ public class VerboiceIVRControllerDecisionTreeIT extends SpringIntegrationTest {
         tree.setRootNode(new Node().addPrompts(
                 new TextToSpeechPrompt().setMessage("Hello Welcome to motech")
         ).setTransitions(transitions));
-        allTrees.addOrReplace(tree);
+        allTrees.addOrReplace(new TreeDao(tree));
         markForDeletion(tree);
     }
 
@@ -143,7 +145,7 @@ public class VerboiceIVRControllerDecisionTreeIT extends SpringIntegrationTest {
         transitions.put("failed", new Transition().setDestinationNode(failureTextNode));
 
         tree.setRootNode(new Node().addPrompts(new DialPrompt("othernumber")).setTransitions(transitions));
-        allTrees.addOrReplace(tree);
+        allTrees.addOrReplace(new TreeDao(tree));
         markForDeletion(tree);
     }
 
@@ -176,7 +178,7 @@ public class VerboiceIVRControllerDecisionTreeIT extends SpringIntegrationTest {
         TestComponent testComponent;
 
         @Override
-        public Node getDestinationNode(String input) {
+        public Node getDestinationNode(String input, FlowSession session) {
             final HashMap<String, ITransition> transitions = new HashMap<String, ITransition>();
             transitions.put("1", new Transition().setDestinationNode(new Node().setPrompts(new AudioPrompt().setAudioFileUrl("option1_after_custom_transition.wav"))));
             transitions.put("?", this);

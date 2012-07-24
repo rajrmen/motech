@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.script.ScriptEngine;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -43,7 +44,6 @@ public class ServerEventRelay implements EventRelay
     // @TODO either relayEvent should be made private, or this method moved out to it's own class.
     public void sendEventMessage(MotechEvent event) {
         log.info("Sending event: " + event.getSubject());
-
         Set<EventListener> listeners = eventListenerRegistry.getListeners( event.getSubject() );
         Map<String, String> parameters = new HashMap<String, String>();
         parameters.put("subject", event.getSubject());

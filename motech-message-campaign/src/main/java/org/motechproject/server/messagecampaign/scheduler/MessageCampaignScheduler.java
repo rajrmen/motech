@@ -75,7 +75,7 @@ public abstract class MessageCampaignScheduler<T extends CampaignMessage, E exte
     }
 
     public Map<String, List<Date>> getCampaignTimings(Date startDate, Date endDate) {
-        Map<String, List<Date>> messageTimingsMap = new HashMap<>();
+        Map<String, List<Date>> messageTimingsMap = new HashMap();
 
         for (T message : campaign.messages()) {
             messageTimingsMap.put(message.name(),

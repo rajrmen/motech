@@ -198,7 +198,7 @@ public class IvrController extends MultiActionController {
             case DISCONNECTED:
                 phoneCall.setDisposition(CallDetailRecord.Disposition.ANSWERED);
 
-                motechEvent = phoneCall.getCallRequest().getOnSuccessEvent();
+                //motechEvent = phoneCall.getCallRequest().getOnSuccessEvent();
                 phoneCall.setEndDate(new Date(event.getTimestamp()));
                 break;
 
@@ -207,17 +207,17 @@ public class IvrController extends MultiActionController {
                 switch (event.getReason()) {
                     case BUSY:
                         phoneCall.setDisposition(CallDetailRecord.Disposition.BUSY);
-                        motechEvent = phoneCall.getCallRequest().getOnBusyEvent();
+                        //motechEvent = phoneCall.getCallRequest().getOnBusyEvent();
                         break;
 
                     case TIMEOUT:
                         phoneCall.setDisposition(CallDetailRecord.Disposition.NO_ANSWER);
-                        motechEvent = phoneCall.getCallRequest().getOnNoAnswerEvent();
+                        //motechEvent = phoneCall.getCallRequest().getOnNoAnswerEvent();
                         break;
 
                     default:
                         phoneCall.setDisposition(CallDetailRecord.Disposition.FAILED);
-                        motechEvent = phoneCall.getCallRequest().getOnFailureEvent();
+                        //motechEvent = phoneCall.getCallRequest().getOnFailureEvent();
                 }
                 break;
         }

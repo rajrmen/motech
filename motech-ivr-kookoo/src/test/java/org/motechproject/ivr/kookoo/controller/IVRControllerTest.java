@@ -4,12 +4,13 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.motechproject.ivr.domain.CallSessionRecord;
+import org.motechproject.ivr.domain.FlowSession;
 import org.motechproject.ivr.event.CallEvent;
 import org.motechproject.ivr.event.IVREvent;
 import org.motechproject.ivr.kookoo.KooKooIVRContextForTest;
 import org.motechproject.ivr.kookoo.KookooCallbackRequest;
 import org.motechproject.ivr.kookoo.KookooRequest;
+import org.motechproject.ivr.kookoo.TestFlowSession;
 import org.motechproject.ivr.kookoo.extensions.CallFlowController;
 import org.motechproject.ivr.kookoo.service.KookooCallDetailRecordsService;
 import org.motechproject.ivr.model.CallDetailRecord;
@@ -74,12 +75,12 @@ public class IVRControllerTest {
         when(request.getCookies()).thenReturn(new Cookie[]{});
         when(request.getSession()).thenReturn(session);
 
-        when(ivrSessionManagementService.getCallSession("sid")).thenReturn(new CallSessionRecord("sid"));
+        when(ivrSessionManagementService.getCallSession("sid")).thenReturn(new TestFlowSession("sid"));
         doNothing().when(callDetailRecordsService).appendToLastCallEvent(anyString(), anyMap());
 
         ivrController.reply(kookooRequest, request, mock(HttpServletResponse.class));
         verify(ivrSessionManagementService, times(1)).getCallSession("sid");
-        verify(ivrSessionManagementService, times(1)).updateCallSession(any(CallSessionRecord.class));
+        verify(ivrSessionManagementService, times(1)).updateCallSession(any(FlowSession.class));
     }
 
     @Test
@@ -173,4 +174,5 @@ public class IVRControllerTest {
         assertEquals(IVREvent.Missed.toString(), callEventArgumentCaptor.getValue().getName());
         assertEquals("outbox", callEventArgumentCaptor.getValue().getData().getFirst(IVRService.CALL_TYPE));
     }
+
 }

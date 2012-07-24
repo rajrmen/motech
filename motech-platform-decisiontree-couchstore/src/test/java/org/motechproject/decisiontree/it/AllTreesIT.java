@@ -3,6 +3,7 @@ package org.motechproject.decisiontree.it;
 import org.ektorp.CouchDbConnector;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.motechproject.decisiontree.domain.TreeDao;
 import org.motechproject.decisiontree.model.*;
 import org.motechproject.decisiontree.repository.AllTrees;
 import org.motechproject.testing.utils.SpringIntegrationTest;
@@ -34,16 +35,17 @@ public class AllTreesIT extends SpringIntegrationTest {
         final Node audioPromptNode = new Node().addPrompts(new AudioPrompt().setName("abc")).setTransitions(transitions);
         tree.setName("tree").setRootNode(audioPromptNode);
 
-        allTrees.addOrReplace(tree);
+        final TreeDao treeDao = new TreeDao(tree);
+        allTrees.addOrReplace(treeDao);
         markForDeletion(tree);
 
-        Tree fromDb = allTrees.get(tree.getId());
+        TreeDao fromDb = allTrees.get(treeDao.getId());
         assertNotNull(fromDb);
-        final Node rootNodeFromDb = fromDb.getRootNode();
+        final Node rootNodeFromDb = fromDb.getTree().getRootNode();
         assertNotNull(rootNodeFromDb);
         assertEquals(AudioPrompt.class.getName(), rootNodeFromDb.getPrompts().get(0).getClass().getName());
 
-        final Node nextNode = rootNodeFromDb.getTransitions().get("1").getDestinationNode("1");
+        final Node nextNode = rootNodeFromDb.getTransitions().get("1").getDestinationNode("1", null);
         assertEquals(TextToSpeechPrompt.class.getName(), nextNode.getPrompts().get(0).getClass().getName());
 
     }
@@ -52,12 +54,13 @@ public class AllTreesIT extends SpringIntegrationTest {
     public void shouldStoreTreeWithCommands() throws Exception {
         Tree tree = new Tree();
         tree.setName("tree").setRootNode(new Node().addPrompts(new AudioPrompt().setCommand(new TestCommand())));
-        allTrees.addOrReplace(tree);
+        final TreeDao treeDao = new TreeDao(tree);
+        allTrees.addOrReplace(treeDao);
         markForDeletion(tree);
 
-        Tree fromDb = allTrees.get(tree.getId());
+        TreeDao fromDb = allTrees.get(treeDao.getId());
         assertNotNull(fromDb);
-        final ITreeCommand command = fromDb.getRootNode().getPrompts().get(0).getCommand();
+        final ITreeCommand command = fromDb.getTree().getRootNode().getPrompts().get(0).getCommand();
         assertEquals(TestCommand.class.getName(), command.getClass().getName());
         final String[] result = command.execute(null);
         assertEquals("ok", result[0]);
@@ -69,12 +72,12 @@ public class AllTreesIT extends SpringIntegrationTest {
         Tree tree = new Tree();
         tree.setName("someTree");
         tree.setRootNode(new Node().addPrompts(new AudioPrompt().setName("audioFile")));
-        allTrees.addOrReplace(tree);
+        allTrees.addOrReplace(new TreeDao(tree));
         markForDeletion(tree);
 
-        final Tree fromDb = allTrees.findByName("someTree");
+        final TreeDao fromDb = allTrees.findByName("someTree");
         assertNotNull(fromDb);
-        assertEquals("audioFile", fromDb.getRootNode().getPrompts().get(0).getName());
+        assertEquals("audioFile", fromDb.getTree().getRootNode().getPrompts().get(0).getName());
     }
 
     @Test
@@ -82,16 +85,17 @@ public class AllTreesIT extends SpringIntegrationTest {
         Tree tree = new Tree();
         tree.setName("someTree");
         tree.setRootNode(new Node().addPrompts(new AudioPrompt().setName("audioFile1")));
-        allTrees.addOrReplace(tree);
+        final TreeDao treeDao = new TreeDao(tree);
+        allTrees.addOrReplace(treeDao);
         markForDeletion(tree);
 
         tree = new Tree();
         tree.setName("someTree");
         tree.setRootNode(new Node().addPrompts(new AudioPrompt().setName("audioFile2")));
-        allTrees.addOrReplace(tree);
+        allTrees.addOrReplace(treeDao);
 
-        final Tree someTree = allTrees.findByName("someTree");
-        assertEquals("audioFile2", someTree.getRootNode().getPrompts().get(0).getName());
+        final TreeDao someTree = allTrees.findByName("someTree");
+        assertEquals("audioFile2", someTree.getTree().getRootNode().getPrompts().get(0).getName());
     }
 
     @Override

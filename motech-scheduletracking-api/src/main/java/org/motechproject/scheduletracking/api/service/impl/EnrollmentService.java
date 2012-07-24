@@ -1,5 +1,6 @@
 package org.motechproject.scheduletracking.api.service.impl;
 
+import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.Period;
 import org.motechproject.model.Time;
@@ -15,7 +16,6 @@ import java.util.Map;
 
 import static org.motechproject.scheduletracking.api.domain.EnrollmentStatus.COMPLETED;
 import static org.motechproject.scheduletracking.api.domain.EnrollmentStatus.UNENROLLED;
-import static org.motechproject.util.StringUtil.isNullOrEmpty;
 
 @Component
 public class EnrollmentService {
@@ -42,9 +42,9 @@ public class EnrollmentService {
         }
 
         Enrollment activeEnrollment = allEnrollments.getActiveEnrollment(externalId, scheduleName);
-        if (activeEnrollment == null)
+        if (activeEnrollment == null) {
             allEnrollments.add(enrollment);
-        else {
+        } else {
             unscheduleJobs(activeEnrollment);
             enrollment = activeEnrollment.copyFrom(enrollment);
             allEnrollments.update(enrollment);
@@ -56,18 +56,20 @@ public class EnrollmentService {
 
     public void fulfillCurrentMilestone(Enrollment enrollment, DateTime fulfillmentDateTime) {
         Schedule schedule = allSchedules.getByName(enrollment.getScheduleName());
-        if (isNullOrEmpty(enrollment.getCurrentMilestoneName()))
+        if (StringUtils.isBlank(enrollment.getCurrentMilestoneName())) {
             throw new NoMoreMilestonesToFulfillException();
+        }
 
         unscheduleJobs(enrollment);
 
         enrollment.fulfillCurrentMilestone(fulfillmentDateTime);
         String nextMilestoneName = schedule.getNextMilestoneName(enrollment.getCurrentMilestoneName());
         enrollment.setCurrentMilestoneName(nextMilestoneName);
-        if (nextMilestoneName == null)
+        if (nextMilestoneName == null) {
             enrollment.setStatus(COMPLETED);
-        else
+        } else {
             scheduleJobs(enrollment);
+        }
 
         allEnrollments.update(enrollment);
     }
@@ -87,8 +89,9 @@ public class EnrollmentService {
             Period windowEnd = milestone.getWindowEnd(window.getName());
             DateTime windowStartDateTime = milestoneStart.plus(windowStart);
             DateTime windowEndDateTime = milestoneStart.plus(windowEnd);
-            if (inRange(asOf, windowStartDateTime, windowEndDateTime))
+            if (inRange(asOf, windowStartDateTime, windowEndDateTime)) {
                 return window.getName();
+            }
         }
         return null;
     }

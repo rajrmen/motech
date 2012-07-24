@@ -45,7 +45,7 @@ public class DecisionTreeController extends MultiActionController {
     public static final String TYPE_PARAM = "type";
 
     public static final String NODE_TEMPLATE_NAME = TEMPLATE_BASE_PATH + "node";
-    public static final String LEAF_TEMPLATE_NAME = TEMPLATE_BASE_PATH + "leaf";
+    public static final String LEAF_TEMPLATE_NAME = TEMPLATE_BASE_PATH + "node";
     public static final String ERROR_MESSAGE_TEMPLATE_NAME = TEMPLATE_BASE_PATH + "node-error";
     public static final String EXIT_TEMPLATE_NAME = TEMPLATE_BASE_PATH + "exit";
 
@@ -158,7 +158,7 @@ public class DecisionTreeController extends MultiActionController {
             ITransition transition = sendTreeEventActions(params, transitionKey, parentTransitionPath, parentNode);
             applicationContext.getAutowireCapableBeanFactory().autowireBean(transition);
 
-            node = transition.getDestinationNode(transitionKey);
+            node = transition.getDestinationNode(transitionKey, null);
 
             if (node == null || (node.getPrompts().isEmpty() && node.getActionsAfter().isEmpty()
                     && node.getActionsBefore().isEmpty() && node.getTransitions().isEmpty())) {

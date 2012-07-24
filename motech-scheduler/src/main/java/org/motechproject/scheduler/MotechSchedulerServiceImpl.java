@@ -519,7 +519,7 @@ public class MotechSchedulerServiceImpl extends MotechObject implements MotechSc
             String subject, String externalJobIdPrefix, Date startDate, Date endDate) {
 
         JobId jobId = new JobId(subject, externalJobIdPrefix, false);
-        List<Date> messageTimings = new ArrayList<>();
+        List<Date> messageTimings = new ArrayList();
         try {
             List<TriggerKey> triggerKeys = new ArrayList<TriggerKey>(
                     scheduler.getTriggerKeys(GroupMatcher.triggerGroupContains(JOB_GROUP_NAME)));

@@ -38,7 +38,7 @@ public class TreeNodeLocator {
                 if (transition == null) transition = node.getTransitions().get(ANY_KEY);
                 if (transition == null) return null;
                 applicationContext.getAutowireCapableBeanFactory().autowireBean(transition); //TODO : autowiring in 2 places, see - DecistionTreeController
-                node = transition.getDestinationNode(key);
+                node = transition.getDestinationNode(key, null);
                 if (node == null) return null;
             }
         }

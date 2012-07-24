@@ -6,7 +6,6 @@ import org.ektorp.support.TypeDiscriminator;
 import org.joda.time.DateTime;
 import org.motechproject.model.MotechBaseDataObject;
 import org.motechproject.model.Time;
-import org.motechproject.util.DateUtil;
 
 import java.util.LinkedList;
 import java.util.List;

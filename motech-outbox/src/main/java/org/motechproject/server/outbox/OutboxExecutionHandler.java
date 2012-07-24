@@ -67,14 +67,14 @@ public class OutboxExecutionHandler {
             MotechEvent incompleteEvent = new MotechEvent(EventKeys.INCOMPLETE_OUTBOX_CALL_SUBJECT,
                     messageParameters);
 
-            callRequest.setOnBusyEvent(incompleteEvent);
-            callRequest.setOnFailureEvent(incompleteEvent);
-            callRequest.setOnNoAnswerEvent(incompleteEvent);
+            //callRequest.setOnBusyEvent(incompleteEvent);
+            //callRequest.setOnFailureEvent(incompleteEvent);
+            //callRequest.setOnNoAnswerEvent(incompleteEvent);
 
             MotechEvent successEvent = new MotechEvent(EventKeys.COMPLETED_OUTBOX_CALL_SUBJECT,
                     messageParameters);
 
-            callRequest.setOnSuccessEvent(successEvent);
+            //callRequest.setOnSuccessEvent(successEvent);
 
             ivrService.initiateCall(callRequest);
         } catch (CallInitiationException e) {

@@ -18,7 +18,7 @@ public class CouchDbManager {
     HttpClientFactoryBean httpClientFactoryBean;
 
     private CouchDbInstance couchDbInstance;
-    private Map<String, CouchDbConnector> couchDbConnectors = new HashMap<>();
+    private Map<String, CouchDbConnector> couchDbConnectors = new HashMap();
 
     public CouchDbManager() {
         // do nothing

@@ -1,7 +1,6 @@
 package org.motechproject.ivr.service;
 
 import org.codehaus.jackson.annotate.JsonProperty;
-import org.motechproject.scheduler.domain.MotechEvent;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -33,14 +32,6 @@ public class CallRequest implements Serializable {
     @JsonProperty
     private Map<String, String> payload = new HashMap<String, String>();
 
-    @JsonProperty
-    private MotechEvent onSuccessEvent;
-    @JsonProperty
-    private MotechEvent onBusyEvent;
-    @JsonProperty
-    private MotechEvent onNoAnswerEvent;
-    @JsonProperty
-    private MotechEvent onFailureEvent;
 
     /**
      * Generate a call request for the IVR system
@@ -93,37 +84,7 @@ public class CallRequest implements Serializable {
         return phone;
     }
 
-    public MotechEvent getOnSuccessEvent() {
-        return onSuccessEvent;
-    }
 
-    public void setOnSuccessEvent(MotechEvent onSuccessEvent) {
-        this.onSuccessEvent = onSuccessEvent;
-    }
-
-    public MotechEvent getOnBusyEvent() {
-        return onBusyEvent;
-    }
-
-    public void setOnBusyEvent(MotechEvent onBusyEvent) {
-        this.onBusyEvent = onBusyEvent;
-    }
-
-    public MotechEvent getOnNoAnswerEvent() {
-        return onNoAnswerEvent;
-    }
-
-    public void setOnNoAnswerEvent(MotechEvent onNoAnswerEvent) {
-        this.onNoAnswerEvent = onNoAnswerEvent;
-    }
-
-    public MotechEvent getOnFailureEvent() {
-        return onFailureEvent;
-    }
-
-    public void setOnFailureEvent(MotechEvent onFailureEvent) {
-        this.onFailureEvent = onFailureEvent;
-    }
 
     public Map<String, String> getPayload() {
         return payload;

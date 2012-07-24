@@ -14,7 +14,7 @@ public class AllSettings extends MotechBaseRepository<SettingsRecord> {
     }
 
     public SettingsRecord getSettings() {
-        List<SettingsRecord> settingsRecordList = new ArrayList<>();
+        List<SettingsRecord> settingsRecordList = new ArrayList();
         return (settingsRecordList == null || settingsRecordList.isEmpty()) ? new SettingsRecord() :
                 settingsRecordList.get(0);
     }

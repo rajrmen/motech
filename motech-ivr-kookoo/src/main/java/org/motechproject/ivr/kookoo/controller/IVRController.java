@@ -1,7 +1,7 @@
 package org.motechproject.ivr.kookoo.controller;
 
 import org.apache.log4j.Logger;
-import org.motechproject.ivr.domain.CallSessionRecord;
+import org.motechproject.ivr.domain.FlowSession;
 import org.motechproject.ivr.event.CallEvent;
 import org.motechproject.ivr.event.IVREvent;
 import org.motechproject.ivr.kookoo.KooKooIVRContext;
@@ -36,8 +36,8 @@ public class IVRController {
 
     @RequestMapping(value = "/ivr/reply", method = RequestMethod.GET)
     public String reply(KookooRequest kookooRequest, HttpServletRequest request, HttpServletResponse response) {
-        CallSessionRecord callSessionRecord = ivrSessionManagementService.getCallSession(kookooRequest.getSid());
-        KooKooIVRContext kooKooIVRContext = new KooKooIVRContext(kookooRequest, request, response, callSessionRecord);
+        FlowSession flowSession = ivrSessionManagementService.getCallSession(kookooRequest.getSid());
+        KooKooIVRContext kooKooIVRContext = new KooKooIVRContext(kookooRequest, request, response, flowSession);
         return reply(kooKooIVRContext);
     }
 
@@ -87,7 +87,7 @@ public class IVRController {
                 String treeName = callFlowController.decisionTreeName(ivrContext);
                 ivrContext.treeName(treeName);
             }
-            ivrSessionManagementService.updateCallSession(ivrContext.getCallSessionRecord());
+            ivrSessionManagementService.updateCallSession(ivrContext.getFlowSession());
             kookooCallDetailRecordsService.appendToLastCallEvent(ivrContext.callDetailRecordId(), ivrContext.dataToLog());
             String transferURL = AllIVRURLs.springTransferUrl(url, ivrContext.ivrEvent().toLowerCase());
             logger.info(String.format("Transferring to %s", transferURL));

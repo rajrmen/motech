@@ -3,8 +3,8 @@ package org.motechproject.server.messagecampaign.domain.message;
 import org.joda.time.DateTime;
 import org.motechproject.model.DayOfWeek;
 import org.motechproject.model.Time;
-import org.motechproject.server.messagecampaign.contract.CampaignRequest;
 import org.motechproject.valueobjects.WallTime;
+import org.motechproject.server.messagecampaign.contract.CampaignRequest;
 
 import java.util.ArrayList;
 import java.util.Date;
