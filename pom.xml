@@ -7,11 +7,6 @@
     <packaging>pom</packaging>
     <name>MoTeCH</name>
 
-    <description>
-        MoTeCH is a software system from Grameen Foundation that harnesses the ubiquity
-        of mobile phones to deliver and receive information from patient and caregivers.
-    </description>
-
     <properties>
         <db.server>localhost</db.server>
         <db.port>5984</db.port>
@@ -21,64 +16,9 @@
         <activemq.version>5.4.2</activemq.version>
         <modules.root.dir>${basedir}</modules.root.dir>
         <jdk.version>1.7</jdk.version>
-        <scm.connection>scm:git:https://code.google.com/p/motech</scm.connection>
-        <scm.developerConnection>scm:git:https://code.google.com/p/motech</scm.developerConnection>
-        <scm.url>https://code.google.com/p/motech</scm.url>
     </properties>
 
-    <repositories>
-        <repository>
-            <id>motech-repo</id>
-            <name>MoTeCH Maven Repository</name>
-            <url>http://nexus.motechproject.org/content/repositories/public</url>
-        </repository>
-    </repositories>
-
-    <pluginRepositories>
-        <pluginRepository>
-            <id>motech-repo</id>
-            <name>MoTeCH Maven Repository</name>
-            <url>http://nexus.motechproject.org/content/repositories/public</url>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </pluginRepository>
-    </pluginRepositories>
-
-    <distributionManagement>
-        <repository>
-            <id>motech.nexus</id>
-            <name>MoTeCH Releases Repository</name>
-            <url>http://nexus.motechproject.org/content/repositories/releases</url>
-            <uniqueVersion>false</uniqueVersion>
-        </repository>
-        <snapshotRepository>
-            <id>motech.nexus</id>
-            <name>MoTeCH Snapshots Repository</name>
-            <url>http://nexus.motechproject.org/content/repositories/snapshots</url>
-            <uniqueVersion>false</uniqueVersion>
-        </snapshotRepository>
-    </distributionManagement>
-
     <dependencies>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.8.2</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-library</artifactId>
-            <version>1.1</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-            <version>1.8.5</version>
-            <scope>test</scope>
-        </dependency>
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
@@ -89,7 +29,7 @@
             <artifactId>joda-time</artifactId>
             <version>2.0</version>
         </dependency>
-        <dependency>
+        <!--<dependency>
             <groupId>com.googlecode.lambdaj</groupId>
             <artifactId>lambdaj</artifactId>
             <version>2.3.3</version>
@@ -108,7 +48,7 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
             <version>1.6.1</version>
-        </dependency>
+        </dependency>-->
         <dependency>
             <groupId>commons-logging</groupId>
             <artifactId>commons-logging</artifactId>
@@ -129,65 +69,43 @@
             <artifactId>annotations</artifactId>
             <version>1.0.0</version>
         </dependency>
+
+        <!-- Test -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.8.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-library</artifactId>
+            <version>1.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>1.8.5</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <modules>
         <module>motech-platform-common-api</module>
-        <module>motech-platform-server</module>
-        <module>motech-platform-scheduler</module>
-        <module>motech-platform-ivr-api</module>
-        <module>motech-platform-server-api</module>
-        <module>motech-outbox</module>
-        <module>motech-outbox-api</module>
-        <module>motech-appointments</module>
-        <module>motech-appointments-api</module>
-        <module>motech-commcare-api</module>
-        <module>motech-platform-decisiontree</module>
-        <module>motech-platform-decisiontree-common</module>
-        <module>motech-pillreminder</module>
-        <module>motech-pillreminder-api</module>
-        <module>motech-cmslite-api</module>
-        <module>motech-scheduletracking-api</module>
-        <module>motech-message-campaign</module>
-        <module>motech-mobileforms-api</module>
-        <module>motech-alerts-api</module>
-        <module>motech-ivr-asterisk</module>
-        <module>motech-ivr-kookoo-v2</module>
-        <module>motech-ivr-voxeo</module>
-        <module>motech-ivr-verboice</module>
-        <module>motech-demo</module>
-        <module>motech-mrs-api</module>
-        <module>motech-openmrs-api</module>
-        <module>motech-openmrs-omod</module>
-        <module>motech-openmrs-ws</module>
-        <module>motech-sms-api</module>
-        <module>motech-sms-http</module>
-        <module>motech-sms-smpp</module>
-        <module>motech-testing-utils</module>
-        <module>motech-platform-common</module>
-        <module>motech-scheduler</module>
-        <module>motech-rpm</module>
-        <module>motech-rules-api</module>
-        <module>motech-rules</module>
-        <module>motech-platform-server-config</module>
         <module>motech-platform-server-startup</module>
-        <module>motech-web-security</module>
-        <module>motech-admin</module>
-        <module>motech-admin-UI</module>
-        <!-- Keep this module in last, the module checks if everything is alright after deploy motech on tomcat server -->
-        <module>motech-deployment-tests</module>
+        <module>motech-platform-server-api</module>
+        <module>motech-platform-server-config</module>
+        <module>motech-platform-scheduler</module>
+
+        <module>motech-scheduler</module>
+        <module>motech-scheduletracking-api</module>
+        <module>motech-scheduletracking-webapp</module>
+
+        <module>motech-testing-utils</module>
     </modules>
 
     <build>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-release-plugin</artifactId>
-                <version>2.3.2</version>
-                <configuration>
-                    <preparationGoals>clean install</preparationGoals>
-                </configuration>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -197,301 +115,6 @@
                     <target>${jdk.version}</target>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.12</version>
-                <configuration>
-                    <excludes>
-                        <exclude>**/**/*ForTest.java</exclude>
-                    </excludes>
-                    <argLine>-XX:-UseSplitVerifier</argLine>      <!-- bug in powermock on java7 -->
-                    <forkMode>once</forkMode>   <!-- bug in surefire; won't pass argline for never -->
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-eclipse-plugin</artifactId>
-                <version>2.6</version>
-                <configuration>
-                    <wtpversion>2.0</wtpversion>
-                    <downloadSources>true</downloadSources>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>com.mycila.maven-license-plugin</groupId>
-                <artifactId>maven-license-plugin</artifactId>
-                <version>1.9.0</version>
-                <configuration>
-                    <header>header.txt</header>
-                    <strictCheck>true</strictCheck>
-                    <excludes>
-                        <exclude>**/jquery-autocomplete/**</exclude>
-                    </excludes>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-pmd-plugin</artifactId>
-                <version>2.7.1</version>
-                <configuration>
-                    <rulesets>
-                        <ruleset>${modules.root.dir}/pmd.xml</ruleset>
-                    </rulesets>
-                    <includeTests>false</includeTests>
-                    <targetJdk>${jdk.version}</targetJdk>
-                    <skip>${maven.test.skip}</skip>
-                </configuration>
-                <executions>
-                    <execution>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>check</goal>
-                            <goal>cpd-check</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <!--<plugin>-->
-                <!--<groupId>org.codehaus.mojo</groupId>-->
-                <!--<artifactId>findbugs-maven-plugin</artifactId>-->
-                <!--<version>2.3.2</version>-->
-                <!--<configuration>-->
-                    <!--<failOnError>true</failOnError>-->
-                    <!--<effort>Max</effort>-->
-                    <!--<threshold>Low</threshold>-->
-                    <!--<excludeFilterFile>${modules.root.dir}/findbugs-exclude.xml</excludeFilterFile>-->
-                    <!--<includeFilterFile>${modules.root.dir}/findbugs-include.xml</includeFilterFile>-->
-                    <!--<skip>${maven.test.skip}</skip>-->
-                    <!--<includeTests>false</includeTests>-->
-                <!--</configuration>-->
-                <!--<executions>-->
-                    <!--<execution>-->
-                        <!--<phase>verify</phase>-->
-                        <!--<goals>-->
-                            <!--<goal>check</goal>-->
-                        <!--</goals>-->
-                    <!--</execution>-->
-                <!--</executions>-->
-            <!--</plugin>-->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-checkstyle-plugin</artifactId>
-                <version>2.9.1</version>
-                <configuration>
-                    <configLocation>${modules.root.dir}/checkstyle.xml</configLocation>
-                    <includeTestSourceDirectory>false</includeTestSourceDirectory>
-                    <enableFilesSummary>true</enableFilesSummary>
-                    <failsOnError>true</failsOnError>
-                    <consoleOutput>true</consoleOutput>
-                    <skip>${maven.test.skip}</skip>
-                </configuration>
-                <executions>
-                    <execution>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
         </plugins>
     </build>
-
-    <profiles>
-        <profile>
-            <id>IT</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-clean-plugin</artifactId>
-                        <version>2.5</version>
-                        <inherited>false</inherited>
-                        <configuration>
-                            <filesets>
-                                <fileset>
-                                    <directory>${user.home}/.motech/bundles</directory>
-                                    <includes>
-                                        <include>**/*.jar</include>
-                                    </includes>
-                                    <followSymlinks>false</followSymlinks>
-                                </fileset>
-                            </filesets>
-                        </configuration>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-failsafe-plugin</artifactId>
-                        <version>2.9</version>
-                        <configuration>
-                            <encoding>UTF-8</encoding>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <id>integration-test</id>
-                                <goals>
-                                    <goal>integration-test</goal>
-                                </goals>
-                            </execution>
-                            <execution>
-                                <id>verify</id>
-                                <goals>
-                                    <goal>verify</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>RPM</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>rpm-maven-plugin</artifactId>
-                        <version>2.0</version>
-                        <inherited>false</inherited>
-                        <executions>
-                            <execution>
-                                <goals>
-                                    <goal>attached-rpm</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-
-                        <configuration>
-                            <copyright>2012, Grameen Foundation</copyright>
-                            <distribution>Motech distribution</distribution>
-                            <group>Applications/Internet</group>
-                            <prefix>/usr/share</prefix>
-
-                            <defineStatements>
-                                <defineStatement>_unpackaged_files_terminate_build 0</defineStatement>
-                            </defineStatements>
-
-                            <requires>
-                                <require>motech-base &gt;= ${project.version}</require>
-                                <require>mysql-server</require>
-                                <require>couchdb</require>
-                                <require>curl</require>
-                            </requires>
-
-                            <mappings>
-                                <mapping>
-                                    <directory>/usr/share/doc/motech</directory>
-                                    <documentation>true</documentation>
-                                    <username>root</username>
-                                    <groupname>root</groupname>
-                                    <sources>
-                                        <source>
-                                            <location>LICENSE.txt</location>
-                                        </source>
-                                        <source>
-                                            <location>README</location>
-                                        </source>
-                                    </sources>
-                                </mapping>
-                            </mappings>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
-
-    <reporting>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-plugin-plugin</artifactId>
-                <version>2.7</version>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-report-plugin</artifactId>
-                <version>2.9</version>
-                <configuration>
-                    <xrefLocation>${project.reporting.outputDirectory}/../xref-test</xrefLocation>
-                    <aggregate>true</aggregate>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jxr-plugin</artifactId>
-                <version>2.1</version>
-                <configuration>
-                    <aggregate>true</aggregate>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-pmd-plugin</artifactId>
-                <version>2.5</version>
-                <configuration>
-                    <xrefLocation>${project.reporting.outputDirectory}/../xref</xrefLocation>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-project-info-reports-plugin</artifactId>
-                <version>2.3.1</version>
-                <reportSets>
-                    <reportSet>
-                        <reports>
-                            <report>index</report>
-                            <report>dependencies</report>
-                            <report>mailing-list</report>
-                            <report>cim</report>
-                            <report>issue-tracking</report>
-                            <report>license</report>
-                            <report>scm</report>
-                            <report>summary</report>
-                        </reports>
-                    </reportSet>
-                </reportSets>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>taglist-maven-plugin</artifactId>
-                <version>2.4</version>
-            </plugin>
-        </plugins>
-    </reporting>
-
-    <!-- License -->
-    <licenses>
-        <license>
-            <name>MOTECH PLATFORM OPENSOURCE LICENSE AGREEMENT</name>
-            <url>license.txt</url>
-        </license>
-    </licenses>
-
-    <organization>
-        <name>Grameen Foundation</name>
-        <url>http://grameenfoundation.org/</url>
-    </organization>
-
-    <ciManagement>
-        <system>hudson</system>
-        <url>http://ci.motechproject.org/</url>
-    </ciManagement>
-
-    <mailingLists>
-        <mailingList>
-            <name>MoTeCH Dev</name>
-            <subscribe>motech-dev+subscribe@googlegroups.com</subscribe>
-            <unsubscribe>motech-dev+unsubscribe@googlegroups.com</unsubscribe>
-            <post>motech-dev@googlegroups.com</post>
-            <archive>http://groups.google.com/group/motech-dev</archive>
-        </mailingList>
-    </mailingLists>
-
-    <scm>
-        <connection>${scm.connection}</connection>
-        <developerConnection>${scm.developerConnection}</developerConnection>
-        <url>${scm.url}</url>
-      <tag>HEAD</tag>
-  </scm>
 </project>
