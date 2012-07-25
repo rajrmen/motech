@@ -1,7 +1,6 @@
 package org.motechproject.model;
 
 import org.apache.commons.lang.StringUtils;
-import org.codehaus.jackson.annotate.JsonIgnore;
 import org.joda.time.DateTime;
 import org.joda.time.LocalTime;
 
@@ -52,7 +51,6 @@ public class Time implements Comparable<Time>, Serializable {
         return (this.getHour() > toCompare.getHour() || (this.getHour().intValue() == toCompare.getHour() && this.getMinute() >= toCompare.getMinute()));
     }
 
-    @JsonIgnore
     public DateTime getDateTime(DateTime dateTime) {
         return new DateTime(dateTime.getYear(), dateTime.getMonthOfYear(), dateTime.getDayOfMonth(), hour, minute, 0, 0);
     }

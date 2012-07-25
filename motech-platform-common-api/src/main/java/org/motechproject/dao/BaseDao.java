@@ -1,13 +1,11 @@
 package org.motechproject.dao;
 
-import org.motechproject.model.MotechBaseDataObject;
-
 import java.util.List;
 
 /**
  *
  */
-public interface BaseDao<T extends MotechBaseDataObject> {
+public interface BaseDao<T extends Object> {
 
     public void add(T entity);
 
