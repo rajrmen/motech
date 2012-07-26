@@ -129,6 +129,11 @@
             <artifactId>annotations</artifactId>
             <version>1.0.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.openmrs.hibernate</groupId>
+            <artifactId>hibernate</artifactId>
+            <version>3.2.5.ga-mod</version>
+        </dependency>
     </dependencies>
 
     <modules>
@@ -174,6 +179,8 @@
         <module>motech-web-security</module>
         <module>motech-admin</module>
         <module>motech-admin-UI</module>
+        <!-- OSGI modules -->
+        <module>motech-openmrs-api-bundle</module>
         <!-- Keep this module in last, the module checks if everything is alright after deploy motech on tomcat server -->
         <module>motech-deployment-tests</module>
     </modules>

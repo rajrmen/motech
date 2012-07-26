@@ -10,7 +10,6 @@
     <artifactId>motech-openmrs-api</artifactId>
     <name>MoTeCH OpenMRS API</name>
     <version>0.12-SNAPSHOT</version>
-    <packaging>bundle</packaging>
     <description>Motech interface to OpenMRS</description>
 
     <properties>
@@ -57,10 +56,6 @@
                 <exclusion>
                     <artifactId>commons-io</artifactId>
                     <groupId>commons-io</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>hibernate</artifactId>
-                    <groupId>org.openmrs.hibernate</groupId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -132,100 +127,7 @@
             <version>1.4.9</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.osgi</groupId>
-            <artifactId>org.osgi.compendium</artifactId>
-            <version>4.2.0</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.osgi</groupId>
-            <artifactId>org.osgi.core</artifactId>
-            <version>4.2.0</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-core</artifactId>
-            <version>3.6.10.Final</version>
-        </dependency>
     </dependencies>
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <version>2.3.4</version>
-                <extensions>true</extensions>
-                <configuration>
-                    <instructions>
-                        <Bundle-Activator>
-                            org.motechproject.openmrs.osgi.Activator
-                        </Bundle-Activator>
-                        <Import-Package>
-                            javax.mail,
-                            javax.servlet,
-                            org.apache.commons.logging,
-                            org.apache.log4j,
-                            org.osgi.framework,
-                            org.osgi.service.http,
-                            org.osgi.util.tracker,
-                            org.slf4j,
-                            org.motechproject.mrs.model,
-                            org.motechproject.mrs.security,
-                            org.motechproject.mrs.services,
-                            org.springframework.aop.config,
-                            org.springframework.aop.framework.autoproxy,
-                            org.springframework.beans.factory,
-                            org.springframework.beans.factory.aspectj,
-                            org.springframework.beans.factory.xml,
-                            org.springframework.context.config,
-                            org.springframework.context.support,
-                            org.springframework.core.type,
-                            org.springframework.core.type.classreading,
-                            org.springframework.core.type.filter,
-                            org.springframework.orm.hibernate3,
-                            org.springframework.osgi.web.context.support,
-                            org.springframework.stereotype,
-                            org.springframework.transaction.interceptor,
-                            org.springframework.web.servlet,
-                            !*
-                        </Import-Package>
-                        <Export-Package>org.motechproject.openmrs.services</Export-Package>
-                        <Embed-Dependency>
-                            (openmrs-api|antlr*|liquibase*|hapi*|hibernate*|simple-xml*);scope=!test;type=!pom;inline=true
-                        </Embed-Dependency>
-                        <Embed-Transitive>true</Embed-Transitive>
-                    </instructions>
-                </configuration>
-            </plugin>
-            <plugin>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>2.5</version>
-                <executions>
-                    <execution>
-                        <id>copy-bundles</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${user.home}/.motech/bundles</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>target</directory>
-                                    <includes>
-                                        <include>*.jar</include>
-                                    </includes>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
-
     <profiles>
         <profile>
             <id>IT</id>
