@@ -18,13 +18,6 @@
             <version>2.5</version>
             <scope>provided</scope>
         </dependency>
-
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>org.springframework.spring-library</artifactId>
-            <type>libd</type>
-            <version>3.1.0.RELEASE</version>
-        </dependency>
     </dependencies>
 
     <modules>
