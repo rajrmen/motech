@@ -5,10 +5,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.motechproject.decisiontree.FlowSession;
-import org.motechproject.decisiontree.model.DialStatus;
-import org.motechproject.decisiontree.model.ITransition;
-import org.motechproject.decisiontree.model.Node;
-import org.motechproject.decisiontree.model.Transition;
+import org.motechproject.decisiontree.model.*;
 import org.motechproject.decisiontree.service.FlowSessionService;
 import org.motechproject.server.decisiontree.TreeNodeLocator;
 import org.motechproject.server.decisiontree.service.DecisionTreeService;
@@ -119,16 +116,16 @@ public class DecisionTreeController extends MultiActionController {
             if (StringUtils.isBlank(language) || StringUtils.isBlank(treeNameString)) {
                 logger.error("Invalid HTTP request - the following parameters: "
                         + ", " + LANGUAGE_PARAM + " and " + TREE_NAME_PARAM + " are mandatory");
-                return getErrorModelAndView(Errors.NULL_PATIENTID_LANGUAGE_OR_TREENAME_PARAM);
+                return getErrorModelAndView(Errors.NULL_PATIENTID_LANGUAGE_OR_TREENAME_PARAM, language);
             }
             return getModelViewForNextNode(request, transitionPath, params, language, treeNameString, encodedParentTransitionPath, transitionKey, type);
         } catch (DecisionTreeException exception) {
             logger.error(exception.getMessage());
-            return getErrorModelAndView(exception.subject);
+            return getErrorModelAndView(exception.subject, language);
         } catch (Exception e) {
             logger.error("Can not get node by Tree ID : " + treeNameString + " and Transition Path: " + encodedParentTransitionPath, e);
         }
-        return getErrorModelAndView(Errors.GET_NODE_ERROR);
+        return getErrorModelAndView(Errors.GET_NODE_ERROR, language);
     }
 
     private ModelAndView getModelViewForNextNode(HttpServletRequest request, String transitionPath, Map<String, Object> params, String language, String treeNameString, String encodedParentTransitionPath, String transitionKey, String type) {
@@ -141,7 +138,7 @@ public class DecisionTreeController extends MultiActionController {
         try {
             if (transitionKey == null) {
                 node = decisionTreeService.getNode(currentTree, TreeNodeLocator.PATH_DELIMITER, session);
-                return constructModelViewForNode(request, node, transitionPath, language, treeNameString, type, treeNames, params);
+                return constructModelViewForNode(request, node, transitionPath, language, treeNameString, type, treeNames, params, session);
             } else {
                 String parentTransitionPath;
                 parentTransitionPath = getParentTransitionPath(encodedParentTransitionPath);
@@ -151,8 +148,9 @@ public class DecisionTreeController extends MultiActionController {
 
                 node = transition.getDestinationNode(transitionKey, session);
 
-                if (node == null || (node.getPrompts().isEmpty() && node.getActionsAfter().isEmpty()
-                        && node.getActionsBefore().isEmpty() && node.getTransitions().isEmpty())) {
+                final boolean emptyNode = node == null || (node.getPrompts().isEmpty() && node.getActionsAfter().isEmpty()
+                        && node.getActionsBefore().isEmpty() && node.getTransitions().isEmpty());
+                if (emptyNode) {
                     if (treeNames.length > 1) {
                         //reduce the current tree and redirect to the next tree
                         treeNames = (String[]) ArrayUtils.remove(treeNames, 0);
@@ -163,10 +161,13 @@ public class DecisionTreeController extends MultiActionController {
                         return new ModelAndView(EXIT_TEMPLATE_NAME);
                     }
                 } else {
+                    for (INodeOperation operation : node.getOperations()) {
+                        operation.perform(transitionKey, session);
+                    }
                     String modifiedTransitionPath = parentTransitionPath +
                             (TreeNodeLocator.PATH_DELIMITER.equals(parentTransitionPath) ? "" : TreeNodeLocator.PATH_DELIMITER)
                             + transitionKey;
-                    return constructModelViewForNode(request, node, modifiedTransitionPath, language, treeNameString, type, treeNames, params);
+                    return constructModelViewForNode(request, node, modifiedTransitionPath, language, treeNameString, type, treeNames, params, session);
                 }
             }
         } finally {
@@ -174,7 +175,7 @@ public class DecisionTreeController extends MultiActionController {
         }
     }
 
-    private ModelAndView constructModelViewForNode(HttpServletRequest request, Node node, String transitionPath, String language, String treeNameString, String type, String[] treeNames, Map<String, Object> params) {
+    private ModelAndView constructModelViewForNode(HttpServletRequest request, Node node, String transitionPath, String language, String treeNameString, String type, String[] treeNames, Map<String, Object> params, FlowSession session) {
         validateNode(node);
         treeEventProcessor.sendActionsBefore(node, transitionPath, params);
 
@@ -190,7 +191,7 @@ public class DecisionTreeController extends MultiActionController {
         mav.addObject("contextPath", request.getContextPath());
         mav.addObject("servletPath", request.getServletPath());
         mav.addObject("node", node);
-        mav.addObject("language", language);
+        mav.addObject("language", session.get(LANGUAGE_PARAM));
         mav.addObject("type", type);
         mav.addObject("transitionPath", Base64.encodeBase64URLSafeString(transitionPath.getBytes()));
         mav.addObject("escape", new StringEscapeUtils());
@@ -288,7 +289,7 @@ public class DecisionTreeController extends MultiActionController {
         return templateName + "-" + type;
     }
 
-    private ModelAndView getErrorModelAndView(Errors errorCode) {
+    private ModelAndView getErrorModelAndView(Errors errorCode, String language) {
         ModelAndView mav = new ModelAndView();
         mav.setViewName(ERROR_MESSAGE_TEMPLATE_NAME);
         mav.addObject("errorCode", errorCode);

@@ -21,7 +21,7 @@ import java.net.URL;
 import java.util.Properties;
 
 public class Context {
-    Logger logger = Logger.getLogger(Context.class);
+    private static Logger logger = Logger.getLogger(Context.class);
     private String url;
     private String user;
     private String password;

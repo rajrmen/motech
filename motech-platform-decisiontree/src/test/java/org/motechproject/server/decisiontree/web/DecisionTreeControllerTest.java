@@ -20,6 +20,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -27,6 +28,7 @@ import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.*;
 import static org.motechproject.server.decisiontree.web.DecisionTreeController.*;
@@ -68,14 +70,16 @@ public class DecisionTreeControllerTest {
         params.put(TREE_NAME_PARAM, treeName);
         doNothing().when(autoWireCapableFactory).autowireBean(anyObject());
         when(applicationContext.getAutowireCapableBeanFactory()).thenReturn(autoWireCapableFactory);
-        flowSession = mock(FlowSession.class);
-        when(flowSessionService.getSession(anyString())).thenReturn(flowSession);
+        flowSession = new InMemoryFlowSession();
+        when(flowSessionService.getSession(any(HttpServletRequest.class))).thenReturn(flowSession);
     }
 
     @Test
     public void nodeTest() {
         Node childNode = new Node();
         Transition childTransition = new Transition();
+        final  MyINodeOperation iNodeOperation = new MyINodeOperation();
+        childNode.addOperations(iNodeOperation);
         childTransition.setDestinationNode(new Node());
         childNode.addTransition("1", childTransition);
 
@@ -98,6 +102,7 @@ public class DecisionTreeControllerTest {
         assertNotNull(modelAndView);
         verify(decisionTreeService).getNode(eq(treeName), eq(transitionPath), any(FlowSession.class));
         assertEquals(NODE_TEMPLATE_NAME + "-" + "verboice", modelAndView.getViewName());
+        assertTrue(iNodeOperation.isCalled());
     }
 
     @Test
@@ -382,5 +387,49 @@ public class DecisionTreeControllerTest {
         verify(decisionTreeService).getNode(eq(treeName), eq(TreeNodeLocator.PATH_DELIMITER), any(FlowSession.class));
         assertEquals(NODE_TEMPLATE_NAME + "-" + "vxml", modelAndView.getViewName());
 
+    }
+
+    static class InMemoryFlowSession implements FlowSession {
+
+        private String language;
+        Map<String, Serializable> store;
+
+        @Override
+        public String getSessionId() {
+            return "sessionId";
+        }
+
+        @Override
+        public String getLanguage() {
+            return this.language;
+        }
+
+        @Override
+        public void setLanguage(String language) {
+            this.language = language;
+        }
+
+        @Override
+        public <T extends Serializable> void set(String key,T value) {
+            store.put(key,value);
+        }
+
+        @Override
+        public <T extends Serializable> T get(String key) {
+            return null;
+        }
+    }
+
+    private static class MyINodeOperation implements INodeOperation {
+        boolean called;
+
+        @Override
+        public void perform(String userInput, FlowSession session) {
+            called = true;
+        }
+
+        public boolean isCalled() {
+            return called;
+        }
     }
 }
