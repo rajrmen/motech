@@ -96,15 +96,15 @@
                         </Import-Package>
                         <Embed-Dependency>
                             antlr,
+                            c3p0,
                             hapi,
                             javassist,
                             liquibase-core,
-                            motech-openmrs-api,
+                            motech-openmrs-api;inline=true,
+                            mysql-connector-java,
                             openmrs-api;inline=true,
                             simple-xml,
-                            c3p0,
-                            xercesImpl,
-                            mysql-connector-java
+                            xercesImpl
                         </Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>
                     </instructions>
