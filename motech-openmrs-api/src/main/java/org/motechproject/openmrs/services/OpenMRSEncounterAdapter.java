@@ -15,6 +15,7 @@ import org.openmrs.Person;
 import org.openmrs.User;
 import org.openmrs.api.EncounterService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -29,6 +30,7 @@ import static java.util.Arrays.asList;
 /**
  * Manages OpenMRS Encounters
  */
+@Service
 public class OpenMRSEncounterAdapter implements MRSEncounterAdapter {
     private EncounterService encounterService;
     private OpenMRSUserAdapter openMRSUserAdapter;

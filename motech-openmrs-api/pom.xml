@@ -146,7 +146,7 @@
                                 </goals>
                                 <configuration>
                                     <files>
-                                        <file>${project.basedir}/../maven.properties</file>
+                                        <file>${modules.root.dir}/maven.properties</file>
                                     </files>
                                 </configuration>
                             </execution>
@@ -180,7 +180,7 @@
                                 <configuration>
                                     <autocommit>true</autocommit>
                                     <sqlCommand>
-                                        drop database openmrs_api_test;
+                                        DROP DATABASE openmrs_api_test;
                                     </sqlCommand>
                                     <onError>continue</onError>
                                 </configuration>
@@ -194,17 +194,16 @@
                                 <configuration>
                                     <autocommit>true</autocommit>
                                     <sqlCommand>
-                                        create database openmrs_api_test default charset utf8;
-                                        grant all on openmrs_api_test.* to 'openmrs'@'localhost' identified by
-                                        'password';
-                                        grant all on openmrs_api_test.* to 'openmrs'@'%' identified by 'password';
-                                        flush privileges;
-                                        use openmrs_api_test;
+                                        CREATE DATABASE openmrs_api_test DEFAULT CHARSET utf8;
+                                        GRANT ALL ON openmrs_api_test.* TO 'openmrs'@'localhost' IDENTIFIED BY 'password';
+                                        GRANT ALL ON openmrs_api_test.* TO 'openmrs'@'%' IDENTIFIED BY 'password';
+                                        FLUSH PRIVILEGES;
+                                        USE openmrs_api_test;
                                     </sqlCommand>
                                     <srcFiles>
-                                        <srcFile>${project.basedir}/src/test/sql/openmrs-1.8.sql</srcFile>
-                                        <srcFile>${project.basedir}/src/test/sql/concept_cause_of_death.sql</srcFile>
-                                        <srcFile>${project.basedir}/src/test/sql/insert_email_person_attribute_type_table.sql</srcFile>
+                                        <srcFile>${modules.root.dir}/sql/openmrs-1.8.sql</srcFile>
+                                        <srcFile>${modules.root.dir}/sql/concept_cause_of_death.sql</srcFile>
+                                        <srcFile>${modules.root.dir}/sql/insert_email_person_attribute_type_table.sql</srcFile>
                                     </srcFiles>
                                 </configuration>
                             </execution>

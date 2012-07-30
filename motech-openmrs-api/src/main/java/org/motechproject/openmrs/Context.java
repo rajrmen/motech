@@ -15,9 +15,13 @@ import org.openmrs.module.ModuleFactory;
 import org.openmrs.util.DatabaseUpdateException;
 import org.openmrs.util.InputRequiredException;
 import org.openmrs.util.OpenmrsConstants;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 
+import java.io.IOException;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.Properties;
 
 public class Context {
@@ -27,21 +31,28 @@ public class Context {
     private String password;
     private String openmrsUser;
     private String openmrsPassword;
+    private String dataDir;
     private static final String ENABLE_HIBERNATE_SECOND_LEVEL_CACHE = "hibernate.cache.use_second_level_cache";
 
-    public Context(String url, String user, String password, String openmrsUser, String openmrsPassword) {
+    @Autowired
+    private ResourceLoader resourceLoader;
+
+    public Context(String url, String user, String password, String openmrsUser, String openmrsPassword, String dataDir) {
         this.url = url;
         this.user = user;
         this.password = password;
         this.openmrsUser = openmrsUser;
         this.openmrsPassword = openmrsPassword;
+        this.dataDir = dataDir;
     }
 
-    public void initialize() throws URISyntaxException, InputRequiredException, DatabaseUpdateException {
-        URL resource = getClass().getClassLoader().getResource("openmrs-data");
+    public void initialize() throws InputRequiredException, DatabaseUpdateException, URISyntaxException, IOException {
+        Resource resource = (dataDir != null && !dataDir.equalsIgnoreCase("")) ?
+                new FileSystemResource(dataDir) :
+                resourceLoader.getResource("openmrs-data");
 
         if (resource != null) {
-            String path = resource.toURI().getPath();
+            String path = resource.getURL().getPath();
             logger.info(String.format("openmrs data folder is set to %s", path));
 
             Properties properties = new Properties();

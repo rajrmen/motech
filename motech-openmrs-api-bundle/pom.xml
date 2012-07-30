@@ -62,9 +62,123 @@
             <artifactId>xercesImpl</artifactId>
             <version>2.9.1</version>
         </dependency>
+        <dependency>
+            <groupId>org.azeckoski</groupId>
+            <artifactId>reflectutils</artifactId>
+            <version>0.9.10</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.openmrs.web</groupId>
+            <artifactId>openmrs-web</artifactId>
+            <version>1.8.2</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-io</groupId>
+                    <artifactId>commons-io</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>2.5</version>
+                <executions>
+                    <execution>
+                        <id>copy-openmrs-data</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${user.home}/.motech/config/${project.groupId}.${project.artifactId}/</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>src/</directory>
+                                    <includes>
+                                        <include>openmrs-data/**</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <!--PROPERTIES READ-->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>properties-maven-plugin</artifactId>
+                <version>1.0-alpha-2</version>
+                <executions>
+                    <execution>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>read-project-properties</goal>
+                        </goals>
+                        <configuration>
+                            <files>
+                                <file>${modules.root.dir}/maven.properties</file>
+                            </files>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>sql-maven-plugin</artifactId>
+                <version>1.5</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>mysql</groupId>
+                        <artifactId>mysql-connector-java</artifactId>
+                        <version>5.1.13</version>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <driver>com.mysql.jdbc.Driver</driver>
+                    <username>${mysql.user}</username>
+                    <password>${mysql.password}</password>
+                    <url>jdbc:mysql://localhost:3306</url>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>drop-db</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>execute</goal>
+                        </goals>
+                        <configuration>
+                            <autocommit>true</autocommit>
+                            <sqlCommand>
+                                DROP DATABASE motech_openmrs_api;
+                            </sqlCommand>
+                            <onError>continue</onError>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>create-db</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>execute</goal>
+                        </goals>
+                        <configuration>
+                            <autocommit>true</autocommit>
+                            <sqlCommand>
+                                CREATE DATABASE motech_openmrs_api DEFAULT CHARSET utf8;
+                                GRANT ALL ON motech_openmrs_api.* TO 'openmrs'@'localhost' IDENTIFIED BY 'password';
+                                GRANT ALL ON motech_openmrs_api.* TO 'openmrs'@'%' IDENTIFIED BY 'password';
+                                FLUSH PRIVILEGES;
+                                USE motech_openmrs_api;
+                            </sqlCommand>
+                            <srcFiles>
+                                <srcFile>${modules.root.dir}/sql/openmrs-1.8.sql</srcFile>
+                            </srcFiles>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
@@ -82,27 +196,39 @@
                             !com.ibm.*,
                             !com.opensymphony.*,
                             !com.werken.*,
+                            !edu.emory.*,
                             !javax.security.jacc.*,
+                            !nu.xom.*,
                             !org.jboss.*,
                             !org.jdom.*,
+                            !org.jfree.*,
+                            javax.mail,
+                            net.sf.cglib.proxy,
+                            org.hibernate.id,
                             org.springframework.aop.config,
                             org.springframework.aop.framework.autoproxy,
                             org.springframework.beans.factory.aspectj,
                             org.springframework.beans.factory.config,
                             org.springframework.beans.factory.xml,
                             org.springframework.context.config,
+                            org.springframework.context.support,
+                            org.springframework.orm.hibernate3,
+                            org.springframework.transaction.config,
                             org.springframework.transaction.interceptor,
                             *
                         </Import-Package>
                         <Embed-Dependency>
                             antlr,
                             c3p0,
+                            dwr,
                             hapi,
                             javassist,
                             liquibase-core,
                             motech-openmrs-api;inline=true,
                             mysql-connector-java,
                             openmrs-api;inline=true,
+                            openmrs-web,
+                            reflectutils,
                             simple-xml,
                             xercesImpl
                         </Embed-Dependency>
