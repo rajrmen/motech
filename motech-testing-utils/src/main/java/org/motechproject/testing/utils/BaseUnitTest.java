@@ -1,7 +1,6 @@
 package org.motechproject.testing.utils;
 
 import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
 import org.junit.After;
@@ -14,14 +13,14 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class BaseUnitTest {
-    static final DateTimeSource dateTimeSource = new DefaultDateTimeSource();
+    static final DateTimeSource DATE_TIME_SOURCE = new DefaultDateTimeSource();
 
     protected void mockCurrentDate(DateTime currentDateTime) {
-        DateTimeSourceUtil.SourceInstance = new MockDateTimeSource(currentDateTime);
+        DateTimeSourceUtil.setSourceInstance(new FakeDateTimeSource(currentDateTime));
     }
 
     protected void mockCurrentDate(LocalDate currentDate) {
-        DateTimeSourceUtil.SourceInstance = new MockDateTimeSource(currentDate);
+        DateTimeSourceUtil.setSourceInstance(new FakeDateTimeSource(currentDate));
     }
 
     protected DateTime date(int year, int monthOfYear, int dayOfMonth) {
@@ -45,7 +44,7 @@ public class BaseUnitTest {
     }
 
     protected void resetDateTimeSource() {
-        DateTimeSourceUtil.SourceInstance = dateTimeSource;
+        DateTimeSourceUtil.setSourceInstance(DATE_TIME_SOURCE);
     }
 
     @After
@@ -53,30 +52,4 @@ public class BaseUnitTest {
         resetDateTimeSource();
     }
 
-    class MockDateTimeSource implements DateTimeSource {
-        private DateTime dateTime;
-
-        MockDateTimeSource(LocalDate localDate) {
-            this(localDate.toDateTime(LocalTime.MIDNIGHT));
-        }
-
-        MockDateTimeSource(DateTime dateTime) {
-            this.dateTime = dateTime;
-        }
-
-        @Override
-        public DateTimeZone timeZone() {
-            return dateTime.getZone();
-        }
-
-        @Override
-        public DateTime now() {
-            return dateTime;
-        }
-
-        @Override
-        public LocalDate today() {
-            return dateTime.toLocalDate();
-        }
-    }
 }

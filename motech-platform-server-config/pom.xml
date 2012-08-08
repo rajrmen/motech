@@ -23,9 +23,15 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>motech-platform-scheduler</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>org.osgi.compendium</artifactId>
             <version>4.2.0</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.osgi</groupId>
@@ -33,6 +39,11 @@
             <version>4.2.0</version>
             <type>jar</type>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>commons-vfs</groupId>
+            <artifactId>commons-vfs</artifactId>
+            <version>1.0</version>
         </dependency>
     </dependencies>
 

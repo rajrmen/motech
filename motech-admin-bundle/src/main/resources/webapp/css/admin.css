@@ -1,5 +1,5 @@
 body {
-    font:1em/145% 'Trebuchet MS',helvetica,arial,verdana;
+    font:0.8em/145% 'Trebuchet MS',helvetica,arial,verdana;
 }
 
 .header h1 {
@@ -48,13 +48,13 @@ body {
 
 #left-half {
     float: left;
-    width: 66%;
+    width: 70%;
     margin: 5px;
 }
 
 #right-half {
     float: right;
-    width: 32%;
+    width: 28%;
     margin: 5px;
 }
 
@@ -104,4 +104,12 @@ h1 {
 .bundle-prop {
     padding: 5px;
     border-bottom: 1px dotted;
+}
+
+.settings-section {
+    padding: 5px;
+}
+
+.float-right {
+    float: right;
 }

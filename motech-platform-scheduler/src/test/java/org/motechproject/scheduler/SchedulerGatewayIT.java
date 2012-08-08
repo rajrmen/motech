@@ -41,7 +41,7 @@ public class SchedulerGatewayIT {
 
         CronSchedulableJob cronSchedulableJob = new CronSchedulableJob(cronEvent, "0/2 * * * * ?");
         RunOnceSchedulableJob runOnceSchedulableJob = new RunOnceSchedulableJob(runOnceEvent, new Date((new Date().getTime() + 5000)));
-        RepeatingSchedulableJob repeatingSchedulableJob = new RepeatingSchedulableJob(repeatingEvent, new Date(), null, null, 4 * 1000L);
+        RepeatingSchedulableJob repeatingSchedulableJob = new RepeatingSchedulableJob(repeatingEvent, new Date(), null, null, 4 * 1000L, false);
 
         JobId cronJob = new CronJobId(cronEvent);
         JobId repeatingJob = new RepeatingJobId(repeatingEvent);
@@ -54,6 +54,8 @@ public class SchedulerGatewayIT {
         motechSchedulerGateway.scheduleRepeatingJob(repeatingSchedulableJob);
 
         Thread.sleep(8 * 1000L);
+
+        motechSchedulerGateway.unscheduleJob(runonceJob);
 
         motechSchedulerGateway.unscheduleJob(cronJob);
 

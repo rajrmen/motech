@@ -55,7 +55,7 @@
                 <configuration>
                     <instructions>
                         <Export-Package>
-                            org.motechproject.scheduler
+                            !*
                         </Export-Package>
                         <Bundle-Activator>
                             org.motechproject.scheduler.osgi.Activator
@@ -82,6 +82,7 @@
                             org.springframework.scheduling.concurrent,
                             org.springframework.osgi.config,
                             org.quartz.simpl,
+                            org.quartz.impl.triggers,
                             *
                         </Import-Package>
                         <Embed-Dependency>motech-scheduler</Embed-Dependency>

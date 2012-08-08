@@ -14,19 +14,20 @@ public class RepeatingSchedulableJob implements Serializable {
     private Date endTime;
     private Integer repeatCount;
     private Long repeatIntervalInMilliSeconds;
+    private boolean ignorePastFiresAtStart;
+    private boolean useOriginalFireTimeAfterMisfire = false;
 
-    public RepeatingSchedulableJob(final MotechEvent motechEvent, final Date startTime, final Date endTime,
-                                   final Integer repeatCount, final Long repeatIntervalInMilliSeconds) {
+    public RepeatingSchedulableJob(final MotechEvent motechEvent, final Date startTime, final Date endTime, final Integer repeatCount, final Long repeatIntervalInMilliSeconds, boolean ignorePastFiresAtStart) {
         this.motechEvent = motechEvent;
         this.startTime = startTime;
         this.endTime = endTime;
         this.repeatCount = repeatCount;
         this.repeatIntervalInMilliSeconds = repeatIntervalInMilliSeconds;
+        this.ignorePastFiresAtStart = ignorePastFiresAtStart;
     }
 
-    public RepeatingSchedulableJob(final MotechEvent motechEvent, final Date startTime, final Date endTime,
-                                   final Long repeatIntervalInMilliSeconds) {
-        this(motechEvent, startTime, endTime, null, repeatIntervalInMilliSeconds);
+    public RepeatingSchedulableJob(final MotechEvent motechEvent, final Date startTime, final Date endTime, final Long repeatIntervalInMilliSeconds, boolean ignorePastFiresAtStart) {
+        this(motechEvent, startTime, endTime, null, repeatIntervalInMilliSeconds, ignorePastFiresAtStart);
     }
 
     public MotechEvent getMotechEvent() {
@@ -67,6 +68,31 @@ public class RepeatingSchedulableJob implements Serializable {
 
     public void setRepeatIntervalInMilliSeconds(final Long repeatIntervalInMilliSeconds) {
         this.repeatIntervalInMilliSeconds = repeatIntervalInMilliSeconds;
+    }
+
+    public boolean isIgnorePastFiresAtStart() {
+        return ignorePastFiresAtStart;
+    }
+
+    /**
+     * Ignore past fires when start time of job is in past.
+     * <pre>ex : repeating job with interval of 5 unit, and current time in between fire 2 and 3 will start triggering from 3rd firetime.
+     *  1     2     3     4
+     *  |-----|-----|-----|
+     *  start    ^current time
+     *  </pre>
+     * @param ignorePastFiresAtStart
+     */
+    public void setIgnorePastFiresAtStart(boolean ignorePastFiresAtStart) {
+        this.ignorePastFiresAtStart = ignorePastFiresAtStart;
+    }
+
+    public boolean isUseOriginalFireTimeAfterMisfire() {
+        return useOriginalFireTimeAfterMisfire;
+    }
+
+    public void setUseOriginalFireTimeAfterMisfire(boolean useOriginalFireTimeAfterMisfire) {
+        this.useOriginalFireTimeAfterMisfire = useOriginalFireTimeAfterMisfire;
     }
 
     @Override
