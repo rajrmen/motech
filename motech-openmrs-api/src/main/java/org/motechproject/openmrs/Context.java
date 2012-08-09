@@ -1,6 +1,7 @@
 package org.motechproject.openmrs;
 
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.ConceptService;
@@ -47,7 +48,7 @@ public class Context {
     }
 
     public void initialize() throws InputRequiredException, DatabaseUpdateException, URISyntaxException, IOException {
-        Resource resource = (dataDir != null && !dataDir.equalsIgnoreCase("")) ?
+        Resource resource = (StringUtils.isNotBlank(dataDir)) ?
                 new FileSystemResource(dataDir) :
                 resourceLoader.getResource("openmrs-data");
 
