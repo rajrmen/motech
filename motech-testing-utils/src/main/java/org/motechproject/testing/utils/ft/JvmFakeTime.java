@@ -11,7 +11,6 @@ public abstract class JvmFakeTime {
             m.invoke(null, System.class, "jvmfaketime", false);
         } catch (Exception e) {
             e.printStackTrace();
-            System.out.println("couldn't load libjvmfaketime.");
         }
     }
 }
