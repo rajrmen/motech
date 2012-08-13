@@ -396,7 +396,7 @@
                         <version>2.5.1</version>
                         <configuration>
                             <fork>true</fork>
-                            <compilerArgument>-Xbootclasspath/p:${modules.root.dir}/tools/jvmfaketime</compilerArgument>
+                            <compilerArgument>-Xbootclasspath/p:${modules.root.dir}/tools/jvmfaketime/jvmfaketime.jar</compilerArgument>
                             <testExcludes>
                                 <exclude>NONE</exclude>
                             </testExcludes>
@@ -415,7 +415,7 @@
                             </includes>
                             <argLine>-XX:-UseSplitVerifier</argLine>      <!-- bug in powermock on java7 -->
                             <forkMode>always</forkMode>   <!-- bug in surefire; won't pass argline for never -->
-                            <argLine>-Xbootclasspath/p:${modules.root.dir}/tools/jvmfaketime</argLine>
+                            <argLine>-Xbootclasspath/p:${modules.root.dir}/tools/jvmfaketime/jvmfaketime.jar</argLine>
                         </configuration>
                     </plugin>
                     <plugin>
