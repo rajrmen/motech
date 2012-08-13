@@ -19,11 +19,6 @@
         </dependency>
         <dependency>
             <groupId>org.motechproject</groupId>
-            <artifactId>motech-scheduler</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.motechproject</groupId>
             <artifactId>motech-platform-scheduler</artifactId>
             <version>${project.version}</version>
         </dependency>
