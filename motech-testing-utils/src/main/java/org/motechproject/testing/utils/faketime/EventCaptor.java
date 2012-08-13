@@ -1,4 +1,4 @@
-package org.motechproject.testing.utils.ft;
+package org.motechproject.testing.utils.faketime;
 
 import org.joda.time.DateTime;
 import org.motechproject.scheduler.domain.MotechEvent;

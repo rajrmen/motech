@@ -1,4 +1,4 @@
-package org.motechproject.testing.utils.ft;
+package org.motechproject.testing.utils.faketime;
 
 import java.lang.reflect.Method;
 

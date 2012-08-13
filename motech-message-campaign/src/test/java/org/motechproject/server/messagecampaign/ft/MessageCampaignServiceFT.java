@@ -11,8 +11,8 @@ import org.motechproject.server.messagecampaign.EventKeys;
 import org.motechproject.server.messagecampaign.contract.CampaignRequest;
 import org.motechproject.server.messagecampaign.dao.AllCampaignEnrollments;
 import org.motechproject.server.messagecampaign.service.MessageCampaignService;
-import org.motechproject.testing.utils.ft.EventCaptor;
-import org.motechproject.testing.utils.ft.JvmFakeTime;
+import org.motechproject.testing.utils.faketime.EventCaptor;
+import org.motechproject.testing.utils.faketime.JvmFakeTime;
 import org.quartz.Scheduler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
@@ -21,7 +21,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import static java.util.Arrays.asList;
 import static org.motechproject.util.DateUtil.newDateTime;
-import static org.motechproject.util.DateUtil.now;
 
 @ContextConfiguration(locations = "classpath:message_campaign_service_ft/context.xml")
 @RunWith(SpringJUnit4ClassRunner.class)

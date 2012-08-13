@@ -66,18 +66,12 @@
                 <configuration>
                     <source>${jdk.version}</source>
                     <target>${jdk.version}</target>
+                    <excludes>
+                        <exclude>NONE</exclude>
+                    </excludes>
+                    <fork>true</fork>
+                    <compilerArgument>-Xbootclasspath/p:${modules.root.dir}/tools/jvmfaketime/jvmfaketime.jar</compilerArgument>
                 </configuration>
-                <executions>
-                    <execution>
-                        <id>default-compile</id>
-                        <phase>compile</phase>
-                        <configuration>
-                            <excludes>
-                                <exclude>**/ft/*.java</exclude>
-                            </excludes>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>
@@ -97,14 +91,14 @@
                         </configuration>
                         <executions>
                             <execution>
-                                <id>default-testCompile</id>
-                                <phase>test-compile</phase>
+                                <id>default-compile</id>
+                                <phase>compile</phase>
                                 <configuration>
                                     <fork>true</fork>
-                                    <compilerArgument>-Xbootclasspath/p:${modules.root.dir}/tools/jvmfaketime</compilerArgument>
-                                    <testExcludes>
+                                    <compilerArgument>-Xbootclasspath/p:${modules.root.dir}/tools/jvmfaketime/jvmfaketime.jar</compilerArgument>
+                                    <excludes>
                                         <exclude>NONE</exclude>
-                                    </testExcludes>
+                                    </excludes>
                                 </configuration>
                             </execution>
                         </executions>
