@@ -30,26 +30,21 @@ public class KookooCallServiceImpl implements IVRService {
 
     private Properties properties;
 
-    private HttpClient httpClient;
     private Logger log = Logger.getLogger(this.getClass().getName());
 
     private KookooCallDetailRecordsService kookooCallDetailRecordsService;
 
     @Autowired
     public KookooCallServiceImpl(@Qualifier("ivrProperties") Properties properties, KookooCallDetailRecordsService kookooCallDetailRecordsService) {
-        this(properties, new HttpClient(), kookooCallDetailRecordsService);
-    }
-
-
-    KookooCallServiceImpl(Properties properties, HttpClient httpClient, KookooCallDetailRecordsService kookooCallDetailRecordsService) {
         this.properties = properties;
-        this.httpClient = httpClient;
         this.kookooCallDetailRecordsService = kookooCallDetailRecordsService;
     }
 
     @Override
     public void initiateCall(CallRequest callRequest) {
         if (callRequest == null) throw new IllegalArgumentException("Missing call request");
+
+        HttpClient httpClient = new HttpClient();
 
         try {
             String kooKooCallDetailRecordId = kookooCallDetailRecordsService.createOutgoing(callRequest.getPhone(), CallDetailRecord.Disposition.UNKNOWN);
@@ -67,7 +62,7 @@ public class KookooCallServiceImpl implements IVRService {
             GetMethod getMethod = new GetMethod(properties.get(OUTBOUND_URL).toString());
             getMethod.setQueryString(new NameValuePair[]{
                     new NameValuePair(API_KEY_KEY, properties.get(API_KEY).toString()),
-                    new NameValuePair(URL_KEY, URLEncoder.encode(applicationReplyUrl, "UTF-8")),
+                    new NameValuePair(URL_KEY, applicationReplyUrl),
                     new NameValuePair(PHONE_NUMBER_KEY, callRequest.getPhone()),
                     new NameValuePair(CALLBACK_URL_KEY, applicationCallbackUrl)
             });
