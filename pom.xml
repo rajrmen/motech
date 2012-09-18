@@ -258,6 +258,13 @@
         <module>modules/testing-utils/testing-utils</module>
         <module>modules/web-security/web-security</module>
 
+        <!-- Internal OSGI bundles -->
+        <module>bundles/hapi</module>
+        <module>bundles/liquibase</module>
+        <module>bundles/reflectutils</module>
+        <module>bundles/simplexml</module>
+        <module>bundles/openmrs</module>
+
         <!-- OSGI modules -->
         <module>modules/admin/admin-bundle</module>
         <module>modules/alerts/api-bundle</module>
@@ -276,7 +283,7 @@
         <module>modules/message-campaign/message-campaign-bundle</module>
         <module>modules/mobileforms/api-bundle</module>
         <module>modules/mrs/api-bundle</module>
-        <!--<module>modules/openmrs/api-bundle</module>-->
+        <module>modules/openmrs/api-bundle</module>
         <module>modules/openmrs/atomfeed-bundle</module>
         <module>modules/openmrs/ws-bundle</module>
         <module>modules/outbox/outbox-bundle</module>
