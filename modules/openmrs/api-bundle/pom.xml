@@ -107,7 +107,7 @@
         </dependency>
         <dependency>
             <groupId>org.openmrs.api</groupId>
-            <artifactId>org.motechproject.org.openmrs.api</artifactId>
+            <artifactId>openmrs-api</artifactId>
             <version>1.8.2</version>
         </dependency>
         <dependency>
@@ -160,12 +160,13 @@
                         </Import-Package>
                         <Embed-Dependency>
                             motech-openmrs-api,
-                            org.motechproject.org.openmrs.api;inline=applicationContext-service.xml|hibernate.default.properties|hibernate.cfg.xml
+                            openmrs-api
+                            <!--org.motechproject.org.openmrs.api&lt;!&ndash;;inline=applicationContext-service.xml|hibernate.default.properties|hibernate.cfg.xml&ndash;&gt;-->
                         </Embed-Dependency>
                         <Require-Bundle>
                             com.springsource.org.hibernate,
                             org.motechproject.com.ca.uhn.hapi,
-                            org.motechproject.org.openmrs.api
+                            <!--org.motechproject.org.openmrs.api-->
                         </Require-Bundle>
                         <Embed-Transitive>true</Embed-Transitive>
                     </instructions>

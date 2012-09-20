@@ -207,7 +207,8 @@
                             org.openmrs.util;version=${project.version},
                             org.openmrs.util.databasechange;version=${project.version},
                             org.openmrs.validator;version=${project.version},
-                            org.openmrs.xml;version=${project.version}
+                            org.openmrs.xml;version=${project.version},
+                            org.openmrs;version=${project.version}
                         </Export-Package>
                         <Require-Bundle>
                             com.springsource.org.hibernate

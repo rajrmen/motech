@@ -263,7 +263,7 @@
         <module>bundles/liquibase</module>
         <module>bundles/reflectutils</module>
         <module>bundles/simplexml</module>
-        <module>bundles/openmrs</module>
+        <!--<module>bundles/openmrs</module>-->
 
         <!-- OSGI modules -->
         <module>modules/admin/admin-bundle</module>
