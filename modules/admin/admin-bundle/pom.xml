@@ -90,7 +90,6 @@
             <artifactId>commons-io</artifactId>
             <version>2.0.1</version>
         </dependency>
-        <!-- OSGI dependencies -->
         <dependency>
             <groupId>org.codehaus.jackson</groupId>
             <artifactId>org.motechproject.org.codehaus.jackson</artifactId>
@@ -197,6 +196,7 @@
                         <include>lib/angular/angular.min.js</include>
                         <include>lib/angular/angular-resource.min.js</include>
                         <include>lib/angular/angular-mocks.js</include>
+                        <include>lib/jquery/jquery-1.7.2.min.js</include>
                         <include>lib/**/*.js</include>
                         <include>js/util.js</include>
                         <include>js/common.js</include>

@@ -41,7 +41,7 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>motech-event</artifactId>
+            <artifactId>motech-platform-event</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
@@ -118,7 +118,6 @@
             <version>${spring.version}</version>
             <scope>provided</scope>
         </dependency>
-        <!-- OSGI dependencies -->
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>org.motechproject.com.google.code.gson</artifactId>

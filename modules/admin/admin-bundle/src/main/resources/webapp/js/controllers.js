@@ -258,10 +258,13 @@ function MasterCtrl($scope, i18nService, $http) {
 
 
     $scope.mappings = [];
-    $http({method: 'GET', url: 'api/mappings'}).
-          success(function(data) {
-              $scope.mappings = data;
-          });
+    $scope.getMappings = function() {
+        $http({method: 'GET', url: 'api/mappings'}).
+              success(function(data) {
+                  $scope.mappings = data;
+              });
+    }
+    $scope.getMappings();
 
     $scope.showSettings = function(bundle) {
         return $.inArray(bundle.symbolicName, $scope.bundlesWithSettings) >= 0;
@@ -376,4 +379,15 @@ function BundleSettingsCtrl($scope, Bundle, ModuleSettings, $routeParams, $http)
             motechAlert('settings.saved', 'success');
         }, alertHandler('bundles.error.restart', 'error'));
     }
+}
+
+function OperationsCtrl($scope, $http) {
+    $http({method: 'GET', url: 'api/mappings/graphite'}).
+        success(function(data) {
+            $scope.graphiteUrl = data;
+            // prefix with http://
+            if ($scope.graphiteUrl && $scope.graphiteUrl.lastIndexOf("http://") !== 0) {
+                $scope.graphiteUrl = "http://" + $scope.graphiteUrl;
+            }
+        });
 }

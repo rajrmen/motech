@@ -6,6 +6,7 @@ import org.motechproject.admin.ex.NoDbException;
 import org.motechproject.admin.repository.AllAdminMappings;
 import org.motechproject.admin.service.AdminMappingService;
 import org.motechproject.server.config.service.PlatformSettingsService;
+import org.motechproject.server.config.settings.MotechSettings;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 @Service("adminMappingService")
 public class AdminMappingServiceImpl implements AdminMappingService {
@@ -67,7 +69,10 @@ public class AdminMappingServiceImpl implements AdminMappingService {
         if (getAllAdminMappings() != null) {
             List<String> bundlesWithSettings = platformSettingsService.retrieveRegisteredBundleNames();
             for (String bundleName : bundlesWithSettings) {
-                result.put(bundleName, String.format("#/bundleSettings/%s", getBundleId(bundleName)));
+                Long bundleId = getBundleId(bundleName);
+                if (bundleId != null) {
+                    result.put(bundleName, String.format("#/bundleSettings/%s", bundleId));
+                }
             }
 
             List<AdminMapping> mappings = allAdminMappings.getAll();
@@ -81,13 +86,9 @@ public class AdminMappingServiceImpl implements AdminMappingService {
     }
 
     @Override
-    public void registerGraphiteUrl(String url) {
-        registerMapping(GRAPHITE, url);
-    }
-
-    @Override
     public String getGraphiteUrl() {
-        return getAllMappings().get(GRAPHITE);
+        Properties metricsProperties = platformSettingsService.getPlatformSettings().getMetricsProperties();
+        return metricsProperties.getProperty(MotechSettings.GRAPHITE_URL);
     }
 
     private AllAdminMappings getAllAdminMappings() {
@@ -102,12 +103,12 @@ public class AdminMappingServiceImpl implements AdminMappingService {
         return allAdminMappings;
     }
 
-    private long getBundleId(String symbolicName) {
+    private Long getBundleId(String symbolicName) {
         for (Bundle bundle : bundleContext.getBundles()) {
             if (bundle.getSymbolicName().equals(symbolicName)) {
                 return bundle.getBundleId();
             }
         }
-        throw new IllegalArgumentException("Invalid symbolic name");
+        return null;
     }
 }
