@@ -200,7 +200,9 @@ public class OsgiFrameworkService implements ApplicationContextAware {
             }
         }
 
-        bundle.start();
+        if (!isFragmentBundle(bundle)) {
+            bundle.start();
+        }
     }
 
     private void registerPlatformServices(BundleContext bundleContext) throws Exception {
@@ -297,6 +299,10 @@ public class OsgiFrameworkService implements ApplicationContextAware {
         }
 
         return list;
+    }
+
+    private boolean isFragmentBundle(Bundle bundle) {
+        return bundle.getHeaders().get("Fragment-Host") != null;
     }
 
     @Override

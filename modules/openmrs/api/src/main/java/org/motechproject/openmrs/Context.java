@@ -13,10 +13,13 @@ import org.openmrs.api.PatientService;
 import org.openmrs.api.PersonService;
 import org.openmrs.api.UserService;
 import org.openmrs.module.ModuleFactory;
+import org.openmrs.scheduler.SchedulerUtil;
 import org.openmrs.util.DatabaseUpdateException;
 import org.openmrs.util.InputRequiredException;
 import org.openmrs.util.OpenmrsConstants;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -38,6 +41,9 @@ public class Context {
     @Autowired
     private ResourceLoader resourceLoader;
 
+    @Autowired
+    org.openmrs.api.context.Context openmrsContext;
+
     public Context(String url, String user, String password, String openmrsUser, String openmrsPassword, String dataDir) {
         this.url = url;
         this.user = user;
@@ -47,10 +53,17 @@ public class Context {
         this.dataDir = dataDir;
     }
 
-    public void initialize() throws InputRequiredException, DatabaseUpdateException, URISyntaxException, IOException {
+    public void initialize() throws InputRequiredException, DatabaseUpdateException, URISyntaxException, IOException, ClassNotFoundException {
         Resource resource = (StringUtils.isNotBlank(dataDir)) ?
                 new FileSystemResource(dataDir) :
                 resourceLoader.getResource("openmrs-data");
+
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+        } catch (ClassNotFoundException e) {
+            logger.error(e);
+            throw e;
+        }
 
         if (resource != null) {
             String path = resource.getURL().getPath();
@@ -62,10 +75,30 @@ public class Context {
             properties.setProperty(ENABLE_HIBERNATE_SECOND_LEVEL_CACHE, String.valueOf(false));
 
             logger.info(String.format("connecting to openmrs instance at %s", url));
-            org.openmrs.api.context.Context.startup(url, user, password, properties);
+            //org.openmrs.api.context.Context.startup(url, user, password, properties);
+            openMrsStartup(properties);
 
             logger.info(String.format("loaded %d modules", ModuleFactory.getLoadedModules().size()));
         }
+    }
+
+    private void openMrsStartup(Properties properties) throws DatabaseUpdateException, InputRequiredException {
+        properties.put("connection.url", url);
+        properties.put("connection.username", user);
+        properties.put("connection.password", password);
+        org.openmrs.api.context.Context.setRuntimeProperties(properties);
+
+        //@SuppressWarnings("unused")
+        //AbstractApplicationContext ctx = new ClassPathXmlApplicationContext("applicationContext-service.xml");
+
+        openmrsContext.openSession(); // so that the startup method can use proxyPrivileges
+
+        openmrsContext.startup(properties);
+
+        // start the scheduled tasks
+        SchedulerUtil.startup(properties);
+
+        openmrsContext.closeSession();
     }
 
     public PatientService getPatientService() {
