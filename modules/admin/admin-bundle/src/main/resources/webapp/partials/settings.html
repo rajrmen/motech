@@ -9,7 +9,7 @@
                         <input type="file" id="settingsFile" name="settingsFile" class="input-file"/>
                     </span>
                     <span class="offset1">
-                        <button type="submit" ng-click="uploadSettings()" class="btn">{{msg('submit')}}</button>
+                        <input class="btn" type="button" value="{{msg('submit')}}" ng-click="uploadSettings()"/>
                     </span>
                 </fieldset>
             </form>
@@ -53,7 +53,7 @@
                         <div class="control-group inside">
                             <div class="control-label span3"></div>
                             <div class="controls span2">
-                                <input type="submit" ng-click="saveSettings(pSettings)" value="{{msg('save')}} {{msg(pSettings.section)}} Settings" class="btn"/>
+                                <input type="submit" ng-click="saveSettings(pSettings)" value="{{msg('save')}}" class="btn"/>
                             </div>
                         </div>
                     </fieldset>
