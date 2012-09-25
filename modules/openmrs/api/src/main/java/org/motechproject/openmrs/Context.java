@@ -41,9 +41,6 @@ public class Context {
     @Autowired
     private ResourceLoader resourceLoader;
 
-    @Autowired
-    org.openmrs.api.context.Context openmrsContext;
-
     public Context(String url, String user, String password, String openmrsUser, String openmrsPassword, String dataDir) {
         this.url = url;
         this.user = user;
@@ -75,30 +72,10 @@ public class Context {
             properties.setProperty(ENABLE_HIBERNATE_SECOND_LEVEL_CACHE, String.valueOf(false));
 
             logger.info(String.format("connecting to openmrs instance at %s", url));
-            //org.openmrs.api.context.Context.startup(url, user, password, properties);
-            openMrsStartup(properties);
+            org.openmrs.api.context.Context.startup(url, user, password, properties);
 
             logger.info(String.format("loaded %d modules", ModuleFactory.getLoadedModules().size()));
         }
-    }
-
-    private void openMrsStartup(Properties properties) throws DatabaseUpdateException, InputRequiredException {
-        properties.put("connection.url", url);
-        properties.put("connection.username", user);
-        properties.put("connection.password", password);
-        org.openmrs.api.context.Context.setRuntimeProperties(properties);
-
-        //@SuppressWarnings("unused")
-        //AbstractApplicationContext ctx = new ClassPathXmlApplicationContext("applicationContext-service.xml");
-
-        openmrsContext.openSession(); // so that the startup method can use proxyPrivileges
-
-        openmrsContext.startup(properties);
-
-        // start the scheduled tasks
-        SchedulerUtil.startup(properties);
-
-        openmrsContext.closeSession();
     }
 
     public PatientService getPatientService() {

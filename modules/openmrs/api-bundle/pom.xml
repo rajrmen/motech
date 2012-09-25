@@ -108,7 +108,27 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <version>5.1.13</version>
+            <version>5.1.20</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>com.springsource.org.hibernate</artifactId>
+            <version>3.2.6.ga</version>
+        </dependency>
+        <dependency>
+            <groupId>net.sourceforge.cglib</groupId>
+            <artifactId>com.springsource.net.sf.cglib</artifactId>
+            <version>2.1.3</version>
+        </dependency>
+        <dependency>
+            <groupId>net.sourceforge.ehcache</groupId>
+            <artifactId>com.springsource.net.sf.ehcache</artifactId>
+            <version>1.6.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>com.springsource.org.apache.commons.io</artifactId>
+            <version>1.4.0</version>
         </dependency>
         <!-- Non-OSGI dependencies -->
         <dependency>
@@ -143,17 +163,6 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>xerces</groupId>
-            <artifactId>xercesImpl</artifactId>
-            <version>2.9.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.azeckoski</groupId>
-            <artifactId>reflectutils</artifactId>
-            <version>0.9.10</version>
-            <type>jar</type>
-        </dependency>
-        <dependency>
             <groupId>org.openmrs.web</groupId>
             <artifactId>openmrs-web</artifactId>
             <version>1.8.2</version>
@@ -163,26 +172,6 @@
                     <artifactId>commons-io</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>5.1.20</version>
-        </dependency>
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>com.springsource.org.hibernate</artifactId>
-            <version>3.2.6.ga</version>
-        </dependency>
-        <dependency>
-            <groupId>net.sourceforge.cglib</groupId>
-            <artifactId>com.springsource.net.sf.cglib</artifactId>
-            <version>2.1.3</version>
-        </dependency>
-        <dependency>
-            <groupId>net.sourceforge.ehcache</groupId>
-            <artifactId>com.springsource.net.sf.ehcache</artifactId>
-            <version>1.6.2</version>
         </dependency>
     </dependencies>
     <build>
@@ -225,18 +214,11 @@
                             org.motechproject.openmrs.osgi.Activator
                         </Bundle-Activator>
                         <Import-Package>
-                            !com.ibm.*,
                             !com.opensymphony.*,
-                            !com.werken.*,
-                            !edu.emory.*,
-                            !javax.security.jacc.*,
-                            !nu.xom.*,
-                            !org.jboss.*,
-                            !org.jdom.*,
+                            !edu.emory.mathcs.backport.java.util.concurrent,
                             !org.jfree.*,
                             javassist.util.proxy,
-                            javax.mail,
-                            javax.servlet.jsp.jstl.core,
+                            com.mysql.jdbc,
                             org.hibernate.hql.ast,
                             org.motechproject.server.config,
                             org.motechproject.server.config.service,
@@ -246,6 +228,8 @@
                             org.springframework.beans.factory.aspectj,
                             org.springframework.beans.factory.config,
                             org.springframework.beans.factory.xml,
+                            org.springframework.context,
+                            org.springframework.context.annotation,
                             org.springframework.context.config,
                             org.springframework.context.support,
                             org.springframework.orm.hibernate3,
@@ -255,16 +239,7 @@
                             *
                         </Import-Package>
                         <Embed-Dependency>
-                            dwr,
-                            hapi,
-                            liquibase-core,
-                            motech-openmrs-api;inline=true,
-                            mysql-connector-java,
-                            openmrs-api;inline=true,
-                            openmrs-web,
-                            reflectutils,
-                            simple-xml,
-                            xercesImpl
+                            (motech-openmrs-api|openmrs-api|openmrs-web|dwr);inline=true
                         </Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>
                     </instructions>
