@@ -36,7 +36,7 @@
         <property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_NEVER" />
     </bean>
 
-    <bean id="openmrsApiContext" class="org.motechproject.openmrs.Context" init-method="initialize" scope="singleton">
+    <bean id="context" class="org.motechproject.openmrs.Context" init-method="initialize" scope="singleton">
         <constructor-arg value="jdbc:mysql://${openmrs.host}:3306/${openmrs.database}?autoReconnect=false"/>
         <constructor-arg value="${openmrs.db.username}"/>
         <constructor-arg value="${openmrs.db.password}"/>

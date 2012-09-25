@@ -5,13 +5,13 @@
     <parent>
         <artifactId>motech</artifactId>
         <groupId>org.motechproject</groupId>
-        <version>0.13-SNAPSHOT</version>
+        <version>0.14-SNAPSHOT</version>
         <relativePath>../../../</relativePath>
     </parent>
     <groupId>org.motechproject</groupId>
     <artifactId>motech-openmrs-api-bundle</artifactId>
     <name>MoTeCH OpenMRS API Bundle</name>
-    <version>0.13-SNAPSHOT</version>
+    <version>0.14-SNAPSHOT</version>
     <packaging>bundle</packaging>
     <description>Motech interface to OpenMRS</description>
     <properties>
@@ -177,30 +177,6 @@
     <build>
         <plugins>
             <plugin>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>2.5</version>
-                <executions>
-                    <execution>
-                        <id>copy-openmrs-data</id>
-                        <phase>initialize</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${user.home}/.motech/config/${project.groupId}.${project.artifactId}/</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>src/</directory>
-                                    <includes>
-                                        <include>openmrs-data/**</include>
-                                    </includes>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
                 <version>2.3.4</version>
@@ -234,6 +210,7 @@
                             org.springframework.context.support,
                             org.springframework.orm.hibernate3,
                             org.springframework.osgi.context,
+                            org.springframework.transaction.annotation,
                             org.springframework.transaction.config,
                             org.springframework.transaction.interceptor,
                             *
@@ -249,6 +226,24 @@
                 <artifactId>maven-resources-plugin</artifactId>
                 <version>2.5</version>
                 <executions>
+                    <execution>
+                        <id>copy-openmrs-data</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${user.home}/.motech/config/${project.groupId}.${project.artifactId}/</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>src/</directory>
+                                    <includes>
+                                        <include>openmrs-data/**</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
                     <execution>
                         <id>copy-bundles</id>
                         <phase>package</phase>
