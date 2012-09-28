@@ -11,7 +11,7 @@
     <artifactId>motech-decisiontree-server</artifactId>
     <version>0.14-SNAPSHOT</version>
     <name>MOTECH Decision Tree Server</name>
-    <description>MOTECH Decision Tree Server</description>
+    <description>MOTECH Decision Tree Server.</description>
     <properties>
         <modules.root.dir>${basedir}/../../..</modules.root.dir>
     </properties>
