@@ -1,8 +1,5 @@
 package org.motechproject.util;
 
-import org.hamcrest.BaseMatcher;
-import org.hamcrest.Description;
-import org.hamcrest.Matcher;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeFieldType;
 import org.joda.time.LocalDate;
@@ -170,29 +167,4 @@ public final class DateUtil {
         return fromDate.dayOfMonth().addToCopy(noOfDaysToNearestCycleDate);
     }
 
-    public static Matcher<?> greaterThanOrEqualTo(final DateTime dateTime) {
-        return new BaseMatcher<DateTime>() {
-            @Override
-            public boolean matches(Object o) {
-                return !((DateTime) o).isBefore(dateTime);
-            }
-
-            @Override
-            public void describeTo(Description description) {
-            }
-        };
-    }
-
-    public static Matcher<?> lessThan(final DateTime dateTime) {
-        return new BaseMatcher<DateTime>() {
-            @Override
-            public boolean matches(Object o) {
-                return ((DateTime) o).isBefore(dateTime);
-            }
-
-            @Override
-            public void describeTo(Description description) {
-            }
-        };
-    }
 }

@@ -17,8 +17,8 @@ import java.util.List;
 import static ch.lambdaj.Lambda.on;
 import static java.util.Arrays.asList;
 import static junit.framework.Assert.assertEquals;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
@@ -46,7 +46,7 @@ public class AllCampaignEnrollmentsIT {
         assertThat(enrollment.getId(), is(actualEnrollment.getId()));
         assertThat(enrollment.getReferenceDate(), is(actualEnrollment.getReferenceDate()));
     }
-    
+
     @Test
     public void shouldCreateNewEnrollmentIfSavedForFirstTime() {
         allCampaignEnrollments = spy(allCampaignEnrollments);

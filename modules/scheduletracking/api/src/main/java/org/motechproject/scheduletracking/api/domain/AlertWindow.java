@@ -1,5 +1,8 @@
 package org.motechproject.scheduletracking.api.domain;
 
+import org.hamcrest.BaseMatcher;
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
 import org.joda.time.DateTime;
 import org.joda.time.Period;
 import org.motechproject.model.Time;
@@ -9,8 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static ch.lambdaj.Lambda.filter;
-import static org.motechproject.util.DateUtil.greaterThanOrEqualTo;
-import static org.motechproject.util.DateUtil.lessThan;
 import static org.motechproject.util.DateUtil.newDateTime;
 import static org.motechproject.util.DateUtil.now;
 
@@ -119,5 +120,30 @@ public class AlertWindow {
     private DateTime earliestValidAlertDateTime() {
         DateTime now = now();
         return !enrolledOn.isAfter(now) ? now : enrolledOn;
+    }
+    private static Matcher<?> greaterThanOrEqualTo(final DateTime dateTime) {
+        return new BaseMatcher<DateTime>() {
+            @Override
+            public boolean matches(Object o) {
+                return !((DateTime) o).isBefore(dateTime);
+            }
+
+            @Override
+            public void describeTo(Description description) {
+            }
+        };
+    }
+
+    private static Matcher<?> lessThan(final DateTime dateTime) {
+        return new BaseMatcher<DateTime>() {
+            @Override
+            public boolean matches(Object o) {
+                return ((DateTime) o).isBefore(dateTime);
+            }
+
+            @Override
+            public void describeTo(Description description) {
+            }
+        };
     }
 }

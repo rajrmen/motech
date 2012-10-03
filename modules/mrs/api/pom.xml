@@ -50,5 +50,10 @@
             <artifactId>spring-security-core</artifactId>
             <version>${spring.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-core</artifactId>
+            <version>1.2</version>
+        </dependency>
     </dependencies>
 </project>

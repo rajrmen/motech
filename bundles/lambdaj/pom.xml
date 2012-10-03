@@ -23,7 +23,7 @@
     <dependencies>
         <dependency>
             <groupId>com.googlecode.lambdaj</groupId>
-            <artifactId>lambdaj</artifactId>
+            <artifactId>org.motechproject.com.googlecode.lambdaj</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>

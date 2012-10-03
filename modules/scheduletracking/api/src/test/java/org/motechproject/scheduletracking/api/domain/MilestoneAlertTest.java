@@ -3,7 +3,7 @@ package org.motechproject.scheduletracking.api.domain;
 import org.joda.time.DateTime;
 import org.junit.Test;
 
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.motechproject.scheduletracking.api.utility.PeriodUtil.weeks;
