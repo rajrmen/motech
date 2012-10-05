@@ -1,6 +1,6 @@
 package org.motechproject.server.web.validator;
 
-import org.apache.commons.validator.routines.UrlValidator;
+import org.apache.commons.validator.UrlValidator;
 import org.motechproject.server.web.form.StartupForm;
 import org.motechproject.server.web.form.StartupSuggestionsForm;
 import org.springframework.validation.Errors;
@@ -9,14 +9,14 @@ import org.springframework.validation.Validator;
 
 import java.util.Arrays;
 
-import static org.apache.commons.validator.routines.UrlValidator.ALLOW_ALL_SCHEMES;
-import static org.apache.commons.validator.routines.UrlValidator.ALLOW_LOCAL_URLS;
+import static org.apache.commons.validator.UrlValidator.ALLOW_ALL_SCHEMES;
+import static org.apache.commons.validator.UrlValidator.ALLOW_2_SLASHES;
 
 public class StartupFormValidator implements Validator {
     private UrlValidator urlValidator;
 
     public StartupFormValidator() {
-        urlValidator = new UrlValidator(ALLOW_ALL_SCHEMES | ALLOW_LOCAL_URLS);
+        urlValidator = new UrlValidator(ALLOW_ALL_SCHEMES | ALLOW_2_SLASHES);
     }
 
     @Override

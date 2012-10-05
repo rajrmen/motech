@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.motechproject</groupId>
     <artifactId>motech</artifactId>
@@ -156,11 +157,12 @@
             <artifactId>mockito-core</artifactId>
             <version>1.8.5</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>1.2.16</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.objenesis</groupId>
+                    <artifactId>objenesis</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>joda-time</groupId>
@@ -171,6 +173,12 @@
             <groupId>com.googlecode.lambdaj</groupId>
             <artifactId>org.motechproject.com.googlecode.lambdaj</artifactId>
             <version>2.3.3</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>log4j</groupId>
+                    <artifactId>log4j</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -186,26 +194,37 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
             <version>1.6.1</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>log4j</groupId>
+                    <artifactId>log4j</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
-            <groupId>commons-logging</groupId>
-            <artifactId>commons-logging</artifactId>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>com.springsource.org.apache.commons.logging</artifactId>
             <version>1.1.1</version>
         </dependency>
         <dependency>
-            <groupId>commons-httpclient</groupId>
-            <artifactId>commons-httpclient</artifactId>
-            <version>3.1</version>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>com.springsource.org.apache.commons.httpclient</artifactId>
+            <version>3.1.0</version>
         </dependency>
         <dependency>
-            <groupId>commons-collections</groupId>
-            <artifactId>commons-collections</artifactId>
-            <version>3.2</version>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>com.springsource.org.apache.commons.collections</artifactId>
+            <version>3.2.0</version>
         </dependency>
         <dependency>
-            <groupId>commons-fileupload</groupId>
-            <artifactId>commons-fileupload</artifactId>
-            <version>1.2.2</version>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>com.springsource.org.apache.commons.fileupload</artifactId>
+            <version>1.2.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.log4j</groupId>
+            <artifactId>com.springsource.org.apache.log4j</artifactId>
+            <version>1.2.16</version>
         </dependency>
         <!-- Uncomment with findbugs-maven-plugin -->
         <!--<dependency>-->
@@ -334,8 +353,10 @@
                         <exclude>**/**/*ForTest.java</exclude>
                         <exclude>**/ft/*.java</exclude>
                     </excludes>
-                    <argLine>-XX:-UseSplitVerifier</argLine>      <!-- bug in powermock on java7 -->
-                    <forkMode>once</forkMode>   <!-- bug in surefire; won't pass argline for never -->
+                    <argLine>-XX:-UseSplitVerifier</argLine>
+                    <!-- bug in powermock on java7 -->
+                    <forkMode>once</forkMode>
+                    <!-- bug in surefire; won't pass argline for never -->
                 </configuration>
             </plugin>
             <plugin>
@@ -492,7 +513,9 @@
                                 <phase>test-compile</phase>
                                 <configuration>
                                     <fork>true</fork>
-                                    <compilerArgument>-Xbootclasspath/p:${modules.root.dir}/tools/jvmfaketime/jvmfaketime.jar</compilerArgument>
+                                    <compilerArgument>
+                                        -Xbootclasspath/p:${modules.root.dir}/tools/jvmfaketime/jvmfaketime.jar
+                                    </compilerArgument>
                                     <testExcludes>
                                         <exclude>NONE</exclude>
                                     </testExcludes>
@@ -511,8 +534,10 @@
                             <includes>
                                 <include>**/ft/*.java</include>
                             </includes>
-                            <argLine>-XX:-UseSplitVerifier</argLine>      <!-- bug in powermock on java7 -->
-                            <forkMode>always</forkMode>   <!-- bug in surefire; won't pass argline for never -->
+                            <argLine>-XX:-UseSplitVerifier</argLine>
+                            <!-- bug in powermock on java7 -->
+                            <forkMode>always</forkMode>
+                            <!-- bug in surefire; won't pass argline for never -->
                             <argLine>-Xbootclasspath/p:${modules.root.dir}/tools/jvmfaketime/jvmfaketime.jar</argLine>
                         </configuration>
                     </plugin>

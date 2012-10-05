@@ -52,9 +52,9 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>commons-vfs</groupId>
-            <artifactId>commons-vfs</artifactId>
-            <version>1.0</version>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>com.springsource.org.apache.commons.vfs</artifactId>
+            <version>1.0.0</version>
         </dependency>
     </dependencies>
 
