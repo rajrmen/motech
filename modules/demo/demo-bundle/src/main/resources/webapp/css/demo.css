@@ -397,3 +397,25 @@ div#b0 div:hover{
 div#b0 div:active{
     background-position: -460px -58px;
 }
+
+.alert-scroll{
+    max-height: 75px;
+    overflow: auto;
+}
+
+#tree-builder li{
+    list-style-type: none;
+    padding-left:15px;
+}
+
+#tree-builder .node-details {
+    padding-left: 15px;
+}
+
+#tree-builder .tree-node {
+    border: 1px SOLID;
+}
+
+#tree-builder .node-header {
+    border: 1px SOLID;
+}

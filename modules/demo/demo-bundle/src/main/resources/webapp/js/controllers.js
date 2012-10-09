@@ -255,6 +255,29 @@ function TreeCreateCtrl($scope, $http) {
     };
 }
 
+function TreeShowCtrl($scope, $routeParams, $http) {
+    $http.get('../tree/trees/' + $routeParams.treeName).success(function(data) {
+        $scope.node = data.rootTransition.destinationNode;
+        $scope.node.visible = true;
+    });
+
+    $scope.isTextToSpeechPrompt = function(prompt) {
+        return prompt["@type"].match(/TextToSpeechPrompt/) != null;
+    }
+
+    $scope.isAudioPrompt = function(prompt) {
+        return prompt["@type"].match(/AudioPrompt/) != null;
+    }
+
+    $scope.toggle = function(node) {
+        node.visible = !node.visible;
+    }
+
+    $scope.toggleIcon = function(node) {
+        return node.visible == true ?  "icon-minus" : "icon-plus";
+    }
+}
+
 function TreeExecuteCtrl($scope, Tree, $routeParams) {
     $scope.entered = [];
     $scope.history = [];

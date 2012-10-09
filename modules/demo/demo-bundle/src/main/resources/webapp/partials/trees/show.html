@@ -1,0 +1,69 @@
+<script type="text/ng-template" id="text_to_speech_prompt_renderer.html">
+    <div class="row-fluid">
+        <div class="form-inline">
+            <label>
+                <span class="icon-volume-up"></span>Message : <input type="text" class="input-small" value="{{prompt.message}}">
+            </label>
+        </div>
+    </div>
+</script>
+
+<script type="text/ng-template" id="audio_prompt_renderer.html">
+    <div class="row-fluid">
+        <div class="form-inline">
+            <label>
+                <span class="icon-music"></span>Audio File Url :<input type="text" value="{{prompt.audioFileUrl}}">
+            </label>
+            <label>
+                Alternate Message : <input type="text"  value="{{prompt.altMessage}}">
+            </label>
+        </div>
+    </div>
+</script>
+
+<script type="text/ng-template" id="prompt_renderer.html">
+    <div ng-show="isTextToSpeechPrompt(prompt)" ng-include="'text_to_speech_prompt_renderer.html'"></div>
+    <div ng-show="isAudioPrompt(prompt)" ng-include="'audio_prompt_renderer.html'"></div>
+</script>
+
+<script type="text/ng-template"  id="tree_item_renderer.html">
+    <li>
+        <div class="tree-node row-fluid">
+            <div class="node-header" ng-click="toggle(node)">
+                <span ng-class="toggleIcon(node)"></span>
+                <b ng-show="transitionKey"> On Press of Key - {{transitionKey}} </b>
+                <b ng-hide="transitionKey"> Root Node </b>
+            </div>
+            <div class="node-details" ng-show="node.visible">
+                <div class="form-inline">
+                    <label> Node Name: <input type="text" value={{node.name}}> </label>
+                </div>
+
+                <div class="prompts">
+                    <b ng-show="node.noticePrompts"> Notice Prompts : </b>
+                    <div ng-repeat="prompt in node.noticePrompts">
+                        <div ng-include="'prompt_renderer.html'"/>
+                    </div>
+
+                    <b ng-show="node.prompts"> Prompts : </b>
+                    <div ng-repeat="prompt in node.prompts">
+                        <div ng-include="'prompt_renderer.html'"/>
+                    </div>
+                </div>
+
+                <div class="transitions">
+                    <b> Transitions : </b>
+                    <div ng-repeat="(transitionKey, transition) in node.transitions">
+                        <ul ng-include="'tree_item_renderer.html'" ng-init="node=transition.destinationNode"></ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </li>
+</script>
+
+<div id="tree-builder">
+    <ul ng-include="'tree_item_renderer.html'">
+    </ul>
+</div>
+​
