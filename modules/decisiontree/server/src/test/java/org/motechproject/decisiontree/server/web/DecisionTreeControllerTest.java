@@ -30,7 +30,7 @@ import org.springframework.web.servlet.DispatcherServlet;
 
 import java.util.HashMap;
 
-import static junit.framework.Assert.assertNotNull;
+import static org.junit.Assert.assertNotNull;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath*:META-INF/motech/*.xml")
@@ -48,7 +48,7 @@ public class DecisionTreeControllerTest extends SpringIntegrationTest {
     private static Server server;
 
     @After
-    public void setUp() {
+    public void tearDown() {
         allTrees.removeAll();
     }
 
@@ -95,10 +95,10 @@ public class DecisionTreeControllerTest extends SpringIntegrationTest {
         tree.setName("treeName").setRootTransition(new Transition().setDestinationNode(audioPromptNode));
 
         allTrees.addOrReplace(tree);
-//        markForDeletion(tree);
+        markForDeletion(tree);
 
         HttpClient httpClient = new HttpClient();
-        HttpMethod method = new GetMethod("http://localhost:7080/motech/trees/treeName");
+        HttpMethod method = new GetMethod("http://localhost:7080/motech/trees/" + tree.getId());
         httpClient.executeMethod(method);
 
         System.out.println(method.getResponseBodyAsString());
@@ -107,6 +107,7 @@ public class DecisionTreeControllerTest extends SpringIntegrationTest {
     private String createJsonTree() {
         String treeJson = "{\n" +
                 "  \"name\": \"testTree\", \n" +
+                "  \"type\": \"Tree\", \n" +
                 "  \"description\": \"Some Description\",\n" +
                 "  \"rootTransition\": {\n" +
                 "    \"@type\": \"org.motechproject.decisiontree.core.model.Transition\",\n" +

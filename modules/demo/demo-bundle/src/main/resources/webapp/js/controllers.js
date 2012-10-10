@@ -256,10 +256,18 @@ function TreeCreateCtrl($scope, $http) {
 }
 
 function TreeShowCtrl($scope, $routeParams, $http) {
-    $http.get('../tree/trees/' + $routeParams.treeName).success(function(data) {
+    $http.get('../tree/trees/' + $routeParams.treeId).success(function(data) {
+        $scope.tree = data;
         $scope.node = data.rootTransition.destinationNode;
         $scope.node.visible = true;
     });
+
+    $scope.save = function() {
+        $scope.tree.rootTransition.destinationNode = $scope.node;
+        $http.post("../tree/trees/create", $scope.tree).success(function(data){
+           motechAlert('trees.create.tree.saved', 'main.saved');
+        });
+    }
 
     $scope.isTextToSpeechPrompt = function(prompt) {
         return prompt["@type"].match(/TextToSpeechPrompt/) != null;

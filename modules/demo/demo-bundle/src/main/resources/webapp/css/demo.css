@@ -419,3 +419,7 @@ div#b0 div:active{
 #tree-builder .node-header {
     border: 1px SOLID;
 }
+
+#tree-builder .add-link {
+    font-size: 90%;
+}

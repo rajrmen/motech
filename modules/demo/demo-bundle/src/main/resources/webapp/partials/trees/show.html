@@ -2,7 +2,7 @@
     <div class="row-fluid">
         <div class="form-inline">
             <label>
-                <span class="icon-volume-up"></span>Message : <input type="text" class="input-small" value="{{prompt.message}}">
+                <span class="icon-volume-up"></span>Message : <input type="text" class="input-small" ng-model="prompt.message">
             </label>
         </div>
     </div>
@@ -12,10 +12,10 @@
     <div class="row-fluid">
         <div class="form-inline">
             <label>
-                <span class="icon-music"></span>Audio File Url :<input type="text" value="{{prompt.audioFileUrl}}">
+                <span class="icon-music"></span>Audio File Url :<input type="text" ng-model="prompt.audioFileUrl">
             </label>
             <label>
-                Alternate Message : <input type="text"  value="{{prompt.altMessage}}">
+                Alternate Message : <input type="text"  ng-model="prompt.altMessage">
             </label>
         </div>
     </div>
@@ -36,23 +36,33 @@
             </div>
             <div class="node-details" ng-show="node.visible">
                 <div class="form-inline">
-                    <label> Node Name: <input type="text" value={{node.name}}> </label>
+                    <label> Node Name: <input type="text" ng-model="node.name"> </label>
                 </div>
 
                 <div class="prompts">
-                    <b ng-show="node.noticePrompts"> Notice Prompts : </b>
+                    <div>
+                        <span><b> Notice Prompts : </b></span>
+                        <span class="add-link"> <a href="#"> [Add]</a></span>
+                    </div>
                     <div ng-repeat="prompt in node.noticePrompts">
                         <div ng-include="'prompt_renderer.html'"/>
                     </div>
 
-                    <b ng-show="node.prompts"> Prompts : </b>
+                    <div>
+                        <span><b> Prompts : </b></span>
+                        <span class="add-link"> <a href="#"> [Add]</a></span>
+                    </div>
                     <div ng-repeat="prompt in node.prompts">
                         <div ng-include="'prompt_renderer.html'"/>
                     </div>
                 </div>
 
                 <div class="transitions">
-                    <b> Transitions : </b>
+                    <div>
+                        <span><b> Transitions : </b></span>
+                        <span class="add-link"> <a href="#"> [Add]</a></span>
+                    </div>
+
                     <div ng-repeat="(transitionKey, transition) in node.transitions">
                         <ul ng-include="'tree_item_renderer.html'" ng-init="node=transition.destinationNode"></ul>
                     </div>
@@ -65,5 +75,6 @@
 <div id="tree-builder">
     <ul ng-include="'tree_item_renderer.html'">
     </ul>
+    <input type="button" class="btn btn-primary" value="Save" ng-click="save(tree)">
 </div>
 ​

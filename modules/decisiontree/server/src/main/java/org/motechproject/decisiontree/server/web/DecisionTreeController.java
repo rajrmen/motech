@@ -1,9 +1,7 @@
 package org.motechproject.decisiontree.server.web;
 
-import org.codehaus.jackson.annotate.JsonTypeInfo;
 import org.codehaus.jackson.map.BeanProperty;
 import org.codehaus.jackson.map.DeserializationConfig;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig;
 import org.codehaus.jackson.map.TypeDeserializer;
 import org.codehaus.jackson.map.TypeSerializer;
@@ -46,18 +44,10 @@ public class DecisionTreeController {
         return decisionTreeService.getDecisionTrees();
     }
 
-    @RequestMapping(value = "/trees/{treeName}", method = RequestMethod.GET)
+    @RequestMapping(value = "/trees/{treeId}", method = RequestMethod.GET)
     @ResponseBody
-    public void getTree(@PathVariable String treeName, HttpServletResponse response) throws IOException {
-        response.setContentType("application/json");
-        Tree byName = allTrees.findByName(treeName);
-
-        StdTypeResolverBuilder typeResolver = new DecisionTreeCustomTypeResolver();
-        typeResolver = typeResolver.init(JsonTypeInfo.Id.CLASS, null);
-        typeResolver = typeResolver.inclusion(JsonTypeInfo.As.PROPERTY);
-        typeResolver = typeResolver.typeProperty("@type");
-
-        new ObjectMapper().setDefaultTyping(typeResolver).writeValue(response.getWriter(), byName);
+    public Tree getTree(@PathVariable String treeId, HttpServletResponse response) throws IOException {
+        return decisionTreeService.getDecisionTree(treeId);
     }
 
     @ResponseStatus(HttpStatus.OK)
