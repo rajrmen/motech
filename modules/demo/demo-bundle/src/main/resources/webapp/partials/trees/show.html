@@ -21,9 +21,20 @@
     </div>
 </script>
 
+<script type="text/ng-template" id="polymorphic_prompt_renderer.html">
+    <div class="row-fluid">
+        <div class="form-inline">
+            <label>
+                </span> Choose Type :<select ng-model="prompt.selectedPrompt" ng-change="updatePrompt(node, prompt, prompt.selectedPrompt)" ng-options="value as key for (key, value) in prompt.availableTypes" />
+            </label>
+        </div>
+    </div>
+</script>
+
 <script type="text/ng-template" id="prompt_renderer.html">
     <div ng-show="isTextToSpeechPrompt(prompt)" ng-include="'text_to_speech_prompt_renderer.html'"></div>
     <div ng-show="isAudioPrompt(prompt)" ng-include="'audio_prompt_renderer.html'"></div>
+    <div ng-show="isPolymorphic(prompt)" ng-include="'polymorphic_prompt_renderer.html'"></div>
 </script>
 
 <script type="text/ng-template"  id="tree_item_renderer.html">
@@ -42,7 +53,7 @@
                 <div class="prompts">
                     <div>
                         <span><b> Notice Prompts : </b></span>
-                        <span class="add-link"> <a href="#"> [Add]</a></span>
+                        <span class="add-link" ng-click="addPrompt(node, 'noticePrompts')"> <a> [Add]</a></span>
                     </div>
                     <div ng-repeat="prompt in node.noticePrompts">
                         <div ng-include="'prompt_renderer.html'"/>
@@ -50,7 +61,7 @@
 
                     <div>
                         <span><b> Prompts : </b></span>
-                        <span class="add-link"> <a href="#"> [Add]</a></span>
+                        <span class="add-link" ng-click="addPrompt(node, 'prompts')"> <a> [Add]</a></span>
                     </div>
                     <div ng-repeat="prompt in node.prompts">
                         <div ng-include="'prompt_renderer.html'"/>

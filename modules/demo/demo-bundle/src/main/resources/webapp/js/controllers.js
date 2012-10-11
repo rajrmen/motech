@@ -277,12 +277,28 @@ function TreeShowCtrl($scope, $routeParams, $http) {
         return prompt["@type"].match(/AudioPrompt/) != null;
     }
 
+    $scope.isPolymorphic = function(prompt) {
+        return prompt["@type"].match(/PolymorphicPrompt/) != null;
+    }
+
     $scope.toggle = function(node) {
         node.visible = !node.visible;
     }
 
     $scope.toggleIcon = function(node) {
         return node.visible == true ?  "icon-minus" : "icon-plus";
+    }
+
+    $scope.addPrompt = function(node, promptType) {
+        node[promptType].push(new DecisionTree.PolymorphicPrompt(promptType));
+    }
+
+    $scope.updatePrompt = function(node, oldPrompt, newPromptClass) {
+        var promptType = oldPrompt.promptType;
+        var promptIndex = node[promptType].indexOf(oldPrompt);
+        if (promptIndex != -1) {
+            node[promptType][promptIndex] = new newPromptClass();
+        }
     }
 }
 
