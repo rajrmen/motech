@@ -13,7 +13,7 @@
     <name>MoTeCH OpenMRS API Bundle</name>
     <version>0.14-SNAPSHOT</version>
     <packaging>bundle</packaging>
-    <description>Motech interface to OpenMRS</description>
+    <description>MOTECH interface to OpenMRS</description>
     <properties>
         <modules.root.dir>${basedir}/../../..</modules.root.dir>
     </properties>

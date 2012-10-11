@@ -10,7 +10,7 @@
     <groupId>org.motechproject</groupId>
     <artifactId>motech-rules-api-bundle</artifactId>
     <version>0.14-SNAPSHOT</version>
-    <name>MoTeCH Rules API Bundle</name>
+    <name>MOTECH Rules API Bundle</name>
     <packaging>bundle</packaging>
     <properties>
         <modules.root.dir>${basedir}/../../..</modules.root.dir>
@@ -20,6 +20,11 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>motech-rules-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>motech-platform-event</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -94,13 +99,15 @@
                             !com.sun.*,
                             !org.eclipse.jdt.*,
                             !org.mvel2.*,
+                            org.ektorp.impl,
+                            org.ektorp.spring,
+                            org.motechproject.event.listener,
+                            org.motechproject.event.listener.annotations,
                             org.motechproject.server.config,
                             org.motechproject.server.config.service,
                             org.springframework.beans.factory.xml,
                             org.springframework.context.config,
                             org.springframework.osgi.config,
-                            org.ektorp.spring,
-                            org.ektorp.impl,
                             *
                         </Import-Package>
                         <Embed-Dependency>motech-rules-api, drools-api</Embed-Dependency>

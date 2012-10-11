@@ -9,8 +9,8 @@
     </parent>
     <groupId>org.motechproject</groupId>
     <artifactId>motech-event-logging-bundle</artifactId>
-    <name>MoTeCH Event Logging Bundle</name>
-    <description>Motech Event Logging Bundle</description>
+    <name>MOTECH Event Logging Bundle</name>
+    <description>MOTECH Event Logging Bundle</description>
     <version>0.14-SNAPSHOT</version>
     <properties>
         <modules.root.dir>${basedir}/../../..</modules.root.dir>
@@ -100,6 +100,7 @@
                             org.ektorp.spring,
                             org.ektorp.support,
                             org.motechproject.event,
+                            org.motechproject.event.listener.annotations,
                             org.motechproject.server.config,
                             org.motechproject.server.config.service,
                             org.springframework.beans.factory.xml,

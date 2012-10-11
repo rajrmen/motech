@@ -9,8 +9,8 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.motechproject</groupId>
     <artifactId>motech-mrs-api-bundle</artifactId>
-    <name>MoTeCH MRS API Bundle</name>
-    <description>Motech interface to MRS</description>
+    <name>MOTECH MRS API Bundle</name>
+    <description>MOTECH interface to MRS</description>
     <version>0.14-SNAPSHOT</version>
     <packaging>bundle</packaging>
     <properties>
@@ -121,8 +121,11 @@
                             org.motechproject.mrs.osgi.Activator
                         </Bundle-Activator>
                         <Import-Package>
+                            org.motechproject.event.listener,
+                            org.motechproject.event.listener.annotations,
                             org.springframework.beans.factory.xml,
                             org.springframework.context.config,
+                            org.springframework.osgi.config,
                             *
                         </Import-Package>
                         <Embed-Dependency>motech-mrs-api</Embed-Dependency>

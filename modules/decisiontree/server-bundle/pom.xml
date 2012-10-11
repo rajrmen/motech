@@ -10,9 +10,9 @@
     <groupId>org.motechproject</groupId>
     <artifactId>motech-decisiontree-server-bundle</artifactId>
     <version>0.14-SNAPSHOT</version>
-    <name>MoTeCH Decision Tree Server Bundle</name>
+    <name>MOTECH Decision Tree Server Bundle</name>
     <packaging>bundle</packaging>
-    <description>MoTeCH Decision Tree Server Bundle</description>
+    <description>MOTECH Decision Tree Server Bundle</description>
     <properties>
         <modules.root.dir>${basedir}/../../..</modules.root.dir>
     </properties>
@@ -124,7 +124,9 @@
                             org.motechproject.decisiontree.core.repository,
                             org.motechproject.event,
                             org.motechproject.event.listener,
+                            org.motechproject.event.listener.annotations,
                             org.motechproject.server.config,
+                            org.motechproject.server.config.service,
                             org.springframework.beans.factory.xml,
                             org.springframework.context.config,
                             org.springframework.context.support,

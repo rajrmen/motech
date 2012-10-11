@@ -10,7 +10,7 @@
     <groupId>org.motechproject</groupId>
     <artifactId>motech-ivr-asterisk-bundle</artifactId>
     <version>0.14-SNAPSHOT</version>
-    <name>MoTeCH IVR Asterisk Bundle</name>
+    <name>MOTECH IVR Asterisk Bundle</name>
     <packaging>bundle</packaging>
     <properties>
         <modules.root.dir>${basedir}/../../..</modules.root.dir>
@@ -102,6 +102,8 @@
                             org.asteriskjava.live,
                             org.ektorp.impl,
                             org.ektorp.spring,
+                            org.motechproject.decisiontree.server.domain,
+                            org.motechproject.event.listener.annotations,
                             org.motechproject.server.config,
                             org.motechproject.server.config.service,
                             org.springframework.beans.factory.xml,
@@ -109,7 +111,6 @@
                             org.springframework.context.support,
                             org.springframework.osgi.config,
                             org.springframework.web.servlet.mvc,
-                            org.motechproject.decisiontree.server.domain,
                             *
                         </Import-Package>
                         <Embed-Dependency>motech-ivr-asterisk</Embed-Dependency>
