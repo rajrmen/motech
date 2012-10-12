@@ -422,8 +422,20 @@ div#b0 div:active{
 
 #tree-builder .node-header {
     border: 1px SOLID;
+    cursor: pointer;
 }
 
 #tree-builder .add-link {
     font-size: 90%;
 }
+
+#tree-builder .prompt {
+    background-color: #B1BDCD;
+    padding: 3px;
+}
+
+#tree-builder .remove {
+    margin-top: 7px;
+    cursor: pointer;
+}
+

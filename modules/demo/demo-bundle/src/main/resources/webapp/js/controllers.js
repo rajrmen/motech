@@ -255,7 +255,7 @@ function TreeCreateCtrl($scope, $http) {
     };
 }
 
-function TreeShowCtrl($scope, $routeParams, $http) {
+function TreeShowCtrl($scope, $routeParams, $http, $window) {
     $http.get('../tree/trees/' + $routeParams.treeId).success(function(data) {
         $scope.tree = data;
         $scope.node = data.rootTransition.destinationNode;
@@ -298,6 +298,17 @@ function TreeShowCtrl($scope, $routeParams, $http) {
         var promptIndex = node[promptType].indexOf(oldPrompt);
         if (promptIndex != -1) {
             node[promptType][promptIndex] = new newPromptClass();
+        }
+    }
+
+    $scope.removePrompt = function(node, prompt, promptType) {
+        var confirmValue = $window.confirm("Are you sure?");
+        if(confirmValue == true) {
+            var prompts = node[promptType];
+            var promptIndex = prompts.indexOf(prompt);
+            if(promptIndex != -1) {
+                prompts.splice(promptIndex, 1);
+            }
         }
     }
 }

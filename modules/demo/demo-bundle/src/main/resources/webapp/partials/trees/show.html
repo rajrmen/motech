@@ -1,15 +1,16 @@
 <script type="text/ng-template" id="text_to_speech_prompt_renderer.html">
-    <div class="row-fluid">
+    <div class="row-fluid prompt">
         <div class="form-inline">
             <label>
                 <span class="icon-volume-up"></span>Message : <input type="text" class="input-small" ng-model="prompt.message">
             </label>
+            <span class="pull-right icon-remove remove" ng-click="removePrompt(node, prompt, promptType)"></span>
         </div>
     </div>
 </script>
 
 <script type="text/ng-template" id="audio_prompt_renderer.html">
-    <div class="row-fluid">
+    <div class="row-fluid prompt">
         <div class="form-inline">
             <label>
                 <span class="icon-music"></span>Audio File Url :<input type="text" ng-model="prompt.audioFileUrl">
@@ -17,16 +18,18 @@
             <label>
                 Alternate Message : <input type="text"  ng-model="prompt.altMessage">
             </label>
+            <span class="pull-right icon-remove remove" ng-click="removePrompt(node, prompt, promptType)"></span>
         </div>
     </div>
 </script>
 
 <script type="text/ng-template" id="polymorphic_prompt_renderer.html">
-    <div class="row-fluid">
+    <div class="row-fluid prompt">
         <div class="form-inline">
             <label>
                 </span> Choose Type :<select ng-model="prompt.selectedPrompt" ng-change="updatePrompt(node, prompt, prompt.selectedPrompt)" ng-options="value as key for (key, value) in prompt.availableTypes" />
             </label>
+            <span class="pull-right icon-remove remove" ng-click="removePrompt(node, prompt, promptType)"></span>
         </div>
     </div>
 </script>
@@ -55,16 +58,16 @@
                         <span><b> Notice Prompts : </b></span>
                         <span class="add-link" ng-click="addPrompt(node, 'noticePrompts')"> <a> [Add]</a></span>
                     </div>
-                    <div ng-repeat="prompt in node.noticePrompts">
-                        <div ng-include="'prompt_renderer.html'"/>
+                    <div ng-repeat="prompt in node.noticePrompts" class="container-fluid">
+                        <div ng-include="'prompt_renderer.html'" ng-init="promptType='noticePrompts'"/>
                     </div>
 
                     <div>
                         <span><b> Prompts : </b></span>
                         <span class="add-link" ng-click="addPrompt(node, 'prompts')"> <a> [Add]</a></span>
                     </div>
-                    <div ng-repeat="prompt in node.prompts">
-                        <div ng-include="'prompt_renderer.html'"/>
+                    <div ng-repeat="prompt in node.prompts" class="container-fluid">
+                        <div ng-include="'prompt_renderer.html'" ng-init="promptType='prompts'"/>
                     </div>
                 </div>
 
