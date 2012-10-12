@@ -1,26 +1,35 @@
+form.form-horizontal {
+    margin: 0;
+}
+
+.form-horizontal .control-group {
+    margin-bottom: 0;
+}
+
+.settings-form  {
+    border-top: 1px solid #D4E1F9;
+    margin: 0;
+}
+
+.box-content > div.settings-form:first-child   {
+    border-top: none;
+}
+
+h4.settings-section {
+    padding: 10px 0 0 10px;
+}
+
+.lightblue-2 {
+    background: #EDF5F9;
+}
+
 .well2 {
     margin-bottom: 20px;
     min-height: 20px;
 }
 
-.inside5 {
-    padding: 5px;
-}
-
 .inside form {
     margin: 0;
-}
-
-.settings-input {
-    margin:5px;
-}
-
-.settings-input label {
-    display: block;
-    float: left;
-    width: 25%;
-    padding-left: 15px;
-    margin: 7px 0 7px 0;
 }
 
 .bundle-dtLabel {
@@ -92,6 +101,9 @@
 .table-content {
     border-radius:4px;
     padding: 0;
+    -webkit-box-shadow: 0 0 6px #bec9de;
+       -moz-box-shadow: 0 0 6px #bec9de;
+            box-shadow: 0 0 6px #bec9de;
 }
 
 .table-bundles {
@@ -143,6 +155,22 @@
     cursor: pointer;
 }
 
-.admin-title-text {
-    color: #C2EAFE;
+.table-lightblue {
+    border-color: #D4E1F9;
+    background: #E4F1F9;
 }
+
+.table-lightblue  tbody tr:nth-child(2n+1) td, .table-lightblue tbody tr:nth-child(2n+1) th {
+    background-color: #F3FBFE;
+}
+
+.table-lightblue  tbody tr:hover td, .table-lightblue tbody tr:hover th, .table-lightblue tbody tr:hover td a {
+    background-color: #EDF5F9;
+    color: #005580;
+}
+
+.table-lightblue .table-bordered th, .table-bordered td {
+      border-top: 1px solid #D4E1F9;
+      border-left: 1px solid #D4E1F9;
+}
+

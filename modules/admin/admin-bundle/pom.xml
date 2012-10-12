@@ -28,7 +28,7 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>motech-platform-event</artifactId>
+            <artifactId>motech-platform-server-bundle</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
@@ -193,7 +193,6 @@
                     <sourceIncludes>
                         <include>lib/angular/angular.min.js</include>
                         <include>lib/angular/angular-resource.min.js</include>
-                        <include>lib/angular/angular-mocks.js</include>
                         <include>lib/jquery/jquery-1.7.2.min.js</include>
                         <include>lib/**/*.js</include>
                         <include>js/util.js</include>
@@ -203,8 +202,7 @@
 
                     <jsTestSrcDir>${project.basedir}/src/test/resources/</jsTestSrcDir>
                     <specIncludes>
-                        <include>lib/angular.min.js</include>
-                        <include>lib/angular-mocks.js</include>
+                        <include>lib/*.js</include>
                         <include>spec/*.js</include>
                     </specIncludes>
                 </configuration>
