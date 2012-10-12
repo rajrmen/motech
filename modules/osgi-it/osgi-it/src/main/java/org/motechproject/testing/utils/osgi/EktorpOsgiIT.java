@@ -12,7 +12,7 @@ public class EktorpOsgiIT extends BaseOsgiIT {
 
     private Logger logger = Logger.getLogger(EktorpOsgiIT.class);
 
-    public void testOsgiPlatformStarts() {
+    public void testEktorpIsAvailable() {
         final StdCouchDbConnector test = new StdCouchDbConnector("test", new StdCouchDbInstance( new StdHttpClient.Builder().caching(false).build()));
         test.createDatabaseIfNotExists();
         final DbInfo dbInfo = test.getDbInfo();
