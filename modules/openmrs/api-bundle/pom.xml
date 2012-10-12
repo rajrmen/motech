@@ -36,6 +36,11 @@
             <version>2.5.0</version>
         </dependency>
         <dependency>
+            <groupId>javax.transaction</groupId>
+            <artifactId>com.springsource.javax.transaction</artifactId>
+            <version>1.1.0</version>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.osgi</groupId>
             <artifactId>org.springframework.osgi.web</artifactId>
             <version>1.2.1</version>
@@ -99,6 +104,11 @@
             <groupId>org.aspectj</groupId>
             <artifactId>com.springsource.org.aspectj.runtime</artifactId>
             <version>1.6.8.RELEASE</version>
+        </dependency>
+        <dependency>
+            <groupId>org.antlr</groupId>
+            <artifactId>com.springsource.antlr</artifactId>
+            <version>2.7.6</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -196,6 +206,8 @@
                             javassist.util.proxy,
                             com.mysql.jdbc,
                             org.hibernate.hql.ast,
+                            org.motechproject.event.listener,
+                            org.motechproject.event.listener.annotations,
                             org.motechproject.server.config,
                             org.motechproject.server.config.service,
                             org.springframework.osgi.config,
@@ -213,6 +225,8 @@
                             org.springframework.transaction.annotation,
                             org.springframework.transaction.config,
                             org.springframework.transaction.interceptor,
+                            org.apache.xerces.xni.parser,
+                            org.eclipse.core.runtime,
                             *
                         </Import-Package>
                         <Embed-Dependency>
