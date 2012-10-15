@@ -1,4 +1,4 @@
-package org.motechproject.testing.utils;
+package org.motechproject.testing.osgi;
 
 public class MavenArtifact {
 

@@ -1,4 +1,4 @@
-package org.motechproject.testing.utils;
+package org.motechproject.testing.osgi;
 
 import org.springframework.core.io.Resource;
 
@@ -37,6 +37,9 @@ public final class MavenDependencyListParser {
         if (line.contains("org.springframework.test:")) {
             return false;
         }
+        if (line.contains(":org.springframework.osgi.test:")) {
+            return false;
+        }
         if (line.contains("org.springframework.asm:")) {
             return false;
         }
@@ -59,7 +62,7 @@ public final class MavenDependencyListParser {
             return false;
         }
 
-        if ("BaseOsgiIT.PLATFORM_NAME".contains("Felix")) {
+        if (BaseOsgiIT.PLATFORM_NAME.contains("Felix")) {
             if (line.contains("eclipse")) {
                 return false;
             }
@@ -75,7 +78,7 @@ public final class MavenDependencyListParser {
             if (line.contains("org.springframework.osgi.core:jar:1.2.1:")) {
                 return false;
             }
-            if (line.contains("org.springframework.osgi:org.springframework.osgi.io:jar:1.2.1:compile")) {
+            if (line.contains("org.springframework.osgi:org.springframework.osgi.io:jar:1.2.1")) {
                 return false;
             }
             if (line.endsWith(":org.eclipse.osgi:")) {
@@ -86,9 +89,7 @@ public final class MavenDependencyListParser {
             if (line.contains("org.springframework.osgi.core:")) {
                 return false;
             }
-            if (line.contains(":org.springframework.osgi.test:")) {
-                return false;
-            }
+
             if (line.contains("org.springframework.osgi.io:")) {
                 return false;
             }
