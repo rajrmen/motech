@@ -311,6 +311,16 @@ function TreeShowCtrl($scope, $routeParams, $http, $window) {
             }
         }
     }
+
+    $scope.addTransition = function(node) {
+        node.transitions["newTransition"] = new DecisionTree.Transition();
+    }
+
+    $scope.changeTransitionKey = function(node, oldTransitionKey, newTransitionKey) {
+        var tempTransition = node.transitions[oldTransitionKey];
+        node.transitions[newTransitionKey] = tempTransition;
+        node.transitions[oldTransitionKey] = null;
+    }
 }
 
 function TreeExecuteCtrl($scope, Tree, $routeParams) {

@@ -45,7 +45,12 @@
         <div class="tree-node row-fluid">
             <div class="node-header" ng-click="toggle(node)">
                 <span ng-class="toggleIcon(node)"></span>
-                <b ng-show="transitionKey"> On Press of Key - {{transitionKey}} </b>
+                <b ng-show="transitionKey"> On Press of Key :
+                    <span>
+                        <input type="text" class="input-small" ng-model="transitionKey">
+                        <a ng-click="changeTransitionKey(node, oldTransKey, transitionKey)">Change Key</a>
+                    </span>
+                </b>
                 <b ng-hide="transitionKey"> Root Node </b>
             </div>
             <div class="node-details" ng-show="node.visible">
@@ -74,11 +79,11 @@
                 <div class="transitions">
                     <div>
                         <span><b> Transitions : </b></span>
-                        <span class="add-link"> <a href="#"> [Add]</a></span>
+                        <span class="add-link" ng-click="addTransition(node)"> <a> [Add]</a></span>
                     </div>
 
                     <div ng-repeat="(transitionKey, transition) in node.transitions">
-                        <ul ng-include="'tree_item_renderer.html'" ng-init="node=transition.destinationNode"></ul>
+                        <ul ng-include="'tree_item_renderer.html'" ng-init="node=transition.destinationNode" ng-init="oldTransKey=transitionKey"></ul>
                     </div>
                 </div>
             </div>
