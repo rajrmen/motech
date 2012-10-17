@@ -1,13 +1,16 @@
 package org.motechproject.server.config.monito;
 
 import org.apache.commons.vfs.FileChangeEvent;
+import org.apache.commons.vfs.FileObject;
 import org.apache.commons.vfs.impl.StandardFileSystemManager;
+import org.apache.commons.vfs.provider.ram.RamFileObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
-import org.motechproject.scheduler.gateway.MotechSchedulerGateway;
+import org.motechproject.event.MotechEvent;
+import org.motechproject.event.listener.EventRelay;
 import org.motechproject.server.config.ConfigLoader;
 import org.motechproject.server.config.monitor.ConfigFileMonitor;
 import org.motechproject.server.config.service.PlatformSettingsService;
@@ -15,9 +18,14 @@ import org.motechproject.server.config.settings.ConfigFileSettings;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.ResourceLoader;
 
+import java.net.URL;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -26,7 +34,7 @@ import static org.mockito.MockitoAnnotations.initMocks;
 public class ConfigFileMonitorTest {
 
     @Mock
-    MotechSchedulerGateway schedulerGateway;
+    EventRelay serverEventRelay;
 
     @Mock
     ConfigLoader configLoader;
@@ -54,7 +62,6 @@ public class ConfigFileMonitorTest {
     public void setUp() throws Exception {
         initMocks(this);
 
-        configFileMonitor.setSchedulerGateway(schedulerGateway);
         configFileMonitor.setConfigLoader(configLoader);
         configFileMonitor.setPlatformSettingsService(platformSettingsService);
         configFileMonitor.setSystemManager(systemManager);
@@ -77,22 +84,25 @@ public class ConfigFileMonitorTest {
 
     @Test
     public void testFileDeleted() throws Exception {
+        doNothing().when(serverEventRelay).sendEventMessage(any(MotechEvent.class));
+        final FileObject fileObject = mock(FileObject.class);
+        when(fileObject.getURL()).thenReturn(new URL("file:///abc"));
+        when(fileChangeEvent.getFile()).thenReturn(fileObject);
         configFileMonitor.fileDeleted(fileChangeEvent);
-
         verify(platformSettingsService).evictMotechSettingsCache();
-
         assertNull(configFileMonitor.getCurrentSettings());
     }
 
     @Test
     public void testFileChanged() throws Exception {
+        doNothing().when(serverEventRelay).sendEventMessage(any(MotechEvent.class));
+        final FileObject fileObject = mock(FileObject.class);
+        when(fileObject.getURL()).thenReturn(new URL("file:///abc"));
+        when(fileChangeEvent.getFile()).thenReturn(fileObject);
         when(configLoader.loadConfig()).thenReturn(motechSettings);
-
         configFileMonitor.fileChanged(fileChangeEvent);
-
         verify(configLoader).loadConfig();
         verify(platformSettingsService).evictMotechSettingsCache();
-
         assertCurrentSettings();
     }
 

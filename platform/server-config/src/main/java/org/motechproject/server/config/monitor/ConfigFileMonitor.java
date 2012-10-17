@@ -6,11 +6,8 @@ import org.apache.commons.vfs.FileSystemException;
 import org.apache.commons.vfs.FileSystemManager;
 import org.apache.commons.vfs.VFS;
 import org.apache.commons.vfs.impl.DefaultFileMonitor;
-import org.joda.time.DateTime;
 import org.motechproject.event.MotechEvent;
-import org.motechproject.scheduler.domain.RunOnceJobId;
-import org.motechproject.scheduler.domain.RunOnceSchedulableJob;
-import org.motechproject.scheduler.gateway.MotechSchedulerGateway;
+import org.motechproject.event.listener.EventRelay;
 import org.motechproject.server.config.ConfigLoader;
 import org.motechproject.server.config.service.PlatformSettingsService;
 import org.motechproject.server.config.settings.ConfigFileSettings;
@@ -21,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,7 +31,6 @@ public class ConfigFileMonitor implements FileListener, InitializingBean {
     private static final Logger LOGGER = LoggerFactory.getLogger(ConfigFileMonitor.class);
     private static final Long DELAY = 2500L;
 
-    private MotechSchedulerGateway schedulerGateway;
     private ConfigLoader configLoader;
     private PlatformSettingsService platformSettingsService;
     private FileSystemManager systemManager;
@@ -44,6 +39,8 @@ public class ConfigFileMonitor implements FileListener, InitializingBean {
     private ConfigFileSettings currentSettings;
 
     private boolean monitorStart;
+    @Autowired
+    private EventRelay serverEventRelay;
 
     @Override
     protected void finalize() throws Throwable {
@@ -118,7 +115,7 @@ public class ConfigFileMonitor implements FileListener, InitializingBean {
         }
 
         platformSettingsService.evictMotechSettingsCache();
-        scheduleJob(FILE_DELETED_EVENT_SUBJECT, fileChangeEvent);
+        serverEventRelay.sendEventMessage(createMotechEvent(FILE_DELETED_EVENT_SUBJECT, fileChangeEvent));
     }
 
     @Override
@@ -127,13 +124,13 @@ public class ConfigFileMonitor implements FileListener, InitializingBean {
 
         currentSettings = configLoader.loadConfig();
         platformSettingsService.evictMotechSettingsCache();
-        scheduleJob(FILE_CHANGED_EVENT_SUBJECT, fileChangeEvent);
+        serverEventRelay.sendEventMessage(createMotechEvent(FILE_CHANGED_EVENT_SUBJECT, fileChangeEvent));
     }
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        if (schedulerGateway == null) {
-            throw new Exception("schedulerGateway property is required.");
+        if (serverEventRelay == null) {
+            throw new Exception("serverEventRelay property is required.");
         }
 
         if (configLoader == null) {
@@ -155,11 +152,6 @@ public class ConfigFileMonitor implements FileListener, InitializingBean {
     }
 
     @Autowired
-    public void setSchedulerGateway(final MotechSchedulerGateway schedulerGateway) {
-        this.schedulerGateway = schedulerGateway;
-    }
-
-    @Autowired
     public void setConfigLoader(final ConfigLoader configLoader) {
         this.configLoader = configLoader;
     }
@@ -171,20 +163,6 @@ public class ConfigFileMonitor implements FileListener, InitializingBean {
 
     public void setSystemManager(final FileSystemManager systemManager) {
         this.systemManager = systemManager;
-    }
-
-    private void scheduleJob(final String subject, final FileChangeEvent fileChangeEvent) {
-        try {
-            MotechEvent motechEvent = createMotechEvent(subject, fileChangeEvent);
-            Date startDate = DateTime.now().toDate();
-            RunOnceSchedulableJob runOnceSchedulableJob = new RunOnceSchedulableJob(motechEvent, startDate);
-            RunOnceJobId runOnceJobId = new RunOnceJobId(motechEvent);
-
-            schedulerGateway.unscheduleJob(runOnceJobId);
-            schedulerGateway.scheduleRunOnceJob(runOnceSchedulableJob);
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage(), e);
-        }
     }
 
     private MotechEvent createMotechEvent(final String subject, final FileChangeEvent fileChangeEvent) throws FileSystemException {
