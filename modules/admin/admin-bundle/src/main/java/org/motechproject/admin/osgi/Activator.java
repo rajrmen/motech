@@ -124,6 +124,7 @@ public class Activator implements BundleActivator {
         regData.addSubMenu("#/messages", "messages");
         regData.addSubMenu("#/settings", "settings");
         regData.addSubMenu("#/operations", "operations");
+        regData.addSubMenu("#/security", "manageSecurity");
 
         regData.addI18N("messages", "../admin/bundles/");
 

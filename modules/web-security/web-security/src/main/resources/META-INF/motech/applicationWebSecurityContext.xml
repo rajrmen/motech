@@ -18,6 +18,8 @@
 
     <bean class="org.motechproject.event.listener.annotations.EventAnnotationBeanPostProcessor"/>
 
+    <bean class="org.motechproject.security.Initialize"/>
+
     <context:annotation-config/>
     <context:component-scan base-package="org.motechproject.security"/>
 </beans>

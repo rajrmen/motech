@@ -3,6 +3,7 @@ package org.motechproject.security.service;
 import org.motechproject.security.authentication.MotechPasswordEncoder;
 import org.motechproject.security.domain.MotechUser;
 import org.motechproject.security.domain.MotechUserCouchdbImpl;
+import org.motechproject.security.domain.MotechRole;
 import org.motechproject.security.repository.AllMotechUsers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,17 +21,17 @@ public class MotechUserService {
     @Autowired
     private MotechPasswordEncoder passwordEncoder;
 
-    public void register(String username, String password, String externalId, List<String> roles) {
-        this.register(username, password, externalId, roles, true);
+    public void register(String username, String password, String email, String externalId, List<MotechRole> roles) {
+        this.register(username, password, email, externalId, roles, true);
     }
 
-    public void register(String username, String password, String externalId, List<String> roles, boolean isActive) {
+    public void register(String username, String password, String email, String externalId, List<MotechRole> roles, boolean isActive) {
         if (isBlank(username) || isBlank(password)) {
             throw new IllegalArgumentException("Username or password cannot be empty");
         }
 
         String encodePassword = passwordEncoder.encodePassword(password);
-        MotechUserCouchdbImpl user = new MotechUserCouchdbImpl(username, encodePassword, externalId, roles);
+        MotechUserCouchdbImpl user = new MotechUserCouchdbImpl(username, encodePassword, email, externalId, roles);
         user.setActive(isActive);
         allMotechUsers.add(user);
     }

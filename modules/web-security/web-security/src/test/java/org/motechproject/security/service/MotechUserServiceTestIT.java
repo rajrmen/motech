@@ -2,6 +2,7 @@ package org.motechproject.security.service;
 
 import org.ektorp.CouchDbConnector;
 import org.junit.After;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.motechproject.security.authentication.MotechPasswordEncoder;

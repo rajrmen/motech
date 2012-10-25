@@ -24,7 +24,10 @@ public class MotechUserCouchdbImpl extends MotechBaseDataObject implements Motec
     private String password;
 
     @JsonProperty
-    private List<String> roles;
+    private String email;
+
+    @JsonProperty
+    private List<MotechRole> roles;
 
     @JsonProperty
     private boolean active;
@@ -34,10 +37,11 @@ public class MotechUserCouchdbImpl extends MotechBaseDataObject implements Motec
         this.setType(DOC_TYPE);
     }
 
-    public MotechUserCouchdbImpl(String userName, String password, String externalId, List<String> roles) {
+    public MotechUserCouchdbImpl(String userName, String password, String email, String externalId, List<MotechRole> roles) {
         super();
         this.userName = userName == null ? null : userName.toLowerCase();
         this.password = password;
+        this.email = email;
         this.externalId = externalId;
         this.roles = roles;
         this.active = true;
@@ -60,15 +64,23 @@ public class MotechUserCouchdbImpl extends MotechBaseDataObject implements Motec
         this.password = password;
     }
 
-    public List<String> getRoles() {
+    public List<MotechRole> getRoles() {
         return roles;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     @JsonIgnore
     public List<GrantedAuthority> getAuthorities() {
         List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
-        for (String role : roles) {
-            authorities.add(new SimpleGrantedAuthority(role));
+        for (MotechRole role : roles) {
+            authorities.add(new SimpleGrantedAuthority(role.getRoleName()));
         }
         return authorities;
     }

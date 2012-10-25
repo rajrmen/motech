@@ -12,5 +12,6 @@ angular.module('motech-admin', ['motech-dashboard', 'bundleServices', 'messageSe
           when('/bundleSettings/:bundleId', {templateUrl: '../admin/partials/bundleSettings.html', controller: BundleSettingsCtrl}).
           when('/modulePanels', {templateUrl: '../admin/partials/modulePanels.html'}).
           when('/operations', {templateUrl: '../admin/partials/operations.html', controller: OperationsCtrl}).
+          when('/security', {templateUrl: '../admin/partials/security.html', controller: SecurityCtrl}).
           otherwise({redirectTo: '/bundles'});
 }]);

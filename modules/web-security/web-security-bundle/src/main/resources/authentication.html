@@ -1,0 +1,368 @@
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.css"/>
+    <link rel="stylesheet" type="text/css" href="css/bootstrap-responsive.css"/>
+
+    <link rel="stylesheet" type="text/css" href="css/index.css"/>
+
+    <script src="../jquery-1.8.2.min.js" type="text/javascript"></script>
+    <script src="../bootstrap.js" type="text/javascript"></script>
+</head>
+
+<body>
+<div class="bodywrap">
+<div id="content" class="container-fluid">
+<div class="row-fluid">
+
+<div id="main-content" class="span10">
+
+<div class="well2 span8"  style="display: '';">
+    <div class="box-header">{{msg('User Registration')}}</div>
+    <div class="box-content clearfix">
+        <div class="well3">
+            <form class="form-horizontal inside">
+                <div class="control-group">
+                    <h4>{{msg('user')}}</h4>
+                </div>
+                <div class="control-group">
+                    <label class="control-label">{{msg('username')}}</label>
+                    <div class="controls">
+                        <input type="text" ng-model="" placeholder="user name">
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label">{{msg('email')}}</label>
+                    <div class="controls">
+                        <input type="text" ng-model="" placeholder="....@.....">
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label">{{msg('password')}}</label>
+                    <div class="controls btn-group">
+                        <input type="text" ng-model="" placeholder="______">
+                        <span class="help-inline"><button type="submit" class="btn btn-small"  ng-click="">{{msg('generate')}}</button></span>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <h4>{{msg('permissions')}}</h4>
+                </div>
+                <div class="control-group">
+                    <div class="controls">
+                        <input class="btn btn-success" type="submit" value="{{msg('admin.user')}}" ng-click=""/>
+                        <input class="btn btn-success" type="submit" value="{{msg('admin.sever')}}" ng-click=""/>
+                        <input class="btn disabled" type="submit" value="{{msg('author.content')}}" ng-click=""/>
+                        <input class="btn disabled" type="submit" value="{{msg('mrs.user')}}" ng-click=""/>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <div class="controls">
+                        <div class="btn-group dropdown">
+                            <a class="btn dropdown-toggle"  role="button" data-toggle="dropdown"  href="#">
+                                {{msg('permissions')}}
+                                <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu" role="menu">
+                                <li class="nav-header"><a class="ng-binding" href="" >Admin user</a></li>
+                                <li class="nav-header"><a class="ng-binding" href="" >Admin server</a></li>
+                                <li class="nav-header"><a class="ng-binding" href="" >Admin 3</a></li>
+                                <li class="nav-header"><a class="ng-binding" href="" >Admin 4</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <div class="controls">
+                        <input class="btn btn-primary" type="submit" value="{{msg('save')}}" ng-click=""/>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="well2 span10"  style="display: '';">
+    <div class="box-header">{{msg('Administering Users - list')}}</div>
+    <div class="box-content clearfix">
+        <div class="well3">
+            <form class="form-search form-inline">
+                <label class="control-label">{{msg('username')}}</label>
+                <input type="text" class="input-medium search-query">
+                <button type="submit" class="btn">Search</button>
+                <label class="help-inline">{{msg('permission')}}</label>
+                <select class="help-inline" multiple="multiple" size="2">
+                    <option>{{msg('admin.user')}}</option>
+                    <option>{{msg('admin.server')}}</option>
+                    <option>{{msg('open.user')}}</option>
+                </select>
+            </form>
+            <div  id='dex'  class="">
+                <table class="table table-condensed table-bordered table-striped table-lightblue">
+                    <thead>
+                    <tr>
+                        <th>{{msg('Id')}} </th>
+                        <th>{{msg('Username')}} </th>
+                        <th>{{msg('Permission')}} </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>{{msg('1')}}</td>
+                        <td>{{msg('user')}}</td>
+                        <td>{{msg('admin.server')}}</td>
+                    </tr>
+                    <tr>
+                        <td>{{msg('2')}}</td>
+                        <td>{{msg('user')}}</td>
+                        <td>{{msg('admin.server')}}</td>
+                    </tr>
+                    <tr>
+                        <td>{{msg('3')}}</td>
+                        <td>{{msg('user')}}</td>
+                        <td>{{msg('admin.server')}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="pagination pagination-centered pagination-condensed">
+                <ul>
+                    <li class="disabled"><a href="#">First</a></li>
+                    <li class="active"><a href="#">1</a></li>
+                    <li class=""><a href="#">2</a></li>
+                    <li class=""><a href="#">3</a></li>
+                    <li class="disabled"><a href="#">Last</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="well2 span8" style="display: '';">
+    <div class="box-header">{{msg('Administering Users')}}-{{msg('deleting')}}</div>
+    <div class="box-content clearfix">
+        <div class="well3">
+            <form class="form-horizontal inside">
+                <div class="control-group">
+                    <h4>{{msg('user')}}: {{msg('username')}}</h4>
+                </div>
+                <div class="control-group">
+                    <label class="control-label">{{msg('email')}}</label>
+                    <div class="controls">
+                        <input type="text" ng-model="" placeholder="....@.....">
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label">{{msg('password')}}</label>
+                    <div class="controls btn-group">
+                        <input type="text" ng-model="" placeholder="______">
+                    </div>
+                </div>
+                <div class="control-group">
+                    <h4>{{msg('permissions')}}</h4>
+                </div>
+                <div class="control-group">
+                    <div class="controls">
+                        <input class="btn btn-success" type="submit" value="{{msg('admin.user')}}" ng-click=""/>
+                        <input class="btn btn-success" type="submit" value="{{msg('admin.sever')}}" ng-click=""/>
+                        <input class="btn disabled" type="submit" value="{{msg('author.content')}}" ng-click=""/>
+                        <input class="btn disabled" type="submit" value="{{msg('mrs.user')}}" ng-click=""/>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <div class="controls">
+                        <div class="btn-group dropdown">
+                            <a class="btn dropdown-toggle" role="button" data-toggle="dropdown"  href="#">
+                                {{msg('permissions')}}
+                                <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu" role="menu">
+                                <li class="nav-header"><a class="ng-binding" href="" >Admin user</a></li>
+                                <li class="nav-header"><a class="ng-binding" href="" >Admin server</a></li>
+                                <li class="nav-header"><a class="ng-binding" href="" >Admin 3</a></li>
+                                <li class="nav-header"><a class="ng-binding" href="" >Admin 4</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <div class="controls">
+                        <input class="btn btn-primary" type="submit" value="{{msg('save')}}" ng-click=""/>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <h4>{{msg('delete.user')}}</h4>
+                </div>
+                <div class="control-group">
+                    <div class="controls">
+                        <p>{{msg('delete.user.text."Deleting a user is a non-recoverable action. Please be absolutely sure
+                            this is what you want to do.')}}</p>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <div class="controls">
+                        <label class="checkbox">
+                            <input type="checkbox"> {{msg('I want to delete this user')}}
+                        </label>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <div class="controls">
+                        <input class="btn btn-primary" type="submit" value="{{msg('delete')}}" ng-click=""/>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<div class="well2 span4">
+    <div class="box-header">{{msg('user.repository')}}</div>
+    <div class="box-content clearfix">
+        <div class="well3">
+            <form class="inside">
+                <div class="control-group">
+                    <h4>{{msg('Sign in with your')}}</h4>
+                </div>
+                <div class="control-group">
+                    <h4>{{msg('MOTECH ID')}}</h4>
+                </div>
+                <div class="control-group">
+                    <input type="text" ng-model="" placeholder="Username">
+                </div>
+                <div class="control-group">
+                    <input type="text" ng-model="" placeholder="Password">
+                </div>
+                <div class="control-group">
+                    <input class="btn btn-primary" type="submit" value="{{msg('sign.in')}}" ng-click=""/>
+                </div>
+            </form>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+</div>
+
+
+<div class="well2 span8">
+    <div class="box-header">{{msg('user.repository')}}</div>
+    <div class="box-content clearfix">
+        <div class="row-fluid">
+            <div class="span6 inside">
+                <div class="well3">
+                    <div class="control-group">
+                        <h5>{{msg('We didn't recognize the user name password you entered. Please try again.')}}</h5>
+                    </div>
+                    <div class="control-group">
+                        <h5>{{msg('I think I forgot my username or password.')}}</h5>
+                    </div>
+                    <div class="control-group">
+                        <h5>{{msg('If you don't remember your username or password, ')}}
+                            <button class="btn btn-mini btn-link">click here </button> {{msg(' and we'll email you instruction to reset password.')}}</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="span6">
+                <div class="well3"><div class="left-divider">
+                    <form class="inside">
+                        <div class="control-group">
+                            <h4>{{msg('Sign in with your')}}</h4>
+                        </div>
+                        <div class="control-group">
+                            <h4>{{msg('MOTECH ID')}}</h4>
+                        </div>
+                        <div class="control-group">
+                            <input type="text" ng-model="" placeholder="Username">
+                        </div>
+                        <div class="control-group">
+                            <input type="text" ng-model="" placeholder="Password">
+                        </div>
+                        <div class="control-group">
+                            <input class="btn btn-primary" type="submit" value="{{msg('sign.in')}}" ng-click=""/>
+                        </div>
+                    </form>
+                </div></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="well2 span4">
+    <div class="box-header">{{msg('user.repository')}}</div>
+    <div class="box-content">
+        <form class="inside">
+            <div class="well3">
+                <div class="control-group">
+                    <h4>{{msg('Can't sign in? Forgot your password?')}}</h4>
+                </div>
+                <div class="control-group">
+                    <p>{{msg('Enter your email address below and we'll send you password reset instructions')}}</p>
+                </div>
+                <div class="control-group">
+                    <label>{{msg('Enter your email address')}}</label>
+                    <input type="text" ng-model="" placeholder="_______">
+                </div>
+                <div class="control-group">
+                    <input class="btn btn-primary" type="submit" value="{{msg('Send me reset instructions')}}" ng-click=""/>
+                </div>
+            </div>
+        </form>
+        <div class="clearfix"></div>
+    </div>
+</div>
+
+
+<div class="well2 span4">
+    <div class="box-header">{{msg('user.repository')}}</div>
+    <div class="box-content">
+        <div class="well3">
+            <form class="inside">
+                <div class="control-group">
+                    <h4>{{msg('Sign in?')}}</h4>
+                </div>
+                <div class="control-group">
+                    <p>{{msg('Sign in your &lt;account provider name&gt; account')}}</p>
+                </div>
+                <div class="control-group">
+                    <input class="btn btn-primary" type="submit" value="{{msg('sign in')}}" ng-click=""/>
+                </div>
+            </form>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+</div>
+
+
+<div class="well2 span4">
+    <div class="box-header">{{msg('Reset password')}}</div>
+    <div class="box-content">
+        <div class="well3">
+            <form class="inside">
+                <div class="control-group">
+                    <h4>{{msg('Reset your password')}}</h4>
+                </div>
+                <div class="control-group">
+                    <label>{{msg('Password')}}</label>
+                    <input type="text" ng-model="" placeholder="_______">
+                </div>
+                <div class="control-group">
+                    <label>{{msg('Confirm password')}}</label>
+                    <input type="text" ng-model="" placeholder="_______">
+                </div>
+                <div class="control-group">
+                    <input class="btn btn-primary" type="submit" value="{{msg('sign in')}}" ng-click=""/>
+                </div>
+            </form>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+</div>
+
+
+
+</div>
+</div>
+</div>
+</div>
+</body>
+</html>

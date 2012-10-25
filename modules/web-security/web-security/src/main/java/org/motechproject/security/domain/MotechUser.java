@@ -12,7 +12,9 @@ public interface MotechUser {
 
     String getPassword();
 
-    List<String> getRoles();
+    String getEmail();
+
+    List<MotechRole> getRoles();
 
     List<GrantedAuthority> getAuthorities();
 
@@ -21,4 +23,6 @@ public interface MotechUser {
     void setActive(boolean active);
 
     void setPassword(String password);
+
+    void setEmail(String email);
 }

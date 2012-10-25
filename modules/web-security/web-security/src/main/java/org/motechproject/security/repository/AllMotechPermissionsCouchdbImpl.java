@@ -1,0 +1,37 @@
+package org.motechproject.security.repository;
+
+import org.ektorp.CouchDbConnector;
+import org.ektorp.ViewQuery;
+import org.ektorp.support.View;
+import org.motechproject.dao.MotechBaseRepository;
+import org.motechproject.security.domain.MotechPermission;
+import org.motechproject.security.domain.MotechPermissionCouchdbImpl;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
+
+@Component
+@View(name = "all", map = "function(doc) { emit(doc._id, doc); }")
+public class AllMotechPermissionsCouchdbImpl extends MotechBaseRepository<MotechPermissionCouchdbImpl> implements AllMotechPermissions {
+
+    @Autowired
+    protected AllMotechPermissionsCouchdbImpl(@Qualifier("webSecurityDbConnector") CouchDbConnector db) {
+        super(MotechPermissionCouchdbImpl.class, db);
+        initStandardDesignDocument();
+    }
+
+    @Override
+    public void add(MotechPermission permission) {
+        if (findByPermissionName(permission.getPermissionName()) != null) { return; }
+        else super.add((MotechPermissionCouchdbImpl) permission);
+    }
+
+    @Override
+    @View(name = "by_permissionName", map = "function(doc) { if (doc.type ==='MotechPermission') { emit(doc.permissionName, doc._id); }}")
+    public MotechPermission findByPermissionName(String permissionName) {
+        if (permissionName == null) { return null; }
+
+        String lowerUserName = permissionName.toLowerCase();
+        ViewQuery viewQuery = createQuery("by_permissionName").key(lowerUserName).includeDocs(true);
+        return singleResult(db.queryView(viewQuery, MotechPermissionCouchdbImpl.class));    }
+}

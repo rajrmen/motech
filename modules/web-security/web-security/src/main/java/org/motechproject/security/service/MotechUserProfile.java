@@ -1,6 +1,7 @@
 package org.motechproject.security.service;
 
 import org.motechproject.security.domain.MotechUser;
+import org.motechproject.security.domain.MotechRole;
 
 import java.util.List;
 
@@ -20,7 +21,7 @@ public class MotechUserProfile {
         return user.getUserName();
     }
 
-    public List<String> getRoles() {
+    public List<MotechRole> getRoles() {
         return user.getRoles();
     }
 }

@@ -283,12 +283,42 @@ select {
             box-shadow: 0 0 6px #bec9de;
 }
 
+.box-content form {
+    margin:0;
+}
+
 .inside {
     padding: 8px 10px;
 }
 
 .outside-tb {
     margin: 10px 0;
+}
+
+.well2 {
+    margin-bottom: 20px;
+    min-height: 20px;
+}
+
+.well3 {
+    padding: 10px 20px;
+    min-height: 20px;
+}
+
+.left-divider {
+    border-left: 1px solid #7bb5fc;
+    margin-left: -30px;
+    padding-left: 30px;
+}
+
+.pagination-condensed {
+    height: 26px;
+    margin: 5px;
+}
+
+.pagination-condensed a {
+    line-height: 24px;
+    padding: 0 8px;
 }
 
 footer {

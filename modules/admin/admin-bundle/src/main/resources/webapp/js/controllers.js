@@ -382,3 +382,7 @@ function OperationsCtrl($scope, $http) {
             }
         });
 }
+
+function SecurityCtrl($scope, $http) {
+
+}
