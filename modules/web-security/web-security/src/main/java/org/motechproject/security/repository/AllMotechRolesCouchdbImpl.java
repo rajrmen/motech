@@ -10,6 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Component
 @View(name = "all", map = "function(doc) { emit(doc._id, doc); }")
 public class AllMotechRolesCouchdbImpl extends MotechBaseRepository<MotechRoleCouchdbImpl> implements AllMotechRoles {
@@ -18,6 +21,11 @@ public class AllMotechRolesCouchdbImpl extends MotechBaseRepository<MotechRoleCo
     protected AllMotechRolesCouchdbImpl(@Qualifier("webSecurityDbConnector") CouchDbConnector db) {
         super(MotechRoleCouchdbImpl.class, db);
         initStandardDesignDocument();
+    }
+
+    @Override
+    public List<MotechRole> getRoles() {
+        return new ArrayList<MotechRole>(getAll());
     }
 
     @Override
@@ -30,11 +38,8 @@ public class AllMotechRolesCouchdbImpl extends MotechBaseRepository<MotechRoleCo
     @View(name = "by_roleName", map = "function(doc) { if (doc.type ==='MotechRole') { emit(doc.roleName, doc._id); }}")
     public MotechRole findByRoleName(String roleName) {
         if (roleName == null) { return null; }
-
-        String lowerUserName = roleName.toLowerCase();
-        ViewQuery viewQuery = createQuery("by_roleName").key(lowerUserName).includeDocs(true);
+        ViewQuery viewQuery = createQuery("by_roleName").key(roleName).includeDocs(true);
         return singleResult(db.queryView(viewQuery, MotechRoleCouchdbImpl.class));
     }
-
 
 }

@@ -1,5 +1,6 @@
 package org.motechproject.security.domain;
 
+import org.codehaus.jackson.annotate.JsonTypeInfo;
 import org.springframework.security.core.GrantedAuthority;
 
 import java.util.List;
@@ -14,7 +15,7 @@ public interface MotechUser {
 
     String getEmail();
 
-    List<MotechRole> getRoles();
+    List<String> getRoles();
 
     List<GrantedAuthority> getAuthorities();
 
@@ -25,4 +26,10 @@ public interface MotechUser {
     void setPassword(String password);
 
     void setEmail(String email);
+
+    void setUserName(String username);
+
+    void setRoles(List<String> roles);
+
+    void setExternalId(String externalId);
 }

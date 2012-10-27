@@ -1,5 +1,9 @@
 package org.motechproject.security.domain;
 
+import org.codehaus.jackson.annotate.JsonTypeInfo;
+
+import java.util.List;
+
 /**
  * Created with IntelliJ IDEA.
  * User: lukasz
@@ -10,4 +14,6 @@ package org.motechproject.security.domain;
 public interface MotechRole {
 
     String getRoleName();
+
+    List<String> getPermissionNames();
 }

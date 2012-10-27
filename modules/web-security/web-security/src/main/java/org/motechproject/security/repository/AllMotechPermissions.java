@@ -11,7 +11,7 @@ import org.motechproject.security.domain.MotechPermission;
  */
 public interface AllMotechPermissions {
 
-    void add(MotechPermission role);
+    void add(MotechPermission permission);
 
     MotechPermission findByPermissionName(String permissionName);
 }

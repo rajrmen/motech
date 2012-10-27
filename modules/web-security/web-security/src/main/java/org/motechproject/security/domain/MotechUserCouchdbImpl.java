@@ -27,7 +27,7 @@ public class MotechUserCouchdbImpl extends MotechBaseDataObject implements Motec
     private String email;
 
     @JsonProperty
-    private List<MotechRole> roles;
+    private List<String> roles;
 
     @JsonProperty
     private boolean active;
@@ -37,7 +37,7 @@ public class MotechUserCouchdbImpl extends MotechBaseDataObject implements Motec
         this.setType(DOC_TYPE);
     }
 
-    public MotechUserCouchdbImpl(String userName, String password, String email, String externalId, List<MotechRole> roles) {
+    public MotechUserCouchdbImpl(String userName, String password, String email, String externalId, List<String> roles) {
         super();
         this.userName = userName == null ? null : userName.toLowerCase();
         this.password = password;
@@ -64,7 +64,7 @@ public class MotechUserCouchdbImpl extends MotechBaseDataObject implements Motec
         this.password = password;
     }
 
-    public List<MotechRole> getRoles() {
+    public List<String> getRoles() {
         return roles;
     }
 
@@ -76,11 +76,23 @@ public class MotechUserCouchdbImpl extends MotechBaseDataObject implements Motec
         this.email = email;
     }
 
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public void setRoles(List<String> roles) {
+        this.roles = roles;
+    }
+
+    public void setExternalId(String externalId) {
+        this.externalId = externalId;
+    }
+
     @JsonIgnore
     public List<GrantedAuthority> getAuthorities() {
         List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
-        for (MotechRole role : roles) {
-            authorities.add(new SimpleGrantedAuthority(role.getRoleName()));
+        for (String role : roles) {
+            authorities.add(new SimpleGrantedAuthority(role));
         }
         return authorities;
     }
@@ -109,4 +121,5 @@ public class MotechUserCouchdbImpl extends MotechBaseDataObject implements Motec
     public int hashCode() {
         return userName.hashCode();
     }
+
 }

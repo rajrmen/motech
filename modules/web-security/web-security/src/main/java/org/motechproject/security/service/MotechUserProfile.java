@@ -21,7 +21,7 @@ public class MotechUserProfile {
         return user.getUserName();
     }
 
-    public List<MotechRole> getRoles() {
+    public List<String> getRoles() {
         return user.getRoles();
     }
 }

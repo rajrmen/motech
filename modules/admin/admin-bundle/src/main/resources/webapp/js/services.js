@@ -23,3 +23,7 @@ angular.module('platformSettingsServices', ['ngResource']).factory('PlatformSett
 angular.module('moduleSettingsServices', ['ngResource']).factory('ModuleSettings', function($resource) {
     return $resource('../admin/api/settings/:bundleId');
 });
+
+angular.module('securityService', ['ngResource']).factory('Security', function($resource) {
+    return $resource('../websecurity/roles');
+});

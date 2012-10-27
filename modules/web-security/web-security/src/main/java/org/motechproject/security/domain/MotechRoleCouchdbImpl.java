@@ -22,17 +22,17 @@ public class MotechRoleCouchdbImpl extends MotechBaseDataObject implements Motec
     private String roleName;
 
     @JsonProperty
-    private List<MotechPermission> permissions;
+    private List<String> permissionNames;
 
     public MotechRoleCouchdbImpl() {
         super();
         this.setType(DOC_TYPE);
     }
 
-    public MotechRoleCouchdbImpl(String roleName, List<MotechPermission> permissions) {
+    public MotechRoleCouchdbImpl(String roleName, List<String> permissionNames) {
         super();
         this.roleName = roleName;
-        this.permissions = permissions;
+        this.permissionNames = permissionNames;
         this.setType(DOC_TYPE);
     }
 
@@ -44,11 +44,11 @@ public class MotechRoleCouchdbImpl extends MotechBaseDataObject implements Motec
         this.roleName = roleName;
     }
 
-    public List<MotechPermission> getPermissions() {
-        return permissions;
+    public List<String> getPermissionNames() {
+        return permissionNames;
     }
 
-    public void setPermissions(List<MotechPermission> permissions) {
-        this.permissions = permissions;
+    public void setPermissionNames(List<String> permissionNames) {
+        this.permissionNames = permissionNames;
     }
 }

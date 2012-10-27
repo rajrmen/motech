@@ -30,8 +30,6 @@ public class AllMotechPermissionsCouchdbImpl extends MotechBaseRepository<Motech
     @View(name = "by_permissionName", map = "function(doc) { if (doc.type ==='MotechPermission') { emit(doc.permissionName, doc._id); }}")
     public MotechPermission findByPermissionName(String permissionName) {
         if (permissionName == null) { return null; }
-
-        String lowerUserName = permissionName.toLowerCase();
-        ViewQuery viewQuery = createQuery("by_permissionName").key(lowerUserName).includeDocs(true);
+        ViewQuery viewQuery = createQuery("by_permissionName").key(permissionName).includeDocs(true);
         return singleResult(db.queryView(viewQuery, MotechPermissionCouchdbImpl.class));    }
 }

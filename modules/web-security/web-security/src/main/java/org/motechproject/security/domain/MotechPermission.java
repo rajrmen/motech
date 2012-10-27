@@ -1,5 +1,7 @@
 package org.motechproject.security.domain;
 
+import org.codehaus.jackson.annotate.JsonTypeInfo;
+
 /**
  * Created with IntelliJ IDEA.
  * User: lukasz

@@ -1,76 +1,34 @@
 package org.motechproject.security.service;
 
-import org.motechproject.security.authentication.MotechPasswordEncoder;
-import org.motechproject.security.domain.MotechUser;
 import org.motechproject.security.domain.MotechUserCouchdbImpl;
-import org.motechproject.security.domain.MotechRole;
-import org.motechproject.security.repository.AllMotechUsers;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.motechproject.security.model.UserDto;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static org.apache.commons.lang.StringUtils.isBlank;
+/**
+ * Created with IntelliJ IDEA.
+ * User: lukasz
+ * Date: 25.10.12
+ * Time: 14:45
+ * To change this template use File | Settings | File Templates.
+ */
 
-@Service
-public class MotechUserService {
+public interface MotechUserService {
 
-    @Autowired
-    private AllMotechUsers allMotechUsers;
+    public void register(String username, String password, String email, String externalId, List<String> roles);
 
-    @Autowired
-    private MotechPasswordEncoder passwordEncoder;
+    public void register(String username, String password, String email, String externalId, List<String> roles, boolean isActive);
 
-    public void register(String username, String password, String email, String externalId, List<MotechRole> roles) {
-        this.register(username, password, email, externalId, roles, true);
-    }
+    public void activateUser(String username);
 
-    public void register(String username, String password, String email, String externalId, List<MotechRole> roles, boolean isActive) {
-        if (isBlank(username) || isBlank(password)) {
-            throw new IllegalArgumentException("Username or password cannot be empty");
-        }
+    public MotechUserProfile retrieveUserByCredentials(String username, String password);
 
-        String encodePassword = passwordEncoder.encodePassword(password);
-        MotechUserCouchdbImpl user = new MotechUserCouchdbImpl(username, encodePassword, email, externalId, roles);
-        user.setActive(isActive);
-        allMotechUsers.add(user);
-    }
+    public MotechUserProfile changePassword(String username, String oldPassword, String newPassword);
 
-    public void activateUser(String username) {
-        MotechUser motechUser = allMotechUsers.findByUserName(username);
-        if (motechUser != null) {
-            motechUser.setActive(true);
-            allMotechUsers.update(motechUser);
-        }
-    }
+    public void remove(String username);
 
-    public MotechUserProfile retrieveUserByCredentials(String username, String password) {
-        MotechUser user = allMotechUsers.findByUserName(username);
-        if (user != null && passwordEncoder.isPasswordValid(user.getPassword(), password)) {
-            return new MotechUserProfile(user);
-        }
-        return null;
-    }
+    public boolean hasUser(String username);
 
-    public MotechUserProfile changePassword(String username, String oldPassword, String newPassword) {
-        MotechUser motechUser = allMotechUsers.findByUserName(username);
-        if (motechUser != null && passwordEncoder.isPasswordValid(motechUser.getPassword(), oldPassword)) {
-            motechUser.setPassword(passwordEncoder.encodePassword(newPassword));
-            allMotechUsers.update(motechUser);
-            return new MotechUserProfile(motechUser);
-        }
-        return null;
-    }
-
-    public void remove(String username) {
-        MotechUser motechUser = allMotechUsers.findByUserName(username);
-        if (motechUser != null) {
-            allMotechUsers.remove(motechUser);
-        }
-    }
-
-    public boolean hasUser(String username) {
-        return allMotechUsers.findByUserName(username) != null;
-    }
+    public List<UserDto> getUsers();
 }
-

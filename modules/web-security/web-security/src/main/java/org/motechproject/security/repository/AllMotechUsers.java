@@ -1,6 +1,7 @@
 package org.motechproject.security.repository;
 
 import org.motechproject.security.domain.MotechUser;
+import org.motechproject.security.domain.MotechUserCouchdbImpl;
 
 import java.util.List;
 
@@ -15,4 +16,6 @@ public interface AllMotechUsers {
     void update(MotechUser motechUser);
 
     void remove(MotechUser motechUser);
+
+    public List<MotechUser> getUsers();
 }
