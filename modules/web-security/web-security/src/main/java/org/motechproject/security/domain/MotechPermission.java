@@ -12,4 +12,6 @@ import org.codehaus.jackson.annotate.JsonTypeInfo;
 public interface MotechPermission {
 
     String getPermissionName();
+
+    String getBundleName();
 }

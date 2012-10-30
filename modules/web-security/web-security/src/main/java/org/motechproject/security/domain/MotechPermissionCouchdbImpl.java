@@ -19,14 +19,18 @@ public class MotechPermissionCouchdbImpl extends MotechBaseDataObject implements
     @JsonProperty
     private String permissionName;
 
+    @JsonProperty
+    private String bundleName;
+
     public MotechPermissionCouchdbImpl() {
         super();
         this.setType(DOC_TYPE);
     }
 
-    public MotechPermissionCouchdbImpl(String permissionName) {
+    public MotechPermissionCouchdbImpl(String permissionName, String bundleName) {
         super();
         this.permissionName = permissionName;
+        this.bundleName = bundleName;
         this.setType(DOC_TYPE);
     }
 
@@ -36,5 +40,13 @@ public class MotechPermissionCouchdbImpl extends MotechBaseDataObject implements
 
     public void setPermissionName(String permissionName) {
         this.permissionName = permissionName;
+    }
+
+    public String getBundleName() {
+        return bundleName;
+    }
+
+    public void setBundleName(String bundleName) {
+        this.bundleName = bundleName;
     }
 }

@@ -25,17 +25,17 @@ public class Initialize {
     @Autowired
     public void initialize(@Qualifier("webSecurityDbConnector") CouchDbConnector db) {
         //initialize startup permission for admin user
-        MotechPermission addUserPerrmision = new MotechPermissionCouchdbImpl("addUser");
-        MotechPermission editUserPermission = new MotechPermissionCouchdbImpl("editUser");
-        MotechPermission deleteUserPermission = new MotechPermissionCouchdbImpl("deleteUser");
+        MotechPermission addUserPerrmision = new MotechPermissionCouchdbImpl("addUser", "websecurity");
+        MotechPermission editUserPermission = new MotechPermissionCouchdbImpl("editUser", "websecurity");
+        MotechPermission deleteUserPermission = new MotechPermissionCouchdbImpl("deleteUser", "websecurity");
 
         //initialize startup permission for admin bundle
-        MotechPermission startBundle = new MotechPermissionCouchdbImpl("startBundle");
-        MotechPermission stopBundle = new MotechPermissionCouchdbImpl("storpBundle");
-        MotechPermission restartBundle = new MotechPermissionCouchdbImpl("restartBundle");
-        MotechPermission uninstallBundle = new MotechPermissionCouchdbImpl("uninstallBundle");
-        MotechPermission installBundle = new MotechPermissionCouchdbImpl("installBundle");
-        MotechPermission changeConfigBundle = new MotechPermissionCouchdbImpl("chancgCongigBundle");
+        MotechPermission startBundle = new MotechPermissionCouchdbImpl("startBundle", "websecurity");
+        MotechPermission stopBundle = new MotechPermissionCouchdbImpl("storpBundle", "websecurity");
+        MotechPermission restartBundle = new MotechPermissionCouchdbImpl("restartBundle", "websecurity");
+        MotechPermission uninstallBundle = new MotechPermissionCouchdbImpl("uninstallBundle", "websecurity");
+        MotechPermission installBundle = new MotechPermissionCouchdbImpl("installBundle", "websecurity");
+        MotechPermission changeConfigBundle = new MotechPermissionCouchdbImpl("chancgCongigBundle", "websecurity");
 
         //initialize startup role
         MotechRole adminUser = new MotechRoleCouchdbImpl("Admin User", Arrays.asList(addUserPerrmision.getPermissionName(), editUserPermission.getPermissionName(), deleteUserPermission.getPermissionName()));

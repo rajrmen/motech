@@ -1,6 +1,6 @@
 'use strict';
 
-function SecurityCtrl($scope, Roles, Users, $http) {
+function UserCtrl($scope, Roles, Users, $http) {
        $scope.user = {
            externalId : "",
            userName: "",
@@ -54,4 +54,8 @@ function SecurityCtrl($scope, Roles, Users, $http) {
        $scope.changeCurrentPage = function(page) {
            $scope.currentPage=page;
        }
+}
+
+function RoleCtrl($scope, Roles, Users, $http) {
+
 }
