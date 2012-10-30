@@ -163,25 +163,6 @@ h4.settings-section {
     cursor: pointer;
 }
 
-.table-lightblue {
-    border-color: #D4E1F9;
-    background: #E4F1F9;
-}
-
-.table-lightblue  tbody tr:nth-child(2n+1) td, .table-lightblue tbody tr:nth-child(2n+1) th {
-    background-color: #F3FBFE;
-}
-
-.table-lightblue  tbody tr:hover td, .table-lightblue tbody tr:hover th, .table-lightblue tbody tr:hover td a {
-    background-color: #EDF5F9;
-    color: #005580;
-}
-
-.table-lightblue .table-bordered th, .table-bordered td {
-      border-top: 1px solid #D4E1F9;
-      border-left: 1px solid #D4E1F9;
-}
-
 .table-bundles.table-bordered {
     border-radius: 0 0 4px 4px;
 }

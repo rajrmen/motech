@@ -10,8 +10,9 @@
                 </select>
             </form>
                 <div class="margin-before">
-                    <table class="table table-condensed table-bordered table-striped table-lightblue">
+                    <table class="table table-condensed table-bordered table-striped table-lightblue table-user">
                         <thead>
+                        <tr>
                         <th>{{msg('userName')}} </th>
                         <th>{{msg('role')}} </th>
                         </tr>
@@ -20,6 +21,7 @@
                         <tr ng-repeat="user in userList | filterPagination:currentPage*pageSize | limitTo:pageSize">
                             <td>{{user.userName}}</td>
                             <td><span ng-repeat="role in user.roles">{{role}}, </span></td>
+                        </tr>
                         </tbody>
                     </table>
                 </div>

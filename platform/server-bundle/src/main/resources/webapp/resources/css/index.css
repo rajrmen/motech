@@ -333,6 +333,23 @@ select {
     margin: 0 0 10px 0;
 }
 
+.margin-left {
+    margin: 0 0 0 10px;
+}
+
+.margin-right {
+    margin: 0 10px 0 0;
+}
+
+.margin-left2 {
+    margin: 0 0 0 20px;
+}
+
+.margin-right2 {
+    margin: 0 20px 0 0;
+}
+
+
 .well2 {
     margin-bottom: 20px;
     min-height: 20px;
@@ -454,24 +471,21 @@ footer {
     line-height: 20px;
 }
 
-
-.table-header {
-    background: #d4e4ef;
-    border-color:#fff;
+.table-lightblue {
+    border-color: #D4E1F9;
+    background: #E4F1F9;
 }
 
-.table-role td:first-child, .table-role td .checkbox, .table-role td .checkbox input {
-    text-align: center;
-    float: none;
-    margin: 0;
-    padding-left: 0;
+.table-lightblue  tbody tr:nth-child(2n+1) td, .table-lightblue tbody tr:nth-child(2n+1) th {
+    background-color: #F3FBFE;
 }
 
-.table-role th {
-    text-align: center;
+.table-lightblue  tbody tr:hover td, .table-lightblue tbody tr:hover th, .table-lightblue tbody tr:hover td a {
+    background-color: #EDF5F9;
+    color: #005580;
 }
 
-.table-role th:nth-child(2) {
-    text-align: left;
-    padding-left: 20px;
+.table-lightblue .table-bordered th, .table-lightblue .table-bordered td {
+      border-top: 1px solid #D4E1F9;
+      border-left: 1px solid #D4E1F9;
 }
