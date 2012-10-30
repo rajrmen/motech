@@ -12,14 +12,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created with IntelliJ IDEA.
- * User: lukasz
- * Date: 25.10.12
- * Time: 14:19
- * To change this template use File | Settings | File Templates.
- */
-
 @Controller
 public class RoleController {
 

@@ -24,6 +24,3 @@ angular.module('moduleSettingsServices', ['ngResource']).factory('ModuleSettings
     return $resource('../admin/api/settings/:bundleId');
 });
 
-angular.module('securityService', ['ngResource']).factory('Security', function($resource) {
-    return $resource('../websecurity/roles');
-});

@@ -3,7 +3,6 @@ package org.motechproject.security.service;
 import org.motechproject.security.authentication.MotechPasswordEncoder;
 import org.motechproject.security.domain.MotechUser;
 import org.motechproject.security.domain.MotechUserCouchdbImpl;
-import org.motechproject.security.domain.MotechRole;
 import org.motechproject.security.model.UserDto;
 import org.motechproject.security.repository.AllMotechUsers;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,6 +88,13 @@ public class MotechUserServiceImpl implements MotechUserService {
             users.add(new UserDto(user));
         }
          return users;
+    }
+
+    @Override
+    public void loginUser(String userName, String password) {
+        if (allMotechUsers.checkUserAuthorisation(userName, password)) {
+
+        }
     }
 }
 

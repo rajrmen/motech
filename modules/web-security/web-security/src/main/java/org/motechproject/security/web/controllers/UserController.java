@@ -9,13 +9,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-/**
- * Created with IntelliJ IDEA.
- * User: lukasz
- * Date: 25.10.12
- * Time: 14:57
- * To change this template use File | Settings | File Templates.
- */
 @Controller
 public class UserController {
 
@@ -28,9 +21,15 @@ public class UserController {
         motechUserService.register(user.getUserName(), user.getPassword(), user.getEmail(), "", user.getRoles());
     }
 
-    @RequestMapping(value = "/users/all", method = RequestMethod.GET)
+    @RequestMapping(value = "/users", method = RequestMethod.GET)
     @ResponseBody
     public List<UserDto> getUsers() {
         return motechUserService.getUsers();
+    }
+
+    @RequestMapping(value = "/users/login", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.OK)
+    public void loginUser(String userName, String password) {
+        motechUserService.loginUser(userName, password);
     }
 }

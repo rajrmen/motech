@@ -6,7 +6,6 @@ import org.ektorp.support.View;
 import org.motechproject.dao.MotechBaseRepository;
 import org.motechproject.security.domain.MotechUser;
 import org.motechproject.security.domain.MotechUserCouchdbImpl;
-import org.motechproject.security.model.UserDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -63,5 +62,15 @@ public class AllMotechUsersCouchdbImpl extends MotechBaseRepository<MotechUserCo
     @Override
     public List<MotechUser> getUsers() {
         return new ArrayList<MotechUser>(getAll());
+    }
+
+    @Override
+    public boolean checkUserAuthorisation(String userName, String password) {
+        MotechUser user = findByUserName(userName);
+        if(user!=null && user.getPassword().equals(password)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }

@@ -4,6 +4,9 @@ import org.joda.time.Duration;
 import org.joda.time.Period;
 import org.joda.time.format.PeriodFormatter;
 import org.joda.time.format.PeriodFormatterBuilder;
+import org.motechproject.server.osgi.BundleInformation;
+import org.motechproject.server.osgi.OsgiFrameworkService;
+import org.motechproject.server.osgi.OsgiListener;
 import org.motechproject.server.startup.MotechPlatformState;
 import org.motechproject.server.startup.StartupManager;
 import org.motechproject.server.ui.LocaleSettings;
@@ -30,7 +33,7 @@ import static org.motechproject.server.ui.UIFrameworkService.MODULES_WITH_SUBMEN
 public class DashboardController {
 
     private StartupManager startupManager = StartupManager.getInstance();
-
+    private static String WEBSECURITY = "org.motechproject.motech-web-security";
     @Autowired
     private UIFrameworkService uiFrameworkService;
 
@@ -48,6 +51,8 @@ public class DashboardController {
         // check if this is the first run
         if (startupManager.getPlatformState() == MotechPlatformState.NEED_CONFIG) {
             mav = new ModelAndView("redirect:startup.do");
+        } else if (isWebSecurityStarted()) {
+            mav = new ModelAndView("redirect:login.do");
         } else {
             mav = new ModelAndView("index");
 
@@ -92,5 +97,16 @@ public class DashboardController {
                 .toFormatter();
 
         return formatter.print(uptime.normalizedStandard());
+    }
+
+    private boolean isWebSecurityStarted() {
+        boolean isRun = false;
+        OsgiFrameworkService service = OsgiListener.getOsgiService();
+        for (BundleInformation bundle : service.getExternalBundles()){
+            if(bundle.getSymbolicName().equals(WEBSECURITY) && bundle.hasStatus(32)) {
+                isRun = true;
+            }
+        }
+        return isRun;
     }
 }
