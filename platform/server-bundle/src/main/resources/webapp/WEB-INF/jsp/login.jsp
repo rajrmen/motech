@@ -52,7 +52,7 @@
         </script>
     </c:if>
 </head>
-<body ng-controller="MasterCtrl">
+<body class="body-down" ng-controller="MasterCtrl">
 <div class="bodywrap">
     <div class="header">
         <div class="container">
@@ -62,10 +62,10 @@
         </div>
     </div>
     <div class="clearfix"></div>
-    <div id="content" class="container-fluid">
+    <div id="content" class="container">
         <div class="row-fluid">
             <div id="main-content">
-                <div class="well2 span4">
+                <div id="login" class="well2 span4">
                     <div class="box-header"><fmt:message key="security.signInUser" bundle="${bundle}"/></div>
                     <div class="box-content clearfix">
                         <div class="well3">
@@ -84,6 +84,9 @@
                                 </div>
                                 <div class="control-group">
                                     <input class="btn btn-primary" value="Sign in" type="submit"/>
+                                </div>
+                                <div class="control-group">
+                                <a><fmt:message key="security.enterEmailQuestions" bundle="${bundle}"/></a>
                                 </div>
                             </form>
                         </div>
@@ -104,8 +107,8 @@
                                         <h5><fmt:message key="security.thinkForgotMsg" bundle="${bundle}"/></h5>
                                     </div>
                                     <div class="control-group">
-                                        <h5><fmt:message key="security.donotRememberMsg1 " bundle="${bundle}"/>
-                                            <button class="btn btn-mini btn-link"><fmt:message key="clickHere" bundle="${bundle}"/></button> <fmt:message key=" security.donotRememberMsg2" bundle="${bundle}"/></h5>
+                                        <h5><fmt:message key="security.donotRememberMsg1" bundle="${bundle}"/>
+                                            <button class="btn btn-mini btn-link"><fmt:message key="clickHere" bundle="${bundle}"/></button> <fmt:message key="security.donotRememberMsg2" bundle="${bundle}"/></h5>
                                     </div>
                                 </div>
                             </div>
