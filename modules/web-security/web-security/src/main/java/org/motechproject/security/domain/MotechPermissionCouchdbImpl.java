@@ -4,13 +4,6 @@ import org.codehaus.jackson.annotate.JsonProperty;
 import org.ektorp.support.TypeDiscriminator;
 import org.motechproject.model.MotechBaseDataObject;
 
-/**
- * Created with IntelliJ IDEA.
- * User: lukasz
- * Date: 23.10.12
- * Time: 11:24
- * To change this template use File | Settings | File Templates.
- */
 @TypeDiscriminator("doc.type == 'MotechPermission'")
 public class MotechPermissionCouchdbImpl extends MotechBaseDataObject implements MotechPermission {
 

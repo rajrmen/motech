@@ -1,7 +1,6 @@
 package org.motechproject.security.service;
 
 import org.motechproject.security.domain.MotechUser;
-import org.motechproject.security.domain.MotechRole;
 
 import java.util.List;
 

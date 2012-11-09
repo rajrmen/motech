@@ -1,8 +1,5 @@
 package org.motechproject.security.domain;
 
-import org.codehaus.jackson.annotate.JsonTypeInfo;
-import org.springframework.security.core.GrantedAuthority;
-
 import java.util.List;
 
 public interface MotechUser {
@@ -16,8 +13,6 @@ public interface MotechUser {
     String getEmail();
 
     List<String> getRoles();
-
-    List<GrantedAuthority> getAuthorities();
 
     boolean isActive();
 

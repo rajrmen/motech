@@ -65,7 +65,7 @@
                     <ul class="nav">
                         <li><strong><fmt:message key="server.time" bundle="${bundle}"/>: </strong>${uptime}</li>
                         <li>|</li>
-                        <li><a href=""><strong><fmt:message key="login" bundle="${bundle}"/> </strong></a></li>
+                        <li><a href=""><strong><fmt:message key="login" bundle="${bundle}"/></strong></a></li>
                         <li>|</li>
                             <li class="dropdown" id="localization">
                                 <a class="menu-flag dropdown-toggle" data-toggle="dropdown" href="#">

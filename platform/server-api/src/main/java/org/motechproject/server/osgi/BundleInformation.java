@@ -94,6 +94,6 @@ public class BundleInformation {
     }
 
     public boolean hasStatus(int status) {
-        return State.fromInt(status).equals(status) ? true : false;
+        return state.getStateId() == status ? true : false;
     }
 }

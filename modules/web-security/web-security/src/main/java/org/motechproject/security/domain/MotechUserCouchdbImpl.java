@@ -1,13 +1,9 @@
 package org.motechproject.security.domain;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.ektorp.support.TypeDiscriminator;
 import org.motechproject.model.MotechBaseDataObject;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @TypeDiscriminator("doc.type == 'MotechUser'")
@@ -86,15 +82,6 @@ public class MotechUserCouchdbImpl extends MotechBaseDataObject implements Motec
 
     public void setExternalId(String externalId) {
         this.externalId = externalId;
-    }
-
-    @JsonIgnore
-    public List<GrantedAuthority> getAuthorities() {
-        List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
-        for (String role : roles) {
-            authorities.add(new SimpleGrantedAuthority(role));
-        }
-        return authorities;
     }
 
     public boolean isActive() {

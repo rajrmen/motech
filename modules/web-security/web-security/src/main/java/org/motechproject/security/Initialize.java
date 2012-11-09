@@ -5,6 +5,7 @@ import org.motechproject.security.domain.*;
 import org.motechproject.security.repository.AllMotechPermissions;
 import org.motechproject.security.repository.AllMotechRoles;
 import org.motechproject.security.repository.AllMotechUsers;
+import org.motechproject.security.service.MotechUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -21,6 +22,9 @@ public class Initialize {
 
     @Autowired
     AllMotechUsers allMotechUsers;
+
+    @Autowired
+    MotechUserService motechUserService;
 
     @Autowired
     public void initialize(@Qualifier("webSecurityDbConnector") CouchDbConnector db) {
@@ -41,8 +45,6 @@ public class Initialize {
         MotechRole adminUser = new MotechRoleCouchdbImpl("Admin User", Arrays.asList(addUserPerrmision.getPermissionName(), editUserPermission.getPermissionName(), deleteUserPermission.getPermissionName()));
         MotechRole adminBundle = new MotechRoleCouchdbImpl("Admin Bundle", Arrays.asList(startBundle.getPermissionName(), stopBundle.getPermissionName(), restartBundle.getPermissionName()));
 
-        //initialize startup user
-        MotechUser admin = new MotechUserCouchdbImpl("motech", "motech", "1", "", Arrays.asList(adminUser.getRoleName(), adminBundle.getRoleName()));
 
         //create all startup security
         allMotechPermissions.add(addUserPerrmision);
@@ -56,6 +58,6 @@ public class Initialize {
         allMotechPermissions.add(changeConfigBundle);
         allMotechRoles.add(adminUser);
         allMotechRoles.add(adminBundle);
-        allMotechUsers.add(admin);
+        motechUserService.register("motech", "motech", "motech@motech", "", Arrays.asList(adminUser.getRoleName(), adminBundle.getRoleName()), true);
     }
 }

@@ -1,16 +1,17 @@
 package org.motechproject.security.osgi;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.felix.http.api.ExtHttpService;
 import org.motechproject.server.ui.ModuleRegistrationData;
 import org.motechproject.server.ui.UIFrameworkService;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
-import org.osgi.service.http.HttpService;
 import org.osgi.util.tracker.ServiceTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.osgi.web.context.support.OsgiBundleXmlWebApplicationContext;
+import org.springframework.web.filter.DelegatingFilterProxy;
 import org.springframework.web.servlet.DispatcherServlet;
 
 import java.io.IOException;
@@ -29,24 +30,24 @@ public class Activator implements BundleActivator {
     private static final String MODULE_NAME = "websecurity";
 
     private static BundleContext bundleContext;
+    private static DelegatingFilterProxy filter;
 
     @Override
     public void start(BundleContext context) throws Exception {
         bundleContext = context;
 
         this.tracker = new ServiceTracker(context,
-                HttpService.class.getName(), null) {
-
+                ExtHttpService.class.getName(), null) {
             @Override
             public Object addingService(ServiceReference ref) {
                 Object service = super.addingService(ref);
-                serviceAdded((HttpService) service);
+                serviceAdded((ExtHttpService) service);
                 return service;
             }
 
             @Override
             public void removedService(ServiceReference ref, Object service) {
-                serviceRemoved((HttpService) service);
+                serviceRemoved((ExtHttpService) service);
                 super.removedService(ref, service);
             }
         };
@@ -75,7 +76,7 @@ public class Activator implements BundleActivator {
         this.tracker.close();
 
         if (httpService != null) {
-            HttpService service = (HttpService) context.getService(httpService);
+            ExtHttpService service = (ExtHttpService) context.getService(httpService);
             serviceRemoved(service);
         }
     }
@@ -89,18 +90,19 @@ public class Activator implements BundleActivator {
 
     }
 
-    private void serviceAdded(HttpService service) {
+    private void serviceAdded(ExtHttpService service) {
         try {
             DispatcherServlet dispatcherServlet = new DispatcherServlet();
             dispatcherServlet.setContextConfigLocation(CONTEXT_CONFIG_LOCATION);
             dispatcherServlet.setContextClass(WebSecurityApplicationContext.class);
             ClassLoader old = Thread.currentThread().getContextClassLoader();
-
             try {
                 Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
                 UiHttpContext httpContext = new UiHttpContext(service.createDefaultHttpContext());
                 service.registerServlet(SERVLET_URL_MAPPING, dispatcherServlet, null, null);
                 service.registerResources(RESOURCE_URL_MAPPING, "/webapp", httpContext);
+                filter = new DelegatingFilterProxy("springSecurityFilterChain", dispatcherServlet.getWebApplicationContext());
+                service.registerFilter(filter, "/.*", null,0,httpContext);
                 logger.debug("Servlet registered");
             } finally {
                 Thread.currentThread().setContextClassLoader(old);
@@ -110,8 +112,9 @@ public class Activator implements BundleActivator {
         }
     }
 
-    private void serviceRemoved(HttpService service) {
+    private void serviceRemoved(ExtHttpService service) {
         service.unregister(SERVLET_URL_MAPPING);
+        service.unregisterFilter(filter);
         logger.debug("Servlet unregistered");
     }
 

@@ -33,7 +33,7 @@ import static org.motechproject.server.ui.UIFrameworkService.MODULES_WITH_SUBMEN
 public class DashboardController {
 
     private StartupManager startupManager = StartupManager.getInstance();
-    private static String WEBSECURITY = "org.motechproject.motech-web-security";
+    private static String WEBSECURITY = "org.motechproject.motech-web-security-bundle";
     @Autowired
     private UIFrameworkService uiFrameworkService;
 
@@ -51,8 +51,6 @@ public class DashboardController {
         // check if this is the first run
         if (startupManager.getPlatformState() == MotechPlatformState.NEED_CONFIG) {
             mav = new ModelAndView("redirect:startup.do");
-        } else if (isWebSecurityStarted()) {
-            mav = new ModelAndView("redirect:login.do");
         } else {
             mav = new ModelAndView("index");
 
@@ -103,7 +101,8 @@ public class DashboardController {
         boolean isRun = false;
         OsgiFrameworkService service = OsgiListener.getOsgiService();
         for (BundleInformation bundle : service.getExternalBundles()){
-            if(bundle.getSymbolicName().equals(WEBSECURITY) && bundle.hasStatus(32)) {
+            String name = bundle.getSymbolicName();
+            if(bundle.hasStatus(32) && bundle.getSymbolicName().equals(WEBSECURITY) ) {
                 isRun = true;
             }
         }
