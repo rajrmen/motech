@@ -105,10 +105,10 @@ h1, h2, h3, h4, h5, h6 {
 .header-nav {
     display:block;
     margin: 0 0 10px 0;
-    padding: 0 0 0 0;
+    padding: 0;
     color: #fff;
     line-height: 28px;
-    font-size: 16px;
+    font-size: 14px;
     background: #001e4f url("../img/navbar.jpg") repeat-x 0 0;
     border-bottom:1px solid #ff9900;
 }
@@ -135,8 +135,60 @@ h1, h2, h3, h4, h5, h6 {
     background: url("../img/navbar.jpg") repeat-x 0 0;
 }
 
+.menu-left {
+    font-size: 13px;
+}
+
+form.inside {
+    margin:0;
+}
+
+.navbar .btn-blue.btn-navbar, .navbar .btn-blue {
+    background: #224477 url("../img/navbar.jpg") repeat-x 0 -6px;
+    border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.1) inset, 0 1px 0 rgba(255, 255, 255, 0.075);
+}
+
+.navbar .btn-blue.btn-navbar:hover, .navbar .btn-blue:hover, .nav-collapse .nav > li > a:hover {
+    background: #224477 url("../img/navbar.jpg") repeat-x 0 -1px;
+    box-shadow: 0 0 5px rgba(055, 055, 055, 0.3) inset, 0 0 1px rgba(255, 255, 255, 0.5);
+}
+
+.nav-collapse .nav > li > a:hover, .nav-collapse .dropdown-menu a:hover {
+    background-color: #224477;
+}
+
+ .nav-collapse .nav > li > a.no-hover:hover {
+    background: #224477 url("../img/navbar.jpg") repeat-x 0 0;
+    border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.1) inset, 0 1px 0 rgba(255, 255, 255, 0.075);
+    color: #c2eafe;
+}
+
+.navbar .btn.btn-blue {
+    padding:  5px;
+    margin: 5px  0 0 0;
+    color: #c2eafe;
+}
+
+.navbar .btn-blue.btn-navbar:active {
+    background: #002244;
+}
+
+.navbar .divider-vertical {
+    background-color: #4E688D;
+    border-right: 1px solid #224477;
+}
+
+.navbar .divider-vertical-sub {
+    background-color: #4E688D;
+    border-right: 1px solid #224477;
+    height: 20px;
+    margin: 10px 9px;
+}
+
 #minimize {
-    margin:0 0 0 40px;
+    padding: 2px 0 0 0;
 }
 
 .minimize {
