@@ -22,7 +22,7 @@
     <script src="resources/lib/angular/angular-cookies.min.js" type="text/javascript"></script>
     <script src="resources/lib/angular/angular-bootstrap.js" type="text/javascript"></script>
 
-    <script src="resources/lib/bootstrap/bootstrap-modal.js"></script>
+    <script src="resources/lib/bootstrap/bootstrap.min.js"></script>
 
     <script src="resources/js/util.js" type="text/javascript"></script>
     <script src="resources/js/common.js" type="text/javascript"></script>

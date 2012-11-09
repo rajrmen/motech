@@ -29,8 +29,7 @@
     <script src="resources/lib/angular/angular-cookies.min.js" type="text/javascript"></script>
     <script src="resources/lib/angular/angular-bootstrap.js" type="text/javascript"></script>
 
-    <script src="resources/lib/bootstrap/bootstrap-modal.js"></script>
-    <script src="resources/lib/bootstrap/bootstrap-tabs.js"></script>
+    <script src="resources/lib/bootstrap/bootstrap.min.js"></script>
 
     <script src="resources/js/util.js" type="text/javascript"></script>
     <script src="resources/js/common.js" type="text/javascript"></script>
@@ -57,15 +56,27 @@
     <div class="header">
         <div class="container">
             <div class="dashboard-logo"></div>
-            <div class="header-title"><fmt:message key="motechTitle" bundle="${bundle}"/></div>
+            <div class="nav-collapse">
+                <div class="header-title"><fmt:message key="motechTitle" bundle="${bundle}"/></div>
+            </div>
             <div class="clearfix"></div>
         </div>
     </div>
+
+    <div class="clearfix"></div>
+    <div class="nav-collapse">
+        <div class="header-nav navbar">
+            <div class="navbar-inner navbar-inner-bg">
+            </div>
+        </div>
+    </div>
+
     <div class="clearfix"></div>
     <div id="content" class="container">
         <div class="row-fluid">
             <div id="main-content">
-                <div id="login" class="well2 span4">
+
+                <div id="login" class="well2 margin-center margin-before4 spn4">
                     <div class="box-header"><fmt:message key="security.signInUser" bundle="${bundle}"/></div>
                     <div class="box-content clearfix">
                         <div class="well3">
@@ -86,7 +97,7 @@
                                     <input class="btn btn-primary" value="Sign in" type="submit"/>
                                 </div>
                                 <div class="control-group">
-                                <a><fmt:message key="security.enterEmailQuestions" bundle="${bundle}"/></a>
+                                <a href="#"><fmt:message key="security.signInQuestions" bundle="${bundle}"/></a>
                                 </div>
                             </form>
                         </div>

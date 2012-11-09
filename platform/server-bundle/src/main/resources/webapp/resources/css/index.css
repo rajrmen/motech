@@ -93,7 +93,7 @@ h1, h2, h3, h4, h5, h6 {
     height:28px;
     display:block;
     float:left;
-    margin: 40px 0 0 9%;
+    margin: 40px 0 0 8%;
     background: #fff;
     color:#224477;
     text-weight:400;
@@ -381,12 +381,32 @@ select {
     margin: 10px 0;
 }
 
+.margin-center {
+    margin: auto;
+}
+
 .margin-before {
     margin: 10px 0 0 0;
 }
 
+.margin-before2 {
+    margin-top: 20px;
+}
+
+.margin-before3 {
+    margin-top: 30px;
+}
+
+.margin-before4 {
+    margin-top: 40px;
+}
+
+.margin-before5 {
+    margin-top: 50px;
+}
+
 .margin-after {
-    margin: 0 0 10px 0;
+    margin-bottom: 10px;
 }
 
 .margin-left1 {
@@ -654,3 +674,53 @@ footer {
 }
 
 /*----- end startup ------*/
+
+
+/*----- common ------*/
+
+.spn12 {
+  width: 940px;
+}
+
+.spn11 {
+  width: 860px;
+}
+
+.spn10 {
+  width: 780px;
+}
+
+.spn9 {
+  width: 700px;
+}
+
+.spn8 {
+  width: 620px;
+}
+
+.spn7 {
+  width: 540px;
+}
+
+.spn6 {
+  width: 460px;
+}
+
+.spn5 {
+  width: 380px;
+}
+
+.spn4 {
+  width: 300px;
+}
+
+.spn3 {
+  width: 220px;
+}
+
+.spn2 {
+  width: 140px;
+}
+
+.spn1 {
+  width: 60px;
