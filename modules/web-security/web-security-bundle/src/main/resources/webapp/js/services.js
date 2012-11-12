@@ -10,6 +10,6 @@ angular.module('userService', ['ngResource']).factory('Users', function($resourc
     return $resource('../websecurity/api/users');
 });
 
-angular.module('permissionService', ['ngResource']).factory('Permission', function($resource) {
-    return $resource('../websecurity/api/users');
+angular.module('permissionService', ['ngResource']).factory('Permissions', function($resource) {
+    return $resource('../websecurity/api/permissions');
 });

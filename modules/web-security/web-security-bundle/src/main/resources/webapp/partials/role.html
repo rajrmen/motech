@@ -1,26 +1,25 @@
-<div class="inbox-header">{{msg('Managing Role')}}</div>
+<div class="inbox-header">{{msg('manageRole')}}</div>
 <div class="box-content clearfix">
     <div class="well3">
-        <button type="submit" class="btn btn-primary"><i class="icon-plus icon-white i-middle"></i>{{msg('Add New Role')}}</button>
+        <button type="submit" class="btn btn-primary"><i class="icon-plus icon-white i-middle"></i>{{msg('addNewRole')}}</button>
         <div class="margin-before">
-            <label class="control-label">{{msg('Role name')}}</label>
-            <input type="text" ng-model="propertyRoleName" class="input-medium">
+            <label class="control-label">{{msg('roleName')}}</label>
+            <input type="text" ng-model="propertyRoleName.roleName" class="input-medium">
         </div>
         <div class="margin-before">
-            <table class="table table-condensed table-bordered table-striped table-lightblue table-role according" id="according2">
+            <table class="table table-condensed table-bordered table-striped table-lightblue table-role">
                 <thead class="table-header">
                 <tr>
                     <th>Id </th>
-                    <th>{{msg('Role')}} </th>
+                    <th>{{msg('role')}} </th>
+                    <th></th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr class="accordion-group" ng-repeat="role in roleList | filter:propertyRoleName | filterPagination:currentPage*pageSize | limitTo:pageSize">
-                    <td>{{index}}</td>
-                    <td class="accordion-heading"><span class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseOne"><i class="icon-user"/>{{role.roleName}}</span></td>
-                    <tr id="collapseOne" class="accordion-body collapse in" ng-repeat="permission in role.permissionNames">
-                        <td class="accordion-inner">{{permission}}</td>
-                    </tr>
+                <tr ng-repeat="role in roleList | filter:propertyRoleName | filterPagination:currentPage*pageSize | limitTo:pageSize">
+                    <td>{{$index}}</td>
+                    <td><i class="icon-user"/>{{role.roleName}}</td>
+                    <td>edit image</td>
                 </tr>
                 </tbody>
             </table>
@@ -34,65 +33,37 @@
         </div>
     </div>
 </div>
-<div class="inbox-header">{{msg('Managing Permissions')}}</div>
+<div class="inbox-header">{{msg('managePermissions')}}</div>
 <div class="box-content clearfix">
     <div class="well3">
         <form class="form-inline">
-            <label class="control-label">{{msg('View Permissions')}}</label>
-            <select ng-model="selectedItemRole" ng-options="permissionsModuleName.moduleName for permissionsModuleName in permissionList">
+            <label class="control-label">{{msg('choseModule')}}</label>
+            <select ng-model="selectedItemRole" ng-options="permissions.bundleName for permissions in uniqePermissionList(permissionList)">
                 <option value="">-- chose modeule --</option>
             </select>
         </form>
         <div class="margin-before">
             <form class="form-inline">
-                <label class="control-label">{{msg('Role name')}}</label>
-                <input type="text" class="input-medium">
+                <label class="control-label">{{msg('search')}}</label>
+                <input type="text" class="input-medium" ng-model="roleNameFilter">
 
-            <div class="" ng-repeat="permission in permissionList">
+            <div class="">
                 <div class="label-header ">{{permission.bundleName}}</div>
                 <table class="table table-condensed table-bordered table-striped table-lightblue">
                     <thead class="table-header">
                     <tr>
                         <th>Id </th>
                         <th>{{msg('Action')}} </th>
+                        <th>{{msg('moduleName')}}</th>
                     </tr>
                     </thead>
                     <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td>
-                            <label class="checkbox">
-                                <input type="checkbox"> {{msg('Add tree')}}
-                            </label>
-                        </td>
-                        <td>{{msg('Demo tree')}}</td>
-                        <td>
-                            <button class="btn btn-mini btn-success"><i class="icon-plus icon-white i-middle"></i></button> {{msg('Limit Scope')}}
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>2</td>
-                        <td>
-                            <label class="checkbox">
-                                <input type="checkbox"> {{msg('Add decision tree')}}
-                            </label>
-                        </td>
-                        <td>{{msg('Demo tree')}}</td>
-                        <td>
-                            <button class="btn btn-mini btn-success"><i class="icon-plus icon-white i-middle"></i></button> {{msg('Limit Scope')}}
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>3</td>
-                        <td>
-                            <label class="checkbox">
-                                <input type="checkbox"> {{msg('Add message')}}
-                            </label>
-                        </td>
-                        <td>{{msg('Demo tree')}}</td>
-                        <td>
-                            <button class="btn btn-mini btn-success"><i class="icon-plus icon-white i-middle"></i></button> {{msg('Limit Scope')}}
-                        </td>
+                    <tr ng-repeat="permission in permissionList | filter:roleNameFilter | filter:selectedItemRole">
+                        <td>{{$index}}</td>
+                        <td><label class="checkbox">
+                            <input type="checkbox">{{permission.permissionName}}
+                        </label></td>
+                        <td>{{permission.bundleName}}</td>
                     </tr>
                     </tbody>
                 </table>

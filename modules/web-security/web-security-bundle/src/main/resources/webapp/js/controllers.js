@@ -63,22 +63,30 @@ function RoleCtrl($scope, Roles, Permissions, $http) {
        $scope.roleList = Roles.query();
        $scope.permissionList = Permissions.query();
        $scope.numberOfPages=function(){
-           return Math.ceil($scope.userList.length/$scope.pageSize);
+           return Math.ceil($scope.roleList.length/$scope.pageSize);
        }
 
        $scope.changeCurrentPage = function(page) {
            $scope.currentPage=page;
        }
 
-       $scope.permissionList = function(role) {
-            $http.get('../websecurity/api/permission/getPermisionForRole', role).
-                        success(function(data) {
-
-            });
-
-        $http({method: 'GET', url: '../admin/api/settings/bundles/list'}).
-                success(function(data) {
-                    $scope.bundlesWithSettings = data;
-                });
+       $scope.uniqePermissionList = function(list) {
+           var newArr = [],
+           listLen = list.length,
+           found, x, y;
+           for (x = 0; x < listLen; x++) {
+               found = undefined;
+               for (y = 0; y < newArr.length; y++) {
+                   if (list[x].bundleName === newArr[y].bundleName) {
+                       found = true;
+                       break;
+                   }
+               }
+               if (!found) {
+                   newArr.push(list[x]);
+               }
+           }
+           return newArr;
        }
+
 }
