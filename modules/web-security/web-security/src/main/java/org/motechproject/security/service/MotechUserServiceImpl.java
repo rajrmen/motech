@@ -6,6 +6,7 @@ import org.motechproject.security.domain.MotechUserCouchdbImpl;
 import org.motechproject.security.model.UserDto;
 import org.motechproject.security.repository.AllMotechUsers;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;

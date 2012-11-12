@@ -165,10 +165,14 @@
                             org.springframework.security.web,
                             org.springframework.security.web.context,
                             org.springframework.security.web.authentication,
+                            org.springframework.security.web.authentication.preauth,
                             org.springframework.web.servlet.config,
                             org.springframework.web.servlet.mvc,
                             org.springframework.web.servlet.support,
                             org.springframework.web.servlet.view,
+                            org.springframework.aop,
+                            org.springframework.aop.framework,
+                            org.aopalliance.aop,
                             *
                         </Import-Package>
                         <Embed-Dependency>motech-web-security;inline=true</Embed-Dependency>
