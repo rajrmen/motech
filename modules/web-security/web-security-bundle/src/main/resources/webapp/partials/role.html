@@ -1,142 +1,36 @@
 <div class="inbox-header">{{msg('Managing Role')}}</div>
 <div class="box-content clearfix">
     <div class="well3">
-        <form class="form-inline">
-            <label class="control-label">{{msg('View Role')}}</label>
-            <select class="help-inline">
-                <option>{{msg('All Role')}}</option>
-                <option>{{msg('adminUsers')}}</option>
-                <option>{{msg('adminServer')}}</option>
-                <option>{{msg('mrsUser')}}</option>
-            </select>
-            <button type="submit" class="btn btn-primary"><i class="icon-plus icon-white i-middle"></i>{{msg('Add New Role')}}</button>
-        </form>
+        <button type="submit" class="btn btn-primary"><i class="icon-plus icon-white i-middle"></i>{{msg('Add New Role')}}</button>
         <div class="margin-before">
-            <form class="form-inline">
-                <label class="control-label">{{msg('Role name')}}</label>
-                <input type="text" class="input-medium">
-                <div class="form-action margin-before">
-                    <button type="submit" class="btn btn-primary">{{msg('Save')}}</button>
-                    <button type="submit" class="btn">{{msg('Cancel')}}</button>
-                </div>
-            </form>
+            <label class="control-label">{{msg('Role name')}}</label>
+            <input type="text" ng-model="propertyRoleName" class="input-medium">
         </div>
         <div class="margin-before">
-            <table class="table table-condensed table-bordered table-striped table-lightblue table-role">
+            <table class="table table-condensed table-bordered table-striped table-lightblue table-role according" id="according2">
                 <thead class="table-header">
                 <tr>
                     <th>Id </th>
                     <th>{{msg('Role')}} </th>
-                    <th>{{msg('View')}} </th>
-                    <th>{{msg('Create')}} </th>
-                    <th>{{msg('Edit')}} </th>
-                    <th>{{msg('Delete')}} </th>
-                    <th>{{msg('Configure')}} </th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr>
-                    <td>1</td>
-                    <td>
-                        <i class="icon-user"></i> Admin User
-                    </td>
-                    <td>
-                        <label class="checkbox">
-                            <input type="checkbox">
-                        </label>
-                    </td>
-                    <td>
-                        <label class="checkbox">
-                            <input type="checkbox">
-                        </label>
-                    </td>
-                    <td>
-                        <label class="checkbox">
-                            <input type="checkbox">
-                        </label>
-                    </td>
-                    <td>
-                        <label class="checkbox">
-                            <input type="checkbox">
-                        </label>
-                    </td>
-                    <td>
-                        <label class="checkbox">
-                            <input type="checkbox">
-                        </label>
-                    </td>
-
-                </tr>
-                <tr>
-                    <td>2</td>
-                    <td>
-                        <i class="icon-user"></i> Admin Server
-                    </td>
-                    <td>
-                        <label class="checkbox">
-                            <input type="checkbox">
-                        </label>
-                    </td>
-                    <td>
-                        <label class="checkbox">
-                            <input type="checkbox">
-                        </label>
-                    </td>
-                    <td>
-                        <label class="checkbox">
-                            <input type="checkbox">
-                        </label>
-                    </td>
-                    <td>
-                        <label class="checkbox">
-                            <input type="checkbox">
-                        </label>
-                    </td>
-                    <td>
-                        <label class="checkbox">
-                            <input type="checkbox">
-                        </label>
-                    </td>
-                </tr>
-                <tr>
-                    <td>3</td>
-                    <td>
-                        <i class="icon-user"></i> MRS Users
-                    </td>
-                    <td>
-                        <label class="checkbox">
-                            <input type="checkbox">
-                        </label>
-                    </td>
-                    <td>
-                        <label class="checkbox">
-                            <input type="checkbox">
-                        </label>
-                    </td>
-                    <td>
-                        <label class="checkbox">
-                            <input type="checkbox">
-                        </label>
-                    </td>
-                    <td>
-                        <label class="checkbox">
-                            <input type="checkbox">
-                        </label>
-                    </td>
-                    <td>
-                        <label class="checkbox">
-                            <input type="checkbox">
-                        </label>
-                    </td>
+                <tr class="accordion-group" ng-repeat="role in roleList | filter:propertyRoleName | filterPagination:currentPage*pageSize | limitTo:pageSize">
+                    <td>{{index}}</td>
+                    <td class="accordion-heading"><span class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseOne"><i class="icon-user"/>{{role.roleName}}</span></td>
+                    <tr id="collapseOne" class="accordion-body collapse in" ng-repeat="permission in role.permissionNames">
+                        <td class="accordion-inner">{{permission}}</td>
+                    </tr>
                 </tr>
                 </tbody>
             </table>
-            <div class="form-action margin-before">
-                <button type="submit" class="btn btn-primary">{{msg('Save')}}</button>
-            </div>
         </div>
-        <div class="pagination pagination-centered pagination-condensed">
-
+        <div class="pagination pagination-centered pagination-condensed" ng-show="numberOfPages() &gt; 1">
+            <ul>
+                <li ng-class="{true:'disabled', false:''}[currentPage==0]"><a ng-click="changeCurrentPage(0)">{{msg('first')}}</a></li>
+                <li ng-repeat="number in [] | repeat:numberOfPages()" ng-class="{true:'active', false:''}[number==currentPage]"><a ng-click="changeCurrentPage(number)">{{number+1}}</a></li>
+                <li ng-disabled="{true:'disabled', false:''}[currentPage==numberOfPages()]"><a ng-click="changeCurrentPage(numberOfPages()-1)">{{msg('last')}}</a></li>
+            </ul>
         </div>
     </div>
 </div>
@@ -145,191 +39,68 @@
     <div class="well3">
         <form class="form-inline">
             <label class="control-label">{{msg('View Permissions')}}</label>
-            <select class="help-inline">
-                <option>{{msg('All Permissions')}}</option>
-                <option>{{msg('adminUsers')}}</option>
-                <option>{{msg('adminServer')}}</option>
-                <option>{{msg('mrsUser')}}</option>
+            <select ng-model="selectedItemRole" ng-options="permissionsModuleName.moduleName for permissionsModuleName in permissionList">
+                <option value="">-- chose modeule --</option>
             </select>
-            <button type="submit" class="btn btn-primary"><i class="icon-plus icon-white i-middle"></i>{{msg('Add New Permissions')}}</button>
         </form>
         <div class="margin-before">
             <form class="form-inline">
-                <label class="control-label">{{msg('Permission name')}}</label>
+                <label class="control-label">{{msg('Role name')}}</label>
                 <input type="text" class="input-medium">
-                <div class="form-action margin-before">
-                    <button type="submit" class="btn btn-primary">{{msg('Save')}}</button>
-                    <button type="submit" class="btn">{{msg('Cancel')}}</button>
-                </div>
+
+            <div class="" ng-repeat="permission in permissionList">
+                <div class="label-header ">{{permission.bundleName}}</div>
+                <table class="table table-condensed table-bordered table-striped table-lightblue">
+                    <thead class="table-header">
+                    <tr>
+                        <th>Id </th>
+                        <th>{{msg('Action')}} </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>
+                            <label class="checkbox">
+                                <input type="checkbox"> {{msg('Add tree')}}
+                            </label>
+                        </td>
+                        <td>{{msg('Demo tree')}}</td>
+                        <td>
+                            <button class="btn btn-mini btn-success"><i class="icon-plus icon-white i-middle"></i></button> {{msg('Limit Scope')}}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>
+                            <label class="checkbox">
+                                <input type="checkbox"> {{msg('Add decision tree')}}
+                            </label>
+                        </td>
+                        <td>{{msg('Demo tree')}}</td>
+                        <td>
+                            <button class="btn btn-mini btn-success"><i class="icon-plus icon-white i-middle"></i></button> {{msg('Limit Scope')}}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>
+                            <label class="checkbox">
+                                <input type="checkbox"> {{msg('Add message')}}
+                            </label>
+                        </td>
+                        <td>{{msg('Demo tree')}}</td>
+                        <td>
+                            <button class="btn btn-mini btn-success"><i class="icon-plus icon-white i-middle"></i></button> {{msg('Limit Scope')}}
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
             </form>
         </div>
-        <div class="margin-before">
-            <div class="">
-                <div class="label-header ">{{msg('Demo Tree IVR')}}
-                    <button type="submit" class="btn btn-primary">{{msg('Save')}}</button>
-                </div>
-            </div>
-            <table class="table table-condensed table-bordered table-striped table-lightblue">
-                <thead class="table-header">
-                <tr>
-                    <th>Id </th>
-                    <th>{{msg('Action')}} </th>
-                    <th>{{msg('Scope permission')}} </th>
-                    <th>{{msg('Add Limit Scope')}} </th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    <td>1</td>
-                    <td>
-                        <label class="checkbox">
-                            <input type="checkbox"> {{msg('Add tree')}}
-                        </label>
-                    </td>
-                    <td>{{msg('Demo tree')}}</td>
-                    <td>
-                        <button class="btn btn-mini btn-success"><i class="icon-plus icon-white i-middle"></i></button> {{msg('Limit Scope')}}
-                    </td>
-                </tr>
-                <tr>
-                    <td>2</td>
-                    <td>
-                        <label class="checkbox">
-                            <input type="checkbox"> {{msg('Add decision tree')}}
-                        </label>
-                    </td>
-                    <td>{{msg('Demo tree')}}</td>
-                    <td>
-                        <button class="btn btn-mini btn-success"><i class="icon-plus icon-white i-middle"></i></button> {{msg('Limit Scope')}}
-                    </td>
-                </tr>
-                <tr>
-                    <td>3</td>
-                    <td>
-                        <label class="checkbox">
-                            <input type="checkbox"> {{msg('Add message')}}
-                        </label>
-                    </td>
-                    <td>{{msg('Demo tree')}}</td>
-                    <td>
-                        <button class="btn btn-mini btn-success"><i class="icon-plus icon-white i-middle"></i></button> {{msg('Limit Scope')}}
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
 
-        <div class="margin-before">
-            <div class=""><div class="label-header ">{{msg('Demo Tree')}}</div></div>
-            <table class="table table-condensed table-bordered table-striped table-lightblue">
-                <thead class="table-header">
-                <tr>
-                    <th>Id </th>
-                    <th>{{msg('Action')}} </th>
-                    <th>{{msg('Scope permission')}} </th>
-                    <th>{{msg('Add Limit Scope')}} </th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    <td>1</td>
-                    <td>
-                        <label class="checkbox">
-                            <input type="checkbox"> {{msg('Add tree')}}
-                        </label>
-                    </td>
-                    <td>{{msg('Demo tree')}}</td>
-                    <td>
-                        <button class="btn btn-mini btn-success"><i class="icon-plus icon-white i-middle"></i></button> {{msg('Limit Scope')}}
-                    </td>
-                </tr>
-                <tr>
-                    <td>2</td>
-                    <td>
-                        <label class="checkbox">
-                            <input type="checkbox"> {{msg('Add decision tree')}}
-                        </label>
-                    </td>
-                    <td>{{msg('Demo tree')}}</td>
-                    <td>
-                        <button class="btn btn-mini btn-success"><i class="icon-plus icon-white i-middle"></i></button> {{msg('Limit Scope')}}
-                    </td>
-                </tr>
-                <tr>
-                    <td>3</td>
-                    <td>
-                        <label class="checkbox">
-                            <input type="checkbox"> {{msg('Add message')}}
-                        </label>
-                    </td>
-                    <td>{{msg('Demo tree')}}</td>
-                    <td>
-                        <button class="btn btn-mini btn-success"><i class="icon-plus icon-white i-middle"></i></button> {{msg('Limit Scope')}}
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <div class="margin-before">
-            <div class=""><div class="label-header ">{{msg('Demo IVR')}}</div></div>
-            <table class="table table-condensed table-bordered table-striped table-lightblue">
-                <thead class="table-header">
-                <tr>
-                    <th>Id </th>
-                    <th>{{msg('Action')}} </th>
-                    <th>{{msg('Scope permission')}} </th>
-                    <th>{{msg('Add Limit Scope')}} </th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    <td>1</td>
-                    <td>
-                        <label class="checkbox">
-                            <input type="checkbox"> {{msg('Add tree')}}
-                        </label>
-                    </td>
-                    <td>{{msg('Demo tree')}}</td>
-                    <td>
-                        <button class="btn btn-mini btn-success"><i class="icon-plus icon-white i-middle"></i></button> {{msg('Limit Scope')}}
-                    </td>
-                </tr>
-                <tr>
-                    <td>2</td>
-                    <td>
-                        <label class="checkbox">
-                            <input type="checkbox"> {{msg('Add decision tree')}}
-                        </label>
-                    </td>
-                    <td>{{msg('Demo tree')}}</td>
-                    <td>
-                        <button class="btn btn-mini btn-success"><i class="icon-plus icon-white i-middle"></i></button> {{msg('Limit Scope')}}
-                    </td>
-                </tr>
-                <tr>
-                    <td>3</td>
-                    <td>
-                        <label class="checkbox">
-                            <input type="checkbox"> {{msg('Add message')}}
-                        </label>
-                    </td>
-                    <td>{{msg('Demo tree')}}</td>
-                    <td>
-                        <button class="btn btn-mini btn-success"><i class="icon-plus icon-white i-middle"></i></button> {{msg('Limit Scope')}}
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
         <div class="pagination pagination-centered pagination-condensed">
-            <ul>
-                <li class="disabled"><a href="#">{{msg('first')}}</a></li>
-                <li class="active"><a href="#">1</a></li>
-                <li class=""><a href="#">2</a></li>
-                <li class=""><a href="#">3</a></li>
-                <li class="disabled"><a href="#">{{msg('last')}}</a></li>
-            </ul>
         </div>
     </div>
 </div>

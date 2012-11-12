@@ -1,6 +1,7 @@
 package org.motechproject.security.web.controllers;
 
 import org.motechproject.security.model.UserDto;
+import org.motechproject.security.service.MotechUserProfile;
 import org.motechproject.security.service.MotechUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,7 +24,7 @@ public class UserController {
 
     @RequestMapping(value = "/users", method = RequestMethod.GET)
     @ResponseBody
-    public List<UserDto> getUsers() {
+    public List<MotechUserProfile> getUsers() {
         return motechUserService.getUsers();
     }
 

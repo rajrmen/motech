@@ -9,3 +9,7 @@ angular.module('roleService', ['ngResource']).factory('Roles', function($resourc
 angular.module('userService', ['ngResource']).factory('Users', function($resource) {
     return $resource('../websecurity/api/users');
 });
+
+angular.module('permissionService', ['ngResource']).factory('Permission', function($resource) {
+    return $resource('../websecurity/api/users');
+});

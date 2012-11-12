@@ -82,10 +82,10 @@ public class MotechUserServiceImpl implements MotechUserService {
     }
 
     @Override
-    public List<UserDto> getUsers() {
-        List<UserDto> users = new ArrayList<>();
+    public List<MotechUserProfile> getUsers() {
+        List<MotechUserProfile> users = new ArrayList<>();
         for(MotechUser user : allMotechUsers.getUsers()) {
-            users.add(new UserDto(user));
+            users.add(new MotechUserProfile(user));
         }
          return users;
     }

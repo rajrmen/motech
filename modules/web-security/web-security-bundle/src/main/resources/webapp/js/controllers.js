@@ -9,8 +9,8 @@ function UserCtrl($scope, Roles, Users, $http) {
            roles: [],
            active: true
        }
-       $scope.currentPage=1;
-       $scope.pageSize=2;
+       $scope.currentPage=0;
+       $scope.pageSize=15;
        $scope.selectedItem='';
 
        $scope.roleList = Roles.query();
@@ -56,6 +56,29 @@ function UserCtrl($scope, Roles, Users, $http) {
        }
 }
 
-function RoleCtrl($scope, Roles, Users, $http) {
+function RoleCtrl($scope, Roles, Permissions, $http) {
+       $scope.currentPage=0;
+       $scope.pageSize=15;
 
+       $scope.roleList = Roles.query();
+       $scope.permissionList = Permissions.query();
+       $scope.numberOfPages=function(){
+           return Math.ceil($scope.userList.length/$scope.pageSize);
+       }
+
+       $scope.changeCurrentPage = function(page) {
+           $scope.currentPage=page;
+       }
+
+       $scope.permissionList = function(role) {
+            $http.get('../websecurity/api/permission/getPermisionForRole', role).
+                        success(function(data) {
+
+            });
+
+        $http({method: 'GET', url: '../admin/api/settings/bundles/list'}).
+                success(function(data) {
+                    $scope.bundlesWithSettings = data;
+                });
+       }
 }

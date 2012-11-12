@@ -21,7 +21,7 @@ public interface MotechUserService {
 
     public boolean hasUser(String username);
 
-    public List<UserDto> getUsers();
+    public List<MotechUserProfile> getUsers();
 
     public void loginUser(String userName, String password);
 }
