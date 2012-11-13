@@ -15,7 +15,7 @@ import java.io.InputStream;
 import java.lang.reflect.Type;
 import java.util.List;
 
-@Service
+@Service("channelService")
 public class ChannelServiceImpl implements ChannelService {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -23,9 +23,9 @@ public class ChannelServiceImpl implements ChannelService {
     private MotechJsonReader motechJsonReader;
 
     @Autowired
-    public ChannelServiceImpl(final AllChannels allChannels, final MotechJsonReader motechJsonReader) {
+    public ChannelServiceImpl(final AllChannels allChannels) {
         this.allChannels = allChannels;
-        this.motechJsonReader = motechJsonReader;
+        this.motechJsonReader = new MotechJsonReader();
     }
 
     @Override

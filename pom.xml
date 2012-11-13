@@ -259,9 +259,10 @@
         <module>modules/sms/api-bundle</module>
         <module>modules/sms/http-bundle</module>
         <module>modules/sms/smpp-bundle</module>
+        <module>modules/tasks/tasks-bundle</module>
         <module>modules/web-security/web-security-bundle</module>
-        <module>utils/http-agent/http-agent-bundle</module>
         <module>utils/c3p0-fragment-bundle</module>
+        <module>utils/http-agent/http-agent-bundle</module>
 
         <!-- Packaging modules -->
         <module>packaging/deb</module>
