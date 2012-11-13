@@ -3,14 +3,14 @@
             <div class="well3">
 
             <div class="control-group">
-                <a href="#userRegister" role="button" class="btn" data-toggle="modal" ng-click="resetValues()">Add user</a>
+                <a href="#userRegister" role="button" class="btn btn-primary" data-toggle="modal" ng-click="resetValues()"><i class="icon-plus icon-white"></i> Add user</a>
             </div>
             <form class="form-search form-inline">
                 <label class="control-label">{{msg('userName')}}</label>
                 <input type="text" ng-model="propertyUserName" class="input-medium search-query">
                 <label class="help-inline">{{msg('role')}}</label>
                 <select ng-model="selectedItem" ng-options="role.roleName for role in roleList">
-                    <option value="">-- chose role --</option>
+                    <option value="">-- {{msg('choseModule')}} --</option>
                 </select>
             </form>
                 <div class="margin-before">
@@ -23,7 +23,7 @@
                         </thead>
                         <tbody>
                         <tr href="#userEdit" data-toggle="modal" ng-click="getUser(user)" ng-repeat="user in userList | filter:propertyUserName | filter:selectedItem.roleName | filterPagination:currentPage*pageSize | limitTo:pageSize">
-                            <td>{{user.userName}}</td>
+                            <td><a>{{user.userName}}</a></td>
                             <td><span ng-repeat="role in user.roles">{{role}}, </span></td>
                         </tr>
                         </tbody>
@@ -67,7 +67,7 @@
                 </div>
                 <div class="control-group">
                     <label class="control-label">{{msg('password')}}</label>
-                    <div class="controls btn-group">
+                    <div class="controls">
                         <input type="password" ng-model="user.password">
                         <span class="help-inline"><a class="btn btn-small"  ng-click="generatePassword()">{{msg('generate')}}</a></span>
                     </div>
@@ -94,7 +94,7 @@
                     </div>
                 </div>
                 <div class="control-group">
-                    <div class="controls btn-group">
+                    <div class="controls">
                         <input class="btn btn-primary" type="submit" value="{{msg('save')}}" ng-click="saveUser()"/>
                         <input class="btn" type="submit" value="{{msg('cancel')}}" data-dismiss="modal" aria-hidden="true"/>
                     </div>
@@ -127,7 +127,7 @@
                 </div>
                 <div class="control-group">
                     <label class="control-label">{{msg('password')}}</label>
-                    <div class="controls btn-group">
+                    <div class="controls">
                         <input type="password" ng-model="user.password">
                     </div>
                 </div>
@@ -155,7 +155,7 @@
                 <div class="control-group">
                     <div class="controls">
                         <input class="btn btn-primary" type="submit" value="{{msg('save')}}" ng-click="updateUser()"/>
-                        <input class="btn" type="submit" value="{{msg('cancel')}}" data-dismiss="modal" aria-hidden="true"/>
+                        <input class="btn" type="submit" value="{{msg('cancel')}}" data-dismiss="modal" ng-click=""/>
                     </div>
                 </div>
                 <div class="control-group">
@@ -175,9 +175,10 @@
                 </div>
                 <div ng-show="deleteUser" class="control-group">
                     <div class="controls">
-                        <div class="btn-group">
+                        <span>
                         <input class="btn btn-primary" type="submit" value="{{msg('delete')}}" ng-click="deleteUser()"/>
-                        </div>
+                        <input class="btn" type="submit" value="{{msg('cancel')}}" data-dismiss="modal" ng-click=""/>
+                        </span>
                     </div>
                 </div>
             </form>

@@ -441,18 +441,27 @@ select {
     padding-left: 30px;
 }
 
-.pagination-condensed {
-    height: 26px;
-    margin: 5px;
+.table-lightblue {
+    border-color: #D4E1F9;
+    background: #E4F1F9;
 }
 
-.pagination-condensed a {
-    line-height: 24px;
-    padding: 0 8px;
+.table-lightblue  tbody tr:nth-child(2n+1) td, .table-lightblue tbody tr:nth-child(2n+1) th {
+    background-color: #F3FBFE;
+}
+
+.table-lightblue  tbody tr:hover td, .table-lightblue tbody tr:hover th, .table-lightblue tbody tr:hover td a {
+    background-color: #EDF5F9;
+    color: #005580;
+}
+
+.table-lightblue.table-bordered th, .table-lightblue.table-bordered td {
+      border-top: 1px solid #D4E1F9;
+      border-left: 1px solid #D4E1F9;
 }
 
 .table-lightblue th, .pagination.lightblue ul > li > a {
-    border-color:#fff;
+    border-color: #fff;
     color: #224477;
     background: #deefff;
     background: -moz-linear-gradient(top,  #deefff 0%, #98bede 100%);
@@ -467,13 +476,31 @@ select {
             box-shadow: 0 0 2px #bec9de;
 }
 
+.pagination.lightblue ul > li > a {
+    border-color: #94A2B4;
+}
+
 .pagination.lightblue li.active a {
     color: #000000;
     background: #deefff;
 }
 
+.pagination.lightblue li.disabled a {
+    color: #95A6C1;
+}
+
 .pagination.lightblue li:hover a {
     color: #0099de;
+}
+
+.pagination-condensed {
+    height: 26px;
+    margin: 5px;
+}
+
+.pagination-condensed a {
+    line-height: 24px;
+    padding: 0 8px;
 }
 
 footer {
@@ -570,26 +597,6 @@ footer {
     font-size: 13px;
     line-height: 20px;
 }
-
-.table-lightblue {
-    border-color: #D4E1F9;
-    background: #E4F1F9;
-}
-
-.table-lightblue  tbody tr:nth-child(2n+1) td, .table-lightblue tbody tr:nth-child(2n+1) th {
-    background-color: #F3FBFE;
-}
-
-.table-lightblue  tbody tr:hover td, .table-lightblue tbody tr:hover th, .table-lightblue tbody tr:hover td a {
-    background-color: #EDF5F9;
-    color: #005580;
-}
-
-.table-lightblue.table-bordered th, .table-lightblue.table-bordered td {
-      border-top: 1px solid #D4E1F9;
-      border-left: 1px solid #D4E1F9;
-}
-
 
 
 /* ----- startup ----- */
@@ -698,8 +705,6 @@ footer {
             box-shadow: 0 2px 5px #89aedb;
 
 }
-
-/*----- end startup ------*/
 
 
 /*----- common ------*/

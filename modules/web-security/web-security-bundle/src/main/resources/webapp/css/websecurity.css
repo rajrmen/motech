@@ -10,6 +10,11 @@
     text-align: center;
 }
 
+.table-role thead tr > th:first-child{
+    text-align: center;
+    width: 25px;
+}
+
 .table-role th:nth-child(2) {
     text-align: left;
     padding-left: 20px;
