@@ -224,6 +224,7 @@
         <module>modules/sms/api</module>
         <module>modules/sms/http</module>
         <module>modules/sms/smpp</module>
+        <module>modules/tasks/tasks</module>
         <module>modules/testing-utils/testing-utils</module>
         <module>modules/web-security/web-security</module>
         <module>utils/http-agent/http-agent</module>
