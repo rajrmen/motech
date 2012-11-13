@@ -149,16 +149,16 @@ function RoleCtrl($scope, Roles, Permissions, $http) {
                    success(function(){$scope.successfulMessage="successUpdate"}).
                    error(function(){$scope.failureMessage="failureUpdate"});
             }
-
+            $scope.addRoleView=!$scope.addRoleView;
 
         }
 
         $scope.getRole = function(role)  {
             $scope.addOrEdit = "edit";
-            addRoleView=!addRoleView;
             $http.post('../websecurity/api/roles/getrole', role.roleName).success(function(data) {
                    $scope.role = data;
             });
+            $scope.addRoleView=!$scope.addRoleView;
         }
 
         $scope.deleteRole = function() {
