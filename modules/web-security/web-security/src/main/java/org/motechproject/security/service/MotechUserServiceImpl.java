@@ -94,7 +94,6 @@ public class MotechUserServiceImpl implements MotechUserService {
     @Override
     public UserDto getUser(String userName) {
         MotechUser user = allMotechUsers.findByUserName(userName);
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
         return new UserDto(user);
     }
 

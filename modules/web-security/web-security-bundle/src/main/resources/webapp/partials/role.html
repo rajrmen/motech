@@ -1,9 +1,9 @@
-<div class="box-header">{{msg('manageRole')}}</div>
-<div class="box-content clearfix">
+<div ng-show="addRoleView" class="box-header">{{msg('manageRole')}}</div>
+<div ng-show="addRoleView" class="box-content clearfix">
     <div class="well3">
-        <button type="submit" class="btn btn-primary"><i class="icon-plus icon-white i-middle"></i> {{msg('addNewRole')}}</button>
+        <button ng-click="addRole()" type="submit" class="btn btn-primary"><i class="icon-plus icon-white i-middle"></i>{{msg('addNewRole')}}</button>
         <div class="margin-before control-group">
-            <label class="control-label">{{msg('roleName')}}</label>
+            <label class="control-label">{{msg('enterRoleName')}}</label>
             <div class="controls">
                 <input type="text" ng-model="propertyRoleName.roleName" class="input-medium">
             </div>
@@ -30,46 +30,57 @@
             <ul>
                 <li ng-class="{true:'disabled', false:''}[currentPage==0]"><a ng-click="changeCurrentPage(0)">{{msg('first')}}</a></li>
                 <li ng-repeat="number in [] | repeat:numberOfPages()" ng-class="{true:'active', false:''}[number==currentPage]"><a ng-click="changeCurrentPage(number)">{{number+1}}</a></li>
-                <li ng-class="{true:'disabled', false:''}[currentPage==numberOfPages()]"><a ng-click="changeCurrentPage(numberOfPages()-1)">{{msg('last')}}</a></li>
+                <li ng-class="{true:'disabled', false:''}[currentPage==numberOfPages()-1]"><a ng-click="changeCurrentPage(numberOfPages()-1)">{{msg('last')}}</a></li>
             </ul>
         </div>
     </div>
 </div>
 
-<div class="box-header">{{msg('managePermissions')}}</div>
-<div class="box-content clearfix">
+<div ng-hide="addRoleView" class="box-header">{{msg('managePermissions')}}</div>
+<div ng-hide="addRoleView" class="box-content clearfix">
+    <label class="control-label">{{msg('roleName')}}</label>
+    <input type="text" ng-model="role.roleName" class="input-medium">
     <div class="well3">
         <form class="form-inline">
             <label class="control-label">{{msg('choseModule')}}</label>
-            <select ng-model="selectedItemRole" ng-options="permissions.bundleName for permissions in uniqePermissionList(permissionList)">
-                <option value="">-- {{msg('choseModule')}} --</option>
+            <select ng-model="selectedItemRole">
+                <option value="">-- {{msg('choseModule')} --</option>
+                <option ng-repeat=" permissions in uniqePermissionList(permissionList)" value="{{permissions.bundleName}}">{{permissions.bundleName}}</option>
             </select>
             <label class="control-label">{{msg('search')}}</label>
             <input type="text" class="input-medium" ng-model="roleNameFilter">
         </form>
         <div class="margin-before">
-            <div class="label-header ">{{permission.bundleName}}</div>
-            <table class="table table-condensed table-bordered table-striped table-lightblue">
-                <thead class="table-header">
-                <tr>
-                    <th>Id </th>
-                    <th>{{msg('Action')}} </th>
-                    <th>{{msg('moduleName')}}</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr ng-repeat="permission in permissionList | filter:roleNameFilter | filter:selectedItemRole">
-                    <td>{{$index}}</td>
-                    <td><label class="checkbox">
-                        <input type="checkbox">{{permission.permissionName}}
-                    </label></td>
-                    <td>{{permission.bundleName}}</td>
-                </tr>
-                </tbody>
-            </table>
+                <div class="label-header ">{{permission.bundleName}}</div>
+                <table class="table table-condensed table-bordered table-striped table-lightblue">
+                    <thead class="table-header">
+                    <tr>
+                        <th>Id </th>
+                        <th>{{msg('Action')}} </th>
+                        <th>{{msg('moduleName')}}</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="permission in permissionList | filter:roleNameFilter | filter:selectedItemRole">
+                        <td>{{$index}}</td>
+                        <td><label class="checkbox">
+                            <input type="checkbox" ng-click="addPermission(permission.permissionName)">{{permission.permissionName}}
+                        </label></td>
+                        <td>{{permission.bundleName}}</td>
+                    </tr>
+                    </tbody>
+                </table>
         </div>
     </div>
 
-    <div class="pagination pagination-centered pagination-condensed lightblue">
+        <div class="pagination pagination-centered pagination-condensed">
+        </div>
+
+        <div class="control-group">
+            <div class="controls btn-group">
+                <input class="btn btn-primary" type="submit" value="{{msg('save')}}" ng-click="saveRole()"/>
+                <input class="btn" type="submit" value="{{msg('cancel')}}"/>
+            </div>
+        </div>
     </div>
 </div>

@@ -11,4 +11,8 @@ public interface AllMotechRoles {
     void add(MotechRole role);
 
     MotechRole findByRoleName(String roleName);
+
+    void remove(MotechRole motechRole);
+
+    void update(MotechRole motechRole);
 }

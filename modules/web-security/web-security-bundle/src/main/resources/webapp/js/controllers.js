@@ -93,9 +93,15 @@ function UserCtrl($scope, Roles, Users, $http) {
 }
 
 function RoleCtrl($scope, Roles, Permissions, $http) {
+       $scope.role = {
+            roleName : "",
+            permissionNames : []
+       }
+       $scope.addRoleView=true;
+       $scope.successfulMessage='';
        $scope.currentPage=0;
        $scope.pageSize=15;
-
+       $scope.addOrEdit="";
        $scope.roleList = Roles.query();
        $scope.permissionList = Permissions.query();
        $scope.numberOfPages=function(){
@@ -124,5 +130,50 @@ function RoleCtrl($scope, Roles, Permissions, $http) {
            }
            return newArr;
        }
+
+       $scope.addPermission = function(permissionName) {
+           if ($scope.role.permissionNames.indexOf(permissionName)==-1) {
+               $scope.role.permissionNames.push(permissionName);
+           } else {
+               $scope.role.permissionNames.removeObject(permissionName);
+           }
+       }
+
+        $scope.saveRole = function() {
+            if ($scope.addOrEdit=="add") {
+               $http.post('../websecurity/api/roles/create', $scope.role).
+                   success(function(){$scope.successfulMessage="successAdd";}).
+                   error(function(){$scope.failureMessage="failureAdd"});
+            } else {
+                $http.post('../websecurity/api/roles/update', $scope.role).
+                   success(function(){$scope.successfulMessage="successUpdate"}).
+                   error(function(){$scope.failureMessage="failureUpdate"});
+            }
+
+
+        }
+
+        $scope.getRole = function(role)  {
+            $scope.addOrEdit = "edit";
+            addRoleView=!addRoleView;
+            $http.post('../websecurity/api/roles/getrole', role.roleName).success(function(data) {
+                   $scope.role = data;
+            });
+        }
+
+        $scope.deleteRole = function() {
+            $http.post('../websecurity/api/users/delete', $scope.role).
+                success(function(){$scope.successfulMessage="successRemove"}).
+                error(function(){$scope.failureMessage="failureRemove"});
+        }
+
+        $scope.addRole=function() {
+            $scope.role = {
+                    roleName : "",
+                    permissionNames : []
+            }
+            $scope.addOrEdit = "add";
+            $scope.addRoleView=!$scope.addRoleView;
+        }
 
 }

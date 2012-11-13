@@ -42,4 +42,15 @@ public class AllMotechRolesCouchdbImpl extends MotechBaseRepository<MotechRoleCo
         return singleResult(db.queryView(viewQuery, MotechRoleCouchdbImpl.class));
     }
 
+    @Override
+    public void remove(MotechRole motechRole) {
+        super.remove((MotechRoleCouchdbImpl)motechRole);
+    }
+
+    @Override
+    public void update(MotechRole motechRole) {
+        super.update((MotechRoleCouchdbImpl)motechRole);
+    }
+
+
 }

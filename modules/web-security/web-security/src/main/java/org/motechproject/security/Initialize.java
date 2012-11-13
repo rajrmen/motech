@@ -39,9 +39,9 @@ public class Initialize {
         MotechPermission restartBundle = new MotechPermissionCouchdbImpl("restartBundle", "websecurity");
         MotechPermission uninstallBundle = new MotechPermissionCouchdbImpl("uninstallBundle", "websecurity");
         MotechPermission installBundle = new MotechPermissionCouchdbImpl("installBundle", "websecurity");
-        MotechPermission changeConfigBundle = new MotechPermissionCouchdbImpl("changeCongigBundle", "websecurity");
+        MotechPermission changeConfigBundle = new MotechPermissionCouchdbImpl("changeConfigBundle", "websecurity");
 
-        //test
+
         MotechPermission getBundlesPerrmision = new MotechPermissionCouchdbImpl("getBundles", "admin");
         //initialize startup role
         MotechRole adminUser = new MotechRoleCouchdbImpl("Admin User", Arrays.asList(addUserPerrmision.getPermissionName(), editUserPermission.getPermissionName(), deleteUserPermission.getPermissionName()));
