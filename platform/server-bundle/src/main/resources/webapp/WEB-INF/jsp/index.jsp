@@ -115,7 +115,7 @@
                             <ul id="localization" class="dropdown-menu">
                                 <li><a class=""><i class="icon-user"></i> Profile</a></li>
                                 <li class="divider"></li>
-                                <li><a class=""><i class="icon-off"></i> Sign Up</a></li>
+                                <li><a href="${contextPath}/j_spring_security_logout" class=""><i class="icon-off"></i> Sign Up</a></li>
                             </ul>
                         </li>
                     </ul>

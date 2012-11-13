@@ -53,7 +53,11 @@ public class DashboardController {
             mav = new ModelAndView("redirect:startup.do");
         } else {
             mav = new ModelAndView("index");
-
+            if (!request.getSession().getServletContext().getContextPath().equals("/")) {
+                mav.addObject("contextPath", request.getSession().getServletContext().getContextPath().substring(1));
+            } else {
+                mav.addObject("contextPath", "");
+            }
             mav.addObject("uptime", getUptime(request));
 
             Map<String, Collection<ModuleRegistrationData>> modules = uiFrameworkService.getRegisteredModules();
