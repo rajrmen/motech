@@ -100,12 +100,19 @@ public class MotechUserServiceImpl implements MotechUserService {
 
     @Override
     public void updateUser(UserDto user) {
-        allMotechUsers.update((MotechUser)user);
+        MotechUser motechUser = allMotechUsers.findByUserName(user.getUserName());
+        motechUser.setEmail(user.getEmail());
+        if(!user.getPassword().equals("")){
+            motechUser.setPassword(passwordEncoder.encode(user.getPassword()));
+        }
+        motechUser.setRoles(user.getRoles());
+        allMotechUsers.update(motechUser);
     }
 
     @Override
     public void deleteUser(UserDto user) {
-        allMotechUsers.remove((MotechUser)user);
+        MotechUser motechUser = allMotechUsers.findByUserName(user.getUserName());
+        allMotechUsers.remove(motechUser);
     }
 }
 

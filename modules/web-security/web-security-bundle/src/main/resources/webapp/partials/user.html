@@ -1,8 +1,9 @@
 <div class="box-header">{{msg('security.administeringUsersList')}}</div>
         <div class="box-content clearfix">
             <div class="well3">
+
             <div class="control-group">
-                <a href="#userRegister" role="button" class="btn" data-toggle="modal">Add user</a>
+                <a href="#userRegister" role="button" class="btn" data-toggle="modal" ng-click="resetValues()">Add user</a>
             </div>
             <form class="form-search form-inline">
                 <label class="control-label">{{msg('userName')}}</label>
@@ -32,7 +33,7 @@
                     <ul>
                         <li ng-class="{true:'disabled', false:''}[currentPage==0]"><a ng-click="changeCurrentPage(0)">{{msg('first')}}</a></li>
                         <li ng-repeat="number in [] | repeat:numberOfPages()" ng-class="{true:'active', false:''}[number==currentPage]"><a ng-click="changeCurrentPage(number)">{{number+1}}</a></li>
-                        <li ng-class="{true:'disabled', false:''}[currentPage==numberOfPages()]"><a ng-click="changeCurrentPage(numberOfPages()-1)">{{msg('last')}}</a></li>
+                        <li ng-class="{true:'disabled', false:''}[currentPage==(numberOfPages()-1)]"><a ng-click="changeCurrentPage(numberOfPages()-1)">{{msg('last')}}</a></li>
                     </ul>
                 </div>
             </div>
@@ -42,6 +43,12 @@
     <div class="box-header">{{msg('security.userRegistration')}}</div>
     <div class="box-content clearfix">
         <div class="well3">
+            <div class="">
+                <ul>
+                    <li ng-show="successfulMessage.length>0">{{msg(successfulMessage)}}</li>
+                    <li ng-show="failureMessage.length>0">{{msg(failureMessage)}}</li>
+                </ul>
+            </div>
             <form id="createUserForm" name="createUserForm" class="form-horizontal inside">
                 <div class="control-group">
                     <h4>{{msg('user')}}</h4>
@@ -102,6 +109,12 @@
     <div class="box-header">{{msg('security.administeringUsers')}}-{{msg('deletingUser')}}</div>
     <div class="box-content clearfix">
         <div class="well3">
+            <div class="">
+                <ul>
+                    <li ng-show="successfulMessage.length>0">{{msg(successfulMessage)}}</li>
+                    <li ng-show="failureMessage.length>0">{{msg(failureMessage)}}</li>
+                </ul>
+            </div>
             <form class="form-horizontal inside">
                 <div class="control-group">
                     <h4>{{msg('user')}}: {{user.userName}}</h4>
@@ -142,6 +155,7 @@
                 <div class="control-group">
                     <div class="controls">
                         <input class="btn btn-primary" type="submit" value="{{msg('save')}}" ng-click="updateUser()"/>
+                        <input class="btn" type="submit" value="{{msg('cancel')}}" data-dismiss="modal" aria-hidden="true"/>
                     </div>
                 </div>
                 <div class="control-group">
@@ -155,15 +169,14 @@
                 <div class="control-group">
                     <div class="controls">
                         <label class="checkbox">
-                            <input type="checkbox"> {{msg('security.deletingCheckMsg')}}
+                            <input type="checkbox" ng-model="deleteU"> {{msg('security.deletingCheckMsg')}}
                         </label>
                     </div>
                 </div>
-                <div class="control-group">
+                <div ng-show="deleteUser" class="control-group">
                     <div class="controls">
                         <div class="btn-group">
                         <input class="btn btn-primary" type="submit" value="{{msg('delete')}}" ng-click="deleteUser()"/>
-                        <input class="btn" type="submit" value="{{msg('cancel')}}" ng-click=""/>
                         </div>
                     </div>
                 </div>

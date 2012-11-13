@@ -12,6 +12,9 @@ function UserCtrl($scope, Roles, Users, $http) {
        $scope.currentPage=0;
        $scope.pageSize=15;
        $scope.selectedItem='';
+       $scope.deleteU=false;
+       $scope.successfulMessage='';
+       $scope.failureMessage='';
 
        $scope.roleList = Roles.query();
 
@@ -20,8 +23,7 @@ function UserCtrl($scope, Roles, Users, $http) {
        $scope.selectedRole = -1;
 
        $scope.generatePassword = function() {
-             //generator po stronie serwera
-             $scope.user.password='1234';
+
        }
 
        $scope.activeRole = function(roleName) {
@@ -42,8 +44,8 @@ function UserCtrl($scope, Roles, Users, $http) {
 
        $scope.saveUser = function() {
            $http.post('../websecurity/api/users/create', $scope.user).
-                success(alertHandler('user.saved', 'success')).
-                error(alertHandler('user.error.location'));
+                success(function(){$scope.successfulMessage="successAdd"; $scope.userList = Users.query();}).
+                error(function(){$scope.failureMessage="failureAdd"});
        }
 
 
@@ -56,21 +58,37 @@ function UserCtrl($scope, Roles, Users, $http) {
        }
 
        $scope.getUser = function(user)  {
+           $scope.successfulMessage='';
+           $scope.failureMessage='';
            $http.post('../websecurity/api/users/getuser', user.userName).success(function(data) {
                    $scope.user = data;
+                   $scope.user.password='';
            });
        }
 
        $scope.updateUser = function(){
            $http.post('../websecurity/api/users/update', $scope.user).
-                success(alertHandler('user.saved', 'success')).
-                error(alertHandler('user.error.location'));
+               success(function(){$scope.successfulMessage="successUpdate"}).
+               error(function(){$scope.failureMessage="failureUpdate"});
        }
 
        $scope.deleteUser = function() {
            $http.post('../websecurity/api/users/delete', $scope.user).
-                success(alertHandler('user.saved', 'success')).
-                error(alertHandler('user.error.location'));
+                success(function(){$scope.successfulMessage="successRemove"}).
+                error(function(){$scope.failureMessage="failureRemove"});
+       }
+
+       $scope.resetValues = function() {
+            $scope.user = {
+                externalId : "",
+                userName: "",
+                password: "",
+                email: "",
+                roles: [],
+                active: true
+            }
+            $scope.successfulMessage='';
+            $scope.failureMessage='';
        }
 }
 
