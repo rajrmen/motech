@@ -92,10 +92,20 @@ public class MotechUserServiceImpl implements MotechUserService {
     }
 
     @Override
-    public void loginUser(String userName, String password) {
-        if (allMotechUsers.checkUserAuthorisation(userName, password)) {
+    public UserDto getUser(String userName) {
+        MotechUser user = allMotechUsers.findByUserName(userName);
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        return new UserDto(user);
+    }
 
-        }
+    @Override
+    public void updateUser(UserDto user) {
+        allMotechUsers.update((MotechUser)user);
+    }
+
+    @Override
+    public void deleteUser(UserDto user) {
+        allMotechUsers.remove((MotechUser)user);
     }
 }
 

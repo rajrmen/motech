@@ -3,7 +3,6 @@
             <div class="well3">
             <div class="control-group">
                 <a href="#userRegister" role="button" class="btn" data-toggle="modal">Add user</a>
-                <a href="#userEdit" role="button" class="btn" data-toggle="modal">Edit</a>
             </div>
             <form class="form-search form-inline">
                 <label class="control-label">{{msg('userName')}}</label>
@@ -22,7 +21,7 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <tr ng-repeat="user in userList | filter:propertyUserName | filter:selectedItem.roleName | filterPagination:currentPage*pageSize | limitTo:pageSize">
+                        <tr href="#userEdit" data-toggle="modal" ng-click="getUser(user)" ng-repeat="user in userList | filter:propertyUserName | filter:selectedItem.roleName | filterPagination:currentPage*pageSize | limitTo:pageSize">
                             <td>{{user.userName}}</td>
                             <td><span ng-repeat="role in user.roles">{{role}}, </span></td>
                         </tr>
@@ -33,7 +32,7 @@
                     <ul>
                         <li ng-class="{true:'disabled', false:''}[currentPage==0]"><a ng-click="changeCurrentPage(0)">{{msg('first')}}</a></li>
                         <li ng-repeat="number in [] | repeat:numberOfPages()" ng-class="{true:'active', false:''}[number==currentPage]"><a ng-click="changeCurrentPage(number)">{{number+1}}</a></li>
-                        <li ng-disabled="{true:'disabled', false:''}[currentPage==numberOfPages()]"><a ng-click="changeCurrentPage(numberOfPages()-1)">{{msg('last')}}</a></li>
+                        <li ng-class="{true:'disabled', false:''}[currentPage==numberOfPages()]"><a ng-click="changeCurrentPage(numberOfPages()-1)">{{msg('last')}}</a></li>
                     </ul>
                 </div>
             </div>
@@ -56,13 +55,13 @@
                 <div class="control-group">
                     <label class="control-label">{{msg('email')}}</label>
                     <div class="controls">
-                        <input type="text" ng-model="user.email" placeholder="....@....">
+                        <input type="text" ng-model="user.email">
                     </div>
                 </div>
                 <div class="control-group">
                     <label class="control-label">{{msg('password')}}</label>
                     <div class="controls btn-group">
-                        <input type="text" ng-model="user.password" placeholder="______">
+                        <input type="password" ng-model="user.password">
                         <span class="help-inline"><a class="btn btn-small"  ng-click="generatePassword()">{{msg('generate')}}</a></span>
                     </div>
                 </div>
@@ -77,7 +76,7 @@
                 <div ng-show="roleList.length &gt;= 25" class="control-group">
                     <div class="controls">
                         <div class="btn-group dropdown">
-                            <a class="btn dropdown-toggle"  role="button" data-toggle="dropdown"  href="#">
+                            <a class="btn dropdown-toggle" role="button" data-toggle="dropdown"  href="#">
                                 {{msg('role')}}
                                 <span class="caret"></span>
                             </a>
@@ -105,50 +104,44 @@
         <div class="well3">
             <form class="form-horizontal inside">
                 <div class="control-group">
-                    <h4>{{msg('user')}}: {{msg('userName')}}</h4>
+                    <h4>{{msg('user')}}: {{user.userName}}</h4>
                 </div>
                 <div class="control-group">
                     <label class="control-label">{{msg('email')}}</label>
                     <div class="controls">
-                        <input type="text" ng-model="" placeholder="....@.....">
+                        <input type="text" ng-model="user.email">
                     </div>
                 </div>
                 <div class="control-group">
                     <label class="control-label">{{msg('password')}}</label>
                     <div class="controls btn-group">
-                        <input type="text" ng-model="" placeholder="______">
+                        <input type="password" ng-model="user.password">
                     </div>
                 </div>
                 <div class="control-group">
                     <h4>{{msg('role')}}</h4>
                 </div>
-                <div class="control-group">
-                    <div class="controls">
-                        <input class="btn btn-success" type="submit" value="{{msg('adminUsers')}}" ng-click=""/>
-                        <input class="btn btn-success" type="submit" value="{{msg('adminServer')}}" ng-click=""/>
-                        <input class="btn disabled" type="submit" value="{{msg('authorContent')}}" title="{{msg('security.authorContentTooltip')}}"  ng-click=""/>
-                        <input class="btn disabled" type="submit" value="{{msg('mrsUser')}}" ng-click=""/>
+                <div ng-show="roleList.length &lt; 25" class="control-group">
+                    <div class="controls"> <!-- btn-success when active -->
+                        <input ng-repeat="role in roleList" ng-class="getClass(role.roleName)" type="submit" value="{{role.roleName}}" ng-click="activeRole(role.roleName)"/>
                     </div>
                 </div>
-                <div class="control-group">
+                <div ng-show="roleList.length &gt;= 25" class="control-group">
                     <div class="controls">
                         <div class="btn-group dropdown">
-                            <a class="btn dropdown-toggle" role="button" data-toggle="dropdown"  href="#">
+                            <a class="btn dropdown-toggle"  role="button" data-toggle="dropdown"  href="#">
                                 {{msg('role')}}
                                 <span class="caret"></span>
                             </a>
                             <ul class="dropdown-menu" role="menu">
-                                <li class="nav-header"><a class="ng-binding" href="" >{{msg('adminUsers')}}</a></li>
-                                <li class="nav-header"><a class="ng-binding" href="" >{{msg('adminServer')}}</a></li>
-                                <li class="nav-header"><a class="ng-binding" href="" >{{msg('authorContent')}}</a></li>
-                                <li class="nav-header"><a class="ng-binding" href="" >{{msg('mrsUser')}}</a></li>
+                                <li ng-repeat="role in roleList" class="nav-header"><a class="ng-binding" href="" >{{role.roleName}}</a></li>
                             </ul>
                         </div>
                     </div>
                 </div>
                 <div class="control-group">
                     <div class="controls">
-                        <input class="btn btn-primary" type="submit" value="{{msg('save')}}" ng-click=""/>
+                        <input class="btn btn-primary" type="submit" value="{{msg('save')}}" ng-click="updateUser()"/>
                     </div>
                 </div>
                 <div class="control-group">
@@ -169,7 +162,7 @@
                 <div class="control-group">
                     <div class="controls">
                         <div class="btn-group">
-                        <input class="btn btn-primary" type="submit" value="{{msg('delete')}}" ng-click=""/>
+                        <input class="btn btn-primary" type="submit" value="{{msg('delete')}}" ng-click="deleteUser()"/>
                         <input class="btn" type="submit" value="{{msg('cancel')}}" ng-click=""/>
                         </div>
                     </div>

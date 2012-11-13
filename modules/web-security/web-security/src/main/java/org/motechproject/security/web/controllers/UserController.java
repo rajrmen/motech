@@ -28,9 +28,23 @@ public class UserController {
         return motechUserService.getUsers();
     }
 
-    @RequestMapping(value = "/users/login", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.OK)
-    public void loginUser(String userName, String password) {
-        motechUserService.loginUser(userName, password);
+    @RequestMapping(value = "/users/getuser", method = RequestMethod.POST)
+    @ResponseBody public UserDto getUser(@RequestBody String userName) {
+        return motechUserService.getUser(userName);
     }
+
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/users/update", method = RequestMethod.POST)
+    public void updateUser(@RequestBody UserDto user) {
+        motechUserService.updateUser(user);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/users/delete", method = RequestMethod.POST)
+    public void deleteUser(@RequestBody UserDto user) {
+        motechUserService.deleteUser(user);
+    }
+
+
 }

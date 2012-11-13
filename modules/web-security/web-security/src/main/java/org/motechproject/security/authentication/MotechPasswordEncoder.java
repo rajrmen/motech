@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Qualifier("passwordEncoder")
-public class MotechPasswordEncoder extends BCryptPasswordEncoder {
+public class MotechPasswordEncoder extends BCryptPasswordEncoder{
 
     public String encodePassword(String rawPassword) {
         return super.encode(rawPassword);
@@ -15,4 +15,5 @@ public class MotechPasswordEncoder extends BCryptPasswordEncoder {
     public boolean isPasswordValid(String encPassword, String rawPassword) {
         return super.matches(rawPassword, encPassword);
     }
+
 }

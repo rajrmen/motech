@@ -110,14 +110,16 @@
                     <ul class="nav pull-right menu-left">
                         <li ng-hide="showDashboardLogo.showDashboard"><a class="no-hover"><strong><fmt:message key="server.time" bundle="${bundle}"/>: </strong>${uptime}</a></li>
                         <li ng-hide="showDashboardLogo.showDashboard" class="divider-vertical divider-vertical-sub"></li>
+                        <c:if test="${securityLaunch}">
                         <li class="dropdown">
-                            <a class="dropdown-toggle" href="#" data-toggle="dropdown">Logged in as <UserNameExample><strong class="caret"></strong></a>
+                            <a class="dropdown-toggle" href="#" data-toggle="dropdown">Logged in as <strong>${userName}</strong><strong class="caret"></strong></a>
                             <ul id="localization" class="dropdown-menu">
                                 <li><a class=""><i class="icon-user"></i> Profile</a></li>
                                 <li class="divider"></li>
                                 <li><a href="${contextPath}/j_spring_security_logout" class=""><i class="icon-off"></i> Sign Up</a></li>
                             </ul>
                         </li>
+                        </c:if>
                     </ul>
                 </div>
             </div>

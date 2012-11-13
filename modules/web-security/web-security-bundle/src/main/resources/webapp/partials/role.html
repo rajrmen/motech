@@ -28,7 +28,7 @@
             <ul>
                 <li ng-class="{true:'disabled', false:''}[currentPage==0]"><a ng-click="changeCurrentPage(0)">{{msg('first')}}</a></li>
                 <li ng-repeat="number in [] | repeat:numberOfPages()" ng-class="{true:'active', false:''}[number==currentPage]"><a ng-click="changeCurrentPage(number)">{{number+1}}</a></li>
-                <li ng-disabled="{true:'disabled', false:''}[currentPage==numberOfPages()]"><a ng-click="changeCurrentPage(numberOfPages()-1)">{{msg('last')}}</a></li>
+                <li ng-class="{true:'disabled', false:''}[currentPage==numberOfPages()]"><a ng-click="changeCurrentPage(numberOfPages()-1)">{{msg('last')}}</a></li>
             </ul>
         </div>
     </div>

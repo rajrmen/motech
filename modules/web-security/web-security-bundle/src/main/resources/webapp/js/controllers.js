@@ -47,12 +47,30 @@ function UserCtrl($scope, Roles, Users, $http) {
        }
 
 
-       $scope.numberOfPages=function(){
+       $scope.numberOfPages = function(){
            return Math.ceil($scope.userList.length/$scope.pageSize);
        }
 
        $scope.changeCurrentPage = function(page) {
            $scope.currentPage=page;
+       }
+
+       $scope.getUser = function(user)  {
+           $http.post('../websecurity/api/users/getuser', user.userName).success(function(data) {
+                   $scope.user = data;
+           });
+       }
+
+       $scope.updateUser = function(){
+           $http.post('../websecurity/api/users/update', $scope.user).
+                success(alertHandler('user.saved', 'success')).
+                error(alertHandler('user.error.location'));
+       }
+
+       $scope.deleteUser = function() {
+           $http.post('../websecurity/api/users/delete', $scope.user).
+                success(alertHandler('user.saved', 'success')).
+                error(alertHandler('user.error.location'));
        }
 }
 

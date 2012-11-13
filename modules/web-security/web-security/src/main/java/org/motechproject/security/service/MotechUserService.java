@@ -1,5 +1,6 @@
 package org.motechproject.security.service;
 
+import org.motechproject.security.model.UserDto;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.List;
@@ -10,7 +11,6 @@ public interface MotechUserService {
     @PreAuthorize("isFullyAuthenticated()")
     public void register(String username, String password, String email, String externalId, List<String> roles);
 
-    @PreAuthorize("isFullyAuthenticated()")
     public void register(String username, String password, String email, String externalId, List<String> roles, boolean isActive);
 
     @PreAuthorize("isFullyAuthenticated()")
@@ -27,5 +27,9 @@ public interface MotechUserService {
 
     public List<MotechUserProfile> getUsers();
 
-    public void loginUser(String userName, String password);
+    UserDto getUser(String userName);
+
+    void updateUser(UserDto user);
+
+    void deleteUser(UserDto user);
 }

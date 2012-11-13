@@ -53,6 +53,12 @@ public class DashboardController {
             mav = new ModelAndView("redirect:startup.do");
         } else {
             mav = new ModelAndView("index");
+            if (isWebSecurityStarted()) {
+                mav.addObject("userName",request.getUserPrincipal().getName());
+                mav.addObject("securityLaunch", true);
+            } else {
+                mav.addObject("securityLaunch", false);
+            }
             if (!request.getSession().getServletContext().getContextPath().equals("/")) {
                 mav.addObject("contextPath", request.getSession().getServletContext().getContextPath().substring(1));
             } else {
