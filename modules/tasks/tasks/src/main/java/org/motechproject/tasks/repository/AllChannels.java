@@ -7,10 +7,8 @@ import org.motechproject.tasks.domain.Channel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-@Repository
 public class AllChannels extends MotechBaseRepository<Channel> {
 
-    @Autowired
     public AllChannels(final CouchDbConnector connector) {
         super(Channel.class, connector);
     }
