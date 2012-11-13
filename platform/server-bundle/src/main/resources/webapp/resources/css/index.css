@@ -386,7 +386,7 @@ select {
 }
 
 .margin-before {
-    margin: 10px 0 0 0;
+    margin-top: 10px;
 }
 
 .margin-before2 {
@@ -410,21 +410,20 @@ select {
 }
 
 .margin-left1 {
-    margin: 0 0 0 10px;
+    margin-left: 10px;
 }
 
 .margin-right1 {
-    margin: 0 10px 0 0;
+    margin-right: 10px;
 }
 
 .margin-left2 {
-    margin: 0 0 0 20px;
+    margin-left: 20px;
 }
 
 .margin-right2 {
-    margin: 0 20px 0 0;
+    margin-right: 20px;
 }
-
 
 .well2 {
     margin-bottom: 20px;
@@ -450,6 +449,31 @@ select {
 .pagination-condensed a {
     line-height: 24px;
     padding: 0 8px;
+}
+
+.table-lightblue th, .pagination.lightblue ul > li > a {
+    border-color:#fff;
+    color: #224477;
+    background: #deefff;
+    background: -moz-linear-gradient(top,  #deefff 0%, #98bede 100%);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#deefff), color-stop(100%,#98bede));
+    background: -webkit-linear-gradient(top,  #deefff 0%,#98bede 100%);
+    background: -o-linear-gradient(top,  #deefff 0%,#98bede 100%);
+    background: -ms-linear-gradient(top,  #deefff 0%,#98bede 100%);
+    background: linear-gradient(to bottom,  #deefff 0%,#98bede 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#deefff', endColorstr='#98bede', GradientType=0 );
+    -webkit-box-shadow: 0 0 2px #bec9de;
+       -moz-box-shadow: 0 0 2px #bec9de;
+            box-shadow: 0 0 2px #bec9de;
+}
+
+.pagination.lightblue li.active a {
+    color: #000000;
+    background: #deefff;
+}
+
+.pagination.lightblue li:hover a {
+    color: #0099de;
 }
 
 footer {
@@ -565,6 +589,8 @@ footer {
       border-top: 1px solid #D4E1F9;
       border-left: 1px solid #D4E1F9;
 }
+
+
 
 /* ----- startup ----- */
 

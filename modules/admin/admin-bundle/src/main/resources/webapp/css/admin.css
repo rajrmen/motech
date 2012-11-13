@@ -119,15 +119,31 @@ h4.settings-section {
 }
 
 .table-bundles thead .sorting-no {
+    float: right;
+    width: 15px;
+    height: 24px;
     background: url("../img/sort.png")no-repeat center right;
 }
 
 .table-bundles thead .sorting-asc {
+    float: right;
+    width: 15px;
+    height: 24px;
     background: url("../img/sort-asc.png")no-repeat center right;
 }
 
 .table-bundles thead .sorting-desc {
+    float: right;
+    width: 15px;
+    height: 24px;
     background: url("../img/sort-desc.png")no-repeat center right;
+}
+
+.table-bundles thead .sorting-no-img {
+    float: right;
+    width: 1px;
+    height: 24px;
+    background: none;
 }
 
 .table-bundles a:link {
