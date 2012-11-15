@@ -14,4 +14,9 @@
         <priority>2</priority>
     </rule>
 
+    <rule ref="rulesets/coupling.xml/LooseCoupling"/>
+
+    <rule ref="rulesets/strictexception.xml/AvoidCatchingThrowable"/>
+
+    <rule ref="rulesets/unusedcode.xml/UnusedLocalVariable"/>
 </ruleset>
