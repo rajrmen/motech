@@ -1,20 +1,23 @@
 package org.motechproject.tasks.domain;
 
 public class EventParameter {
-    protected final String eventKey;
-    protected final String displayName;
-
-    public EventParameter(String eventKey, String displayName) {
-        this.eventKey = eventKey;
-        this.displayName = displayName;
-    }
+    protected String eventKey;
+    protected String displayName;
 
     public String getEventKey() {
         return eventKey;
     }
 
+    public void setEventKey(String eventKey) {
+        this.eventKey = eventKey;
+    }
+
     public String getDisplayName() {
         return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
     }
 
     @Override
@@ -29,13 +32,21 @@ public class EventParameter {
 
         EventParameter that = (EventParameter) o;
 
-        return displayName.equals(that.displayName) && eventKey.equals(that.eventKey);
+        if (displayName != null ? !displayName.equals(that.displayName) : that.displayName != null) {
+            return false;
+        }
+
+        if (eventKey != null ? !eventKey.equals(that.eventKey) : that.eventKey != null) {
+            return false;
+        }
+
+        return true;
     }
 
     @Override
     public int hashCode() {
-        int result = eventKey.hashCode();
-        result = 31 * result + displayName.hashCode();
+        int result = eventKey != null ? eventKey.hashCode() : 0;
+        result = 31 * result + (displayName != null ? displayName.hashCode() : 0);
 
         return result;
     }
@@ -44,5 +55,4 @@ public class EventParameter {
     public String toString() {
         return String.format("EventParameter{eventKey='%s', displayName='%s'}", eventKey, displayName);
     }
-
 }

@@ -9,8 +9,9 @@ public interface ChannelService {
 
     void registerChannel(Channel channel);
 
-    void registerChannel(InputStream channelAsJson);
+    void registerChannel(InputStream stream);
 
     List<Channel> getAllChannels();
 
+    Channel getChannel(String displayName);
 }

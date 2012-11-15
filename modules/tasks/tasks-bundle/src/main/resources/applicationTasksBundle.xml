@@ -11,6 +11,7 @@
 
     <osgi:reference id="eventListenerRegistryServiceOsgi" interface="org.motechproject.event.listener.EventListenerRegistryService"/>
 
-    <osgi:service ref="channelService" interface="org.motechproject.tasks.service.ChannelService"/>
+    <osgi:service id="channelServiceOsgi" auto-export="interfaces" ref="channelService"
+                  interface="org.motechproject.tasks.service.ChannelService"/>
 
 </beans>

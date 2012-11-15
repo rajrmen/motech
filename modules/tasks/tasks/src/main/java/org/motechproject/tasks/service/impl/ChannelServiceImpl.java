@@ -50,4 +50,9 @@ public class ChannelServiceImpl implements ChannelService {
     public List<Channel> getAllChannels() {
         return allChannels.getAll();
     }
+
+    @Override
+    public Channel getChannel(final String displayName) {
+        return allChannels.ByDisplayName(displayName);
+    }
 }

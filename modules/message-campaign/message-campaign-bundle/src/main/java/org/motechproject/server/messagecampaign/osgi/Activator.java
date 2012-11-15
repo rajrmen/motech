@@ -31,6 +31,7 @@
  */
 package org.motechproject.server.messagecampaign.osgi;
 
+import org.motechproject.tasks.service.ChannelService;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
@@ -41,12 +42,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.osgi.web.context.support.OsgiBundleXmlWebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
 
+import java.io.InputStream;
+
 public class Activator implements BundleActivator {
     private static Logger logger = LoggerFactory.getLogger(Activator.class);
     private static final String CONTEXT_CONFIG_LOCATION = "classpath:applicationMessageCampaignBundle.xml";
     private static final String SERVLET_URL_MAPPING = "/messagecampaign";
-    private ServiceTracker tracker;
-    private ServiceReference httpService;
+
+    private ServiceTracker httpServiceTracker;
+    private ServiceTracker channelServiceTracker;
 
     private static BundleContext bundleContext;
 
@@ -54,7 +58,7 @@ public class Activator implements BundleActivator {
     public void start(BundleContext context) throws Exception {
         bundleContext = context;
 
-        this.tracker = new ServiceTracker(context, HttpService.class.getName(), null) {
+        this.httpServiceTracker = new ServiceTracker(context, HttpService.class.getName(), null) {
 
             @Override
             public Object addingService(ServiceReference ref) {
@@ -69,15 +73,24 @@ public class Activator implements BundleActivator {
                 super.removedService(ref, service);
             }
         };
-        this.tracker.open();
+        this.httpServiceTracker.open();
+
+        this.channelServiceTracker = new ServiceTracker(context, ChannelService.class.getName(), null) {
+
+            @Override
+            public Object addingService(ServiceReference ref) {
+                Object service = super.addingService(ref);
+                serviceAdded((ChannelService) service);
+                return service;
+            }
+
+        };
+        this.channelServiceTracker.open();
     }
 
     public void stop(BundleContext context) throws Exception {
-        this.tracker.close();
-        if (httpService != null) {
-            HttpService service = (HttpService) context.getService(httpService);
-            serviceRemoved(service);
-        }
+        this.httpServiceTracker.close();
+        this.channelServiceTracker.close();
     }
 
     public static class MessageCampaignApplicationContext extends OsgiBundleXmlWebApplicationContext {
@@ -109,5 +122,14 @@ public class Activator implements BundleActivator {
     private void serviceRemoved(HttpService service) {
         service.unregister(SERVLET_URL_MAPPING);
         logger.debug("Servlet unregistered");
+    }
+
+    private void serviceAdded(ChannelService service) {
+        try {
+            InputStream stream = getClass().getClassLoader().getResourceAsStream("task-channel.json");
+            service.registerChannel(stream);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }
