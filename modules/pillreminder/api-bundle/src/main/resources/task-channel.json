@@ -1,0 +1,45 @@
+{
+  "displayName" : "Pill Reminder",
+  "moduleName" : "${project.artifactId}",
+  "moduleVersion" : "${project.version}",
+  "triggerTaskEvents" : [
+    {
+      "displayName" : "Event subject",
+      "eventKey" : "EventKeys.PILLREMINDER_REMINDER_EVENT_SUBJECT",
+      "eventParameters" : [
+        {
+          "eventKey" : "EventKeys.PILLREMINDER_TIMES_SENT",
+          "displayName" : "Times sent"
+        },
+        {
+          "eventKey" :  EventKeys.PILLREMINDER_TOTAL_TIMES_TO_SEND",
+          "displayName" : "Total times to send"
+        },
+        {
+          "eventKey" :  EventKeys.PILLREMINDER_RETRY_INTERVAL",
+          "displayName" : "Retry interval"
+        }
+      ]
+    }
+  ],
+  "actionTaskEvents" : [
+    {
+      "displayName" : "Event subject scheduler",
+      "eventKey" : "EventKeys.PILLREMINDER_REMINDER_EVENT_SUBJECT_SCHEDULER",
+      "eventParameters" : [
+        {
+          "eventKey" : "EventKeys.PILLREMINDER_TIMES_SENT",
+          "displayName" : "Times sent"
+        },
+        {
+          "eventKey" :  EventKeys.PILLREMINDER_TOTAL_TIMES_TO_SEND",
+          "displayName" : "Total times to send"
+        },
+        {
+          "eventKey" :  EventKeys.PILLREMINDER_RETRY_INTERVAL",
+          "displayName" : "Retry interval"
+        }
+      ]
+    }
+  ]
+}
