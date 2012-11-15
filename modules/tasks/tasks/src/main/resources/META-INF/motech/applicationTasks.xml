@@ -9,17 +9,8 @@
     <context:annotation-config/>
     <context:component-scan base-package="org.motechproject.tasks"/>
 
-    <!-- ================ -->
-    <!--   DB CONNECTORS  -->
-    <!-- ================ -->
-
     <bean id="tasksSettings" class="org.motechproject.server.config.SettingsFacade" autowire="byType">
         <property name="moduleName" value="tasks"/>
-    </bean>
-
-    <bean id="channelDbConnector" factory-bean="tasksSettings" factory-method="getConnector">
-        <constructor-arg value="motech-channel"/>
-        <constructor-arg value="couchdb.properties"/>
     </bean>
 
     <bean id="taskDbConnector" factory-bean="tasksSettings" factory-method="getConnector">
@@ -27,22 +18,6 @@
         <constructor-arg value="couchdb.properties"/>
     </bean>
 
-    <!-- ======================================= -->
-    <!--   EVENT ANNOTATION BEAN POST PROCESSOR  -->
-    <!-- ======================================= -->
-
     <bean class="org.motechproject.event.listener.annotations.EventAnnotationBeanPostProcessor"/>
-
-    <!-- ================== -->
-    <!-- MODULE REPOSITORY  -->
-    <!-- ================== -->
-
-    <bean id="allChannels" class="org.motechproject.tasks.repository.AllChannels">
-        <constructor-arg ref="channelDbConnector"/>
-    </bean>
-
-    <bean id="allTasks" class="org.motechproject.tasks.repository.AllTasks">
-        <constructor-arg ref="taskDbConnector"/>
-    </bean>
 
 </beans>
