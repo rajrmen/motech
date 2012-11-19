@@ -46,15 +46,17 @@ public class TaskTriggerHandler {
         registerHandler();
     }
 
-    public void handler(final MotechEvent trigger) {
-        List<Task> tasks;
+    public void handler(final MotechEvent triggerEvent) {
+        TaskEvent trigger;
 
         try {
-            tasks = taskService.findTasksForTrigger(trigger.getSubject());
+            trigger = taskService.findTrigger(triggerEvent.getSubject());
         } catch (TriggerNotFoundException e) {
             LOG.error(e.getMessage(), e);
             return;
         }
+
+        List<Task> tasks = taskService.findTasksForTrigger(trigger);
 
         for (Task t : tasks) {
             TaskEvent action;
@@ -79,7 +81,7 @@ public class TaskTriggerHandler {
 
             for (EventParameter param : actionEventParameters) {
                 String key = param.getEventKey();
-                Object value = t.getActionInputFields().get(param.getEventKey());
+                Object value = replaceAll(t.getActionInputFields().get(key), trigger.getEventParameters(), triggerEvent);
 
                 if (StringUtils.isBlank(String.valueOf(value))) {
                     registerError(t, String.format("Not exist value for key: %s", key));
@@ -127,6 +129,19 @@ public class TaskTriggerHandler {
             taskService.save(task);
             LOG.info(String.format("Task %s disabled.", task));
         }
+    }
+
+    private String replaceAll(final String template, final List<EventParameter> triggerEventParameters, final MotechEvent triggerEvent) {
+        String replaced = template;
+
+        for (EventParameter parameter : triggerEventParameters) {
+            String key = parameter.getEventKey();
+            String value = (String) triggerEvent.getParameters().get(key);
+
+            replaced = replaced.replaceAll(String.format("{{%s}}", key), value);
+        }
+
+        return replaced;
     }
 
 }

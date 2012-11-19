@@ -71,9 +71,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public List<Task> findTasksForTrigger(final String subject) throws TriggerNotFoundException {
-        TaskEvent trigger = findTrigger(subject);
-
+    public List<Task> findTasksForTrigger(final TaskEvent trigger) {
         List<Task> tasks = allTasks.getAll();
         List<Task> result = new ArrayList<>(tasks.size());
 
@@ -88,7 +86,8 @@ public class TaskServiceImpl implements TaskService {
         return result;
     }
 
-    private TaskEvent findTrigger(String subject) throws TriggerNotFoundException {
+    @Override
+    public TaskEvent findTrigger(String subject) throws TriggerNotFoundException {
         List<Channel> channels = channelService.getAllChannels();
         TaskEvent trigger = null;
 

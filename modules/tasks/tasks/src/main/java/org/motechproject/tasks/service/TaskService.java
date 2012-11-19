@@ -15,6 +15,7 @@ public interface TaskService {
 
     List<Task> getAllTasks();
 
-    List<Task> findTasksForTrigger(String subject) throws TriggerNotFoundException;
+    List<Task> findTasksForTrigger(final TaskEvent trigger);
 
+    TaskEvent findTrigger(String subject) throws TriggerNotFoundException;
 }
