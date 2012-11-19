@@ -61,9 +61,6 @@
                             org.motechproject.server.messagecampaign.contract,
                             org.motechproject.server.messagecampaign.service
                         </Export-Package>
-                        <Bundle-Activator>
-                            org.motechproject.server.messagecampaign.osgi.Activator
-                        </Bundle-Activator>
                         <Import-Package>
                             net.sf.cglib.core,
                             net.sf.cglib.proxy,
@@ -76,7 +73,6 @@
                             org.quartz.simpl,
                             org.springframework.beans.factory.xml,
                             org.springframework.context.config,
-                            org.springframework.osgi.config,
                             org.springframework.scheduling.quartz,
                             *
                         </Import-Package>

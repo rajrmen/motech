@@ -82,11 +82,6 @@
             <version>${spring.integration.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.springframework.osgi</groupId>
-            <artifactId>org.springframework.osgi.web</artifactId>
-            <version>1.2.1</version>
-        </dependency>
-        <dependency>
             <groupId>javax.validation</groupId>
             <artifactId>com.springsource.javax.validation</artifactId>
             <version>1.0.0.GA</version>
@@ -202,11 +197,6 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.osgi</groupId>
-            <artifactId>org.springframework.osgi.core</artifactId>
-            <version>1.2.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.osgi</groupId>
             <artifactId>org.springframework.osgi.io</artifactId>
             <version>1.2.1</version>
         </dependency>
@@ -249,11 +239,6 @@
             <groupId>javax.transaction</groupId>
             <artifactId>com.springsource.javax.transaction</artifactId>
             <version>1.1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.osgi</groupId>
-            <artifactId>org.springframework.osgi.extender</artifactId>
-            <version>1.2.1</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -373,7 +358,7 @@
                             </defineStatements>
 
                             <requires>
-                                <require>tomcat7 &gt;= 7.0</require>
+                                <require>tomcat &gt;= 7.0</require>
                                 <require>jdk &gt;= 1.7</require>
                             </requires>
 

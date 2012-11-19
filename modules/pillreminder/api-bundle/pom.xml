@@ -59,9 +59,6 @@
                             org.motechproject.server.pillreminder.api.contract,
                             org.motechproject.server.pillreminder.api.service
                         </Export-Package>
-                        <Bundle-Activator>
-                            org.motechproject.server.pillreminder.api.osgi.Activator
-                        </Bundle-Activator>
                         <Import-Package>
                             org.ektorp.impl,
                             org.ektorp.spring,
@@ -72,11 +69,9 @@
                             org.motechproject.server.config.service,
                             org.springframework.beans.factory.xml,
                             org.springframework.context.config,
-                            org.springframework.osgi.config,
                             *
                         </Import-Package>
                         <Embed-Dependency>motech-pillreminder-api;inline=true</Embed-Dependency>
-                        <Embed-Transitive>true</Embed-Transitive>
                     </instructions>
                 </configuration>
             </plugin>
