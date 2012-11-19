@@ -3,17 +3,16 @@ package org.motechproject.tasks.domain;
 import org.ektorp.support.TypeDiscriminator;
 import org.motechproject.model.MotechBaseDataObject;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @TypeDiscriminator("doc.type == 'Channel'")
 public class Channel extends MotechBaseDataObject {
-    protected List<TaskEvent> actionTaskEvents = new ArrayList<>();
-    protected List<TaskEvent> triggerTaskEvents = new ArrayList<>();
-    protected String description;
-    protected String moduleName;
-    protected String moduleVersion;
-    protected String displayName;
+    private List<TaskEvent> actionTaskEvents;
+    private List<TaskEvent> triggerTaskEvents;
+    private String description;
+    private String displayName;
+    private String moduleName;
+    private String moduleVersion;
 
     public List<TaskEvent> getActionTaskEvents() {
         return actionTaskEvents;

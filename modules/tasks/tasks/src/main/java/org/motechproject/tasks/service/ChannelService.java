@@ -4,7 +4,6 @@ import org.motechproject.tasks.domain.Channel;
 
 import java.io.InputStream;
 import java.util.List;
-import java.util.Map;
 
 public interface ChannelService {
 
@@ -12,5 +11,5 @@ public interface ChannelService {
 
     List<Channel> getAllChannels();
 
-    Channel getChannel(String displayName);
+    Channel getChannel(String displayName, String moduleName, String moduleVersion);
 }

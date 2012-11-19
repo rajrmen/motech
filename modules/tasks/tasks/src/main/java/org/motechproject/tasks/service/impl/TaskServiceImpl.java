@@ -4,6 +4,8 @@ import org.motechproject.dao.BusinessIdNotUniqueException;
 import org.motechproject.tasks.domain.Channel;
 import org.motechproject.tasks.domain.Task;
 import org.motechproject.tasks.domain.TaskEvent;
+import org.motechproject.tasks.ex.ActionNotFoundException;
+import org.motechproject.tasks.ex.TriggerNotFoundException;
 import org.motechproject.tasks.repository.AllTasks;
 import org.motechproject.tasks.service.ChannelService;
 import org.motechproject.tasks.service.TaskService;
@@ -17,13 +19,18 @@ import java.util.List;
 
 @Service("taskService")
 public class TaskServiceImpl implements TaskService {
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
+    private static final Logger LOG = LoggerFactory.getLogger(TaskServiceImpl.class);
+
+    private static final int CHANNEL_NAME_IDX = 0;
+    private static final int MODULE_NAME_IDX = 1;
+    private static final int MODULE_VERSION_IDX = 2;
+    private static final int SUBJECT_IDX = 3;
 
     private AllTasks allTasks;
     private ChannelService channelService;
 
     @Autowired
-    public TaskServiceImpl(final AllTasks allTasks, final ChannelService channelService) {
+    public TaskServiceImpl(AllTasks allTasks, ChannelService channelService) {
         this.allTasks = allTasks;
         this.channelService = channelService;
     }
@@ -32,23 +39,27 @@ public class TaskServiceImpl implements TaskService {
     public void save(final Task task) {
         try {
             allTasks.addOrUpdate(task);
-            logger.info(String.format("Saved task: %s", task.getId()));
+            LOG.info(String.format("Saved task: %s", task.getId()));
         } catch (BusinessIdNotUniqueException e) {
-            logger.error(e.getMessage(), e);
+            LOG.error(e.getMessage(), e);
         }
     }
 
     @Override
-    public TaskEvent getActionEventFor(final Task task) {
+    public TaskEvent getActionEventFor(final Task task) throws ActionNotFoundException {
         String[] actionArray = task.getAction().split(":");
-        Channel channel = channelService.getChannel(actionArray[0]);
+        Channel channel = channelService.getChannel(actionArray[CHANNEL_NAME_IDX], actionArray[MODULE_NAME_IDX], actionArray[MODULE_VERSION_IDX]);
         TaskEvent event = null;
 
         for (TaskEvent action : channel.getActionTaskEvents()) {
-            if (action.getSubject().equalsIgnoreCase(actionArray[1])) {
+            if (action.getSubject().equalsIgnoreCase(actionArray[SUBJECT_IDX])) {
                 event = action;
                 break;
             }
+        }
+
+        if (event == null) {
+            throw new ActionNotFoundException(String.format("Cant find action for subject: %s", actionArray[SUBJECT_IDX]));
         }
 
         return event;
@@ -60,26 +71,24 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public List<Task> findTasksForTrigger(final String subject) {
+    public List<Task> findTasksForTrigger(final String subject) throws TriggerNotFoundException {
         TaskEvent trigger = findTrigger(subject);
 
         List<Task> tasks = allTasks.getAll();
         List<Task> result = new ArrayList<>(tasks.size());
 
-        if (trigger != null) {
-            for (Task t : tasks) {
-                String triggerKey = t.getTrigger().split(":")[0];
+        for (Task t : tasks) {
+            String triggerKey = t.getTrigger().split(":")[SUBJECT_IDX];
 
-                if (triggerKey.equalsIgnoreCase(trigger.getSubject())) {
-                    result.add(t);
-                }
+            if (triggerKey.equalsIgnoreCase(trigger.getSubject())) {
+                result.add(t);
             }
         }
 
         return result;
     }
 
-    private TaskEvent findTrigger(String subject) {
+    private TaskEvent findTrigger(String subject) throws TriggerNotFoundException {
         List<Channel> channels = channelService.getAllChannels();
         TaskEvent trigger = null;
 
@@ -94,6 +103,10 @@ public class TaskServiceImpl implements TaskService {
             if (trigger != null) {
                 break;
             }
+        }
+
+        if (trigger == null) {
+            throw new TriggerNotFoundException(String.format("Cant find trigger for subject: %s", subject));
         }
 
         return trigger;

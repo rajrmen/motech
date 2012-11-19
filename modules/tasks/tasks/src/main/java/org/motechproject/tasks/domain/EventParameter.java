@@ -1,8 +1,8 @@
 package org.motechproject.tasks.domain;
 
 public class EventParameter {
-    protected String eventKey;
-    protected String displayName;
+    private String displayName;
+    private String eventKey;
 
     public String getEventKey() {
         return eventKey;

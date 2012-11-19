@@ -2,7 +2,6 @@ package org.motechproject.tasks.repository;
 
 import org.ektorp.CouchDbConnector;
 import org.ektorp.support.View;
-import org.motechproject.dao.BusinessIdNotUniqueException;
 import org.motechproject.dao.MotechBaseRepository;
 import org.motechproject.tasks.domain.Task;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +16,7 @@ public class AllTasks extends MotechBaseRepository<Task> {
         super(Task.class, connector);
     }
 
-    public void addOrUpdate(Task task) throws BusinessIdNotUniqueException{
+    public void addOrUpdate(Task task) {
         addOrReplace(task, "id", task.getId());
     }
 

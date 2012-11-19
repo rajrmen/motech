@@ -1,5 +1,6 @@
 package org.motechproject.server.pillreminder.api.osgi;
 
+import org.motechproject.osgi.web.MotechOsgiWebApplicationContext;
 import org.motechproject.tasks.service.ChannelService;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
@@ -8,7 +9,6 @@ import org.osgi.service.http.HttpService;
 import org.osgi.util.tracker.ServiceTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.osgi.web.context.support.OsgiBundleXmlWebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
 
 import java.io.InputStream;
@@ -64,7 +64,7 @@ public class Activator implements BundleActivator {
         this.channelServiceTracker.close();
     }
 
-    public static class PillReminderApplicationContext extends OsgiBundleXmlWebApplicationContext {
+    public static class PillReminderApplicationContext extends MotechOsgiWebApplicationContext {
 
         public PillReminderApplicationContext() {
             super();

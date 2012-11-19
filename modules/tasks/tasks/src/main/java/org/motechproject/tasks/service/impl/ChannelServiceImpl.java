@@ -17,7 +17,7 @@ import java.util.List;
 
 @Service("channelService")
 public class ChannelServiceImpl implements ChannelService {
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
+    private static final Logger LOG = LoggerFactory.getLogger(ChannelServiceImpl.class);
 
     private AllChannels allChannels;
     private MotechJsonReader motechJsonReader;
@@ -30,14 +30,16 @@ public class ChannelServiceImpl implements ChannelService {
 
     @Override
     public void registerChannel(final InputStream stream) {
-        Type type = new TypeToken<Channel>() {}.getType();
+        Type type = new TypeToken<Channel>() {
+        }.getType();
         Channel channel = (Channel) motechJsonReader.readFromStream(stream, type);
+        LOG.debug("Read channel definition from json file.");
 
         try {
             allChannels.addOrUpdate(channel);
-            logger.info(String.format("Saved channel: %s", channel.getDisplayName()));
+            LOG.info(String.format("Saved channel: %s", channel.getDisplayName()));
         } catch (BusinessIdNotUniqueException e) {
-            logger.error(e.getMessage(), e);
+            LOG.error("Cant save channel: ", e);
         }
     }
 
@@ -47,7 +49,7 @@ public class ChannelServiceImpl implements ChannelService {
     }
 
     @Override
-    public Channel getChannel(final String displayName) {
-        return allChannels.ByDisplayName(displayName);
+    public Channel getChannel(final String displayName, final String moduleName, final String moduleVersion) {
+        return allChannels.byDisplayName(displayName, moduleName, moduleVersion);
     }
 }

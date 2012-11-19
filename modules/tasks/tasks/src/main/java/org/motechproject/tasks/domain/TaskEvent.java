@@ -3,10 +3,10 @@ package org.motechproject.tasks.domain;
 import java.util.List;
 
 public class TaskEvent {
-    protected List<EventParameter> eventParameters;
-    protected String description;
-    protected String subject;
-    protected String displayName;
+    private List<EventParameter> eventParameters;
+    private String description;
+    private String displayName;
+    private String subject;
 
     public List<EventParameter> getEventParameters() {
         return eventParameters;

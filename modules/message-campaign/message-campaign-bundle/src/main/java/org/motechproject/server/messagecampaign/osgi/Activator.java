@@ -31,6 +31,7 @@
  */
 package org.motechproject.server.messagecampaign.osgi;
 
+import org.motechproject.osgi.web.MotechOsgiWebApplicationContext;
 import org.motechproject.tasks.service.ChannelService;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
@@ -39,7 +40,6 @@ import org.osgi.service.http.HttpService;
 import org.osgi.util.tracker.ServiceTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.osgi.web.context.support.OsgiBundleXmlWebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
 
 import java.io.InputStream;
@@ -93,7 +93,7 @@ public class Activator implements BundleActivator {
         this.channelServiceTracker.close();
     }
 
-    public static class MessageCampaignApplicationContext extends OsgiBundleXmlWebApplicationContext {
+    public static class MessageCampaignApplicationContext extends MotechOsgiWebApplicationContext {
 
         public MessageCampaignApplicationContext() {
             super();
