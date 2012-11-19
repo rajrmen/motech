@@ -10,7 +10,12 @@ import org.motechproject.tasks.service.TaskService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+
+@Service("taskService")
 public class TaskServiceImpl implements TaskService {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -24,7 +29,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public void add(final Task task) {
+    public void save(final Task task) {
         try {
             allTasks.addOrUpdate(task);
             logger.info(String.format("Saved task: %s", task.getId()));
@@ -34,16 +39,14 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public TaskEvent getTriggerEventFor(final Task task) {
-        String[] triggerArray = task.getTrigger().split(":");
-        Channel channel = channelService.getChannel(triggerArray[0]);
+    public TaskEvent getActionEventFor(final Task task) {
+        String[] actionArray = task.getAction().split(":");
+        Channel channel = channelService.getChannel(actionArray[0]);
         TaskEvent event = null;
 
-        for (TaskEvent trigger : channel.getTriggerTaskEvents()) {
-            String[] eventKey = trigger.getEventKey().split(".");
-
-            if (eventKey[1].equalsIgnoreCase(triggerArray[1])) {
-                event = trigger;
+        for (TaskEvent action : channel.getActionTaskEvents()) {
+            if (action.getSubject().equalsIgnoreCase(actionArray[1])) {
+                event = action;
                 break;
             }
         }
@@ -52,21 +55,48 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public TaskEvent getActionEventFor(final Task task) {
-        String[] triggerArray = task.getTrigger().split(":");
-        Channel channel = channelService.getChannel(triggerArray[0]);
-        TaskEvent event = null;
+    public List<Task> getAllTasks() {
+        return allTasks.getAll();
+    }
 
-        for (TaskEvent action : channel.getActionTaskEvents()) {
-            String[] eventKey = action.getEventKey().split(".");
+    @Override
+    public List<Task> findTasksForTrigger(final String subject) {
+        TaskEvent trigger = findTrigger(subject);
 
-            if (eventKey[1].equalsIgnoreCase(triggerArray[1])) {
-                event = action;
+        List<Task> tasks = allTasks.getAll();
+        List<Task> result = new ArrayList<>(tasks.size());
+
+        if (trigger != null) {
+            for (Task t : tasks) {
+                String triggerKey = t.getTrigger().split(":")[0];
+
+                if (triggerKey.equalsIgnoreCase(trigger.getSubject())) {
+                    result.add(t);
+                }
+            }
+        }
+
+        return result;
+    }
+
+    private TaskEvent findTrigger(String subject) {
+        List<Channel> channels = channelService.getAllChannels();
+        TaskEvent trigger = null;
+
+        for (Channel c : channels) {
+            for (TaskEvent t : c.getTriggerTaskEvents()) {
+                if (t.getSubject().equalsIgnoreCase(subject)) {
+                    trigger = t;
+                    break;
+                }
+            }
+
+            if (trigger != null) {
                 break;
             }
         }
 
-        return event;
+        return trigger;
     }
 
 }

@@ -6,32 +6,32 @@
   "triggerTaskEvents" : [
     {
       "displayName" : "Send Message",
-      "eventKey" : "EventKeys.SEND_MESSAGE",
+      "subject" : "org.motechproject.server.messagecampaign.fired-campaign-message",
       "eventParameters" : [
         {
-          "eventKey" : "EventKeys.CAMPAIGN_NAME_KEY",
+          "eventKey" : "CampaignName",
           "displayName" : "Campaign name"
         },
         {
-          "eventKey" :  EventKeys.EXTERNAL_ID_KEY",
+          "eventKey" :  "ExternalID",
           "displayName" : "External ID"
         },
         {
-          "eventKey" :  EventKeys.MESSAGE_KEY",
+          "eventKey" :  "MessageKey",
           "displayName" : "Message key"
         }
       ]
     },
     {
       "displayName" : "Campaign completed",
-      "eventKey" : "EventKeys.CAMPAIGN_COMPLETED",
+      "subject" : "org.motechproject.server.messagecampaign.campaign-completed",
       "eventParameters" : [
         {
-          "eventKey" : "EventKeys.EXTERNAL_ID_KEY",
+          "eventKey" : "ExternalID",
           "displayName" : "External ID"
         },
         {
-          "eventKey" : "EventKeys.CAMPAIGN_NAME_KEY",
+          "eventKey" : "CampaignName",
           "displayName" : "Campaign name"
         }
       ]
@@ -40,32 +40,32 @@
   "actionTaskEvents" : [
     {
       "displayName" : "Send Message",
-      "eventKey" : "EventKeys.SEND_MESSAGE",
+      "subject" : "org.motechproject.server.messagecampaign.fired-campaign-message",
       "eventParameters" : [
         {
-          "eventKey" : "EventKeys.CAMPAIGN_NAME_KEY",
+          "eventKey" : "CampaignName",
           "displayName" : "Campaign name"
         },
         {
-          "eventKey" :  EventKeys.EXTERNAL_ID_KEY",
+          "eventKey" :  "ExternalID",
           "displayName" : "External ID"
         },
         {
-          "eventKey" :  EventKeys.MESSAGE_KEY",
+          "eventKey" :  "MessageKey",
           "displayName" : "Message key"
         }
       ]
     },
     {
       "displayName" : "Campaign completed",
-      "eventKey" : "EventKeys.CAMPAIGN_COMPLETED",
+      "subject" : "org.motechproject.server.messagecampaign.campaign-completed",
       "eventParameters" : [
         {
-          "eventKey" : "EventKeys.EXTERNAL_ID_KEY",
+          "eventKey" : "ExternalID",
           "displayName" : "External ID"
         },
         {
-          "eventKey" : "EventKeys.CAMPAIGN_NAME_KEY",
+          "eventKey" : "CampaignName",
           "displayName" : "Campaign name"
         }
       ]

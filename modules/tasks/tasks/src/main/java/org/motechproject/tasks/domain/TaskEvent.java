@@ -5,7 +5,7 @@ import java.util.List;
 public class TaskEvent {
     protected List<EventParameter> eventParameters;
     protected String description;
-    protected String eventKey;
+    protected String subject;
     protected String displayName;
 
     public List<EventParameter> getEventParameters() {
@@ -24,16 +24,12 @@ public class TaskEvent {
         this.description = description;
     }
 
-    public String getEventKey() {
-        return eventKey;
+    public String getSubject() {
+        return subject;
     }
 
-    public void setEventKey(String eventKey) {
-        if (eventKey == null || eventKey.split(".").length < 2) {
-            throw new IllegalStateException("EventKey property must have pattern: className.propertyName");
-        }
-
-        this.eventKey = eventKey;
+    public void setSubject(String subject) {
+        this.subject = subject;
     }
 
     public String getDisplayName() {
@@ -64,7 +60,7 @@ public class TaskEvent {
             return false;
         }
 
-        if (eventKey != null ? !eventKey.equals(taskEvent.eventKey) : taskEvent.eventKey != null) {
+        if (subject != null ? !subject.equals(taskEvent.subject) : taskEvent.subject != null) {
             return false;
         }
 
@@ -79,7 +75,7 @@ public class TaskEvent {
     public int hashCode() {
         int result = eventParameters != null ? eventParameters.hashCode() : 0;
         result = 31 * result + (description != null ? description.hashCode() : 0);
-        result = 31 * result + (eventKey != null ? eventKey.hashCode() : 0);
+        result = 31 * result + (subject != null ? subject.hashCode() : 0);
         result = 31 * result + (displayName != null ? displayName.hashCode() : 0);
 
         return result;
@@ -87,7 +83,7 @@ public class TaskEvent {
 
     @Override
     public String toString() {
-        return String.format("TaskEvent{eventParameters=%s, description='%s', eventKey='%s', displayName='%s'}",
-                eventParameters, description, eventKey, displayName);
+        return String.format("TaskEvent{eventParameters=%s, description='%s', subject='%s', displayName='%s'}",
+                eventParameters, description, subject, displayName);
     }
 }

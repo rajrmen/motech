@@ -5,18 +5,18 @@
   "triggerTaskEvents" : [
     {
       "displayName" : "Event subject",
-      "eventKey" : "EventKeys.PILLREMINDER_REMINDER_EVENT_SUBJECT",
+      "subject" : "org.motechproject.server.pillreminder.pill-reminder",
       "eventParameters" : [
         {
-          "eventKey" : "EventKeys.PILLREMINDER_TIMES_SENT",
+          "eventKey" : "times-reminders-sent",
           "displayName" : "Times sent"
         },
         {
-          "eventKey" :  EventKeys.PILLREMINDER_TOTAL_TIMES_TO_SEND",
+          "eventKey" :  "times-reminders-to-be-sent",
           "displayName" : "Total times to send"
         },
         {
-          "eventKey" :  EventKeys.PILLREMINDER_RETRY_INTERVAL",
+          "eventKey" :  "retry-interval",
           "displayName" : "Retry interval"
         }
       ]
@@ -25,18 +25,18 @@
   "actionTaskEvents" : [
     {
       "displayName" : "Event subject scheduler",
-      "eventKey" : "EventKeys.PILLREMINDER_REMINDER_EVENT_SUBJECT_SCHEDULER",
+      "subject" : "org.motechproject.server.pillreminder.scheduler-reminder",
       "eventParameters" : [
         {
-          "eventKey" : "EventKeys.PILLREMINDER_TIMES_SENT",
+          "eventKey" : "times-reminders-sent",
           "displayName" : "Times sent"
         },
         {
-          "eventKey" :  EventKeys.PILLREMINDER_TOTAL_TIMES_TO_SEND",
+          "eventKey" :  "times-reminders-to-be-sent",
           "displayName" : "Total times to send"
         },
         {
-          "eventKey" :  EventKeys.PILLREMINDER_RETRY_INTERVAL",
+          "eventKey" :  "retry-interval",
           "displayName" : "Retry interval"
         }
       ]

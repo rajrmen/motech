@@ -4,10 +4,9 @@ import org.motechproject.tasks.domain.Channel;
 
 import java.io.InputStream;
 import java.util.List;
+import java.util.Map;
 
 public interface ChannelService {
-
-    void registerChannel(Channel channel);
 
     void registerChannel(InputStream stream);
 

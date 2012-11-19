@@ -66,15 +66,19 @@ public class Task extends MotechBaseDataObject {
         if (!action.equals(task.action)) {
             return false;
         }
+
         if (!actionInputFields.equals(task.actionInputFields)) {
             return false;
         }
+
         if (additionalData != null ? !additionalData.equals(task.additionalData) : task.additionalData != null) {
             return false;
         }
+
         if (filter != null ? !filter.equals(task.filter) : task.filter != null) {
             return false;
         }
+
         if (!trigger.equals(task.trigger)) {
             return false;
         }

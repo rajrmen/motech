@@ -29,21 +29,16 @@ public class ChannelServiceImpl implements ChannelService {
     }
 
     @Override
-    public void registerChannel(final Channel channel) {
+    public void registerChannel(final InputStream stream) {
+        Type type = new TypeToken<Channel>() {}.getType();
+        Channel channel = (Channel) motechJsonReader.readFromStream(stream, type);
+
         try {
             allChannels.addOrUpdate(channel);
             logger.info(String.format("Saved channel: %s", channel.getDisplayName()));
         } catch (BusinessIdNotUniqueException e) {
             logger.error(e.getMessage(), e);
         }
-    }
-
-    @Override
-    public void registerChannel(final InputStream stream) {
-        Type type = new TypeToken<Channel>() {}.getType();
-        Channel channel = (Channel) motechJsonReader.readFromStream(stream, type);
-
-        registerChannel(channel);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package org.motechproject.tasks.repository;
 
 import org.ektorp.CouchDbConnector;
+import org.ektorp.support.View;
 import org.motechproject.dao.BusinessIdNotUniqueException;
 import org.motechproject.dao.MotechBaseRepository;
 import org.motechproject.tasks.domain.Task;
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 @Repository
+@View(name = "by_id", map = "function(doc) { if(doc.type === 'Channel') emit(doc._id); }")
 public class AllTasks extends MotechBaseRepository<Task> {
 
     @Autowired
