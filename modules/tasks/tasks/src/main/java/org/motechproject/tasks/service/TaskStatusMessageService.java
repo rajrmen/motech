@@ -6,6 +6,7 @@ import org.motechproject.tasks.domain.TaskStatusMessage;
 import java.util.List;
 
 public interface TaskStatusMessageService {
+
     void addError(Task task, String message);
 
     void addSuccess(Task task);

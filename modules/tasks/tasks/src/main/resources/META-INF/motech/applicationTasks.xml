@@ -10,6 +10,11 @@
     <context:component-scan base-package="org.motechproject.tasks"/>
 
     <bean id="tasksSettings" class="org.motechproject.server.config.SettingsFacade" autowire="byType">
+        <property name="configFiles">
+            <list>
+                <value>classpath:handler-settings.properties</value>
+            </list>
+        </property>
         <property name="moduleName" value="tasks"/>
     </bean>
 

@@ -6,6 +6,7 @@ import org.motechproject.event.listener.EventListener;
 import org.motechproject.event.listener.EventListenerRegistryService;
 import org.motechproject.event.listener.EventRelay;
 import org.motechproject.event.listener.annotations.MotechListenerEventProxy;
+import org.motechproject.server.config.SettingsFacade;
 import org.motechproject.tasks.domain.EventParameter;
 import org.motechproject.tasks.domain.Task;
 import org.motechproject.tasks.domain.TaskEvent;
@@ -24,12 +25,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.motechproject.tasks.service.TaskService.SUBJECT_IDX;
+import static org.motechproject.tasks.util.TaskUtil.getSubject;
 
 @Service
 public class TaskTriggerHandler {
     private static final String SERVICE_NAME = "taskTriggerHandler";
-    private static final Integer TASK_POSSIBLE_ERRORS = 5;
+    private static final String TASK_POSSIBLE_ERRORS_KEY = "task.possible.errors";
 
     private static final Logger LOG = LoggerFactory.getLogger(TaskTriggerHandler.class);
 
@@ -37,13 +38,17 @@ public class TaskTriggerHandler {
     private TaskStatusMessageService statusMessageService;
     private EventListenerRegistryService registryService;
     private EventRelay eventRelay;
+    private SettingsFacade settingsFacade;
 
     @Autowired
-    public TaskTriggerHandler(TaskService taskService, TaskStatusMessageService statusMessageService, EventListenerRegistryService registryService, EventRelay eventRelay) {
+    public TaskTriggerHandler(final TaskService taskService, final TaskStatusMessageService statusMessageService,
+                              final EventListenerRegistryService registryService, final EventRelay eventRelay,
+                              final SettingsFacade settingsFacade) {
         this.taskService = taskService;
         this.statusMessageService = statusMessageService;
         this.registryService = registryService;
         this.eventRelay = eventRelay;
+        this.settingsFacade = settingsFacade;
 
         registerHandler();
     }
@@ -101,25 +106,28 @@ public class TaskTriggerHandler {
         }
     }
 
+    public void registerHandlerFor(final String subject) {
+        Method method = ReflectionUtils.findMethod(AopUtils.getTargetClass(this), "handler");
+        EventListener proxy = new MotechListenerEventProxy(SERVICE_NAME, this, method);
+
+        try {
+            registryService.registerListener(proxy, subject);
+            LOG.info(String.format("Register TaskTriggerHandler for subject: '%s'", subject));
+        } catch (Exception e) {
+            LOG.error(String.format("Cant register TaskTriggerHandler for subject: %s", subject), e);
+        }
+    }
+
     private void registerHandler() {
         List<Task> tasks = taskService.getAllTasks();
         List<String> subjects = new ArrayList<>();
 
         for (Task t : tasks) {
-            String subject = t.getTrigger().split(":")[SUBJECT_IDX];
-            subjects.add(subject);
+            subjects.add(getSubject(t.getTrigger()));
         }
 
-        if (!subjects.isEmpty()) {
-            Method method = ReflectionUtils.findMethod(AopUtils.getTargetClass(this), "handler");
-            EventListener proxy = new MotechListenerEventProxy(SERVICE_NAME, this, method);
-
-            try {
-                registryService.registerListener(proxy, subjects);
-                LOG.info(String.format("Register TaskTriggerHandler for subjects: '%s'", subjects));
-            } catch (Exception e) {
-                LOG.error("Cant register TaskTriggerHandler", e);
-            }
+        for (String subject : subjects) {
+            registerHandlerFor(subject);
         }
     }
 
@@ -127,7 +135,10 @@ public class TaskTriggerHandler {
         statusMessageService.addError(task, message);
         LOG.error(message);
 
-        if (statusMessageService.errorsFromLastRun(task).size() >= TASK_POSSIBLE_ERRORS) {
+        int errorRunsCount = statusMessageService.errorsFromLastRun(task).size();
+        int possibleErrorRun = Integer.valueOf(settingsFacade.getProperty(TASK_POSSIBLE_ERRORS_KEY));
+
+        if (errorRunsCount >= possibleErrorRun) {
             task.setEnabled(false);
             taskService.save(task);
             statusMessageService.addWarning(task);
@@ -141,9 +152,8 @@ public class TaskTriggerHandler {
             for (EventParameter parameter : triggerEventParameters) {
                 String key = parameter.getEventKey();
                 String value = String.valueOf(triggerEvent.getParameters().get(key));
-                String regex = String.format("\\{\\{%s\\}\\}", key);
 
-                replaced = replaced.replaceAll(regex, value);
+                replaced = replaced.replaceAll(String.format("\\{\\{%s\\}\\}", key), value);
             }
         }
 

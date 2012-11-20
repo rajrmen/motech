@@ -9,6 +9,7 @@ import org.motechproject.event.MotechEvent;
 import org.motechproject.event.listener.EventListener;
 import org.motechproject.event.listener.EventListenerRegistryService;
 import org.motechproject.event.listener.EventRelay;
+import org.motechproject.server.config.SettingsFacade;
 import org.motechproject.tasks.domain.EventParameter;
 import org.motechproject.tasks.domain.Level;
 import org.motechproject.tasks.domain.Task;
@@ -28,7 +29,6 @@ import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.never;
@@ -50,6 +50,9 @@ public class TaskTriggerHandlerTest extends BaseUnitTest {
     EventListenerRegistryService registryService;
 
     @Mock
+    SettingsFacade settingsFacade;
+
+    @Mock
     EventRelay eventRelay;
 
     TaskTriggerHandler handler;
@@ -65,11 +68,12 @@ public class TaskTriggerHandlerTest extends BaseUnitTest {
         initTest();
 
         when(taskService.getAllTasks()).thenReturn(tasks);
+        when(settingsFacade.getProperty("task.possible.errors")).thenReturn("5");
 
-        handler = new TaskTriggerHandler(taskService, taskStatusMessageService, registryService, eventRelay);
+        handler = new TaskTriggerHandler(taskService, taskStatusMessageService, registryService, eventRelay, settingsFacade);
 
         verify(taskService).getAllTasks();
-        verify(registryService).registerListener(any(EventListener.class), anyListOf(String.class));
+        verify(registryService).registerListener(any(EventListener.class), anyString());
     }
 
     @Test

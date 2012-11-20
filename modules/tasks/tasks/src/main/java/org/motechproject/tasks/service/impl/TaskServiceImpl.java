@@ -17,6 +17,11 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.motechproject.tasks.util.TaskUtil.getChannelName;
+import static org.motechproject.tasks.util.TaskUtil.getModuleName;
+import static org.motechproject.tasks.util.TaskUtil.getModuleVersion;
+import static org.motechproject.tasks.util.TaskUtil.getSubject;
+
 @Service("taskService")
 public class TaskServiceImpl implements TaskService {
     private static final Logger LOG = LoggerFactory.getLogger(TaskServiceImpl.class);
@@ -54,13 +59,14 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public TaskEvent getActionEventFor(final Task task) throws ActionNotFoundException {
-        String[] actionArray = task.getAction().split(":");
-        Channel channel = channelService.getChannel(actionArray[CHANNEL_NAME_IDX], actionArray[MODULE_NAME_IDX], actionArray[MODULE_VERSION_IDX]);
+        Channel channel = channelService.getChannel(getChannelName(task.getAction()), getModuleName(task.getAction()),
+                getModuleVersion(task.getAction()));
+        String taskActionSubject = getSubject(task.getAction());
         TaskEvent event = null;
 
         if (channel.getActionTaskEvents() != null) {
             for (TaskEvent action : channel.getActionTaskEvents()) {
-                if (action.getSubject().equalsIgnoreCase(actionArray[SUBJECT_IDX])) {
+                if (action.getSubject().equalsIgnoreCase(taskActionSubject)) {
                     event = action;
                     break;
                 }
@@ -68,7 +74,7 @@ public class TaskServiceImpl implements TaskService {
         }
 
         if (event == null) {
-            throw new ActionNotFoundException(String.format("Cant find action for subject: %s", actionArray[SUBJECT_IDX]));
+            throw new ActionNotFoundException(String.format("Cant find action for subject: %s", taskActionSubject));
         }
 
         return event;
@@ -85,9 +91,7 @@ public class TaskServiceImpl implements TaskService {
         List<Task> result = new ArrayList<>(tasks.size());
 
         for (Task t : tasks) {
-            String triggerKey = t.getTrigger().split(":")[SUBJECT_IDX];
-
-            if (triggerKey.equalsIgnoreCase(trigger.getSubject())) {
+            if (getSubject(t.getTrigger()).equalsIgnoreCase(trigger.getSubject())) {
                 result.add(t);
             }
         }
