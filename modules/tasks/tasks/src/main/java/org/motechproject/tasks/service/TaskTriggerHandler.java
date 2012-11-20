@@ -32,14 +32,14 @@ public class TaskTriggerHandler {
     private static final Logger LOG = LoggerFactory.getLogger(TaskTriggerHandler.class);
 
     private TaskService taskService;
-    private TaskErrorService errorService;
+    private TaskStatusMessageService statusMessageService;
     private EventListenerRegistryService registryService;
     private EventRelay eventRelay;
 
     @Autowired
-    public TaskTriggerHandler(TaskService taskService, TaskErrorService errorService, EventListenerRegistryService registryService, EventRelay eventRelay) {
+    public TaskTriggerHandler(TaskService taskService, TaskStatusMessageService statusMessageService, EventListenerRegistryService registryService, EventRelay eventRelay) {
         this.taskService = taskService;
-        this.errorService = errorService;
+        this.statusMessageService = statusMessageService;
         this.registryService = registryService;
         this.eventRelay = eventRelay;
 
@@ -94,6 +94,7 @@ public class TaskTriggerHandler {
 
             if (send) {
                 eventRelay.sendEventMessage(new MotechEvent(subject, parameters));
+                statusMessageService.addSuccess(t);
             }
         }
     }
@@ -121,13 +122,13 @@ public class TaskTriggerHandler {
     }
 
     private void registerError(final Task task, final String message) {
-        errorService.addTaskError(task, message);
+        statusMessageService.addError(task, message);
         LOG.error(message);
 
-        if (errorService.getTaskErrors(task).size() >= TASK_POSSIBLE_ERRORS) {
+        if (statusMessageService.errorsFromLastRun(task).size() >= TASK_POSSIBLE_ERRORS) {
             task.setEnabled(false);
             taskService.save(task);
-            LOG.info(String.format("Task %s disabled.", task));
+            statusMessageService.addWarning(task);
         }
     }
 
