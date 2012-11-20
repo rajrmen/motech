@@ -24,6 +24,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.motechproject.tasks.service.TaskService.SUBJECT_IDX;
+
 @Service
 public class TaskTriggerHandler {
     private static final String SERVICE_NAME = "taskTriggerHandler";
@@ -52,7 +54,7 @@ public class TaskTriggerHandler {
         try {
             trigger = taskService.findTrigger(triggerEvent.getSubject());
         } catch (TriggerNotFoundException e) {
-            LOG.error(e.getMessage(), e);
+            LOG.error(e.getMessage());
             return;
         }
 
@@ -64,14 +66,14 @@ public class TaskTriggerHandler {
             try {
                 action = taskService.getActionEventFor(t);
             } catch (ActionNotFoundException e) {
-                registerError(t, String.format("Not found action for: %s", t.getAction()));
+                registerError(t, "error.actionNotFound");
                 continue;
             }
 
             String subject = action.getSubject();
 
             if (StringUtils.isBlank(subject)) {
-                registerError(t, String.format("Action '%s' does not have subject", action.getDisplayName()));
+                registerError(t, "error.actionWithoutSubject");
                 continue;
             }
 
@@ -81,10 +83,10 @@ public class TaskTriggerHandler {
 
             for (EventParameter param : actionEventParameters) {
                 String key = param.getEventKey();
-                Object value = replaceAll(t.getActionInputFields().get(key), trigger.getEventParameters(), triggerEvent);
+                String value = replaceAll(t.getActionInputFields().get(key), trigger.getEventParameters(), triggerEvent);
 
-                if (StringUtils.isBlank(String.valueOf(value))) {
-                    registerError(t, String.format("Not exist value for key: %s", key));
+                if (StringUtils.isBlank(value)) {
+                    registerError(t, "error.wrongActionInputFields");
                     send = false;
                     break;
                 }
@@ -104,7 +106,7 @@ public class TaskTriggerHandler {
         List<String> subjects = new ArrayList<>();
 
         for (Task t : tasks) {
-            String subject = t.getTrigger().split(":")[1];
+            String subject = t.getTrigger().split(":")[SUBJECT_IDX];
             subjects.add(subject);
         }
 
@@ -135,11 +137,14 @@ public class TaskTriggerHandler {
     private String replaceAll(final String template, final List<EventParameter> triggerEventParameters, final MotechEvent triggerEvent) {
         String replaced = template;
 
-        for (EventParameter parameter : triggerEventParameters) {
-            String key = parameter.getEventKey();
-            String value = (String) triggerEvent.getParameters().get(key);
+        if (replaced != null) {
+            for (EventParameter parameter : triggerEventParameters) {
+                String key = parameter.getEventKey();
+                String value = String.valueOf(triggerEvent.getParameters().get(key));
+                String regex = String.format("\\{\\{%s\\}\\}", key);
 
-            replaced = replaced.replaceAll(String.format("{{%s}}", key), value);
+                replaced = replaced.replaceAll(regex, value);
+            }
         }
 
         return replaced;

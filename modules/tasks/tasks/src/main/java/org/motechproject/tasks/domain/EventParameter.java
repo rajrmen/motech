@@ -4,6 +4,15 @@ public class EventParameter {
     private String displayName;
     private String eventKey;
 
+    public EventParameter() {
+        this(null, null);
+    }
+
+    public EventParameter(String displayName, String eventKey) {
+        this.displayName = displayName;
+        this.eventKey = eventKey;
+    }
+
     public String getEventKey() {
         return eventKey;
     }

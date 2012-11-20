@@ -5,9 +5,9 @@ import org.codehaus.jackson.annotate.JsonValue;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 public enum Level {
-    ERROR("error"),
-    WARNING("warning"),
-    SUCCESS("success");
+    ERROR("ERROR"),
+    WARNING("WARNING"),
+    SUCCESS("SUCCESS");
 
     private final String value;
 

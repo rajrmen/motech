@@ -30,8 +30,7 @@ public class ChannelServiceImpl implements ChannelService {
 
     @Override
     public void registerChannel(final InputStream stream) {
-        Type type = new TypeToken<Channel>() {
-        }.getType();
+        Type type = new TypeToken<Channel>() {}.getType();
         Channel channel = (Channel) motechJsonReader.readFromStream(stream, type);
         LOG.debug("Read channel definition from json file.");
 
@@ -50,6 +49,6 @@ public class ChannelServiceImpl implements ChannelService {
 
     @Override
     public Channel getChannel(final String displayName, final String moduleName, final String moduleVersion) {
-        return allChannels.byDisplayName(displayName, moduleName, moduleVersion);
+        return allChannels.byChannelInfo(displayName, moduleName, moduleVersion);
     }
 }

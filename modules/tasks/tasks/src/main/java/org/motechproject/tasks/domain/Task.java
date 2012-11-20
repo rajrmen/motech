@@ -7,12 +7,29 @@ import java.util.Map;
 
 @TypeDiscriminator("doc.type == 'Task'")
 public class Task extends MotechBaseDataObject {
-    private Boolean enabled;
+    private boolean enabled;
     private Map<String, String> actionInputFields;
     private Map<String, String> additionalData;
     private Map<String, String> filter;
     private String action;
     private String trigger;
+
+    public Task() {
+        this(null, null, null);
+    }
+
+    public Task(String trigger, String action, Map<String, String> actionInputFields) {
+        this(true, actionInputFields, null, null, action, trigger);
+    }
+
+    public Task(boolean enabled, Map<String, String> actionInputFields, Map<String, String> additionalData, Map<String, String> filter, String action, String trigger) {
+        this.enabled = enabled;
+        this.actionInputFields = actionInputFields;
+        this.additionalData = additionalData;
+        this.filter = filter;
+        this.action = action;
+        this.trigger = trigger;
+    }
 
     public String getTrigger() {
         return trigger;
@@ -38,11 +55,11 @@ public class Task extends MotechBaseDataObject {
         this.actionInputFields = actionInputFields;
     }
 
-    public Boolean getEnabled() {
+    public boolean isEnabled() {
         return enabled;
     }
 
-    public void setEnabled(final Boolean enabled) {
+    public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
 
@@ -74,6 +91,10 @@ public class Task extends MotechBaseDataObject {
 
         Task task = (Task) o;
 
+        if (enabled != task.enabled) {
+            return false;
+        }
+
         if (action != null ? !action.equals(task.action) : task.action != null) {
             return false;
         }
@@ -83,10 +104,6 @@ public class Task extends MotechBaseDataObject {
         }
 
         if (additionalData != null ? !additionalData.equals(task.additionalData) : task.additionalData != null) {
-            return false;
-        }
-
-        if (enabled != null ? !enabled.equals(task.enabled) : task.enabled != null) {
             return false;
         }
 
@@ -103,12 +120,12 @@ public class Task extends MotechBaseDataObject {
 
     @Override
     public int hashCode() {
-        int result = trigger != null ? trigger.hashCode() : 0;
-        result = 31 * result + (action != null ? action.hashCode() : 0);
+        int result = (enabled ? 1 : 0);
         result = 31 * result + (actionInputFields != null ? actionInputFields.hashCode() : 0);
-        result = 31 * result + (enabled != null ? enabled.hashCode() : 0);
         result = 31 * result + (additionalData != null ? additionalData.hashCode() : 0);
         result = 31 * result + (filter != null ? filter.hashCode() : 0);
+        result = 31 * result + (action != null ? action.hashCode() : 0);
+        result = 31 * result + (trigger != null ? trigger.hashCode() : 0);
 
         return result;
     }

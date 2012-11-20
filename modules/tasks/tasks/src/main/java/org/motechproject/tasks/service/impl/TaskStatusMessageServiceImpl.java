@@ -1,6 +1,5 @@
 package org.motechproject.tasks.service.impl;
 
-import org.joda.time.DateTime;
 import org.motechproject.tasks.domain.Level;
 import org.motechproject.tasks.domain.Task;
 import org.motechproject.tasks.domain.TaskStatusMessage;
@@ -28,12 +27,12 @@ public class TaskStatusMessageServiceImpl implements TaskStatusMessageService {
 
     @Override
     public void addSuccess(Task task) {
-        allTaskStatusMessages.add(new TaskStatusMessage("OK", task.getId(), Level.SUCCESS));
+        allTaskStatusMessages.add(new TaskStatusMessage("success.ok", task.getId(), Level.SUCCESS));
     }
 
     @Override
     public void addWarning(Task task) {
-        allTaskStatusMessages.add(new TaskStatusMessage("Task disabled", task.getId(), Level.WARNING));
+        allTaskStatusMessages.add(new TaskStatusMessage("warning.taskDisabled", task.getId(), Level.WARNING));
     }
 
     @Override

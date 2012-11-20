@@ -21,6 +21,13 @@
             <artifactId>motech-platform-server-config</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <!-- Test -->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>motech-testing-utils</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
     <build>
         <plugins>

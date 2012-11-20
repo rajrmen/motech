@@ -20,10 +20,23 @@ public class AllChannels extends MotechBaseRepository<Channel> {
     }
 
     public void addOrUpdate(Channel channel) {
-        addOrReplace(channel, "channelInfo", channel.getDisplayName());
+        Channel existingChannel = byChannelInfo(channel.getDisplayName(), channel.getModuleName(), channel.getModuleVersion());
+
+        if (existingChannel == null) {
+            add(channel);
+        } else {
+            existingChannel.setActionTaskEvents(channel.getActionTaskEvents());
+            existingChannel.setTriggerTaskEvents(channel.getTriggerTaskEvents());
+            existingChannel.setDescription(channel.getDescription());
+            existingChannel.setDisplayName(channel.getDisplayName());
+            existingChannel.setModuleName(channel.getModuleName());
+            existingChannel.setModuleVersion(channel.getModuleVersion());
+
+            update(existingChannel);
+        }
     }
 
-    public Channel byDisplayName(final String displayName, final String moduleName, final String moduleVersion) {
+    public Channel byChannelInfo(final String displayName, final String moduleName, final String moduleVersion) {
         List<Channel> channels = queryView("by_channelInfo", ComplexKey.of(displayName, moduleName, moduleVersion));
         return channels.isEmpty() ? null : channels.get(0);
     }

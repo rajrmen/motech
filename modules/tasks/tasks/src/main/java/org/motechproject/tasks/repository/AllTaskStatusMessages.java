@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-@View(name = "by_taskId", map = "function(doc) { if(doc.type === 'Channel') emit(doc.taskId); }")
+@View(name = "by_taskId", map = "function(doc) { if(doc.type === 'TaskStatusMessage') emit(doc.task); }")
 public class AllTaskStatusMessages extends MotechBaseRepository<TaskStatusMessage> {
 
     @Autowired

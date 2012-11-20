@@ -21,11 +21,6 @@ import java.util.List;
 public class TaskServiceImpl implements TaskService {
     private static final Logger LOG = LoggerFactory.getLogger(TaskServiceImpl.class);
 
-    private static final int CHANNEL_NAME_IDX = 0;
-    private static final int MODULE_NAME_IDX = 1;
-    private static final int MODULE_VERSION_IDX = 2;
-    private static final int SUBJECT_IDX = 3;
-
     private AllTasks allTasks;
     private ChannelService channelService;
 
@@ -37,6 +32,18 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public void save(final Task task) {
+        if (task.getAction().split(":").length != 4) {
+            throw new IllegalArgumentException("Task action must contains channel.displayName:channel.moduleName:channel.moduleVersion:action.subject");
+        }
+
+        if (task.getTrigger().split(":").length != 4) {
+            throw new IllegalArgumentException("Task trigger must contains channel.displayName:channel.moduleName:channel.moduleVersion:trigger.subject");
+        }
+
+        if (task.getActionInputFields() == null || task.getActionInputFields().isEmpty()) {
+            throw new IllegalArgumentException("Task must contains action input fields");
+        }
+
         try {
             allTasks.addOrUpdate(task);
             LOG.info(String.format("Saved task: %s", task.getId()));
@@ -51,10 +58,12 @@ public class TaskServiceImpl implements TaskService {
         Channel channel = channelService.getChannel(actionArray[CHANNEL_NAME_IDX], actionArray[MODULE_NAME_IDX], actionArray[MODULE_VERSION_IDX]);
         TaskEvent event = null;
 
-        for (TaskEvent action : channel.getActionTaskEvents()) {
-            if (action.getSubject().equalsIgnoreCase(actionArray[SUBJECT_IDX])) {
-                event = action;
-                break;
+        if (channel.getActionTaskEvents() != null) {
+            for (TaskEvent action : channel.getActionTaskEvents()) {
+                if (action.getSubject().equalsIgnoreCase(actionArray[SUBJECT_IDX])) {
+                    event = action;
+                    break;
+                }
             }
         }
 

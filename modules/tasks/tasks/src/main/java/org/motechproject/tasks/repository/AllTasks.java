@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 @Repository
-@View(name = "by_id", map = "function(doc) { if(doc.type === 'Channel') emit(doc._id); }")
+@View(name = "by_id", map = "function(doc) { if(doc.type === 'Task') emit(doc._id); }")
 public class AllTasks extends MotechBaseRepository<Task> {
 
     @Autowired
