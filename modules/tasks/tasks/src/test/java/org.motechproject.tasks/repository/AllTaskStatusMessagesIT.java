@@ -52,6 +52,8 @@ public class AllTaskStatusMessagesIT extends SpringIntegrationTest {
         assertEquals("12345", messages.get(1).getTask());
         assertEquals(SUCCESS.getValue(), messages.get(1).getMessage());
 
+        markForDeletion(messages);
+
         messages = allTaskStatusMessages.byTaskId("54321");
 
         assertEquals(1, messages.size());
@@ -60,7 +62,7 @@ public class AllTaskStatusMessagesIT extends SpringIntegrationTest {
         assertEquals("54321", messages.get(0).getTask());
         assertEquals(WARNING.getValue(), messages.get(0).getMessage());
 
-        markForDeletion(errorMsg, warningMsg, successMsg);
+        markForDeletion(messages);
     }
 
     @Override

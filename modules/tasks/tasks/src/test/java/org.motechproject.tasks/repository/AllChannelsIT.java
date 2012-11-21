@@ -45,7 +45,7 @@ public class AllChannelsIT extends SpringIntegrationTest {
 
         assertEquals(2, allChannels.getAll().size());
 
-        markForDeletion(channels);
+        markForDeletion(allChannels.getAll());
     }
 
     @Test
@@ -55,12 +55,16 @@ public class AllChannelsIT extends SpringIntegrationTest {
         allChannels.addOrUpdate(channels.get(0));
         allChannels.addOrUpdate(channels.get(1));
 
-        Channel channel = channels.get(0);
+        List<Channel> channelList = allChannels.getAll();
+
+        assertEquals(2, channelList.size());
+
+        Channel channel = channelList.get(0);
         Channel actual = allChannels.byChannelInfo(channel.getDisplayName(), channel.getModuleName(), channel.getModuleVersion());
 
         assertEquals(channel, actual);
 
-        markForDeletion(channels);
+        markForDeletion(channelList);
     }
 
     private List<Channel> loadChannels() {

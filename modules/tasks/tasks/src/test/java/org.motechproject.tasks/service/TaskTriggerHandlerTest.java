@@ -17,7 +17,6 @@ import org.motechproject.tasks.domain.TaskEvent;
 import org.motechproject.tasks.domain.TaskStatusMessage;
 import org.motechproject.tasks.ex.ActionNotFoundException;
 import org.motechproject.tasks.ex.TriggerNotFoundException;
-import org.motechproject.testing.utils.BaseUnitTest;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,7 +35,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
-public class TaskTriggerHandlerTest extends BaseUnitTest {
+public class TaskTriggerHandlerTest {
     private static final String TRIGGER_SUBJECT = "APPOINTMENT_CREATE_EVENT_SUBJECT";
     private static final String ACTION_SUBJECT = "SEND_SMS";
 
@@ -203,8 +202,8 @@ public class TaskTriggerHandlerTest extends BaseUnitTest {
     private MotechEvent createEvent() {
         Map<String, Object> param = new HashMap<>(4);
         param.put("externalId", 123456789);
-        param.put("startDate", LocalDate.now());
-        param.put("endDate", LocalDate.now().plusDays(9));
+        param.put("startDate", new LocalDate(2012, 11, 20));
+        param.put("endDate", new LocalDate(2012, 11, 29));
         param.put("facilityId", 987654321);
 
         return new MotechEvent(TRIGGER_SUBJECT, param);
@@ -212,7 +211,6 @@ public class TaskTriggerHandlerTest extends BaseUnitTest {
 
     private void initTest() throws Exception {
         initMocks(this);
-        mockCurrentDate(new LocalDate(2012, 11, 20));
 
         tasks = new ArrayList<>();
 

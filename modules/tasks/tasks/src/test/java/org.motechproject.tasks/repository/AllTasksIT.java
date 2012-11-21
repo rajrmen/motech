@@ -49,7 +49,7 @@ public class AllTasksIT extends SpringIntegrationTest {
 
         assertEquals(expected, actual);
 
-        markForDeletion(expected);
+        markForDeletion(actual);
     }
 
     @Override
