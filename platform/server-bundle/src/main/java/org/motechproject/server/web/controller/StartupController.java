@@ -33,7 +33,7 @@ import java.util.Properties;
 public class StartupController {
     private static final String START_PARAM = "START";
 
-    private static final String ADMIN_SYMBOLIC_NAME = "org.motechproject.motech-admin-bundle";
+    private static final String ADMIN_SYMBOLIC_NAME = "org.motechproject.motech-admin-bundle"; // NOPMD - unused, until todos in submitForm() are done
 
     private StartupManager startupManager = StartupManager.getInstance();
 
@@ -97,6 +97,7 @@ public class StartupController {
             if (startupManager.canLaunchBundles()) {
                 if (StringUtils.isNotBlank(start)) {
                     //TODO : call start  OsgiListener.getOsgiService().startMotechBundles();
+                    //TODO: Check if we can send an event instead of talking to web loader directly
                 } else {
                     //TODO OsgiListener.getOsgiService().startBundle(ADMIN_SYMBOLIC_NAME);
                 }

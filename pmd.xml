@@ -14,9 +14,17 @@
         <priority>2</priority>
     </rule>
 
+    <rule ref="rulesets/codesize.xml/NcssMethodCount">
+        <properties>
+            <property name="minimum" value="50"/>
+        </properties>
+    </rule>
+
     <rule ref="rulesets/coupling.xml/LooseCoupling"/>
 
     <rule ref="rulesets/design.xml/SimplifyConditional"/>
+
+    <rule ref="rulesets/logging-java.xml/AvoidPrintStackTrace"/>
 
     <rule ref="rulesets/migrating.xml/IntegerInstantiation"/>
 
@@ -25,4 +33,5 @@
     <rule ref="rulesets/strings.xml/UseIndexOfChar"/>
 
     <rule ref="rulesets/unusedcode.xml/UnusedLocalVariable"/>
+    <rule ref="rulesets/unusedcode.xml/UnusedPrivateField"/>
 </ruleset>

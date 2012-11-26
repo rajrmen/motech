@@ -22,7 +22,7 @@ import static org.motechproject.sms.api.DeliveryStatus.INPROGRESS;
 import static org.motechproject.sms.api.DeliveryStatus.KEEPTRYING;
 import static org.motechproject.sms.api.constants.EventDataKeys.MESSAGE;
 import static org.motechproject.sms.smpp.constants.EventDataKeys.RECIPIENT;
-import static org.motechproject.util.DateUtil.newDateTime;
+import static org.motechproject.commons.date.util.DateUtil.newDateTime;
 
 @Component
 public class OutboundMessageNotification implements IOutboundMessageNotification {
@@ -34,11 +34,8 @@ public class OutboundMessageNotification implements IOutboundMessageNotification
     @Autowired
     private AllOutboundSMS allOutboundSMS;
 
-    private SettingsFacade settings;
-
     @Autowired
     public OutboundMessageNotification(EventRelay eventRelay, @Qualifier("smsApiSettings") SettingsFacade settings) {
-        this.settings = settings;
         this.eventRelay = eventRelay;
         String maxRetriesAsString = settings.getProperty(SmsProperties.MAX_RETRIES);
         this.maxRetries = maxRetriesAsString != null? Integer.parseInt(maxRetriesAsString) : 0;
