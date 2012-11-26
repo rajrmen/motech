@@ -4,15 +4,13 @@ import org.apache.commons.lang.StringUtils;
 import org.fcitmuk.epihandy.DeserializationListenerAdapter;
 import org.fcitmuk.epihandy.FormData;
 import org.fcitmuk.epihandy.StudyData;
-import org.motechproject.MotechException;
+import org.motechproject.commons.api.MotechException;
 import org.motechproject.mobileforms.api.domain.Form;
 import org.motechproject.mobileforms.api.domain.FormBean;
 import org.motechproject.mobileforms.api.parser.FormDataParser;
 import org.motechproject.mobileforms.api.repository.AllMobileForms;
 import org.motechproject.mobileforms.api.utils.MapToBeanConvertor;
 import org.motechproject.mobileforms.api.vo.Study;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,8 +18,6 @@ import java.util.List;
 import java.util.Map;
 
 public class FormParser extends DeserializationListenerAdapter {
-    private final Logger log = LoggerFactory.getLogger(FormParser.class);
-
     private List<Study> studies;
 
     private FormDataParser parser;

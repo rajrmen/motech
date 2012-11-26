@@ -17,7 +17,6 @@
         <modules.root.dir>${basedir}/../../..</modules.root.dir>
     </properties>
     <dependencies>
-        <!-- MOTECH dependencies -->
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>motech-message-campaign</artifactId>
@@ -32,73 +31,35 @@
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>com.springsource.javax.servlet</artifactId>
-            <version>2.5.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.osgi</groupId>
-            <artifactId>org.springframework.osgi.web</artifactId>
-            <version>1.2.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.osgi</groupId>
-            <artifactId>org.osgi.compendium</artifactId>
-            <version>4.2.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.osgi</groupId>
-            <artifactId>org.osgi.core</artifactId>
-            <version>4.2.0</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>org.springframework.web.servlet</artifactId>
-            <version>${spring.version}</version>
         </dependency>
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>com.springsource.org.json</artifactId>
-            <version>1.0.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>org.springframework.beans</artifactId>
-            <version>${spring.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>org.springframework.jms</artifactId>
-            <version>${spring.version}</version>
             <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.googlecode.lambdaj</groupId>
-            <artifactId>org.motechproject.com.googlecode.lambdaj</artifactId>
-            <version>2.3.3</version>
         </dependency>
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>org.motechproject.com.google.code.gson</artifactId>
-            <version>1.7.1</version>
         </dependency>
         <dependency>
             <groupId>org.codehaus.jackson</groupId>
             <artifactId>org.motechproject.org.codehaus.jackson</artifactId>
-            <version>1.9.7</version>
         </dependency>
         <dependency>
             <groupId>org.quartz-scheduler</groupId>
             <artifactId>org.motechproject.org.quartz-scheduler</artifactId>
-            <version>2.1.5</version>
         </dependency>
         <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>1.4</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.osgi</groupId>
-            <artifactId>org.springframework.osgi.core</artifactId>
-            <version>1.2.1</version>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>com.springsource.org.apache.commons.io</artifactId>
         </dependency>
     </dependencies>
     <build>
@@ -115,10 +76,9 @@
                             org.motechproject.server.messagecampaign.contract,
                             org.motechproject.server.messagecampaign.service
                         </Export-Package>
-                        <Bundle-Activator>
-                            org.motechproject.server.messagecampaign.osgi.Activator
-                        </Bundle-Activator>
                         <Import-Package>
+                            net.sf.cglib.core,
+                            net.sf.cglib.proxy,
                             org.ektorp.impl,
                             org.ektorp.spring,
                             org.motechproject.event,
@@ -128,10 +88,7 @@
                             org.quartz.simpl,
                             org.springframework.beans.factory.xml,
                             org.springframework.context.config,
-                            org.springframework.osgi.config,
                             org.springframework.scheduling.quartz,
-                            net.sf.cglib.core,
-                            net.sf.cglib.proxy,
                             *
                         </Import-Package>
                         <Embed-Dependency>motech-message-campaign</Embed-Dependency>

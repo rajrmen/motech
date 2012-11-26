@@ -4,7 +4,6 @@ import org.apache.commons.lang.StringUtils;
 import org.motechproject.server.config.service.PlatformSettingsService;
 import org.motechproject.server.config.settings.ConfigFileSettings;
 import org.motechproject.server.config.settings.MotechSettings;
-import org.motechproject.server.osgi.OsgiListener;
 import org.motechproject.server.startup.StartupManager;
 import org.motechproject.server.ui.LocaleSettings;
 import org.motechproject.server.web.form.StartupForm;
@@ -26,6 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Properties;
 
 
@@ -33,7 +33,7 @@ import java.util.Properties;
 public class StartupController {
     private static final String START_PARAM = "START";
 
-    private static final String ADMIN_SYMBOLIC_NAME = "org.motechproject.motech-admin-bundle";
+    private static final String ADMIN_SYMBOLIC_NAME = "org.motechproject.motech-admin-bundle"; // NOPMD - unused, until todos in submitForm() are done
 
     private StartupManager startupManager = StartupManager.getInstance();
 
@@ -55,13 +55,15 @@ public class StartupController {
         if (startupManager.canLaunchBundles()) {
             view.setViewName("redirect:home");
         } else {
+            Locale userLocale = localeSettings.getUserLocale(request);
 
             StartupForm startupSettings = new StartupForm();
-            startupSettings.setLanguage(localeSettings.getUserLocale(request).getLanguage());
+            startupSettings.setLanguage(userLocale.getLanguage());
 
             view.addObject("suggestions", createSuggestions());
             view.addObject("startupSettings", startupSettings);
             view.addObject("languages", localeSettings.getAvailableLanguages().keySet());
+            view.addObject("pageLang", userLocale);
         }
 
         return view;
@@ -94,9 +96,10 @@ public class StartupController {
 
             if (startupManager.canLaunchBundles()) {
                 if (StringUtils.isNotBlank(start)) {
-                    OsgiListener.getOsgiService().startMotechBundles();
+                    //TODO : call start  OsgiListener.getOsgiService().startMotechBundles();
+                    //TODO: Check if we can send an event instead of talking to web loader directly
                 } else {
-                    OsgiListener.getOsgiService().startBundle(ADMIN_SYMBOLIC_NAME);
+                    //TODO OsgiListener.getOsgiService().startBundle(ADMIN_SYMBOLIC_NAME);
                 }
             }
         }

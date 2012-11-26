@@ -15,7 +15,7 @@ import org.motechproject.mrs.model.MRSPerson;
 import org.motechproject.mrs.model.MRSUser;
 import org.motechproject.mrs.services.MRSEncounterAdapter;
 import org.motechproject.openmrs.OpenMRSIntegrationTestBase;
-import org.motechproject.util.DateUtil;
+import org.motechproject.commons.date.util.DateUtil;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.ObsService;
@@ -35,14 +35,14 @@ import static ch.lambdaj.Lambda.on;
 import static java.util.Arrays.asList;
 import static junit.framework.Assert.assertEquals;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.isIn;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.motechproject.openmrs.TestIdGenerator.newGUID;
-import static org.motechproject.util.DateUtil.newDate;
+import static org.motechproject.commons.date.util.DateUtil.newDate;
 
 public class OpenMRSEncounterAdapterIT extends OpenMRSIntegrationTestBase {
 

@@ -3,8 +3,8 @@ package org.motechproject.server.alerts.domain;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.ektorp.support.TypeDiscriminator;
 import org.joda.time.DateTime;
-import org.motechproject.model.MotechBaseDataObject;
-import org.motechproject.util.DateUtil;
+import org.motechproject.commons.couchdb.model.MotechBaseDataObject;
+import org.motechproject.commons.date.util.DateUtil;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -125,7 +125,7 @@ public class Alert extends MotechBaseDataObject implements Comparable<Alert> {
 
     @Override
     public int compareTo(Alert o) {
-        return new Integer(this.priority).compareTo(o.priority);
+        return Integer.valueOf(this.priority).compareTo(o.priority);
     }
 
     public Map<String, String> getData() {

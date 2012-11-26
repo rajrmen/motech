@@ -3,6 +3,7 @@ package org.motechproject.decisiontree.server.service;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.motechproject.decisiontree.core.DecisionTreeService;
 import org.motechproject.decisiontree.core.EndOfCallEvent;
 import org.motechproject.decisiontree.core.model.CallStatus;
 import org.motechproject.decisiontree.server.domain.FlowSessionRecord;
@@ -51,6 +52,16 @@ public class DecisionTreeServerImplTest {
 
         decisionTreeServer.getResponse("123a", "1234567890", "freeivr", "sometree", CallStatus.Disconnect.toString(), "en");
 
+        verify(eventRelay).sendEventMessage(new EndOfCallEvent(flowSession.getCallDetailRecord()));
+    }
+
+    @Test
+    public void shouldRaiseEndOfCallEventForMissedCalls() {
+        FlowSessionRecord flowSession = new FlowSessionRecord("123a", "1234567890");
+        when(flowSessionService.getSession("123a")).thenReturn(flowSession);
+
+        decisionTreeServer.handleMissedCall(flowSession.getSessionId());
+        verify(flowSessionService).updateSession(flowSession);
         verify(eventRelay).sendEventMessage(new EndOfCallEvent(flowSession.getCallDetailRecord()));
     }
 

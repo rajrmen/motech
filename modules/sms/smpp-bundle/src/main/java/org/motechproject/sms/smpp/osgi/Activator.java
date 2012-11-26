@@ -1,5 +1,6 @@
 package org.motechproject.sms.smpp.osgi;
 
+import org.motechproject.osgi.web.MotechOsgiWebApplicationContext;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
@@ -7,7 +8,6 @@ import org.osgi.service.http.HttpService;
 import org.osgi.util.tracker.ServiceTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.osgi.web.context.support.OsgiBundleXmlWebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
 
 public class Activator implements BundleActivator {
@@ -51,15 +51,6 @@ public class Activator implements BundleActivator {
         }
     }
 
-    public static class SmsSmppApplicationContext extends OsgiBundleXmlWebApplicationContext {
-
-        public SmsSmppApplicationContext() {
-            super();
-            setBundleContext(Activator.bundleContext);
-        }
-
-    }
-
     private void serviceAdded(HttpService service) {
         try {
             DispatcherServlet dispatcherServlet = new DispatcherServlet();
@@ -82,5 +73,12 @@ public class Activator implements BundleActivator {
     private void serviceRemoved(HttpService service) {
         service.unregister(SERVLET_URL_MAPPING);
         logger.debug("Servlet unregistered");
+    }
+
+    public static class SmsSmppApplicationContext extends MotechOsgiWebApplicationContext{
+        public SmsSmppApplicationContext() {
+            super();
+            setBundleContext(Activator.bundleContext);
+        }
     }
 }

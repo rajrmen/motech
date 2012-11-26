@@ -8,7 +8,7 @@ import org.junit.runner.RunWith;
 import org.motechproject.server.alerts.domain.Alert;
 import org.motechproject.server.alerts.domain.AlertStatus;
 import org.motechproject.server.alerts.domain.AlertType;
-import org.motechproject.util.DateUtil;
+import org.motechproject.commons.date.util.DateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -24,7 +24,7 @@ import static ch.lambdaj.Lambda.on;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"/META-INF/motech/applicationContextAlert.xml"})
+@ContextConfiguration(locations = {"classpath*:/META-INF/motech/*.xml"})
 public class AllAlertsIT {
 
     @Autowired

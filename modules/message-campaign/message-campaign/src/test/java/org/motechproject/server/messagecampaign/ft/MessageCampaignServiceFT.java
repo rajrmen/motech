@@ -20,7 +20,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import static java.util.Arrays.asList;
-import static org.motechproject.util.DateUtil.newDateTime;
+import static org.motechproject.commons.date.util.DateUtil.newDateTime;
 
 @ContextConfiguration(locations = "classpath:message_campaign_service_ft/context.xml")
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -46,7 +46,7 @@ public class MessageCampaignServiceFT {
     @Before
     public void setup() {
         JvmFakeTime.load();
-        System.startFakingTime();
+        //System.startFakingTime();
         scheduler = schedulerFactoryBean.getScheduler();
     }
 

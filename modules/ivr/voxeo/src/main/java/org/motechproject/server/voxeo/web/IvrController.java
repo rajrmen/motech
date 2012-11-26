@@ -1,7 +1,7 @@
 package org.motechproject.server.voxeo.web;
 
 import org.ektorp.UpdateConflictException;
-import org.motechproject.decisiontree.server.domain.CallDetailRecord;
+import org.motechproject.ivr.model.CallDetailRecord;
 import org.motechproject.event.MotechEvent;
 import org.motechproject.event.listener.EventRelay;
 import org.motechproject.ivr.event.IVREventDelegate;
@@ -130,9 +130,6 @@ public class IvrController extends MultiActionController {
     public ModelAndView outgoing(HttpServletRequest request, HttpServletResponse response) {
         response.setContentType("text/plain");
         response.setCharacterEncoding("UTF-8");
-
-        ModelAndView mav = new ModelAndView();
-
 
         String sessionId = request.getParameter("session.id");
         String externalId = request.getParameter("externalId");

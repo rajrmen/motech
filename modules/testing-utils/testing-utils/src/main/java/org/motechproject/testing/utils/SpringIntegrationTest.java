@@ -5,7 +5,7 @@ import org.ektorp.CouchDbConnector;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.runner.RunWith;
-import org.motechproject.util.DateUtil;
+import org.motechproject.commons.date.util.DateUtil;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.ArrayList;
@@ -16,7 +16,7 @@ public abstract class SpringIntegrationTest extends BaseUnitTest {
 
     private CouchDbConnector dbConnector;
 
-    private ArrayList<BulkDeleteDocument> toDelete;
+    private List<BulkDeleteDocument> toDelete;
 
     @Before
     public void before() {

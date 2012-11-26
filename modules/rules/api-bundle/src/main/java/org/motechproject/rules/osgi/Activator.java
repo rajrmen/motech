@@ -1,5 +1,7 @@
 package org.motechproject.rules.osgi;
 
+import org.motechproject.osgi.web.MotechOsgiWebApplicationContext;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
@@ -7,13 +9,12 @@ import org.osgi.service.http.HttpService;
 import org.osgi.util.tracker.ServiceTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.osgi.web.context.support.OsgiBundleXmlWebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
 
 
 public class Activator implements BundleActivator {
     private static Logger logger = LoggerFactory.getLogger(Activator.class);
-    private static final String CONTEXT_CONFIG_LOCATION = "applicationRulesBundle.xml";
+    private static final String CONTEXT_CONFIG_LOCATION = "META-INF/osgi/applicationRulesBundle.xml";
     private static final String SERVLET_URL_MAPPING = "/rules";
     private ServiceTracker tracker;
     private ServiceReference httpService;
@@ -23,6 +24,8 @@ public class Activator implements BundleActivator {
     @Override
     public void start(BundleContext context) throws Exception {
         bundleContext = context;
+
+
 
         this.tracker = new ServiceTracker(context,
                 HttpService.class.getName(), null) {
@@ -41,6 +44,8 @@ public class Activator implements BundleActivator {
             }
         };
         this.tracker.open();
+
+        new RuleBundleLoader(bundleContext, Bundle.STARTING, null).open();
     }
 
     public void stop(BundleContext context) throws Exception {
@@ -51,7 +56,7 @@ public class Activator implements BundleActivator {
         }
     }
 
-    public static class RulesApplicationContext extends OsgiBundleXmlWebApplicationContext {
+    public static class RulesApplicationContext extends MotechOsgiWebApplicationContext {
 
         public RulesApplicationContext() {
             super();

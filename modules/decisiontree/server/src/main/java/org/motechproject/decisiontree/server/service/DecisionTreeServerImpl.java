@@ -1,6 +1,7 @@
 package org.motechproject.decisiontree.server.service;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.motechproject.decisiontree.core.DecisionTreeService;
 import org.motechproject.decisiontree.core.EndOfCallEvent;
 import org.motechproject.decisiontree.core.FlowSession;
 import org.motechproject.decisiontree.core.TreeNodeLocator;
@@ -25,7 +26,7 @@ import java.util.Map;
 
 import static java.lang.String.format;
 import static org.apache.commons.lang.StringUtils.isBlank;
-import static org.motechproject.util.DateUtil.now;
+import static org.motechproject.commons.date.util.DateUtil.now;
 
 @Service
 public class DecisionTreeServerImpl implements org.motechproject.decisiontree.server.service.DecisionTreeServer {
@@ -75,6 +76,14 @@ public class DecisionTreeServerImpl implements org.motechproject.decisiontree.se
             view = getErrorModelAndView(Error.UNEXPECTED_EXCEPTION, session, provider);
         }
         return view;
+    }
+
+    @Override
+    public void handleMissedCall(String flowSessionId) {
+        FlowSession session = flowSessionService.getSession(flowSessionId);
+        CallDetailRecord callDetailRecord = ((FlowSessionRecord) session).getCallDetailRecord().setEndDate(now());
+        flowSessionService.updateSession(session);
+        eventRelay.sendEventMessage(new EndOfCallEvent(callDetailRecord));
     }
 
     private ModelAndView getModelViewForNextNode(FlowSession session, String provider, String tree, String transitionKey) {

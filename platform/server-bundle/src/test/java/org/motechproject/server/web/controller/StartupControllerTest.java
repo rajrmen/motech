@@ -8,8 +8,6 @@ import org.mockito.Mock;
 import org.motechproject.server.config.service.PlatformSettingsService;
 import org.motechproject.server.config.settings.ConfigFileSettings;
 import org.motechproject.server.config.settings.MotechSettings;
-import org.motechproject.server.osgi.OsgiFrameworkService;
-import org.motechproject.server.osgi.OsgiListener;
 import org.motechproject.server.startup.StartupManager;
 import org.motechproject.server.ui.LocaleSettings;
 import org.motechproject.server.web.form.StartupForm;
@@ -17,6 +15,7 @@ import org.motechproject.server.web.form.StartupSuggestionsForm;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -36,11 +35,12 @@ import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({StartupManager.class, OsgiListener.class})
+@PrepareForTest({StartupManager.class})
 public class StartupControllerTest {
     private static final String SUGGESTIONS_KEY = "suggestions";
     private static final String STARTUP_SETTINGS_KEY = "startupSettings";
     private static final String LANGUAGES_KEY = "languages";
+    private static final String PAGE_LANG_KEY = "pageLang";
 
     @Mock
     private StartupManager startupManager;
@@ -63,18 +63,13 @@ public class StartupControllerTest {
     @Mock
     private ConfigFileSettings motechSettings;
 
-    @Mock
-    private OsgiFrameworkService osgiFrameworkService;
-
     @Before
     public void setUp() {
         PowerMockito.mockStatic(StartupManager.class);
-        PowerMockito.mockStatic(OsgiListener.class);
 
         initMocks(this);
 
         when(StartupManager.getInstance()).thenReturn(startupManager);
-        when(OsgiListener.getOsgiService()).thenReturn(osgiFrameworkService);
     }
 
     @Test
@@ -107,10 +102,7 @@ public class StartupControllerTest {
         verify(localeSettings).getUserLocale(httpServletRequest);
 
         assertEquals("startup", result.getViewName());
-        assertEquals(3, result.getModelMap().size());
-        assertNotNull(result.getModelMap().get(SUGGESTIONS_KEY));
-        assertNotNull(result.getModelMap().get(STARTUP_SETTINGS_KEY));
-        assertNotNull(result.getModelMap().get(LANGUAGES_KEY));
+        assertModelMap(result.getModelMap(), SUGGESTIONS_KEY, STARTUP_SETTINGS_KEY, LANGUAGES_KEY, PAGE_LANG_KEY);
 
         StartupSuggestionsForm startupSuggestionsForm = (StartupSuggestionsForm) result.getModelMap().get(SUGGESTIONS_KEY);
 
@@ -148,8 +140,15 @@ public class StartupControllerTest {
         verify(platformSettingsService).savePlatformSettings(any(Properties.class));
         verify(startupManager).startup();
         verify(startupManager).canLaunchBundles();
-        verify(osgiFrameworkService).startBundle(anyString());
 
         assertEquals("redirect:home", result.getViewName());
+    }
+
+    private void assertModelMap(final ModelMap modelMap, String... keys) {
+        assertEquals(keys.length, modelMap.size());
+
+        for (String k : keys) {
+            assertNotNull(modelMap.get(k));
+        }
     }
 }

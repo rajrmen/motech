@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <artifactId>motech</artifactId>
@@ -19,755 +20,98 @@
             <artifactId>motech-platform-server-api</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <!-- web listener and proxy -->
         <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>servlet-api</artifactId>
-            <version>2.5</version>
-            <scope>provided</scope>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.apache.felix.http.proxy</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.apache.felix.framework</artifactId>
+        </dependency>
+        <!-- server web app dependencies -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>org.springframework.web</artifactId>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>jstl</artifactId>
             <version>1.2</version>
         </dependency>
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>jsp-api</artifactId>
-            <version>2.0</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.osgi</groupId>
-            <artifactId>org.osgi.core</artifactId>
-            <version>4.2.0</version>
-            <type>jar</type>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.felix</groupId>
-            <artifactId>org.apache.felix.framework</artifactId>
-            <version>3.0.8</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.felix</groupId>
-            <artifactId>org.apache.felix.http.proxy</artifactId>
-            <version>2.2.0</version>
-        </dependency>
+        <!-- Felix bundles needed at runtime -->
         <dependency>
             <groupId>org.apache.felix</groupId>
             <artifactId>org.apache.felix.http.bridge</artifactId>
             <version>2.2.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.felix</groupId>
-            <artifactId>org.apache.felix.webconsole</artifactId>
-            <version>1.2.8</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.felix</groupId>
             <artifactId>org.apache.felix.scr</artifactId>
             <version>1.0.0</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.felix</groupId>
-                    <artifactId>javax.servlet</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.felix</groupId>
-                    <artifactId>org.osgi.compendium</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.felix</groupId>
-                    <artifactId>org.osgi.core</artifactId>
-                </exclusion>
-            </exclusions>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.felix</groupId>
             <artifactId>org.apache.felix.shell</artifactId>
             <version>1.0.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-webmvc</artifactId>
-            <version>${spring.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>javax.mail</groupId>
-            <artifactId>mail</artifactId>
-            <version>1.4.5</version>
-        </dependency>
-        <dependency>
-            <groupId>commons-vfs</groupId>
-            <artifactId>commons-vfs</artifactId>
-            <version>1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-            <version>4.1.2</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient-cache</artifactId>
-            <version>4.1.2</version>
-        </dependency>
-        <dependency>
-            <groupId>com.google.collections</groupId>
-            <artifactId>google-collections</artifactId>
-            <version>1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>javax.persistence</groupId>
-            <artifactId>persistence-api</artifactId>
-            <version>1.0</version>
-        </dependency>
-        <!-- OSGI dependencies -->
-        <dependency>
-            <groupId>org.drools</groupId>
-            <artifactId>drools-api</artifactId>
-            <version>5.1.1</version>
             <scope>provided</scope>
-            <optional>true</optional>
         </dependency>
         <dependency>
-            <groupId>org.osgi</groupId>
-            <artifactId>org.osgi.compendium</artifactId>
-            <version>4.2.0</version>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.activemq</groupId>
-            <artifactId>kahadb</artifactId>
-            <version>5.4.2</version>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>com.springsource.org.apache.commons.io</artifactId>
-            <scope>provided</scope>
-            <optional>true</optional>
-            <version>1.4.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.activemq</groupId>
-            <artifactId>activemq-core</artifactId>
-            <version>${activemq.version}</version>
-            <scope>provided</scope>
-            <optional>true</optional>
-            <exclusions>
-                <exclusion>
-                    <groupId>commons-codec</groupId>
-                    <artifactId>commons-codec</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>commons-logging</groupId>
-                    <artifactId>commons-logging</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>commons-net</groupId>
-                    <artifactId>commons-net</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.springframework</groupId>
-                    <artifactId>spring-context</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>net.sourceforge.cglib</groupId>
-            <artifactId>com.springsource.net.sf.cglib</artifactId>
-            <version>2.2.0</version>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.velocity</groupId>
-            <artifactId>com.springsource.org.apache.velocity</artifactId>
-            <version>1.6.2</version>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.aopalliance</groupId>
-            <artifactId>com.springsource.org.aopalliance</artifactId>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.apache.felix.webconsole</artifactId>
             <version>1.0.0</version>
             <scope>provided</scope>
-            <optional>true</optional>
         </dependency>
+        <!-- Core bundles needed at runtime-->
         <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>com.springsource.org.apache.commons.beanutils</artifactId>
-            <version>1.8.3</version>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>motech-platform-event</artifactId>
+            <version>${project.version}</version>
             <scope>provided</scope>
-            <optional>true</optional>
         </dependency>
         <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>com.springsource.org.apache.commons.codec</artifactId>
-            <version>1.4.0</version>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>motech-platform-server-config</artifactId>
+            <version>${project.version}</version>
             <scope>provided</scope>
-            <optional>true</optional>
         </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>com.springsource.org.apache.commons.collections</artifactId>
-            <version>3.2.1</version>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>com.springsource.org.apache.commons.digester</artifactId>
-            <version>1.8.1</version>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>com.springsource.org.apache.commons.dbcp</artifactId>
-            <version>1.2.2.osgi</version>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>com.springsource.org.apache.commons.pool</artifactId>
-            <version>1.3.0</version>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>com.springsource.org.apache.commons.fileupload</artifactId>
-            <version>1.2.1</version>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>com.springsource.org.apache.commons.httpclient</artifactId>
-            <version>3.1.0</version>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>com.springsource.org.apache.commons.lang</artifactId>
-            <version>2.6.0</version>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>com.springsource.org.apache.commons.logging</artifactId>
-            <version>1.1.1</version>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.jdom</groupId>
-            <artifactId>com.springsource.org.jdom</artifactId>
-            <version>1.1.0</version>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>org.springframework.aop</artifactId>
-            <version>${spring.version}</version>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>org.springframework.asm</artifactId>
-            <version>${spring.version}</version>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>org.springframework.aspects</artifactId>
-            <version>${spring.version}</version>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>org.springframework.beans</artifactId>
-            <version>${spring.version}</version>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>org.springframework.context</artifactId>
-            <version>${spring.version}</version>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>org.springframework.context.support</artifactId>
-            <version>${spring.version}</version>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>org.springframework.core</artifactId>
-            <version>${spring.version}</version>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>org.springframework.expression</artifactId>
-            <version>${spring.version}</version>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>org.springframework.jdbc</artifactId>
-            <version>${spring.version}</version>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>org.springframework.jms</artifactId>
-            <version>${spring.version}</version>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>org.springframework.orm</artifactId>
-            <version>${spring.version}</version>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>org.springframework.transaction</artifactId>
-            <version>${spring.version}</version>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>org.springframework.web</artifactId>
-            <version>${spring.version}</version>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>org.springframework.web.servlet</artifactId>
-            <version>${spring.version}</version>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>org.springframework.security.core</artifactId>
-            <version>${spring.version}</version>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>org.springframework.security.config</artifactId>
-            <version>${spring.version}</version>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>org.springframework.security.web</artifactId>
-            <version>${spring.version}</version>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.osgi</groupId>
-            <artifactId>org.springframework.osgi.core</artifactId>
-            <version>1.2.1</version>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.osgi</groupId>
-            <artifactId>org.springframework.osgi.extender</artifactId>
-            <version>1.2.1</version>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.osgi</groupId>
-            <artifactId>org.springframework.osgi.io</artifactId>
-            <version>1.2.1</version>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.osgi</groupId>
-            <artifactId>org.springframework.osgi.web</artifactId>
-            <version>1.2.1</version>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.json</groupId>
-            <artifactId>com.springsource.org.json</artifactId>
-            <version>1.0.0</version>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.aspectj</groupId>
-            <artifactId>com.springsource.org.aspectj.runtime</artifactId>
-            <version>1.6.8.RELEASE</version>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.aspectj</groupId>
-            <artifactId>com.springsource.org.aspectj.weaver</artifactId>
-            <version>1.6.12.RELEASE</version>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>com.jcraft.jzlib</groupId>
-            <artifactId>com.springsource.com.jcraft.jzlib</artifactId>
-            <version>1.0.7</version>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.codehaus.janino</groupId>
-            <artifactId>com.springsource.org.codehaus.janino</artifactId>
-            <version>2.6.1</version>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.codehaus.janino</groupId>
-            <artifactId>com.springsource.org.codehaus.commons.compiler</artifactId>
-            <version>2.6.1</version>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.asteriskjava</groupId>
-            <artifactId>asterisk-java</artifactId>
-            <version>1.0.0.M3</version>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>javax.transaction</groupId>
-            <artifactId>com.springsource.javax.transaction</artifactId>
-            <version>1.1.0</version>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>com.google.collections</groupId>
-            <artifactId>google-collections</artifactId>
-            <version>1.0</version>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>xerces</groupId>
-            <artifactId>xercesImpl</artifactId>
-            <version>2.8.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.objenesis</groupId>
-            <artifactId>com.springsource.org.objenesis</artifactId>
-            <version>1.2.0</version>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.antlr</groupId>
-            <artifactId>com.springsource.antlr</artifactId>
-            <version>2.7.6</version>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.objectweb.asm</groupId>
-            <artifactId>com.springsource.org.objectweb.asm</artifactId>
-            <version>1.5.3</version>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.integration</groupId>
-            <artifactId>spring-integration-jms</artifactId>
-            <version>${spring.integration.version}</version>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.integration</groupId>
-            <artifactId>spring-integration-core</artifactId>
-            <version>2.1.0.RELEASE</version>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>javax.validation</groupId>
-            <artifactId>com.springsource.javax.validation</artifactId>
-            <version>1.0.0.GA</version>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>com.springsource.org.apache.commons.validator</artifactId>
-            <version>1.3.1</version>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.oro</groupId>
-            <artifactId>com.springsource.org.apache.oro</artifactId>
-            <version>2.0.8</version>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
-        <!-- Converted dependencies -->
-        <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>org.motechproject.com.google.code.gson</artifactId>
-            <version>1.7.1</version>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.codehaus.jackson</groupId>
-            <artifactId>org.motechproject.org.codehaus.jackson</artifactId>
-            <version>1.9.7</version>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>com.googlecode.jsmpp</groupId>
-            <artifactId>org.motechproject.com.googlecode.jsmpp</artifactId>
-            <version>2.1.0</version>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>net.sf.kxml</groupId>
-            <artifactId>org.motechproject.net.sf.kxml</artifactId>
-            <version>2.3.0</version>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>com.googlecode.lambdaj</groupId>
-            <artifactId>org.motechproject.com.googlecode.lambdaj</artifactId>
-            <version>2.3.3</version>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.quartz-scheduler</groupId>
-            <artifactId>org.motechproject.org.quartz-scheduler</artifactId>
-            <version>2.1.5</version>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.smslib</groupId>
-            <artifactId>org.motechproject.org.smslib</artifactId>
-            <version>3.5.1</version>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>com.bea.xml.stream</groupId>
-            <artifactId>org.motechproject.com.bea.xml.stream</artifactId>
-            <version>1.2.0</version>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>com.thoughtworks.xstream</groupId>
-            <artifactId>org.motechproject.com.thoughtworks.xstream</artifactId>
-            <version>1.4.2</version>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.joda.time</groupId>
-            <artifactId>org.motechproject.org.joda.time</artifactId>
-            <version>2.0.0</version>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>com.mchange.c3p0</groupId>
-            <artifactId>com.springsource.com.mchange.v2.c3p0</artifactId>
-            <version>0.9.1</version>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.ant</groupId>
-            <artifactId>com.springsource.org.apache.tools.ant</artifactId>
-            <version>1.8.1</version>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>com.springsource.org.hibernate</artifactId>
-            <version>3.3.2.GA</version>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.javassist</groupId>
-            <artifactId>com.springsource.javassist</artifactId>
-            <version>3.3.0.ga</version>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.objectweb.asm</groupId>
-            <artifactId>com.springsource.org.objectweb.asm.attrs</artifactId>
-            <version>1.5.3</version>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.javassist</groupId>
-            <artifactId>com.springsource.javassist</artifactId>
-            <version>3.9.0.GA</version>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>ca.uhn.hapi</groupId>
-            <artifactId>org.motechproject.com.ca.uhn.hapi</artifactId>
-            <version>0.5.0</version>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.openmrs.liquibase</groupId>
-            <artifactId>org.motechproject.org.openmrs.liquibase</artifactId>
-            <version>1.9.4</version>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.azeckoski</groupId>
-            <artifactId>org.motechproject.org.azeckoski.reflectutils</artifactId>
-            <version>0.9.14</version>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.simpleframework</groupId>
-            <artifactId>org.motechproject.org.simpleframework.xml</artifactId>
-            <version>1.6.2</version>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
-        <!-- Dependencies for Xstream -->
-        <dependency>
-            <groupId>org.dom4j</groupId>
-            <artifactId>com.springsource.org.dom4j</artifactId>
-            <version>1.6.1</version>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.codehaus.woodstox</groupId>
-            <artifactId>com.springsource.com.ctc.wstx</artifactId>
-            <version>3.2.7</version>
-            <scope>provided</scope>
-            <optional>true</optional>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.xerces</groupId>
-                    <artifactId>com.springsource.org.apache.xerces</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.xmlpull</groupId>
-            <artifactId>com.springsource.org.xmlpull</artifactId>
-            <version>1.1.3.4-O</version>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>nu.xom</groupId>
-            <artifactId>com.springsource.nu.xom</artifactId>
-            <version>1.1.0</version>
-            <scope>provided</scope>
-            <optional>true</optional>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.xerces</groupId>
-                    <artifactId>com.springsource.org.apache.xerces</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.codehaus.jettison</groupId>
-            <artifactId>com.springsource.org.codehaus.jettison</artifactId>
-            <version>1.0.1</version>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
-
-        <!-- server bundle -->
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>motech-platform-server-bundle</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
-
-        <dependency>
-            <groupId>commons-lang</groupId>
-            <artifactId>commons-lang</artifactId>
-            <version>2.6</version>
         </dependency>
         <dependency>
-            <groupId>javax.jms</groupId>
-            <artifactId>jms</artifactId>
-            <version>1.1</version>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>motech-platform-server-bundle</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- Admin -->
+        <dependency>
+            <groupId>org.motechproject</groupId>
+            <artifactId>motech-admin-bundle</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-j2ee-management_1.1_spec</artifactId>
-            <version>1.0.1</version>
+            <groupId>org.motechproject</groupId>
+            <artifactId>motech-demo-bundle</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
     <build>
         <finalName>motech-platform-server</finalName>
         <plugins>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
-                    <execution>
+                    <!--<execution>
                         <id>copy-bundles</id>
                         <goals>
                             <goal>copy-dependencies</goal>
@@ -781,18 +125,19 @@
                                 ${project.build.directory}/bundles
                             </outputDirectory>
                         </configuration>
-                    </execution>
+                    </execution>-->
+
                     <execution>
                         <id>copy-osgi-dependencies</id>
                         <goals>
                             <goal>copy-dependencies</goal>
                         </goals>
                         <configuration>
+                            <excludeArtifactIds>org.osgi.core,jstl,servlet-api,org.apache.felix.framework,org.apache.felix.http.proxy</excludeArtifactIds>
+                            <includeScope>runtime</includeScope>
                             <includeScope>provided</includeScope>
-                            <excludeArtifactIds>org.osgi.core,jstl,servlet-api,com.springsource.slf4j.api</excludeArtifactIds>
-                            <includeArtifactIds>
-                                org.springframework.security.web,org.springframework.security.config,activemq-core,asterisk-java,com.springsource.com.jcraft.jzlib,com.springsource.net.sf.cglib,com.springsource.antlr,com.springsource.org.aopalliance,com.springsource.org.apache.commons.beanutils,com.springsource.org.apache.commons.codec,com.springsource.org.apache.commons.collections,com.springsource.org.apache.commons.dbcp,com.springsource.org.apache.commons.digester,com.springsource.org.apache.commons.fileupload,com.springsource.org.apache.commons.httpclient,com.springsource.org.apache.commons.lang,com.springsource.org.apache.commons.logging,com.springsource.org.apache.commons.pool,com.springsource.org.apache.velocity,com.springsource.org.aspectj.runtime,com.springsource.org.aspectj.weaver,com.springsource.org.codehaus.commons.compiler,com.springsource.org.codehaus.janino,com.springsource.org.jdom,com.springsource.org.json,drools-api,kahadb,org.osgi.compendium,org.springframework.aop,org.springframework.asm,org.springframework.aspects,org.springframework.beans,org.springframework.context,org.springframework.context.support,org.springframework.core,org.springframework.expression,org.springframework.jdbc,org.springframework.jms,org.springframework.orm,org.springframework.osgi.core,org.springframework.osgi.extender,org.springframework.osgi.io,org.springframework.osgi.web,org.springframework.security.core,org.springframework.transaction,org.springframework.web,org.springframework.web.servlet,spring-integration-core,spring-integration-jms,com.springsource.org.objenesis,com.springsource.org.xmlpull,com.springsource.org.codehaus.jettison,com.springsource.nu.xom,com.springsource.org.iso_relax.verifier,com.springsource.com.sun.msv.datatype,com.springsource.org.relaxng.datatype,com.springsource.com.sun.msv,com.springsource.com.ctc.wstx,com.springsource.org.dom4j,org.motechproject.com.google.code.gson,org.motechproject.org.codehaus.jackson,org.motechproject.com.googlecode.jsmpp,org.motechproject.com.googlecode.lambdaj,org.motechproject.org.quartz-scheduler,org.motechproject.org.smslib,org.motechproject.com.bea.xml.stream,org.motechproject.com.thoughtworks.xstream,org.motechproject.net.sf.kxml,com.springsource.com.mchange.v2.c3p0,com.springsource.org.apache.commons.io,com.springsource.org.apache.oro,com.springsource.javax.validation,com.springsource.org.apache.commons.validator,com.springsource.org.apache.tools.ant,com.springsource.javassist,com.springsource.org.objectweb.asm,com.springsource.org.hibernate,com.springsource.javax.transaction,org.motechproject.org.joda.time,org.motechproject.com.ca.uhn.hapi,org.motechproject.org.openmrs.liquibase,org.motechproject.org.azeckoski.reflectutils,org.motechproject.org.simpleframework.xml
-                            </includeArtifactIds>
+                            <includeScope>compile</includeScope>
+
                             <overWriteIfNewer>true</overWriteIfNewer>
                             <outputDirectory>
                                 ${user.home}/.motech/bundles
@@ -801,6 +146,7 @@
                     </execution>
                 </executions>
             </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
@@ -812,12 +158,12 @@
                         </manifest>
                     </archive>
                     <webResources>
-                        <resource>
+                       <!-- <resource>
                             <directory>
                                 ${project.build.directory}/bundles
                             </directory>
                             <targetPath>WEB-INF/bundles</targetPath>
-                        </resource>
+                        </resource>-->
                         <resource>
                             <directory>.</directory>
                             <targetPath>META-INF</targetPath>
@@ -828,6 +174,51 @@
                         </resource>
                     </webResources>
                 </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-clean-plugin</artifactId>
+                <version>2.5</version>
+                <inherited>false</inherited>
+                <executions>
+                    <execution>
+                        <id>clean-bundles</id>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                        <phase>initialize</phase>
+                        <configuration>
+                            <filesets>
+                                <fileset>
+                                    <directory>${user.home}/.motech/bundles</directory>
+                                    <includes>
+                                        <include>**/*.jar</include>
+                                    </includes>
+                                    <followSymlinks>false</followSymlinks>
+                                </fileset>
+                            </filesets>
+                        </configuration>
+                    </execution>
+                    <!-- Clean up config after run -->
+                    <execution>
+                        <id>clean-config</id>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                        <phase>install</phase>
+                        <configuration>
+                            <excludeDefaultDirectories>true</excludeDefaultDirectories>
+                            <filesets>
+                                <fileset>
+                                    <directory>${user.home}/.motech/config</directory>
+                                    <includes>
+                                        <include>**/**</include>
+                                    </includes>
+                                    <followSymlinks>false</followSymlinks>
+                                </fileset>
+                            </filesets>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

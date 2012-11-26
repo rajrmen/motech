@@ -3,10 +3,20 @@
 # Exit on non-zero exit code
 set -e
 
-# Stop the motech server
-invoke-rc.d motech stop
+# Remove cache
+rm -rf /var/cache/motech/*
 
-# Delete the motech user, if he exists
-if [ ! `grep -c motech: /etc/passwd` -eq 0 ]; then
-    userdel motech
+# Clean up the webapp
+rm -rf /var/lib/motech/webapps/ROOT
+
+# Remove fragment dir if empty
+FRAGMENT_DIR=/usr/share/motech/.motech/bundles/fragments
+
+if [ -d $FRAGMENT_DIR ] && [ ! "$(ls -A $FRAGMENT_DIR)" ]; then
+    rm -rf $FRAGMENT_DIR
+fi
+
+# Stop the motech server
+if [ -f /etc/init.d/motech ]; then
+    invoke-rc.d motech stop
 fi

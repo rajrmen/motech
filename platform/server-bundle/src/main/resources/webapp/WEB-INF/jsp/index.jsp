@@ -28,6 +28,7 @@
     <script src="resources/lib/angular/angular-resource.min.js" type="text/javascript"></script>
     <script src="resources/lib/angular/angular-cookies.min.js" type="text/javascript"></script>
     <script src="resources/lib/angular/angular-bootstrap.js" type="text/javascript"></script>
+    <script src="resources/lib/angular/angular-ui.min.js" type="text/javascript"></script>
 
     <script src="resources/lib/bootstrap/bootstrap.min.js"></script>
 
@@ -84,45 +85,21 @@
     <div class="clearfix"></div>
 
     <div class="header-nav navbar">
-        <div class="navbar-inner navbar-inner-bg">
-            <div class="container-fluid">
-                <a class="btn btn-navbar btn-blue" data-toggle="collapse" data-target=".nav-collapse">
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </a>
-                <a id="brand" class="brand" ng-hide="showDashboardLogo.showDashboard" href="#">MOTECH</a>
+        <div class="navbar-inner navbar-inverse navbar-inner-bg">
 
-                <div class="nav-collapse">
-                    <ul class="nav" role="navigation">
-                        <li class="divider-vertical" ng-hide="showDashboardLogo.showDashboard" ></li>
-                        <li class="current"><a  role="menu"  href="."><fmt:message key="home" bundle="${bundle}"/></a></li>
-                        <li class="divider-vertical divider-vertical-sub"></li>
-                        <li><a role="menu"><fmt:message key="motech" bundle="${bundle}"/> <fmt:message key="project" bundle="${bundle}"/></a></li>
-                        <li class="divider-vertical divider-vertical-sub"></li>
-                        <li><a role="menu"><fmt:message key="community" bundle="${bundle}"/></a></li>
-                    </ul>
-                    <a id="minimize" class="btn btn-mini btn-blue" ng-click="minimizeHeader()">
-                        <img src="resources/img/trans.gif" title="{{msg(showDashboardLogo.changeTitle())}}"
-                        alt="{{msg(showDashboardLogo.changeTitle())}}"
-                        ng-class="showDashboardLogo.changeClass()"/>
-                    </a>
-                    <ul class="nav pull-right menu-left">
-                        <li ng-hide="showDashboardLogo.showDashboard"><a class="no-hover"><strong><fmt:message key="server.time" bundle="${bundle}"/>: </strong>${uptime}</a></li>
-                        <li ng-hide="showDashboardLogo.showDashboard" class="divider-vertical divider-vertical-sub"></li>
-                        <c:if test="${securityLaunch}">
-                        <li class="dropdown">
-                            <a class="dropdown-toggle" href="#" data-toggle="dropdown">Logged in as <strong>${userName}</strong><strong class="caret"></strong></a>
-                            <ul id="localization" class="dropdown-menu">
-                                <li><a class=""><i class="icon-user"></i> Profile</a></li>
-                                <li class="divider"></li>
-                                <li><a href="${contextPath}/j_spring_security_logout" class=""><i class="icon-off"></i> Sign Up</a></li>
-                            </ul>
-                        </li>
-                        </c:if>
-                    </ul>
-                </div>
-            </div>
+            <a id="brand" class="brand" ng-hide="showDashboardLogo.showDashboard" href="#">MOTECH</a>
+            <ul class="nav" role="navigation">
+                <li class="divider-vertical" ng-hide="showDashboardLogo.showDashboard" ></li>
+                <li class="current"><a  role="menu"  href="."><fmt:message key="home" bundle="${bundle}"/></a></li>
+                <li><a>|</a></li>
+                <li><a role="menu"><fmt:message key="motech" bundle="${bundle}"/> <fmt:message key="project" bundle="${bundle}"/></a></li>
+                <li><a>|</a></li>
+                <li><a role="menu"><fmt:message key="community" bundle="${bundle}"/></a></li>
+            </ul>
+            <a id="minimize" ng-click="minimizeHeader()">
+                                <img src="resources/img/trans.gif" title="{{msg(showDashboardLogo.changeTitle())}}" alt="{{msg(showDashboardLogo.changeTitle())}}"
+                                    ng-class="showDashboardLogo.changeClass()"/>
+            </a>
         </div>
     </div>
 

@@ -2,6 +2,7 @@ package org.motechproject.security.osgi;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.felix.http.api.ExtHttpService;
+import org.motechproject.osgi.web.MotechOsgiWebApplicationContext;
 import org.motechproject.server.ui.ModuleRegistrationData;
 import org.motechproject.server.ui.UIFrameworkService;
 import org.osgi.framework.BundleActivator;
@@ -10,7 +11,7 @@ import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.osgi.web.context.support.OsgiBundleXmlWebApplicationContext;
+
 import org.springframework.web.filter.DelegatingFilterProxy;
 import org.springframework.web.servlet.DispatcherServlet;
 
@@ -81,7 +82,7 @@ public class Activator implements BundleActivator {
         }
     }
 
-    public static class WebSecurityApplicationContext extends OsgiBundleXmlWebApplicationContext {
+    public static class WebSecurityApplicationContext extends MotechOsgiWebApplicationContext {
 
         public WebSecurityApplicationContext() {
             super();

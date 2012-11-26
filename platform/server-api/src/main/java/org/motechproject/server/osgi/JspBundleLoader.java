@@ -55,7 +55,11 @@ public class JspBundleLoader implements BundleLoader, ServletContextAware {
 
                     //build jar file
                     File tempJarFile = new File(tempDir, jarUrl.getFile());
-                    FileUtils.copyURLToFile(jarUrl, tempJarFile);
+                    // There is a problem with creating new directories when loading bundles asynchronously.
+                    // This is why this step must be synchronized.
+                    synchronized (JspBundleLoader.class) {
+                        FileUtils.copyURLToFile(jarUrl, tempJarFile);
+                    }
 
                     JarFile jarFile = new JarFile(tempJarFile);
                     searchForJspFilesInJarFile(jarFile, bundle.getBundleId());
@@ -100,7 +104,7 @@ public class JspBundleLoader implements BundleLoader, ServletContextAware {
                     Properties p = new Properties();
                     URL msgUrl = messages.nextElement();
                     String fileName = msgUrl.getFile().substring(msgUrl.getFile().lastIndexOf('/') + 1);
-                    int underscore = fileName.indexOf("_");
+                    int underscore = fileName.indexOf('_');
 
                     if (underscore != -1) {
                         fileName = "messages" + fileName.substring(underscore);

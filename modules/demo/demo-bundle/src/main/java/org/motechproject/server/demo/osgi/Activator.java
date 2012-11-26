@@ -1,8 +1,10 @@
 package org.motechproject.server.demo.osgi;
 
 import org.apache.commons.io.IOUtils;
+import org.motechproject.osgi.web.MotechOsgiWebApplicationContext;
 import org.motechproject.server.ui.ModuleRegistrationData;
 import org.motechproject.server.ui.UIFrameworkService;
+import org.motechproject.server.ui.UiHttpContext;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
@@ -10,7 +12,6 @@ import org.osgi.service.http.HttpService;
 import org.osgi.util.tracker.ServiceTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.osgi.web.context.support.OsgiBundleXmlWebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
 
 import java.io.IOException;
@@ -20,7 +21,7 @@ import java.io.StringWriter;
 public class Activator implements BundleActivator {
     private static Logger logger = LoggerFactory.getLogger(Activator.class);
 
-    private static final String CONTEXT_CONFIG_LOCATION = "applicationDemoBundle.xml";
+    private static final String CONTEXT_CONFIG_LOCATION = "META-INF/osgi/applicationDemoBundle.xml";
     private static final String SERVLET_URL_MAPPING = "/demo/api";
     private static final String RESOURCE_URL_MAPPING = "/demo";
 
@@ -77,7 +78,7 @@ public class Activator implements BundleActivator {
         this.uiServiceTracker.close();
     }
 
-    public static class DemoApplicationContext extends OsgiBundleXmlWebApplicationContext {
+    public static class DemoApplicationContext extends MotechOsgiWebApplicationContext {
 
         public DemoApplicationContext() {
             super();

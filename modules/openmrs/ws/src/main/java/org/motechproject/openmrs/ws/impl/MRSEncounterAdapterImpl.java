@@ -146,8 +146,7 @@ public class MRSEncounterAdapterImpl implements MRSEncounterAdapter {
         for (MRSObservation observation : originalObservations) {
             String conceptUuid = conceptAdapter.resolveConceptUuidFromConceptName(observation.getConceptName());
             if (CollectionUtils.isNotEmpty(observation.getDependantObservations())) {
-                Set<MRSObservation> updatedDependent = resolveConceptUuidForConceptNames(observation
-                        .getDependantObservations());
+                resolveConceptUuidForConceptNames(observation.getDependantObservations());
             }
             updatedObs.add(new MRSObservation(observation.getId(), observation.getDate(), conceptUuid, observation
                     .getValue()));
@@ -253,5 +252,17 @@ public class MRSEncounterAdapterImpl implements MRSEncounterAdapter {
         }
 
         return mrsObs;
+    }
+
+    @Override
+    public MRSEncounter getEncounterById(String id) {
+        try {
+            Encounter encounter = encounterResource.getEncounterById(id);
+            MRSPatient patient = patientAdapter.getPatient(encounter.getPatient().getUuid());
+            MRSPerson provider = personAdapter.getPerson(encounter.getProvider().getUuid());
+            return convertToMrsEncounter(encounter, provider, patient);
+        } catch (HttpException e) {
+            return null;
+        }
     }
 }

@@ -31,7 +31,7 @@
             <property name="ignoreAbstractMethods" value="false"/>
         </module>
         <module name="ParameterAssignment">
-            <property name="severity" value="info"/>
+            <property name="severity" value="error"/>
         </module>
         <module name="DoubleCheckedLocking">
             <property name="severity" value="error"/>
@@ -62,7 +62,7 @@
             <property name="format" value="^[a-z][a-zA-Z0-9]*$"/>
         </module>
         <module name="FinalClass">
-            <property name="severity" value="warning"/>
+            <property name="severity" value="error"/>
         </module>
         <module name="ParenPad">
             <property name="severity" value="info"/>
@@ -131,7 +131,7 @@
             <property name="allowInSwitchCase" value="false"/>
         </module>
         <module name="HideUtilityClassConstructor">
-            <property name="severity" value="warning"/>
+            <property name="severity" value="error"/>
         </module>
         <module name="MultipleVariableDeclarations">
             <property name="severity" value="error"/>
@@ -252,6 +252,9 @@
             <property name="severity" value="info"/>
             <property name="allowLineBreaks" value="true"/>
             <property name="tokens" value="ARRAY_INIT,BNOT,DEC,DOT,INC,LNOT,UNARY_MINUS,UNARY_PLUS"/>
+        </module>
+        <module name="ClassTypeParameterName">
+            <property name="format" value="^[A-Z]$"/>
         </module>
     </module>
 </module>

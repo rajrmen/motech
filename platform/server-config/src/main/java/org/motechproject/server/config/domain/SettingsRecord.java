@@ -3,7 +3,7 @@ package org.motechproject.server.config.domain;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.ektorp.support.TypeDiscriminator;
 import org.joda.time.DateTime;
-import org.motechproject.model.MotechBaseDataObject;
+import org.motechproject.commons.couchdb.model.MotechBaseDataObject;
 import org.motechproject.server.config.settings.MotechSettings;
 
 import java.util.Arrays;
@@ -19,10 +19,10 @@ public class SettingsRecord extends MotechBaseDataObject implements MotechSettin
 
     private boolean cluster;
     private DateTime lastRun;
-    private byte[] configFileChecksum;
+    private byte[] configFileChecksum = new byte[0];
 
     private Properties couchDbProperties;
-    private Properties activemqProperties;
+    private Properties activemqProperties = new Properties();
     private Properties quartzProperties;
     private Properties metricsProperties;
     private Properties schedulerProperties;

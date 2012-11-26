@@ -12,31 +12,28 @@ import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.motechproject.commcare.exception.CaseParserException;
 import org.motechproject.commcare.parser.OpenRosaResponseParser;
 import org.motechproject.commcare.response.OpenRosaResponse;
+import org.motechproject.server.config.SettingsFacade;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.Properties;
 
 @Component
 public class CommCareAPIHttpClient {
-
-    private HttpClient commonsHttpClient;
-
-    private Properties commcareUserProperties;
+    private static final String COMMCARE_USER_API_FILE_NAME = "commcareUserApi.properties";
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    private HttpClient commonsHttpClient;
+    private SettingsFacade settingsFacade;
+
     @Autowired
-    public CommCareAPIHttpClient(
-            HttpClient commonsHttpClient,
-            @Qualifier(value = "commcareUserApi") Properties commcareUserProperties) {
+    public CommCareAPIHttpClient(final HttpClient commonsHttpClient, final SettingsFacade settingsFacade) {
         this.commonsHttpClient = commonsHttpClient;
-        this.commcareUserProperties = commcareUserProperties;
+        this.settingsFacade = settingsFacade;
     }
 
     public OpenRosaResponse caseUploadRequest(String caseXml)
@@ -143,35 +140,40 @@ public class CommCareAPIHttpClient {
     }
 
     private String commcareUserUrl() {
-        return "https://www.commcarehq.org/a/" + getCommcareDomain()
-                + "/api/v0.1/user/?format=json";
+        return String.format("%s/%s/api/v0.1/user/?format=json", getCommcareBaseUrl(), getCommcareDomain());
     }
 
-
     private String commcareFormUrl(String formId) {
-        return "https://www.commcarehq.org/a/" + getCommcareDomain()
-                + "/api/v0.1/form/" + formId + "/?format=json";
+        return String.format("%s/%s/api/v0.1/form/%s/?format=json", getCommcareBaseUrl(), getCommcareDomain(), formId);
     }
 
     private String baseCommcareUrl() {
-        return "https://www.commcarehq.org/a/" + getCommcareDomain()
-                + "/cloudcare/api/cases/";
+        return String.format("%s/%s/cloudcare/api/cases/", getCommcareBaseUrl(), getCommcareDomain());
     }
 
     private String commcareCaseUploadUrl() {
-        return "https://www.commcarehq.org/a/" + getCommcareDomain()
-                + "/receiver/";
+        return String.format("%s/%s/receiver/", getCommcareBaseUrl(), getCommcareDomain());
+    }
+
+    private String getCommcareBaseUrl() {
+        String commcareBaseUrl = settingsFacade.getProperties(COMMCARE_USER_API_FILE_NAME).getProperty("commcareBaseUrl");
+
+        if (commcareBaseUrl.endsWith("/")) {
+            commcareBaseUrl = commcareBaseUrl.substring(0, commcareBaseUrl.length() - 1);
+        }
+
+        return commcareBaseUrl;
     }
 
     private String getCommcareDomain() {
-        return commcareUserProperties.getProperty("commcareDomain");
+        return settingsFacade.getProperties(COMMCARE_USER_API_FILE_NAME).getProperty("commcareDomain");
     }
 
     private String getUsername() {
-        return commcareUserProperties.getProperty("username");
+        return settingsFacade.getProperties(COMMCARE_USER_API_FILE_NAME).getProperty("username");
     }
 
     private String getPassword() {
-        return commcareUserProperties.getProperty("password");
+        return settingsFacade.getProperties(COMMCARE_USER_API_FILE_NAME).getProperty("password");
     }
 }

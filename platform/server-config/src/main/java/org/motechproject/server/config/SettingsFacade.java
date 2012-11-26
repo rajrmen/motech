@@ -5,7 +5,7 @@ import org.ektorp.CouchDbConnector;
 import org.ektorp.CouchDbInstance;
 import org.ektorp.impl.StdCouchDbInstance;
 import org.ektorp.spring.HttpClientFactoryBean;
-import org.motechproject.MotechException;
+import org.motechproject.commons.api.MotechException;
 import org.motechproject.server.config.service.PlatformSettingsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
@@ -131,7 +131,7 @@ public class SettingsFacade {
     }
 
     public void setProperty(String filename, String key, String value) {
-        if (config.containsKey(filename)) {
+        if (!config.containsKey(filename)) {
             config.put(filename, new Properties());
         }
 
@@ -158,12 +158,13 @@ public class SettingsFacade {
         setProperty(filename, key, value);
     }
 
-    public CouchDbConnector getConnector(final String dbName, final String couchDbFileName) throws FileNotFoundException {
+    public CouchDbConnector getConnector(String dbName, final String couchDbFileName) throws FileNotFoundException {
         CouchDbConnector connector = null;
+        String finalDbName = getDbPrefix() + dbName;
 
         if (platformSettingsService != null) {
             try {
-                connector = platformSettingsService.getCouchConnector(dbName);
+                connector = platformSettingsService.getCouchConnector(finalDbName);
             } catch (Exception e) {
                 connector = null;
             }
@@ -185,12 +186,11 @@ public class SettingsFacade {
                     HttpClientFactoryBean httpClientFactoryBean = new HttpClientFactoryBean();
                     httpClientFactoryBean.setProperties(couchDb);
                     httpClientFactoryBean.setTestConnectionAtStartup(true);
-
+                    httpClientFactoryBean.setCaching(false);
                     httpClientFactoryBean.afterPropertiesSet();
 
                     CouchDbInstance instance = new StdCouchDbInstance(httpClientFactoryBean.getObject());
-
-                    connector = instance.createConnector(dbName, true);
+                    connector = instance.createConnector(finalDbName, true);
                 } catch (Exception e) {
                     throw new MotechException("Error during creation CouchDbConnector", e);
                 } finally {
@@ -202,6 +202,20 @@ public class SettingsFacade {
         }
 
         return connector;
+    }
+
+    private String getDbPrefix() {
+        Properties motechProperties = new Properties();
+        try {
+            motechProperties.load(getClass().getClassLoader().getResourceAsStream("motech.properties"));
+        } catch (Exception ignore) {
+        }
+
+        String appName = motechProperties.getProperty("motech.app.name", null);
+        if (appName == null || appName.trim().isEmpty() ) {
+            return "";
+        }
+        return appName + "_";
     }
 
     public void saveConfigProperties(String filename, Properties properties) {
@@ -234,7 +248,7 @@ public class SettingsFacade {
         try {
             is = resource.getInputStream();
 
-            Properties props =  new Properties();
+            Properties props = new Properties();
             props.load(is);
 
             config.put(filename, props);
@@ -326,7 +340,7 @@ public class SettingsFacade {
         }
     }
 
-    protected String getSymbolicName() {
+    public String getSymbolicName() {
         if (symbolicName == null && moduleName != null) {
             symbolicName = constructSymbolicName();
         }

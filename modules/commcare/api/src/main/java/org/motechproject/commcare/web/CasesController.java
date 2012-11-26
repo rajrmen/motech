@@ -8,8 +8,8 @@ import org.motechproject.commcare.exception.CaseParserException;
 import org.motechproject.commcare.parser.CaseParser;
 import org.motechproject.event.MotechEvent;
 import org.motechproject.event.listener.EventRelay;
+import org.motechproject.server.config.SettingsFacade;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
@@ -25,16 +25,20 @@ import java.io.IOException;
  */
 @Controller
 public class CasesController {
-    @Value("#{case_event_strategy['case.events.send.with.all.data']}")
-    private String caseEventStrategy;
+    private static final String CASE_EVENT_STRATEGY_KEY = "case.events.send.with.all.data";
     private static final String FULL_DATA_EVENT = "full";
     private static final String PARTIAL_DATA_EVENT = "partial";
 
-    @Autowired
     private EventRelay eventRelay;
+    private SettingsFacade settingsFacade;
 
-    private String getRequestBodyAsString(HttpServletRequest request)
-            throws IOException {
+    @Autowired
+    public CasesController(final EventRelay eventRelay, final SettingsFacade settingsFacade) {
+        this.eventRelay = eventRelay;
+        this.settingsFacade = settingsFacade;
+    }
+
+    private String getRequestBodyAsString(HttpServletRequest request) throws IOException {
         BufferedReader reader = request.getReader();
         boolean end = false;
         String forwardedRequest = "";
@@ -51,8 +55,7 @@ public class CasesController {
     }
 
     @RequestMapping({ "/cases" })
-    public ModelAndView receiveCase(HttpServletRequest request,
-            HttpServletResponse response) {
+    public ModelAndView receiveCase(HttpServletRequest request, HttpServletResponse response) {
 
         String caseXml = "";
 
@@ -61,12 +64,11 @@ public class CasesController {
         } catch (IOException e1) {
             e1.printStackTrace();
         }
-        CaseParser<CaseXml> parser = new CaseParser<CaseXml>(CaseXml.class,
-                caseXml);
+        CaseParser<CaseXml> parser = new CaseParser<>(CaseXml.class, caseXml);
 
         CaseXml caseInstance = null;
         try {
-            caseInstance = (CaseXml) parser.parseCase();
+            caseInstance = parser.parseCase();
         } catch (CaseParserException e) {
             MotechEvent motechEvent = new MotechEvent(
                     EventSubjects.MALFORMED_CASE_EXCEPTION);
@@ -78,7 +80,8 @@ public class CasesController {
         if (caseInstance != null) {
             CaseEvent caseEvent = new CaseEvent(caseInstance.getCaseId());
 
-            MotechEvent motechCaseEvent = null;
+            MotechEvent motechCaseEvent;
+            String caseEventStrategy = settingsFacade.getProperty(CASE_EVENT_STRATEGY_KEY);
 
             if (caseEventStrategy.equals(FULL_DATA_EVENT)) {
                 caseEvent = caseEvent.eventFromCase(caseInstance);
@@ -98,8 +101,7 @@ public class CasesController {
         return null;
     }
 
-    public void setEventRelay(
-            EventRelay eventRelay) {
+    public void setEventRelay(EventRelay eventRelay) {
         this.eventRelay = eventRelay;
     }
 }

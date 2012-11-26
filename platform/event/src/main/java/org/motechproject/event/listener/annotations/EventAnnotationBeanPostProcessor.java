@@ -17,13 +17,14 @@ import java.util.Map;
 /**
  * Responsible for registering handlers based on annotations
  *
+ * Create a bean only when module has MotechEvent annotations.
+ *
  * @author yyonkov
  */
 @Component
 public class EventAnnotationBeanPostProcessor implements DestructionAwareBeanPostProcessor {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    @Autowired(required = false)
     private EventListenerRegistryService eventListenerRegistry;
 
     /* (non-Javadoc)
@@ -95,5 +96,11 @@ public class EventAnnotationBeanPostProcessor implements DestructionAwareBeanPos
         if (eventListenerRegistry != null) {
             eventListenerRegistry.clearListenersForBean(beanName);
         }
+    }
+
+    //TODO:keeping required false for now, should be removed.
+    @Autowired (required = false)
+    public void setEventListenerRegistry(EventListenerRegistryService eventListenerRegistry) {
+        this.eventListenerRegistry = eventListenerRegistry;
     }
 }
