@@ -97,7 +97,7 @@
                                     <input class="btn btn-primary" value="Sign in" type="submit"/>
                                 </div>
                                 <div class="control-group">
-                                <a href="#"><fmt:message key="security.signInQuestions" bundle="${bundle}"/></a>
+                                <!--<a href="#"><fmt:message key="security.signInQuestions" bundle="${bundle}"/></a>-->
                                 </div>
                             </form>
                         </div>

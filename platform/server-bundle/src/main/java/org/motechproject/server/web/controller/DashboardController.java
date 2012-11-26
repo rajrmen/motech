@@ -43,11 +43,23 @@ public class DashboardController {
     @Autowired
     private MessageSource messageSource;
 
-    @RequestMapping({"/index", "/", "/home"})
+
+    @RequestMapping({"/index", "/", "/home" })
     public ModelAndView index(@RequestParam(required = false) String moduleName, final HttpServletRequest request) {
 
         ModelAndView mav;
-
+            if (request.getUserPrincipal() != null) {
+                mav.addObject("userName", request.getUserPrincipal().getName());
+                mav.addObject("securityLaunch", true);
+            } else {
+                mav.addObject("securityLaunch", false);
+                mav.addObject("userName", "Admin Mode");
+            }
+            if (!"/".equals(request.getSession().getServletContext().getContextPath())) {
+                mav.addObject("contextPath", request.getSession().getServletContext().getContextPath().substring(1));
+            } else {
+                mav.addObject("contextPath", "");
+            }
         // check if this is the first run
         if (startupManager.getPlatformState() == MotechPlatformState.NEED_CONFIG) {
             mav = new ModelAndView("redirect:startup.do");

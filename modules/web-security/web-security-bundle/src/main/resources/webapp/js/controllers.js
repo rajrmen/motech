@@ -9,12 +9,17 @@ function UserCtrl($scope, Roles, Users, $http) {
            roles: [],
            active: true
        }
+       $scope.confirmPassword="";
+       $scope.propertyUserName="";
+       $scope.pasPassword=true;
+       $scope.pwdNameValidate=true;
+       $scope.addUserView=true;
+       $scope.editUserView=true;
+       $scope.showUsersView=true;
        $scope.currentPage=0;
        $scope.pageSize=15;
        $scope.selectedItem='';
        $scope.deleteU=false;
-       $scope.successfulMessage='';
-       $scope.failureMessage='';
 
        $scope.roleList = Roles.query();
 
@@ -44,8 +49,13 @@ function UserCtrl($scope, Roles, Users, $http) {
 
        $scope.saveUser = function() {
            $http.post('../websecurity/api/users/create', $scope.user).
-                success(function(){$scope.successfulMessage="successAdd"; $scope.userList = Users.query();}).
-                error(function(){$scope.failureMessage="failureAdd"});
+                success(function(){
+                    motechAlert('security.create.user.saved', 'security.create');
+                    $scope.userList = Users.query();
+                    $scope.showUsersView=!$scope.addUserView;
+                    $scope.addUserView=!$scope.addUserView;
+                }).
+                error(function(){motechAlert('security.create.user.error', 'main.error');});
        }
 
 
@@ -64,18 +74,27 @@ function UserCtrl($scope, Roles, Users, $http) {
                    $scope.user = data;
                    $scope.user.password='';
            });
+           $scope.showUsersView=!$scope.editUserView;
+           $scope.editUserView=!$scope.editUserView;
        }
 
        $scope.updateUser = function(){
            $http.post('../websecurity/api/users/update', $scope.user).
-               success(function(){$scope.successfulMessage="successUpdate"}).
-               error(function(){$scope.failureMessage="failureUpdate"});
+               success(function(){motechAlert('security.update.user.saved', 'security.update');
+                   $scope.userList = Users.query();
+                   $scope.showUsersView=!$scope.editUserView;
+                   $scope.editUserView=!$scope.editUserView;
+               }).error(function(){motechAlert('security.update.user.error', 'main.error');});
        }
 
        $scope.deleteUser = function() {
            $http.post('../websecurity/api/users/delete', $scope.user).
-                success(function(){$scope.successfulMessage="successRemove"}).
-                error(function(){$scope.failureMessage="failureRemove"});
+                success(function(){
+                    motechAlert('security.delete.user.saved', 'security.delete');
+                    $scope.showUsersView=!$scope.editUserView;
+                    $scope.editUserView=!$scope.editUserView;
+                    $scope.userList = Users.query();
+                }).error(function(){motechAlert('security.delete.user.error', 'main.error');});
        }
 
        $scope.resetValues = function() {
@@ -87,17 +106,57 @@ function UserCtrl($scope, Roles, Users, $http) {
                 roles: [],
                 active: true
             }
-            $scope.successfulMessage='';
-            $scope.failureMessage='';
        }
+
+       $scope.hasValue = function(prop) {
+           return $scope.user.hasOwnProperty(prop) && $scope.user[prop] != '' && $scope.user[prop] != undefined;
+       }
+
+       $scope.hasPassword = function(password){
+            return $scope[password] != '' && $scope[password] != undefined;
+       }
+
+       $scope.cssPassword = function() {
+           var msg = 'control-group';
+              if ($scope.user.password!=$scope.confirmPassword || (!$scope.hasValue('password') && $scope.editUserView)) {
+                 msg = msg.concat(' error');
+              }
+           return msg;
+       }
+
+       $scope.cssClass = function(prop, pass) {
+           var msg = 'control-group';
+           if (!$scope.hasValue(prop)) {
+                msg = msg.concat(' error');
+           }
+           return msg;
+       }
+
+       $scope.addUser=function() {
+           $scope.resetValues();
+           $scope.showUsersView=!$scope.addUserView;
+           $scope.addUserView=!$scope.addUserView;
+       }
+
+       $scope.cancelAddUser=function() {
+           $scope.showUsersView=!$scope.addUserView;
+           $scope.addUserView=!$scope.addUserView;
+       }
+
+       $scope.cancelEditUser=function() {
+           $scope.showUsersView=!$scope.editUserView;
+           $scope.editUserView=!$scope.editUserView;
+      }
 }
 
 function RoleCtrl($scope, Roles, Permissions, $http) {
        $scope.role = {
-            roleName : "",
+            roleName : '',
+            originalRoleName:'',
             permissionNames : []
        }
        $scope.addRoleView=true;
+       $scope.pwdNameValidate=true;
        $scope.successfulMessage='';
        $scope.currentPage=0;
        $scope.pageSize=15;
@@ -112,7 +171,7 @@ function RoleCtrl($scope, Roles, Permissions, $http) {
            $scope.currentPage=page;
        }
 
-       $scope.uniqePermissionList = function(list) {
+       $scope.uniquePermissionList = function(list) {
            var newArr = [],
            listLen = list.length,
            found, x, y;
@@ -142,38 +201,68 @@ function RoleCtrl($scope, Roles, Permissions, $http) {
         $scope.saveRole = function() {
             if ($scope.addOrEdit=="add") {
                $http.post('../websecurity/api/roles/create', $scope.role).
-                   success(function(){$scope.successfulMessage="successAdd";}).
-                   error(function(){$scope.failureMessage="failureAdd"});
+                   success(function() {
+                   motechAlert('security.create.role.saved', 'security.create');
+                   $scope.roleList=Roles.query();
+                   $scope.addRoleView=!$scope.addRoleView;
+                   }).
+                   error(function(){motechAlert('security.create.role.error', 'main.error');});
             } else {
-                $http.post('../websecurity/api/roles/update', $scope.role).
-                   success(function(){$scope.successfulMessage="successUpdate"}).
-                   error(function(){$scope.failureMessage="failureUpdate"});
+               $http.post('../websecurity/api/roles/update', $scope.role).
+                   success(function() {
+                   motechAlert('security.update.role.saved', 'security.update');
+                   $scope.roleList=Roles.query();
+                   $scope.addRoleView=!$scope.addRoleView;
+                   }).
+                   error(function(){motechAlert('security.update.role.error', 'main.error');});
             }
-            $scope.addRoleView=!$scope.addRoleView;
-
         }
 
         $scope.getRole = function(role)  {
             $scope.addOrEdit = "edit";
             $http.post('../websecurity/api/roles/getrole', role.roleName).success(function(data) {
                    $scope.role = data;
+                   $scope.role.originalRoleName=role.roleName;
             });
             $scope.addRoleView=!$scope.addRoleView;
+
         }
 
         $scope.deleteRole = function() {
             $http.post('../websecurity/api/users/delete', $scope.role).
-                success(function(){$scope.successfulMessage="successRemove"}).
-                error(function(){$scope.failureMessage="failureRemove"});
+                success(function(){motechAlert('security.delete.role.saved', 'security.delete');}).
+                error(function(){motechAlert('security.delete.role.error', 'main.error');});
         }
 
-        $scope.addRole=function() {
+        $scope.addRole = function() {
             $scope.role = {
-                    roleName : "",
+                    roleName : '',
+                    originalRoleName:'',
                     permissionNames : []
             }
             $scope.addOrEdit = "add";
             $scope.addRoleView=!$scope.addRoleView;
         }
 
+        $scope.cancelRole=function() {
+            $scope.addRoleView=!$scope.addRoleView;
+        }
+
+        $scope.hasValue = function(prop) {
+            return $scope.role.hasOwnProperty(prop) && $scope.role[prop] != '' && $scope.role[prop] != undefined;
+        }
+
+        $scope.cssClass = function(prop) {
+            var msg = 'control-group';
+
+            if (!$scope.hasValue(prop)) {
+                msg = msg.concat(' error');
+            }
+
+            return msg;
+        }
+
+        $scope.isChecked = function(permissionName){
+              return $scope.role.permissionNames.indexOf(permissionName)===-1 ? false : true;
+        }
 }

@@ -1,12 +1,5 @@
 package org.motechproject.server.web.form;
 
-/**
- * Created with IntelliJ IDEA.
- * User: lukasz
- * Date: 30.10.12
- * Time: 15:31
- * To change this template use File | Settings | File Templates.
- */
 public class LoginForm {
     private String userName;
     private String password;

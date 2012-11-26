@@ -67,10 +67,6 @@ public class AllMotechUsersCouchdbImpl extends MotechBaseRepository<MotechUserCo
     @Override
     public boolean checkUserAuthorisation(String userName, String password) {
         MotechUser user = findByUserName(userName);
-        if(user!=null && user.getPassword().equals(password)) {
-            return true;
-        } else {
-            return false;
-        }
+        return password.equals(user.getPassword()) ? true : false;
     }
 }

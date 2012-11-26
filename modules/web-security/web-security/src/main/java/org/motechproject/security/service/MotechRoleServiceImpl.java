@@ -33,7 +33,9 @@ public class MotechRoleServiceImpl implements MotechRoleService {
 
     @Override
     public void updateRole(RoleDto role) {
-        MotechRole motechRole = allMotechRoles.findByRoleName(role.getRoleName());
+        MotechRole motechRole = allMotechRoles.findByRoleName(role.getOriginalRoleName());
+        motechRole.setRoleName(role.getRoleName());
+        motechRole.setPermissionNames(role.getPermissionNames());
         allMotechRoles.update(motechRole);
     }
 
@@ -45,7 +47,7 @@ public class MotechRoleServiceImpl implements MotechRoleService {
 
     @Override
     public void createRole(RoleDto role) {
-        MotechRoleCouchdbImpl motechRole = new MotechRoleCouchdbImpl(role.getRoleName(), role.getPermissionNames());
+        MotechRole motechRole = new MotechRoleCouchdbImpl(role.getRoleName(), role.getPermissionNames());
         allMotechRoles.add(motechRole);
     }
 }

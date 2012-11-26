@@ -3,7 +3,7 @@ package org.motechproject.security.repository;
 import org.ektorp.CouchDbConnector;
 import org.ektorp.ViewQuery;
 import org.ektorp.support.View;
-import org.motechproject.dao.MotechBaseRepository;
+import org.motechproject.commons.couchdb.dao.MotechBaseRepository;
 import org.motechproject.security.domain.MotechRole;
 import org.motechproject.security.domain.MotechRoleCouchdbImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,12 +44,12 @@ public class AllMotechRolesCouchdbImpl extends MotechBaseRepository<MotechRoleCo
 
     @Override
     public void remove(MotechRole motechRole) {
-        super.remove((MotechRoleCouchdbImpl)motechRole);
+        super.remove((MotechRoleCouchdbImpl) motechRole);
     }
 
     @Override
     public void update(MotechRole motechRole) {
-        super.update((MotechRoleCouchdbImpl)motechRole);
+        super.update((MotechRoleCouchdbImpl) motechRole);
     }
 
 

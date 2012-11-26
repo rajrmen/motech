@@ -60,26 +60,6 @@
         <div class="container-fluid">
             <div class="dashboard-logo" ng-show="showDashboardLogo.showDashboard"></div>
             <div class="header-title" ng-show="showDashboardLogo.showDashboard"><fmt:message key="motechTitle" bundle="${bundle}"/></div>
-            <div class="top-menu" ng-show="showDashboardLogo.showDashboard">
-                <div class="navbar">
-                    <ul class="nav">
-                        <li><strong><fmt:message key="server.time" bundle="${bundle}"/>: </strong>${uptime}</li>
-                        <li>|</li>
-                        <li class="dropdown" id="localization">
-                            <a class="menu-flag dropdown-toggle" data-toggle="dropdown" href="#">
-                                <i class="flag flag-${pageLang.language}" title="${pageLang.language}" alt="${pageLang.language}"></i>
-                                <span style="text-transform:capitalize;">${pageLang.getDisplayLanguage(pageLang)}</span>
-                                <span class="caret"></span>
-                            </a>
-                            <ul class="dropdown-menu">
-                                <li ng-repeat="(key, value) in languages">
-                                    <a ng-click="setUserLang(key)"><i class="flag flag-{{key}}"></i> {{value}}</a>
-                                </li>
-                            </ul>
-                        </li>
-                    </ul>
-                </div>
-            </div>
         </div>
     </div>
     <div class="clearfix"></div>
@@ -109,14 +89,12 @@
                         ng-class="showDashboardLogo.changeClass()"/>
                     </a>
                     <ul class="nav pull-right menu-left">
-
+                        <c:if test="${securityLaunch}">
                         <li class="dropdown">
                             <a class="dropdown-toggle" href="#" data-toggle="dropdown">Logged in as <strong>${userName}</strong><strong class="caret"></strong></a>
                             <ul id="localization" class="dropdown-menu" role="menu">
-                                <c:if test="${securityLaunch}">
                                 <li><a href="#" tabindex="-1"><i class="icon-user"></i> Profile</a></li>
                                 <li class="divider"></li>
-                                </c:if>
                                 <li class="dropdown-submenu pull-left">
                                     <a class="menu-flag dropdown-toggle" tabindex="-1" data-toggle="dropdown" href="#">
                                         <i class="flag flag-${pageLang.language}" title="${pageLang.language}" alt="${pageLang.language}"></i>
@@ -128,12 +106,11 @@
                                         </li>
                                     </ul>
                                 </li>
-                                <c:if test="${securityLaunch}">
                                 <li class="divider"></li>
                                 <li><a href="${contextPath}/j_spring_security_logout" class=""><i class="icon-off"></i> Sign Out</a></li>
-                                </c:if>
                             </ul>
                         </li>
+                        </c:if>
                     </ul>
                 </div>
             </div>
@@ -144,44 +121,17 @@
 
     <div id="content" class="container-fluid">
         <div class="row-fluid">
-
-            <div id="side-nav" class="span2">
-                <ul class="nav nav-tabs nav-stacked">
-                    <c:forEach var="module" items="${individuals}">
-                        <li class="nav-header"><fmt:message key="${module.moduleName}" bundle="${bundle}"/></li>
-                        <c:forEach var="entry" items="${module.subMenu}">
-                            <li ng-class="active('?moduleName=${module.moduleName}${entry.value}')"><a href="?moduleName=${module.moduleName}${entry.value}"><fmt:message key="${entry.key}" bundle="${bundle}"/></a></li>
-                        </c:forEach>
-                        <li class="divider"></li>
-                    </c:forEach>
-
-                    <c:if test="${not empty links}">
-                        <li class="nav-header"><fmt:message key="modules" bundle="${bundle}"/></li>
-                        <c:forEach var="module" items="${links}">
-                            <li <c:if test="${module.moduleName == currentModule.moduleName}">class='active'</c:if>><a href="?moduleName=${module.moduleName}">${module.moduleName}</a></li>
-                        </c:forEach>
-                    </c:if>
-                </ul>
-            </div>
-
             <div id="main-content" class="span10">
-                <c:if test="${! empty currentModule}">
                     <div>
-                        <div class="splash" ng-hide="ready">
+                        <div class="splash splash-alert">
                             <div class="splash-logo"></div>
                             <div class="clearfix"></div>
-                            <div class="splash-loader"><img src="resources/img/loader.gif" alt="loading" /></div>
+                            <div class="splash-loader splash-header-alert">{{msg('accessDenied')}}</div>
                             <div class="clearfix"></div>
-                            <div class="splash-msg"><fmt:message key="module.loading" bundle="${bundle}"/></div>
+                            <div class="splash-msg splash-msg-alert">{{msg('accessDeniedAlert')}}</div>
                             <div class="clearfix"></div>
-                        </div>
-                        <div id="module-content" ng-show="ready">
-                            <script type="text/javascript">
-                                loadModule('${currentModule.url}', ${currentModule.angularModulesStr});
-                            </script>
                         </div>
                     </div>
-                </c:if>
             </div>
 
         </div>

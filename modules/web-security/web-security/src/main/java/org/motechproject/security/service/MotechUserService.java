@@ -8,28 +8,29 @@ import java.util.List;
 
 public interface MotechUserService {
 
-    @PreAuthorize("isFullyAuthenticated()")
-    public void register(String username, String password, String email, String externalId, List<String> roles);
 
-    public void register(String username, String password, String email, String externalId, List<String> roles, boolean isActive);
+    void register(String username, String password, String email, String externalId, List<String> roles);
 
-    @PreAuthorize("isFullyAuthenticated()")
-    public void activateUser(String username);
+    @PreAuthorize("isFullyAuthenticated() and hasRole('addUser')")
+    void register(String username, String password, String email, String externalId, List<String> roles, boolean isActive);
 
-    public MotechUserProfile retrieveUserByCredentials(String username, String password);
+    @PreAuthorize("isFullyAuthenticated() and hasRole('activateUser')")
+    void activateUser(String username);
 
-    public MotechUserProfile changePassword(String username, String oldPassword, String newPassword);
+    MotechUserProfile retrieveUserByCredentials(String username, String password);
 
-    @PreAuthorize("isFullyAuthenticated()")
-    public void remove(String username);
+    MotechUserProfile changePassword(String username, String oldPassword, String newPassword);
 
-    public boolean hasUser(String username);
+    boolean hasUser(String username);
 
-    public List<MotechUserProfile> getUsers();
+    @PreAuthorize("isFullyAuthenticated() and hasRole('manageUser')")
+    List<MotechUserProfile> getUsers();
 
+    @PreAuthorize("isFullyAuthenticated() and hasRole('editUser')")
     UserDto getUser(String userName);
 
     void updateUser(UserDto user);
 
+    @PreAuthorize("isFullyAuthenticated() and hasRole('deleteUser')")
     void deleteUser(UserDto user);
 }

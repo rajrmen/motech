@@ -4,6 +4,8 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.motechproject.security.domain.MotechRole;
+import org.motechproject.security.domain.MotechRoleCouchdbImpl;
 import org.motechproject.security.domain.MotechUser;
 import org.motechproject.security.domain.MotechUserCouchdbImpl;
 import org.motechproject.security.repository.AllMotechRoles;
@@ -40,8 +42,9 @@ public class MotechAuthenticationProviderTest {
     @Test
     public void shouldRetrieveUserFromDatabase() {
         MotechUser motechUser = new MotechUserCouchdbImpl("bob", "encodedPassword", "entity_1", "", asList("some_role"));
+        MotechRole motechRole = new MotechRoleCouchdbImpl("some_role", asList("some_permission"));
         when(allMotechUsers.findByUserName("bob")).thenReturn(motechUser);
-
+        when(allMotechRoles.findByRoleName("some_role")).thenReturn(motechRole);
         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken("bob", "password");
         UserDetails userDetails = authenticationProvider.retrieveUser("bob", authentication);
 

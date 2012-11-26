@@ -2,16 +2,27 @@ package org.motechproject.security.service;
 
 import org.ektorp.CouchDbConnector;
 import org.junit.After;
+import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.motechproject.security.authentication.MotechPasswordEncoder;
+import org.motechproject.security.domain.MotechRoleCouchdbImpl;
 import org.motechproject.security.domain.MotechUser;
+import org.motechproject.security.model.UserDto;
+import org.motechproject.security.repository.AllMotechRoles;
+import org.motechproject.security.repository.AllMotechRolesCouchdbImpl;
 import org.motechproject.security.repository.AllMotechUsers;
 import org.motechproject.security.repository.AllMotechUsersCouchdbImpl;
 import org.motechproject.testing.utils.SpringIntegrationTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -19,36 +30,51 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import static java.util.Arrays.asList;
-import static junit.framework.Assert.assertFalse;
-import static junit.framework.Assert.assertNull;
-import static junit.framework.Assert.assertTrue;
+import static junit.framework.Assert.*;
 import static org.junit.Assert.assertNotNull;
+    
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath*:/META-INF/motech/*.xml")
 public class MotechUserServiceTestIT extends SpringIntegrationTest {
 
     @Autowired
+    AllMotechRoles allMotechRoles;
+    
+    @Autowired
     MotechUserService motechUserService;
-
+    
     @Autowired
     AllMotechUsers allMotechUsers;
-
+    
     @Autowired
     @Qualifier("webSecurityDbConnector")
     CouchDbConnector connector;
-
+    
     @Autowired
-    private MotechPasswordEncoder passwordEncoder;
+    private AuthenticationManager authenticationManager;
 
+
+    @Before
+    public void onStartUp(){
+        allMotechRoles.add(new MotechRoleCouchdbImpl("IT_ADMIN", asList("addUser", "editUser", "deleteUser", "manageUser", "activateUser", "manageRole")));
+        motechUserService.register("admin", "admin", "1234", "", asList("IT_ADMIN"));
+        UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken("admin", "admin");
+        Authentication auth = authenticationManager.authenticate(authRequest);
+        SecurityContext context = SecurityContextHolder.getContext();
+        context.setAuthentication(auth);
+    }
+    
+    private MotechPasswordEncoder passwordEncoder;
+    
     @Ignore
     @Test
     public void testRegister() {
         motechUserService.register("userName", "password", "1234", "", asList("IT_ADMIN", "DB_ADMIN"));
         MotechUser motechUser = allMotechUsers.findByUserName("userName");
-
+    
         assertNotNull(motechUser);
-
+    
         assertTrue(motechUser.getRoles().contains("IT_ADMIN"));
         assertTrue(motechUser.getRoles().contains("DB_ADMIN"));
     }
@@ -58,7 +84,7 @@ public class MotechUserServiceTestIT extends SpringIntegrationTest {
         motechUserService.register("userName", "password", "1234", "", asList("IT_ADMIN", "DB_ADMIN"), false);
         motechUserService.activateUser("userName");
         MotechUser motechUser = allMotechUsers.findByUserName("userName");
-
+    
         assertTrue(motechUser.isActive());
     }
     @Ignore
@@ -70,7 +96,7 @@ public class MotechUserServiceTestIT extends SpringIntegrationTest {
     @Test(expected = IllegalArgumentException.class)
     public void shouldThrowExceptionIfUserNameIsEmptyForRegisterWithActiveInfo() {
         motechUserService.register("", "password", "ext_id", "", new ArrayList<String>(), true);
-
+    
     }
     @Ignore
     @Test(expected = IllegalArgumentException.class)
@@ -88,7 +114,7 @@ public class MotechUserServiceTestIT extends SpringIntegrationTest {
         motechUserService.register("userName", "password", "1234", "", asList("IT_ADMIN", "DB_ADMIN"), false);
         motechUserService.activateUser("userName1");
         MotechUser motechUser = allMotechUsers.findByUserName("userName");
-
+    
         assertFalse(motechUser.isActive());
     }
     @Ignore
@@ -96,7 +122,7 @@ public class MotechUserServiceTestIT extends SpringIntegrationTest {
     public void shouldCreateActiveUserByDefault() {
         motechUserService.register("userName", "password", "1234", "", asList("IT_ADMIN", "DB_ADMIN"));
         MotechUser motechUser = allMotechUsers.findByUserName("userName");
-
+    
         assertTrue(motechUser.isActive());
     }
     @Ignore
@@ -104,7 +130,7 @@ public class MotechUserServiceTestIT extends SpringIntegrationTest {
     public void shouldCreateInActiveUser() {
         motechUserService.register("userName", "password", "1234", "", asList("IT_ADMIN", "DB_ADMIN"), false);
         MotechUser motechUser = allMotechUsers.findByUserName("userName");
-
+    
         assertFalse(motechUser.isActive());
     }
     @Ignore
@@ -149,9 +175,10 @@ public class MotechUserServiceTestIT extends SpringIntegrationTest {
     @After
     public void tearDown() {
         ((AllMotechUsersCouchdbImpl) allMotechUsers).removeAll();
+        ((AllMotechRolesCouchdbImpl) allMotechRoles).removeAll();
         super.tearDown();
     }
-
+    
     @Override
     public CouchDbConnector getDBConnector() {
         return connector;

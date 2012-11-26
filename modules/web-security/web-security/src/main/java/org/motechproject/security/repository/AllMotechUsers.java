@@ -16,7 +16,7 @@ public interface AllMotechUsers {
 
     void remove(MotechUser motechUser);
 
-    public List<MotechUser> getUsers();
+    List<MotechUser> getUsers();
 
-    public boolean checkUserAuthorisation(String userName, String password);
+    boolean checkUserAuthorisation(String userName, String password);
 }

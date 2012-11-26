@@ -1,6 +1,13 @@
+        allMotechUsers.add(new MotechUserCouchdbImpl(userName, "testpassword", "", "id", asList("ADMIN")));
+        allMotechUsers.add(new MotechUserCouchdbImpl(userName, "testpassword1", "", "id2", asList("ADMIN")));
+        MotechUser provider1 = new MotechUserCouchdbImpl("provider1", "testpassword", "", "id1", asList("PROVIDER"));
+        MotechUser provider2 = new MotechUserCouchdbImpl("provider2", "testpassword", "", "id2", asList("PROVIDER"));
+        MotechUser cmfAdmin = new MotechUserCouchdbImpl("cmfadmin", "testpassword", "", "id3", asList("CMFADMIN"));
+        MotechUser itAdmin = new MotechUserCouchdbImpl("itadmin", "testpassword", "", "id4", asList("ITADMIN"));
 package org.motechproject.security.repository;
 
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,21 +27,24 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNull;
 
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath*:META-INF/motech/*.xml")
 public class AllMotechWebUsersIT {
 
     @Autowired
     AllMotechUsers allMotechUsers;
+
     @Autowired
     MotechPasswordEncoder passwordEncoder;
-
+    
     @Ignore
     @Test
     public void findByUserName() {
+        MotechUser motechUser = new MotechUserCouchdbImpl("testuser", "testpassword", "", "id", asList("ADMIN"));
         MotechUser motechUser = new MotechUserCouchdbImpl("testuser", "testpassword", "id","", asList("ADMIN"));
         allMotechUsers.add(motechUser);
-
+    
         MotechUser testUser = allMotechUsers.findByUserName("testuser");
         assertEquals("testuser", testUser.getUserName());
     }
@@ -42,8 +52,9 @@ public class AllMotechWebUsersIT {
     @Test
     public void findByUserNameShouldBeCaseInsensitive() {
         String userName = "TestUser";
+        allMotechUsers.add(new MotechUserCouchdbImpl(userName, "testpassword", "", "id", asList("ADMIN")));
         allMotechUsers.add(new MotechUserCouchdbImpl(userName, "testpassword", "id","", asList("ADMIN")));
-
+    
         assertNotNull(allMotechUsers.findByUserName("TESTUSER"));
     }
     @Ignore
@@ -52,7 +63,7 @@ public class AllMotechWebUsersIT {
         String userName = "username";
         allMotechUsers.add(new MotechUserCouchdbImpl(userName, "testpassword", "id","", asList("ADMIN")));
         allMotechUsers.add(new MotechUserCouchdbImpl(userName, "testpassword1", "id2","", asList("ADMIN")));
-
+    
         MotechUser motechUser = allMotechUsers.findByUserName("userName");
         assertEquals(1, ((AllMotechUsersCouchdbImpl) allMotechUsers).getAll().size());
         assertEquals("testpassword", motechUser.getPassword());
@@ -69,7 +80,7 @@ public class AllMotechWebUsersIT {
         allMotechUsers.add(provider2);
         allMotechUsers.add(cmfAdmin);
         allMotechUsers.add(itAdmin);
-
+    
         List<? extends MotechUser> providers = allMotechUsers.findByRole("PROVIDER");
         assertEquals(asList("id1", "id2"), extract(providers, on(MotechUser.class).getExternalId()));
     }

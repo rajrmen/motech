@@ -6,7 +6,6 @@ import org.motechproject.security.domain.MotechUserCouchdbImpl;
 import org.motechproject.security.model.UserDto;
 import org.motechproject.security.repository.AllMotechUsers;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -70,14 +69,6 @@ public class MotechUserServiceImpl implements MotechUserService {
     }
 
     @Override
-    public void remove(String username) {
-        MotechUser motechUser = allMotechUsers.findByUserName(username);
-        if (motechUser != null) {
-            allMotechUsers.remove(motechUser);
-        }
-    }
-
-    @Override
     public boolean hasUser(String username) {
         return allMotechUsers.findByUserName(username) != null;
     }
@@ -85,7 +76,7 @@ public class MotechUserServiceImpl implements MotechUserService {
     @Override
     public List<MotechUserProfile> getUsers() {
         List<MotechUserProfile> users = new ArrayList<>();
-        for(MotechUser user : allMotechUsers.getUsers()) {
+        for (MotechUser user : allMotechUsers.getUsers()) {
             users.add(new MotechUserProfile(user));
         }
          return users;
@@ -101,7 +92,7 @@ public class MotechUserServiceImpl implements MotechUserService {
     public void updateUser(UserDto user) {
         MotechUser motechUser = allMotechUsers.findByUserName(user.getUserName());
         motechUser.setEmail(user.getEmail());
-        if(!user.getPassword().equals("")){
+        if (!"".equals(user.getPassword())) {
             motechUser.setPassword(passwordEncoder.encode(user.getPassword()));
         }
         motechUser.setRoles(user.getRoles());

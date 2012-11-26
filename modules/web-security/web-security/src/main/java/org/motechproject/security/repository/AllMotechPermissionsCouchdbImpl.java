@@ -3,7 +3,7 @@ package org.motechproject.security.repository;
 import org.ektorp.CouchDbConnector;
 import org.ektorp.ViewQuery;
 import org.ektorp.support.View;
-import org.motechproject.dao.MotechBaseRepository;
+import org.motechproject.commons.couchdb.dao.MotechBaseRepository;
 import org.motechproject.security.domain.MotechPermission;
 import org.motechproject.security.domain.MotechPermissionCouchdbImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +26,7 @@ public class AllMotechPermissionsCouchdbImpl extends MotechBaseRepository<Motech
     @Override
     public void add(MotechPermission permission) {
         if (findByPermissionName(permission.getPermissionName()) != null) { return; }
-        else super.add((MotechPermissionCouchdbImpl) permission);
+        super.add((MotechPermissionCouchdbImpl) permission);
     }
 
     @Override

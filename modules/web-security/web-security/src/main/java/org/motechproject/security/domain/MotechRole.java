@@ -7,4 +7,8 @@ public interface MotechRole {
     String getRoleName();
 
     List<String> getPermissionNames();
+
+    void setRoleName(String roleName);
+
+    void setPermissionNames(List<String> perrmissionNames);
 }

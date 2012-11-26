@@ -8,6 +8,8 @@ public class RoleDto {
 
     private String roleName;
 
+    private String originalRoleName;
+
     private List<String> permissionNames;
 
     public RoleDto() {
@@ -32,6 +34,14 @@ public class RoleDto {
 
     public void setPermissionNames(List<String> permissionNames) {
         this.permissionNames = permissionNames;
+    }
+
+    public String getOriginalRoleName() {
+        return originalRoleName;
+    }
+
+    public void setOriginalRoleName(String originalRoleName) {
+        this.originalRoleName = originalRoleName;
     }
 }
 

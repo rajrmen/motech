@@ -1,65 +1,68 @@
 package org.motechproject.security;
 
 import org.ektorp.CouchDbConnector;
-import org.motechproject.security.domain.*;
+import org.motechproject.security.domain.MotechPermission;
+import org.motechproject.security.domain.MotechPermissionCouchdbImpl;
+import org.motechproject.security.domain.MotechRole;
+import org.motechproject.security.domain.MotechRoleCouchdbImpl;
 import org.motechproject.security.repository.AllMotechPermissions;
 import org.motechproject.security.repository.AllMotechRoles;
 import org.motechproject.security.repository.AllMotechUsers;
 import org.motechproject.security.service.MotechUserService;
+import org.motechproject.server.config.service.PlatformSettingsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Arrays;
+import java.util.Properties;
 
 
 public class Initialize {
 
     @Autowired
-    AllMotechPermissions allMotechPermissions;
+    private MotechUserService motechUserService;
 
     @Autowired
-    AllMotechRoles allMotechRoles;
+    private AllMotechPermissions allMotechPermissions;
 
     @Autowired
-    AllMotechUsers allMotechUsers;
+    private AllMotechRoles allMotechRoles;
 
     @Autowired
-    MotechUserService motechUserService;
+    private AllMotechUsers allMotechUsers;
 
     @Autowired
-    public void initialize(@Qualifier("webSecurityDbConnector") CouchDbConnector db) {
+    public void initialize(@Qualifier("webSecurityDbConnector") CouchDbConnector db) throws IOException {
         //initialize startup permission for admin user
         MotechPermission addUserPerrmision = new MotechPermissionCouchdbImpl("addUser", "websecurity");
         MotechPermission editUserPermission = new MotechPermissionCouchdbImpl("editUser", "websecurity");
         MotechPermission deleteUserPermission = new MotechPermissionCouchdbImpl("deleteUser", "websecurity");
+        MotechPermission manageUserPerrmision = new MotechPermissionCouchdbImpl("manageUser", "websecurity");
+        MotechPermission activeUserPerrmision = new MotechPermissionCouchdbImpl("activateUser", "websecurity");
+        MotechPermission manageRolePermission = new MotechPermissionCouchdbImpl("manageRole", "websecurity");
 
-        //initialize startup permission for admin bundle
-        MotechPermission startBundle = new MotechPermissionCouchdbImpl("startBundle", "websecurity");
-        MotechPermission stopBundle = new MotechPermissionCouchdbImpl("stopBundle", "websecurity");
-        MotechPermission restartBundle = new MotechPermissionCouchdbImpl("restartBundle", "websecurity");
-        MotechPermission uninstallBundle = new MotechPermissionCouchdbImpl("uninstallBundle", "websecurity");
-        MotechPermission installBundle = new MotechPermissionCouchdbImpl("installBundle", "websecurity");
-        MotechPermission changeConfigBundle = new MotechPermissionCouchdbImpl("changeConfigBundle", "websecurity");
-
-
-        MotechPermission getBundlesPerrmision = new MotechPermissionCouchdbImpl("getBundles", "admin");
         //initialize startup role
-        MotechRole adminUser = new MotechRoleCouchdbImpl("Admin User", Arrays.asList(addUserPerrmision.getPermissionName(), editUserPermission.getPermissionName(), deleteUserPermission.getPermissionName()));
-        MotechRole adminBundle = new MotechRoleCouchdbImpl("Admin Bundle", Arrays.asList(startBundle.getPermissionName(), stopBundle.getPermissionName(), restartBundle.getPermissionName(), getBundlesPerrmision.getPermissionName()));
-
+        MotechRole adminUser = new MotechRoleCouchdbImpl("Admin User", Arrays.asList(addUserPerrmision.getPermissionName(), editUserPermission.getPermissionName(), deleteUserPermission.getPermissionName(), manageUserPerrmision.getPermissionName(), activeUserPerrmision.getPermissionName(), manageRolePermission.getPermissionName()));
 
         //create all startup security
         allMotechPermissions.add(addUserPerrmision);
         allMotechPermissions.add(editUserPermission);
         allMotechPermissions.add(deleteUserPermission);
-        allMotechPermissions.add(startBundle);
-        allMotechPermissions.add(stopBundle);
-        allMotechPermissions.add(restartBundle);
-        allMotechPermissions.add(uninstallBundle);
-        allMotechPermissions.add(installBundle);
-        allMotechPermissions.add(changeConfigBundle);
+        allMotechPermissions.add(manageUserPerrmision);
+        allMotechPermissions.add(activeUserPerrmision);
+        allMotechPermissions.add(manageRolePermission);
+
         allMotechRoles.add(adminUser);
-        allMotechRoles.add(adminBundle);
-        motechUserService.register("motech", "motech", "motech@motech", "", Arrays.asList(adminUser.getRoleName(), adminBundle.getRoleName()), true);
+
+        Properties adminDetails = new Properties();
+        InputStream file = new FileInputStream(String.format("%s/.motech/config/%s", System.getProperty("user.home"), PlatformSettingsService.SETTINGS_FILE_NAME));
+        adminDetails.load(new InputStreamReader(file));
+        String adminName = adminDetails.getProperty("admin.login");
+        String adminPassword = adminDetails.getProperty("admin.password");
+        motechUserService.register(adminName, adminPassword, "motech@motech", "", Arrays.asList(adminUser.getRoleName()));
     }
 }
