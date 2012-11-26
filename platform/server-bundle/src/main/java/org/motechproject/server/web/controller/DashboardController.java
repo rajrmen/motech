@@ -4,9 +4,6 @@ import org.joda.time.Duration;
 import org.joda.time.Period;
 import org.joda.time.format.PeriodFormatter;
 import org.joda.time.format.PeriodFormatterBuilder;
-import org.motechproject.server.osgi.BundleInformation;
-import org.motechproject.server.osgi.OsgiFrameworkService;
-import org.motechproject.server.osgi.OsgiListener;
 import org.motechproject.server.startup.MotechPlatformState;
 import org.motechproject.server.startup.StartupManager;
 import org.motechproject.server.ui.LocaleSettings;
@@ -47,7 +44,13 @@ public class DashboardController {
     @RequestMapping({"/index", "/", "/home" })
     public ModelAndView index(@RequestParam(required = false) String moduleName, final HttpServletRequest request) {
 
-        ModelAndView mav;
+        ModelAndView mav = null;
+
+        // check if this is the first run
+        if (startupManager.getPlatformState() == MotechPlatformState.NEED_CONFIG) {
+            mav = new ModelAndView("redirect:startup.do");
+        } else {
+            mav = new ModelAndView("index");
             if (request.getUserPrincipal() != null) {
                 mav.addObject("userName", request.getUserPrincipal().getName());
                 mav.addObject("securityLaunch", true);
@@ -56,22 +59,6 @@ public class DashboardController {
                 mav.addObject("userName", "Admin Mode");
             }
             if (!"/".equals(request.getSession().getServletContext().getContextPath())) {
-                mav.addObject("contextPath", request.getSession().getServletContext().getContextPath().substring(1));
-            } else {
-                mav.addObject("contextPath", "");
-            }
-        // check if this is the first run
-        if (startupManager.getPlatformState() == MotechPlatformState.NEED_CONFIG) {
-            mav = new ModelAndView("redirect:startup.do");
-        } else {
-            mav = new ModelAndView("index");
-            if (isWebSecurityStarted()) {
-                mav.addObject("userName",request.getUserPrincipal().getName());
-                mav.addObject("securityLaunch", true);
-            } else {
-                mav.addObject("securityLaunch", false);
-            }
-            if (!request.getSession().getServletContext().getContextPath().equals("/")) {
                 mav.addObject("contextPath", request.getSession().getServletContext().getContextPath().substring(1));
             } else {
                 mav.addObject("contextPath", "");
@@ -119,15 +106,4 @@ public class DashboardController {
         return formatter.print(uptime.normalizedStandard());
     }
 
-    private boolean isWebSecurityStarted() {
-        boolean isRun = false;
-        OsgiFrameworkService service = OsgiListener.getOsgiService();
-        for (BundleInformation bundle : service.getExternalBundles()){
-            String name = bundle.getSymbolicName();
-            if(bundle.hasStatus(32) && bundle.getSymbolicName().equals(WEBSECURITY) ) {
-                isRun = true;
-            }
-        }
-        return isRun;
-    }
 }

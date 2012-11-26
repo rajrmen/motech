@@ -3,8 +3,6 @@ package org.motechproject.security.osgi;
 import org.apache.commons.io.IOUtils;
 
 import org.apache.felix.http.api.ExtHttpService;
-import org.apache.commons.io.IOUtils;
-import org.apache.felix.http.api.ExtHttpService;
 import org.motechproject.osgi.web.MotechOsgiWebApplicationContext;
 import org.motechproject.server.ui.ModuleRegistrationData;
 import org.motechproject.server.ui.UIFrameworkService;
@@ -16,13 +14,7 @@ import org.osgi.util.tracker.ServiceTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.filter.DelegatingFilterProxy;
-
-import org.springframework.web.filter.DelegatingFilterProxy;
 import org.springframework.web.servlet.DispatcherServlet;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringWriter;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -43,11 +35,6 @@ public class Activator implements BundleActivator {
     private ServiceTracker uiServiceTracker;
 
     private static final String MODULE_NAME = "websecurity";
-    private ServiceTracker tracker;
-    private ServiceTracker uiServiceTracker;
-    private ServiceReference httpService;
-
-    private static final String MODULE_NAME = "websecurity";
 
     private static BundleContext bundleContext;
     private static DelegatingFilterProxy filter;
@@ -56,7 +43,6 @@ public class Activator implements BundleActivator {
     public void start(BundleContext context) throws Exception {
         bundleContext = context;
 
-        this.tracker = new ServiceTracker(context,
         this.httpServiceTracker = new ServiceTracker(context,
                 ExtHttpService.class.getName(), null) {
             @Override
@@ -73,10 +59,6 @@ public class Activator implements BundleActivator {
             }
         };
         this.httpServiceTracker.open();
-
-        this.uiServiceTracker = new ServiceTracker(context,
-                UIFrameworkService.class.getName(), null) {
-        this.tracker.open();
 
         this.uiServiceTracker = new ServiceTracker(context,
                 UIFrameworkService.class.getName(), null) {
@@ -100,9 +82,6 @@ public class Activator implements BundleActivator {
     public void stop(BundleContext context) throws Exception {
         this.httpServiceTracker.close();
         this.uiServiceTracker.close();
-            ExtHttpService service = (ExtHttpService) context.getService(httpService);
-            serviceRemoved(service);
-        }
     }
 
     public static class WebSecurityApplicationContext extends MotechOsgiWebApplicationContext {
@@ -124,15 +103,12 @@ public class Activator implements BundleActivator {
                 Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
                 UiHttpContext httpContext = new UiHttpContext(service.createDefaultHttpContext());
 
-                UiHttpContext httpContext = new UiHttpContext(service.createDefaultHttpContext());
                 service.registerServlet(SERVLET_URL_MAPPING, dispatcherServlet, null, null);
                 service.registerResources(RESOURCE_URL_MAPPING, "/webapp", httpContext);
                 if (!isAdminMode()){
                     filter = new DelegatingFilterProxy("springSecurityFilterChain", dispatcherServlet.getWebApplicationContext());
                     service.registerFilter(filter, "/.*", null,0,httpContext);
                 }
-                filter = new DelegatingFilterProxy("springSecurityFilterChain", dispatcherServlet.getWebApplicationContext());
-                service.registerFilter(filter, "/.*", null,0,httpContext);
                 logger.debug("Servlet registered");
             } finally {
                 Thread.currentThread().setContextClassLoader(old);
@@ -146,39 +122,6 @@ public class Activator implements BundleActivator {
         service.unregister(SERVLET_URL_MAPPING);
         service.unregisterFilter(filter);
         logger.debug("Servlet unregistered");
-    }
-
-    private void serviceAdded(UIFrameworkService service) {
-        ModuleRegistrationData regData = new ModuleRegistrationData();
-        regData.setModuleName(MODULE_NAME);
-        regData.setUrl("../websecurity/");
-        regData.addAngularModule("motech-web-security");
-        regData.addSubMenu("#/users", "manageUser");
-        regData.addSubMenu("#/roles", "manageRole");
-        regData.addI18N("messages", "../websecurity/bundles/");
-
-        InputStream is = null;
-        StringWriter writer = new StringWriter();
-        try {
-            is = this.getClass().getClassLoader().getResourceAsStream("header.html");
-            IOUtils.copy(is, writer);
-
-            regData.setHeader(writer.toString());
-        } catch (IOException e) {
-            logger.error("Cant read header.html", e);
-            throw new RuntimeException(e);
-        } finally {
-            IOUtils.closeQuietly(is);
-            IOUtils.closeQuietly(writer);
-        }
-
-        service.registerModule(regData);
-        logger.debug("Web Security registered in UI framework");
-    }
-
-    private void serviceRemoved(UIFrameworkService service) {
-        service.unregisterModule(MODULE_NAME);
-        logger.debug("Web Security unregistered from ui framework");
     }
 
     private void serviceAdded(UIFrameworkService service) {

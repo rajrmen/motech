@@ -60,30 +60,10 @@
         <div class="container-fluid">
             <div class="dashboard-logo" ng-show="showDashboardLogo.showDashboard"></div>
             <div class="header-title" ng-show="showDashboardLogo.showDashboard"><fmt:message key="motechTitle" bundle="${bundle}"/></div>
-            <div class="top-menu" ng-show="showDashboardLogo.showDashboard">
-                <div class="navbar">
-                    <ul class="nav">
-                        <li><strong><fmt:message key="server.time" bundle="${bundle}"/>: </strong>${uptime}</li>
-                        <li>|</li>
-                        <li class="dropdown" id="localization">
-                            <a class="menu-flag dropdown-toggle" data-toggle="dropdown" href="#">
-                                <i class="flag flag-${pageLang.language}" title="${pageLang.language}" alt="${pageLang.language}"></i>
-                                <span style="text-transform:capitalize;">${pageLang.getDisplayLanguage(pageLang)}</span>
-                                <span class="caret"></span>
-                            </a>
-                            <ul class="dropdown-menu">
-                                <li ng-repeat="(key, value) in languages">
-                                    <a ng-click="setUserLang(key)"><i class="flag flag-{{key}}"></i> {{value}}</a>
-                                </li>
-                            </ul>
-                        </li>
-                    </ul>
-                </div>
-            </div>
         </div>
     </div>
     <div class="clearfix"></div>
-
+                                                                  \
     <div class="header-nav navbar">
         <div class="navbar-inner navbar-inverse navbar-inner-bg">
             <div class="container-fluid">

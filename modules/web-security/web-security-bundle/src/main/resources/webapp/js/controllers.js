@@ -73,6 +73,7 @@ function UserCtrl($scope, Roles, Users, $http) {
            $http.post('../websecurity/api/users/getuser', user.userName).success(function(data) {
                    $scope.user = data;
                    $scope.user.password='';
+                   $scope.confirmPassword="";
            });
            $scope.showUsersView=!$scope.editUserView;
            $scope.editUserView=!$scope.editUserView;
