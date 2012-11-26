@@ -2,7 +2,7 @@ package org.motechproject.tasks.domain;
 
 import org.ektorp.support.TypeDiscriminator;
 import org.joda.time.DateTime;
-import org.motechproject.model.MotechBaseDataObject;
+import org.motechproject.commons.couchdb.model.MotechBaseDataObject;
 
 @TypeDiscriminator("doc.type == 'TaskStatusMessage'")
 public class TaskStatusMessage extends MotechBaseDataObject {

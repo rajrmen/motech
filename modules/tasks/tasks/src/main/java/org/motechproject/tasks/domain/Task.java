@@ -1,7 +1,7 @@
 package org.motechproject.tasks.domain;
 
 import org.ektorp.support.TypeDiscriminator;
-import org.motechproject.model.MotechBaseDataObject;
+import org.motechproject.commons.couchdb.model.MotechBaseDataObject;
 
 import java.util.Map;
 

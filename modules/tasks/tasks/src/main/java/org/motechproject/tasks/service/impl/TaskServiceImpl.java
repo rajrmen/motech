@@ -1,6 +1,6 @@
 package org.motechproject.tasks.service.impl;
 
-import org.motechproject.dao.BusinessIdNotUniqueException;
+import org.motechproject.commons.couchdb.dao.BusinessIdNotUniqueException;
 import org.motechproject.tasks.domain.Channel;
 import org.motechproject.tasks.domain.Task;
 import org.motechproject.tasks.domain.TaskEvent;

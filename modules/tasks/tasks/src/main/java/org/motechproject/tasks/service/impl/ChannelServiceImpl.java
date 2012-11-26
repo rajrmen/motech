@@ -1,8 +1,8 @@
 package org.motechproject.tasks.service.impl;
 
 import com.google.gson.reflect.TypeToken;
-import org.motechproject.dao.BusinessIdNotUniqueException;
-import org.motechproject.dao.MotechJsonReader;
+import org.motechproject.commons.api.json.MotechJsonReader;
+import org.motechproject.commons.couchdb.dao.BusinessIdNotUniqueException;
 import org.motechproject.tasks.domain.Channel;
 import org.motechproject.tasks.repository.AllChannels;
 import org.motechproject.tasks.service.ChannelService;

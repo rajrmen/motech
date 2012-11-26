@@ -4,7 +4,7 @@ import com.google.gson.reflect.TypeToken;
 import org.ektorp.CouchDbConnector;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.motechproject.dao.MotechJsonReader;
+import org.motechproject.commons.api.json.MotechJsonReader;
 import org.motechproject.tasks.domain.Channel;
 import org.motechproject.testing.utils.SpringIntegrationTest;
 import org.springframework.beans.factory.annotation.Autowired;
