@@ -7,7 +7,8 @@ function UserCtrl($scope, Roles, Users, $http) {
            password: "",
            email: "",
            roles: [],
-           active: true
+           active: true,
+           openId: ""
        }
        $scope.confirmPassword="";
        $scope.propertyUserName="";
@@ -105,7 +106,8 @@ function UserCtrl($scope, Roles, Users, $http) {
                 password: "",
                 email: "",
                 roles: [],
-                active: true
+                active: true,
+                openId: ""
             }
        }
 

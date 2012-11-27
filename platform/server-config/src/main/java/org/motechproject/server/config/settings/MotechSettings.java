@@ -33,10 +33,13 @@ public interface MotechSettings {
 
     String ADMINLOGIN = "admin.login";
     String ADMINPASSWORD = "admin.password";
+    String LOGINMODE = "login.mode";
 
     String getLanguage();
 
     String getStatusMsgTimeout();
+
+    String getLoginMode();
 
     Properties getCouchDBProperties();
 

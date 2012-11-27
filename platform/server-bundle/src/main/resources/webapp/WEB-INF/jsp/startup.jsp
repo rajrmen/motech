@@ -134,6 +134,19 @@
                             <input type="password" class="input-large" name="adminConfirmPassword" value="${startupSettings.adminConfirmPassword}"/>
                         </div>
                     </div>
+                     <div class="control-group">
+                        <label class="control-label"><fmt:message key="enter.adminEmail" bundle="${bundle}"/></label>
+                        <div class="controls">
+                            <input type="password" class="input-large" name="adminEmail" value="${startupSettings.adminEmail}"/>
+                        </div>
+                     </div>
+                     <div class="control-group">
+                         <label class="control-label"><fmt:message key="select.loginMode" bundle="${bundle}"/></label>
+                         <div class="controls">
+                                 <input type="radio" value="repository" name="loginMode" />
+                                 <input type="radio" value="openId" name="loginMode" />
+                         </div>
+                     </div>
 
                     <div class="control-group">
                         <div class="controls">

@@ -3,6 +3,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
+
 <fmt:setLocale value="${pageLang}" />
 <fmt:setBundle basename="org.motechproject.resources.messages" var="bundle"/>
 
@@ -75,7 +76,8 @@
     <div id="content" class="container">
         <div class="row-fluid">
             <div id="main-content">
-
+                <c:if test="${loginMode==repository}">
+                <c:if test="${empty error}">
                 <div id="login" class="well2 margin-center margin-before4 spn4">
                     <div class="box-header"><fmt:message key="security.signInUser" bundle="${bundle}"/></div>
                     <div class="box-content clearfix">
@@ -104,7 +106,8 @@
                         <div class="clearfix"></div>
                     </div>
                 </div>
-                <!--
+                </c:if>
+                <c:if test="${error=='true'}">
                 <div class="well2 span8">
                     <div class="box-header"><fmt:message key="security.signInUnsuccessful" bundle="${bundle}"/></div>
                     <div class="box-content clearfix">
@@ -125,7 +128,7 @@
                             </div>
                             <div class="span6">
                                 <div class="well3"><div class="left-divider">
-                                    <form class="inside">
+                                    <form class="inside" action="${contextPath}/j_spring_security_check" method="POST">
                                         <div class="control-group">
                                             <h4><fmt:message key="security.signInWithId" bundle="${bundle}"/></h4>
                                         </div>
@@ -133,13 +136,13 @@
                                             <h4><fmt:message key="motechId" bundle="${bundle}"/></h4>
                                         </div>
                                         <div class="control-group">
-                                            <input type="text" ng-model="" placeholder="<fmt:message key="username" bundle="${bundle}"/>">
+                                            <input type="text" name="j_username" placeholder="<fmt:message key="username" bundle="${bundle}"/>">
                                         </div>
                                         <div class="control-group">
-                                            <input type="text" ng-model="" placeholder="<fmt:message key="password" bundle="${bundle}"/>">
+                                            <input type="password" name="j_password" placeholder="<fmt:message key="password" bundle="${bundle}"/>">
                                         </div>
                                         <div class="control-group">
-                                            <input class="btn btn-primary" type="submit" value="<fmt:message key="signIn" bundle="${bundle}"/>" ng-click=""/>
+                                            <input class="btn btn-primary" type="submit" value="<fmt:message key="signIn" bundle="${bundle}"/>"/>
                                         </div>
                                     </form>
                                 </div></div>
@@ -147,79 +150,82 @@
                         </div>
                     </div>
                 </div>
-
-
-                <div class="well2 span4">
-                    <div class="box-header"><fmt:message key="security.resetInstructions" bundle="${bundle}"/></div>
-                    <div class="box-content">
-                        <form class="inside">
+                </c:if>
+                <c:if test="${reset=='true'}">
+                    <div class="well2 span4">
+                        <div class="box-header"><fmt:message key="security.resetInstructions" bundle="${bundle}"/></div>
+                        <div class="box-content">
+                            <form class="inside">
+                                <div class="well3">
+                                    <div class="control-group">
+                                        <h4><fmt:message key="security.enterEmailQuestions" bundle="${bundle}"/></h4>
+                                    </div>
+                                    <div class="control-group">
+                                        <p><fmt:message key="security.enterEmailMsg" bundle="${bundle}"/></p>
+                                    </div>
+                                    <div class="control-group">
+                                        <label><fmt:message key="security.enterEmail" bundle="${bundle}"/></label>
+                                        <input type="text" ng-model="" placeholder="_______">
+                                    </div>
+                                    <div class="control-group">
+                                        <input class="btn btn-primary" type="submit" value="<fmt:message key="security.sendReset" bundle="${bundle}"/>" ng-click=""/>
+                                    </div>
+                                </div>
+                            </form>
+                            <div class="clearfix"></div>
+                        </div>
+                    </div>
+                    </c:if>
+                    <c:if test="${reset=='true'}">
+                    <div class="well2 span4">
+                        <div class="box-header"><fmt:message key="security.resetYourPassword" bundle="${bundle}"/></div>
+                        <div class="box-content">
                             <div class="well3">
-                                <div class="control-group">
-                                    <h4><fmt:message key="security.enterEmailQuestions" bundle="${bundle}"/></h4>
-                                </div>
-                                <div class="control-group">
-                                    <p><fmt:message key="security.enterEmailMsg" bundle="${bundle}"/></p>
-                                </div>
-                                <div class="control-group">
-                                    <label><fmt:message key="security.enterEmail" bundle="${bundle}"/></label>
-                                    <input type="text" ng-model="" placeholder="_______">
-                                </div>
-                                <div class="control-group">
-                                    <input class="btn btn-primary" type="submit" value="<fmt:message key="security.sendReset" bundle="${bundle}"/>" ng-click=""/>
-                                </div>
+                                <form class="inside">
+                                    <div class="control-group">
+                                        <h4><fmt:message key="password" bundle="${bundle}"/></h4>
+                                    </div>
+                                    <div class="control-group">
+                                        <label><fmt:message key="password" bundle="${bundle}"/></label>
+                                        <input type="text" ng-model="" placeholder="_______">
+                                    </div>
+                                    <div class="control-group">
+                                        <label><fmt:message key="confirmPassword" bundle="${bundle}"/></label>
+                                        <input type="text" ng-model="" placeholder="_______">
+                                    </div>
+                                    <div class="control-group">
+                                        <input class="btn btn-primary" type="submit" value="<fmt:message key="changePassword" bundle="${bundle}"/>" ng-click=""/>
+                                    </div>
+                                </form>
                             </div>
-                        </form>
-                        <div class="clearfix"></div>
-                    </div>
-                </div>
-
-
-                <div class="well2 span4">
-                    <div class="box-header"><fmt:message key="security.openIdConsumer" bundle="${bundle}"/></div>
-                    <div class="box-content">
-                        <div class="well3">
-                            <form class="inside">
-                                <div class="control-group">
-                                    <h4><fmt:message key="Sign in?" bundle="${bundle}"/></h4>
-                                </div>
-                                <div class="control-group">
-                                    <p><fmt:message key="security.signUsingAccount" bundle="${bundle}"/></p>
-                                </div>
-                                <div class="control-group">
-                                    <input class="btn btn-primary" type="submit" value="<fmt:message key="signIn" bundle="${bundle}"/>" ng-click=""/>
-                                </div>
-                            </form>
+                            <div class="clearfix"></div>
                         </div>
-                        <div class="clearfix"></div>
                     </div>
-                </div>
-
-
-                <div class="well2 span4">
-                    <div class="box-header"><fmt:message key="security.resetYourPassword" bundle="${bundle}"/></div>
-                    <div class="box-content">
-                        <div class="well3">
-                            <form class="inside">
-                                <div class="control-group">
-                                    <h4><fmt:message key="password" bundle="${bundle}"/></h4>
-                                </div>
-                                <div class="control-group">
-                                    <label><fmt:message key="password" bundle="${bundle}"/></label>
-                                    <input type="text" ng-model="" placeholder="_______">
-                                </div>
-                                <div class="control-group">
-                                    <label><fmt:message key="confirmPassword" bundle="${bundle}"/></label>
-                                    <input type="text" ng-model="" placeholder="_______">
-                                </div>
-                                <div class="control-group">
-                                    <input class="btn btn-primary" type="submit" value="<fmt:message key="changePassword" bundle="${bundle}"/>" ng-click=""/>
-                                </div>
-                            </form>
+                    </c:if>
+                </c:if>
+                <c:if test="${loginMode=='openid'}">
+                    <div class="well2 span4">
+                        <div class="box-header"><fmt:message key="security.openIdConsumer" bundle="${bundle}"/></div>
+                        <div class="box-content">
+                            <div class="well3">
+                                <form class="inside" action="${contextPath}/j_spring_openid_security_check" method="POST">
+                                    <div class="control-group">
+                                        <h4><fmt:message key="Sign in?" bundle="${bundle}"/></h4>
+                                    </div>
+                                    <div class="control-group">
+                                    <input id="openid_identifier" name="openid_identifier" type="text"/>
+                                        <p><fmt:message key="security.signUsingAccount" bundle="${bundle}"/></p>
+                                    </div>
+                                    <div class="control-group">
+                                        <input class="btn btn-primary" type="submit" value="<fmt:message key="signIn" bundle="${bundle}"/>" ng-click=""/>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="clearfix"></div>
                         </div>
-                        <div class="clearfix"></div>
                     </div>
-                </div>
-                -->
+                </c:if>
+
             </div>
         </div>
     </div>

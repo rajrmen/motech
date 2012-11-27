@@ -81,7 +81,7 @@ public class MotechUserServiceTestIT extends SpringIntegrationTest {
     @Ignore
     @Test
     public void shouldActivateUser() {
-        motechUserService.register("userName", "password", "1234", "", asList("IT_ADMIN", "DB_ADMIN"), false);
+        motechUserService.register("userName", "password", "1234", "", asList("IT_ADMIN", "DB_ADMIN"), false, "");
         motechUserService.activateUser("userName");
         MotechUser motechUser = allMotechUsers.findByUserName("userName");
     
@@ -95,7 +95,7 @@ public class MotechUserServiceTestIT extends SpringIntegrationTest {
     @Ignore
     @Test(expected = IllegalArgumentException.class)
     public void shouldThrowExceptionIfUserNameIsEmptyForRegisterWithActiveInfo() {
-        motechUserService.register("", "password", "ext_id", "", new ArrayList<String>(), true);
+        motechUserService.register("", "password", "ext_id", "", new ArrayList<String>(), true, "");
     
     }
     @Ignore
@@ -111,7 +111,7 @@ public class MotechUserServiceTestIT extends SpringIntegrationTest {
     @Ignore
     @Test
     public void shouldNotActivateInvalidUser() {
-        motechUserService.register("userName", "password", "1234", "", asList("IT_ADMIN", "DB_ADMIN"), false);
+        motechUserService.register("userName", "password", "1234", "", asList("IT_ADMIN", "DB_ADMIN"), false, "");
         motechUserService.activateUser("userName1");
         MotechUser motechUser = allMotechUsers.findByUserName("userName");
     
@@ -128,7 +128,7 @@ public class MotechUserServiceTestIT extends SpringIntegrationTest {
     @Ignore
     @Test
     public void shouldCreateInActiveUser() {
-        motechUserService.register("userName", "password", "1234", "", asList("IT_ADMIN", "DB_ADMIN"), false);
+        motechUserService.register("userName", "password", "1234", "", asList("IT_ADMIN", "DB_ADMIN"), false, "");
         MotechUser motechUser = allMotechUsers.findByUserName("userName");
     
         assertFalse(motechUser.isActive());

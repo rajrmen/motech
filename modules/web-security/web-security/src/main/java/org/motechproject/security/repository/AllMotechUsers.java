@@ -8,9 +8,13 @@ public interface AllMotechUsers {
 
     MotechUser findByUserName(String userName);
 
+    MotechUser findUserByOpenId(String openId);
+
     List<? extends MotechUser> findByRole(String role);
 
     void add(MotechUser user);
+
+    void addOpenIdUser(MotechUser user);
 
     void update(MotechUser motechUser);
 

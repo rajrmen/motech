@@ -63,7 +63,6 @@
         </div>
     </div>
     <div class="clearfix"></div>
-                                                                  \
     <div class="header-nav navbar">
         <div class="navbar-inner navbar-inverse navbar-inner-bg">
             <div class="container-fluid">

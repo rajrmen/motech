@@ -40,6 +40,7 @@ public class StartupFormValidator implements Validator {
         if (!password.equals(passwordConfirm)) {
             errors.rejectValue("adminPassword", "error.invalid.password", null, null);
         }
+
     }
 
 }

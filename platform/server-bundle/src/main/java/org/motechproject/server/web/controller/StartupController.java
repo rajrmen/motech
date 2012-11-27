@@ -89,6 +89,7 @@ public class StartupController {
             settings.saveMotechSetting(MotechSettings.DB_PORT, form.getDatabasePort());
             settings.saveMotechSetting(MotechSettings.ADMINLOGIN, form.getAdminLogin());
             settings.saveMotechSetting(MotechSettings.ADMINPASSWORD, form.getAdminPassword());
+            settings.saveMotechSetting(MotechSettings.LOGINMODE, form.getLoginMode());
             settings.saveActiveMqSetting(MotechSettings.AMQ_BROKER_URL, form.getQueueUrl());
 
             platformSettingsService.savePlatformSettings(settings.getMotechSettings());

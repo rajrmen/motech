@@ -1,14 +1,23 @@
 package org.motechproject.security.service;
 
 import org.motechproject.security.authentication.MotechPasswordEncoder;
+import org.motechproject.security.domain.MotechRole;
 import org.motechproject.security.domain.MotechUser;
 import org.motechproject.security.domain.MotechUserCouchdbImpl;
 import org.motechproject.security.model.UserDto;
+import org.motechproject.security.repository.AllMotechRoles;
 import org.motechproject.security.repository.AllMotechUsers;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.apache.commons.lang.StringUtils.isBlank;
@@ -20,21 +29,24 @@ public class MotechUserServiceImpl implements MotechUserService {
     private AllMotechUsers allMotechUsers;
 
     @Autowired
+    private AllMotechRoles allMotechRoles;
+
+    @Autowired
     private MotechPasswordEncoder passwordEncoder;
 
     @Override
     public void register(String username, String password, String email, String externalId, List<String> roles) {
-        this.register(username, password, email, externalId, roles, true);
+        this.register(username, password, email, externalId, roles, true, "");
     }
 
     @Override
-    public void register(String username, String password, String email, String externalId, List<String> roles, boolean isActive) {
+    public void register(String username, String password, String email, String externalId, List<String> roles, boolean isActive, String openId) {
         if (isBlank(username) || isBlank(password)) {
             throw new IllegalArgumentException("Username or password cannot be empty");
         }
 
         String encodePassword = passwordEncoder.encodePassword(password);
-        MotechUserCouchdbImpl user = new MotechUserCouchdbImpl(username, encodePassword, email, externalId, roles);
+        MotechUserCouchdbImpl user = new MotechUserCouchdbImpl(username, encodePassword, email, externalId, roles, openId);
         user.setActive(isActive);
         allMotechUsers.add(user);
     }

@@ -1,5 +1,7 @@
 package org.motechproject.server.web.controller;
 
+import org.motechproject.server.config.service.PlatformSettingsService;
+import org.motechproject.server.config.settings.MotechSettings;
 import org.motechproject.server.ui.LocaleSettings;
 import org.motechproject.server.web.form.LoginForm;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,8 @@ public class LoginController {
     @Autowired
     private LocaleSettings localeSettings;
 
+    @Autowired
+    private PlatformSettingsService settingsService;
 
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
@@ -26,6 +30,9 @@ public class LoginController {
         } else {
             view.addObject("contextPath", "");
         }
+        MotechSettings settings = settingsService.getPlatformSettings();
+        view.addObject("loginMode", settings.getLoginMode().toLowerCase());
+        view.addObject("error", request.getParameter("error"));
         view.addObject("loginForm", new LoginForm());
         view.addObject("pageLang", localeSettings.getUserLocale(request));
         return view;
