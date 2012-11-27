@@ -26,6 +26,11 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>motech-platform-server-bundle</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>com.springsource.javax.servlet</artifactId>
         </dependency>
@@ -55,13 +60,16 @@
                             org.motechproject.tasks.service.impl,
                         </Export-Package>
                         <Import-Package>
+                            org.eclipse.gemini.blueprint.config,
                             org.motechproject.event.listener,
                             org.motechproject.event.listener.annotations,
                             org.motechproject.server.config,
                             org.motechproject.server.config.service,
                             org.springframework.beans.factory.xml,
                             org.springframework.context.config,
-                            org.eclipse.gemini.blueprint.config,
+                            org.springframework.web.servlet.config,
+                            org.springframework.web.servlet.mvc,
+                            org.springframework.web.servlet.view,
                             *
                         </Import-Package>
                         <Embed-Dependency>motech-tasks;inline=true</Embed-Dependency>

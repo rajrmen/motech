@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 @Repository
-@View(name = "by_id", map = "function(doc) { if(doc.type === 'Task') emit(doc._id); }")
 public class AllTasks extends MotechBaseRepository<Task> {
 
     @Autowired
@@ -17,7 +16,21 @@ public class AllTasks extends MotechBaseRepository<Task> {
     }
 
     public void addOrUpdate(Task task) {
-        addOrReplace(task, "id", task.getId());
+        if (task.getId() != null) {
+            Task existing = get(task.getId());
+
+            existing.setAction(task.getAction());
+            existing.setActionInputFields(task.getActionInputFields());
+            existing.setAdditionalData(task.getAdditionalData());
+            existing.setDescription(task.getDescription());
+            existing.setEnabled(task.isEnabled());
+            existing.setFilter(task.getFilter());
+            existing.setTrigger(task.getTrigger());
+
+            update(existing);
+        } else {
+            add(task);
+        }
     }
 
 }

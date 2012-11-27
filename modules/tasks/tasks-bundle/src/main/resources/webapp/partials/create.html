@@ -1,301 +1,269 @@
 <!------------------------  Create Task  ------------------------------------->
-
-
 <div class="">
-    <h3>{{msg('motechNewTaskHeader')}}</h3>
+    <h3>{{msg('header.newTask')}}</h3>
 </div>
 <div class=" outside-tb2 top-line"></div>
-
-<div class="box-header">{{msg('motechNewTask')}}</div>
-<div class="box-content well3">
-    <h3 class="pagination-centered">{{msg('createTaskData')}}</h3>
-    <div class="section-input">
-
-        <div class="panel-input" ui-jq="tooltip" ui-options="{placement:'right'}" data-original-title="{{msg('double click to edit')}}">
-            <ul class="trigger droppable">
-
-            </ul>
-            <span class="instructions">{{msg('dragTrigger')}}</span>
+<div ng-hide="task.trigger && task.action">
+    <div class="box-header">{{msg('section.newTask')}}</div>
+    <div class="box-content well3">
+        <h3 class="pagination-centered">{{msg('section.selectEvents')}}</h3>
+        <div class="section-input">
+            <div class="panel-input" ui-jq="tooltip" ui-options="{placement:'right'}" data-original-title="{{msg('help.doubleClickToEdit')}}">
+                <ul class="trigger droppable" droppable>
+                    <li class="task-panel selected" ng-show="trigger" draggable>
+                        <div><img src="../tasks/img/{{trigger.moduleName}}.png" class="panel-img"/></div>
+                        <span>{{trigger.displayName}}</span>
+                        <div>
+                            <div>{{msg('tooltip.selectTrigger')}}</div>
+                            <ul>
+                                <li ng-repeat="t in trigger.triggerTaskEvents">
+                                    <a ng-click="selectTaskEvent('trigger', t)">{{t.displayName}}</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                </ul>
+                <span class="instructions" ng-hide="trigger">{{msg('info.dragTrigger')}}</span>
+            </div>
+            <div class="to imgArrow"><img src="../tasks/img/arrow.png"/></div>
+            <div class="panel-input" ui-jq="tooltip" ui-options="{placement:'right'}" data-original-title="{{msg('help.dragChannelFromListBelow')}}">
+                <ul class="action droppable" droppable>
+                    <li class="task-panel selected" ng-show="action" draggable>
+                        <div><img src="../tasks/img/{{action.moduleName}}.png" class="panel-img" /></div>
+                        <span>{{action.displayName}}</span>
+                        <div>
+                            <div>{{msg('tooltip.selectAction')}}</div>
+                            <ul>
+                                <li ng-repeat="a in action.actionTaskEvents">
+                                    <a ng-click="selectTaskEvent('action', a)">{{a.displayName}}</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                </ul>
+                <span class="instructions" ng-hide="action">{{msg('info.dragAction')}}</span>
+            </div>
+            <div class="clearfix"></div>
         </div>
-        <div class="to imgArrow"><img src="img/arrow.png"/></div>
-        <div class="panel-input" ui-jq="tooltip" ui-options="{placement:'right'}" data-original-title="{{msg('Drag a Channel from the list below')}}">
-            <ul class="action droppable">
-
+        <div class="clearfix"></div><div class="margin-before4"></div>
+        <div class="section-source">
+            <div data-left-arrow="true" class="left-arrow">
+                <img src="../tasks/img/larrow.png"/>
+            </div>
+            <ul class="task-selector droppable" style="position: relative;" droppable>
+                <li class="task-panel" ng-repeat="channel in channels" draggable data-channel-name="{{channel.displayName}}" data-module-name="{{channel.moduleName}}" data-module-version="{{channel.moduleVersion}}">
+                    <div><img src="../tasks/img/{{channel.moduleName}}.png" class="panel-img" /></div>
+                    <!-- <div ng-class="getIconClass(bundle)"><img ng-src="../admin/api/bundles/{{bundle.bundleId}}/icon" class="icon"/> </div> -->
+                    <span>{{channel.displayName}}</span>
+                    <div>
+                        <div>{{msg('tooltip.availableTriggers')}}</div>
+                        <ul>
+                            <li ng-repeat="trigger in channel.triggerTaskEvents">{{trigger.displayName}}</li>
+                        </ul>
+                        <div>{{msg('tooltip.availableActions')}}</div>
+                        <ul>
+                            <li ng-repeat="action in channel.actionTaskEvents">{{action.displayName}}</li>
+                        </ul>
+                    </div>
+                </li>
             </ul>
-            <span class="instructions">{{msg('dragAction')}}</span>
+            <div data-right-arrow="true" class="right-arrow">
+                <img src="../tasks/img/rarrow.png"/>
+            </div>
+            <div class="clearfix"></div>
         </div>
-        <div class="clearfix"></div>
     </div>
-
-    <div class="clearfix"></div><div class="margin-before4"></div>
-
-
-
-    <div class="section-source">
-        <div data-left-arrow="true" class="left-arrow"><img src="img/larrow.png"/></div>
-
-        <ul class="task-selector droppable" style="position: relative;">
-
-            <li class="task-panel">
-                <div><img src="img/adherence.png" class="panel-img" /></div>
-                <!-- <div ng-class="getIconClass(bundle)"><img ng-src="../admin/api/bundles/{{bundle.bundleId}}/icon" class="icon"/> </div> -->
-                <span>Adherence</span>
-            </li>
-
-            <li class="task-panel">
-                <div><img src="img/alerts.png" class="panel-img" /></div>
-                <span>Alerts</span>
-            </li>
-
-            <li class="task-panel">
-                <div><img src="img/appointments.png" class="panel-img" /></div>
-                <span>Appointments</span>
-            </li>
-
-            <li class="task-panel">
-                <div><img src="img/cms.png" class="panel-img" /></div>
-                <span>CMS</span>
-            </li>
-
-            <li  class="task-panel">
-                <div><img src="img/decisiontree.png" class="panel-img" /></div>
-                <span>Decision Tree</span>
-            </li>
-
-            <li class="task-panel">
-                <div><img src="img/ivr.png" class="panel-img" /></div>
-                <span>IVR</span>
-            </li>
-
-            <li class="task-panel">
-                <div><img src="img/messagecampaign.png" class="panel-img" /></div>
-                <span>Message Campaign</span>
-            </li>
-
-            <li class="task-panel">
-                <div><img src="img/mrs.png" class="panel-img" /></div>
-                <span>MRS</span>
-            </li>
-
-            <li class="task-panel">
-                <div><img src="img/openmrs.png" class="panel-img" /></div>
-                <span>Open MRS</span>
-            </li>
-
-            <li  class="task-panel">
-                <div><img src="img/outbox.png" class="panel-img" /></div>
-                <span>Outbox</span>
-            </li>
-
-            <li  class="task-panel">
-                <div><img src="img/pillreminder.png" class="panel-img" /></div>
-                <span>Pill Reminder</span>
-            </li>
-
-            <li  class="task-panel">
-                <div><img src="img/scheduletracking.png" class="panel-img" /></div>
-                <span>Schedule Tracking</span>
-            </li>
-
-            <li  class="task-panel">
-                <div><img src="img/sms.png" class="panel-img" /></div>
-                <span>SMS</span>
-            </li>
-
-        </ul>
-
-        <div data-right-arrow="true" class="right-arrow"><img src="img/rarrow.png"/></div>
-        <div class="clearfix"></div>
-    </div>
+    <div class="margin-after4"></div>
 </div>
-
-<div class="margin-after4"></div>
-
-
-
-<!------------------------  Build Task  ------------------------------------->
-
-<div class="well2 container-fluid margin-center">
-    <div class="box-header">{{msg('msg('Build your new task')}}</div>
-    <div class="box-content clearfix"><h3 class="pagination-centered">{{msg('Build your new task')}}</h3>
-        <div class="row-fluid">
-            <div class="span6 inside">
-                <div class="well3">
-                    <div class="right-divider">
-                        <form class="inside form-horizontal">
-                            <div class="control-group">
-                                <h4>{{msg('New Appointment')}}</h4>
-                                <p>Drag field from below to build the action.</p>
-                            </div>
-                            <div class="control-group">
-                                <span class="badge badge-info">ExternalId</span>
-                                <span class="badge badge-info">StartDate</span>
-                                <span class="badge badge-info">EndDate</span>
-                                <span class="badge badge-info">FacilityId</span>
-
-                            </div>
-                            <div class="control-group">
-                                <h5>{{msg('Include Additional Data (optional)')}}</h5>
-                            </div>
-                            <div class="control-group">
-                                <label class="control-label">Source </label>
-                                <div class="controls">
-                                    <div class="btn-group">
-                                        <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-                                            MRS
-                                            <span class="caret"></span>
-                                        </a>
-                                        <ul class="dropdown-menu">
-                                            <li><a><i></i> 1</a></li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="control-group">
-                                <label class="control-label">Object </label>
-                                <div class="controls">
-                                    <div class="btn-group">
-                                        <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-                                            Patient
-                                            <span class="caret"></span>
-                                        </a>
-                                        <ul class="dropdown-menu">
-                                            <li><a><i></i> 1</a></li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="control-group">
-                                <label class="control-label">Lookup by </label>
-                                <div class="controls">
-                                    <div class="btn-group">
-                                        <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-                                            ExternalID
-                                            <span class="caret"></span>
-                                        </a>
-                                        <ul class="dropdown-menu">
-                                            <li><a><i></i> 1</a></li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="control-group">
-                                <p><strong>Object Fields</strong></p>
-
-                                <span class="badge badge-important">FullName</span>
-                                <span class="badge badge-important">Gander</span>
-                                <span class="badge badge-important">DOB</span>
-                                <span class="badge badge-important">PhoneNumber</span>
-
-                            </div>
-                            <div class="control-group">
-                                <label class="control-label">Object </label>
-                                <div class="controls">
-                                    <div class="btn-group">
-                                        <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-                                            Facility
-                                            <span class="caret"></span>
-                                        </a>
-                                        <ul class="dropdown-menu">
-                                            <li><a><i></i> 1</a></li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="control-group">
-                                <label class="control-label">Lookup by </label>
-                                <div class="controls">
-                                    <div class="btn-group">
-                                        <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-                                            FacilityID
-                                            <span class="caret"></span>
-                                        </a>
-                                        <ul class="dropdown-menu">
-                                            <li><a><i></i> 1</a></li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="control-group">
-                                <p><strong>Object Fields</strong></p>
-
-                                <span class="badge badge-warning">FacilityName</span>
-                                <span class="badge badge-warning">Address</span>
-                            </div>
-                            <div class="control-group">
-                                <button class="btn btn-primary"><i class="icon icon-plus"></i> Choose Another MRS Object</button>
+<div ng-show="task.trigger && task.action">
+    <!------------------------  Build Task  ------------------------------------->
+    <div class="well2 container-fluid margin-center">
+        <div class="box-header">{{msg('section.buildAction')}}</div>
+        <div class="box-content clearfix"><h3 class="pagination-centered">{{msg('section.buildAction')}}</h3>
+            <div class="row-fluid">
+                <div class="span6 inside">
+                    <div class="well3">
+                        <div class="right-divider">
+                            <form class="inside form-horizontal">
                                 <div class="control-group">
+                                    <h4>{{selectedTrigger.displayName}}</h4>
+                                    <p>{{msg('info.dragFieldBuildAction')}}</p>
                                 </div>
-                                <button class="btn btn-warning"><i class="icon icon-plus"></i> Choose Another Data Source</button>
-                            </div>
-                        </form>
+                                <div class="control-group">
+                                    <span class="badge badge-info triggerField" draggable ng-repeat="i in triggerInputFields" data-index="{{$index}}">{{i.displayName}}</span>
+                                </div>
+                                <div class="control-group">
+                                    <h5>{{msg('subsection.IncludeAdditionalData')}}</h5>
+                                </div>
+                                <div class="control-group">
+                                    <label class="control-label">Source </label>
+                                    <div class="controls">
+                                        <div class="btn-group">
+                                            <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+                                                MRS
+                                                <span class="caret"></span>
+                                            </a>
+                                            <ul class="dropdown-menu">
+                                                <li><a><i></i> 1</a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="control-group">
+                                    <label class="control-label">Object </label>
+                                    <div class="controls">
+                                        <div class="btn-group">
+                                            <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+                                                Patient
+                                                <span class="caret"></span>
+                                            </a>
+                                            <ul class="dropdown-menu">
+                                                <li><a><i></i> 1</a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="control-group">
+                                    <label class="control-label">Lookup by </label>
+                                    <div class="controls">
+                                        <div class="btn-group">
+                                            <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+                                                ExternalID
+                                                <span class="caret"></span>
+                                            </a>
+                                            <ul class="dropdown-menu">
+                                                <li><a><i></i> 1</a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="control-group">
+                                    <p><strong>Object Fields</strong></p>
+
+                                    <span class="badge badge-important">FullName</span>
+                                    <span class="badge badge-important">Gander</span>
+                                    <span class="badge badge-important">DOB</span>
+                                    <span class="badge badge-important">PhoneNumber</span>
+
+                                </div>
+                                <div class="control-group">
+                                    <label class="control-label">Object </label>
+                                    <div class="controls">
+                                        <div class="btn-group">
+                                            <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+                                                Facility
+                                                <span class="caret"></span>
+                                            </a>
+                                            <ul class="dropdown-menu">
+                                                <li><a><i></i> 1</a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="control-group">
+                                    <label class="control-label">Lookup by </label>
+                                    <div class="controls">
+                                        <div class="btn-group">
+                                            <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+                                                FacilityID
+                                                <span class="caret"></span>
+                                            </a>
+                                            <ul class="dropdown-menu">
+                                                <li><a><i></i> 1</a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="control-group">
+                                    <p><strong>Object Fields</strong></p>
+
+                                    <span class="badge badge-warning">FacilityName</span>
+                                    <span class="badge badge-warning">Address</span>
+                                </div>
+                                <div class="control-group">
+                                    <button class="btn btn-primary"><i class="icon icon-plus"></i> Choose Another MRS Object</button>
+                                    <div class="control-group">
+                                    </div>
+                                    <button class="btn btn-warning"><i class="icon icon-plus"></i> Choose Another Data Source</button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="span6">
-                <div class="well3">
-                    <div class="">
-                        <form class="inside">
-                            <div class="control-group">
-                                <h4>{{msg('Send SMS')}}</h4>
-                            </div>
-                            <div class="control-group">
-                                <label>Create SMS Message</label>
-                            </div>
-                            <div class="control-group">
-                                <label>Phone # </label>
-                                <input type="text"/>
-                            </div>
-                            <div class="control-group">
-                                <label>Message </label>
-                                <textarea rows="3"></textarea>
-                            </div>
-                        </form>
+                <div class="span6">
+                    <div class="well3">
+                        <div class="">
+                            <form class="inside">
+                                <div class="control-group">
+                                    <h4>{{selectedAction.displayName}}</h4>
+                                </div>
+                                <div class="control-group" ng-show="selectedAction.description">
+                                    <label>{{selectedAction.description}}</label>
+                                </div>
+                                <div class="control-group" ng-repeat="i in actionInputFields">
+                                    <label>{{i.displayName}}</label>
+                                    <textarea ng-model="i.value" droppable class="actionField" data-index="{{$index}}"></textarea>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
 
 
-<!------------------------  filter ------------------------------------->
+    <!------------------------  filter ------------------------------------->
 
-<h3 class="pagination-centered">{{msg('Filters Optional')}}</h3>
-<div class="pagination-centered">
-    <p>This step is optional. You can create filters to decide which new Appointments trigger new SMS messages.</p>
-    <p><strong>Only run this Task if:</strong></p>
-    <form class="form-inline">
-        <label><i class="icon icon-plus"></i> If appointment</label>
-        <div class="btn-group">
-            <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-                Start Date
-                <span class="caret"></span>
-            </a>
-            <ul class="dropdown-menu">
-                <li><a><i></i> date1</a></li>
-            </ul>
-        </div>
-        <div class="btn-group">
-            <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-                Is
-                <span class="caret"></span>
-            </a>
-            <ul class="dropdown-menu">
-                <li><a><i></i> date1</a></li>
-            </ul>
-        </div>
-        <div class="btn-group">
-            <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-                &gt;
-                <span class="caret"></span>
-            </a>
-            <ul class="dropdown-menu">
-                <li><a><i></i> date1</a></li>
-            </ul>
-        </div>
-        <input type="text" value="10/6/2012"/>
-    </form>
+    <h3 class="pagination-centered">{{msg('section.filters')}}</h3>
+    <div class="pagination-centered">
+        <p>This step is optional. You can create filters to decide which new Appointments trigger new SMS messages.</p>
+        <p><strong>Only run this Task if:</strong></p>
+        <form class="form-inline">
+            <label><i class="icon icon-plus"></i> If appointment</label>
+            <div class="btn-group">
+                <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+                    Start Date
+                    <span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu">
+                    <li><a><i></i> date1</a></li>
+                </ul>
+            </div>
+            <div class="btn-group">
+                <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+                    Is
+                    <span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu">
+                    <li><a><i></i> date1</a></li>
+                </ul>
+            </div>
+            <div class="btn-group">
+                <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+                    &gt;
+                    <span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu">
+                    <li><a><i></i> date1</a></li>
+                </ul>
+            </div>
+            <input type="text" value="10/6/2012"/>
+        </form>
+    </div>
+    <!------------------------  description ------------------------------------->
+    <h3 class="pagination-centered">{{msg('section.taskDescription')}}</h3>
+    <div class="pagination-centered">
+        <p>{{msg('info.taskDescription')}}</p>
+        <textarea ng-model="task.description"></textarea>
+    </div>
+    <!------------------------  save ------------------------------------->
+    <h3 class="pagination-centered">{{msg('section.save')}}</h3>
+    <div class="pagination-centered">
+        <p>{{msg('info.save')}}</p>
+        <a ng-click="save(true)" class="btn btn-primary">Save & Enabled</a>
+        <a ng-click="save(false)" class="btn">Save</a>
+    </div>
 </div>

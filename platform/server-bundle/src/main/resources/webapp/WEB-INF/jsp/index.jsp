@@ -23,6 +23,7 @@
     <script src="resources/lib/jquery/jquery.i18n.properties-min-1.0.9.js" type="text/javascript"></script>
     <script src="resources/lib/jquery/jquery.tools.min.js" type="text/javascript"></script>
     <script src="resources/lib/jquery/jquery.blockUI.js" type="text/javascript"></script>
+    <script src="resources/lib/jquery/jquery.caret.js" type="text/javascript"></script>
 
     <script src="resources/lib/angular/angular.min.js" type="text/javascript"></script>
     <script src="resources/lib/angular/angular-resource.min.js" type="text/javascript"></script>

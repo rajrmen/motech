@@ -63,6 +63,10 @@ function MasterCtrl($scope, $http, i18nService, $cookieStore) {
         return i18nService.getMessage(key);
     };
 
+    $scope.msg = function(key, value) {
+        return i18nService.getMessage(key, value);
+    };
+
     $scope.setModuleUrl = function(url) {
         $scope.moduleUrl = url;
     }
