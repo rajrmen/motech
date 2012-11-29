@@ -9,33 +9,32 @@
 
 <div class="row-fluid">
     <div class="span8">
-        <h4 ng-show="tasks | filter:{enabled:true}">{{msg('header.activeTasks')}}</h4>
-        <div ng-repeat="task in tasks | filter:{enabled:true}">
+        <h4 ng-show="activeTasks.length != 0">{{msg('header.activeTasks')}}</h4>
+        <div ng-repeat="item in activeTasks">
             <div class="task-content clearfix">
-                <div class="task-header">{{get(task.trigger, 'displayName')}} - {{get(task.action, 'displayName')}}</div>
+                <div class="task-header">{{get(item.task.trigger, 'displayName')}} - {{get(item.task.action, 'displayName')}}</div>
                 <div class="task-bar">
                     <ul class="task-nav">
                         <li class="task-panel">
-                            <div><img src="../tasks/img/{{get(task.trigger, 'moduleName')}}.png" class="panel-img"/></div>
-                            <!-- <div ng-class="getIconClass(bundle)"><img ng-src="../admin/api/bundles/{{bundle.bundleId}}/icon" class="icon"/> </div> -->
-                            <span>{{get(task.trigger, 'displayName')}}</span>
+                            <div><img ng-src="../tasks/img/{{get(item.task.trigger, 'moduleName')}}.png" class="panel-img"/></div>
+                            <span>{{get(item.task.trigger, 'displayName')}}</span>
                         </li>
                         <li>
                             <div><img src="../tasks/img/arrow.png" class="imgArrow"/></div>
                         </li>
                         <li class="task-panel">
-                            <div><img src="../tasks/img/{{get(task.action, 'moduleName')}}.png" class="panel-img"/></div>
-                            <span>{{get(task.action, 'displayName')}}</span>
+                            <div><img ng-src="../tasks/img/{{get(item.task.action, 'moduleName')}}.png" class="panel-img"/></div>
+                            <span>{{get(item.task.action, 'displayName')}}</span>
                         </li>
                     </ul>
                     <div class="">
-                        <button type="button" class="btn btn-primary"><i class="icon icon-edit icon-white"></i>
+                        <a href="#/task/{{item.task._id}}/edit" type="button" class="btn btn-primary"><i class="icon icon-edit icon-white"></i>
                             {{msg('button.edit')}}
-                        </button>
+                        </a>
                         <button type="button" class="btn btn-primary"><i class="icon icon-pause icon-white"></i>
                             {{msg('button.pause')}}
                         </button>
-                        <button ng-click="deleteTask(task)" type="button" class="btn btn-danger"><i class="icon icon-trash icon-white"></i>
+                        <button ng-click="deleteTask(item)" type="button" class="btn btn-danger"><i class="icon icon-trash icon-white"></i>
                             {{msg('button.delete')}}
                         </button>
                         <button type="button" class="btn btn-primary"><i class="icon icon-time icon-white"></i>
@@ -43,12 +42,13 @@
                         </button>
                     </div>
                     <ul class="task-list">
-                        <li class="info"><i class="icon icon-share icon-blue"></i>{{msg('info.executedTimes', 49)}}</li>
-                        <li class="error"><i class="icon icon-exclamation-sign icon-red"></i>{{msg('info.errorsLastDays', 2)}}</li>
+                        <li class="info"><i class="icon icon-share icon-blue"></i> {{msg('info.executedTimes', item.success.length)}}</li>
+                        <li class="error" ng-hide="item.error.length == 0"><i class="icon icon-exclamation-sign icon-red"></i> {{msg('info.errorsLastDays', item.error.length)}}</li>
+                        <li class="success" ng-show="item.error.length == 0"><i class="icon icon-ok-sign icon-green"></i> {{msg('info.errorsLastDays', item.error.length)}}</li>
                     </ul>
                 </div>
                 <div class="clearfix"></div>
-                <div class="task-footer">{{task.description}}</div>
+                <div class="task-footer">{{item.task.description}}</div>
             </div>
 
             <div class="clearfix"></div>
@@ -56,45 +56,43 @@
         </div>
 
 
-        <h4 ng-show="tasks | filter:{enabled:false}">{{msg('header.pausedTasks')}}</h4>
-        <div ng-repeat="task in tasks | filter:{enabled:false}">
+        <h4 ng-show="pausedTasks.length != 0">{{msg('header.pausedTasks')}}</h4>
+        <div ng-repeat="item in pausedTasks">
             <div class="task-content clearfix">
-                <div class="task-header">{{get(task.trigger, 'displayName')}} - {{get(task.action, 'displayName')}}</div>
+                <div class="task-header">{{get(item.task.trigger, 'displayName')}} - {{get(item.task.action, 'displayName')}}</div>
                 <div class="task-bar">
                     <ul class="task-nav">
                         <li class="task-panel">
-                            <div><img src="../tasks/img/{{get(task.trigger, 'moduleName')}}.png" class="panel-img"/></div>
-                            <!-- <div ng-class="getIconClass(bundle)"><img ng-src="../admin/api/bundles/{{bundle.bundleId}}/icon" class="icon"/> </div> -->
-                            <span>{{get(task.trigger, 'displayName')}}</span>
+                            <div><img ng-src="../tasks/img/{{get(item.task.trigger, 'moduleName')}}.png" class="panel-img"/></div>
+                            <span>{{get(item.task.trigger, 'displayName')}}</span>
                         </li>
                         <li>
                             <div><img src="../tasks/img/arrow.png" class="imgArrow"/></div>
                         </li>
                         <li class="task-panel">
-                            <div><img src="../tasks/img/{{get(task.action, 'moduleName')}}.png" class="panel-img"/></div>
-                            <span>{{get(task.action, 'displayName')}}</span>
+                            <div><img ng-src="../tasks/img/{{get(item.task.action, 'moduleName')}}.png" class="panel-img"/></div>
+                            <span>{{get(item.task.action, 'displayName')}}</span>
                         </li>
                     </ul>
                     <div class="">
-                        <button type="button" class="btn btn-primary"><i class="icon icon-edit icon-white"></i>
+                        <a href="#/task/{{item.task._id}}/edit" type="button" class="btn btn-primary"><i class="icon icon-edit icon-white"></i>
                             {{msg('button.edit')}}
-                        </button>
+                        </a>
                         <button type="button" class="btn btn-primary"><i class="icon icon-play icon-white"></i>
                             {{msg('button.resume')}}
                         </button>
-                        <button ng-click="deleteTask(task)" type="button" class="btn btn-danger"><i class="icon icon-trash icon-white"></i>
+                        <button ng-click="deleteTask(item)" type="button" class="btn btn-danger"><i class="icon icon-trash icon-white"></i>
                             {{msg('button.delete')}}
                         </button>
                         <button type="button" class="btn btn-primary"><i class="icon icon-time icon-white"></i>
                             {{msg('button.history')}}
                         </button>
                     </div>
-                    <!--<ul class="task-list">-->
-                    <!--<li class="info"><i class="icon icon-share icon-blue"></i> Execute 49 times</li>-->
-                    <!--<li class="error"><i class="icon icon-exclamation-sign icon-red"></i> 2 errors in the last 7-->
-                    <!--days-->
-                    <!--</li>-->
-                    <!--</ul>-->
+                    <ul class="task-list">
+                        <li class="info"><i class="icon icon-share icon-blue"></i> {{msg('info.executedTimes', item.success.length)}}</li>
+                        <li class="error" ng-hide="item.error.length == 0"><i class="icon icon-exclamation-sign icon-red"></i> {{msg('info.errorsLastDays', item.error.length)}}</li>
+                        <li class="success" ng-show="item.error.length == 0"><i class="icon icon-ok-sign icon-green"></i> {{msg('info.errorsLastDays', item.error.length)}}</li>
+                    </ul>
                 </div>
                 <div class="clearfix"></div>
                 <div class="task-footer">{{task.description}}</div>
