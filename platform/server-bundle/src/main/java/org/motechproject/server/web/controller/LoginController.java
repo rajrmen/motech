@@ -40,7 +40,6 @@ public class LoginController {
 
     @RequestMapping(value = "/accessdenied", method = RequestMethod.GET)
     public ModelAndView accessdenied(final HttpServletRequest request) {
-        ModelAndView mav = new ModelAndView("accessdenied");
-        return mav;
+        return new ModelAndView("accessdenied");
     }
 }

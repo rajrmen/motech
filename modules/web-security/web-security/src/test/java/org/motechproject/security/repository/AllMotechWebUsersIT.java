@@ -1,8 +1,9 @@
 package org.motechproject.security.repository;
 
 import org.junit.After;
-import org.junit.Before;
+
 import org.junit.Ignore;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.motechproject.security.authentication.MotechPasswordEncoder;
@@ -35,7 +36,9 @@ public class AllMotechWebUsersIT {
     @Ignore
     @Test
     public void findByUserName() {
+
         MotechUser motechUser = new MotechUserCouchdbImpl("testuser", "testpassword", "", "id", asList("ADMIN"), "");
+
         allMotechUsers.add(motechUser);
     
         MotechUser testUser = allMotechUsers.findByUserName("testuser");
@@ -46,8 +49,6 @@ public class AllMotechWebUsersIT {
     public void findByUserNameShouldBeCaseInsensitive() {
         String userName = "TestUser";
         allMotechUsers.add(new MotechUserCouchdbImpl(userName, "testpassword", "", "id", asList("ADMIN"), ""));
-        allMotechUsers.add(new MotechUserCouchdbImpl(userName, "testpassword", "id","", asList("ADMIN"), ""));
-    
         assertNotNull(allMotechUsers.findByUserName("TESTUSER"));
     }
     @Ignore
@@ -56,7 +57,7 @@ public class AllMotechWebUsersIT {
         String userName = "username";
         allMotechUsers.add(new MotechUserCouchdbImpl(userName, "testpassword", "id","", asList("ADMIN"), ""));
         allMotechUsers.add(new MotechUserCouchdbImpl(userName, "testpassword1", "id2","", asList("ADMIN"), ""));
-    
+
         MotechUser motechUser = allMotechUsers.findByUserName("userName");
         assertEquals(1, ((AllMotechUsersCouchdbImpl) allMotechUsers).getAll().size());
         assertEquals("testpassword", motechUser.getPassword());

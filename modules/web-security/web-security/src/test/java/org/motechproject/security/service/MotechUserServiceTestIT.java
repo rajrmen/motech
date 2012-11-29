@@ -30,9 +30,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import static java.util.Arrays.asList;
-import static junit.framework.Assert.*;
 import static org.junit.Assert.assertNotNull;
-    
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath*:/META-INF/motech/*.xml")
@@ -40,7 +43,7 @@ public class MotechUserServiceTestIT extends SpringIntegrationTest {
 
     @Autowired
     AllMotechRoles allMotechRoles;
-    
+
     @Autowired
     MotechUserService motechUserService;
     
@@ -96,7 +99,6 @@ public class MotechUserServiceTestIT extends SpringIntegrationTest {
     @Test(expected = IllegalArgumentException.class)
     public void shouldThrowExceptionIfUserNameIsEmptyForRegisterWithActiveInfo() {
         motechUserService.register("", "password", "ext_id", "", new ArrayList<String>(), true, "");
-    
     }
     @Ignore
     @Test(expected = IllegalArgumentException.class)

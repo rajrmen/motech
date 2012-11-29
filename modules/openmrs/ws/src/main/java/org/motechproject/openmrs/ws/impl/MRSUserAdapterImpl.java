@@ -181,11 +181,10 @@ public class MRSUserAdapterImpl implements MRSUserAdapter {
     private String getRoleUuidByRoleName(MRSUser user) {
         if (!roleIsPresentInOpenMrs(user.getSecurityRole())) {
             LOGGER.error("Could not find a role in OpenMRS with name: " + user.getSecurityRole());
-            throw new MRSException(new RuntimeException("No OpenMRS role found with name: " + user.getSecurityRole()));
+            throw new MRSException("No OpenMRS role found with name: " + user.getSecurityRole());
         }
 
-        String roleUuid = cachedRoles.get(user.getSecurityRole());
-        return roleUuid;
+        return cachedRoles.get(user.getSecurityRole());
     }
 
     private boolean roleIsPresentInOpenMrs(String securityRole) {

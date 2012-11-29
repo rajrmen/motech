@@ -1,9 +1,9 @@
 package org.motechproject.security.osgi;
 
 import org.apache.commons.io.IOUtils;
-
 import org.apache.felix.http.api.ExtHttpService;
 import org.motechproject.osgi.web.MotechOsgiWebApplicationContext;
+import org.motechproject.osgi.web.ServletRegistrationException;
 import org.motechproject.server.ui.ModuleRegistrationData;
 import org.motechproject.server.ui.UIFrameworkService;
 import org.motechproject.server.ui.UiHttpContext;
@@ -16,12 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.filter.DelegatingFilterProxy;
 import org.springframework.web.servlet.DispatcherServlet;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.StringWriter;
+import java.io.*;
 import java.util.Properties;
 
 public class Activator implements BundleActivator {
@@ -40,7 +35,7 @@ public class Activator implements BundleActivator {
     private static DelegatingFilterProxy filter;
 
     @Override
-    public void start(BundleContext context) throws Exception {
+    public void start(BundleContext context) {
         bundleContext = context;
 
         this.httpServiceTracker = new ServiceTracker(context,
@@ -79,7 +74,8 @@ public class Activator implements BundleActivator {
         this.uiServiceTracker.open();
     }
 
-    public void stop(BundleContext context) throws Exception {
+
+    public void stop(BundleContext context) {
         this.httpServiceTracker.close();
         this.uiServiceTracker.close();
     }
@@ -114,7 +110,7 @@ public class Activator implements BundleActivator {
                 Thread.currentThread().setContextClassLoader(old);
             }
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new ServletRegistrationException(e);
         }
     }
 
@@ -142,7 +138,7 @@ public class Activator implements BundleActivator {
             regData.setHeader(writer.toString());
         } catch (IOException e) {
             logger.error("Cant read header.html", e);
-            throw new RuntimeException(e);
+            throw new ServletRegistrationException(e);
         } finally {
             IOUtils.closeQuietly(is);
             IOUtils.closeQuietly(writer);
@@ -170,7 +166,9 @@ public class Activator implements BundleActivator {
                 isAdminMode = Boolean.valueOf(am);
                 adminMode.delete();
             } catch (IOException e) {
-                e.printStackTrace();
+                logger.debug("Can not read file", e);
+            } finally {
+                IOUtils.closeQuietly(file);
             }
         }
         return isAdminMode;

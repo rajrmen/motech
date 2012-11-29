@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.motechproject</groupId>
     <artifactId>motech</artifactId>
-    <version>0.15-SNAPSHOT</version>
+    <version>0.16-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>MOTECH</name>
 
@@ -19,10 +18,12 @@
         <db.port>5984</db.port>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <spring.version>3.1.0.RELEASE</spring.version>
+        <spring.security.version>3.1.0.RELEASE</spring.security.version>
         <spring.integration.version>2.1.0.RELEASE</spring.integration.version>
         <activemq.version>5.4.2</activemq.version>
         <modules.root.dir>${basedir}</modules.root.dir>
         <jdk.version>1.7</jdk.version>
+
         <scm.connection>scm:git:https://code.google.com/p/motech</scm.connection>
         <scm.developerConnection>scm:git:https://code.google.com/p/motech</scm.developerConnection>
         <scm.url>https://code.google.com/p/motech</scm.url>
@@ -1092,6 +1093,7 @@
         <module>modules/sms/api</module>
         <module>modules/sms/http</module>
         <module>modules/sms/smpp</module>
+        <module>modules/tasks/tasks</module>
         <module>modules/testing-utils/testing-utils</module>
         <module>modules/web-security/web-security</module>
         <module>utils/http-agent/http-agent</module>
@@ -1126,9 +1128,10 @@
         <module>modules/sms/api-bundle</module>
         <module>modules/sms/http-bundle</module>
         <module>modules/sms/smpp-bundle</module>
+        <module>modules/tasks/tasks-bundle</module>
         <module>modules/web-security/web-security-bundle</module>
-        <module>utils/http-agent/http-agent-bundle</module>
         <module>utils/c3p0-fragment-bundle</module>
+        <module>utils/http-agent/http-agent-bundle</module>
 
         <!-- Packaging modules -->
         <module>packaging/deb</module>

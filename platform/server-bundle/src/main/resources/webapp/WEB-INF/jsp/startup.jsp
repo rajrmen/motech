@@ -166,11 +166,6 @@
                         </div>
                     </c:if>
                 </form>
-                            {{msg('${error}')}}<br/>
-                        </c:forEach>
-                        </div>
-                    </c:if>
-                </form>
             </div>
         </div>
     </div>
