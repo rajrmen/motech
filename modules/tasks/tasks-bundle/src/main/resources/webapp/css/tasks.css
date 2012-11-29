@@ -1,10 +1,3 @@
-.icon.icon-red {
-    background-image: url("../img/glyphicons-halflings-red.png");
-}
-.icon.icon-blue {
-    background-image: url("../img/glyphicons-halflings-blue.png");
-}
-
 .right-divider {
     border-right: 1px solid #7bb5fc;
     margin-right: -30px;
@@ -78,8 +71,8 @@
 /*----- Tasks - recent -----*/
 
 .recent-activity-img {
-    height: 44px;
-    width: 44px;
+    height: 36px;
+    width: 36px;
 }
 
 .table-recent-activity {

@@ -26,6 +26,18 @@
     background: #dbedf7 url("../img/frame-bg.jpg") repeat-x 0 0;
 }
 
+.icon.icon-red {
+    background-image: url("../img/glyphicons-halflings-red.png");
+}
+
+.icon.icon-blue {
+    background-image: url("../img/glyphicons-halflings-blue.png");
+}
+
+.icon.icon-green {
+    background-image: url("../img/glyphicons-halflings-green.png");
+}
+
 h1, h2, h3, h4, h5, h6 {
     color: #224477;
 }
