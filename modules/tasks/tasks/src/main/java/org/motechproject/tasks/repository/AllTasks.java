@@ -1,7 +1,6 @@
 package org.motechproject.tasks.repository;
 
 import org.ektorp.CouchDbConnector;
-import org.ektorp.support.View;
 import org.motechproject.commons.couchdb.dao.MotechBaseRepository;
 import org.motechproject.tasks.domain.Task;
 import org.springframework.beans.factory.annotation.Autowired;

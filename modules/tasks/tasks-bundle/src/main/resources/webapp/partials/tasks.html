@@ -16,14 +16,14 @@
                 <div class="task-bar">
                     <ul class="task-nav">
                         <li class="task-panel">
-                            <div><img ng-src="../tasks/img/{{get(item.task.trigger, 'moduleName')}}.png" class="panel-img"/></div>
+                            <div><img ng-src="../tasks/api/channel/icon?moduleName={{get(item.task.trigger, 'moduleName')}}&moduleVersion={{get(item.task.trigger, 'moduleVersion')}}" class="panel-img"/></div>
                             <span>{{get(item.task.trigger, 'displayName')}}</span>
                         </li>
                         <li>
                             <div><img src="../tasks/img/arrow.png" class="imgArrow"/></div>
                         </li>
                         <li class="task-panel">
-                            <div><img ng-src="../tasks/img/{{get(item.task.action, 'moduleName')}}.png" class="panel-img"/></div>
+                            <div><img ng-src="../tasks/api/channel/icon?moduleName={{get(item.task.action, 'moduleName')}}&moduleVersion={{get(item.task.action, 'moduleVersion')}}" class="panel-img"/></div>
                             <span>{{get(item.task.action, 'displayName')}}</span>
                         </li>
                     </ul>
@@ -63,14 +63,14 @@
                 <div class="task-bar">
                     <ul class="task-nav">
                         <li class="task-panel">
-                            <div><img ng-src="../tasks/img/{{get(item.task.trigger, 'moduleName')}}.png" class="panel-img"/></div>
+                            <div><img ng-src="../tasks/api/channel/icon?moduleName={{get(item.task.trigger, 'moduleName')}}&moduleVersion={{get(item.task.trigger, 'moduleVersion')}}" class="panel-img"/></div>
                             <span>{{get(item.task.trigger, 'displayName')}}</span>
                         </li>
                         <li>
                             <div><img src="../tasks/img/arrow.png" class="imgArrow"/></div>
                         </li>
                         <li class="task-panel">
-                            <div><img ng-src="../tasks/img/{{get(item.task.action, 'moduleName')}}.png" class="panel-img"/></div>
+                            <div><img ng-src="../tasks/api/channel/icon?moduleName={{get(item.task.action, 'moduleName')}}&moduleVersion={{get(item.task.action, 'moduleVersion')}}" class="panel-img"/></div>
                             <span>{{get(item.task.action, 'displayName')}}</span>
                         </li>
                     </ul>
@@ -111,7 +111,6 @@
                     <tbody>
                     <tr>
                         <td><div><img src="../tasks/img/adherence.png"  class="recent-activity-img" /></div>
-                            <!-- <div ng-class="getIconClass(bundle)"><img ng-src="../admin/api/bundles/{{bundle.bundleId}}/icon" class="icon"/> </div> -->
                         </td>
                         <td><div><img src="../tasks/img/arrow.png" class="recent-activity-arrow"/></div></td>
                         <td><div><img src="../tasks/img/sms.png" class="recent-activity-img" /></div></td>

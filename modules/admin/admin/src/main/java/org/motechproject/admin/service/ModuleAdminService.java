@@ -1,7 +1,7 @@
 package org.motechproject.admin.service;
 
-import org.motechproject.admin.bundles.BundleIcon;
 import org.motechproject.admin.bundles.ExtendedBundleInformation;
+import org.motechproject.server.osgi.BundleIcon;
 import org.motechproject.server.osgi.BundleInformation;
 import org.osgi.framework.BundleException;
 import org.springframework.web.multipart.MultipartFile;

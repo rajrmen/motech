@@ -10,7 +10,7 @@
         <div class="panel-input" ui-jq="tooltip" ui-options="{placement:'left'}" data-original-title="{{msg('help.doubleClickToEdit')}}">
             <ul class="trigger droppable" droppable>
                 <li class="task-panel dragged" ng-show="draggedTrigger" draggable>
-                    <div><img src="../tasks/img/{{draggedTrigger.module}}.png" class="panel-img"/></div>
+                    <div><img ng-src="../tasks/api/channel/icon?moduleName={{draggedTrigger.module}}&moduleVersion={{draggedTrigger.version}}" class="panel-img"/></div>
                     <span>{{draggedTrigger.display}}</span>
                     <div ng-hide="selectedTrigger">
                         <div>{{msg('tooltip.selectTrigger')}}</div>
@@ -28,7 +28,7 @@
         <div class="panel-input" ui-jq="tooltip" ui-options="{placement:'right'}" data-original-title="{{msg('help.dragChannelFromListBelow')}}">
             <ul class="action droppable" droppable>
                 <li class="task-panel dragged" ng-show="draggedAction" draggable>
-                    <div><img src="../tasks/img/{{draggedAction.module}}.png" class="panel-img" /></div>
+                    <div><img ng-src="../tasks/api/channel/icon?moduleName={{draggedAction.module}}&moduleVersion={{draggedAction.version}}" class="panel-img"/></div>
                     <span>{{draggedAction.display}}</span>
                     <div ng-hide="selectedAction">
                         <div>{{msg('tooltip.selectAction')}}</div>
@@ -51,8 +51,7 @@
         </div>
         <ul class="task-selector droppable" style="position: relative;" droppable>
             <li class="task-panel" ng-repeat="channel in channels" draggable data-channel-name="{{channel.displayName}}" data-module-name="{{channel.moduleName}}" data-module-version="{{channel.moduleVersion}}">
-                <div><img src="../tasks/img/{{channel.moduleName}}.png" class="panel-img" /></div>
-                <!-- <div ng-class="getIconClass(bundle)"><img ng-src="../admin/api/bundles/{{bundle.bundleId}}/icon" class="icon"/> </div> -->
+                <div><img ng-src="../tasks/api/channel/icon?moduleName={{channel.moduleName}}&moduleVersion={{channel.moduleVersion}}" class="panel-img" /></div>
                 <span>{{channel.displayName}}</span>
                 <div>
                     <div>{{msg('tooltip.availableTriggers')}}</div>

@@ -1,4 +1,4 @@
-package org.motechproject.admin.bundles;
+package org.motechproject.server.osgi;
 
 import org.junit.Test;
 

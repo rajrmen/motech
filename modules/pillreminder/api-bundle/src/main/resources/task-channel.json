@@ -1,7 +1,7 @@
 {
   "displayName" : "Pill Reminder",
   "moduleName" : "${project.artifactId}",
-  "moduleVersion" : "${project.version}",
+  "moduleVersion" : "${parsedVersion.osgiVersion}",
   "triggerTaskEvents" : [
     {
       "displayName" : "Event subject",

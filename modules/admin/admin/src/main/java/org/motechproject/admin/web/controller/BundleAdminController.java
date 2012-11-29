@@ -1,10 +1,10 @@
 package org.motechproject.admin.web.controller;
 
 import org.apache.commons.lang.StringUtils;
-import org.motechproject.admin.bundles.BundleIcon;
 import org.motechproject.admin.bundles.ExtendedBundleInformation;
 import org.motechproject.admin.service.ModuleAdminService;
 import org.motechproject.admin.service.StatusMessageService;
+import org.motechproject.server.osgi.BundleIcon;
 import org.motechproject.server.osgi.BundleInformation;
 import org.osgi.framework.BundleException;
 import org.springframework.beans.factory.annotation.Autowired;

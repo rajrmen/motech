@@ -36,6 +36,19 @@
         </resources>
         <plugins>
             <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>1.7</version>
+                <executions>
+                    <execution>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>parse-version</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <artifactId>maven-resources-plugin</artifactId>
                 <version>2.5</version>
                 <executions>
@@ -59,9 +72,6 @@
                             org.motechproject.server.pillreminder.api.contract,
                             org.motechproject.server.pillreminder.api.service
                         </Export-Package>
-                        <Bundle-Activator>
-                            org.motechproject.server.pillreminder.api.osgi.Activator
-                        </Bundle-Activator>
                         <Import-Package>
                             org.ektorp.impl,
                             org.ektorp.spring,
