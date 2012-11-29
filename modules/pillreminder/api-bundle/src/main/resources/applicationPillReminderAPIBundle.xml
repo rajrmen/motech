@@ -27,6 +27,10 @@
         <property name="eventListenerRegistry" ref="eventListenerRegistryServiceOsgi"/>
     </bean>
 
+    <bean class="org.motechproject.tasks.util.ChannelRegister">
+        <constructor-arg value="classpath:task-channel.json"/>
+    </bean>
+
     <!-- todo expose relevant services here -->
 
 </beans>

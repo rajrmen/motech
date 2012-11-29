@@ -4,7 +4,7 @@
     <parent>
         <artifactId>motech</artifactId>
         <groupId>org.motechproject</groupId>
-        <version>0.15-SNAPSHOT</version>
+        <version>0.16-SNAPSHOT</version>
         <relativePath>../../../</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -12,7 +12,7 @@
     <groupId>org.motechproject</groupId>
     <artifactId>motech-tasks-bundle</artifactId>
     <name>MOTECH Tasks Bundle</name>
-    <version>0.15-SNAPSHOT</version>
+    <version>0.16-SNAPSHOT</version>
     <packaging>bundle</packaging>
 
     <properties>
@@ -29,10 +29,6 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>motech-platform-server-bundle</artifactId>
             <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>com.springsource.javax.servlet</artifactId>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -54,10 +50,7 @@
                             org.motechproject.tasks.osgi.Activator
                         </Bundle-Activator>
                         <Export-Package>
-                            org.motechproject.tasks.domain,
-                            org.motechproject.tasks.repository,
-                            org.motechproject.tasks.service,
-                            org.motechproject.tasks.service.impl,
+                            org.motechproject.tasks.*
                         </Export-Package>
                         <Import-Package>
                             org.eclipse.gemini.blueprint.config,

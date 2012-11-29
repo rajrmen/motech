@@ -45,7 +45,7 @@ public class TaskServiceImpl implements TaskService {
             throw new IllegalArgumentException("Task trigger must contains channel.displayName:channel.moduleName:channel.moduleVersion:trigger.subject");
         }
 
-        if (task.getActionInputFields() == null || task.getActionInputFields().isEmpty()) {
+        if (task.getActionInputFields() == null) {
             throw new IllegalArgumentException("Task must contains action input fields");
         }
 

@@ -5,14 +5,14 @@
     <parent>
         <artifactId>motech</artifactId>
         <groupId>org.motechproject</groupId>
-        <version>0.15-SNAPSHOT</version>
+        <version>0.16-SNAPSHOT</version>
         <relativePath>../../../</relativePath>
     </parent>
     <groupId>org.motechproject</groupId>
     <artifactId>motech-message-campaign-bundle</artifactId>
     <name>MOTECH Message Campaign Bundle</name>
     <description>MOTECH Message Campaign</description>
-    <version>0.15-SNAPSHOT</version>
+    <version>0.16-SNAPSHOT</version>
     <packaging>bundle</packaging>
     <properties>
         <modules.root.dir>${basedir}/../../..</modules.root.dir>
@@ -26,11 +26,6 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>motech-tasks-bundle</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>motech-platform-osgi-web-util</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>
@@ -78,6 +73,8 @@
                             org.motechproject.event.listener.annotations,
                             org.motechproject.server.config,
                             org.motechproject.server.config.service,
+                            org.motechproject.tasks.service,
+                            org.motechproject.tasks.util,
                             org.quartz.simpl,
                             org.springframework.beans.factory.xml,
                             org.springframework.context.config,

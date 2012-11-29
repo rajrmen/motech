@@ -2,6 +2,7 @@ package org.motechproject.tasks.osgi;
 
 import org.apache.commons.io.IOUtils;
 import org.motechproject.osgi.web.MotechOsgiWebApplicationContext;
+import org.motechproject.osgi.web.ServletRegistrationException;
 import org.motechproject.server.ui.ModuleRegistrationData;
 import org.motechproject.server.ui.UIFrameworkService;
 import org.motechproject.server.ui.UiHttpContext;
@@ -34,7 +35,7 @@ public class Activator implements BundleActivator {
     private static BundleContext bundleContext;
 
     @Override
-    public void start(BundleContext context) throws Exception {
+    public void start(BundleContext context) {
         bundleContext = context;
 
         this.httpServiceTracker = new ServiceTracker(context,
@@ -106,7 +107,7 @@ public class Activator implements BundleActivator {
                 Thread.currentThread().setContextClassLoader(old);
             }
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new ServletRegistrationException(e);
         }
     }
 

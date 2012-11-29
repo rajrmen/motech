@@ -20,7 +20,14 @@ public class Task extends MotechBaseDataObject {
     }
 
     public Task(String trigger, String action, Map<String, String> actionInputFields) {
+        this(true, actionInputFields, null, null, action, trigger);
+    }
+
+    public Task(boolean enabled, Map<String, String> actionInputFields, Map<String, String> additionalData, Map<String, String> filter, String action, String trigger) {
+        this.enabled = enabled;
         this.actionInputFields = actionInputFields;
+        this.additionalData = additionalData;
+        this.filter = filter;
         this.action = action;
         this.trigger = trigger;
     }

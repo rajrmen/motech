@@ -154,7 +154,15 @@ public class DecisionTreeServerImpl implements org.motechproject.decisiontree.se
     }
 
     private boolean isEmptyNode(Node node) {
-        return node == null || (node.getPrompts().isEmpty() && node.getActionsAfter().isEmpty() && node.getActionsBefore().isEmpty() && node.getTransitions().isEmpty());
+        return node == null || hasNoActionableItems(node);
+    }
+
+    private boolean hasNoActionableItems(Node node) {
+        return node.getPrompts().isEmpty() && hasNoActions(node) && node.getTransitions().isEmpty();
+    }
+
+    private boolean hasNoActions(Node node) {
+        return node.getActionsAfter().isEmpty() && node.getActionsBefore().isEmpty();
     }
 
     private void executeOperations(String transitionKey, FlowSession session, Node node) {
@@ -168,8 +176,7 @@ public class DecisionTreeServerImpl implements org.motechproject.decisiontree.se
     }
 
     private Node getCurrentNode(FlowSession session) {
-        Node node = session.getCurrentNode();
-        return node;
+        return session.getCurrentNode();
     }
 
     private void validateNode(Node node) {
@@ -194,7 +201,7 @@ public class DecisionTreeServerImpl implements org.motechproject.decisiontree.se
             try {
                 Integer.parseInt(key);
             } catch (NumberFormatException e) {
-                throw new DecisionTreeException(Error.INVALID_TRANSITION_KEY, format("Invalid transition key [%s] for node [%s]", key, node));
+                throw new DecisionTreeException(Error.INVALID_TRANSITION_KEY, format("Invalid transition key [%s] for node [%s]", key, node), e);
             }
             ITransition transition = transitionEntry.getValue();
             if (transition instanceof Transition && ((Transition) transition).getDestinationNode() == null) {
@@ -278,6 +285,11 @@ public class DecisionTreeServerImpl implements org.motechproject.decisiontree.se
 
         public DecisionTreeException(Error subject, String description) {
             super(description);
+            this.subject = subject;
+        }
+
+        public DecisionTreeException(Error subject, String description, Throwable cause) {
+            super(description, cause);
             this.subject = subject;
         }
     }
