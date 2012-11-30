@@ -1,6 +1,7 @@
 package org.motechproject.security.repository;
 
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.motechproject.security.domain.MotechRole;
@@ -9,9 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
 import static java.util.Arrays.asList;
+import static junit.framework.Assert.assertEquals;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath*:META-INF/motech/*.xml")
@@ -61,6 +61,11 @@ public class AllMotechRoleIT {
 
     @After
     public void tearDown() {
+        ((AllMotechRolesCouchdbImpl) allMotechRoles).removeAll();
+    }
+
+    @Before
+    public void clear() {
         ((AllMotechRolesCouchdbImpl) allMotechRoles).removeAll();
     }
 

@@ -13,6 +13,7 @@ import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.config.method.GlobalMethodSecurityBeanDefinitionParser;
 import org.springframework.web.filter.DelegatingFilterProxy;
 import org.springframework.web.servlet.DispatcherServlet;
 
@@ -162,7 +163,7 @@ public class Activator implements BundleActivator {
             try {
                 file = new FileInputStream(adminMode);
                 adminDetails.load(new InputStreamReader(file));
-                String am = adminDetails.getProperty("adminMode.mode");
+                String am = adminDetails.getProperty("admin.mode");
                 isAdminMode = Boolean.valueOf(am);
                 adminMode.delete();
             } catch (IOException e) {

@@ -5,10 +5,14 @@ import org.motechproject.security.domain.MotechUser;
 import org.motechproject.security.domain.MotechUserCouchdbImpl;
 import org.motechproject.security.repository.AllMotechRoles;
 import org.motechproject.security.repository.AllMotechUsers;
+import org.motechproject.server.config.service.PlatformSettingsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.*;
+import org.springframework.security.core.userdetails.AuthenticationUserDetailsService;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.openid.OpenIDAttribute;
 import org.springframework.security.openid.OpenIDAuthenticationToken;
 
@@ -38,7 +42,11 @@ public class MotechOpenIdUserDetailsService implements AuthenticationUserDetails
     public UserDetails loadUserDetails(OpenIDAuthenticationToken token) throws UsernameNotFoundException {
         MotechUser user = allMotechUsers.findUserByOpenId(token.getName());
         if (user == null) {
-            user = new MotechUserCouchdbImpl(getAttribute(token.getAttributes(), "Email"), "", "", "", new ArrayList<String>(), token.getName());
+            List<String> roles = new ArrayList<String>();
+            if (allMotechUsers.getUsers().isEmpty()) {
+                roles.add("Admin User");
+            }
+            user = new MotechUserCouchdbImpl(getAttribute(token.getAttributes(), "Email"), "", "", "", roles, token.getName());
             allMotechUsers.addOpenIdUser(user);
         }
 

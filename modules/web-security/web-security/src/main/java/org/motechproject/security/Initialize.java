@@ -1,6 +1,5 @@
 package org.motechproject.security;
 
-import org.apache.commons.io.IOUtils;
 import org.ektorp.CouchDbConnector;
 import org.motechproject.security.domain.MotechPermission;
 import org.motechproject.security.domain.MotechPermissionCouchdbImpl;
@@ -16,10 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.Properties;
 
@@ -39,6 +35,9 @@ public class Initialize {
 
     @Autowired
     private AllMotechUsers allMotechUsers;
+
+    @Autowired
+    private PlatformSettingsService settingsService;
 
     @Autowired
     public void initialize(@Qualifier("webSecurityDbConnector") CouchDbConnector db) throws IOException {
@@ -63,19 +62,14 @@ public class Initialize {
 
         allMotechRoles.add(adminUser);
 
-        Properties adminDetails = new Properties();
-
-        InputStream file = null;
-        try {
-            file = new FileInputStream(String.format("%s/.motech/config/%s", System.getProperty("user.home"), PlatformSettingsService.SETTINGS_FILE_NAME));
-            adminDetails.load(new InputStreamReader(file));
-            String adminName = adminDetails.getProperty("admin.login");
-            String adminPassword = adminDetails.getProperty("admin.password");
-            motechUserService.register(adminName, adminPassword, "motech@motech", "", Arrays.asList(adminUser.getRoleName()), true, "");
-        } catch (IOException e) {
-            logger.debug("Can read file", e);
-        } finally {
-            IOUtils.closeQuietly(file);
+        Properties sysProperties = settingsService.exportPlatformSettings();
+        if (sysProperties.getProperty("login.mode").equals("repository") && sysProperties.getProperty("admin.login") != null && sysProperties.getProperty("admin.password") != null) {
+            String adminName = sysProperties.getProperty("admin.login");
+            String adminPassword = sysProperties.getProperty("admin.password");
+            motechUserService.register(adminName, adminPassword, "motech@motech.com", "", Arrays.asList(adminUser.getRoleName()));
+            sysProperties.remove("admin.login");
+            sysProperties.remove("admin.password");
+            settingsService.savePlatformSettings(sysProperties);
         }
     }
 }

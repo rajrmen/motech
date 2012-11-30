@@ -1,9 +1,8 @@
 package org.motechproject.security.repository;
 
 import org.junit.After;
-
+import org.junit.Before;
 import org.junit.Ignore;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.motechproject.security.authentication.MotechPasswordEncoder;
@@ -32,8 +31,7 @@ public class AllMotechWebUsersIT {
 
     @Autowired
     MotechPasswordEncoder passwordEncoder;
-    
-    @Ignore
+
     @Test
     public void findByUserName() {
 
@@ -44,14 +42,12 @@ public class AllMotechWebUsersIT {
         MotechUser testUser = allMotechUsers.findByUserName("testuser");
         assertEquals("testuser", testUser.getUserName());
     }
-    @Ignore
     @Test
     public void findByUserNameShouldBeCaseInsensitive() {
         String userName = "TestUser";
         allMotechUsers.add(new MotechUserCouchdbImpl(userName, "testpassword", "", "id", asList("ADMIN"), ""));
         assertNotNull(allMotechUsers.findByUserName("TESTUSER"));
     }
-    @Ignore
     @Test
     public void shouldNotCreateNewAccountIfUserAlreadyExists() {
         String userName = "username";
@@ -63,7 +59,6 @@ public class AllMotechWebUsersIT {
         assertEquals("testpassword", motechUser.getPassword());
         assertEquals("id", motechUser.getExternalId());
     }
-    @Ignore
     @Test
     public void shouldListWebUsersByRole() {
         MotechUser provider1 = new MotechUserCouchdbImpl("provider1", "testpassword", "id1","", asList("PROVIDER"), "");
@@ -78,14 +73,18 @@ public class AllMotechWebUsersIT {
         List<? extends MotechUser> providers = allMotechUsers.findByRole("PROVIDER");
         assertEquals(asList("id1", "id2"), extract(providers, on(MotechUser.class).getExternalId()));
     }
-    @Ignore
     @Test
     public void findByUseridShouldReturnNullIfuserNameIsNull() {
         assertNull(null, allMotechUsers.findByUserName(null));
     }
-    @Ignore
+
     @After
     public void tearDown() {
+        ((AllMotechUsersCouchdbImpl) allMotechUsers).removeAll();
+    }
+
+    @Before
+    public void clear() {
         ((AllMotechUsersCouchdbImpl) allMotechUsers).removeAll();
     }
 }

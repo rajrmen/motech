@@ -38,10 +38,9 @@ public class MotechAuthenticationProviderTest {
         authenticationProvider = new MotechAuthenticationProvider(allMotechUsers, passwordEncoder, allMotechRoles);
     }
 
-    @Ignore
     @Test
     public void shouldRetrieveUserFromDatabase() {
-        MotechUser motechUser = new MotechUserCouchdbImpl("bob", "encodedPassword", "entity_1", "", asList("some_role"));
+        MotechUser motechUser = new MotechUserCouchdbImpl("bob", "encodedPassword", "entity_1", "", asList("some_role"), "");
         MotechRole motechRole = new MotechRoleCouchdbImpl("some_role", asList("some_permission"));
         when(allMotechUsers.findByUserName("bob")).thenReturn(motechUser);
         when(allMotechRoles.findByRoleName("some_role")).thenReturn(motechRole);
@@ -53,7 +52,6 @@ public class MotechAuthenticationProviderTest {
         assertEquals(motechUser.getUserName(), userDetails.getUsername());
     }
 
-    @Ignore
     @Test(expected = AuthenticationException.class)
     public void shouldThrowExceptionIfUserDoesntExist() {
         when(allMotechUsers.findByUserName("bob")).thenReturn(null);
@@ -62,10 +60,9 @@ public class MotechAuthenticationProviderTest {
         authenticationProvider.retrieveUser("bob", authentication);
     }
 
-    @Ignore
     @Test(expected = AuthenticationException.class)
     public void shouldThrowExceptionIfUserIsInactive() {
-        MotechUserCouchdbImpl motechUser = new MotechUserCouchdbImpl("bob", "encodedPassword", "entity_1", "", asList("some_role"));
+        MotechUserCouchdbImpl motechUser = new MotechUserCouchdbImpl("bob", "encodedPassword", "entity_1", "", asList("some_role"), "");
         motechUser.setActive(false);
         when(allMotechUsers.findByUserName("bob")).thenReturn(motechUser);
 
@@ -73,7 +70,6 @@ public class MotechAuthenticationProviderTest {
         authenticationProvider.retrieveUser("bob", authentication);
     }
 
-    @Ignore
     @Test
     public void shouldAuthenticateUser() {
         when(passwordEncoder.isPasswordValid("encodedPassword", "password")).thenReturn(true);
@@ -85,7 +81,6 @@ public class MotechAuthenticationProviderTest {
         authenticationProvider.additionalAuthenticationChecks(user, authentication);
     }
 
-    @Ignore
     @Test(expected = AuthenticationException.class)
     public void shouldNotAuthenticateEmptyPassword() {
         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken("bob", "");
@@ -95,7 +90,6 @@ public class MotechAuthenticationProviderTest {
         authenticationProvider.additionalAuthenticationChecks(user, authentication);
     }
 
-    @Ignore
     @Test(expected = AuthenticationException.class)
     public void shouldNotAuthenticateWrongPassword() {
         when(passwordEncoder.isPasswordValid("encodedPassword", "password")).thenReturn(false);

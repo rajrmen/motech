@@ -68,8 +68,9 @@
                     <div ng-class="cssClass('email')">
                     <label class="control-label">{{msg('email')}}</label>
                     <div class="controls">
-                        <input type="text" ng-model="user.email" required>
-                        <span ng-hide="hasValue('email')" class="form-hint">{{msg('emailRequired')}}</span>
+                        <input id="email" name="email" type="email" ng-model="user.email" required>
+                        <span ng-show="createUserForm.email.$error.required" class="form-hint">{{msg('emailRequired')}}</span>
+                        <span ng-show="createUserForm.email.$error.email" class="form-hint">{{msg('emailFormat')}}</span>
                     </div>
                     </div>
                 </div>
@@ -143,8 +144,9 @@
                     <div ng-class="cssClass('email')">
                         <label class="control-label">{{msg('email')}}</label>
                         <div class="controls">
-                            <input type="text" ng-model="user.email" required>
-                            <span ng-hide="hasValue('email')" class="form-hint">{{msg('emailRequired')}}</span>
+                            <input name="email" type="email" ng-model="user.email" required>
+                            <span ng-show="editUserForm.email.$error.required" class="form-hint">{{msg('emailRequired')}}</span>
+                            <span ng-show="editUserForm.email.$error.email" class="form-hint">{{msg('emailFormat')}}</span>
                         </div>
                     </div>
                 </div>
