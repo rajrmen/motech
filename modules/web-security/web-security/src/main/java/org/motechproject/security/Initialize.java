@@ -66,9 +66,11 @@ public class Initialize {
         if (sysProperties.getProperty("login.mode").equals("repository") && sysProperties.getProperty("admin.login") != null && sysProperties.getProperty("admin.password") != null) {
             String adminName = sysProperties.getProperty("admin.login");
             String adminPassword = sysProperties.getProperty("admin.password");
-            motechUserService.register(adminName, adminPassword, "motech@motech.com", "", Arrays.asList(adminUser.getRoleName()));
+            String adminEmail = sysProperties.getProperty("admim.email");
+            motechUserService.register(adminName, adminPassword, adminEmail, "", Arrays.asList(adminUser.getRoleName()));
             sysProperties.remove("admin.login");
             sysProperties.remove("admin.password");
+            sysProperties.remove("admin.email");
             settingsService.savePlatformSettings(sysProperties);
         }
     }

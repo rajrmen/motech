@@ -13,6 +13,8 @@ import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.security.config.method.GlobalMethodSecurityBeanDefinitionParser;
 import org.springframework.web.filter.DelegatingFilterProxy;
 import org.springframework.web.servlet.DispatcherServlet;
@@ -93,7 +95,12 @@ public class Activator implements BundleActivator {
     private void serviceAdded(ExtHttpService service) {
         try {
             DispatcherServlet dispatcherServlet = new DispatcherServlet();
-            dispatcherServlet.setContextConfigLocation(CONTEXT_CONFIG_LOCATION);
+            boolean adminMode = isAdminMode();
+            if (adminMode) {
+                dispatcherServlet.setContextConfigLocation("adminMode.xml");
+            } else {
+                dispatcherServlet.setContextConfigLocation(CONTEXT_CONFIG_LOCATION);
+            }
             dispatcherServlet.setContextClass(WebSecurityApplicationContext.class);
             ClassLoader old = Thread.currentThread().getContextClassLoader();
             try {
@@ -102,7 +109,7 @@ public class Activator implements BundleActivator {
 
                 service.registerServlet(SERVLET_URL_MAPPING, dispatcherServlet, null, null);
                 service.registerResources(RESOURCE_URL_MAPPING, "/webapp", httpContext);
-                if (!isAdminMode()){
+                if (!adminMode){
                     filter = new DelegatingFilterProxy("springSecurityFilterChain", dispatcherServlet.getWebApplicationContext());
                     service.registerFilter(filter, "/.*", null,0,httpContext);
                 }
@@ -157,7 +164,7 @@ public class Activator implements BundleActivator {
     private boolean isAdminMode() {
         Properties adminDetails = new Properties();
         boolean isAdminMode = false;
-        File adminMode = new File(String.format("%s/.motech/config/%s", System.getProperty("user.home"), ADMIN_MODE_FILE));
+        File adminMode = new File(String.format("%s/.motech/%s", System.getProperty("user.home"), ADMIN_MODE_FILE));
         if (adminMode.exists()) {
             InputStream file = null;
             try {

@@ -33,7 +33,8 @@ public interface MotechSettings {
 
     String ADMINLOGIN = "admin.login";
     String ADMINPASSWORD = "admin.password";
-    String LOGINMODE = "login.mode";
+    String ADMINEMAIL="admin.email";
+    String LOGINMODE ="login.mode";
 
     String getLanguage();
 
