@@ -34,25 +34,27 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "classpath*:/META-INF/motech/*.xml")
+@ContextConfiguration(locations ={ "classpath*:/META-INF/motech/*.xml", "classpath*:/META-INF/security/*.xml"})
 public class MotechUserServiceTestIT extends SpringIntegrationTest {
 
     @Autowired
-    AllMotechRoles allMotechRoles;
+    private AllMotechRoles allMotechRoles;
 
     @Autowired
-    MotechUserService motechUserService;
+    private MotechUserService motechUserService;
     
     @Autowired
-    AllMotechUsers allMotechUsers;
+    private AllMotechUsers allMotechUsers;
     
     @Autowired
     @Qualifier("webSecurityDbConnector")
-    CouchDbConnector connector;
+    private CouchDbConnector connector;
     
     @Autowired
     private AuthenticationManager authenticationManager;
 
+    @Autowired
+    private MotechPasswordEncoder passwordEncoder;
 
     @Before
     public void onStartUp(){
@@ -63,8 +65,6 @@ public class MotechUserServiceTestIT extends SpringIntegrationTest {
         SecurityContext context = SecurityContextHolder.getContext();
         context.setAuthentication(auth);
     }
-
-    private MotechPasswordEncoder passwordEncoder;
 
     @Test
     public void testRegister() {

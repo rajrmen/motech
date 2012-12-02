@@ -213,13 +213,16 @@
                                         <h4><fmt:message key="signin" bundle="${bundle}"/></h4>
                                     </div>
                                     <div class="control-group">
-                                    <input id="openid_identifier" name="openid_identifier" type="text"/>
-                                        <p><fmt:message key="security.signUsingAccount" bundle="${bundle}"/></p>
+                                    <input name="openid_identifier" type="text"/>
                                     </div>
                                     <div class="control-group">
                                         <input class="btn btn-primary" type="submit" value="<fmt:message key="signin" bundle="${bundle}"/>"/>
                                     </div>
                                 </form>
+                                <form class="inside" action="${contextPath}/j_spring_openid_security_check" method="POST">
+                                    <p>For Google users:</p>
+                                   <input name="openid_identifier" type="hidden" value="https://www.google.com/accounts/o8/id"/>
+                                   <input type="submit" value="Sign with Google"/></form>
                             </div>
                             <div class="clearfix"></div>
                         </div>

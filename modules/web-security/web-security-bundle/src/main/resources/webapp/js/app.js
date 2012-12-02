@@ -7,6 +7,7 @@ angular.module('motech-web-security', ['motech-dashboard', 'roleService', 'userS
         $routeProvider.
             when('/users', {templateUrl: '../websecurity/partials/user.html', controller: UserCtrl}).
             when('/roles', {templateUrl: '../websecurity/partials/role.html', controller: RoleCtrl}).
+            when('/profile', {templateUrl: '../websecurity/partials/profile.html', controller: UserCtrl}).
             otherwise({redirectTo: '/welcome'});
 }]).filter('filterPagination', function() {
     return function(input, start) {

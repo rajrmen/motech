@@ -25,6 +25,21 @@ public class ConfigFileSettings implements MotechSettings {
     }
 
     @Override
+    public String getAdminLogin() {
+        return motechSettings.getProperty(ADMINLOGIN);
+    }
+
+    @Override
+    public String getAdminPassword() {
+        return motechSettings.getProperty(ADMINPASSWORD);
+    }
+
+    @Override
+    public String getAdminEmail() {
+        return motechSettings.getProperty(ADMINEMAIL);
+    }
+
+    @Override
     public String getStatusMsgTimeout() {
         return motechSettings.getProperty(STATUS_MSG_TIMEOUT);
     }

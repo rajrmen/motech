@@ -3,7 +3,7 @@
     <div class="box-content clearfix">
         <div class="well3">
         <div class="control-group">
-            <a ng-click="addUser()" role="button" class="btn btn-primary"><i class="icon-plus icon-white"></i> {{msg('addUser')}}</a>
+            <a ng-show="loginMode()" ng-click="addUser()" role="button" class="btn btn-primary"><i class="icon-plus icon-white"></i> {{msg('addUser')}}</a>
         </div>
         <form class="form-search form-inline">
             <label class="control-label">{{msg('searchUsername')}}</label>
@@ -24,7 +24,7 @@
                 <tbody>
                 <tr ng-click="getUser(user)" ng-repeat="user in userList | filter:{userName : propertyUserName} | filter:selectedItem.roleName | filterPagination:currentPage*pageSize | limitTo:pageSize">
                     <td><a>{{user.userName}}</a></td>
-                    <td><span ng-repeat="role in user.roles">{{role}}, </span></td>
+                    <td><span ng-repeat="role in user.roles">{{role}}<span ng-hide="$index == (user.roles.length-1)">, </span></span></td>
                 </tr>
                 </tbody>
             </table>
@@ -44,12 +44,6 @@
     <div class="box-header">{{msg('security.userRegistration')}}</div>
     <div class="box-content clearfix">
         <div class="well3">
-            <div class="">
-                <ul>
-                    <li ng-show="successfulMessage.length>0">{{msg(successfulMessage)}}</li>
-                    <li ng-show="failureMessage.length>0">{{msg(failureMessage)}}</li>
-                </ul>
-            </div>
             <form id="createUserForm" name="createUserForm" class="form-horizontal inside" novalidate>
                 <div class="control-group">
                     <h4>{{msg('user')}}</h4>
@@ -130,12 +124,6 @@
     <div class="box-header">{{msg('security.administeringUsers')}}</div>
     <div class="box-content clearfix">
         <div class="well3">
-            <div class="">
-                <ul>
-                    <li ng-show="successfulMessage.length>0">{{msg(successfulMessage)}}</li>
-                    <li ng-show="failureMessage.length>0">{{msg(failureMessage)}}</li>
-                </ul>
-            </div>
             <form id="editUserForm" name="editUserForm" class="form-horizontal inside" novalidate>
                 <div class="control-group">
                     <h4>{{msg('user')}}: {{user.userName}}</h4>

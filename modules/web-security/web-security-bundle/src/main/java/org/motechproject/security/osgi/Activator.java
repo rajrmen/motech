@@ -13,13 +13,15 @@ import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.ResourceLoader;
-import org.springframework.security.config.method.GlobalMethodSecurityBeanDefinitionParser;
 import org.springframework.web.filter.DelegatingFilterProxy;
 import org.springframework.web.servlet.DispatcherServlet;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.StringWriter;
 import java.util.Properties;
 
 public class Activator implements BundleActivator {
@@ -109,9 +111,9 @@ public class Activator implements BundleActivator {
 
                 service.registerServlet(SERVLET_URL_MAPPING, dispatcherServlet, null, null);
                 service.registerResources(RESOURCE_URL_MAPPING, "/webapp", httpContext);
-                if (!adminMode){
+                if (!adminMode) {
                     filter = new DelegatingFilterProxy("springSecurityFilterChain", dispatcherServlet.getWebApplicationContext());
-                    service.registerFilter(filter, "/.*", null,0,httpContext);
+                    service.registerFilter(filter, "/.*", null, 0, httpContext);
                 }
                 logger.debug("Servlet registered");
             } finally {

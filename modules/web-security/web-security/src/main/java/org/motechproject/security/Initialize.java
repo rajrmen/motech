@@ -7,11 +7,9 @@ import org.motechproject.security.domain.MotechRole;
 import org.motechproject.security.domain.MotechRoleCouchdbImpl;
 import org.motechproject.security.repository.AllMotechPermissions;
 import org.motechproject.security.repository.AllMotechRoles;
-import org.motechproject.security.repository.AllMotechUsers;
 import org.motechproject.security.service.MotechUserService;
 import org.motechproject.server.config.service.PlatformSettingsService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.motechproject.server.config.settings.MotechSettings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -21,7 +19,6 @@ import java.util.Properties;
 
 
 public class Initialize {
-    private static Logger logger = LoggerFactory.getLogger(Initialize.class);
     private static final String WEB_SECURITY = "websecurity";
 
     @Autowired
@@ -32,9 +29,6 @@ public class Initialize {
 
     @Autowired
     private AllMotechRoles allMotechRoles;
-
-    @Autowired
-    private AllMotechUsers allMotechUsers;
 
     @Autowired
     private PlatformSettingsService settingsService;
@@ -62,16 +56,37 @@ public class Initialize {
 
         allMotechRoles.add(adminUser);
 
-        Properties sysProperties = settingsService.exportPlatformSettings();
-        if (sysProperties.getProperty("login.mode").equals("repository") && sysProperties.getProperty("admin.login") != null && sysProperties.getProperty("admin.password") != null) {
-            String adminName = sysProperties.getProperty("admin.login");
-            String adminPassword = sysProperties.getProperty("admin.password");
-            String adminEmail = sysProperties.getProperty("admim.email");
+        MotechSettings sysProperties = settingsService.getPlatformSettings();
+        if ("repository".equals(sysProperties.getLoginMode()) && null != sysProperties.getAdminLogin() && null != sysProperties.getAdminPassword() && null != sysProperties.getAdminEmail()) {
+            String adminName = sysProperties.getAdminLogin();
+            String adminPassword = sysProperties.getAdminPassword();
+            String adminEmail = sysProperties.getAdminEmail();
             motechUserService.register(adminName, adminPassword, adminEmail, "", Arrays.asList(adminUser.getRoleName()));
-            sysProperties.remove("admin.login");
-            sysProperties.remove("admin.password");
-            sysProperties.remove("admin.email");
-            settingsService.savePlatformSettings(sysProperties);
+            Properties properties = getProperties(sysProperties);
+            settingsService.savePlatformSettings(properties);
         }
+    }
+
+    private Properties getProperties(MotechSettings settings) {
+        Properties properties = new Properties();
+        properties.putAll(convertCouchDbProperties(settings.getCouchDBProperties()));
+        properties.putAll(settings.getQuartzProperties());
+        properties.putAll(settings.getSchedulerProperties());
+        properties.putAll(settings.getMetricsProperties());
+        properties.put(MotechSettings.LANGUAGE, settings.getLanguage());
+        properties.put(MotechSettings.STATUS_MSG_TIMEOUT, settings.getStatusMsgTimeout());
+        properties.put(MotechSettings.LOGINMODE, settings.getLoginMode());
+        return properties;
+    }
+
+    private Properties convertCouchDbProperties(Properties couchDb){
+        Properties couchProperties = new Properties();
+        couchProperties.put("db.host", couchDb.getProperty("host"));
+        couchProperties.put("db.port", couchDb.getProperty("port"));
+        couchProperties.put("db.maxConnections", couchDb.getProperty("maxConnections"));
+        couchProperties.put("db.connectionTimeout", couchDb.getProperty("connectionTimeout"));
+        couchProperties.put("db.socketTimeout", couchDb.getProperty("socketTimeout"));
+
+        return couchProperties;
     }
 }

@@ -38,6 +38,12 @@ public interface MotechSettings {
 
     String getLanguage();
 
+    String getAdminLogin();
+
+    String getAdminPassword();
+
+    String getAdminEmail();
+
     String getStatusMsgTimeout();
 
     String getLoginMode();

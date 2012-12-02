@@ -5,7 +5,6 @@ import org.motechproject.security.domain.MotechUser;
 import org.motechproject.security.domain.MotechUserCouchdbImpl;
 import org.motechproject.security.repository.AllMotechRoles;
 import org.motechproject.security.repository.AllMotechUsers;
-import org.motechproject.server.config.service.PlatformSettingsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -22,10 +21,10 @@ import java.util.List;
 public class MotechOpenIdUserDetailsService implements AuthenticationUserDetailsService<OpenIDAuthenticationToken> {
 
     @Autowired
-    AllMotechRoles allMotechRoles;
+    private AllMotechRoles allMotechRoles;
 
     @Autowired
-    AllMotechUsers allMotechUsers;
+    private AllMotechUsers allMotechUsers;
 
     private List<GrantedAuthority> getAuthorities(List<String> roles) {
         List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
@@ -54,9 +53,9 @@ public class MotechOpenIdUserDetailsService implements AuthenticationUserDetails
     }
 
     private String getAttribute(List<OpenIDAttribute> attributes, String attributeName) {
-        String attributeValue="";
+        String attributeValue = "";
         for(OpenIDAttribute attribute : attributes) {
-            if (attribute.getName()!=null && (attribute.getName().equals("ax"+attributeName) || attribute.getName().equals("ae"+attributeName))) {
+            if (attribute.getName() != null && (attribute.getName().equals("ax" + attributeName) || attribute.getName().equals("ae" + attributeName))) {
                 attributeValue = attribute.getValues().get(0);
             }
         }

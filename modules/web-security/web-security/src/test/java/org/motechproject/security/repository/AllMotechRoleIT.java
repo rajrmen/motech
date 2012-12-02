@@ -18,7 +18,7 @@ import static junit.framework.Assert.assertEquals;
 public class AllMotechRoleIT {
 
     @Autowired
-    AllMotechRoles allMotechRoles;
+    private AllMotechRoles allMotechRoles;
 
     @Test
     public void findByUserName() {

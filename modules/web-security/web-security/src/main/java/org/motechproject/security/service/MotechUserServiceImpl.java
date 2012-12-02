@@ -4,7 +4,6 @@ import org.motechproject.security.authentication.MotechPasswordEncoder;
 import org.motechproject.security.domain.MotechUser;
 import org.motechproject.security.domain.MotechUserCouchdbImpl;
 import org.motechproject.security.model.UserDto;
-import org.motechproject.security.repository.AllMotechRoles;
 import org.motechproject.security.repository.AllMotechUsers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,9 +18,6 @@ public class MotechUserServiceImpl implements MotechUserService {
 
     @Autowired
     private AllMotechUsers allMotechUsers;
-
-    @Autowired
-    private AllMotechRoles allMotechRoles;
 
     @Autowired
     private MotechPasswordEncoder passwordEncoder;

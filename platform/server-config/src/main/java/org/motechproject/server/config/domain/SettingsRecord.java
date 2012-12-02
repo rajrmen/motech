@@ -17,6 +17,9 @@ public class SettingsRecord extends MotechBaseDataObject implements MotechSettin
     private String language;
     private String statusMsgTimeout;
     private String loginMode;
+    private String adminLogin;
+    private String adminPassword;
+    private String adminEmail;
 
     private boolean cluster;
     private DateTime lastRun;
@@ -62,6 +65,21 @@ public class SettingsRecord extends MotechBaseDataObject implements MotechSettin
         return loginMode;
     }
 
+    @Override
+    public String getAdminLogin() {
+        return adminLogin;
+    }
+
+    @Override
+    public String getAdminPassword() {
+        return adminPassword;
+    }
+
+    @Override
+    public String getAdminEmail() {
+        return adminEmail;
+    }
+
     public Properties getSchedulerProperties() {
         return schedulerProperties;
     }
@@ -92,6 +110,18 @@ public class SettingsRecord extends MotechBaseDataObject implements MotechSettin
 
     public void setLoginMode(String loginMode) {
         this.loginMode = loginMode;
+    }
+
+    public void setAdminLogin(String adminLogin) {
+        this.adminLogin = adminLogin;
+    }
+
+    public void setAdminPassword(String adminPassword) {
+        this.adminPassword = adminPassword;
+    }
+
+    public void setAdminEmail(String adminEmail) {
+        this.adminEmail = adminEmail;
     }
 
     public void setStatusMsgTimeout(final String statusMsgTimeout) {
@@ -130,6 +160,9 @@ public class SettingsRecord extends MotechBaseDataObject implements MotechSettin
         setMetricsProperties(settings.getMetricsProperties());
         setSchedulerProperties(settings.getSchedulerProperties());
         setLoginMode(settings.getLoginMode());
+        setAdminLogin(settings.getAdminLogin());
+        setAdminPassword(settings.getAdminPassword());
+        setAdminEmail(settings.getAdminEmail());
     }
 
     public void updateFromProperties(final Properties props) {
@@ -156,6 +189,15 @@ public class SettingsRecord extends MotechBaseDataObject implements MotechSettin
                     break;
                 case MotechSettings.LOGINMODE:
                     setLoginMode(value);
+                    break;
+                case MotechSettings.ADMINLOGIN:
+                    setAdminLogin(value);
+                    break;
+                case MotechSettings.ADMINPASSWORD:
+                    setAdminPassword(value);
+                    break;
+                case MotechSettings.ADMINEMAIL:
+                    setAdminPassword(value);
                     break;
                 default:
                     for (Properties p : Arrays.asList(getQuartzProperties(), getMetricsProperties(), getSchedulerProperties())) {

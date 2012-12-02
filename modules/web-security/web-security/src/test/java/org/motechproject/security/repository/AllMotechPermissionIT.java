@@ -22,7 +22,7 @@ import static org.hamcrest.Matchers.equalTo;
 public class AllMotechPermissionIT {
 
     @Autowired
-    AllMotechPermissions allMotechPermissions;
+    private AllMotechPermissions allMotechPermissions;
 
     @Test
     public void findByPermissionName() {

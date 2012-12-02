@@ -11,6 +11,11 @@
     <!--<context:property-placeholder location="classpath*:motech-web-security.properties"/>
         todo is this used? if yes use properties instead of placeholder -->
 
+    <context:annotation-config/>
+    <context:component-scan base-package="org.motechproject.security"/>
+
+    <mvc:annotation-driven/>
+
     <bean id="webSecuritySettings" class="org.motechproject.server.config.SettingsFacade" autowire="byType">
         <property name="moduleName" value="web-security"/>
     </bean>
@@ -23,9 +28,4 @@
     <bean class="org.motechproject.event.listener.annotations.EventAnnotationBeanPostProcessor"/>
 
     <bean class="org.motechproject.security.Initialize"/>
-
-    <context:annotation-config/>
-    <context:component-scan base-package="org.motechproject.security"/>
-
-    <mvc:annotation-driven/>
 </beans>

@@ -32,6 +32,13 @@ function UserCtrl($scope, Roles, Users, $http) {
 
        }
 
+       $scope.loginMode = function() {
+           $http.get('../websecurity/api/users/loginmode').
+               success(function(data){
+                   return data=="openid" ? false : true;
+               })
+       }
+
        $scope.activeRole = function(roleName) {
              if ($scope.user.roles.indexOf(roleName)==-1) {
                 $scope.user.roles.push(roleName);

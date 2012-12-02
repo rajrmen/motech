@@ -30,7 +30,7 @@ import static org.motechproject.server.ui.UIFrameworkService.MODULES_WITH_SUBMEN
 public class DashboardController {
 
     private StartupManager startupManager = StartupManager.getInstance();
-    private static String WEBSECURITY = "org.motechproject.motech-web-security-bundle";
+
     @Autowired
     private UIFrameworkService uiFrameworkService;
 
