@@ -10,7 +10,12 @@ angular.module('motech-tasks', ['motech-dashboard', 'channelServices', 'taskServ
             when('/task/:taskId/edit', {templateUrl: '../tasks/partials/form.html', controller: ManageTaskCtrl}).
             otherwise({redirectTo: '/dashboard'});
     }
-]).directive('doubleClick', function() {
+]).filter('filterPagination', function() {
+    return function(input, start) {
+        start= +start;
+        return input.slice(start);
+    }
+}).directive('doubleClick', function() {
     return {
         restrict: 'A',
         link: function(scope, element, attrs) {

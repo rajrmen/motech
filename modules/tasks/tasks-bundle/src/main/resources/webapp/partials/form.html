@@ -50,10 +50,10 @@
     <div class="clearfix"></div><div class="margin-before4"></div>
     <div class="section-source" ng-hide="task.trigger && task.action">
         <div data-left-arrow="true" class="left-arrow">
-            <img src="../tasks/img/larrow.png"/>
+            <img src="../tasks/img/larrow.png" ng-click="currentPage = currentPage - 1" ng-hide="currentPage == 0"/>
         </div>
         <ul class="task-selector droppable" style="position: relative;" droppable>
-            <li class="task-panel" ng-repeat="channel in channels" draggable data-channel-name="{{channel.displayName}}" data-module-name="{{channel.moduleName}}" data-module-version="{{channel.moduleVersion}}">
+            <li class="task-panel" ng-repeat="channel in channels | filterPagination:currentPage*pageSize | limitTo:pageSize" draggable data-channel-name="{{channel.displayName}}" data-module-name="{{channel.moduleName}}" data-module-version="{{channel.moduleVersion}}">
                 <div><img ng-src="../tasks/api/channel/icon?moduleName={{channel.moduleName}}&moduleVersion={{channel.moduleVersion}}" class="panel-img" /></div>
                 <span>{{channel.displayName}}</span>
                 <div>
@@ -69,7 +69,7 @@
             </li>
         </ul>
         <div data-right-arrow="true" class="right-arrow">
-            <img src="../tasks/img/rarrow.png"/>
+            <img src="../tasks/img/rarrow.png" ng-click="currentPage = currentPage + 1" ng-hide="currentPage &gt;= channels.length/pageSize - 1"/>
         </div>
         <div class="clearfix"></div>
     </div>

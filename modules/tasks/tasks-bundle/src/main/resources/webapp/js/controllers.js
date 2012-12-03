@@ -57,6 +57,8 @@ function DashboardCtrl($scope, Tasks, Activities) {
 }
 
 function ManageTaskCtrl($scope, Channels, Tasks, $routeParams, $http) {
+    $scope.currentPage = 0;
+    $scope.pageSize = 10;
     $scope.task = {};
     $scope.channels = Channels.query(function (){
         if ($routeParams.taskId != undefined) {
