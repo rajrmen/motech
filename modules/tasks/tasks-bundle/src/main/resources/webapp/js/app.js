@@ -6,11 +6,32 @@ angular.module('motech-tasks', ['motech-dashboard', 'channelServices', 'taskServ
     function ($routeProvider) {
         $routeProvider.
             when('/dashboard', {templateUrl: '../tasks/partials/tasks.html', controller: DashboardCtrl}).
-            when('/task/new', {templateUrl: '../tasks/partials/create.html', controller: ManageTaskCtrl}).
-            when('/task/:taskId/edit', {templateUrl: '../tasks/partials/create.html', controller: ManageTaskCtrl}).
+            when('/task/new', {templateUrl: '../tasks/partials/form.html', controller: ManageTaskCtrl}).
+            when('/task/:taskId/edit', {templateUrl: '../tasks/partials/form.html', controller: ManageTaskCtrl}).
             otherwise({redirectTo: '/dashboard'});
     }
-]).directive('draggable', function() {
+]).directive('doubleClick', function() {
+    return {
+        restrict: 'A',
+        link: function(scope, element, attrs) {
+            element.dblclick(function () {
+                var parent = element.parent();
+
+                if (parent.hasClass('trigger')) {
+                    delete scope.selectedTrigger;
+                    delete scope.task.trigger;
+                    scope.draggedTrigger.display = scope.draggedTrigger.channel;
+                } else if (parent.hasClass('action')) {
+                    delete scope.selectedAction;
+                    delete scope.task.action;
+                    scope.draggedAction.display = scope.draggedAction.channel;
+                }
+
+                scope.$apply();
+            });
+        }
+    }
+}).directive('draggable', function() {
     return {
         restrict: 'A',
         link: function(scope, element, attrs) {
@@ -41,9 +62,15 @@ angular.module('motech-tasks', ['motech-dashboard', 'channelServices', 'taskServ
 
                         if (element.hasClass('trigger')) {
                             scope.setTaskEvent('trigger', channelName, moduleName, moduleVersion);
+                            delete scope.task.trigger;
+                            delete scope.selectedTrigger;
                         } else if (element.hasClass('action')) {
                             scope.setTaskEvent('action', channelName, moduleName, moduleVersion);
+                            delete scope.task.action;
+                            delete scope.selectedAction;
                         }
+
+                        element.parent().attr('data-original-title', scope.msg('help.doubleClickToEdit'));
                     } else if (angular.element(ui.draggable).hasClass('dragged') && element.hasClass('task-selector')) {
                         parent = angular.element(ui.draggable).parent();
 
@@ -56,6 +83,8 @@ angular.module('motech-tasks', ['motech-dashboard', 'channelServices', 'taskServ
                             delete scope.task.action;
                             delete scope.selectedAction;
                         }
+
+                        parent.parent().attr('data-original-title', scope.msg('help.dragChannelFromListBelow'));
                     }
 
                     scope.$apply();

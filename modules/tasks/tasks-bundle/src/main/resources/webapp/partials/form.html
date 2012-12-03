@@ -1,15 +1,18 @@
 <!------------------------  Create Task  ------------------------------------->
 <div class="">
-    <h3>{{msg('header.newTask')}}</h3>
+    <h3 ng-hide="task._id">{{msg('header.newTask')}}</h3>
+    <h3 ng-show="task._id">{{msg('header.editTask')}}</h3>
+    <a href="#/task/" class="btn btn-warning"><i class="icon icon-share-alt icon-white"></i> {{msg('button.cancel')}}</a>
 </div>
 <div class=" outside-tb2 top-line"></div>
-<div class="box-header">{{msg('section.newTask')}}</div>
+<div ng-hide="task._id" class="box-header">{{msg('section.newTask')}}</div>
+<div ng-show="task._id" class="box-header">{{msg('section.editTask')}}</div>
 <div class="box-content well3">
-    <h3 class="pagination-centered">{{msg('section.selectEvents')}}</h3>
+    <h3 class="pagination-centered" ng-hide="task._id">{{msg('section.selectEvents')}}</h3>
     <div class="section-input">
-        <div class="panel-input" ui-jq="tooltip" ui-options="{placement:'left'}" data-original-title="{{msg('help.doubleClickToEdit')}}">
+        <div class="panel-input" ui-jq="tooltip" ui-options="{placement:'left'}" data-original-title="{{msg('help.dragChannelFromListBelow')}}">
             <ul class="trigger droppable" droppable>
-                <li class="task-panel dragged" ng-show="draggedTrigger" draggable>
+                <li class="task-panel dragged" ng-show="draggedTrigger" draggable double-click>
                     <div><img ng-src="../tasks/api/channel/icon?moduleName={{draggedTrigger.module}}&moduleVersion={{draggedTrigger.version}}" class="panel-img"/></div>
                     <span>{{draggedTrigger.display}}</span>
                     <div ng-hide="selectedTrigger">
@@ -27,7 +30,7 @@
         <div class="to imgArrow"><img src="../tasks/img/arrow.png"/></div>
         <div class="panel-input" ui-jq="tooltip" ui-options="{placement:'right'}" data-original-title="{{msg('help.dragChannelFromListBelow')}}">
             <ul class="action droppable" droppable>
-                <li class="task-panel dragged" ng-show="draggedAction" draggable>
+                <li class="task-panel dragged" ng-show="draggedAction" draggable double-click>
                     <div><img ng-src="../tasks/api/channel/icon?moduleName={{draggedAction.module}}&moduleVersion={{draggedAction.version}}" class="panel-img"/></div>
                     <span>{{draggedAction.display}}</span>
                     <div ng-hide="selectedAction">
@@ -75,8 +78,11 @@
 <div ng-show="task.trigger && task.action">
     <!------------------------  Build Task  ------------------------------------->
     <div class="well2 container-fluid margin-center margin-before">
-        <div class="box-header">{{msg('section.buildAction')}}</div>
-        <div class="box-content clearfix"><h3 class="pagination-centered">{{msg('section.buildAction')}}</h3>
+        <div ng-hide="task._id" class="box-header">{{msg('section.buildAction')}}</div>
+        <div ng-show="task._id" class="box-header">{{msg('section.editAction')}}</div>
+        <div class="box-content clearfix">
+            <h3 ng-hide="task._id" class="pagination-centered">{{msg('section.buildAction')}}</h3>
+            <h3 ng-show="task._id" class="pagination-centered">{{msg('section.editAction')}}</h3>
             <div class="row-fluid">
                 <div class="span6 inside">
                     <div class="well3">
@@ -260,7 +266,10 @@
     <h3 class="pagination-centered">{{msg('section.save')}}</h3>
     <div class="pagination-centered">
         <p>{{msg('info.save')}}</p>
-        <a ng-click="save(true)" class="btn btn-primary">Save & Enabled</a>
-        <a ng-click="save(false)" class="btn">Save</a>
+        <div class="btn-group">
+            <a ng-click="save(true)" class="btn btn-primary"><i class="icon icon-play-circle icon-white"></i> {{msg('button.saveAndEnabled')}}</a>
+            <a ng-click="save(false)" class="btn btn-success"><i class="icon icon-ok icon-white"></i> {{msg('button.save')}}</a>
+            <a href="#/task/" class="btn btn-warning"><i class="icon icon-share-alt icon-white"></i> {{msg('button.cancel')}}</a>
+        </div>
     </div>
 </div>
