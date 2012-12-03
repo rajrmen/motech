@@ -28,7 +28,6 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>motech-platform-event</artifactId>
             <version>${project.version}</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -74,6 +73,8 @@
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
+                        <Context-Path>server</Context-Path>
+                        <Context-File>applicationPlatformServerBundle.xml</Context-File>
                         <Export-Package>
                             <!-- server-startup -->
                             org.motechproject.server.startup,

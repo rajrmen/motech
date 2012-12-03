@@ -22,6 +22,7 @@
 
     <rule ref="rulesets/coupling.xml/LooseCoupling"/>
 
+    <rule ref="rulesets/design.xml/ConstructorCallsOverridableMethod"/>
     <rule ref="rulesets/design.xml/PreserveStackTrace"/>
     <rule ref="rulesets/design.xml/SimplifyConditional"/>
     <rule ref="rulesets/design.xml/UnnecessaryLocalBeforeReturn"/>
@@ -34,9 +35,11 @@
     <rule ref="rulesets/strictexception.xml/AvoidThrowingRawExceptionTypes"/>
     <rule ref="rulesets/strictexception.xml/SignatureDeclareThrowsException"/>
 
+    <rule ref="rulesets/strings.xml/AvoidDuplicateLiterals"/>
     <rule ref="rulesets/strings.xml/UseIndexOfChar"/>
 
     <rule ref="rulesets/unusedcode.xml/UnusedFormalParameter"/>
     <rule ref="rulesets/unusedcode.xml/UnusedLocalVariable"/>
     <rule ref="rulesets/unusedcode.xml/UnusedPrivateField"/>
+    <rule ref="rulesets/unusedcode.xml/UnusedPrivateMethod"/>
 </ruleset>
