@@ -1,11 +1,10 @@
-
 <!------------------------  Tasks  ------------------------------------->
 <div class="row-fluid">
-    <a href="#/task/new" type="button" class="btn btn-success pull-right margin-before2"><i class="icon icon-plus icon-white"></i> {{msg('task.new')}}</a>
+    <a href="#/task/new" type="button" class="btn btn-success pull-right margin-before"><i class="icon icon-plus icon-white"></i> {{msg('task.new')}}</a>
     <h3>{{msg('header.tasks')}}</h3>
 </div>
-<div class="clearfix"></div><div class="margin-after2 top-line"></div>
 
+<div class="clearfix"></div><div class="margin-after top-line"></div>
 
 <div class="row-fluid">
     <div class="margin-before span8 margin-after">
@@ -54,7 +53,6 @@
             <div class="clearfix"></div>
             <div class="margin-after"></div>
         </div>
-
 
         <h4 ng-show="pausedTasks.length != 0">{{msg('header.pausedTasks')}}</h4>
         <div ng-repeat="item in pausedTasks">
