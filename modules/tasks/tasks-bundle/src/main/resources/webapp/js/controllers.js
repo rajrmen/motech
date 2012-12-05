@@ -9,7 +9,7 @@ function DashboardCtrl($scope, Tasks, Activities) {
     var tasks = Tasks.query(function () {
         var item, task, i;
 
-        for (i = 0; i < tasks.length; ++i) {
+        for (i = 0; i < tasks.length; i += 1) {
             task = tasks[i];
             item = {
                 task: task,
@@ -25,7 +25,7 @@ function DashboardCtrl($scope, Tasks, Activities) {
         }
     });
 
-    $scope.get = function(taskEvent, prop) {
+    $scope.get = function (taskEvent, prop) {
         var index;
 
         switch (prop) {
@@ -37,9 +37,9 @@ function DashboardCtrl($scope, Tasks, Activities) {
         }
 
         return taskEvent.split(':')[index];
-    }
+    };
 
-    $scope.deleteTask = function(item) {
+    $scope.deleteTask = function (item) {
         var enabled = item.task.enabled;
 
         jConfirm(jQuery.i18n.prop('task.confirm.remove'), jQuery.i18n.prop("header.confirm"), function (val) {
@@ -53,7 +53,7 @@ function DashboardCtrl($scope, Tasks, Activities) {
                 }, alertHandler('task.error.removed', 'header.error'));
             }
         });
-    }
+    };
 }
 
 function ManageTaskCtrl($scope, Channels, Tasks, $routeParams, $http) {
@@ -96,10 +96,10 @@ function ManageTaskCtrl($scope, Channels, Tasks, $routeParams, $http) {
         }
     });
 
-    $scope.setTaskEvent = function(taskEventType, channelName, moduleName, moduleVersion) {
+    $scope.setTaskEvent = function (taskEventType, channelName, moduleName, moduleVersion) {
         var channel, selected, i, j;
 
-        for (i = 0; i < $scope.channels.length; ++i) {
+        for (i = 0; i < $scope.channels.length; i += 1) {
             channel = $scope.channels[i];
 
             if (channel.displayName == channelName && channel.moduleName == moduleName && channel.moduleVersion == moduleVersion) {
@@ -108,7 +108,7 @@ function ManageTaskCtrl($scope, Channels, Tasks, $routeParams, $http) {
                     channel: channelName,
                     module: moduleName,
                     version: moduleVersion,
-                }
+                };
 
                 if (taskEventType === 'trigger') {
                     $scope.draggedTrigger = selected;
@@ -125,9 +125,9 @@ function ManageTaskCtrl($scope, Channels, Tasks, $routeParams, $http) {
                 break;
             }
         }
-    }
+    };
 
-    $scope.selectTaskEvent = function(taskEventType, taskEvent) {
+    $scope.selectTaskEvent = function (taskEventType, taskEvent) {
         if (taskEventType === 'trigger') {
             $scope.draggedTrigger.display = taskEvent.displayName;
             $scope.task.trigger = "{0}:{1}:{2}:{3}".format($scope.draggedTrigger.channel, $scope.draggedTrigger.module, $scope.draggedTrigger.version, taskEvent.subject);
@@ -141,13 +141,15 @@ function ManageTaskCtrl($scope, Channels, Tasks, $routeParams, $http) {
         delete $scope.task.actionInputFields;
 
         if ($scope.selectedAction != undefined) {
+            var i;
+
             for (i = 0; i < $scope.selectedAction.eventParameters.length; i += 1) {
                 delete $scope.selectedAction.eventParameters[i].value;
             }
         }
-    }
+    };
 
-    $scope.save = function(enabled) {
+    $scope.save = function (enabled) {
         var action = $scope.selectedAction, i, eventKey, value;
 
         $scope.task.actionInputFields = {};
@@ -179,6 +181,6 @@ function ManageTaskCtrl($scope, Channels, Tasks, $routeParams, $http) {
 
                 alertHandler('task.error.saved', 'header.error');
             });
-    }
+    };
 
 }

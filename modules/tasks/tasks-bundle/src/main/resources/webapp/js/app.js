@@ -10,15 +10,15 @@ angular.module('motech-tasks', ['motech-dashboard', 'channelServices', 'taskServ
             when('/task/:taskId/edit', {templateUrl: '../tasks/partials/form.html', controller: ManageTaskCtrl}).
             otherwise({redirectTo: '/dashboard'});
     }
-]).filter('filterPagination', function() {
-    return function(input, start) {
-        start= +start;
+]).filter('filterPagination', function () {
+    return function (input, start) {
+        start = +start;
         return input.slice(start);
     }
-}).directive('doubleClick', function() {
+}).directive('doubleClick', function () {
     return {
         restrict: 'A',
-        link: function(scope, element, attrs) {
+        link: function (scope, element, attrs) {
             element.dblclick(function () {
                 var parent = element.parent();
 
@@ -36,25 +36,32 @@ angular.module('motech-tasks', ['motech-dashboard', 'channelServices', 'taskServ
             });
         }
     }
-}).directive('draggable', function() {
+}).directive('draggable', function () {
     return {
         restrict: 'A',
-        link: function(scope, element, attrs) {
+        link: function (scope, element, attrs) {
             element.draggable({ revert: true });
         }
     }
-}).directive('droppable', function($compile) {
+}).directive('droppable', function ($compile) {
     return {
         restrict: 'A',
-        link: function(scope, element, attrs) {
+        link: function (scope, element, attrs) {
             element.droppable({
-                drop: function(event, ui) {
+                drop: function (event, ui) {
                     var dragIndex, dropIndex, channelName, moduleName, moduleVersion,
-                        parent, value, position, eventKey;
+                        parent, value, position, eventKey, dragType, dropType;
 
                     if (angular.element(ui.draggable).hasClass('triggerField') && element.hasClass('actionField')) {
                         dragIndex = angular.element(ui.draggable).data('index');
                         dropIndex = angular.element(element).data('index');
+                        dragType = angular.element(ui.draggable).data('type');
+                        dropType = angular.element(element).data('type');
+
+                        if ((dragType == 'UNICODE' || dragType == 'TEXTAREA') && dropType == 'NUMBER') {
+                            return;
+                        }
+
                         eventKey = '{{' + scope.selectedTrigger.eventParameters[dragIndex].eventKey + '}}';
                         position = element.caret();
                         value = scope.selectedAction.eventParameters[dropIndex].value || '';
@@ -97,4 +104,28 @@ angular.module('motech-tasks', ['motech-dashboard', 'channelServices', 'taskServ
             });
         }
     }
+}).directive('integer', function () {
+    return {
+        restrict: 'A',
+        link: function (scope, element, attrs) {
+            element.keypress(function (evt) {
+                var charCode = (evt.which) ? evt.which : evt.keyCode,
+                    caret = element.caret(), value = element.val(),
+                    begin = value.indexOf('{{'), end = value.indexOf('}}') + 2;
+
+                if (begin !== -1) {
+                    while (end !== -1) {
+                        if (caret > begin && caret < end) {
+                            return false;
+                        }
+
+                        begin = value.indexOf('{{', end);
+                        end = begin === -1 ? -1 : value.indexOf('}}', begin) + 2;
+                    }
+                }
+
+                return !(charCode > 31 && (charCode < 48 || charCode > 57));
+            });
+        }
+    };
 });

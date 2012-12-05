@@ -91,7 +91,7 @@
                                     <p>{{msg('info.dragFieldBuildAction')}}</p>
                                 </div>
                                 <div class="control-group move-element">
-                                    <span class="badge badge-info triggerField" draggable ng-repeat="i in selectedTrigger.eventParameters" data-index="{{$index}}">{{i.displayName}}</span>
+                                    <span class="badge badge-info triggerField" draggable ng-repeat="i in selectedTrigger.eventParameters" data-index="{{$index}}" data-type="{{i.type}}">{{i.displayName}}</span>
                                 </div>
                                 <!------------------  Include Additional Data  ------------------------>
                                 <div class="accordion" id="accordion1">
@@ -206,7 +206,7 @@
 
                 <div class="span6">
                     <div class="well3">
-                        <form class="inside">
+                        <form name="form" class="inside">
                             <div class="control-group">
                                 <h4>{{selectedAction.displayName}}</h4>
                             </div>
@@ -215,7 +215,9 @@
                             </div>
                             <div class="control-group" ng-repeat="i in selectedAction.eventParameters">
                                 <label>{{i.displayName}}</label>
-                                <textarea ng-model="i.value" droppable class="actionField span6" data-index="{{$index}}"></textarea>
+                                <textarea ui-if="i.type == 'TEXTAREA'" rows="5" ng-model="i.value" droppable class="actionField input-block-level" data-index="{{$index}}" data-type="{{i.type}}"></textarea>
+                                <input ui-if="i.type == 'NUMBER'" type="text" ng-model="i.value" droppable class="actionField input-block-level" data-index="{{$index}}" data-type="{{i.type}}" integer placeholder="{{msg('placeholder.numberOnly')}}"/>
+                                <input ui-if="i.type == 'UNICODE'" type="text" ng-model="i.value" droppable class="actionField input-block-level" data-index="{{$index}}" data-type="{{i.type}}"/>
                             </div>
                         </form>
                     </div>

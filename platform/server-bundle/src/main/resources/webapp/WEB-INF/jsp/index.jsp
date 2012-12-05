@@ -14,6 +14,7 @@
 
     <link rel="stylesheet" type="text/css" href="resources/css/bootstrap.css">
     <link rel="stylesheet" type="text/css" href="resources/css/bootstrap-responsive.css">
+    <link rel="stylesheet" type="text/css" href="resources/css/jquery-ui-min.css" />
     <link rel="stylesheet" type="text/css" href="resources/css/index.css" />
 
     <script src="resources/lib/jquery/jquery-1.8.2.min.js" type="text/javascript"></script>
