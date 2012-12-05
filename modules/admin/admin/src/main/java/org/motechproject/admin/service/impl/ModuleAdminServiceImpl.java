@@ -2,16 +2,14 @@ package org.motechproject.admin.service.impl;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.motechproject.commons.api.MotechException;
 import org.motechproject.admin.bundles.BundleDirectoryManager;
 import org.motechproject.admin.bundles.ExtendedBundleInformation;
 import org.motechproject.admin.ex.BundleNotFoundException;
 import org.motechproject.admin.service.ModuleAdminService;
 import org.motechproject.server.osgi.BundleIcon;
-import org.motechproject.server.osgi.BundleInformation;
-import org.motechproject.server.osgi.BundleLoader;
-import org.motechproject.server.osgi.BundleLoadingException;
-import org.motechproject.server.osgi.JarInformation;
+import org.motechproject.commons.api.MotechException;
+import org.motechproject.server.api.BundleInformation;
+import org.motechproject.server.api.JarInformation;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
@@ -21,7 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.annotation.Resource;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -44,9 +41,6 @@ public class ModuleAdminServiceImpl implements ModuleAdminService {
 
     @Autowired
     private BundleDirectoryManager bundleDirectoryManager;
-
-    @Resource(name = "bundleLoaders")
-    private List<BundleLoader> bundleLoaders;
 
     @Override
     public List<BundleInformation> getBundles() {
@@ -134,8 +128,6 @@ public class ModuleAdminServiceImpl implements ModuleAdminService {
                 bundle.update(bundleInputStream);
             }
 
-            runBundleLoaders(bundle);
-
             if (startBundle) {
                 bundle.start();
             } else {
@@ -183,12 +175,6 @@ public class ModuleAdminServiceImpl implements ModuleAdminService {
             throw new BundleNotFoundException("Bundle with id [" + bundleId + "] not found");
         }
         return bundle;
-    }
-
-    private void runBundleLoaders(Bundle bundle) throws BundleLoadingException {
-        for (BundleLoader loader : bundleLoaders) {
-            loader.loadBundle(bundle);
-        }
     }
 
     private Bundle findMatchingBundle(JarInformation jarInformation) {

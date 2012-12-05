@@ -9,7 +9,7 @@ import org.motechproject.admin.ex.BundleNotFoundException;
 import org.motechproject.admin.service.ModuleAdminService;
 import org.motechproject.admin.service.impl.ModuleAdminServiceImpl;
 import org.motechproject.server.osgi.BundleIcon;
-import org.motechproject.server.osgi.BundleInformation;
+import org.motechproject.server.api.BundleInformation;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
