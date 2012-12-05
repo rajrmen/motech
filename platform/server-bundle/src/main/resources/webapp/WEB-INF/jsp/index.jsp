@@ -37,6 +37,7 @@
     <script src="resources/js/util.js" type="text/javascript"></script>
     <script src="resources/js/common.js" type="text/javascript"></script>
     <script src="resources/js/localization.js"></script>
+    <script src="resources/js/directives.js"></script>
     <script src="resources/js/app.js"></script>
     <script src="resources/js/controllers.js"></script>
 
