@@ -1,7 +1,9 @@
 package org.motechproject.ivr.model;
 
-import org.motechproject.ivr.event.CallEvent;
+import org.ektorp.support.TypeDiscriminator;
+import org.motechproject.commons.couchdb.model.MotechBaseDataObject;
 import org.motechproject.commons.date.util.DateUtil;
+import org.motechproject.ivr.event.CallEvent;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -13,7 +15,8 @@ import static org.motechproject.commons.date.util.DateUtil.setTimeZone;
 /**
 * Call Detail Record represents call events and data captured in a call along with call metrics.
 */
-public class CallDetailRecord {
+@TypeDiscriminator("doc.type === 'CallDetailRecord'")
+public class CallDetailRecord  extends MotechBaseDataObject {
     /**
      * Call status
      */
@@ -26,11 +29,12 @@ public class CallDetailRecord {
     private Date answerDate;
     private Disposition disposition;
     private Integer duration;
-    private String errorMessage;
+    private String message;
     private String phoneNumber;
-
     private CallDirection callDirection;
     private List<CallEvent> callEvents = new ArrayList<CallEvent>();
+    private String id;
+    private String rev;
 
     private CallDetailRecord() {
     }
@@ -55,10 +59,10 @@ public class CallDetailRecord {
     /**
      * CallDetailRecord constructor for failed calls
      * @param disposition: Status of call
-     * @param errorMessage
+     * @param message
      */
-    public CallDetailRecord(Disposition disposition, String errorMessage) {
-        this.errorMessage = errorMessage;
+    public CallDetailRecord(Disposition disposition, String message) {
+        this.message = message;
         this.disposition = disposition;
     }
 
@@ -99,8 +103,8 @@ public class CallDetailRecord {
         return duration;
     }
 
-    public String getErrorMessage() {
-        return errorMessage;
+    public String getMessage() {
+        return message;
     }
 
     public String getPhoneNumber() {
@@ -148,8 +152,8 @@ public class CallDetailRecord {
         this.duration = duration;
     }
 
-    public void setErrorMessage(String errorMessage) {
-        this.errorMessage = errorMessage;
+    public void setMessage(String message) {
+        this.message = message;
     }
 
     /**
