@@ -50,7 +50,7 @@ angular.module('motech-tasks', ['motech-dashboard', 'channelServices', 'taskServ
             element.droppable({
                 drop: function (event, ui) {
                     var dragIndex, dropIndex, channelName, moduleName, moduleVersion,
-                        parent, value, position, eventKey, dragType, dropType;
+                        parent, value, position, eventKey, dragType, dropType, options;
 
                     if (angular.element(ui.draggable).hasClass('triggerField') && element.hasClass('actionField')) {
                         dragIndex = angular.element(ui.draggable).data('index');
@@ -83,6 +83,15 @@ angular.module('motech-tasks', ['motech-dashboard', 'channelServices', 'taskServ
                         }
 
                         element.parent().attr('data-original-title', scope.msg('help.doubleClickToEdit'));
+
+                        options = {
+                            html: true,
+                            placement: element.hasClass('trigger') ? 'left' : 'right',
+                            trigger: 'manual',
+                            content: function() {
+                                return $(element).find('.content-task').html();
+                            }
+                        };
                     } else if (angular.element(ui.draggable).hasClass('dragged') && element.hasClass('task-selector')) {
                         parent = angular.element(ui.draggable).parent();
 
@@ -100,6 +109,10 @@ angular.module('motech-tasks', ['motech-dashboard', 'channelServices', 'taskServ
                     }
 
                     scope.$apply();
+
+                    if (options !== undefined && options !== null) {
+                        element.parent().popover(options).popover('show');
+                    }
                 }
             });
         }

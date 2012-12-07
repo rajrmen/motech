@@ -16,14 +16,3 @@ widgetModule.directive('taskPopover', function() {
         });
     }
 });
-
-widgetModule.directive('taskinputPopover', function() {
-    return function(scope, element, attrs) {
-        $(element).popover({
-            html: true,
-            content: function() {
-                return $(element).find('.content-task').html();
-                }
-        });
-    }
-});
