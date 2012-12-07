@@ -8,6 +8,10 @@ import org.motechproject.commons.date.util.DateUtil;
  * @see IVREvent
  */
 public class CallEvent {
+    public static final String SUBJECT = "IVRCallEvent";
+    public static final String KEY = "callEvent";
+    public static final String CALL_DETAIL_RECORD_ID_KEY = "callDetailRecordId";
+
     private String name;
     private DateTime timeStamp;
     private CallEventCustomData callEventCustomData = new CallEventCustomData();

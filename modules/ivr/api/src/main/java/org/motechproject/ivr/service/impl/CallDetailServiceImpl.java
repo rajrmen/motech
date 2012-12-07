@@ -1,5 +1,6 @@
 package org.motechproject.ivr.service.impl;
 
+import org.motechproject.ivr.event.CallEvent;
 import org.motechproject.ivr.model.CallDetailRecord;
 import org.motechproject.ivr.repository.AllCallDetailRecords;
 import org.motechproject.ivr.service.CallDetailService;
@@ -24,6 +25,15 @@ public class CallDetailServiceImpl implements CallDetailService {
     @Override
     public CallDetailRecord find(String id) {
         return allCallDetailRecords.get(id);
+    }
+
+    @Override
+    public void addCallEvent(String callDetailRecordId, CallEvent callEvent) {
+        CallDetailRecord callDetailRecord = allCallDetailRecords.get(callDetailRecordId);
+        if( callDetailRecord != null ) {
+            callDetailRecord.addCallEvent(callEvent);
+            allCallDetailRecords.update(callDetailRecord);
+        }
     }
 
 }

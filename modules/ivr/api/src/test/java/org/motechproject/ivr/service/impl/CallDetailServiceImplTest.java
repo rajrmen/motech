@@ -3,6 +3,7 @@ package org.motechproject.ivr.service.impl;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.motechproject.ivr.event.CallEvent;
 import org.motechproject.ivr.model.CallDetailRecord;
 import org.motechproject.ivr.repository.AllCallDetailRecords;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,5 +68,20 @@ public class CallDetailServiceImplTest {
         CallDetailRecord recordInDb = callDetailService.find(record.getId());
 
         assertNotNull(recordInDb);
+    }
+
+
+    @Test
+    public void shouldAddEventsToGivenCallDetailRecord() throws Exception {
+        CallDetailRecord record = new CallDetailRecord(CallDetailRecord.Disposition.ANSWERED, "some error");
+        allCallDetailRecords.add(record);
+
+        callDetailService.addCallEvent(record.getId(), new CallEvent("Answered"));
+        callDetailService.addCallEvent(record.getId(), new CallEvent("End"));
+
+        CallDetailRecord recordInDb = callDetailService.find(record.getId());
+        assertEquals(2, recordInDb.getCallEvents().size());
+        assertEquals("Answered", recordInDb.getCallEvents().get(0).getName());
+        assertEquals("End", recordInDb.getCallEvents().get(1).getName());
     }
 }
