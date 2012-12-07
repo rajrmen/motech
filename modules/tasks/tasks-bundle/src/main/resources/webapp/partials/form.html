@@ -12,40 +12,50 @@
 <div class="box-content well3">
     <h3 class="pagination-centered" ng-hide="task._id">{{msg('section.selectEvents')}}</h3>
     <div class="section-input">
-        <div class="panel-input" ui-jq="tooltip" ui-options="{placement:'left'}" data-original-title="{{msg('help.dragChannelFromListBelow')}}">
-            <ul class="trigger droppable" droppable>
-                <li class="task-panel dragged" ng-show="draggedTrigger" draggable double-click>
-                    <div><img ng-src="../tasks/api/channel/icon?moduleName={{draggedTrigger.module}}&moduleVersion={{draggedTrigger.version}}" class="panel-img"/></div>
-                    <span>{{draggedTrigger.display}}</span>
-                    <div ng-hide="selectedTrigger">
-                        <div>{{msg('tooltip.selectTrigger')}}</div>
-                        <ul>
-                            <li ng-repeat="t in draggedTrigger.events">
-                                <a ng-click="selectTaskEvent('trigger', t)">{{t.displayName}}</a>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
-            </ul>
+        <div class="panel-input" ui-jq="tooltip" ui-options="{placement:'bottom'}" data-original-title="{{msg('help.dragChannelFromListBelow')}}">
+            <div taskinput-popover="" rel="popover" data-placement="left" data-trigger="hover">
+                <ul class="trigger droppable" droppable>
+                    <li class="task-panel dragged" ng-show="draggedTrigger" draggable double-click>
+                        <div><img ng-src="../tasks/api/channel/icon?moduleName={{draggedTrigger.module}}&moduleVersion={{draggedTrigger.version}}" class="panel-img"/></div>
+                        <span>{{draggedTrigger.display}}</span>
+                        <div  ng-hide="selectedTrigger">
+                            <div class="content-task" style="display: none;">
+                            <div class="popover-titles">{{msg('tooltip.selectTrigger')}}</div>
+                            <ul>
+                                <li ng-repeat="t in draggedTrigger.events">
+                                    <a ng-click="selectTaskEvent('trigger', t)">{{t.displayName}}</a>
+                                </li>
+                            </ul>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
             <span class="instructions" ng-hide="draggedTrigger">{{msg('info.dragTrigger')}}</span>
         </div>
         <div class="to imgArrow"><img src="../tasks/img/arrow.png"/></div>
-        <div class="panel-input" ui-jq="tooltip" ui-options="{placement:'right'}" data-original-title="{{msg('help.dragChannelFromListBelow')}}">
-            <ul class="action droppable" droppable>
-                <li class="task-panel dragged" ng-show="draggedAction" draggable double-click>
-                    <div><img ng-src="../tasks/api/channel/icon?moduleName={{draggedAction.module}}&moduleVersion={{draggedAction.version}}" class="panel-img"/></div>
-                    <span>{{draggedAction.display}}</span>
-                    <div ng-hide="selectedAction">
-                        <div>{{msg('tooltip.selectAction')}}</div>
-                        <ul>
-                            <li ng-repeat="a in draggedAction.events">
-                                <a ng-click="selectTaskEvent('action', a)">{{a.displayName}}</a>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
-            </ul>
+
+        <div class="panel-input" ui-jq="tooltip" ui-options="{placement:'bottom'}" data-original-title="{{msg('help.dragChannelFromListBelow')}}">
+            <div taskinput-popover="" rel="popover" data-placement="right" data-trigger="hover">
+                <ul class="action droppable" droppable>
+                    <li class="task-panel dragged" ng-show="draggedAction" draggable double-click>
+                        <div><img ng-src="../tasks/api/channel/icon?moduleName={{draggedAction.module}}&moduleVersion={{draggedAction.version}}" class="panel-img"/></div>
+                        <span>{{draggedAction.display}}</span>
+                        <div ng-hide="selectedAction">
+                            <div class="content-task" style="display: none;">
+                                <div class="popover-titles">{{msg('tooltip.selectAction')}}</div>
+                                <ul>
+                                    <li ng-repeat="a in draggedAction.events">
+                                        <a ng-click="selectTaskEvent('action', a)">{{a.displayName}}</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
             <span class="instructions" ng-hide="draggedAction">{{msg('info.dragAction')}}</span>
+
         </div>
         <div class="clearfix"></div>
     </div>
@@ -56,17 +66,19 @@
         </div>
         <ul class="task-selector droppable" style="position: relative;" droppable>
             <li class="task-panel" ng-repeat="channel in channels | filterPagination:currentPage*pageSize | limitTo:pageSize" draggable data-channel-name="{{channel.displayName}}" data-module-name="{{channel.moduleName}}" data-module-version="{{channel.moduleVersion}}">
-                <div><img ng-src="../tasks/api/channel/icon?moduleName={{channel.moduleName}}&moduleVersion={{channel.moduleVersion}}" class="panel-img" /></div>
-                <span>{{channel.displayName}}</span>
-                <div>
-                    <div>{{msg('tooltip.availableTriggers')}}</div>
-                    <ul>
-                        <li ng-repeat="trigger in channel.triggerTaskEvents">{{trigger.displayName}}</li>
-                    </ul>
-                    <div>{{msg('tooltip.availableActions')}}</div>
-                    <ul>
-                        <li ng-repeat="action in channel.actionTaskEvents">{{action.displayName}}</li>
-                    </ul>
+                <div task-popover="" rel="popover" data-placement="left" data-trigger="hover">
+                    <div><img ng-src="../tasks/api/channel/icon?moduleName={{channel.moduleName}}&moduleVersion={{channel.moduleVersion}}" class="panel-img" /></div>
+                    <span>{{channel.displayName}}</span>
+                    <div class="content-task" style="display:none;">
+                        <div class="popover-titles">{{msg('tooltip.availableTriggers')}}</div>
+                        <ul>
+                            <li ng-repeat="trigger in channel.triggerTaskEvents">{{trigger.displayName}}</li>
+                        </ul>
+                        <div class="popover-titles">{{msg('tooltip.availableActions')}}</div>
+                        <ul>
+                            <li ng-repeat="action in channel.actionTaskEvents">{{action.displayName}}</li>
+                        </ul>
+                    </div>
                 </div>
             </li>
         </ul>
