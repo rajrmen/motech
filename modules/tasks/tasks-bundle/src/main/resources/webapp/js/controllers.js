@@ -88,10 +88,6 @@ function ManageTaskCtrl($scope, Channels, Tasks, $routeParams, $http) {
                 for (i = 0; i < $scope.selectedAction.eventParameters.length; i += 1) {
                     $scope.selectedAction.eventParameters[i].value = $scope.task.actionInputFields[$scope.selectedAction.eventParameters[i].eventKey];
                 }
-
-                $('div.panel-input').each(function () {
-                    $(this).attr('data-original-title', $scope.msg('help.doubleClickToEdit'));
-                });
             });
         }
     });
@@ -148,6 +144,10 @@ function ManageTaskCtrl($scope, Channels, Tasks, $routeParams, $http) {
             }
         }
     };
+
+    $scope.getTooltipMsg = function(selected) {
+        return selected !== undefined ? $scope.msg('help.doubleClickToEdit') : '';
+    }
 
     $scope.save = function (enabled) {
         var action = $scope.selectedAction, i, eventKey, value;

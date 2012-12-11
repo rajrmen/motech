@@ -40,7 +40,19 @@ angular.module('motech-tasks', ['motech-dashboard', 'channelServices', 'taskServ
     return {
         restrict: 'A',
         link: function (scope, element, attrs) {
-            element.draggable({ revert: true });
+            element.draggable({
+                revert: true,
+                start: function (event, ui) {
+                    if (element.hasClass('draggable')) {
+                        element.find("div:first-child").popover('hide');
+                    }
+                },
+                stop: function (event, ui) {
+                    if (element.hasClass('draggable')) {
+                        element.find("div:first-child").popover('show');
+                    }
+                }
+            });
         }
     }
 }).directive('droppable', function ($compile) {
@@ -50,7 +62,7 @@ angular.module('motech-tasks', ['motech-dashboard', 'channelServices', 'taskServ
             element.droppable({
                 drop: function (event, ui) {
                     var dragIndex, dropIndex, channelName, moduleName, moduleVersion,
-                        parent, value, position, eventKey, dragType, dropType, options;
+                        parent, value, position, eventKey, dragType, dropType;
 
                     if (angular.element(ui.draggable).hasClass('triggerField') && element.hasClass('actionField')) {
                         dragIndex = angular.element(ui.draggable).data('index');
@@ -81,17 +93,6 @@ angular.module('motech-tasks', ['motech-dashboard', 'channelServices', 'taskServ
                             delete scope.task.action;
                             delete scope.selectedAction;
                         }
-
-                        element.parent().attr('data-original-title', scope.msg('help.doubleClickToEdit'));
-
-                        options = {
-                            html: true,
-                            placement: element.hasClass('trigger') ? 'left' : 'right',
-                            trigger: 'manual',
-                            content: function() {
-                                return $(element).find('.content-task').html();
-                            }
-                        };
                     } else if (angular.element(ui.draggable).hasClass('dragged') && element.hasClass('task-selector')) {
                         parent = angular.element(ui.draggable).parent();
 
@@ -104,15 +105,9 @@ angular.module('motech-tasks', ['motech-dashboard', 'channelServices', 'taskServ
                             delete scope.task.action;
                             delete scope.selectedAction;
                         }
-
-                        parent.parent().attr('data-original-title', scope.msg('help.dragChannelFromListBelow'));
                     }
 
                     scope.$apply();
-
-                    if (options !== undefined && options !== null) {
-                        element.parent().popover(options).popover('show');
-                    }
                 }
             });
         }
