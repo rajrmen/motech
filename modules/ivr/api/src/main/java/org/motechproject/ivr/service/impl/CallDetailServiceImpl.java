@@ -7,6 +7,8 @@ import org.motechproject.ivr.service.CallDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class CallDetailServiceImpl implements CallDetailService {
 
@@ -34,6 +36,11 @@ public class CallDetailServiceImpl implements CallDetailService {
             callDetailRecord.addCallEvent(callEvent);
             allCallDetailRecords.update(callDetailRecord);
         }
+    }
+
+    @Override
+    public List<CallDetailRecord> getAll() {
+        return allCallDetailRecords.getAll();
     }
 
 }

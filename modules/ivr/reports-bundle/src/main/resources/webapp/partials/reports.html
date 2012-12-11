@@ -1,0 +1,87 @@
+<div id="ivr-call-detail-records-filter">
+    <fieldset>
+        <legend> Filter By ...</legend>
+        <div class="container-fluid filter-criteria">
+            <div class="row-fluid">
+                <form class="form-inline">
+                    <div class="span4">
+                        <label> Phone Number : <input type="text" name="phoneNumber"></label>
+                    </div>
+                    <div class="span6">
+                        <label> Message : <input type="text" name="message" class="input-large"> </label>
+                    </div>
+                    <div class="span2">
+                        <span class="icon-remove  pull-right"></span>
+                        <a class="pull-right">Close</a>
+                    </div>
+                </form>
+            </div>
+            <div class="row-fluid">
+                <div class="span3">
+                    <div class="row-fluid">
+                        <div>
+                            <fieldset>
+                                <legend> Duration</legend>
+                                <span> Test 1</span>
+                            </fieldset>
+                        </div>
+                        <div>
+                            <fieldset>
+                                <legend> Direction</legend>
+                                <span> Test 1</span>
+                            </fieldset>
+                        </div>
+                    </div>
+                </div>
+                <div class="span6">
+                    <fieldset>
+                        <legend> Dates</legend>
+                        <span> Test 1</span>
+                    </fieldset>
+                </div>
+                <div class="span3">
+                    <fieldset>
+                        <legend> Disposition</legend>
+                        <span> Test 1</span>
+                    </fieldset>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+</div>
+
+<div>
+    <div ng-show="callDetailRecords.length == 0">
+        No Call Records found
+    </div>
+
+    <div ng-show="callDetailRecords.length > 0">
+        <table class="table table-bordered table-striped table-lightblue">
+            <caption>Call Detail Records</caption>
+            <thead>
+            <tr>
+                <th>Phone Number</th>
+                <th>Direction</th>
+                <th>Start Date</th>
+                <th>Answer Date</th>
+                <th>End Date</th>
+                <th>Disposition</th>
+                <th>Duration</th>
+                <th>Message</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="callDetailRecord in callDetailRecords" ng-click="showCallEvent(callDetailRecord)">
+                <td>{{callDetailRecord.phoneNumber}}</td>
+                <td>{{callDetailRecord.callDirection}}</td>
+                <td>{{callDetailRecord.startDate}}</td>
+                <td>{{callDetailRecord.answerDate}}</td>
+                <td>{{callDetailRecord.endDate}}</td>
+                <td>{{callDetailRecord.disposition}}</td>
+                <td>{{callDetailRecord.duration}}</td>
+                <td>{{callDetailRecord.message}}</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

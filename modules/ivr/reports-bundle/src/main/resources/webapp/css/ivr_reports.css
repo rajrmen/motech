@@ -1,0 +1,15 @@
+#ivr-call-detail-records-filter legend {
+    width: auto;
+    border-bottom: none;
+    font-size: 15px;
+    margin-bottom: 5px;
+}
+
+#ivr-call-detail-records-filter fieldset {
+    border: 1px solid;
+    padding-left: 10px;
+}
+
+#ivr-call-detail-records-filter .filter-criteria {
+    padding-bottom: 20px;
+}
