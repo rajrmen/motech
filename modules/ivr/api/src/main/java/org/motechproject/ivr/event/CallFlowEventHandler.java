@@ -9,15 +9,15 @@ import org.springframework.stereotype.Component;
 @Component
 public class CallFlowEventHandler {
 
-    CallDetailService callDetailService;
+    private CallDetailService callDetailService;
 
     @Autowired
     public CallFlowEventHandler(CallDetailService callDetailService) {
         this.callDetailService = callDetailService;
     }
 
-    @MotechListener(subjects = {CallEvent.SUBJECT})
-    public void handleCallEvent(MotechEvent event) {
+    @MotechListener(subjects = {CallEvent.SUBJECT} )
+    public void handle(MotechEvent event) {
         CallEvent callEvent = (CallEvent) event.getParameters().get(CallEvent.KEY);
         String callDetailRecordId = (String) event.getParameters().get(CallEvent.CALL_DETAIL_RECORD_ID_KEY);
 

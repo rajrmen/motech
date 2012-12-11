@@ -33,8 +33,6 @@ public class CallDetailRecord  extends MotechBaseDataObject {
     private String phoneNumber;
     private CallDirection callDirection;
     private List<CallEvent> callEvents = new ArrayList<>();
-    private String id;
-    private String rev;
 
     private CallDetailRecord() {
     }

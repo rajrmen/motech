@@ -16,7 +16,7 @@ public class AllCallDetailRecords extends MotechBaseRepository<CallDetailRecord>
     }
 
     public CallDetailRecord createOrUpdate(CallDetailRecord record) {
-        if(record.getId() != null && get(record.getId()) != null) {
+        if (record.getId() != null && get(record.getId()) != null) {
             update(record);
             return record;
         }

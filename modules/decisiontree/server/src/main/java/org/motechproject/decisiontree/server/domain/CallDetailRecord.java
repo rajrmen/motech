@@ -62,8 +62,8 @@ public class CallDetailRecord extends MotechBaseDataObject implements CallDetail
      * @param duration
      */
     public CallDetailRecord(Date startDate, Date endDate, Date answerDate, Disposition disposition, Integer duration) {
-        this.startDate = startDate != null? newDateTime(startDate) : null;
-        this.endDate = endDate != null? newDateTime(endDate) : null;
+        this.startDate = startDate != null ? newDateTime(startDate) : null;
+        this.endDate = endDate != null ? newDateTime(endDate) : null;
         this.answerDate = answerDate;
         this.disposition = disposition;
         this.duration = duration;

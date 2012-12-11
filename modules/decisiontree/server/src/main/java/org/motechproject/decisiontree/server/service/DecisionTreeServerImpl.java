@@ -13,7 +13,10 @@ import org.motechproject.decisiontree.core.model.Node;
 import org.motechproject.decisiontree.core.model.Transition;
 import org.motechproject.decisiontree.server.domain.CallDetailRecord;
 import org.motechproject.decisiontree.server.domain.FlowSessionRecord;
+import org.motechproject.decisiontree.server.domain.IVREvent;
 import org.motechproject.event.listener.EventRelay;
+import org.motechproject.ivr.event.CallEvent;
+import org.motechproject.ivr.service.CallDetailService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,11 +49,13 @@ public class DecisionTreeServerImpl implements org.motechproject.decisiontree.se
     private TreeEventProcessor treeEventProcessor;
     private ApplicationContext applicationContext;
     private FlowSessionService flowSessionService;
+    private CallDetailService callDetailService;
     private EventRelay eventRelay;
 
     @Autowired
-    public DecisionTreeServerImpl(DecisionTreeService decisionTreeService, TreeEventProcessor treeEventProcessor, ApplicationContext applicationContext, FlowSessionService flowSessionService, EventRelay eventRelay) {
+    public DecisionTreeServerImpl(DecisionTreeService decisionTreeService, CallDetailService callDetailService, TreeEventProcessor treeEventProcessor, ApplicationContext applicationContext, FlowSessionService flowSessionService, EventRelay eventRelay) {
         this.decisionTreeService = decisionTreeService;
+        this.callDetailService = callDetailService;
         this.treeEventProcessor = treeEventProcessor;
         this.applicationContext = applicationContext;
         this.flowSessionService = flowSessionService;
@@ -91,6 +96,7 @@ public class DecisionTreeServerImpl implements org.motechproject.decisiontree.se
         if (CallStatus.Hangup.toString().equals(transitionKey) || CallStatus.Disconnect.toString().equals(transitionKey)) {
             CallDetailRecord callDetailRecord = ((FlowSessionRecord) session).getCallDetailRecord().setEndDate(now());
             flowSessionService.updateSession(session);
+            callDetailService.addCallEvent(callDetailRecord.getId(), new CallEvent(IVREvent.Hangup.toString()));
             eventRelay.sendEventMessage(new EndOfCallEvent(callDetailRecord));
             return new ModelAndView(templateNameFor(provider, EXIT_TEMPLATE_NAME));
         }

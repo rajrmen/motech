@@ -22,4 +22,7 @@
 
     <osgi:reference id="eventListenerRegistryServiceOsgi" interface="org.motechproject.event.listener.EventListenerRegistryService"/>
 
+    <osgi:reference id="callDetailService" cardinality="0..1"
+                    interface="org.motechproject.ivr.service.CallDetailService  "/>
+
 </beans>

@@ -9,6 +9,8 @@
 
     <osgi:reference id="platformSettingsServiceOsgi" interface="org.motechproject.server.config.service.PlatformSettingsService" />
 
+    <osgi:service id="callDetailService" auto-export="interfaces" ref="callDetailServiceImpl"
+                  interface="org.motechproject.ivr.service.CallDetailService"/>
     <osgi:reference id="eventListenerRegistryServiceOsgi" interface="org.motechproject.event.listener.EventListenerRegistryService"/>
 
 </beans>

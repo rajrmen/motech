@@ -30,7 +30,7 @@ public class CallDetailServiceImpl implements CallDetailService {
     @Override
     public void addCallEvent(String callDetailRecordId, CallEvent callEvent) {
         CallDetailRecord callDetailRecord = allCallDetailRecords.get(callDetailRecordId);
-        if( callDetailRecord != null ) {
+        if (callDetailRecord != null) {
             callDetailRecord.addCallEvent(callEvent);
             allCallDetailRecords.update(callDetailRecord);
         }

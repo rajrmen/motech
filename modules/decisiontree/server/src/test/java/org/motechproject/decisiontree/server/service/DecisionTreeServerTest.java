@@ -14,6 +14,7 @@ import org.motechproject.decisiontree.core.model.Node;
 import org.motechproject.decisiontree.core.model.TextToSpeechPrompt;
 import org.motechproject.decisiontree.core.model.Transition;
 import org.motechproject.event.listener.EventRelay;
+import org.motechproject.ivr.service.impl.CallDetailServiceImpl;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.servlet.ModelAndView;
@@ -42,6 +43,8 @@ public class DecisionTreeServerTest {
     @Mock
     private DecisionTreeService decisionTreeService;
     @Mock
+    private CallDetailServiceImpl callDetailService;
+    @Mock
     private TreeEventProcessor treeEventProcessor;
     @Mock
     ApplicationContext applicationContext;
@@ -64,7 +67,7 @@ public class DecisionTreeServerTest {
         flowSession = new InMemoryFlowSession();
         when(flowSessionService.findOrCreate(anyString(), anyString())).thenReturn(flowSession);
 
-        decisionTreeServer = new DecisionTreeServerImpl(decisionTreeService, treeEventProcessor, applicationContext, flowSessionService, eventRelay);
+        decisionTreeServer = new DecisionTreeServerImpl(decisionTreeService, callDetailService, treeEventProcessor, applicationContext, flowSessionService, eventRelay);
     }
 
     @Test

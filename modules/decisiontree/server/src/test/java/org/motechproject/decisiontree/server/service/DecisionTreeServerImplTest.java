@@ -8,6 +8,7 @@ import org.motechproject.decisiontree.core.EndOfCallEvent;
 import org.motechproject.decisiontree.core.model.CallStatus;
 import org.motechproject.decisiontree.server.domain.FlowSessionRecord;
 import org.motechproject.event.listener.EventRelay;
+import org.motechproject.ivr.service.impl.CallDetailServiceImpl;
 import org.springframework.context.ApplicationContext;
 
 import static org.mockito.Mockito.verify;
@@ -21,6 +22,8 @@ public class DecisionTreeServerImplTest {
     @Mock
     private DecisionTreeService decisionTreeService;
     @Mock
+    private CallDetailServiceImpl callDetailService;
+    @Mock
     private TreeEventProcessor treeEventProcessor;
     @Mock
     private ApplicationContext applicationContext;
@@ -32,7 +35,7 @@ public class DecisionTreeServerImplTest {
     @Before
     public void setup() {
         initMocks(this);
-        decisionTreeServer = new DecisionTreeServerImpl(decisionTreeService, treeEventProcessor, applicationContext, flowSessionService, eventRelay);
+        decisionTreeServer = new DecisionTreeServerImpl(decisionTreeService, callDetailService, treeEventProcessor, applicationContext, flowSessionService, eventRelay);
     }
 
     @Test
