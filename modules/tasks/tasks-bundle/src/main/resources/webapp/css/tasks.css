@@ -135,7 +135,7 @@
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#cccccc', endColorstr='#eeeeee',GradientType=0 );
 }
 
-.button-task:hover a:link {
+.button-task a:link {
     color: #000000;
 }
 
@@ -333,7 +333,6 @@
 }
 
 .task-bar {
-    margin-bottom: 20px;
     overflow: visible;
 }
 
