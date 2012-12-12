@@ -10,7 +10,7 @@
 <div ng-hide="task._id" class="box-header margin-before2">{{msg('section.newTask')}}</div>
 <div ng-show="task._id" class="box-header margin-before2">{{msg('section.editTask')}}</div>
 <div class="box-content well3">
-    <h3 class="pagination-centered" ng-hide="task._id">{{msg('section.selectEvents')}}</h3>
+    <h3 class="pagination-centered" ng-hide="task.trigger && task.action">{{msg('section.selectEvents')}}</h3>
     <div class="section-input">
         <div class="panel-input" ui-jq="tooltip" ui-options="{placement:'bottom'}" data-original-title="{{getTooltipMsg(selectedTrigger)}}">
             <ul class="trigger droppable" droppable>
@@ -59,7 +59,7 @@
     </div>
     <div class="clearfix"></div><div class="margin-before4"></div>
     <div class="section-source" ng-hide="task.trigger && task.action">
-        <h3 class="pagination-centered" ng-hide="task._id">{{msg('help.dragChannelFromListBelow')}}</h3>
+        <h3 class="pagination-centered">{{msg('help.dragChannelFromListBelow')}}</h3>
         <div data-left-arrow="true" class="left-arrow">
             <img src="../tasks/img/larrow.png" ng-click="currentPage = currentPage - 1" ng-hide="currentPage == 0"/>
         </div>
