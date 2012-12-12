@@ -1,5 +1,6 @@
 package org.motechproject.server.web.controller;
 
+import org.apache.commons.lang.StringUtils;
 import org.joda.time.Duration;
 import org.joda.time.Period;
 import org.joda.time.format.PeriodFormatter;
@@ -44,7 +45,7 @@ public class DashboardController {
     @RequestMapping({"/index", "/", "/home" })
     public ModelAndView index(@RequestParam(required = false) String moduleName, final HttpServletRequest request) {
 
-        ModelAndView mav;
+        ModelAndView mav = null;
 
         // check if this is the first run
         if (startupManager.getPlatformState() == MotechPlatformState.NEED_CONFIG) {
@@ -58,9 +59,9 @@ public class DashboardController {
                 mav.addObject("securityLaunch", false);
                 mav.addObject("userName", "Admin Mode");
             }
-            if (!"/".equals(request.getSession().getServletContext().getContextPath())) {
-                mav.addObject("contextPath", request.getSession().getServletContext().getContextPath().substring(1));
-            } else {
+            if (StringUtils.isNotBlank(request.getSession().getServletContext().getContextPath()) && !"/".equals(request.getSession().getServletContext().getContextPath())) {
+                mav.addObject("contextPath", request.getSession().getServletContext().getContextPath().substring(1) + "/");
+            } else if (StringUtils.isBlank(request.getSession().getServletContext().getContextPath()) || "/".equals(request.getSession().getServletContext().getContextPath())) {
                 mav.addObject("contextPath", "");
             }
             mav.addObject("uptime", getUptime(request));
@@ -105,4 +106,5 @@ public class DashboardController {
 
         return formatter.print(uptime.normalizedStandard());
     }
+
 }

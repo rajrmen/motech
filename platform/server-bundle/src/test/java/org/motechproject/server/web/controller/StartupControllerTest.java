@@ -130,6 +130,13 @@ public class StartupControllerTest {
         startupForm.setDatabaseUrl("test_db_url");
         startupForm.setQueueUrl("test_queue_url");
         startupForm.setSchedulerUrl("test_scheduler_url");
+        startupForm.setAdminLogin("motech");
+        startupForm.setAdminEmail("motech@motech.com");
+        startupForm.setAdminPassword("motech");
+        startupForm.setAdminConfirmPassword("motech");
+        startupForm.setLoginMode("repository");
+        startupForm.setProviderName("Provider");
+        startupForm.setProviderUrl("test_provider_url");
 
         when(bindingResult.hasErrors()).thenReturn(false);
         when(startupManager.getLoadedConfig()).thenReturn(motechSettings);

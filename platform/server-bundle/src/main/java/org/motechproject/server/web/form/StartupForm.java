@@ -10,6 +10,26 @@ public class StartupForm {
     private String adminLogin;
     private String adminPassword;
     private String adminConfirmPassword;
+    private String adminEmail;
+    private String loginMode;
+    private String providerName;
+    private String providerUrl;
+
+    public String getProviderName() {
+        return providerName;
+    }
+
+    public void setProviderName(String providerName) {
+        this.providerName = providerName;
+    }
+
+    public String getProviderUrl() {
+        return providerUrl;
+    }
+
+    public void setProviderUrl(String providerUrl) {
+        this.providerUrl = providerUrl;
+    }
 
     public String getLanguage() {
         return language;
@@ -73,5 +93,21 @@ public class StartupForm {
 
     public void setAdminConfirmPassword(String adminConfirmPassword) {
         this.adminConfirmPassword = adminConfirmPassword;
+    }
+
+    public String getAdminEmail() {
+        return adminEmail;
+    }
+
+    public void setAdminEmail(String adminEmail) {
+        this.adminEmail = adminEmail;
+    }
+
+    public String getLoginMode() {
+        return loginMode;
+    }
+
+    public void setLoginMode(String loginMode) {
+        this.loginMode = loginMode;
     }
 }

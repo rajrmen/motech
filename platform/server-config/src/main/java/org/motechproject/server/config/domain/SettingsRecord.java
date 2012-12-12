@@ -16,6 +16,9 @@ public class SettingsRecord extends MotechBaseDataObject implements MotechSettin
 
     private String language;
     private String statusMsgTimeout;
+    private String loginMode;
+    private String providerName;
+    private String providerUrl;
 
     private boolean cluster;
     private DateTime lastRun;
@@ -57,6 +60,20 @@ public class SettingsRecord extends MotechBaseDataObject implements MotechSettin
         return metricsProperties;
     }
 
+    public String getLoginMode() {
+        return loginMode;
+    }
+
+    @Override
+    public String getProviderName() {
+        return providerName;
+    }
+
+    @Override
+    public String getProviderUrl() {
+        return providerUrl;
+    }
+
     public Properties getSchedulerProperties() {
         return schedulerProperties;
     }
@@ -83,6 +100,18 @@ public class SettingsRecord extends MotechBaseDataObject implements MotechSettin
 
     public void setLanguage(final String language) {
         this.language = language;
+    }
+
+    public void setLoginMode(String loginMode) {
+        this.loginMode = loginMode;
+    }
+
+    public void setProviderName(String providerName) {
+        this.providerName = providerName;
+    }
+
+    public void setProviderUrl(String providerUrl) {
+        this.providerUrl = providerUrl;
     }
 
     public void setStatusMsgTimeout(final String statusMsgTimeout) {
@@ -120,6 +149,9 @@ public class SettingsRecord extends MotechBaseDataObject implements MotechSettin
         setQuartzProperties(settings.getQuartzProperties());
         setMetricsProperties(settings.getMetricsProperties());
         setSchedulerProperties(settings.getSchedulerProperties());
+        setLoginMode(settings.getLoginMode());
+        setProviderName(settings.getProviderName());
+        setProviderUrl(settings.getProviderUrl());
     }
 
     public void updateFromProperties(final Properties props) {
@@ -143,6 +175,15 @@ public class SettingsRecord extends MotechBaseDataObject implements MotechSettin
                     break;
                 case MotechSettings.STATUS_MSG_TIMEOUT:
                     setStatusMsgTimeout(value);
+                    break;
+                case MotechSettings.LOGINMODE:
+                    setLoginMode(value);
+                    break;
+                case MotechSettings.PROVIDER_NAME:
+                    setProviderName(value);
+                    break;
+                case MotechSettings.PROVIDER_URL:
+                    setProviderUrl(value);
                     break;
                 default:
                     for (Properties p : Arrays.asList(getQuartzProperties(), getMetricsProperties(), getSchedulerProperties())) {

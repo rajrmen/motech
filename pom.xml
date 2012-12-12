@@ -178,6 +178,12 @@
                 <groupId>org.springframework</groupId>
                 <artifactId>org.springframework.context</artifactId>
                 <version>${spring.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.apache.commons</groupId>
+                        <artifactId>com.springsource.org.apache.commons.logging</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
@@ -208,6 +214,12 @@
                 <groupId>org.springframework</groupId>
                 <artifactId>org.springframework.web</artifactId>
                 <version>${spring.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.apache.commons</groupId>
+                        <artifactId>com.springsource.org.apache.commons.logging</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
@@ -249,6 +261,84 @@
                         <groupId>org.springframework</groupId>
                         <artifactId>org.springframework.aop</artifactId>
                     </exclusion>
+                    <exclusion>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>org.springframework.beans</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>org.springframework.context</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>org.springframework.core</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>org.springframework.transaction</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>org.springframework.expression</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>org.springframework.jdbc</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>org.springframework.web</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.security</groupId>
+                <artifactId>org.springframework.security.config</artifactId>
+                <version>${spring.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>org.springframework.aop</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>org.springframework.beans</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>org.springframework.context</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>org.springframework.core</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>org.springframework.transaction</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>org.springframework.expression</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>org.springframework.jdbc</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>org.springframework.web</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.springframework.security</groupId>
+                        <artifactId>org.springframework.security.web</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.security</groupId>
+                <artifactId>org.springframework.security.web</artifactId>
+                <version>${spring.version}</version>
+                <exclusions>
                     <exclusion>
                         <groupId>org.springframework</groupId>
                         <artifactId>org.springframework.beans</artifactId>
@@ -461,6 +551,11 @@
                     </exclusion>
                 </exclusions>
             </dependency>
+            <dependency>
+                <groupId>org.hibernate</groupId>
+                <artifactId>org.motechproject.org.hibernate.validator</artifactId>
+                <version>4.1.0.Final-r001</version>
+            </dependency>
             <!-- SLF4J -->
             <dependency>
                 <groupId>org.slf4j</groupId>
@@ -505,6 +600,10 @@
                         <groupId>org.apache.activemq</groupId>
                         <artifactId>activemq-core</artifactId>
                     </exclusion>
+                    <exclusion>
+                        <groupId>javax.annotation</groupId>
+                        <artifactId>com.springsource.javax.annotation</artifactId>
+                    </exclusion>
                 </exclusions>
             </dependency>
             <dependency>
@@ -543,7 +642,7 @@
             <dependency>
                 <groupId>com.googlecode.lambdaj</groupId>
                 <artifactId>org.motechproject.com.googlecode.lambdaj</artifactId>
-                <version>2.3.3</version>
+                <version>2.3.3-r001</version>
                 <exclusions>
                     <exclusion>
                         <artifactId>lambdaj</artifactId>
@@ -554,7 +653,7 @@
             <dependency>
                 <groupId>org.quartz-scheduler</groupId>
                 <artifactId>org.motechproject.org.quartz-scheduler</artifactId>
-                <version>2.1.5</version>
+                <version>2.1.5-r001</version>
             </dependency>
             <dependency>
                 <groupId>joda-time</groupId>
@@ -575,6 +674,12 @@
                 <groupId>org.hamcrest</groupId>
                 <artifactId>com.springsource.org.hamcrest.core</artifactId>
                 <version>1.1.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.hamcrest</groupId>
+                <artifactId>hamcrest-all</artifactId>
+                <version>1.1</version>
+                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>com.thoughtworks.xstream</groupId>
@@ -647,6 +752,11 @@
                 <version>5.1.1</version>
             </dependency>
             <dependency>
+                <groupId>org.mvel</groupId>
+                <artifactId>org.motechproject.org.mvel</artifactId>
+                <version>2.0beta1</version>
+            </dependency>
+            <dependency>
                 <groupId>org.smslib</groupId>
                 <artifactId>org.motechproject.org.smslib</artifactId>
                 <version>3.5.1</version>
@@ -669,7 +779,7 @@
             <dependency>
                 <groupId>org.objectweb.asm</groupId>
                 <artifactId>com.springsource.org.objectweb.asm</artifactId>
-                <version>1.5.3</version>
+                <version>2.2.3</version>
             </dependency>
             <dependency>
                 <groupId>com.mysql.jdbc</groupId>
@@ -949,7 +1059,7 @@
             <dependency>
                 <groupId>org.motechproject</groupId>
                 <artifactId>org.motechproject.osgi.it</artifactId>
-                <version>1.0.2.RELEASE</version>
+                <version>1.0.2.RELEASE-r003</version>
                 <scope>test</scope>
                 <exclusions>
                     <exclusion>
@@ -957,14 +1067,19 @@
                         <artifactId>slf4j-api</artifactId>
                     </exclusion>
                     <exclusion>
-                        <artifactId>jcl-over-slf4j</artifactId>
                         <groupId>org.slf4j</groupId>
+                        <artifactId>jcl-over-slf4j</artifactId>
                     </exclusion>
                     <exclusion>
-                        <artifactId>slf4j-log4j12</artifactId>
                         <groupId>org.slf4j</groupId>
+                        <artifactId>slf4j-log4j12</artifactId>
                     </exclusion>
                 </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.security</groupId>
+                <artifactId>org.springframework.security.openid</artifactId>
+                <version>${spring.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -980,6 +1095,8 @@
         <module>platform/server-config</module>
         <module>platform/server-startup</module>
         <module>platform/server</module>
+        <module>platform/web-security/web-security</module>
+        <module>platform/web-security/web-security-bundle</module>
         <module>modules/admin/admin</module>
         <module>modules/alerts/api</module>
         <module>modules/appointments/api</module>
@@ -988,6 +1105,7 @@
         <module>modules/decisiontree/core</module>
         <module>modules/decisiontree/server</module>
         <module>modules/demo/demo</module>
+        <module>modules/event-aggregation/event-aggregation</module>
         <module>modules/event-logging/event-logging</module>
         <module>modules/ivr/api</module>
         <module>modules/ivr/asterisk</module>
@@ -1012,7 +1130,7 @@
         <module>modules/sms/smpp</module>
         <module>modules/tasks/tasks</module>
         <module>modules/testing-utils/testing-utils</module>
-        <module>modules/web-security/web-security</module>
+
         <module>utils/http-agent/http-agent</module>
 
         <!-- OSGI modules -->
@@ -1025,6 +1143,7 @@
         <module>modules/decisiontree/core-bundle</module>
         <module>modules/decisiontree/server-bundle</module>
         <module>modules/demo/demo-bundle</module>
+        <module>modules/event-aggregation/event-aggregation-bundle</module>
         <module>modules/event-logging/event-logging-bundle</module>
         <module>modules/ivr/api-bundle</module>
         <module>modules/ivr/asterisk-bundle</module>
@@ -1046,7 +1165,6 @@
         <module>modules/sms/http-bundle</module>
         <module>modules/sms/smpp-bundle</module>
         <module>modules/tasks/tasks-bundle</module>
-        <module>modules/web-security/web-security-bundle</module>
         <module>utils/http-agent/http-agent-bundle</module>
 
         <!-- Packaging modules -->
@@ -1231,56 +1349,42 @@
                                 <version>2.12.4</version>
                             </dependency>
                         </dependencies>
-                        <configuration>
-                            <encoding>UTF-8</encoding>
-                            <excludes>
-                                <exclude>**/**/*BundleIT.java</exclude>
-                            </excludes>
-                        </configuration>
                         <executions>
                             <execution>
                                 <id>integration-test</id>
                                 <goals>
                                     <goal>integration-test</goal>
                                 </goals>
+                                <configuration>
+                                    <encoding>UTF-8</encoding>
+                                    <excludes>
+                                        <exclude>**/**/*BundleIT.java</exclude>
+                                    </excludes>
+                                    <summaryFile>target/failsafe-reports/failsafe-summary-it.xml</summaryFile>
+                                </configuration>
                             </execution>
                             <execution>
-                                <id>verify</id>
-                                <goals>
-                                    <goal>verify</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>BT</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-failsafe-plugin</artifactId>
-                        <version>2.9</version>
-                        <configuration>
-                            <encoding>UTF-8</encoding>
-                            <includes>
-                                <include>**/**/*BundleIT.java</include>
-                            </includes>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <id>integration-test</id>
+                                <id>integration-test-osgi</id>
                                 <goals>
                                     <goal>integration-test</goal>
                                 </goals>
+                                <configuration>
+                                    <encoding>UTF-8</encoding>
+                                    <includes>
+                                        <include>**/**/*BundleIT.java</include>
+                                    </includes>
+                                    <summaryFile>target/failsafe-reports/failsafe-summary-it-osgi.xml</summaryFile>
+                                </configuration>
                             </execution>
                             <execution>
                                 <id>verify</id>
                                 <goals>
                                     <goal>verify</goal>
                                 </goals>
+                                <configuration>
+                                    <summaryFile>target/failsafe-reports/failsafe-summary-it.xml</summaryFile>
+                                    <summaryFile>target/failsafe-reports/failsafe-summary-it-osgi.xml</summaryFile>
+                                </configuration>
                             </execution>
                         </executions>
                     </plugin>

@@ -10,13 +10,11 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceReference;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.jar.Manifest;
 
 public class ConfigBundleIT extends BaseOsgiIT {
-    @Override
-    protected String getPlatformName() {
-        return Platforms.FELIX;
-    }
 
     public void testConfigBundle() throws Exception {
         ServiceReference settingsReference = bundleContext.getServiceReference(PlatformSettingsService.class.getName());
@@ -33,13 +31,7 @@ public class ConfigBundleIT extends BaseOsgiIT {
     }
 
     @Override
-    protected Manifest getManifest() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("org.motechproject.server.config");
-
-        Manifest manifest = super.getManifest();
-        String imports = manifest.getMainAttributes().getValue(Constants.IMPORT_PACKAGE);
-        manifest.getMainAttributes().putValue(Constants.IMPORT_PACKAGE, builder.append(",").append(imports).toString());
-        return manifest;
+    protected List<String> getImports() {
+        return Arrays.asList("org.motechproject.server.config");
     }
 }

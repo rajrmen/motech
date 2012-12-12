@@ -12,14 +12,20 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>MOTECH - Mobile Technology for Community Health</title>
 
+    <link rel="stylesheet" type="text/css" href="resources/css/jquery-ui-1.9.1-redmond.css">
+    <link rel="stylesheet" type="text/css" href="resources/css/angular-ui.css">
     <link rel="stylesheet" type="text/css" href="resources/css/bootstrap.css">
     <link rel="stylesheet" type="text/css" href="resources/css/bootstrap-responsive.css">
     <link rel="stylesheet" type="text/css" href="resources/css/jquery-ui-min.css" />
+    <link rel="stylesheet" type="text/css" href="resources/css/tagsinput/jquery.tagsinput.css">
+    <link rel="stylesheet" type="text/css" href="resources/css/timepicker/jquery-ui-timepicker-addon.css">
+    <link rel="stylesheet" type="text/css" href="resources/css/jquery-cron/jquery-gentleSelect.css">
+    <link rel="stylesheet" type="text/css" href="resources/css/jquery-cron/jquery-cron.css">
     <link rel="stylesheet" type="text/css" href="resources/css/index.css" />
 
-    <script src="resources/lib/jquery/jquery-1.8.2.min.js" type="text/javascript"></script>
+    <script src="resources/lib/jquery/jquery-1.8.2.js" type="text/javascript"></script>
     <script src="resources/lib/jquery/jquery.form.js" type="text/javascript"></script>
-    <script src="resources/lib/jquery/jquery-ui.min.js" type="text/javascript"></script>
+    <script src="resources/lib/jquery/jquery-ui-1.9.1.js" type="text/javascript"></script>
     <script src="resources/lib/jquery/jquery.alerts.js" type="text/javascript"></script>
     <script src="resources/lib/jquery/jquery.i18n.properties-min-1.0.9.js" type="text/javascript"></script>
     <script src="resources/lib/jquery/jquery.tools.min.js" type="text/javascript"></script>
@@ -33,6 +39,16 @@
     <script src="resources/lib/angular/angular-ui.min.js" type="text/javascript"></script>
 
     <script src="resources/lib/bootstrap/bootstrap.min.js"></script>
+
+    <script src="resources/lib/tagsinput/jquery.tagsinput.js"></script>
+
+    <script src="resources/lib/timepicker/jquery-ui-sliderAccess.js"></script>
+    <script src="resources/lib/timepicker/jquery-ui-timepicker-addon.js"></script>
+
+    <script src="resources/lib/jquery-cron/jquery-gentleSelect.js"></script>
+    <script src="resources/lib/jquery-cron/jquery-cron.js "></script>
+
+    <script src="resources/lib/moment/moment-1.7.2.js "></script>
 
     <script src="resources/js/util.js" type="text/javascript"></script>
     <script src="resources/js/common.js" type="text/javascript"></script>
@@ -94,10 +110,16 @@
                     <ul class="nav pull-right menu-left">
 
                         <li class="dropdown">
-                            <a class="dropdown-toggle" href="#" data-toggle="dropdown">Logged in as <strong>${userName}</strong><strong class="caret"></strong></a>
+                            <a class="dropdown-toggle" href="#" data-toggle="dropdown">
+                                <fmt:message key="loggedAs" bundle="${bundle}"/> <strong>${userName}</strong><strong class="caret"></strong>
+                            </a>
                             <ul id="localization" class="dropdown-menu" role="menu">
                                 <c:if test="${securityLaunch}">
-                                <li><a href="#" tabindex="-1"><i class="icon-user"></i> Profile</a></li>
+                                <li>
+                                    <a href="home?moduleName=websecurity#/profile/${userName}" tabindex="-1">
+                                        <i class="icon-user"></i> <fmt:message key="profile" bundle="${bundle}"/>
+                                    </a>
+                                </li>
                                 <li class="divider"></li>
                                 </c:if>
                                 <li class="dropdown-submenu pull-left">
@@ -113,7 +135,11 @@
                                 </li>
                                 <c:if test="${securityLaunch}">
                                 <li class="divider"></li>
-                                <li><a href="${contextPath}/j_spring_security_logout" class=""><i class="icon-off"></i> Sign Out</a></li>
+                                <li>
+                                    <a href="${contextPath}j_spring_security_logout" class="">
+                                        <i class="icon-off"></i> <fmt:message key="signOut" bundle="${bundle}"/>
+                                    </a>
+                                </li>
                                 </c:if>
                             </ul>
                         </li>

@@ -9,19 +9,16 @@ import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.params.BasicHttpParams;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.junit.Test;
-import org.springframework.test.annotation.ExpectedException;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -79,7 +76,6 @@ public class StartupIT {
         login(httpClient); /* BugCard #208 remove this once we fix web authentication issue, currently
          till security modules started in osgi env there is not authentication for admin console. */
         String response = httpClient.execute(new HttpGet("http://localhost:9090/motech-platform-server/module/admin/api/bundles"), new BasicResponseHandler());
-        System.out.println(response);
         bundles = (JSONArray) new JSONArray(response);
         return bundles;
     }

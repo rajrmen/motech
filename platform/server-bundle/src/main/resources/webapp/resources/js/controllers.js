@@ -5,6 +5,7 @@ function MasterCtrl($scope, $http, i18nService, $cookieStore) {
 
     $scope.i18n = {};
     $scope.languages = [];
+    $scope.securityMode=false;
     $scope.userLang = null;
     $scope.showDashboardLogo = {
         showDashboard : true,
@@ -120,5 +121,9 @@ function MasterCtrl($scope, $http, i18nService, $cookieStore) {
                 i18nService.init(lang, key, $scope.i18n[key][i], handler);
             }
         }
+    }
+
+    $scope.loginMode = function(mode) {
+        return $scope.securityMode = mode;
     }
 }

@@ -1,21 +1,27 @@
 <?xml version="1.0"?>
+
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
     <modelVersion>4.0.0</modelVersion>
+
     <parent>
         <groupId>org.motechproject</groupId>
         <artifactId>motech</artifactId>
         <version>0.16-SNAPSHOT</version>
         <relativePath>../../</relativePath>
     </parent>
+
     <groupId>org.motechproject</groupId>
     <artifactId>motech-platform-server-bundle</artifactId>
     <version>0.16-SNAPSHOT</version>
     <packaging>bundle</packaging>
     <name>MoTeCH Platform Server Bundle</name>
+
     <properties>
         <modules.root.dir>${basedir}/../..</modules.root.dir>
         <jasmine.server.port>8234</jasmine.server.port>
     </properties>
+
     <dependencies>
         <!-- MOTECH dependencies -->
         <dependency>
@@ -37,6 +43,11 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>motech-platform-osgi-web-util</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>motech-platform-web-security</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -63,6 +74,15 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>com.springsource.org.apache.commons.lang</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>org.springframework.security.core</artifactId>
+        </dependency>
+        <!-- Bundle IT dependency -->
+        <dependency>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.apache.felix.http.jetty</artifactId>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
@@ -76,17 +96,13 @@
                         <Context-Path>server</Context-Path>
                         <Context-File>applicationPlatformServerBundle.xml</Context-File>
                         <Export-Package>
-                            <!-- server-startup -->
                             org.motechproject.server.startup,
-                            <!-- Embedded -->
                             org.motechproject.server.ui,
                             org.motechproject.server.ui.ex,
-                            org.motechproject.server.ui.impl,
                             org.motechproject.server.web,
                             org.motechproject.server.web.controller,
                             org.motechproject.server.web.form,
-                            org.motechproject.server.web.validator,
-                            org.motechproject.server.bundle
+                            org.motechproject.server.web.validator
                         </Export-Package>
                         <Bundle-Activator>
                             org.motechproject.server.bundle.Activator
@@ -115,6 +131,7 @@
                             org.springframework.web.servlet.i18n,
                             org.springframework.web.servlet.mvc,
                             org.springframework.web.servlet.view,
+                            org.springframework.security.crypto.bcrypt,
                             *
                         </Import-Package>
                         <Embed-Dependency>

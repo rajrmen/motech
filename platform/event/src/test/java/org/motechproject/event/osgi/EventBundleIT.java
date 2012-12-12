@@ -1,7 +1,6 @@
 package org.motechproject.event.osgi;
 
 
-import org.eclipse.gemini.blueprint.test.platform.Platforms;
 import org.motechproject.event.MotechEvent;
 import org.motechproject.event.listener.EventListener;
 import org.motechproject.event.listener.EventListenerRegistry;
@@ -17,10 +16,6 @@ import java.util.List;
 import java.util.jar.Manifest;
 
 public class EventBundleIT extends BaseOsgiIT {
-    @Override
-    protected String getPlatformName() {
-        return Platforms.FELIX;
-    }
 
     public void testEventListener() throws Exception {
         final String subject = "OSGi IT - 001";
@@ -75,28 +70,14 @@ public class EventBundleIT extends BaseOsgiIT {
     }
 
     @Override
-    protected Manifest getManifest() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("org.motechproject.event").append(",")
-                .append("org.motechproject.event.listener").append(",")
-                .append("org.motechproject.event.listener.annotations");
-
-
-        Manifest mf = super.getManifest();    //TODO : PULL THIS UP TO MOTECH BASE OSGI IT.
-        String imports = (String) mf.getMainAttributes().getValue(Constants.IMPORT_PACKAGE);
-        mf.getMainAttributes().putValue(Constants.IMPORT_PACKAGE, builder.append(",").append(imports).toString());
-        return mf;
+    protected List<String> getImports() {
+        return Arrays.asList("org.motechproject.event",
+                "org.motechproject.event.listener",
+                "org.motechproject.event.listener.annotations");
     }
 
     @Override
     protected String[] getConfigLocations() {
         return new String[]{"/META-INF/osgi/testEventBundleContext.xml"};
-    }
-
-    @Override
-    protected String[] getTestFrameworkBundlesNames() {
-        List<String> bundles = new ArrayList<>(Arrays.asList(super.getTestFrameworkBundlesNames()));
-        bundles.add("org.apache.geronimo.specs,geronimo-j2ee-management_1.1_spec,1.0.1");
-        return bundles.toArray(new String[bundles.size()]);
     }
 }
