@@ -31,8 +31,17 @@
     font-weight: bold;
     line-height: 20px;
     font-size: 15px;
-    padding:5px 10px;
+    padding: 5px 10px;
     color: #224477;
+    background: rgb(242,245,246);
+    background: -moz-linear-gradient(top,  rgba(242,245,246,1) 0%, rgba(227,234,237,1) 37%, rgba(200,215,220,1) 100%);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(242,245,246,1)), color-stop(37%,rgba(227,234,237,1)), color-stop(100%,rgba(200,215,220,1)));
+    background: -webkit-linear-gradient(top,  rgba(242,245,246,1) 0%,rgba(227,234,237,1) 37%,rgba(200,215,220,1) 100%);
+    background: -o-linear-gradient(top,  rgba(242,245,246,1) 0%,rgba(227,234,237,1) 37%,rgba(200,215,220,1) 100%);
+    background: -ms-linear-gradient(top,  rgba(242,245,246,1) 0%,rgba(227,234,237,1) 37%,rgba(200,215,220,1) 100%);
+    background: linear-gradient(to bottom,  rgba(242,245,246,1) 0%,rgba(227,234,237,1) 37%,rgba(200,215,220,1) 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f2f5f6', endColorstr='#c8d7dc',GradientType=0 );
+    border-radius: 4px;
     -webkit-box-shadow: 0 0 2px #bec9de;
        -moz-box-shadow: 0 0 2px #bec9de;
             box-shadow: 0 0 2px #bec9de;
@@ -56,21 +65,25 @@
 
 .task-content .imgArrow {
     float: left;
-    padding: 35px 0 0 0;
-    width: 65px;
+    padding: 45px 0 0 0;
+    width: 50px;
 }
 
 .task-footer {
     border-radius: 0 0 4px 4px;
-    padding: 5px 10px;
+    padding: 0;
     float: left;
+    width: 100%;
 }
 
 .task-list {
-    margin: 10px 0 5px 0;
+    min-width: 120px;
+    height: 120px;
+    margin: 5px 5px 5px 0;
     float: none;
     list-style: none;
     color: #000000;
+    overflow-x: hidden;
 }
 
 .task-list li.error {
@@ -83,6 +96,66 @@
 
 .task-list li.success {
     color: #51a451;
+}
+
+.button-task {
+    height: 40px;
+    width: 25%;
+    margin-left: -1px;
+    border-left: 1px solid #eee;
+    border-radius: 4px;
+    float: left;
+    font-size: 14px;
+    display: inline-block;
+    cursor: pointer;
+    vertical-align: middle;
+    border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1);
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.25);
+    text-align: center;
+    box-shadow: 0 0 2px rgba(2, 2, 2, 0.2) inset, 0 1px 1px rgba(0, 0, 0, 0.2);
+    background: rgb(242,245,246);
+    background: -moz-linear-gradient(top,  rgba(242,245,246,1) 0%, rgba(227,234,237,1) 37%, rgba(200,215,220,1) 100%);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(242,245,246,1)), color-stop(37%,rgba(227,234,237,1)), color-stop(100%,rgba(200,215,220,1)));
+    background: -webkit-linear-gradient(top,  rgba(242,245,246,1) 0%,rgba(227,234,237,1) 37%,rgba(200,215,220,1) 100%);
+    background: -o-linear-gradient(top,  rgba(242,245,246,1) 0%,rgba(227,234,237,1) 37%,rgba(200,215,220,1) 100%);
+    background: -ms-linear-gradient(top,  rgba(242,245,246,1) 0%,rgba(227,234,237,1) 37%,rgba(200,215,220,1) 100%);
+    background: linear-gradient(to bottom,  rgba(242,245,246,1) 0%,rgba(227,234,237,1) 37%,rgba(200,215,220,1) 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f2f5f6', endColorstr='#c8d7dc',GradientType=0 );
+}
+
+.button-task:hover {
+    border-left: 1px solid #eee;
+    background: #cccccc;
+    background: -moz-linear-gradient(top,  #cccccc 0%, #eeeeee 100%);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#cccccc), color-stop(100%,#eeeeee));
+    background: -webkit-linear-gradient(top,  #cccccc 0%,#eeeeee 100%);
+    background: -o-linear-gradient(top,  #cccccc 0%,#eeeeee 100%);
+    background: -ms-linear-gradient(top,  #cccccc 0%,#eeeeee 100%);
+    background: linear-gradient(to bottom,  #cccccc 0%,#eeeeee 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#cccccc', endColorstr='#eeeeee',GradientType=0 );
+}
+
+.button-task:hover a:link {
+    color: #000000;
+}
+
+.button-task:hover a {
+    color: #224477;
+    text-decoration: none;
+}
+
+.button-task-in {
+    padding: 9px 14px;
+}
+
+.task-footer .button-task:first-child {
+    margin-left: 0;
+    border-left: none;
+    border-radius: 4px;
+}
+
+.task-footer .button-task:last-child {
+    border-radius: 0 0 6px 0;
 }
 
 /*----- Tasks - recent -----*/
@@ -273,9 +346,10 @@
 }
 
 .task-nav {
+    width: 335px;
+    height: 128px;
     list-style: none;
-    margin-bottom: 20px;
-    margin-left: 0;
+    overflow: hidden;
 }
 
 .task-bar .task-nav > li {

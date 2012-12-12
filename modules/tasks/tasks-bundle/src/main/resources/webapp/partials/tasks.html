@@ -26,35 +26,28 @@
                             <span>{{get(item.task.action, 'displayName')}}</span>
                         </li>
                     </ul>
-                    <div class="">
-                        <a href="#/task/{{item.task._id}}/edit" type="button" class="btn btn-primary"><i class="icon icon-edit icon-white"></i>
-                            {{msg('button.edit')}}
-                        </a>
-                        <button type="button" class="btn btn-primary"><i class="icon icon-pause icon-white"></i>
-                            {{msg('button.pause')}}
-                        </button>
-                        <button ng-click="deleteTask(item)" type="button" class="btn btn-danger"><i class="icon icon-trash icon-white"></i>
-                            {{msg('button.delete')}}
-                        </button>
-                        <button type="button" class="btn btn-primary"><i class="icon icon-time icon-white"></i>
-                            {{msg('button.history')}}
-                        </button>
-                    </div>
                     <ul class="task-list">
                         <li class="info"><i class="icon icon-share icon-blue"></i> {{msg('info.executedTimes', item.success.length)}}</li>
                         <li class="error" ng-hide="item.error.length == 0"><i class="icon icon-exclamation-sign icon-red"></i> {{msg('info.errorsLastDays', item.error.length)}}</li>
                         <li class="success" ng-show="item.error.length == 0"><i class="icon icon-ok-sign icon-green"></i> {{msg('info.errorsLastDays', item.error.length)}}</li>
+                        <li><i class="icon-chevron-right"></i> {{task.description}}</li>
                     </ul>
                 </div>
                 <div class="clearfix"></div>
-                <div class="task-footer">{{item.task.description}}</div>
+                <div class="task-footer">
+                    <div class="button-task"><a href="#/task/{{item.task._id}}/edit"><div class="button-task-in"><i class="icon-edit"></i> {{msg('button.edit')}}</div></a></div>
+                    <div class="button-task"><a><div class="button-task-in"><i class="icon-pause"></i> {{msg('button.pause')}}</div></a></div>
+                    <div class="button-task"><a ng-click="deleteTask(item)"><div class="button-task-in"><i class="icon-trash"></i> {{msg('button.delete')}}</div></a></div>
+                    <div class="button-task"><a><div class="button-task-in"><i class="icon-time"></i> {{msg('button.history')}}</div></a></div>
+                    <div class="clearfix"></div>
+                </div>
             </div>
 
             <div class="clearfix"></div>
             <div class="margin-after"></div>
         </div>
 
-        <h4 ng-show="pausedTasks.length != 0">{{msg('header.pausedTasks')}}</h4>
+        <h4 class="margin-before3" ng-show="pausedTasks.length != 0">{{msg('header.pausedTasks')}}</h4>
         <div ng-repeat="item in pausedTasks">
             <div class="task-content clearfix">
                 <div class="task-header">{{get(item.task.trigger, 'displayName')}} - {{get(item.task.action, 'displayName')}}</div>
@@ -72,28 +65,21 @@
                             <span>{{get(item.task.action, 'displayName')}}</span>
                         </li>
                     </ul>
-                    <div class="">
-                        <a href="#/task/{{item.task._id}}/edit" type="button" class="btn btn-primary"><i class="icon icon-edit icon-white"></i>
-                            {{msg('button.edit')}}
-                        </a>
-                        <button type="button" class="btn btn-primary"><i class="icon icon-play icon-white"></i>
-                            {{msg('button.resume')}}
-                        </button>
-                        <button ng-click="deleteTask(item)" type="button" class="btn btn-danger"><i class="icon icon-trash icon-white"></i>
-                            {{msg('button.delete')}}
-                        </button>
-                        <button type="button" class="btn btn-primary"><i class="icon icon-time icon-white"></i>
-                            {{msg('button.history')}}
-                        </button>
-                    </div>
                     <ul class="task-list">
                         <li class="info"><i class="icon icon-share icon-blue"></i> {{msg('info.executedTimes', item.success.length)}}</li>
                         <li class="error" ng-hide="item.error.length == 0"><i class="icon icon-exclamation-sign icon-red"></i> {{msg('info.errorsLastDays', item.error.length)}}</li>
                         <li class="success" ng-show="item.error.length == 0"><i class="icon icon-ok-sign icon-green"></i> {{msg('info.errorsLastDays', item.error.length)}}</li>
+                        <li><i class="icon-chevron-right"></i> {{task.description}}</li>
                     </ul>
                 </div>
                 <div class="clearfix"></div>
-                <div class="task-footer">{{task.description}}</div>
+                <div class="task-footer">
+                    <div class="button-task"><a href="#/task/{{item.task._id}}/edit"><div class="button-task-in"><i class="icon-edit"></i> {{msg('button.edit')}}</div></a></div>
+                    <div class="button-task"><a><div class="button-task-in"><i class="icon-play"></i> {{msg('button.resume')}}</div></a></div>
+                    <div class="button-task"><a ng-click="deleteTask(item)"><div class="button-task-in"><i class="icon-trash"></i> {{msg('button.delete')}}</div></a></div>
+                    <div class="button-task"><a><div class="button-task-in"><i class="icon-time"></i> {{msg('button.history')}}</div></a></div>
+                    <div class="clearfix"></div>
+                </div>
             </div>
 
             <div class="clearfix"></div>
