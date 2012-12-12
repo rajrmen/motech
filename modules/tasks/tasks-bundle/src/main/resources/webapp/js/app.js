@@ -46,11 +46,6 @@ angular.module('motech-tasks', ['motech-dashboard', 'channelServices', 'taskServ
                     if (element.hasClass('draggable')) {
                         element.find("div:first-child").popover('hide');
                     }
-                },
-                stop: function (event, ui) {
-                    if (element.hasClass('draggable')) {
-                        element.find("div:first-child").popover('show');
-                    }
                 }
             });
         }
