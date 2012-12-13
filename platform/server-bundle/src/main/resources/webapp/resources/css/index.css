@@ -346,6 +346,10 @@ select {
     background: #001e4f url("../img/head-bg.jpg") repeat-x left top;
 }
 
+.btn-in-header {
+    margin: -5px -10px;
+}
+
 .inbox-header {
     border-radius: 4px;
     font-weight: bold;

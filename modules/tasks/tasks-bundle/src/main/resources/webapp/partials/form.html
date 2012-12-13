@@ -1,15 +1,7 @@
 <!------------------------  Create Task  ------------------------>
-<div class="row-fluid">
-    <a href="#/task/" type="button" class="btn btn-inverse pull-right margin-before"> {{msg('button.cancel')}}</a>
-    <h3 ng-hide="task._id">{{msg('header.newTask')}}</h3>
-    <h3 ng-show="task._id">{{msg('header.editTask')}}</h3>
-</div>
-
-<div class="clearfix"></div><div class="top-line"></div>
-
-<div ng-hide="task._id" class="box-header margin-before2">{{msg('section.newTask')}}</div>
-<div ng-show="task._id" class="box-header margin-before2">{{msg('section.editTask')}}</div>
-<div class="box-content well3">
+<div ng-hide="task._id" class="box-header">{{msg('section.newTask')}} <a href="#/task/" type="button" class="btn btn-danger btn-in-header pull-right"><i class="icon-remove icon-white"></i></a></div>
+<div ng-show="task._id" class="box-header">{{msg('section.editTask')}} <a href="#/task/" type="button" class="btn btn-danger btn-in-header pull-right"><i class="icon-remove icon-white"></i></a></div>
+<div class="box-content">
     <h3 class="pagination-centered" ng-hide="task.trigger && task.action">{{msg('section.selectEvents')}}</h3>
     <div class="section-input">
         <div class="panel-input" ui-jq="tooltip" ui-options="{placement:'bottom'}" data-original-title="{{getTooltipMsg(selectedTrigger)}}">
@@ -93,32 +85,46 @@
             <h3 ng-hide="task._id" class="pagination-centered">{{msg('section.buildAction')}}</h3>
             <h3 ng-show="task._id" class="pagination-centered">{{msg('section.editAction')}}</h3>
             <div class="row-fluid">
-                <div class="span6 inside">
-                    <div class="well3">
-                        <div class="right-divider">
-                            <form class="inside form-horizontal">
-                                <div class="control-group">
-                                    <h4>{{selectedTrigger.displayName}}</h4>
-                                    <p>{{msg('info.dragFieldBuildAction')}}</p>
-                                </div>
-                                <div class="control-group move-element">
-                                    <span class="badge badge-info triggerField" draggable ng-repeat="i in selectedTrigger.eventParameters" data-index="{{$index}}" data-type="{{i.type}}">{{i.displayName}}</span>
-                                </div>
-                                <!------------------  Include Additional Data  ------------------------>
-                                <div class="accordion" id="accordion1">
-                                    <div class="accordion-group">
-                                        <div class="accordion-heading">
-                                            <a class="accordion-toggle inbox-header" data-toggle="collapse" data-parent="#accordion1" href="#collapse1">
-                                                <i class="icon-chevron-right"></i> {{msg('subsection.IncludeAdditionalData')}}
-                                            </a>
-                                            <div id="collapse1" class="accordion-body collapse">
-                                                <div class="accordion-inner">
+                <div class="box-divider">
+                    <div class="span6">
+                        <form class="inside form-horizontal">
+                            <div class="control-group">
+                                <h4>{{selectedTrigger.displayName}}</h4>
+                                <p>{{msg('info.dragFieldBuildAction')}}</p>
+                            </div>
+                            <div class="control-group move-element">
+                                <span class="badge badge-info triggerField" draggable ng-repeat="i in selectedTrigger.eventParameters" data-index="{{$index}}" data-type="{{i.type}}">{{i.displayName}}</span>
+                            </div>
+                            <!------------------  Include Additional Data  ------------------------>
+                            <div class="accordion" id="accordion1">
+                                <div class="accordion-group">
+                                    <div class="accordion-heading">
+                                        <a class="accordion-toggle inbox-header" data-toggle="collapse" data-parent="#accordion1" href="#collapse1">
+                                            <i class="icon-chevron-right"></i> {{msg('subsection.IncludeAdditionalData')}}
+                                        </a>
+                                        <div id="collapse1" class="accordion-body collapse">
+                                            <div class="accordion-inner">
+                                                <div class="control-group">
+                                                    <label class="control-label">Source </label>
+                                                    <div class="controls">
+                                                        <div class="btn-group">
+                                                            <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+                                                                MRS
+                                                                <span class="caret"></span>
+                                                            </a>
+                                                            <ul class="dropdown-menu">
+                                                                <li><a><i></i> 1</a></li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="section">
                                                     <div class="control-group">
-                                                        <label class="control-label">Source </label>
+                                                        <label class="control-label">Object </label>
                                                         <div class="controls">
                                                             <div class="btn-group">
                                                                 <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-                                                                    MRS
+                                                                    Patient
                                                                     <span class="caret"></span>
                                                                 </a>
                                                                 <ul class="dropdown-menu">
@@ -127,96 +133,78 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div class="section">
-                                                        <div class="control-group">
-                                                            <label class="control-label">Object </label>
-                                                            <div class="controls">
-                                                                <div class="btn-group">
-                                                                    <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-                                                                        Patient
-                                                                        <span class="caret"></span>
-                                                                    </a>
-                                                                    <ul class="dropdown-menu">
-                                                                        <li><a><i></i> 1</a></li>
-                                                                    </ul>
-                                                                </div>
+                                                    <div class="control-group">
+                                                        <label class="control-label">Lookup by </label>
+                                                        <div class="controls">
+                                                            <div class="btn-group">
+                                                                <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+                                                                    ExternalID
+                                                                    <span class="caret"></span>
+                                                                </a>
+                                                                <ul class="dropdown-menu">
+                                                                    <li><a><i></i> 1</a></li>
+                                                                </ul>
                                                             </div>
-                                                        </div>
-                                                        <div class="control-group">
-                                                            <label class="control-label">Lookup by </label>
-                                                            <div class="controls">
-                                                                <div class="btn-group">
-                                                                    <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-                                                                        ExternalID
-                                                                        <span class="caret"></span>
-                                                                    </a>
-                                                                    <ul class="dropdown-menu">
-                                                                        <li><a><i></i> 1</a></li>
-                                                                    </ul>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="control-group move-element">
-                                                            <p><strong>Object Fields</strong></p>
-                                                            <span class="badge badge-important">FullName</span>
-                                                            <span class="badge badge-important">Gander</span>
-                                                            <span class="badge badge-important">DOB</span>
-                                                            <span class="badge badge-important">PhoneNumber</span>
                                                         </div>
                                                     </div>
-                                                    <div class="section">
-                                                        <div class="control-group">
-                                                            <label class="control-label">Object </label>
-                                                            <div class="controls">
-                                                                <div class="btn-group">
-                                                                    <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-                                                                        Facility
-                                                                        <span class="caret"></span>
-                                                                    </a>
-                                                                    <ul class="dropdown-menu">
-                                                                        <li><a><i></i> 1</a></li>
-                                                                    </ul>
-                                                                </div>
+                                                    <div class="control-group move-element">
+                                                        <p><strong>Object Fields</strong></p>
+                                                        <span class="badge badge-important">FullName</span>
+                                                        <span class="badge badge-important">Gander</span>
+                                                        <span class="badge badge-important">DOB</span>
+                                                        <span class="badge badge-important">PhoneNumber</span>
+                                                    </div>
+                                                </div>
+                                                <div class="section">
+                                                    <div class="control-group">
+                                                        <label class="control-label">Object </label>
+                                                        <div class="controls">
+                                                            <div class="btn-group">
+                                                                <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+                                                                    Facility
+                                                                    <span class="caret"></span>
+                                                                </a>
+                                                                <ul class="dropdown-menu">
+                                                                    <li><a><i></i> 1</a></li>
+                                                                </ul>
                                                             </div>
                                                         </div>
-                                                        <div class="control-group">
-                                                            <label class="control-label">Lookup by </label>
-                                                            <div class="controls">
-                                                                <div class="btn-group">
-                                                                    <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-                                                                        FacilityID
-                                                                        <span class="caret"></span>
-                                                                    </a>
-                                                                    <ul class="dropdown-menu">
-                                                                        <li><a><i></i> 1</a></li>
-                                                                    </ul>
-                                                                </div>
+                                                    </div>
+                                                    <div class="control-group">
+                                                        <label class="control-label">Lookup by </label>
+                                                        <div class="controls">
+                                                            <div class="btn-group">
+                                                                <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+                                                                    FacilityID
+                                                                    <span class="caret"></span>
+                                                                </a>
+                                                                <ul class="dropdown-menu">
+                                                                    <li><a><i></i> 1</a></li>
+                                                                </ul>
                                                             </div>
                                                         </div>
-                                                        <div class="control-group move-element">
-                                                            <p><strong>Object Fields</strong></p>
-                                                            <span class="badge badge-warning">FacilityName</span>
-                                                            <span class="badge badge-warning">Address</span>
-                                                        </div>
+                                                    </div>
+                                                    <div class="control-group move-element">
+                                                        <p><strong>Object Fields</strong></p>
+                                                        <span class="badge badge-warning">FacilityName</span>
+                                                        <span class="badge badge-warning">Address</span>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="margin-before control-group">
-                                        <button class="btn btn-primary"><i class="icon icon-plus"></i> Choose Another MRS Object</button>
-                                    </div>
-                                    <div class="control-group">
-                                        <button class="btn btn-warning"><i class="icon icon-plus"></i> Choose Another Data Source</button>
-                                    </div>
                                 </div>
-                            </form>
-                        </div>
+                                <div class="margin-before control-group">
+                                    <button class="btn btn-primary"><i class="icon icon-plus"></i> Choose Another MRS Object</button>
+                                </div>
+                                <div class="control-group">
+                                    <button class="btn btn-warning"><i class="icon icon-plus"></i> Choose Another Data Source</button>
+                                </div>
+                            </div>
+                        </form>
                     </div>
-                </div>
-
-                <div class="span6">
-                    <div class="well3">
+                    <div class="center-divider"></div>
+                    <div class="span6">
                         <form name="form" class="inside">
                             <div class="control-group">
                                 <h4>{{selectedAction.displayName}}</h4>
@@ -232,8 +220,8 @@
                             </div>
                         </form>
                     </div>
+                     <div class="clearfix"></div>
                 </div>
-                <div class="clearfix"></div>
                 <div class="accordion" id="accordion2">
                     <!------------------------  Filter  ------------------------>
                     <div class="accordion-group">
@@ -300,11 +288,11 @@
                     </div>
                 </div>
                 <!------------------------  Save  ------------------------>
-                <div class="control-group">
+                <div class="control-group inside">
                     <h4 class="pagination-centered">{{msg('section.save')}}</h4>
-                    <div class="pagination-centered">
-                        <p>{{msg('info.save')}}</p>
-                        <div class="">
+                    <div class="">
+                        <p class="pagination-centered">{{msg('info.save')}}</p>
+                        <div class="control-group pagination-centered inside">
                             <a ng-click="save(true)" class="btn btn-primary"> {{msg('button.saveAndEnabled')}}</a>
                             <a ng-click="save(false)" class="btn btn-success"> {{msg('button.save')}}</a>
                             <a href="#/task/" class="btn"> {{msg('button.cancel')}}</a>
