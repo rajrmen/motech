@@ -6,7 +6,7 @@ import org.motechproject.admin.bundles.BundleDirectoryManager;
 import org.motechproject.admin.bundles.ExtendedBundleInformation;
 import org.motechproject.admin.ex.BundleNotFoundException;
 import org.motechproject.admin.service.ModuleAdminService;
-import org.motechproject.server.osgi.BundleIcon;
+import org.motechproject.server.api.BundleIcon;
 import org.motechproject.commons.api.MotechException;
 import org.motechproject.server.api.BundleInformation;
 import org.motechproject.server.api.JarInformation;
@@ -27,7 +27,7 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.motechproject.server.osgi.BundleIcon.ICON_LOCATIONS;
+import static org.motechproject.server.api.BundleIcon.ICON_LOCATIONS;
 
 @Service
 public class ModuleAdminServiceImpl implements ModuleAdminService {

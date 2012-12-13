@@ -7,7 +7,7 @@ import org.mockito.Mock;
 import org.motechproject.admin.service.ModuleAdminService;
 import org.motechproject.admin.service.StatusMessageService;
 import org.motechproject.admin.web.controller.BundleAdminController;
-import org.motechproject.server.osgi.BundleIcon;
+import org.motechproject.server.api.BundleIcon;
 import org.motechproject.server.api.BundleInformation;
 import org.osgi.framework.BundleException;
 import org.springframework.web.multipart.MultipartFile;

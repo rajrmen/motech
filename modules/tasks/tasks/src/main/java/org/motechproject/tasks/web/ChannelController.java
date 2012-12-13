@@ -1,6 +1,6 @@
 package org.motechproject.tasks.web;
 
-import org.motechproject.server.osgi.BundleIcon;
+import org.motechproject.server.api.BundleIcon;
 import org.motechproject.tasks.domain.Channel;
 import org.motechproject.tasks.service.ChannelService;
 import org.springframework.beans.factory.annotation.Autowired;

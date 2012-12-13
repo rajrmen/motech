@@ -1,6 +1,6 @@
 package org.motechproject.tasks.service;
 
-import org.motechproject.server.osgi.BundleIcon;
+import org.motechproject.server.api.BundleIcon;
 import org.motechproject.tasks.domain.Channel;
 
 import java.io.InputStream;

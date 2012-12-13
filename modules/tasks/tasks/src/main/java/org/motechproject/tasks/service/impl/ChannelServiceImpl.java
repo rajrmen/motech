@@ -5,7 +5,7 @@ import org.apache.commons.io.IOUtils;
 import org.motechproject.commons.api.MotechException;
 import org.motechproject.commons.api.json.MotechJsonReader;
 import org.motechproject.commons.couchdb.dao.BusinessIdNotUniqueException;
-import org.motechproject.server.osgi.BundleIcon;
+import org.motechproject.server.api.BundleIcon;
 import org.motechproject.tasks.domain.Channel;
 import org.motechproject.tasks.repository.AllChannels;
 import org.motechproject.tasks.service.ChannelService;
@@ -24,7 +24,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.List;
 
-import static org.motechproject.server.osgi.BundleIcon.ICON_LOCATIONS;
+import static org.motechproject.server.api.BundleIcon.ICON_LOCATIONS;
 
 @Service("channelService")
 public class ChannelServiceImpl implements ChannelService {
