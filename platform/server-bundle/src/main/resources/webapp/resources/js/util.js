@@ -15,6 +15,18 @@ Array.prototype.removeObject = function (element) {
     }
 };
 
+if (typeof String.prototype.startsWith != 'function') {
+  String.prototype.startsWith = function (str){
+    return this.slice(0, str.length) == str;
+  };
+}
+
+if (typeof String.prototype.endsWith != 'function') {
+  String.prototype.endsWith = function (str){
+    return this.slice(-str.length) == str;
+  };
+}
+
 String.prototype.format = function() {
   var args = arguments;
   return this.replace(/{(\d+)}/g, function(match, number) {

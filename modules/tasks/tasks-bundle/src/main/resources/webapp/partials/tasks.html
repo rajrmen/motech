@@ -30,7 +30,7 @@
                         <li class="info"><i class="icon icon-share icon-blue"></i> {{msg('info.executedTimes', item.success.length)}}</li>
                         <li class="error" ng-hide="item.error.length == 0"><i class="icon icon-exclamation-sign icon-red"></i> {{msg('info.errorsLastDays', item.error.length)}}</li>
                         <li class="success" ng-show="item.error.length == 0"><i class="icon icon-ok-sign icon-green"></i> {{msg('info.errorsLastDays', item.error.length)}}</li>
-                        <li><i class="icon-chevron-right"></i> {{task.description}}</li>
+                        <li ng-show="item.task.description"><i class="icon-chevron-right"></i> {{item.task.description}}</li>
                     </ul>
                 </div>
                 <div class="clearfix"></div>
@@ -69,7 +69,7 @@
                         <li class="info"><i class="icon icon-share icon-blue"></i> {{msg('info.executedTimes', item.success.length)}}</li>
                         <li class="error" ng-hide="item.error.length == 0"><i class="icon icon-exclamation-sign icon-red"></i> {{msg('info.errorsLastDays', item.error.length)}}</li>
                         <li class="success" ng-show="item.error.length == 0"><i class="icon icon-ok-sign icon-green"></i> {{msg('info.errorsLastDays', item.error.length)}}</li>
-                        <li><i class="icon-chevron-right"></i> {{task.description}}</li>
+                        <li ng-show="item.task.description"><i class="icon-chevron-right"></i> {{item.task.description}}</li>
                     </ul>
                 </div>
                 <div class="clearfix"></div>

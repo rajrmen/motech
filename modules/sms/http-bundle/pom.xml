@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <groupId>org.motechproject</groupId>
         <artifactId>motech</artifactId>
@@ -47,6 +48,12 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>com.springsource.org.apache.commons.httpclient</artifactId>
         </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>motech-platform-server-bundle</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
@@ -57,12 +64,14 @@
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
+                        <Context-File>applicationSmsHttpBundle.xml</Context-File>
+                        <Context-Path>smshttp/api</Context-Path>
                         <Export-Package>
                             org.motechproject.sms.http,
                             org.motechproject.sms.http.service
                         </Export-Package>
                         <Bundle-Activator>
-                            org.motechproject.sms.http.osgi.Activator
+                            org.motechproject.osgi.web.Activator
                         </Bundle-Activator>
                         <Import-Package>
                             org.motechproject.event.listener.annotations,

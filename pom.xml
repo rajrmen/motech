@@ -708,8 +708,8 @@
             </dependency>
             <dependency>
                 <groupId>org.json</groupId>
-                <artifactId>json</artifactId>
-                <version>20080701</version>
+                <artifactId>org.motechproject.org.json</artifactId>
+                <version>20080701-r001</version>
             </dependency>
             <dependency>
                 <groupId>org.motechproject.mforms</groupId>
@@ -1382,8 +1382,10 @@
                                     <goal>verify</goal>
                                 </goals>
                                 <configuration>
-                                    <summaryFile>target/failsafe-reports/failsafe-summary-it.xml</summaryFile>
-                                    <summaryFile>target/failsafe-reports/failsafe-summary-it-osgi.xml</summaryFile>
+                                    <summaryFiles>
+                                        <summaryFile>target/failsafe-reports/failsafe-summary-it.xml</summaryFile>
+                                        <summaryFile>target/failsafe-reports/failsafe-summary-it-osgi.xml</summaryFile>
+                                    </summaryFiles>
                                 </configuration>
                             </execution>
                         </executions>
