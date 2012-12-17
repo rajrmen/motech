@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -54,37 +56,23 @@ public class TaskStatusMessageServiceImpl implements TaskStatusMessageService {
     }
 
     @Override
-    public List<TaskStatusMessage> getSuccessMessages(String taskId) {
-        List<TaskStatusMessage> messages = allTaskStatusMessages.byTaskId(taskId);
-        List<TaskStatusMessage> result = new ArrayList<>(messages.size());
-
-        for (TaskStatusMessage msg : messages) {
-            if (msg.getLevel() == Level.SUCCESS) {
-                result.add(msg);
-            }
-        }
-
-        return result;
-    }
-
-    @Override
-    public List<TaskStatusMessage> getErrorMessages(String taskId) {
-        List<TaskStatusMessage> messages = allTaskStatusMessages.byTaskId(taskId);
-        List<TaskStatusMessage> result = new ArrayList<>(messages.size());
-
-        for (TaskStatusMessage msg : messages) {
-            if (msg.getLevel() == Level.ERROR) {
-                result.add(msg);
-            }
-        }
-
-        return result;
-    }
-
-    @Override
     public void deleteMessages(String taskId) {
         for (TaskStatusMessage msg : allTaskStatusMessages.byTaskId(taskId)) {
             allTaskStatusMessages.remove(msg);
         }
+    }
+
+    @Override
+    public List<TaskStatusMessage> getAllMessages() {
+        List<TaskStatusMessage> messages = allTaskStatusMessages.getAll();
+
+        Collections.sort(messages, new Comparator<TaskStatusMessage>() {
+            @Override
+            public int compare(TaskStatusMessage o1, TaskStatusMessage o2) {
+                return o2.getDate().compareTo(o1.getDate());
+            }
+        });
+
+        return messages;
     }
 }

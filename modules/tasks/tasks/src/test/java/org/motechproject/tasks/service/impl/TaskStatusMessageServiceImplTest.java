@@ -53,38 +53,6 @@ public class TaskStatusMessageServiceImplTest {
         }
     }
 
-    @Test
-    public void test_getSuccessMessages() {
-        when(allTaskStatusMessages.byTaskId(TASK_ID)).thenReturn(getTaskStatusMessages());
-
-        List<TaskStatusMessage> successes = messageService.getSuccessMessages(TASK_ID);
-
-        assertNotNull(successes);
-        assertEquals(2, successes.size());
-
-        for (TaskStatusMessage error : successes) {
-            assertEquals(SUCCESS.getValue(), error.getMessage());
-            assertEquals(TASK_ID, error.getTask());
-            assertEquals(SUCCESS, error.getLevel());
-        }
-    }
-
-    @Test
-    public void test_getErrorMessages() {
-        when(allTaskStatusMessages.byTaskId(TASK_ID)).thenReturn(getTaskStatusMessages());
-
-        List<TaskStatusMessage> errors = messageService.getErrorMessages(TASK_ID);
-
-        assertNotNull(errors);
-        assertEquals(8, errors.size());
-
-        for (TaskStatusMessage error : errors) {
-            assertEquals(ERROR.getValue(), error.getMessage());
-            assertEquals(TASK_ID, error.getTask());
-            assertEquals(ERROR, error.getLevel());
-        }
-    }
-
     private List<TaskStatusMessage> getTaskStatusMessages() {
         List<TaskStatusMessage> messages = new ArrayList<>();
         messages.add(createError());

@@ -15,9 +15,7 @@ public interface TaskStatusMessageService {
 
     List<TaskStatusMessage> errorsFromLastRun(Task task);
 
-    List<TaskStatusMessage> getSuccessMessages(String taskId);
-
-    List<TaskStatusMessage> getErrorMessages(String taskId);
-
     void deleteMessages(String taskId);
+
+    List<TaskStatusMessage> getAllMessages();
 }
