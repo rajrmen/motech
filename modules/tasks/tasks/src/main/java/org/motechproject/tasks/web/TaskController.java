@@ -43,6 +43,12 @@ public class TaskController {
         return taskService.getTask(taskId);
     }
 
+    @RequestMapping(value = "/task/{taskId}", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.OK)
+    public void saveTask(@RequestBody Task task) {
+        taskService.save(task);
+    }
+
     @RequestMapping(value = "/task/{taskId}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.OK)
     public void deleteTask(@PathVariable String taskId) {

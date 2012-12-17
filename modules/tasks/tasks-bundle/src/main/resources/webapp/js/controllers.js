@@ -39,6 +39,20 @@ function DashboardCtrl($scope, Tasks, Activities) {
         return taskEvent.split(':')[index];
     };
 
+    $scope.enableTask = function (item, enabled) {
+        item.task.enabled = enabled;
+
+        item.task.$save(function () {
+            if (item.task.enabled) {
+                $scope.pausedTasks.removeObject(item);
+                $scope.activeTasks.push(item);
+            } else {
+                $scope.activeTasks.removeObject(item);
+                $scope.pausedTasks.push(item);
+            }
+        });
+    }
+
     $scope.deleteTask = function (item) {
         var enabled = item.task.enabled;
 

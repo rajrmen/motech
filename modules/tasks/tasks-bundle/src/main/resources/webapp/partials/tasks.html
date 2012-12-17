@@ -36,7 +36,7 @@
                 <div class="clearfix"></div>
                 <div class="task-footer">
                     <div class="button-task"><a href="#/task/{{item.task._id}}/edit"><div class="button-task-in"><i class="icon-edit"></i> {{msg('button.edit')}}</div></a></div>
-                    <div class="button-task"><a><div class="button-task-in"><i class="icon-pause"></i> {{msg('button.pause')}}</div></a></div>
+                    <div class="button-task"><a ng-click="enableTask(item, false)"><div class="button-task-in"><i class="icon-pause"></i> {{msg('button.pause')}}</div></a></div>
                     <div class="button-task"><a ng-click="deleteTask(item)"><div class="button-task-in"><i class="icon-trash"></i> {{msg('button.delete')}}</div></a></div>
                     <div class="button-task"><a><div class="button-task-in"><i class="icon-time"></i> {{msg('button.history')}}</div></a></div>
                     <div class="clearfix"></div>
@@ -75,7 +75,7 @@
                 <div class="clearfix"></div>
                 <div class="task-footer">
                     <div class="button-task"><a href="#/task/{{item.task._id}}/edit"><div class="button-task-in"><i class="icon-edit"></i> {{msg('button.edit')}}</div></a></div>
-                    <div class="button-task"><a><div class="button-task-in"><i class="icon-play"></i> {{msg('button.resume')}}</div></a></div>
+                    <div class="button-task"><a ng-click="enableTask(item, true)"><div class="button-task-in"><i class="icon-play"></i> {{msg('button.resume')}}</div></a></div>
                     <div class="button-task"><a ng-click="deleteTask(item)"><div class="button-task-in"><i class="icon-trash"></i> {{msg('button.delete')}}</div></a></div>
                     <div class="button-task"><a><div class="button-task-in"><i class="icon-time"></i> {{msg('button.history')}}</div></a></div>
                     <div class="clearfix"></div>

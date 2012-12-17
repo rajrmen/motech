@@ -290,11 +290,18 @@
                 <!------------------------  Save  ------------------------>
                 <div class="control-group inside">
                     <h4 class="pagination-centered">{{msg('section.save')}}</h4>
-                    <div class="">
-                        <p class="pagination-centered">{{msg('info.save')}}</p>
+                    <div ng-hide="task._id">
+                        <p class="pagination-centered">{{msg('info.addSave')}}</p>
                         <div class="control-group pagination-centered inside">
                             <a ng-click="save(true)" class="btn btn-primary"> {{msg('button.saveAndEnabled')}}</a>
                             <a ng-click="save(false)" class="btn btn-success"> {{msg('button.save')}}</a>
+                            <a href="#/task/" class="btn"> {{msg('button.cancel')}}</a>
+                        </div>
+                    </div>
+                    <div ng-show="task._id">
+                        <p class="pagination-centered">{{msg('info.editSave')}}</p>
+                        <div class="control-group pagination-centered inside">
+                            <a ng-click="save(task.enabled)" class="btn btn-success"> {{msg('button.save')}}</a>
                             <a href="#/task/" class="btn"> {{msg('button.cancel')}}</a>
                         </div>
                     </div>
