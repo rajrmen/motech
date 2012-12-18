@@ -17,6 +17,16 @@
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
+            <artifactId>motech-platform-commons-couchdb</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>motech-platform-server-config</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
             <artifactId>motech-platform-event</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -31,6 +41,10 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>org.springframework.context.support</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.mysql.jdbc</groupId>
+            <artifactId>com.springsource.com.mysql.jdbc</artifactId>
         </dependency>
 
         <!--Please don't delete this! This dependency is required when using MySql as the job store for Quartz.-->

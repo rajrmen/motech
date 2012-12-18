@@ -6,9 +6,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.motechproject.event.MotechEvent;
 import org.motechproject.commons.date.model.DayOfWeek;
 import org.motechproject.commons.date.model.Time;
+import org.motechproject.event.MotechEvent;
 import org.motechproject.scheduler.domain.CronSchedulableJob;
 import org.motechproject.scheduler.domain.DayOfWeekSchedulableJob;
 import org.motechproject.scheduler.domain.RepeatingSchedulableJob;
@@ -18,6 +18,7 @@ import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.Trigger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -31,10 +32,10 @@ import java.util.Map;
 import static java.util.Arrays.asList;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNull;
-import static org.motechproject.testing.utils.TimeFaker.fakeNow;
-import static org.motechproject.testing.utils.TimeFaker.stopFakingTime;
 import static org.motechproject.commons.date.util.DateUtil.newDate;
 import static org.motechproject.commons.date.util.DateUtil.newDateTime;
+import static org.motechproject.testing.utils.TimeFaker.fakeNow;
+import static org.motechproject.testing.utils.TimeFaker.stopFakingTime;
 import static org.quartz.TriggerKey.triggerKey;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -45,6 +46,7 @@ public class MotechSchedulerServiceImplIT {
     MotechSchedulerService schedulerService;
 
     @Autowired
+    @Qualifier("schedulerFactory")
     SchedulerFactoryBean schedulerFactoryBean;
 
     Scheduler scheduler;

@@ -11,6 +11,7 @@ import org.quartz.SimpleTrigger;
 import org.quartz.TriggerKey;
 import org.quartz.impl.matchers.GroupMatcher;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -34,6 +35,7 @@ import static org.springframework.test.util.ReflectionTestUtils.getField;
 public class SpringQuartzIT {
 
     @Autowired
+    @Qualifier("schedulerFactory")
     private SchedulerFactoryBean schedulerFactoryBean;
 
     String groupName = "group1";

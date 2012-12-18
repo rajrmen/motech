@@ -4,8 +4,9 @@ import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.motechproject.commons.api.MotechObject;
-import org.motechproject.event.MotechEvent;
 import org.motechproject.commons.date.model.Time;
+import org.motechproject.commons.date.util.DateUtil;
+import org.motechproject.event.MotechEvent;
 import org.motechproject.scheduler.MotechSchedulerService;
 import org.motechproject.scheduler.domain.CronJobId;
 import org.motechproject.scheduler.domain.CronSchedulableJob;
@@ -16,7 +17,6 @@ import org.motechproject.scheduler.domain.RepeatingSchedulableJob;
 import org.motechproject.scheduler.domain.RunOnceJobId;
 import org.motechproject.scheduler.domain.RunOnceSchedulableJob;
 import org.motechproject.scheduler.exception.MotechSchedulerException;
-import org.motechproject.commons.date.util.DateUtil;
 import org.quartz.CalendarIntervalScheduleBuilder;
 import org.quartz.CronScheduleBuilder;
 import org.quartz.CronTrigger;
@@ -35,6 +35,7 @@ import org.quartz.impl.matchers.GroupMatcher;
 import org.quartz.impl.triggers.CronTriggerImpl;
 import org.quartz.spi.OperableTrigger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 
@@ -72,7 +73,7 @@ public class MotechSchedulerServiceImpl extends MotechObject implements MotechSc
     private Scheduler scheduler;
 
     @Autowired
-    public MotechSchedulerServiceImpl(SchedulerFactoryBean schedulerFactoryBean) {
+    public MotechSchedulerServiceImpl(@Qualifier("schedulerFactory") SchedulerFactoryBean schedulerFactoryBean) {
         this.schedulerFactoryBean = schedulerFactoryBean;
         this.scheduler = schedulerFactoryBean.getScheduler();
     }
