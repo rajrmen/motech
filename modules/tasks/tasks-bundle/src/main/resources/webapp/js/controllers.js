@@ -103,6 +103,8 @@ function ManageTaskCtrl($scope, Channels, Tasks, $routeParams, $http) {
     $scope.currentPage = 0;
     $scope.pageSize = 10;
     $scope.task = {};
+    $scope.filters = [];
+
     $scope.channels = Channels.query(function (){
         if ($routeParams.taskId != undefined) {
             $scope.task = Tasks.get({ taskId: $routeParams.taskId }, function () {
@@ -130,6 +132,17 @@ function ManageTaskCtrl($scope, Channels, Tasks, $routeParams, $http) {
 
                 for (i = 0; i < $scope.selectedAction.eventParameters.length; i += 1) {
                     $scope.selectedAction.eventParameters[i].value = $scope.task.actionInputFields[$scope.selectedAction.eventParameters[i].eventKey];
+                }
+
+                $scope.filters = [];
+                for (i = 0; i<$scope.task.filters.length; i += 1) {
+                    for (var j = 0; j <  $scope.selectedTrigger.eventParameters.length; j+=1) {
+                        if ( $scope.selectedTrigger.eventParameters[j].displayName==$scope.task.filters[i].eventParameter.displayName) {
+                            $scope.task.filters[i].eventParameter=$scope.selectedTrigger.eventParameters[j];
+                            break;
+                        }
+                    }
+                    $scope.filters.push($scope.task.filters[i]);
                 }
             });
         }
@@ -198,12 +211,22 @@ function ManageTaskCtrl($scope, Channels, Tasks, $routeParams, $http) {
         $scope.task.actionInputFields = {};
         $scope.task.enabled = enabled;
 
+        if ($scope.filters.length!=0) {
+            $scope.task.filters = [];
+            for (i = 0; i < $scope.filters.length; i += 1) {
+                value = $scope.filters[i];
+
+                $scope.task.filters.push(value)
+            }
+        }
+
         for (i = 0; i < action.eventParameters.length; i += 1) {
             eventKey = action.eventParameters[i].eventKey;
             value = action.eventParameters[i].value || '';
 
             $scope.task.actionInputFields[eventKey] = value;
         }
+
 
         blockUI();
         $http.post('../tasks/api/task/save', $scope.task).
@@ -226,4 +249,27 @@ function ManageTaskCtrl($scope, Channels, Tasks, $routeParams, $http) {
             });
     };
 
+    $scope.operators = function(event) {
+        var operator = ['exist'];
+        if (event && (event.type==='UNICODE' || event.type==='TEXTAREA')) {
+            operator.push("equals");
+            operator.push("contains");
+            operator.push("startsWith");
+            operator.push("endsWith");
+        } else if (event && event.type==='NUMBER') {
+            operator.push("gt");
+            operator.push("lt");
+            operator.push("equal");
+        }
+        return operator;
+    }
+
+    $scope.addFilter = function() {
+        $scope.filters.push({})
+    }
+
+    $scope.setEventParameter = function(eventParameter, filterParameter) {
+
+        return filterParameter;
+    }
 }

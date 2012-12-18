@@ -232,43 +232,39 @@
                                 <i  class="icon-chevron-right"></i> {{msg('section.filters')}}
                             </a>
                         </div>
-                        <div id="collapse21" class="accordion-body collapse">
+                        <div id="collapse21" ng-class="{true:'collapse in', false:'collapse'}[filters.length!=0]" class="accordion-body ">
                             <div class="accordion-inner">
                                 <div class="pagination-centered">
                                     <p>This step is optional. You can create filters to decide which new Appointments trigger new SMS messages.</p>
                                     <p><strong>Only run this Task if:</strong></p>
-                                    <form class="form-inline">
-                                        <label><i class="icon icon-plus"></i> If appointment</label>
-                                        <div class="btn-group">
-                                            <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-                                                Start Date
-                                                <span class="caret"></span>
-                                            </a>
-                                            <ul class="dropdown-menu">
-                                                <li><a><i></i> date1</a></li>
-                                            </ul>
+
+                                    <div ng-repeat="filter in filters">
+                                        <div class="form-inline">
+                                            <label><i class="icon icon-plus"></i> If appointment</label>
+                                            <div class="btn-group">
+                                                <select ng-model="filter.eventParameter" class="btn dropdown-toggle" ng-options="c.displayName for c in selectedTrigger.eventParameters">
+                                                    <option value="">Event name</option>
+                                                </select>
+                                            </div>
+                                            <div class="btn-group">
+                                                <select ng-model="filter.navigationOperator" class="btn dropdown-toggle">
+                                                    <option value="">Navigation operator</option>
+                                                    <option value="true" ng-selected="filter.navigationOperator==true">Is</option>
+                                                    <option value="false" ng-selected="filter.navigationOperator==false">Is not</option>
+                                                </select>
+                                            </div>
+                                            <div class="btn-group">
+                                                <select ng-model="filter.operator" class="btn dropdown-toggle" ng-options="msg(c) for c in operators(filter.eventParameter)">
+                                                    <option value="">Operator</option>
+                                                </select>
+                                            </div>
+                                            <input ng-model="filter.expression" ng-show="filter.operator!='exist'" type="text" value=""/>
+                                            <input type="button" ng-click="filters.splice($index, 1)" value="X"/>
                                         </div>
-                                        <div class="btn-group">
-                                            <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-                                                Is
-                                                <span class="caret"></span>
-                                            </a>
-                                            <ul class="dropdown-menu">
-                                                <li><a><i></i> date1</a></li>
-                                            </ul>
-                                        </div>
-                                        <div class="btn-group">
-                                            <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-                                                &gt;
-                                                <span class="caret"></span>
-                                            </a>
-                                            <ul class="dropdown-menu">
-                                                <li><a><i></i> date1</a></li>
-                                            </ul>
-                                        </div>
-                                        <input type="text" value="10/6/2012"/>
-                                    </form>
+                                    </div>
                                 </div>
+
+                                <input type="button" ng-click="addFilter()" value="Add Another Filter">
                             </div>
                         </div>
                     </div>
