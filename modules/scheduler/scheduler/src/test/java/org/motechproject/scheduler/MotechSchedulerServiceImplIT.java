@@ -22,7 +22,6 @@ import org.quartz.Trigger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
-import org.springframework.test.annotation.Repeat;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -55,6 +54,7 @@ public class MotechSchedulerServiceImplIT {
     EventListenerRegistryService eventListenerRegistryService;
 
     @Autowired
+    @Qualifier("schedulerFactory")
     SchedulerFactoryBean schedulerFactoryBean;
 
     Scheduler scheduler;
@@ -544,5 +544,4 @@ class TestEventListener implements EventListener {
     public List<MotechEvent> getReceivedEvents() {
         return receivedEvents;
     }
-
 }
