@@ -46,7 +46,9 @@ public class TaskController {
     @RequestMapping(value = "/task/{taskId}", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.OK)
     public void saveTask(@RequestBody Task task) {
-        taskService.save(task);
+        if (task.getId() != null) {
+            taskService.save(task);
+        }
     }
 
     @RequestMapping(value = "/task/{taskId}", method = RequestMethod.DELETE)
@@ -59,7 +61,9 @@ public class TaskController {
     @RequestMapping(value = "/task/save", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.OK)
     public void save(@RequestBody Task task) {
+        String subject = getSubject(task.getTrigger());
+
         taskService.save(task);
-        triggerHandler.registerHandlerFor(getSubject(task.getTrigger()));
+        triggerHandler.registerHandlerFor(subject);
     }
 }

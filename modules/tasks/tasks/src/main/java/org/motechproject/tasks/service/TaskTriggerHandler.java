@@ -20,7 +20,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -124,14 +123,9 @@ public class TaskTriggerHandler {
 
     private void registerHandler() {
         List<Task> tasks = taskService.getAllTasks();
-        List<String> subjects = new ArrayList<>();
 
         for (Task t : tasks) {
-            subjects.add(getSubject(t.getTrigger()));
-        }
-
-        for (String subject : subjects) {
-            registerHandlerFor(subject);
+            registerHandlerFor(getSubject(t.getTrigger()));
         }
     }
 

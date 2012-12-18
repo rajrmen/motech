@@ -185,4 +185,26 @@ public class TaskServiceImplTest {
         assertEquals(triggerEvent, actual);
     }
 
+    @Test
+    public void test_deleteTask() {
+        Task expected = new Task();
+        expected.setId("12345");
+
+        when(allTasks.get(expected.getId())).thenReturn(expected);
+
+        taskService.deleteTask(expected.getId());
+
+        verify(allTasks).get(expected.getId());
+        verify(allTasks).remove(expected);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void test_deleteTask_taskNotFound() {
+        String taskId = "12345";
+
+        when(allTasks.get(taskId)).thenReturn(null);
+
+        taskService.deleteTask(taskId);
+    }
+
 }

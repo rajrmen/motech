@@ -146,7 +146,7 @@ public class TaskTriggerHandlerTest {
     }
 
     @Test
-    public void test_handler_taskDisable() throws Exception {
+    public void test_handler_taskWillBeDisabled() throws Exception {
         when(taskService.findTrigger(TRIGGER_SUBJECT)).thenReturn(triggerEvent);
         when(taskService.findTasksForTrigger(triggerEvent)).thenReturn(tasks);
         when(taskService.getActionEventFor(task)).thenReturn(actionEvent);
@@ -170,6 +170,22 @@ public class TaskTriggerHandlerTest {
         verify(taskStatusMessageService, never()).addSuccess(task);
 
         assertFalse(task.isEnabled());
+    }
+
+    @Test
+    public void test_handler_taskIsDisabled() throws Exception {
+        when(taskService.findTrigger(TRIGGER_SUBJECT)).thenReturn(triggerEvent);
+        when(taskService.findTasksForTrigger(triggerEvent)).thenReturn(tasks);
+
+        task.setEnabled(false);
+
+        handler.handler(createEvent());
+
+        verify(taskService).findTrigger(TRIGGER_SUBJECT);
+        verify(taskService).findTasksForTrigger(triggerEvent);
+        verify(taskService, never()).getActionEventFor(task);
+        verify(eventRelay, never()).sendEventMessage(any(MotechEvent.class));
+        verify(taskStatusMessageService, never()).addSuccess(task);
     }
 
     @Test
