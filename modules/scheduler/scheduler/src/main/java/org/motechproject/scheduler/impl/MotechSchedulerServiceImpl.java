@@ -35,6 +35,7 @@ import org.quartz.impl.matchers.GroupMatcher;
 import org.quartz.impl.triggers.CronTriggerImpl;
 import org.quartz.spi.OperableTrigger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 
@@ -72,7 +73,7 @@ public class MotechSchedulerServiceImpl extends MotechObject implements MotechSc
     private Scheduler scheduler;
 
     @Autowired
-    public MotechSchedulerServiceImpl(SchedulerFactoryBean schedulerFactoryBean) {
+    public MotechSchedulerServiceImpl(@Qualifier("schedulerFactory") SchedulerFactoryBean schedulerFactoryBean) {
         this.schedulerFactoryBean = schedulerFactoryBean;
         this.scheduler = schedulerFactoryBean.getScheduler();
     }
