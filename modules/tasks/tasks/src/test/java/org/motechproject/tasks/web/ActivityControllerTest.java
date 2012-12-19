@@ -3,8 +3,8 @@ package org.motechproject.tasks.web;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
-import org.motechproject.tasks.domain.TaskStatusMessage;
-import org.motechproject.tasks.service.TaskStatusMessageService;
+import org.motechproject.tasks.domain.TaskActivity;
+import org.motechproject.tasks.service.TaskActivityService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,15 +14,15 @@ import static junit.framework.Assert.assertNotNull;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
-import static org.motechproject.tasks.domain.Level.ERROR;
-import static org.motechproject.tasks.domain.Level.SUCCESS;
-import static org.motechproject.tasks.domain.Level.WARNING;
+import static org.motechproject.tasks.domain.TaskActivityType.ERROR;
+import static org.motechproject.tasks.domain.TaskActivityType.SUCCESS;
+import static org.motechproject.tasks.domain.TaskActivityType.WARNING;
 
 public class ActivityControllerTest {
     private static final String TASK_ID = "12345";
 
     @Mock
-    TaskStatusMessageService messageService;
+    TaskActivityService messageService;
 
     ActivityController controller;
 
@@ -35,16 +35,16 @@ public class ActivityControllerTest {
 
     @Test
     public void shouldGetAllActivities() {
-        List<TaskStatusMessage> expected = new ArrayList<>();
-        expected.add(new TaskStatusMessage(SUCCESS.getValue(), TASK_ID, SUCCESS));
-        expected.add(new TaskStatusMessage(WARNING.getValue(), TASK_ID, WARNING));
-        expected.add(new TaskStatusMessage(ERROR.getValue(), TASK_ID, ERROR));
+        List<TaskActivity> expected = new ArrayList<>();
+        expected.add(new TaskActivity(SUCCESS.getValue(), TASK_ID, SUCCESS));
+        expected.add(new TaskActivity(WARNING.getValue(), TASK_ID, WARNING));
+        expected.add(new TaskActivity(ERROR.getValue(), TASK_ID, ERROR));
 
-        when(messageService.getAllMessages()).thenReturn(expected);
+        when(messageService.getAllActivities()).thenReturn(expected);
 
-        List<TaskStatusMessage> actual = controller.getAllActivities();
+        List<TaskActivity> actual = controller.getAllActivities();
 
-        verify(messageService).getAllMessages();
+        verify(messageService).getAllActivities();
 
         assertNotNull(actual);
         assertEquals(expected.size(), actual.size());

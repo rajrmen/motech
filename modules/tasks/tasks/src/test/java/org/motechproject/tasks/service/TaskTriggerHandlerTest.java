@@ -12,10 +12,9 @@ import org.motechproject.event.listener.EventRelay;
 import org.motechproject.server.config.SettingsFacade;
 import org.motechproject.tasks.domain.EventParamType;
 import org.motechproject.tasks.domain.EventParameter;
-import org.motechproject.tasks.domain.Level;
 import org.motechproject.tasks.domain.Task;
+import org.motechproject.tasks.domain.TaskActivity;
 import org.motechproject.tasks.domain.TaskEvent;
-import org.motechproject.tasks.domain.TaskStatusMessage;
 import org.motechproject.tasks.ex.ActionNotFoundException;
 import org.motechproject.tasks.ex.TriggerNotFoundException;
 
@@ -35,6 +34,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
+import static org.motechproject.tasks.domain.TaskActivityType.ERROR;
 
 public class TaskTriggerHandlerTest {
     private static final String TRIGGER_SUBJECT = "APPOINTMENT_CREATE_EVENT_SUBJECT";
@@ -44,7 +44,7 @@ public class TaskTriggerHandlerTest {
     TaskService taskService;
 
     @Mock
-    TaskStatusMessageService taskStatusMessageService;
+    TaskActivityService taskActivityService;
 
     @Mock
     EventListenerRegistryService registryService;
@@ -58,7 +58,7 @@ public class TaskTriggerHandlerTest {
     TaskTriggerHandler handler;
 
     List<Task> tasks;
-    List<TaskStatusMessage> messages;
+    List<TaskActivity> messages;
     Task task;
     TaskEvent triggerEvent;
     TaskEvent actionEvent;
@@ -70,7 +70,7 @@ public class TaskTriggerHandlerTest {
         when(taskService.getAllTasks()).thenReturn(tasks);
         when(settingsFacade.getProperty("task.possible.errors")).thenReturn("5");
 
-        handler = new TaskTriggerHandler(taskService, taskStatusMessageService, registryService, eventRelay, settingsFacade);
+        handler = new TaskTriggerHandler(taskService, taskActivityService, registryService, eventRelay, settingsFacade);
 
         verify(taskService).getAllTasks();
         verify(registryService).registerListener(any(EventListener.class), anyString());
@@ -87,7 +87,7 @@ public class TaskTriggerHandlerTest {
         verify(taskService, never()).findTasksForTrigger(triggerEvent);
         verify(taskService, never()).getActionEventFor(task);
         verify(eventRelay, never()).sendEventMessage(any(MotechEvent.class));
-        verify(taskStatusMessageService, never()).addSuccess(task);
+        verify(taskActivityService, never()).addSuccess(task);
     }
 
     @Test
@@ -101,10 +101,10 @@ public class TaskTriggerHandlerTest {
         verify(taskService).findTrigger(TRIGGER_SUBJECT);
         verify(taskService).findTasksForTrigger(triggerEvent);
         verify(taskService).getActionEventFor(task);
-        verify(taskStatusMessageService).addError(eq(task), anyString());
+        verify(taskActivityService).addError(eq(task), anyString());
 
         verify(eventRelay, never()).sendEventMessage(any(MotechEvent.class));
-        verify(taskStatusMessageService, never()).addSuccess(task);
+        verify(taskActivityService, never()).addSuccess(task);
     }
 
     @Test
@@ -120,10 +120,10 @@ public class TaskTriggerHandlerTest {
         verify(taskService).findTrigger(TRIGGER_SUBJECT);
         verify(taskService).findTasksForTrigger(triggerEvent);
         verify(taskService).getActionEventFor(task);
-        verify(taskStatusMessageService).addError(eq(task), anyString());
+        verify(taskActivityService).addError(eq(task), anyString());
 
         verify(eventRelay, never()).sendEventMessage(any(MotechEvent.class));
-        verify(taskStatusMessageService, never()).addSuccess(task);
+        verify(taskActivityService, never()).addSuccess(task);
     }
 
     @Test
@@ -139,10 +139,10 @@ public class TaskTriggerHandlerTest {
         verify(taskService).findTrigger(TRIGGER_SUBJECT);
         verify(taskService).findTasksForTrigger(triggerEvent);
         verify(taskService).getActionEventFor(task);
-        verify(taskStatusMessageService).addError(eq(task), anyString());
+        verify(taskActivityService).addError(eq(task), anyString());
 
         verify(eventRelay, never()).sendEventMessage(any(MotechEvent.class));
-        verify(taskStatusMessageService, never()).addSuccess(task);
+        verify(taskActivityService, never()).addSuccess(task);
     }
 
     @Test
@@ -150,7 +150,7 @@ public class TaskTriggerHandlerTest {
         when(taskService.findTrigger(TRIGGER_SUBJECT)).thenReturn(triggerEvent);
         when(taskService.findTasksForTrigger(triggerEvent)).thenReturn(tasks);
         when(taskService.getActionEventFor(task)).thenReturn(actionEvent);
-        when(taskStatusMessageService.errorsFromLastRun(task)).thenReturn(messages);
+        when(taskActivityService.errorsFromLastRun(task)).thenReturn(messages);
 
         task.getActionInputFields().put("message", null);
 
@@ -161,13 +161,13 @@ public class TaskTriggerHandlerTest {
         verify(taskService).findTrigger(TRIGGER_SUBJECT);
         verify(taskService).findTasksForTrigger(triggerEvent);
         verify(taskService).getActionEventFor(task);
-        verify(taskStatusMessageService).addError(eq(task), anyString());
-        verify(taskStatusMessageService).errorsFromLastRun(task);
+        verify(taskActivityService).addError(eq(task), anyString());
+        verify(taskActivityService).errorsFromLastRun(task);
         verify(taskService).save(task);
-        verify(taskStatusMessageService).addWarning(task);
+        verify(taskActivityService).addWarning(task);
 
         verify(eventRelay, never()).sendEventMessage(any(MotechEvent.class));
-        verify(taskStatusMessageService, never()).addSuccess(task);
+        verify(taskActivityService, never()).addSuccess(task);
 
         assertFalse(task.isEnabled());
     }
@@ -185,7 +185,7 @@ public class TaskTriggerHandlerTest {
         verify(taskService).findTasksForTrigger(triggerEvent);
         verify(taskService, never()).getActionEventFor(task);
         verify(eventRelay, never()).sendEventMessage(any(MotechEvent.class));
-        verify(taskStatusMessageService, never()).addSuccess(task);
+        verify(taskActivityService, never()).addSuccess(task);
     }
 
     @Test
@@ -202,7 +202,7 @@ public class TaskTriggerHandlerTest {
         verify(taskService).findTasksForTrigger(triggerEvent);
         verify(taskService).getActionEventFor(task);
         verify(eventRelay).sendEventMessage(captor.capture());
-        verify(taskStatusMessageService).addSuccess(task);
+        verify(taskActivityService).addSuccess(task);
 
         MotechEvent motechEvent = captor.getValue();
 
@@ -263,10 +263,10 @@ public class TaskTriggerHandlerTest {
         actionEvent.setDisplayName("SMS");
 
         messages = new ArrayList<>();
-        messages.add(new TaskStatusMessage("Error1", task.getId(), Level.ERROR));
-        messages.add(new TaskStatusMessage("Error2", task.getId(), Level.ERROR));
-        messages.add(new TaskStatusMessage("Error3", task.getId(), Level.ERROR));
-        messages.add(new TaskStatusMessage("Error4", task.getId(), Level.ERROR));
-        messages.add(new TaskStatusMessage("Error5", task.getId(), Level.ERROR));
+        messages.add(new TaskActivity("Error1", task.getId(), ERROR));
+        messages.add(new TaskActivity("Error2", task.getId(), ERROR));
+        messages.add(new TaskActivity("Error3", task.getId(), ERROR));
+        messages.add(new TaskActivity("Error4", task.getId(), ERROR));
+        messages.add(new TaskActivity("Error5", task.getId(), ERROR));
     }
 }

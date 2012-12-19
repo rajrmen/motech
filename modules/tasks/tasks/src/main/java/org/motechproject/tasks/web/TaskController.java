@@ -2,7 +2,7 @@ package org.motechproject.tasks.web;
 
 import org.motechproject.tasks.domain.Task;
 import org.motechproject.tasks.service.TaskService;
-import org.motechproject.tasks.service.TaskStatusMessageService;
+import org.motechproject.tasks.service.TaskActivityService;
 import org.motechproject.tasks.service.TaskTriggerHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,11 +21,11 @@ import static org.motechproject.tasks.util.TaskUtil.getSubject;
 @Controller
 public class TaskController {
     private TaskService taskService;
-    private TaskStatusMessageService messageService;
+    private TaskActivityService messageService;
     private TaskTriggerHandler triggerHandler;
 
     @Autowired
-    public TaskController(TaskService taskService, TaskStatusMessageService messageService, TaskTriggerHandler triggerHandler) {
+    public TaskController(TaskService taskService, TaskActivityService messageService, TaskTriggerHandler triggerHandler) {
         this.taskService = taskService;
         this.messageService = messageService;
         this.triggerHandler = triggerHandler;
@@ -55,7 +55,7 @@ public class TaskController {
     @ResponseStatus(HttpStatus.OK)
     public void deleteTask(@PathVariable String taskId) {
         taskService.deleteTask(taskId);
-        messageService.deleteMessages(taskId);
+        messageService.deleteActivitiesForTask(taskId);
     }
 
     @RequestMapping(value = "/task/save", method = RequestMethod.POST)

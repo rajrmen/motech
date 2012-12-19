@@ -34,13 +34,13 @@ public class TaskTriggerHandler {
     private static final Logger LOG = LoggerFactory.getLogger(TaskTriggerHandler.class);
 
     private TaskService taskService;
-    private TaskStatusMessageService statusMessageService;
+    private TaskActivityService statusMessageService;
     private EventListenerRegistryService registryService;
     private EventRelay eventRelay;
     private SettingsFacade settingsFacade;
 
     @Autowired
-    public TaskTriggerHandler(final TaskService taskService, final TaskStatusMessageService statusMessageService,
+    public TaskTriggerHandler(final TaskService taskService, final TaskActivityService statusMessageService,
                               final EventListenerRegistryService registryService, final EventRelay eventRelay,
                               final SettingsFacade settingsFacade) {
         this.taskService = taskService;

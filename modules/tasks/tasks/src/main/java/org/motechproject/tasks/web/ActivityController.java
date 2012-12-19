@@ -1,7 +1,7 @@
 package org.motechproject.tasks.web;
 
-import org.motechproject.tasks.domain.TaskStatusMessage;
-import org.motechproject.tasks.service.TaskStatusMessageService;
+import org.motechproject.tasks.domain.TaskActivity;
+import org.motechproject.tasks.service.TaskActivityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,16 +12,16 @@ import java.util.List;
 
 @Controller
 public class ActivityController {
-    private TaskStatusMessageService messageService;
+    private TaskActivityService messageService;
 
     @Autowired
-    public ActivityController(final TaskStatusMessageService messageService) {
+    public ActivityController(final TaskActivityService messageService) {
         this.messageService = messageService;
     }
 
     @RequestMapping(value = "/activity", method = RequestMethod.GET)
     @ResponseBody
-    public List<TaskStatusMessage> getAllActivities() {
-        return messageService.getAllMessages();
+    public List<TaskActivity> getAllActivities() {
+        return messageService.getAllActivities();
     }
 }

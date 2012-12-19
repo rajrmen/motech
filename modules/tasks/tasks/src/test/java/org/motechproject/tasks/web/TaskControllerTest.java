@@ -6,7 +6,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.motechproject.tasks.domain.Task;
 import org.motechproject.tasks.service.TaskService;
-import org.motechproject.tasks.service.TaskStatusMessageService;
+import org.motechproject.tasks.service.TaskActivityService;
 import org.motechproject.tasks.service.TaskTriggerHandler;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -32,7 +32,7 @@ public class TaskControllerTest {
     TaskService taskService;
 
     @Mock
-    TaskStatusMessageService messageService;
+    TaskActivityService messageService;
 
     @Mock
     TaskTriggerHandler taskTriggerHandler;
@@ -87,7 +87,7 @@ public class TaskControllerTest {
         controller.deleteTask(TASK_ID);
 
         verify(taskService).deleteTask(TASK_ID);
-        verify(messageService).deleteMessages(TASK_ID);
+        verify(messageService).deleteActivitiesForTask(TASK_ID);
     }
 
     @Test

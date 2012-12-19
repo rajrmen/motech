@@ -21,11 +21,11 @@ function DashboardCtrl($scope, Tasks, Activities) {
                 };
 
                 for (j = 0; j < activities.length; j += 1) {
-                    if (activities[j].task === item.task._id && activities[j].level === 'SUCCESS') {
+                    if (activities[j].task === item.task._id && activities[j].activityType === 'SUCCESS') {
                         item.success += 1;
                     }
 
-                    if (activities[j].task === item.task._id && activities[j].level === 'ERROR') {
+                    if (activities[j].task === item.task._id && activities[j].activityType === 'ERROR') {
                         item.error += 1;
                     }
                 }
@@ -45,7 +45,7 @@ function DashboardCtrl($scope, Tasks, Activities) {
                             trigger: tasks[j].trigger,
                             action: tasks[j].action,
                             date: activities[i].date,
-                            type: activities[i].level
+                            type: activities[i].activityType
                         });
                         break;
                     }
