@@ -1,8 +1,8 @@
 package org.motechproject.tasks.web;
 
 import org.motechproject.tasks.domain.Task;
-import org.motechproject.tasks.service.TaskService;
 import org.motechproject.tasks.service.TaskActivityService;
+import org.motechproject.tasks.service.TaskService;
 import org.motechproject.tasks.service.TaskTriggerHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

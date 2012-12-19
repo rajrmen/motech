@@ -2,9 +2,11 @@ package org.motechproject.tasks.service.impl;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.motechproject.tasks.domain.Task;
 import org.motechproject.tasks.domain.TaskActivity;
+import org.motechproject.tasks.domain.TaskActivityType;
 import org.motechproject.tasks.repository.AllTaskActivities;
 import org.motechproject.tasks.service.TaskActivityService;
 
@@ -13,6 +15,10 @@ import java.util.List;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 import static org.motechproject.tasks.domain.TaskActivityType.ERROR;
@@ -25,23 +31,23 @@ public class TaskActivityServiceImplTest {
     @Mock
     AllTaskActivities allTaskActivities;
 
-    TaskActivityService messageService;
+    TaskActivityService activityService;
 
     @Before
     public void setup() throws Exception {
         initMocks(this);
 
-        messageService = new TaskActivityServiceImpl(allTaskActivities);
+        activityService = new TaskActivityServiceImpl(allTaskActivities);
     }
 
     @Test
     public void test_errorsFromLastRun() {
-        when(allTaskActivities.byTaskId(TASK_ID)).thenReturn(getTaskStatusMessages());
+        when(allTaskActivities.byTaskId(TASK_ID)).thenReturn(getTaskActivities());
 
         Task t = new Task();
         t.setId(TASK_ID);
 
-        List<TaskActivity> errors = messageService.errorsFromLastRun(t);
+        List<TaskActivity> errors = activityService.errorsFromLastRun(t);
 
         assertNotNull(errors);
         assertEquals(4, errors.size());
@@ -53,7 +59,110 @@ public class TaskActivityServiceImplTest {
         }
     }
 
-    private List<TaskActivity> getTaskStatusMessages() {
+    @Test
+    public void test_errorsFromLastRun_emptyList() {
+        when(allTaskActivities.byTaskId(TASK_ID)).thenReturn(new ArrayList<TaskActivity>());
+
+        Task t = new Task();
+        t.setId(TASK_ID);
+
+        List<TaskActivity> errors = activityService.errorsFromLastRun(t);
+
+        assertNotNull(errors);
+        assertEquals(0, errors.size());
+    }
+
+    @Test
+    public void test_addError() {
+        Task t = new Task();
+        t.setId(TASK_ID);
+
+        String message = "error.notFoundTrigger";
+
+        ArgumentCaptor<TaskActivity> captor = ArgumentCaptor.forClass(TaskActivity.class);
+
+        activityService.addError(t, message);
+
+        verify(allTaskActivities).add(captor.capture());
+
+        assertActivity(message, TASK_ID, TaskActivityType.ERROR, captor.getValue());
+    }
+
+    @Test
+    public void test_addSuccess() {
+        Task t = new Task();
+        t.setId(TASK_ID);
+
+        String message = "success.ok";
+
+        ArgumentCaptor<TaskActivity> captor = ArgumentCaptor.forClass(TaskActivity.class);
+
+        activityService.addSuccess(t);
+
+        verify(allTaskActivities).add(captor.capture());
+
+        assertActivity(message, TASK_ID, TaskActivityType.SUCCESS, captor.getValue());
+    }
+
+    @Test
+    public void test_addWarning() {
+        Task t = new Task();
+        t.setId(TASK_ID);
+
+        String message = "warning.taskDisabled";
+
+        ArgumentCaptor<TaskActivity> captor = ArgumentCaptor.forClass(TaskActivity.class);
+
+        activityService.addWarning(t);
+
+        verify(allTaskActivities).add(captor.capture());
+
+        assertActivity(message, TASK_ID, TaskActivityType.WARNING, captor.getValue());
+    }
+
+    @Test
+    public void test_deleteActivitiesForTask() {
+        List<TaskActivity> activities = getTaskActivities();
+        when(allTaskActivities.byTaskId(TASK_ID)).thenReturn(activities);
+
+        activityService.deleteActivitiesForTask(TASK_ID);
+
+        verify(allTaskActivities, times(activities.size())).remove(any(TaskActivity.class));
+    }
+
+    @Test
+    public void test_deleteActivitiesForTask_emptyList() {
+        when(allTaskActivities.byTaskId(TASK_ID)).thenReturn(new ArrayList<TaskActivity>());
+
+        activityService.deleteActivitiesForTask(TASK_ID);
+
+        verify(allTaskActivities, never()).remove(any(TaskActivity.class));
+    }
+
+    @Test
+    public void test_getAllActivities() {
+        List<TaskActivity> expected = getTaskActivities();
+
+        when(allTaskActivities.getAll()).thenReturn(expected);
+
+        List<TaskActivity> actual = activityService.getAllActivities();
+
+        assertNotNull(actual);
+        assertEquals(expected.size(), actual.size());
+
+        for (int i = 0; i < expected.size(); ++i) {
+            assertEquals(expected.get(i), actual.get(i));
+        }
+    }
+
+    private void assertActivity(String message, String task, TaskActivityType activityType, TaskActivity activity) {
+        assertNotNull(activity);
+        assertEquals(message, activity.getMessage());
+        assertEquals(task, activity.getTask());
+        assertEquals(activityType, activity.getActivityType());
+    }
+
+    private List<TaskActivity> getTaskActivities() {
         List<TaskActivity> messages = new ArrayList<>();
         messages.add(createError());
         messages.add(createError());
