@@ -26,7 +26,7 @@
 </div>
 <div class="clearfix"></div><div class="margin-before4"></div>
 <div class="">
-    <div class="box-content clearfix">
+    <div class="box-content clearfix" ng-hide="activities.length == 0">
         <table class="table table-striped table-lightblue table-recent-activity-task">
             <thead>
             <tr>
@@ -47,5 +47,9 @@
             </tr>
             </tbody>
         </table>
+    </div>
+    <div class="alert" ng-show="activities.length == 0">
+        <strong>{{msg('warning')}}:</strong>
+        {{msg('info.notFoundActivities')}}
     </div>
 </div>

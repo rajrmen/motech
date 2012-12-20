@@ -281,6 +281,10 @@ function LogCtrl($scope, Tasks, Activities, $routeParams) {
         task = Tasks.get(data, function () {
             $scope.activities = Activities.query(data);
 
+            setInterval(function () {
+                $scope.activities = Activities.query(data);
+            }, 30 * 1000);
+
             $scope.trigger = {
                 display: $scope.get(task.trigger, 'displayName'),
                 module: $scope.get(task.trigger, 'moduleName'),
