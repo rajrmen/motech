@@ -273,3 +273,39 @@ function ManageTaskCtrl($scope, Channels, Tasks, $routeParams, $http) {
         return filterParameter;
     }
 }
+
+function LogCtrl($scope, Tasks, Activities, $routeParams) {
+    if ($routeParams.taskId != undefined) {
+        var data = { taskId: $routeParams.taskId }, task;
+
+        task = Tasks.get(data, function () {
+            $scope.activities = Activities.query(data);
+
+            $scope.trigger = {
+                display: $scope.get(task.trigger, 'displayName'),
+                module: $scope.get(task.trigger, 'moduleName'),
+                version: $scope.get(task.trigger, 'moduleVersion')
+            };
+
+            $scope.action = {
+                display: $scope.get(task.action, 'displayName'),
+                module: $scope.get(task.action, 'moduleName'),
+                version: $scope.get(task.action, 'moduleVersion')
+            };
+        });
+    }
+
+    $scope.get = function (taskEvent, prop) {
+        var index;
+
+        switch (prop) {
+            case 'displayName': index = 0; break;
+            case 'moduleName': index = 1; break;
+            case 'moduleVersion': index = 2; break;
+            case 'subject': index = 3; break;
+            default: index = 0; break;
+        }
+
+        return taskEvent.split(':')[index];
+    };
+}

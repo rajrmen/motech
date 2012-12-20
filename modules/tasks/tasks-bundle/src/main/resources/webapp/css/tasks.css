@@ -208,6 +208,14 @@
     vertical-align: middle;
 }
 
+.table-recent-activity-task tbody td:first-child {
+    width: 35px;
+}
+
+.table-recent-activity-task tbody td:last-child {
+    width: 250px;
+}
+
 .section-input {
     width: 380px;
     margin: 10px auto;

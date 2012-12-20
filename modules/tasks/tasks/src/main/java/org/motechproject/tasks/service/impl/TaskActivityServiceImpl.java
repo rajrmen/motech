@@ -64,8 +64,15 @@ public class TaskActivityServiceImpl implements TaskActivityService {
 
     @Override
     public List<TaskActivity> getAllActivities() {
-        List<TaskActivity> messages = allTaskActivities.getAll();
+        return sort(allTaskActivities.getAll());
+    }
 
+    @Override
+    public List<TaskActivity> getTaskActivities(String taskId) {
+        return sort(allTaskActivities.byTaskId(taskId));
+    }
+
+    private List<TaskActivity> sort(List<TaskActivity> messages) {
         Collections.sort(messages, new Comparator<TaskActivity>() {
             @Override
             public int compare(TaskActivity o1, TaskActivity o2) {

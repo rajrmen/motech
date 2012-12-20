@@ -18,4 +18,6 @@ public interface TaskActivityService {
     void deleteActivitiesForTask(String taskId);
 
     List<TaskActivity> getAllActivities();
+
+    List<TaskActivity> getTaskActivities(String taskId);
 }
