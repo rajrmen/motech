@@ -21,13 +21,13 @@ import static org.motechproject.tasks.util.TaskUtil.getSubject;
 @Controller
 public class TaskController {
     private TaskService taskService;
-    private TaskActivityService messageService;
+    private TaskActivityService activityService;
     private TaskTriggerHandler triggerHandler;
 
     @Autowired
-    public TaskController(TaskService taskService, TaskActivityService messageService, TaskTriggerHandler triggerHandler) {
+    public TaskController(TaskService taskService, TaskActivityService activityService, TaskTriggerHandler triggerHandler) {
         this.taskService = taskService;
-        this.messageService = messageService;
+        this.activityService = activityService;
         this.triggerHandler = triggerHandler;
     }
 
@@ -55,7 +55,7 @@ public class TaskController {
     @ResponseStatus(HttpStatus.OK)
     public void deleteTask(@PathVariable String taskId) {
         taskService.deleteTask(taskId);
-        messageService.deleteActivitiesForTask(taskId);
+        activityService.deleteActivitiesForTask(taskId);
     }
 
     @RequestMapping(value = "/task/save", method = RequestMethod.POST)

@@ -29,7 +29,7 @@ public class AllTaskActivitiesIT extends SpringIntegrationTest {
     private CouchDbConnector couchDbConnector;
 
     @Test
-    public void test_byTaskId() {
+    public void shouldFindTaskActivitiesByTaskId() {
         TaskActivity errorMsg = new TaskActivity(ERROR.getValue(), "12345", ERROR);
         TaskActivity successMsg = new TaskActivity(SUCCESS.getValue(), "12345", SUCCESS);
         TaskActivity warningMsg = new TaskActivity(WARNING.getValue(), "54321", WARNING);

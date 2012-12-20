@@ -77,7 +77,7 @@ public class TaskTriggerHandlerTest {
     }
 
     @Test
-    public void test_handler_triggerNotFound() throws Exception {
+    public void shouldNotSendEventWhenTriggerNotFound() throws Exception {
         when(taskService.findTrigger(TRIGGER_SUBJECT)).thenThrow(new TriggerNotFoundException(""));
 
         handler.handler(createEvent());
@@ -91,7 +91,7 @@ public class TaskTriggerHandlerTest {
     }
 
     @Test
-    public void test_handler_actionNotFound() throws Exception {
+    public void shouldNotSendEventWhenActionNotFound() throws Exception {
         when(taskService.findTrigger(TRIGGER_SUBJECT)).thenReturn(triggerEvent);
         when(taskService.findTasksForTrigger(triggerEvent)).thenReturn(tasks);
         when(taskService.getActionEventFor(task)).thenThrow(new ActionNotFoundException(""));
@@ -108,7 +108,7 @@ public class TaskTriggerHandlerTest {
     }
 
     @Test
-    public void test_handler_actionWithoutSubject() throws Exception {
+    public void shouldNotSentEventWhenActionHasNotSubject() throws Exception {
         when(taskService.findTrigger(TRIGGER_SUBJECT)).thenReturn(triggerEvent);
         when(taskService.findTasksForTrigger(triggerEvent)).thenReturn(tasks);
         when(taskService.getActionEventFor(task)).thenReturn(actionEvent);
@@ -127,7 +127,7 @@ public class TaskTriggerHandlerTest {
     }
 
     @Test
-    public void test_handler_actionEventParameterWithoutValue() throws Exception {
+    public void shouldNotSendEventWhenActionEventParameterHasNotValue() throws Exception {
         when(taskService.findTrigger(TRIGGER_SUBJECT)).thenReturn(triggerEvent);
         when(taskService.findTasksForTrigger(triggerEvent)).thenReturn(tasks);
         when(taskService.getActionEventFor(task)).thenReturn(actionEvent);
@@ -146,7 +146,7 @@ public class TaskTriggerHandlerTest {
     }
 
     @Test
-    public void test_handler_taskWillBeDisabled() throws Exception {
+    public void shouldDisableTaskWhenNumberPossibleErrorsIsExceeded() throws Exception {
         when(taskService.findTrigger(TRIGGER_SUBJECT)).thenReturn(triggerEvent);
         when(taskService.findTasksForTrigger(triggerEvent)).thenReturn(tasks);
         when(taskService.getActionEventFor(task)).thenReturn(actionEvent);
@@ -173,7 +173,7 @@ public class TaskTriggerHandlerTest {
     }
 
     @Test
-    public void test_handler_taskIsDisabled() throws Exception {
+    public void shouldNotSendEventWhenTaskIsDisabled() throws Exception {
         when(taskService.findTrigger(TRIGGER_SUBJECT)).thenReturn(triggerEvent);
         when(taskService.findTasksForTrigger(triggerEvent)).thenReturn(tasks);
 
@@ -189,7 +189,7 @@ public class TaskTriggerHandlerTest {
     }
 
     @Test
-    public void test_handler() throws Exception {
+    public void shouldSendEventForGivenTrigger() throws Exception {
         when(taskService.findTrigger(TRIGGER_SUBJECT)).thenReturn(triggerEvent);
         when(taskService.findTasksForTrigger(triggerEvent)).thenReturn(tasks);
         when(taskService.getActionEventFor(task)).thenReturn(actionEvent);

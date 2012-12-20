@@ -41,7 +41,7 @@ public class TaskActivityServiceImplTest {
     }
 
     @Test
-    public void test_errorsFromLastRun() {
+    public void shouldReturnTaskActivitiesForTaskFromLastErrorActivity() {
         when(allTaskActivities.byTaskId(TASK_ID)).thenReturn(getTaskActivities());
 
         Task t = new Task();
@@ -60,7 +60,7 @@ public class TaskActivityServiceImplTest {
     }
 
     @Test
-    public void test_errorsFromLastRun_emptyList() {
+    public void shouldReturnEmptyListWhenTaskHasNotActivities() {
         when(allTaskActivities.byTaskId(TASK_ID)).thenReturn(new ArrayList<TaskActivity>());
 
         Task t = new Task();
@@ -73,7 +73,7 @@ public class TaskActivityServiceImplTest {
     }
 
     @Test
-    public void test_addError() {
+    public void shouldAddTaskErrorActivity() {
         Task t = new Task();
         t.setId(TASK_ID);
 
@@ -89,7 +89,7 @@ public class TaskActivityServiceImplTest {
     }
 
     @Test
-    public void test_addSuccess() {
+    public void shouldAddTaskSuccessActivity() {
         Task t = new Task();
         t.setId(TASK_ID);
 
@@ -105,7 +105,7 @@ public class TaskActivityServiceImplTest {
     }
 
     @Test
-    public void test_addWarning() {
+    public void shouldAddTaskWarningActivity() {
         Task t = new Task();
         t.setId(TASK_ID);
 
@@ -121,7 +121,7 @@ public class TaskActivityServiceImplTest {
     }
 
     @Test
-    public void test_deleteActivitiesForTask() {
+    public void shouldDeleteAllTaskActivitiesForGivenTask() {
         List<TaskActivity> activities = getTaskActivities();
         when(allTaskActivities.byTaskId(TASK_ID)).thenReturn(activities);
 
@@ -131,7 +131,7 @@ public class TaskActivityServiceImplTest {
     }
 
     @Test
-    public void test_deleteActivitiesForTask_emptyList() {
+    public void shouldNotRemoveAnyActivitiesWhenTaskHasNotActivities() {
         when(allTaskActivities.byTaskId(TASK_ID)).thenReturn(new ArrayList<TaskActivity>());
 
         activityService.deleteActivitiesForTask(TASK_ID);
@@ -140,7 +140,7 @@ public class TaskActivityServiceImplTest {
     }
 
     @Test
-    public void test_getAllActivities() {
+    public void shouldReturnAllActivities() {
         List<TaskActivity> expected = getTaskActivities();
 
         when(allTaskActivities.getAll()).thenReturn(expected);

@@ -13,22 +13,22 @@ import java.util.List;
 
 @Controller
 public class ActivityController {
-    private TaskActivityService messageService;
+    private TaskActivityService activityService;
 
     @Autowired
-    public ActivityController(final TaskActivityService messageService) {
-        this.messageService = messageService;
+    public ActivityController(final TaskActivityService activityService) {
+        this.activityService = activityService;
     }
 
     @RequestMapping(value = "/activity", method = RequestMethod.GET)
     @ResponseBody
     public List<TaskActivity> getAllActivities() {
-        return messageService.getAllActivities();
+        return activityService.getAllActivities();
     }
 
     @RequestMapping(value = "/activity/{taskId}", method = RequestMethod.GET)
     @ResponseBody
     public List<TaskActivity> getTaskActivities(@PathVariable String taskId) {
-        return messageService.getTaskActivities(taskId);
+        return activityService.getTaskActivities(taskId);
     }
 }
