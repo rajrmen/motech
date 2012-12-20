@@ -155,6 +155,22 @@ public class TaskActivityServiceImplTest {
         }
     }
 
+    @Test
+    public void shouldReturnAllActivitiesForGivenTask() {
+        List<TaskActivity> expected = getTaskActivities();
+
+        when(allTaskActivities.byTaskId(TASK_ID)).thenReturn(expected);
+
+        List<TaskActivity> actual = activityService.getTaskActivities(TASK_ID);
+
+        assertNotNull(actual);
+        assertEquals(expected.size(), actual.size());
+
+        for (int i = 0; i < expected.size(); ++i) {
+            assertEquals(expected.get(i), actual.get(i));
+        }
+    }
+
     private void assertActivity(String message, String task, TaskActivityType activityType, TaskActivity activity) {
         assertNotNull(activity);
         assertEquals(message, activity.getMessage());
