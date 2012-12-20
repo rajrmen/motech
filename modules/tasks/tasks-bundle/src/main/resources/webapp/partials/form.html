@@ -235,27 +235,27 @@
                         <div id="collapse21" ng-class="{true:'collapse in', false:'collapse'}[filters.length!=0]" class="accordion-body ">
                             <div class="accordion-inner">
                                 <div class="pagination-centered">
-                                    <p>This step is optional. You can create filters to decide which new Appointments trigger new SMS messages.</p>
-                                    <p><strong>Only run this Task if:</strong></p>
+                                    <p>{{msg('info.filter.title')}}</p>
+                                    <p><strong>{{msg('info.filter.run')}}</strong></p>
 
                                     <div ng-repeat="filter in filters">
                                         <div class="form-inline">
-                                            <label><i class="icon icon-plus"></i> If appointment</label>
+                                            <label><i class="icon icon-plus"></i> {{msg('info.if')}} {{selectedTrigger.displayName}}</label>
                                             <div class="btn-group">
                                                 <select ng-model="filter.eventParameter" class="btn dropdown-toggle" ng-options="c.displayName for c in selectedTrigger.eventParameters">
-                                                    <option value="">Event name</option>
+                                                    <option value="">{{msg('info.filter.select')}}</option>
                                                 </select>
                                             </div>
                                             <div class="btn-group">
                                                 <select ng-model="filter.navigationOperator" class="btn dropdown-toggle">
-                                                    <option value="">Navigation operator</option>
-                                                    <option value="true" ng-selected="filter.navigationOperator==true">Is</option>
-                                                    <option value="false" ng-selected="filter.navigationOperator==false">Is not</option>
+                                                    <option value="">{{msg('info.filter.select')}}</option>
+                                                    <option value="true" ng-selected="filter.navigationOperator==true">{{msg('info.filter.is')}}</option>
+                                                    <option value="false" ng-selected="filter.navigationOperator==false">{{msg('info.filter.isNot')}}</option>
                                                 </select>
                                             </div>
                                             <div class="btn-group">
                                                 <select ng-model="filter.operator" class="btn dropdown-toggle" ng-options="msg(c) for c in operators(filter.eventParameter)">
-                                                    <option value="">Operator</option>
+                                                    <option value="">{{msg('info.filter.select')}}</option>
                                                 </select>
                                             </div>
                                             <input ng-model="filter.expression" ng-show="filter.operator!='exist'" type="text" value=""/>
