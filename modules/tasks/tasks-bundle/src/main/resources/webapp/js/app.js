@@ -52,15 +52,6 @@ angular.module('motech-tasks', ['motech-dashboard', 'channelServices', 'taskServ
                $('.accordion').on('hide', function (e) {
                    $(this).find("i.icon-chevron-down").not($(e.target)).removeClass("icon-chevron-down").addClass("icon-chevron-right");
                });
-
-         /* $(".accordion").click(function () {
-             // element.target.removeClass("icon-chevron-right").addClass("icon-chevron-up");
-             $(this).find('i.icon-chevron-right').removeClass("icon-chevron-right").addClass('icon-chevron-up');
-           });
-
-           $(".accordion").click(function (element) {
-              $(this).find("i.icon-chevron-up").removeClass("icon-chevron-up").addClass("icon-chevron-right");
-           });*/
        }
     }
 }).directive('draggable', function () {

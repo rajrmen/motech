@@ -292,7 +292,7 @@ function ManageTaskCtrl($scope, Channels, Tasks, $routeParams, $http) {
     }
 
     $scope.cssClass = function(prop) {
-            var msg = 'control-group';
+            var msg = 'validation-area';
 
             if (!prop) {
                 msg = msg.concat(' error');
