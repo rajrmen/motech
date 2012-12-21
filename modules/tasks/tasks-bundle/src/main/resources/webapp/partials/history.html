@@ -1,6 +1,7 @@
 <!------------------------  History ------------------------------------->
 <div class="">
     <h3>{{msg('header.taskHistory')}}</h3>
+    <a href="#/task/" class="btn btn-warning"> {{msg('button.back')}}</a>
 </div>
 <div class=" outside-tb2 top-line"></div>
 <h3 class="pagination-centered">{{msg('section.recentActivityForTask')}}</h3>
@@ -42,7 +43,7 @@
                     <img ng-show="activity.activityType == 'ERROR'" src="../tasks/img/icon-exclamation.png" class="recent-activity-arrow"/>
                     <img ng-show="activity.activityType == 'WARNING'" src="../tasks/img/icon-question.png" class="recent-activity-arrow"/>
                 </td>
-                <td>{{msg(activity.message)}}</td>
+                <td>{{msg(activity.message, activity.field)}}</td>
                 <td>{{ activity.date | fromNow }}</td>
             </tr>
             </tbody>

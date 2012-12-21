@@ -10,14 +10,13 @@ import org.motechproject.event.listener.EventListener;
 import org.motechproject.event.listener.EventListenerRegistryService;
 import org.motechproject.event.listener.EventRelay;
 import org.motechproject.server.config.SettingsFacade;
-import org.motechproject.tasks.domain.EventParamType;
 import org.motechproject.tasks.domain.EventParameter;
 import org.motechproject.tasks.domain.Filter;
-import org.motechproject.tasks.domain.OperatorType;
 import org.motechproject.tasks.domain.Task;
 import org.motechproject.tasks.domain.TaskActivity;
 import org.motechproject.tasks.domain.TaskEvent;
 import org.motechproject.tasks.ex.ActionNotFoundException;
+import org.motechproject.tasks.ex.TaskException;
 import org.motechproject.tasks.ex.TriggerNotFoundException;
 
 import java.util.ArrayList;
@@ -36,6 +35,15 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
+import static org.motechproject.tasks.domain.EventParamType.NUMBER;
+import static org.motechproject.tasks.domain.EventParamType.TEXTAREA;
+import static org.motechproject.tasks.domain.OperatorType.CONTAINS;
+import static org.motechproject.tasks.domain.OperatorType.ENDSWITH;
+import static org.motechproject.tasks.domain.OperatorType.EQUALS;
+import static org.motechproject.tasks.domain.OperatorType.EXIST;
+import static org.motechproject.tasks.domain.OperatorType.GT;
+import static org.motechproject.tasks.domain.OperatorType.LT;
+import static org.motechproject.tasks.domain.OperatorType.STARTSWITH;
 import static org.motechproject.tasks.domain.TaskActivityType.ERROR;
 
 public class TaskTriggerHandlerTest {
@@ -99,14 +107,17 @@ public class TaskTriggerHandlerTest {
         when(taskService.getActionEventFor(task)).thenThrow(new ActionNotFoundException(""));
 
         handler.handler(createEvent());
+        ArgumentCaptor<TaskException> captor = ArgumentCaptor.forClass(TaskException.class);
 
         verify(taskService).findTrigger(TRIGGER_SUBJECT);
         verify(taskService).findTasksForTrigger(triggerEvent);
         verify(taskService).getActionEventFor(task);
-        verify(taskActivityService).addError(eq(task), anyString());
+        verify(taskActivityService).addError(eq(task), captor.capture());
 
         verify(eventRelay, never()).sendEventMessage(any(MotechEvent.class));
         verify(taskActivityService, never()).addSuccess(task);
+
+        assertEquals("error.actionNotFound", captor.getValue().getMessageKey());
     }
 
     @Test
@@ -118,14 +129,17 @@ public class TaskTriggerHandlerTest {
         actionEvent.setSubject(null);
 
         handler.handler(createEvent());
+        ArgumentCaptor<TaskException> captor = ArgumentCaptor.forClass(TaskException.class);
 
         verify(taskService).findTrigger(TRIGGER_SUBJECT);
         verify(taskService).findTasksForTrigger(triggerEvent);
         verify(taskService).getActionEventFor(task);
-        verify(taskActivityService).addError(eq(task), anyString());
+        verify(taskActivityService).addError(eq(task), captor.capture());
 
         verify(eventRelay, never()).sendEventMessage(any(MotechEvent.class));
         verify(taskActivityService, never()).addSuccess(task);
+
+        assertEquals("error.actionWithoutSubject", captor.getValue().getMessageKey());
     }
 
     @Test
@@ -137,14 +151,39 @@ public class TaskTriggerHandlerTest {
         task.getActionInputFields().put("phone", null);
 
         handler.handler(createEvent());
+        ArgumentCaptor<TaskException> captor = ArgumentCaptor.forClass(TaskException.class);
 
         verify(taskService).findTrigger(TRIGGER_SUBJECT);
         verify(taskService).findTasksForTrigger(triggerEvent);
         verify(taskService).getActionEventFor(task);
-        verify(taskActivityService).addError(eq(task), anyString());
+        verify(taskActivityService).addError(eq(task), captor.capture());
 
         verify(eventRelay, never()).sendEventMessage(any(MotechEvent.class));
         verify(taskActivityService, never()).addSuccess(task);
+
+        assertEquals("error.templateNull", captor.getValue().getMessageKey());
+    }
+
+    @Test
+    public void shouldNotSendEventIfActionEventParameterCanNotBeConvertedToNumber() throws Exception {
+        when(taskService.findTrigger(TRIGGER_SUBJECT)).thenReturn(triggerEvent);
+        when(taskService.findTasksForTrigger(triggerEvent)).thenReturn(tasks);
+        when(taskService.getActionEventFor(task)).thenReturn(actionEvent);
+
+        task.getActionInputFields().put("phone", "1234   d");
+
+        handler.handler(createEvent());
+        ArgumentCaptor<TaskException> captor = ArgumentCaptor.forClass(TaskException.class);
+
+        verify(taskService).findTrigger(TRIGGER_SUBJECT);
+        verify(taskService).findTasksForTrigger(triggerEvent);
+        verify(taskService).getActionEventFor(task);
+        verify(taskActivityService).addError(eq(task), captor.capture());
+
+        verify(eventRelay, never()).sendEventMessage(any(MotechEvent.class));
+        verify(taskActivityService, never()).addSuccess(task);
+
+        assertEquals("error.convertToNumber", captor.getValue().getMessageKey());
     }
 
     @Test
@@ -158,11 +197,12 @@ public class TaskTriggerHandlerTest {
         assertTrue(task.isEnabled());
 
         handler.handler(createEvent());
+        ArgumentCaptor<TaskException> captor = ArgumentCaptor.forClass(TaskException.class);
 
         verify(taskService).findTrigger(TRIGGER_SUBJECT);
         verify(taskService).findTasksForTrigger(triggerEvent);
         verify(taskService).getActionEventFor(task);
-        verify(taskActivityService).addError(eq(task), anyString());
+        verify(taskActivityService).addError(eq(task), captor.capture());
         verify(taskActivityService).errorsFromLastRun(task);
         verify(taskService).save(task);
         verify(taskActivityService).addWarning(task);
@@ -171,6 +211,7 @@ public class TaskTriggerHandlerTest {
         verify(taskActivityService, never()).addSuccess(task);
 
         assertFalse(task.isEnabled());
+        assertEquals("error.templateNull", captor.getValue().getMessageKey());
     }
 
     @Test
@@ -213,12 +254,12 @@ public class TaskTriggerHandlerTest {
 
         assertEquals(2, motechEvent.getParameters().size());
         assertEquals(ACTION_SUBJECT, motechEvent.getSubject());
-        assertEquals(task.getActionInputFields().get("phone"), motechEvent.getParameters().get("phone"));
+        assertEquals(task.getActionInputFields().get("phone"), motechEvent.getParameters().get("phone").toString());
         assertEquals("Hello 123456789, You have an appointment on 2012-11-20", motechEvent.getParameters().get("message"));
     }
 
     @Test
-    public void testFilters() throws Exception{
+    public void shouldPassFiltersCriteria() throws Exception {
         when(taskService.findTrigger(TRIGGER_SUBJECT)).thenReturn(triggerEvent);
         when(taskService.findTasksForTrigger(triggerEvent)).thenReturn(tasks);
         when(taskService.getActionEventFor(task)).thenReturn(actionEvent);
@@ -274,8 +315,8 @@ public class TaskTriggerHandlerTest {
         triggerEvent.setEventParameters(triggerEventParameters);
 
         List<EventParameter> actionEventParameters = new ArrayList<>();
-        actionEventParameters.add(new EventParameter("Phone", "phone"));
-        actionEventParameters.add(new EventParameter("Message", "message", EventParamType.TEXTAREA));
+        actionEventParameters.add(new EventParameter("Phone", "phone", NUMBER));
+        actionEventParameters.add(new EventParameter("Message", "message", TEXTAREA));
 
         actionEvent = new TaskEvent();
         actionEvent.setSubject(ACTION_SUBJECT);
@@ -291,27 +332,18 @@ public class TaskTriggerHandlerTest {
     }
 
     private void addFilters() {
-        Filter filterExist = new Filter(new EventParameter("EventName", "eventName"), true, OperatorType.EXIST.getValue(), "");
-        Filter filterEqual = new Filter(new EventParameter("EventName", "eventName"), true, OperatorType.EQUALS.getValue(), "Event");
-        Filter filterContain = new Filter(new EventParameter("EventName", "eventName"), true, OperatorType.CONTAINS.getValue(), "ven");
-        Filter filterStartsWith = new Filter(new EventParameter("EventName", "eventName"), true, OperatorType.STARTSWITH.getValue(), "Ev");
-        Filter filterEndsWith = new Filter(new EventParameter("EventName", "eventName"), true, OperatorType.ENDSWITH.getValue(), "nt");
-        Filter filterExistNumber = new Filter(new EventParameter("ExternalID", "externalId", EventParamType.NUMBER), true, OperatorType.EXIST.getValue(), "");
-        Filter filterGt = new Filter(new EventParameter("ExternalID", "externalId", EventParamType.NUMBER), true, OperatorType.GT.getValue(), "19");
-        Filter filterLt = new Filter(new EventParameter("ExternalID", "externalId", EventParamType.NUMBER), true, OperatorType.LT.getValue(), "1234567891");
-        Filter filterEqualNumber = new Filter(new EventParameter("ExternalID", "externalId", EventParamType.NUMBER), true, OperatorType.EQUALS.getValue(), "123456789");
-        Filter filterIsNotGt = new Filter(new EventParameter("ExternalID", "externalId", EventParamType.NUMBER), false, OperatorType.GT.getValue(), "1234567891");
-        List<Filter> filters = new ArrayList<Filter>();
-        filters.add(filterContain);
-        filters.add(filterExist);
-        filters.add(filterEqual);
-        filters.add(filterStartsWith);
-        filters.add(filterEndsWith);
-        filters.add(filterGt);
-        filters.add(filterLt);
-        filters.add(filterEqualNumber);
-        filters.add(filterExistNumber);
-        filters.add(filterIsNotGt);
+        List<Filter> filters = new ArrayList<>();
+        filters.add(new Filter(new EventParameter("EventName", "eventName"), true, CONTAINS.getValue(), "ven"));
+        filters.add(new Filter(new EventParameter("EventName", "eventName"), true, EXIST.getValue(), ""));
+        filters.add(new Filter(new EventParameter("EventName", "eventName"), true, EQUALS.getValue(), "Event"));
+        filters.add(new Filter(new EventParameter("EventName", "eventName"), true, STARTSWITH.getValue(), "Ev"));
+        filters.add(new Filter(new EventParameter("EventName", "eventName"), true, ENDSWITH.getValue(), "nt"));
+        filters.add(new Filter(new EventParameter("ExternalID", "externalId", NUMBER), true, GT.getValue(), "19"));
+        filters.add(new Filter(new EventParameter("ExternalID", "externalId", NUMBER), true, LT.getValue(), "1234567891"));
+        filters.add(new Filter(new EventParameter("ExternalID", "externalId", NUMBER), true, EQUALS.getValue(), "123456789"));
+        filters.add(new Filter(new EventParameter("ExternalID", "externalId", NUMBER), true, EXIST.getValue(), ""));
+        filters.add(new Filter(new EventParameter("ExternalID", "externalId", NUMBER), false, GT.getValue(), "1234567891"));
+
         task.setFilters(filters);
     }
 }

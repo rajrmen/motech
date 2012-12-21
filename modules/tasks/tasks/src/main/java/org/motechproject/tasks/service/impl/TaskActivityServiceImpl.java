@@ -3,6 +3,7 @@ package org.motechproject.tasks.service.impl;
 import org.motechproject.tasks.domain.Task;
 import org.motechproject.tasks.domain.TaskActivity;
 import org.motechproject.tasks.domain.TaskActivityType;
+import org.motechproject.tasks.ex.TaskException;
 import org.motechproject.tasks.repository.AllTaskActivities;
 import org.motechproject.tasks.service.TaskActivityService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,9 +23,15 @@ public class TaskActivityServiceImpl implements TaskActivityService {
         this.allTaskActivities = allTaskActivities;
     }
 
+    @Deprecated
     @Override
     public void addError(Task task, String message) {
-        allTaskActivities.add(new TaskActivity(message, task.getId(), TaskActivityType.ERROR));
+        addError(task, new TaskException(message));
+    }
+
+    @Override
+    public void addError(Task task, TaskException e) {
+        allTaskActivities.add(new TaskActivity(e.getMessageKey(), e.getField(), task.getId(), TaskActivityType.ERROR));
     }
 
     @Override
