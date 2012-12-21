@@ -244,19 +244,19 @@
                                                 <div class="control-group">
                                                     <span ng-class="cssClass(filter.eventParameter)" class="">
                                                         <label><i class="icon icon-plus"></i> {{msg('info.if')}} {{selectedTrigger.displayName}}</label>
-                                                        <select ng-model="filter.eventParameter" class="" ng-options="c.displayName for c in selectedTrigger.eventParameters" required>
+                                                        <select ng-model="filter.eventParameter" class="input-medium" ng-options="c.displayName for c in selectedTrigger.eventParameters" required>
                                                             <option value="">{{msg('info.filter.select')}}</option>
                                                         </select>
                                                     </span>
                                                     <span ng-class="cssClass(filter.navigationOperator)" class="">
-                                                        <select ng-disabled="isDisabled(filter.eventParameter)" ng-model="filter.navigationOperator" class="" required>
+                                                        <select ng-disabled="isDisabled(filter.eventParameter)" ng-model="filter.navigationOperator" class="input-medium" required>
                                                             <option value="">{{msg('info.filter.select')}}</option>
                                                             <option value="true" ng-selected="filter.navigationOperator==true">{{msg('info.filter.is')}}</option>
                                                             <option value="false" ng-selected="filter.navigationOperator==false">{{msg('info.filter.isNot')}}</option>
                                                         </select>
                                                     </span>
                                                     <span ng-class="cssClass(filter.operator)" class="">
-                                                        <select ng-disabled="isDisabled(filter.navigationOperator)" ng-model="filter.operator" class="" ng-options="msg(c) for c in operators(filter.eventParameter)" required>
+                                                        <select ng-disabled="isDisabled(filter.navigationOperator)" ng-model="filter.operator" class="input-medium" ng-options="msg(c) for c in operators(filter.eventParameter)" required>
                                                             <option value="">{{msg('info.filter.select')}}</option>
                                                         </select>
                                                     </span>
