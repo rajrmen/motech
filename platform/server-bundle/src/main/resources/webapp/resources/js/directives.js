@@ -18,3 +18,9 @@ widgetModule.directive('taskPopover', function() {
         });
     }
 });
+
+widgetModule.directive('bsSelect', function() {
+    return function(scope, element, attrs) {
+        $(element).selectpicker();
+    }
+});

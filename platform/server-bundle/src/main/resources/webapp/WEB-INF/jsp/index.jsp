@@ -16,6 +16,7 @@
     <link rel="stylesheet" type="text/css" href="resources/css/angular-ui.css">
     <link rel="stylesheet" type="text/css" href="resources/css/bootstrap.css">
     <link rel="stylesheet" type="text/css" href="resources/css/bootstrap-responsive.css">
+    <link rel="stylesheet" type="text/css" href="resources/css/bootstrap-select.css">
     <link rel="stylesheet" type="text/css" href="resources/css/jquery-ui-min.css" />
     <link rel="stylesheet" type="text/css" href="resources/css/tagsinput/jquery.tagsinput.css">
     <link rel="stylesheet" type="text/css" href="resources/css/timepicker/jquery-ui-timepicker-addon.css">
@@ -39,6 +40,8 @@
     <script src="resources/lib/angular/angular-ui.min.js" type="text/javascript"></script>
 
     <script src="resources/lib/bootstrap/bootstrap.min.js"></script>
+
+    <script src="resources/lib/select/bootstrap-select.js"></script>
 
     <script src="resources/lib/tagsinput/jquery.tagsinput.js"></script>
 
