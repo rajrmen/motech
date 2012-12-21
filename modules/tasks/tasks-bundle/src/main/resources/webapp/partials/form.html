@@ -233,6 +233,7 @@
                             </a>
                         </div>
                         <div id="collapse21" ng-class="{true:'collapse in', false:'collapse'}[filters.length!=0]" class="accordion-body ">
+                            <form id="filtersForm" name="filterForm" class="form-horizontal" novalidate>
                             <div class="accordion-inner">
                                 <div class="pagination-centered">
                                     <p>{{msg('info.filter.title')}}</p>
@@ -241,31 +242,36 @@
                                     <div ng-repeat="filter in filters">
                                         <div class="form-inline">
                                             <label><i class="icon icon-plus"></i> {{msg('info.if')}} {{selectedTrigger.displayName}}</label>
-                                            <div class="btn-group">
-                                                <select ng-model="filter.eventParameter" class="btn dropdown-toggle" ng-options="c.displayName for c in selectedTrigger.eventParameters">
+                                            <div ng-class="cssClass(filter.eventParameter)" class="btn-group">
+                                                <select ng-model="filter.eventParameter" class="btn dropdown-toggle" ng-options="c.displayName for c in selectedTrigger.eventParameters" required>
                                                     <option value="">{{msg('info.filter.select')}}</option>
                                                 </select>
                                             </div>
-                                            <div class="btn-group">
-                                                <select ng-model="filter.navigationOperator" class="btn dropdown-toggle">
+                                            <div ng-class="cssClass(filter.navigationOperator)" class="btn-group">
+                                                <select ng-disabled="isDisabled(filter.eventParameter)" ng-model="filter.navigationOperator" class="btn dropdown-toggle" required>
                                                     <option value="">{{msg('info.filter.select')}}</option>
                                                     <option value="true" ng-selected="filter.navigationOperator==true">{{msg('info.filter.is')}}</option>
                                                     <option value="false" ng-selected="filter.navigationOperator==false">{{msg('info.filter.isNot')}}</option>
                                                 </select>
                                             </div>
-                                            <div class="btn-group">
-                                                <select ng-model="filter.operator" class="btn dropdown-toggle" ng-options="msg(c) for c in operators(filter.eventParameter)">
+                                            <div  ng-class="cssClass(filter.operator)" class="btn-group">
+                                                <select ng-disabled="isDisabled(filter.navigationOperator)" ng-model="filter.operator" class="btn dropdown-toggle" ng-options="msg(c) for c in operators(filter.eventParameter)" required>
                                                     <option value="">{{msg('info.filter.select')}}</option>
                                                 </select>
                                             </div>
-                                            <input ng-model="filter.expression" ng-show="filter.operator!='exist'" type="text" value=""/>
-                                            <input type="button" ng-click="filters.splice($index, 1)" value="X"/>
+                                            <div ng-class="cssClass(filter.expression)">
+                                                <input ng-disabled="isDisabled(filter.operator)" ng-model="filter.expression" ng-show="filter.operator!='exist'" type="text" value="" ng-required="filter.operator!='exist'"/>
+                                            </div>
+                                            <div class="control-group">
+                                                <input type="button" ng-click="filters.splice($index, 1)" value="X"/>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
 
                                 <input type="button" ng-click="addFilter()" value="Add Another Filter">
                             </div>
+                            </form>
                         </div>
                     </div>
                     <!------------------------  Description  ------------------------->
@@ -291,15 +297,15 @@
                     <div ng-hide="task._id">
                         <p class="pagination-centered">{{msg('info.addSave')}}</p>
                         <div class="control-group pagination-centered inside">
-                            <a ng-click="save(true)" class="btn btn-primary"> {{msg('button.saveAndEnabled')}}</a>
-                            <a ng-click="save(false)" class="btn btn-success"> {{msg('button.save')}}</a>
+                            <a ng-disabled="validateForm()" ng-click="save(true)" class="btn btn-primary"> {{msg('button.saveAndEnabled')}}</a>
+                            <a ng-disabled="validateForm()" ng-click="save(false)" class="btn btn-success"> {{msg('button.save')}}</a>
                             <a href="#/task/" class="btn"> {{msg('button.cancel')}}</a>
                         </div>
                     </div>
                     <div ng-show="task._id">
                         <p class="pagination-centered">{{msg('info.editSave')}}</p>
                         <div class="control-group pagination-centered inside">
-                            <a ng-click="save(task.enabled)" class="btn btn-success"> {{msg('button.save')}}</a>
+                            <a ng-disabled="validateForm()" ng-click="save(task.enabled)" class="btn btn-success"> {{msg('button.save')}}</a>
                             <a href="#/task/" class="btn"> {{msg('button.cancel')}}</a>
                         </div>
                     </div>

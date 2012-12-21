@@ -135,14 +135,16 @@ function ManageTaskCtrl($scope, Channels, Tasks, $routeParams, $http) {
                 }
 
                 $scope.filters = [];
-                for (i = 0; i<$scope.task.filters.length; i += 1) {
-                    for (var j = 0; j <  $scope.selectedTrigger.eventParameters.length; j+=1) {
-                        if ( $scope.selectedTrigger.eventParameters[j].displayName==$scope.task.filters[i].eventParameter.displayName) {
-                            $scope.task.filters[i].eventParameter=$scope.selectedTrigger.eventParameters[j];
-                            break;
+                if ($scope.task.filters) {
+                    for (i = 0; i<$scope.task.filters.length; i += 1) {
+                        for (var j = 0; j <  $scope.selectedTrigger.eventParameters.length; j+=1) {
+                            if ( $scope.selectedTrigger.eventParameters[j].displayName==$scope.task.filters[i].eventParameter.displayName) {
+                                $scope.task.filters[i].eventParameter=$scope.selectedTrigger.eventParameters[j];
+                                break;
+                            }
                         }
+                        $scope.filters.push($scope.task.filters[i]);
                     }
-                    $scope.filters.push($scope.task.filters[i]);
                 }
             });
         }
@@ -272,6 +274,32 @@ function ManageTaskCtrl($scope, Channels, Tasks, $routeParams, $http) {
 
         return filterParameter;
     }
+
+    $scope.validateForm = function() {
+        if ($scope.filterForm.$invalid && $scope.filters.length != 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    $scope.isDisabled = function(prop) {
+        if(!prop) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    $scope.cssClass = function(prop) {
+            var msg = 'control-group';
+
+            if (!prop) {
+                msg = msg.concat(' error');
+            }
+
+            return msg;
+        }
 }
 
 function LogCtrl($scope, Tasks, Activities, $routeParams) {
