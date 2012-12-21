@@ -71,7 +71,7 @@ public class TaskTriggerHandler {
         if (trigger != null) {
             for (Task task : taskService.findTasksForTrigger(trigger)) {
                 if (!task.isEnabled()) {
-                    logOmittedTask(task, new TaskException("Task is disabled"));
+                    logOmittedTask(task, new Exception("Task is disabled"));
                     continue;
                 }
 
@@ -90,14 +90,14 @@ public class TaskTriggerHandler {
                 String subject = action.getSubject();
 
                 if (StringUtils.isBlank(subject)) {
-                    TaskException taskException = new TaskException("error.actionWithoutSubject", "error.actionWithoutSubject");
-                    registerError(task, taskException);
-                    logOmittedTask(task, taskException);
+                    TaskException exception = new TaskException("error.actionWithoutSubject");
+                    registerError(task, exception);
+                    logOmittedTask(task, exception);
                     continue;
                 }
 
                 if (task.hasFilters() && !checkFilters(task.getFilters(), triggerEvent.getParameters())) {
-                    logOmittedTask(task, new TaskException("Filter criteria not met for task"));
+                    logOmittedTask(task, new Exception("Filter criteria not met for task"));
                     continue;
                 }
 
@@ -268,7 +268,7 @@ public class TaskTriggerHandler {
         }
     }
 
-    private void logOmittedTask(Task task, TaskException e) {
+    private void logOmittedTask(Task task, Throwable e) {
         if (LOG.isDebugEnabled()) {
             LOG.debug(String.format("Omitted task with ID: %s because: ", task.getId()), e);
         }
