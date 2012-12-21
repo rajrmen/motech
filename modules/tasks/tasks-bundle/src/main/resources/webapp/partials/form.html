@@ -101,17 +101,33 @@
                             <div class="accordion" id="accordion1">
                                 <div class="accordion-group">
                                     <div class="accordion-heading">
-                                        <a class="accordion-toggle inbox-header" data-toggle="collapse" data-parent="#accordion1" href="#collapse1">
+                                        <a class="accordion-toggle inbox-header" expandaccordion data-toggle="collapse" data-parent="#accordion1" href="#collapse1">
                                             <i class="icon-chevron-right"></i> {{msg('subsection.IncludeAdditionalData')}}
                                         </a>
-                                        <div id="collapse1" class="accordion-body collapse">
-                                            <div class="accordion-inner">
+                                    </div>
+                                    <div id="collapse1" class="accordion-body collapse">
+                                        <div class="accordion-inner">
+                                            <div class="control-group">
+                                                <label class="control-label">Source </label>
+                                                <div class="controls">
+                                                    <div class="btn-group">
+                                                        <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+                                                            MRS
+                                                            <span class="caret"></span>
+                                                        </a>
+                                                        <ul class="dropdown-menu">
+                                                            <li><a><i></i> 1</a></li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="section">
                                                 <div class="control-group">
-                                                    <label class="control-label">Source </label>
+                                                    <label class="control-label">Object </label>
                                                     <div class="controls">
                                                         <div class="btn-group">
                                                             <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-                                                                MRS
+                                                                Patient
                                                                 <span class="caret"></span>
                                                             </a>
                                                             <ul class="dropdown-menu">
@@ -120,77 +136,61 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="section">
-                                                    <div class="control-group">
-                                                        <label class="control-label">Object </label>
-                                                        <div class="controls">
-                                                            <div class="btn-group">
-                                                                <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-                                                                    Patient
-                                                                    <span class="caret"></span>
-                                                                </a>
-                                                                <ul class="dropdown-menu">
-                                                                    <li><a><i></i> 1</a></li>
-                                                                </ul>
-                                                            </div>
+                                                <div class="control-group">
+                                                    <label class="control-label">Lookup by </label>
+                                                    <div class="controls">
+                                                        <div class="btn-group">
+                                                            <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+                                                                ExternalID
+                                                                <span class="caret"></span>
+                                                            </a>
+                                                            <ul class="dropdown-menu">
+                                                                <li><a><i></i> 1</a></li>
+                                                            </ul>
                                                         </div>
-                                                    </div>
-                                                    <div class="control-group">
-                                                        <label class="control-label">Lookup by </label>
-                                                        <div class="controls">
-                                                            <div class="btn-group">
-                                                                <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-                                                                    ExternalID
-                                                                    <span class="caret"></span>
-                                                                </a>
-                                                                <ul class="dropdown-menu">
-                                                                    <li><a><i></i> 1</a></li>
-                                                                </ul>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="control-group move-element">
-                                                        <p><strong>Object Fields</strong></p>
-                                                        <span class="badge badge-important">FullName</span>
-                                                        <span class="badge badge-important">Gander</span>
-                                                        <span class="badge badge-important">DOB</span>
-                                                        <span class="badge badge-important">PhoneNumber</span>
                                                     </div>
                                                 </div>
-                                                <div class="section">
-                                                    <div class="control-group">
-                                                        <label class="control-label">Object </label>
-                                                        <div class="controls">
-                                                            <div class="btn-group">
-                                                                <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-                                                                    Facility
-                                                                    <span class="caret"></span>
-                                                                </a>
-                                                                <ul class="dropdown-menu">
-                                                                    <li><a><i></i> 1</a></li>
-                                                                </ul>
-                                                            </div>
+                                                <div class="control-group move-element">
+                                                    <p><strong>Object Fields</strong></p>
+                                                    <span class="badge badge-important">FullName</span>
+                                                    <span class="badge badge-important">Gander</span>
+                                                    <span class="badge badge-important">DOB</span>
+                                                    <span class="badge badge-important">PhoneNumber</span>
+                                                </div>
+                                            </div>
+                                            <div class="section">
+                                                <div class="control-group">
+                                                    <label class="control-label">Object </label>
+                                                    <div class="controls">
+                                                        <div class="btn-group">
+                                                            <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+                                                                Facility
+                                                                <span class="caret"></span>
+                                                            </a>
+                                                            <ul class="dropdown-menu">
+                                                                <li><a><i></i> 1</a></li>
+                                                            </ul>
                                                         </div>
                                                     </div>
-                                                    <div class="control-group">
-                                                        <label class="control-label">Lookup by </label>
-                                                        <div class="controls">
-                                                            <div class="btn-group">
-                                                                <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-                                                                    FacilityID
-                                                                    <span class="caret"></span>
-                                                                </a>
-                                                                <ul class="dropdown-menu">
-                                                                    <li><a><i></i> 1</a></li>
-                                                                </ul>
-                                                            </div>
+                                                </div>
+                                                <div class="control-group">
+                                                    <label class="control-label">Lookup by </label>
+                                                    <div class="controls">
+                                                        <div class="btn-group">
+                                                            <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+                                                                FacilityID
+                                                                <span class="caret"></span>
+                                                            </a>
+                                                            <ul class="dropdown-menu">
+                                                                <li><a><i></i> 1</a></li>
+                                                            </ul>
                                                         </div>
                                                     </div>
-                                                    <div class="control-group move-element">
-                                                        <p><strong>Object Fields</strong></p>
-                                                        <span class="badge badge-warning">FacilityName</span>
-                                                        <span class="badge badge-warning">Address</span>
-                                                    </div>
+                                                </div>
+                                                <div class="control-group move-element">
+                                                    <p><strong>Object Fields</strong></p>
+                                                    <span class="badge badge-warning">FacilityName</span>
+                                                    <span class="badge badge-warning">Address</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -228,64 +228,65 @@
                     <!------------------------  Filter  ------------------------>
                     <div class="accordion-group">
                         <div class="accordion-heading">
-                            <a class="accordion-toggle inbox-header" data-toggle="collapse" data-parent="#accordion2" href="#collapse21">
+                            <a class="accordion-toggle inbox-header" expandaccordion data-toggle="collapse" data-parent="#accordion2" href="#collapse21">
                                 <i  class="icon-chevron-right"></i> {{msg('section.filters')}}
                             </a>
                         </div>
                         <div id="collapse21" ng-class="{true:'collapse in', false:'collapse'}[filters.length!=0]" class="accordion-body ">
-                            <form id="filtersForm" name="filterForm" class="form-horizontal" novalidate>
                             <div class="accordion-inner">
-                                <div class="pagination-centered">
-                                    <p>{{msg('info.filter.title')}}</p>
-                                    <p><strong>{{msg('info.filter.run')}}</strong></p>
+                                <form id="filtersForm" name="filterForm" class="form-horizontal" novalidate>
+                                    <div class="pagination-centered">
+                                        <p>{{msg('info.filter.title')}}</p>
+                                        <p><strong>{{msg('info.filter.run')}}</strong></p>
 
-                                    <div ng-repeat="filter in filters">
-                                        <div class="form-inline">
-                                            <label><i class="icon icon-plus"></i> {{msg('info.if')}} {{selectedTrigger.displayName}}</label>
-                                            <div ng-class="cssClass(filter.eventParameter)" class="btn-group">
-                                                <select ng-model="filter.eventParameter" class="btn dropdown-toggle" ng-options="c.displayName for c in selectedTrigger.eventParameters" required>
-                                                    <option value="">{{msg('info.filter.select')}}</option>
-                                                </select>
-                                            </div>
-                                            <div ng-class="cssClass(filter.navigationOperator)" class="btn-group">
-                                                <select ng-disabled="isDisabled(filter.eventParameter)" ng-model="filter.navigationOperator" class="btn dropdown-toggle" required>
-                                                    <option value="">{{msg('info.filter.select')}}</option>
-                                                    <option value="true" ng-selected="filter.navigationOperator==true">{{msg('info.filter.is')}}</option>
-                                                    <option value="false" ng-selected="filter.navigationOperator==false">{{msg('info.filter.isNot')}}</option>
-                                                </select>
-                                            </div>
-                                            <div  ng-class="cssClass(filter.operator)" class="btn-group">
-                                                <select ng-disabled="isDisabled(filter.navigationOperator)" ng-model="filter.operator" class="btn dropdown-toggle" ng-options="msg(c) for c in operators(filter.eventParameter)" required>
-                                                    <option value="">{{msg('info.filter.select')}}</option>
-                                                </select>
-                                            </div>
-                                            <div ng-class="cssClass(filter.expression)">
-                                                <input ng-disabled="isDisabled(filter.operator)" ng-model="filter.expression" ng-show="filter.operator!='exist'" type="text" value="" ng-required="filter.operator!='exist'"/>
-                                            </div>
-                                            <div class="control-group">
-                                                <input type="button" ng-click="filters.splice($index, 1)" value="X"/>
+                                        <div ng-repeat="filter in filters">
+                                            <div class="form-inline">
+                                                <label><i class="icon icon-plus"></i> {{msg('info.if')}} {{selectedTrigger.displayName}}</label>
+                                                <div ng-class="cssClass(filter.eventParameter)" class="btn-group">
+                                                    <select ng-model="filter.eventParameter" class="btn dropdown-toggle" ng-options="c.displayName for c in selectedTrigger.eventParameters" required>
+                                                        <option value="">{{msg('info.filter.select')}}</option>
+                                                    </select>
+                                                </div>
+                                                <div ng-class="cssClass(filter.navigationOperator)" class="btn-group">
+                                                    <select ng-disabled="isDisabled(filter.eventParameter)" ng-model="filter.navigationOperator" class="btn dropdown-toggle" required>
+                                                        <option value="">{{msg('info.filter.select')}}</option>
+                                                        <option value="true" ng-selected="filter.navigationOperator==true">{{msg('info.filter.is')}}</option>
+                                                        <option value="false" ng-selected="filter.navigationOperator==false">{{msg('info.filter.isNot')}}</option>
+                                                    </select>
+                                                </div>
+                                                <div  ng-class="cssClass(filter.operator)" class="btn-group">
+                                                    <select ng-disabled="isDisabled(filter.navigationOperator)" ng-model="filter.operator" class="btn dropdown-toggle" ng-options="msg(c) for c in operators(filter.eventParameter)" required>
+                                                        <option value="">{{msg('info.filter.select')}}</option>
+                                                    </select>
+                                                </div>
+                                                <div ng-class="cssClass(filter.expression)">
+                                                    <input ng-disabled="isDisabled(filter.operator)" ng-model="filter.expression" ng-show="filter.operator!='exist'" type="text" value="" ng-required="filter.operator!='exist'"/>
+                                                </div>
+                                                <div class="control-group">
+                                                    <input type="button" ng-click="filters.splice($index, 1)" value="X"/>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-
-                                <input type="button" ng-click="addFilter()" value="Add Another Filter">
+                                    <div class="btn-group">
+                                        <button class="btn btn-success" ng-click="addFilter()"><i class="icon icon-plus"></i> {{msg('button.addAnotherFilter')}}</button>
+                                    </div>
+                                </form>
                             </div>
-                            </form>
                         </div>
                     </div>
                     <!------------------------  Description  ------------------------->
                     <div class="accordion-group">
                         <div class="accordion-heading">
-                            <a class="accordion-toggle inbox-header" data-toggle="collapse" data-parent="#accordion2" href="#collapse22">
+                            <a class="accordion-toggle inbox-header" expandaccordion data-toggle="collapse" data-parent="#accordion2" href="#collapse22">
                                 <i class="icon-chevron-right"></i> {{msg('section.taskDescription')}}
                             </a>
                         </div>
                         <div id="collapse22" class="accordion-body collapse in">
                             <div class="accordion-inner">
                                 <div class="pagination-centered">
-                                    <p>{{msg('info.taskDescription')}}</p>
-                                    <textarea class="span6" cols="3" ng-model="task.description"></textarea>
+                                    <p class="pagination-centered spn9 margin-center">{{msg('info.taskDescription')}}</p>
+                                    <textarea class="span5" cols="3" ng-model="task.description"></textarea>
                                 </div>
                             </div>
                         </div>
@@ -293,9 +294,9 @@
                 </div>
                 <!------------------------  Save  ------------------------>
                 <div class="control-group inside">
-                    <h4 class="pagination-centered">{{msg('section.save')}}</h4>
+                    <h4 class="margin-center pagination-centered spn9">{{msg('section.save')}}</h4>
                     <div ng-hide="task._id">
-                        <p class="pagination-centered">{{msg('info.addSave')}}</p>
+                        <p class="pagination-centered spn9 margin-center">{{msg('info.addSave')}}</p>
                         <div class="control-group pagination-centered inside">
                             <a ng-disabled="validateForm()" ng-click="save(true)" class="btn btn-primary"> {{msg('button.saveAndEnabled')}}</a>
                             <a ng-disabled="validateForm()" ng-click="save(false)" class="btn btn-success"> {{msg('button.save')}}</a>
@@ -303,7 +304,7 @@
                         </div>
                     </div>
                     <div ng-show="task._id">
-                        <p class="pagination-centered">{{msg('info.editSave')}}</p>
+                        <p class="margin-center pagination-centered spn9">{{msg('info.editSave')}}</p>
                         <div class="control-group pagination-centered inside">
                             <a ng-disabled="validateForm()" ng-click="save(task.enabled)" class="btn btn-success"> {{msg('button.save')}}</a>
                             <a href="#/task/" class="btn"> {{msg('button.cancel')}}</a>
