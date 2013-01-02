@@ -249,10 +249,8 @@
                                                         </select>
                                                     </span>
                                                     <span ng-class="cssClass(filter.navigationOperator)" class="">
-                                                        <select ng-disabled="isDisabled(filter.eventParameter)" ng-model="filter.navigationOperator" class="input-medium" required>
+                                                        <select ng-disabled="isDisabled(filter.eventParameter)" ng-model="filter.navigationOperator" ng-options="msg(c.key) for c in navigationOperators" class="input-medium" required>
                                                             <option value="">{{msg('info.filter.select')}}</option>
-                                                            <option value="true" ng-selected="filter.navigationOperator==true">{{msg('info.filter.is')}}</option>
-                                                            <option value="false" ng-selected="filter.navigationOperator==false">{{msg('info.filter.isNot')}}</option>
                                                         </select>
                                                     </span>
                                                     <span ng-class="cssClass(filter.operator)" class="">
