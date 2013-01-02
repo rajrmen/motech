@@ -105,7 +105,7 @@
                                             <i class="icon-chevron-right"></i> {{msg('subsection.IncludeAdditionalData')}}
                                         </a>
                                     </div>
-                                    <div id="collapse1" class="accordion-body collapse">
+                                    <div id="collapse1" class="accordion-body collapse stripes-bg">
                                         <div class="accordion-inner">
                                             <div class="control-group">
                                                 <label class="control-label">Source </label>
@@ -224,7 +224,7 @@
                     </div>
                      <div class="clearfix"></div>
                 </div>
-                <div class="accordion" id="accordion2">
+                <div class="accordion" id="accordion2 inside">
                     <!------------------------  Filter  ------------------------>
                     <div class="accordion-group">
                         <div class="accordion-heading">
@@ -232,7 +232,7 @@
                                 <i  class="icon-chevron-right"></i> {{msg('section.filters')}}
                             </a>
                         </div>
-                        <div id="collapse21" ng-class="{true:'collapse in', false:'collapse'}[filters.length!=0]" class="accordion-body ">
+                        <div id="collapse21" ng-class="{true:'collapse in', false:'collapse'}[filters.length!=0]" class="accordion-body stripes-bg">
                             <div class="accordion-inner">
                                 <form id="filtersForm" name="filterForm" class="form-horizontal" novalidate>
                                     <div class="margin-center">
@@ -280,7 +280,7 @@
                                 <i class="icon-chevron-right"></i> {{msg('section.taskDescription')}}
                             </a>
                         </div>
-                        <div id="collapse22" class="accordion-body collapse in">
+                        <div id="collapse22" class="accordion-body collapse in stripes-bg">
                             <div class="accordion-inner">
                                 <div class="pagination-centered">
                                     <p class="pagination-centered spn9 margin-center">{{msg('info.taskDescription')}}</p>
