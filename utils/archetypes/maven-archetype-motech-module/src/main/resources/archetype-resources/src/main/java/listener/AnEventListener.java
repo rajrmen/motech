@@ -1,4 +1,4 @@
-package ${groupId}.${artifactId}.listener;
+package ${groupId}.listener;
 
 import org.motechproject.event.MotechEvent;
 import org.motechproject.event.listener.annotations.MotechListener;

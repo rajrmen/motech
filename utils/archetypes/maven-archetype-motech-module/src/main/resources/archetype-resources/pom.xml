@@ -6,7 +6,7 @@
   <version>${version}</version>
   <packaging>bundle</packaging>
   <properties>
-      <motech.version>0.16-SNAPSHOT</motech.version>
+      <motech.version>0.16</motech.version>
   </properties>
     <dependencies>
         <!-- to configure your module properties -->
@@ -34,6 +34,11 @@
             <version>${motech.version}</version>
         </dependency>
         <!-- to build your ui on motech's server console -->
+        <dependency>
+            <groupId>org.motechproject</groupId>
+            <artifactId>motech-platform-server-bundle</artifactId>
+            <version>${motech.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.motechproject</groupId>
             <artifactId>motech-platform-server-bundle</artifactId>
@@ -112,4 +117,12 @@
         </plugins>
 
     </build>
+
+    <repositories>
+        <repository>
+            <id>motech-repo</id>
+            <name>MOTECH Maven Repository</name>
+            <url>http://nexus.motechproject.org/content/repositories/public</url>
+        </repository>
+    </repositories>
 </project>
