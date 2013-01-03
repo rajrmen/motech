@@ -253,9 +253,9 @@ public class MotechSchedulerServiceImpl extends MotechObject implements MotechSc
     public void scheduleRepeatingJob(RepeatingSchedulableJob repeatingSchedulableJob) {
         MotechEvent motechEvent = assertArgumentNotNull(repeatingSchedulableJob);
 
-        Date jobStartDate = repeatingSchedulableJob.getStartTime();
-        Date jobEndDate = repeatingSchedulableJob.getEndTime();
-        assertArgumentNotNull("Job start date", jobStartDate);
+        Date jobStartTime = repeatingSchedulableJob.getStartTime();
+        Date jobEndTime = repeatingSchedulableJob.getEndTime();
+        assertArgumentNotNull("Job start date", jobStartTime);
 
         long repeatIntervalInMilliSeconds = repeatingSchedulableJob.getRepeatIntervalInMilliSeconds();
         if (repeatIntervalInMilliSeconds == 0) {
@@ -286,7 +286,7 @@ public class MotechSchedulerServiceImpl extends MotechObject implements MotechSc
         } else {
             if (repeatingSchedulableJob.getRepeatCount() != null) {
                 final double half = 0.5;
-                jobEndDate = new Date((long) (repeatingSchedulableJob.getStartTime().getTime() + repeatIntervalInMilliSeconds * (repeatingSchedulableJob.getRepeatCount() + half)));
+                jobEndTime = new Date((long) (repeatingSchedulableJob.getStartTime().getTime() + repeatIntervalInMilliSeconds * (repeatingSchedulableJob.getRepeatCount() + half)));
             }
             scheduleBuilder = CalendarIntervalScheduleBuilder.calendarIntervalSchedule()
                     .withIntervalInSeconds((int) (repeatIntervalInMilliSeconds / MILLISECOND))
@@ -297,30 +297,34 @@ public class MotechSchedulerServiceImpl extends MotechObject implements MotechSc
                 .withIdentity(triggerKey(jobId.value(), JOB_GROUP_NAME))
                 .forJob(jobDetail)
                 .withSchedule(scheduleBuilder)
-                .startAt(jobStartDate)
-                .endAt(jobEndDate)
+                .startAt(jobStartTime)
+                .endAt(jobEndTime)
                 .build();
 
-        if (repeatingSchedulableJob.isIgnorePastFiresAtStart()) {
-            List<Date> triggers = TriggerUtils.computeFireTimes((OperableTrigger) trigger, null, Integer.MAX_VALUE);
-            int nextTrigger = getFirstTriggerNotInPast(triggers);
-            if (nextTrigger != -1) {
+        DateTime now = now();
+        if (repeatingSchedulableJob.isIgnorePastFiresAtStart() && newDateTime(jobStartTime).isBefore(now)) {
 
-                if (scheduleBuilder instanceof SimpleScheduleBuilder) {
-                    ((SimpleScheduleBuilder) scheduleBuilder).withRepeatCount(triggers.size() - nextTrigger - 1);
+            List<Date> pastTriggers = TriggerUtils.computeFireTimesBetween((OperableTrigger) trigger, null, jobStartTime, now.toDate());
+
+            if (pastTriggers.size() > 0) {
+
+                if (scheduleBuilder instanceof SimpleScheduleBuilder && repeatingSchedulableJob.getRepeatCount() != null) {
+                    ((SimpleScheduleBuilder) scheduleBuilder).withRepeatCount(repeatingSchedulableJob.getRepeatCount() - pastTriggers.size());
                 }
 
-                ((OperableTrigger) trigger).setStartTime(triggers.get(nextTrigger));
+                List<Date> pastTriggersPlusOne = TriggerUtils.computeFireTimes((OperableTrigger) trigger, null, pastTriggers.size() + 1);
+
+                Date newStartTime = new Date(pastTriggersPlusOne.get(pastTriggersPlusOne.size() - 1).getTime());
+
                 trigger = newTrigger()
                         .withIdentity(triggerKey(jobId.value(), JOB_GROUP_NAME))
                         .forJob(jobDetail)
                         .withSchedule(scheduleBuilder)
-                        .startAt(triggers.get(nextTrigger))
-                        .endAt(jobEndDate)
+                        .startAt(newStartTime)
+                        .endAt(jobEndTime)
                         .build();
             }
         }
-
         scheduleJob(jobDetail, trigger);
     }
 
@@ -349,18 +353,6 @@ public class MotechSchedulerServiceImpl extends MotechObject implements MotechSc
             return simpleSchedule.withMisfireHandlingInstructionNowWithRemainingCount();
         }
         return simpleSchedule;
-    }
-
-    private int getFirstTriggerNotInPast(List<Date> dates) {
-        DateTime now = DateUtil.now();
-        for (int i = 0; i < dates.size(); i++) {
-            Date date = dates.get(i);
-
-            if (newDateTime(date).isAfter(now)) {
-                return i;
-            }
-        }
-        return -1;
     }
 
     @Override
