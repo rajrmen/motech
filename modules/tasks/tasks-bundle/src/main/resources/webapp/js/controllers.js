@@ -219,8 +219,8 @@ function ManageTaskCtrl($scope, Channels, Tasks, $routeParams, $http) {
         $scope.task.actionInputFields = {};
         $scope.task.enabled = enabled;
 
+        $scope.task.filters = [];
         if ($scope.filters.length!=0) {
-            $scope.task.filters = [];
             for (i = 0; i < $scope.filters.length; i += 1) {
                 value = $scope.filters[i];
                 value.navigationOperator = $scope.filters[i].navigationOperator.value;

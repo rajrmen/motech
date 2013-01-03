@@ -29,12 +29,6 @@
             <artifactId>motech-event-aggregation</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>motech-platform-server-bundle</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
         <!-- OSGI dependencies -->
         <dependency>
             <groupId>javax.servlet</groupId>
@@ -60,6 +54,8 @@
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
+                        <Context-Path>/event-aggregation/api</Context-Path>
+                        <Context-File>META-INF/osgi/applicationEventAggregationBundle.xml</Context-File>
                         <Export-Package>
                             org.motechproject.event.aggregation.model.schedule
                         </Export-Package>
