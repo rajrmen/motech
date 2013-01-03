@@ -97,7 +97,7 @@ public class TaskTriggerHandler {
                 }
 
                 if (task.hasFilters() && !checkFilters(task.getFilters(), triggerEvent.getParameters())) {
-                    logOmittedTask(task, new Exception("Filter criteria not met for task"));
+                    logOmittedTask(task, new Exception("Filter criteria not met"));
                     continue;
                 }
 
