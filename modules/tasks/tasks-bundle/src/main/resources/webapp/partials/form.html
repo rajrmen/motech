@@ -229,7 +229,7 @@
                     <div class="accordion-group">
                         <div class="accordion-heading">
                             <a class="accordion-toggle inbox-header" expandaccordion data-toggle="collapse" data-parent="#accordion2" href="#collapse21">
-                                <i  class="icon-chevron-right"></i> {{msg('section.filters')}}
+                                <i ng-class="{true:'icon-chevron-down', false:'icon-chevron-right'}[filters.length!=0]"></i>&nbsp;{{msg('section.filters')}}
                             </a>
                         </div>
                         <div id="collapse21" ng-class="{true:'collapse in', false:'collapse'}[filters.length!=0]" class="accordion-body stripes-bg">
@@ -277,10 +277,10 @@
                     <div class="accordion-group">
                         <div class="accordion-heading">
                             <a class="accordion-toggle inbox-header" expandaccordion data-toggle="collapse" data-parent="#accordion2" href="#collapse22">
-                                <i class="icon-chevron-right"></i> {{msg('section.taskDescription')}}
+                                <i ng-class="{true:'icon-chevron-down', false:'icon-chevron-right'}[task.description!= null || task.description.length() > 0]"></i>&nbsp;{{msg('section.taskDescription')}}
                             </a>
                         </div>
-                        <div id="collapse22" class="accordion-body collapse in stripes-bg">
+                        <div id="collapse22" class="accordion-body stripes-bg" ng-class="{true:'collapse in', false:'collapse'}[task.description!= null || task.description.length() > 0]">
                             <div class="accordion-inner">
                                 <div class="centered">
                                     <p class="centered spn9 margin-center">{{msg('info.taskDescription')}}</p>
