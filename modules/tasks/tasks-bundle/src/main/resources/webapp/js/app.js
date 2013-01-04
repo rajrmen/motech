@@ -74,12 +74,40 @@ angular.module('motech-tasks', ['motech-dashboard', 'channelServices', 'taskServ
         link: function (scope, element, attrs) {
             element.droppable({
                 drop: function (event, ui) {
-                    var dragIndex, dropIndex, channelName, moduleName, moduleVersion,
-                        parent, value, position, eventKey, dragType, dropType;
+                    var channelName, moduleName, moduleVersion,
+                        parent, value, position, eventKey, dragType, dropType, dropElement;
+
+                    var position = function(dropElement, dragElement) {
+                        var sel, range;
+                        if (window.getSelection) {
+                            sel = window.getSelection();
+                            if (sel.getRangeAt && sel.rangeCount) {
+                                range = sel.getRangeAt(0);
+                                range.deleteContents();
+                                if (range.commonAncestorContainer.parentNode == dropElement) {
+                                    var el = document.createElement("div");
+                                    el.innerHTML = dragElement[0].outerHTML;
+                                    var frag = document.createDocumentFragment(), node, lastNode;
+                                    while ( (node = el.firstChild) ) {
+                                        lastNode = frag.appendChild(node);
+                                    }
+                                    range.insertNode(frag);
+
+                                    if (lastNode) {
+                                        range = range.cloneRange();
+                                        range.setStartAfter(lastNode);
+                                        range.collapse(true);
+                                        sel.removeAllRanges();
+                                        sel.addRange(range);
+                                    }
+                                }
+                            }
+                        } else if (document.selection && document.selection.type != "Control") {
+                            document.selection.createRange().pasteHTML(dragElement[0].outerHTML);
+                        }
+                    }
 
                     if (angular.element(ui.draggable).hasClass('triggerField') && element.hasClass('actionField')) {
-                        dragIndex = angular.element(ui.draggable).data('index');
-                        dropIndex = angular.element(element).data('index');
                         dragType = angular.element(ui.draggable).data('type');
                         dropType = angular.element(element).data('type');
 
@@ -87,11 +115,13 @@ angular.module('motech-tasks', ['motech-dashboard', 'channelServices', 'taskServ
                             return;
                         }
 
-                        eventKey = '{{' + scope.selectedTrigger.eventParameters[dragIndex].eventKey + '}}';
-                        position = element.caret();
-                        value = scope.selectedAction.eventParameters[dropIndex].value || '';
+                        dropElement = angular.element(element);
+                        var dragElement = angular.element(ui.draggable).clone()
+                        dragElement.css("position", "relative");
+                        dragElement.css("left", "0px");
+                        dragElement.css("top", "0px");
+                        position(dropElement, dragElement)
 
-                        scope.selectedAction.eventParameters[dropIndex].value = value.insert(position, eventKey);
                     } else if (angular.element(ui.draggable).hasClass('task-panel') && (element.hasClass('trigger') || element.hasClass('action'))) {
                         channelName = angular.element(ui.draggable).data('channel-name');
                         moduleName = angular.element(ui.draggable).data('module-name');
@@ -149,4 +179,51 @@ angular.module('motech-tasks', ['motech-dashboard', 'channelServices', 'taskServ
             });
         }
     };
+}).directive('contenteditable', function() {
+    return {
+        restrict: 'A',
+        require: '?ngModel',
+        link: function(scope, element, attrs, ngModel) {
+            var read;
+            if (!ngModel) {
+                return;
+            }
+            ngModel.$render = function() {
+                var container = $('<div></div>');
+                container.html(ngModel.$viewValue);
+                container.find('.editable').attr('contenteditable', true);
+                return element.html(container.html());
+            };
+
+            element.bind('blur keyup change mouseleave', function() {
+                if (ngModel.$viewValue !== $.trim(element.html())) {
+                    return scope.$apply(read);
+                }
+            });
+
+            return read = function() {
+                var container = $('<div></div>');
+                container.html($.trim(element.html()));
+                container.find('.editable').attr('contenteditable', false);
+                return ngModel.$setViewValue(container.html());
+            };
+        }
+    }
+}).directive('editableContent', function($compile) {
+   return {
+       restrict: 'E',
+       transclude: true,
+       scope: {
+           data: '='
+       },
+       link: function(scope, elm, attrs) {
+           elm.append($compile(
+               '<div contenteditable ui-if="data.type == \'TEXTAREA\'" rows="5" ng-model="data.value" droppable class="actionField input-block-level" data-index="{{$index}}" data-type="{{data.type}}"><span ng-bind-html-unsafe="data.value" ng-model="data.value" class="html"><h1 contentEditable="false"><span class="editable"></span></h1></span></div>' +
+               '<div contenteditable ui-if="data.type == \'NUMBER\'" type="text" ng-model="data.value" droppable class="actionField input-block-level" data-index="{{$index}}" data-type="{{data.type}}" integer placeholder="{{msg(\'placeholder.numberOnly\')}}"><span ng-bind-html-unsafe="data.value" ng-model="data.value" class="html"><h1 contentEditable="false"><span class="editable"></span></h1></span></div>' +
+               '<div contenteditable ui-if="data.type == \'UNICODE\'" type="text" ng-model="data.value" droppable class="actionField input-block-level" data-index="{{$index}}" data-type="{{data.type}}"><span ng-bind-html-unsafe="data.value" ng-model="data.value" class="html"><h1 contentEditable="false"><span class="editable">Title</span></h1></span></div>'
+           )(scope));
+       }
+
+   }
+
 });

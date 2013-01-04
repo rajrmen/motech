@@ -95,7 +95,7 @@
                                 <p>{{msg('info.dragFieldBuildAction')}}</p>
                             </div>
                             <div class="control-group move-element">
-                                <span class="badge badge-info triggerField" draggable ng-repeat="i in selectedTrigger.eventParameters" data-index="{{$index}}" data-type="{{i.type}}">{{i.displayName}}</span>
+                                <span contenteditable="false" class="badge badge-info triggerField" draggable ng-repeat="i in selectedTrigger.eventParameters" data-index="{{$index}}" data-type="{{i.type}}">{{i.displayName}}</span>
                             </div>
                             <!------------------  Include Additional Data  ------------------------>
                             <div class="accordion" id="accordion1">
@@ -214,11 +214,11 @@
                             <div class="control-group" ng-show="selectedAction.description">
                                 <label>{{selectedAction.description}}</label>
                             </div>
+
                             <div class="control-group" ng-repeat="i in selectedAction.eventParameters">
                                 <label>{{i.displayName}}</label>
-                                <textarea ui-if="i.type == 'TEXTAREA'" rows="5" ng-model="i.value" droppable class="actionField input-block-level" data-index="{{$index}}" data-type="{{i.type}}"></textarea>
-                                <input ui-if="i.type == 'NUMBER'" type="text" ng-model="i.value" droppable class="actionField input-block-level" data-index="{{$index}}" data-type="{{i.type}}" integer placeholder="{{msg('placeholder.numberOnly')}}"/>
-                                <input ui-if="i.type == 'UNICODE'" type="text" ng-model="i.value" droppable class="actionField input-block-level" data-index="{{$index}}" data-type="{{i.type}}"/>
+                                <editable-content data="i"></editable-content>
+
                             </div>
                         </form>
                     </div>
