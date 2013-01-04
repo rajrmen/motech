@@ -16,7 +16,7 @@ import static java.util.Arrays.asList;
 public class TasksBundleIT extends BaseOsgiIT {
     private static final Integer TRIES_COUNT = 50;
 
-    public void testChannelService() {
+    public void testChannelService() throws InterruptedException {
         ChannelService service = getService(ChannelService.class);
 
         Channel fromFile;
@@ -25,6 +25,7 @@ public class TasksBundleIT extends BaseOsgiIT {
         do {
             fromFile = service.getChannel("test", "test", "0.15");
             ++channelTries;
+            Thread.sleep(500);
         } while (fromFile == null && channelTries < TRIES_COUNT);
 
         assertNotNull(fromFile);
@@ -41,7 +42,7 @@ public class TasksBundleIT extends BaseOsgiIT {
         assertNull(fromDB);
     }
 
-    public void testDataProviderService() {
+    public void testDataProviderService() throws InterruptedException {
         DataProviderService service = getService(DataProviderService.class);
 
         DataProvider fromFile;
@@ -50,6 +51,7 @@ public class TasksBundleIT extends BaseOsgiIT {
         do {
             fromFile = service.getProvider("MRS");
             ++dataProviderTries;
+            Thread.sleep(500);
         } while (fromFile == null && dataProviderTries < TRIES_COUNT);
 
         assertNotNull(fromFile);
@@ -76,7 +78,7 @@ public class TasksBundleIT extends BaseOsgiIT {
         return new String[]{"/META-INF/osgi/testApplicationTasksBundle.xml"};
     }
 
-    private <T> T getService(Class<T> clazz) {
+    private <T> T getService(Class<T> clazz) throws InterruptedException {
         ServiceReference serviceReference = findServiceReference(clazz.getName());
         T service = clazz.cast(bundleContext.getService(serviceReference));
 
@@ -85,13 +87,14 @@ public class TasksBundleIT extends BaseOsgiIT {
         return service;
     }
 
-    private ServiceReference findServiceReference(String clazz) {
+    private ServiceReference findServiceReference(String clazz) throws InterruptedException {
         ServiceReference serviceReference;
         int tries = 0;
 
         do {
             serviceReference = bundleContext.getServiceReference(clazz);
             ++tries;
+            Thread.sleep(500);
         } while (serviceReference == null && tries < TRIES_COUNT);
 
         assertNotNull(serviceReference);
