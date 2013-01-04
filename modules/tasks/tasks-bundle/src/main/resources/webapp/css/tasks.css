@@ -13,6 +13,10 @@
     color: #B94A48;
 }
 
+.accordion-inner.task-content {
+    padding: 0;
+}
+
 #accordion1.accordion {
     margin-bottom: 0;
 }
@@ -41,10 +45,6 @@
 
 #accordion1 .control-group.section2 {
     margin-bottom: 10px;
-}
-
-.accordion-body.in:hover {
-   overflow: visible;
 }
 
 .move-element span {
