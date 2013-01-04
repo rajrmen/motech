@@ -13,15 +13,39 @@
     color: #B94A48;
 }
 
+editable-content .actionField.input-block-level {
+    min-height: 30px;
+    width: 100%;
+    padding: 3px 5px;
+    background-color: #FFFFFF;
+    border: 1px solid #CCCCCC;
+    border-radius: 4px;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
+    transition: border 0.2s linear 0s, box-shadow 0.2s linear 0s;
+}
+
+editable-content .actionField.input-block-level:focus {
+    border-color: rgba(82, 168, 236, 0.8);
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(82, 168, 236, 0.6);
+    outline: 0 none;
+}
+
+editable-content .actionField.input-block-level span.badge {
+    margin: 0 2px;
+}
+
 .accordion-inner.task-content {
     padding: 0;
+    border: none;
+    box-shadow: none;
 }
 
 #accordion1.accordion {
     margin-bottom: 0;
 }
 
-#accordion1 .accordion-group, #accordion2 .accordion-group {
+#accordion1 .accordion-group, #accordion2 .accordion-group,
+#accordion3 .accordion-group, #accordion4 .accordion-group {
     border: 1px solid #B2D8F8;
 }
 
