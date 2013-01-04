@@ -9,6 +9,10 @@
         <constructor-arg value="classpath:test-channel.json"/>
     </bean>
 
+    <bean id="dataProviderRegister" class="org.motechproject.tasks.util.DataProviderRegister">
+        <constructor-arg value="classpath:test-data-provider.json"/>
+    </bean>
+
     <bean id="testTasksSettings" class="org.motechproject.server.config.SettingsFacade" autowire="byType">
         <property name="moduleName" value="tasks"/>
     </bean>
@@ -22,8 +26,16 @@
         <constructor-arg ref="testTaskDbConnector"/>
     </bean>
 
+    <bean class="org.motechproject.tasks.repository.AllDataProviders">
+        <constructor-arg ref="testTaskDbConnector"/>
+    </bean>
+
     <osgi:reference id="channelServiceOsgi" interface="org.motechproject.tasks.service.ChannelService">
         <osgi:reference-listener ref="channelRegister" bind-method="registered" unbind-method="unregistered"/>
+    </osgi:reference>
+
+    <osgi:reference id="dataProviderServiceOsgi" interface="org.motechproject.tasks.service.DataProviderService">
+        <osgi:reference-listener ref="dataProviderRegister" bind-method="registered" unbind-method="unregistered"/>
     </osgi:reference>
 
 </beans>

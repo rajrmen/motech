@@ -1,46 +1,29 @@
 package org.motechproject.tasks.osgi;
 
-import org.apache.commons.collections.Predicate;
-import org.motechproject.event.listener.EventListenerRegistryService;
-import org.motechproject.event.listener.EventRelay;
-import org.motechproject.server.config.service.PlatformSettingsService;
 import org.motechproject.tasks.domain.Channel;
+import org.motechproject.tasks.domain.DataProvider;
 import org.motechproject.tasks.repository.AllChannels;
+import org.motechproject.tasks.repository.AllDataProviders;
 import org.motechproject.tasks.service.ChannelService;
+import org.motechproject.tasks.service.DataProviderService;
 import org.motechproject.testing.osgi.BaseOsgiIT;
 import org.osgi.framework.ServiceReference;
 
 import java.util.List;
 
 import static java.util.Arrays.asList;
-import static org.apache.commons.lang.StringUtils.containsIgnoreCase;
 
 public class TasksBundleIT extends BaseOsgiIT {
-    private static final Integer TRIES_COUNT = 15;
+    private static final Integer TRIES_COUNT = 50;
 
-    public void testTasksService() {
-        assertNotNull(bundleContext.getServiceReference(PlatformSettingsService.class.getName()));
-        assertNotNull(bundleContext.getServiceReference(EventListenerRegistryService.class.getName()));
-        assertNotNull(bundleContext.getServiceReference(EventRelay.class.getName()));
-
-        ServiceReference channelServiceOsgi;
-        int channelServiceOsgiTries = 0;
-
-        do {
-            channelServiceOsgi = bundleContext.getServiceReference(ChannelService.class.getName());
-            ++channelServiceOsgiTries;
-        } while (channelServiceOsgi == null && channelServiceOsgiTries < TRIES_COUNT);
-
-        assertNotNull(channelServiceOsgi);
-
-        ChannelService channelService = (ChannelService) bundleContext.getService(channelServiceOsgi);
-        assertNotNull(channelService);
+    public void testChannelService() {
+        ChannelService service = getService(ChannelService.class);
 
         Channel fromFile;
         int channelTries = 0;
 
         do {
-            fromFile = channelService.getChannel("test", "test", "0.15");
+            fromFile = service.getChannel("test", "test", "0.15");
             ++channelTries;
         } while (fromFile == null && channelTries < TRIES_COUNT);
 
@@ -58,6 +41,31 @@ public class TasksBundleIT extends BaseOsgiIT {
         assertNull(fromDB);
     }
 
+    public void testDataProviderService() {
+        DataProviderService service = getService(DataProviderService.class);
+
+        DataProvider fromFile;
+        int dataProviderTries = 0;
+
+        do {
+            fromFile = service.getProvider("MRS");
+            ++dataProviderTries;
+        } while (fromFile == null && dataProviderTries < TRIES_COUNT);
+
+        assertNotNull(fromFile);
+
+        AllDataProviders allDataProviders = getApplicationContext().getBean(AllDataProviders.class);
+        DataProvider fromDB = allDataProviders.byName("MRS");
+
+        assertNotNull(fromDB);
+        assertEquals(fromDB, fromFile);
+
+        allDataProviders.remove(fromDB);
+
+        fromDB = allDataProviders.byName("MRS");
+        assertNull(fromDB);
+    }
+
     @Override
     protected List<String> getImports() {
         return asList("org.motechproject.tasks.util", "org.motechproject.server.config");
@@ -68,17 +76,27 @@ public class TasksBundleIT extends BaseOsgiIT {
         return new String[]{"/META-INF/osgi/testApplicationTasksBundle.xml"};
     }
 
-    private class ContainsPredicate implements Predicate {
-        private String match;
+    private <T> T getService(Class<T> clazz) {
+        ServiceReference serviceReference = findServiceReference(clazz.getName());
+        T service = clazz.cast(bundleContext.getService(serviceReference));
 
-        private ContainsPredicate(String match) {
-            this.match = match;
-        }
+        assertNotNull(service);
 
-        @Override
-        public boolean evaluate(Object object) {
-            return containsIgnoreCase(String.valueOf(object), match);
-        }
+        return service;
+    }
+
+    private ServiceReference findServiceReference(String clazz) {
+        ServiceReference serviceReference;
+        int tries = 0;
+
+        do {
+            serviceReference = bundleContext.getServiceReference(clazz);
+            ++tries;
+        } while (serviceReference == null && tries < TRIES_COUNT);
+
+        assertNotNull(serviceReference);
+
+        return serviceReference;
     }
 
 }

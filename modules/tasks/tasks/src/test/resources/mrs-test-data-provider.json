@@ -1,0 +1,26 @@
+{
+    "name": "MRS",
+    "objects": [
+        {
+            "displayName": "Patient",
+            "type": "org.motechproject.mrs.model.MRSPatient",
+            "fields": ["id", "facilityId", "personId"],
+            "service": "org.motechproject.mrs.services.PatientService",
+            "lookupMethod": "getPatient"
+        },
+        {
+            "displayName": "Person",
+            "type": "org.motechproject.mrs.model.MRSPerson",
+            "fields": ["id", "firstName", "middleName", "lastName", "preferredName", "address", "dateOfBirth", "birthDateEstimated", "age", "gender", "dead", "deathDate"],
+            "service": "org.motechproject.mrs.services.PersonService",
+            "lookupMethod": "getPerson"
+        },
+        {
+            "displayName": "Facility",
+            "type": "org.motechproject.mrs.model.MRSFacility",
+            "fields": ["id", "name", "country", "region", "countyDistrict", "stateProvince"],
+            "service": "org.motechproject.mrs.services.FacilityService",
+            "lookupMethod": "getFacility"
+        }
+    ]
+}
