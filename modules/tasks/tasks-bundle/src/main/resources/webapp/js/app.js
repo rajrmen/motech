@@ -84,7 +84,7 @@ angular.module('motech-tasks', ['motech-dashboard', 'channelServices', 'taskServ
                             if (sel.getRangeAt && sel.rangeCount) {
                                 range = sel.getRangeAt(0);
                                 range.deleteContents();
-                                if (range.commonAncestorContainer.parentNode == dropElement) {
+                                if (range.commonAncestorContainer.parentNode == dropElement[0] || range.commonAncestorContainer == dropElement[0]) {
                                     var el = document.createElement("div");
                                     el.innerHTML = dragElement[0].outerHTML;
                                     var frag = document.createDocumentFragment(), node, lastNode;
