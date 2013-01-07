@@ -1,5 +1,9 @@
 package org.motechproject.tasks.domain;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
+import org.codehaus.jackson.annotate.JsonIgnore;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -7,20 +11,18 @@ import java.util.Objects;
 public class DataProviderObject {
     private String displayName;
     private String type;
-    private List<String> fields;
-    private String service;
-    private String lookupMethod;
+    private List<String> lookupFields;
+    private List<EventParameter> fields;
 
     public DataProviderObject() {
-        this(null, null, new ArrayList<String>(), null, null);
+        this(null, null, new ArrayList<String>(), new ArrayList<EventParameter>());
     }
 
-    public DataProviderObject(String displayName, String type, List<String> fields, String service, String lookupMethod) {
+    public DataProviderObject(String displayName, String type, List<String> lookupFields, List<EventParameter> fields) {
         this.displayName = displayName;
         this.type = type;
+        this.lookupFields = lookupFields;
         this.fields = fields;
-        this.service = service;
-        this.lookupMethod = lookupMethod;
     }
 
     public String getDisplayName() {
@@ -39,28 +41,30 @@ public class DataProviderObject {
         this.type = type;
     }
 
-    public List<String> getFields() {
+    @JsonIgnore
+    public EventParameter getLookupField(final String name) {
+        return (EventParameter) CollectionUtils.find(fields, new Predicate() {
+            @Override
+            public boolean evaluate(Object object) {
+                return ((EventParameter)object).getEventKey().equalsIgnoreCase(name);
+            }
+        });
+    }
+
+    public List<String> getLookupFields() {
+        return lookupFields;
+    }
+
+    public void setLookupFields(List<String> lookupFields) {
+        this.lookupFields = lookupFields;
+    }
+
+    public List<EventParameter> getFields() {
         return fields;
     }
 
-    public void setFields(List<String> fields) {
+    public void setFields(List<EventParameter> fields) {
         this.fields = fields;
-    }
-
-    public String getService() {
-        return service;
-    }
-
-    public void setService(String service) {
-        this.service = service;
-    }
-
-    public String getLookupMethod() {
-        return lookupMethod;
-    }
-
-    public void setLookupMethod(String lookupMethod) {
-        this.lookupMethod = lookupMethod;
     }
 
     @Override
@@ -76,24 +80,22 @@ public class DataProviderObject {
         DataProviderObject that = (DataProviderObject) o;
 
         return Objects.equals(displayName, that.displayName) && Objects.equals(fields, that.fields) &&
-                Objects.equals(lookupMethod, that.lookupMethod) && Objects.equals(service, that.service) &&
-                Objects.equals(type, that.type);
+                Objects.equals(type, that.type) && Objects.equals(lookupFields, that.lookupFields);
     }
 
     @Override
     public int hashCode() {
         int result = displayName != null ? displayName.hashCode() : 0;
         result = 31 * result + (type != null ? type.hashCode() : 0);
+        result = 31 * result + (lookupFields != null ? lookupFields.hashCode() : 0);
         result = 31 * result + (fields != null ? fields.hashCode() : 0);
-        result = 31 * result + (service != null ? service.hashCode() : 0);
-        result = 31 * result + (lookupMethod != null ? lookupMethod.hashCode() : 0);
 
         return result;
     }
 
     @Override
     public String toString() {
-        return String.format("DataProviderObject{displayName='%s', type='%s', fields=%s, service='%s', lookupMethod='%s'}",
-                displayName, type, fields, service, lookupMethod);
+        return String.format("DataProviderObject{displayName='%s', type='%s', lookupFields=%s, fields=%s}",
+                displayName, type, lookupFields, fields);
     }
 }

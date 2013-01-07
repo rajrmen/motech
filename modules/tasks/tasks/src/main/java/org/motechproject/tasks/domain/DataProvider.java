@@ -35,11 +35,11 @@ public class DataProvider extends MotechBaseDataObject {
     }
 
     @JsonIgnore
-    public DataProviderObject getObject(final String name) {
+    public DataProviderObject getObject(final String type) {
         return (DataProviderObject) find(objects, new Predicate() {
             @Override
             public boolean evaluate(Object object) {
-                return ((DataProviderObject) object).getDisplayName().equalsIgnoreCase(name);
+                return ((DataProviderObject) object).getType().equalsIgnoreCase(type);
             }
         });
     }
