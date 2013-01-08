@@ -57,7 +57,7 @@ public class TaskTriggerHandler {
         registerHandler();
     }
 
-    public void handler(final MotechEvent triggerEvent) {
+    public void handle(final MotechEvent triggerEvent) {
         TaskEvent trigger = null;
 
         try {
@@ -114,7 +114,7 @@ public class TaskTriggerHandler {
     }
 
     public final void registerHandlerFor(final String subject) {
-        Method method = ReflectionUtils.findMethod(AopUtils.getTargetClass(this), "handler", MotechEvent.class);
+        Method method = ReflectionUtils.findMethod(AopUtils.getTargetClass(this), "handle", MotechEvent.class);
 
         try {
             if (method != null) {
@@ -217,7 +217,7 @@ public class TaskTriggerHandler {
                     filterCheck = checkFilterForNumber(filter, new BigDecimal(object.toString()));
                 }
 
-                if (!filter.isNavigationOperator()) {
+                if (!filter.isNegationOperator()) {
                     filterCheck = !filterCheck;
                 }
             }

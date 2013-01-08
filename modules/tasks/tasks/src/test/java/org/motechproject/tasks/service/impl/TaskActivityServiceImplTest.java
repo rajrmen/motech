@@ -169,10 +169,7 @@ public class TaskActivityServiceImplTest {
 
         assertNotNull(actual);
         assertEquals(expected.size(), actual.size());
-
-        for (int i = 0; i < expected.size(); ++i) {
-            assertEquals(expected.get(i), actual.get(i));
-        }
+        assertEquals(expected, actual);
     }
 
     private void assertActivity(String messageKey, String field, String task, TaskActivityType activityType, TaskActivity activity) {

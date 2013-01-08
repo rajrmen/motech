@@ -248,13 +248,13 @@
                                                             <option value="">{{msg('info.filter.select')}}</option>
                                                         </select>
                                                     </span>
-                                                    <span ng-class="cssClass(filter.navigationOperator)" class="">
-                                                        <select ng-disabled="isDisabled(filter.eventParameter)" ng-model="filter.navigationOperator" ng-options="msg(c.key) for c in navigationOperators" class="input-medium" required>
+                                                    <span ng-class="cssClass(filter.negationOperator)" class="">
+                                                        <select ng-disabled="isDisabled(filter.eventParameter)" ng-model="filter.negationOperator" ng-options="msg(c.key) for c in negationOperators" class="input-medium" required>
                                                             <option value="">{{msg('info.filter.select')}}</option>
                                                         </select>
                                                     </span>
                                                     <span ng-class="cssClass(filter.operator)" class="">
-                                                        <select ng-disabled="isDisabled(filter.navigationOperator)" ng-model="filter.operator" class="input-medium" ng-options="msg(c) for c in operators(filter.eventParameter)" required>
+                                                        <select ng-disabled="isDisabled(filter.negationOperator)" ng-model="filter.operator" class="input-medium" ng-options="msg(c) for c in operators(filter.eventParameter)" required>
                                                             <option value="">{{msg('info.filter.select')}}</option>
                                                         </select>
                                                     </span>

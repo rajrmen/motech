@@ -90,7 +90,7 @@ public class TaskTriggerHandlerTest {
     public void shouldNotSendEventWhenTriggerNotFound() throws Exception {
         when(taskService.findTrigger(TRIGGER_SUBJECT)).thenThrow(new TriggerNotFoundException(""));
 
-        handler.handler(createEvent());
+        handler.handle(createEvent());
 
         verify(taskService).findTrigger(TRIGGER_SUBJECT);
 
@@ -106,7 +106,7 @@ public class TaskTriggerHandlerTest {
         when(taskService.findTasksForTrigger(triggerEvent)).thenReturn(tasks);
         when(taskService.getActionEventFor(task)).thenThrow(new ActionNotFoundException(""));
 
-        handler.handler(createEvent());
+        handler.handle(createEvent());
         ArgumentCaptor<TaskException> captor = ArgumentCaptor.forClass(TaskException.class);
 
         verify(taskService).findTrigger(TRIGGER_SUBJECT);
@@ -128,7 +128,7 @@ public class TaskTriggerHandlerTest {
 
         actionEvent.setSubject(null);
 
-        handler.handler(createEvent());
+        handler.handle(createEvent());
         ArgumentCaptor<TaskException> captor = ArgumentCaptor.forClass(TaskException.class);
 
         verify(taskService).findTrigger(TRIGGER_SUBJECT);
@@ -150,7 +150,7 @@ public class TaskTriggerHandlerTest {
 
         task.getActionInputFields().put("phone", null);
 
-        handler.handler(createEvent());
+        handler.handle(createEvent());
         ArgumentCaptor<TaskException> captor = ArgumentCaptor.forClass(TaskException.class);
 
         verify(taskService).findTrigger(TRIGGER_SUBJECT);
@@ -172,7 +172,7 @@ public class TaskTriggerHandlerTest {
 
         task.getActionInputFields().put("phone", "1234   d");
 
-        handler.handler(createEvent());
+        handler.handle(createEvent());
         ArgumentCaptor<TaskException> captor = ArgumentCaptor.forClass(TaskException.class);
 
         verify(taskService).findTrigger(TRIGGER_SUBJECT);
@@ -196,7 +196,7 @@ public class TaskTriggerHandlerTest {
 
         assertTrue(task.isEnabled());
 
-        handler.handler(createEvent());
+        handler.handle(createEvent());
         ArgumentCaptor<TaskException> captor = ArgumentCaptor.forClass(TaskException.class);
 
         verify(taskService).findTrigger(TRIGGER_SUBJECT);
@@ -221,7 +221,7 @@ public class TaskTriggerHandlerTest {
 
         task.setEnabled(false);
 
-        handler.handler(createEvent());
+        handler.handle(createEvent());
 
         verify(taskService).findTrigger(TRIGGER_SUBJECT);
         verify(taskService).findTasksForTrigger(triggerEvent);
@@ -238,7 +238,7 @@ public class TaskTriggerHandlerTest {
 
         ArgumentCaptor<MotechEvent> captor = ArgumentCaptor.forClass(MotechEvent.class);
 
-        handler.handler(createEvent());
+        handler.handle(createEvent());
 
         verify(taskService).findTrigger(TRIGGER_SUBJECT);
         verify(taskService).findTasksForTrigger(triggerEvent);
@@ -266,7 +266,7 @@ public class TaskTriggerHandlerTest {
         addFilters();
         ArgumentCaptor<MotechEvent> captor = ArgumentCaptor.forClass(MotechEvent.class);
 
-        handler.handler(createEvent());
+        handler.handle(createEvent());
 
         verify(taskService).findTrigger(TRIGGER_SUBJECT);
         verify(taskService).findTasksForTrigger(triggerEvent);
