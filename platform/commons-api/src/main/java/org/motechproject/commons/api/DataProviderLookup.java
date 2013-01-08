@@ -1,8 +1,10 @@
-package org.motechproject.tasks.service;
+package org.motechproject.commons.api;
 
 import java.util.Map;
 
-public interface DataProviderLookupService {
+public interface DataProviderLookup {
+
+    String toJSON();
 
     Object lookup(String clazz, Map<String, String> lookupFields);
 

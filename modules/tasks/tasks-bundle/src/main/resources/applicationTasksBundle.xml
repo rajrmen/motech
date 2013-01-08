@@ -21,6 +21,10 @@
     <osgi:service id="dataProviderServiceOsgi" auto-export="interfaces" ref="dataProviderService"
                   interface="org.motechproject.tasks.service.DataProviderService"/>
 
-    <osgi:list id="lookupServiceList" interface="org.motechproject.tasks.service.DataProviderLookupService" cardinality="0..N"/>
+    <osgi:set id="dataProvidersOSGi" interface="org.motechproject.commons.api.DataProviderLookup" cardinality="0..N">
+        <osgi:reference-listener>
+            <bean class="org.motechproject.tasks.util.DataProviderRegister"/>
+        </osgi:reference-listener>
+    </osgi:set>
 
 </beans>

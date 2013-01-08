@@ -3,7 +3,8 @@ package org.motechproject.tasks.util;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
-import org.motechproject.tasks.service.ChannelService;
+import org.motechproject.commons.api.DataProviderLookup;
+import org.motechproject.tasks.domain.DataProvider;
 import org.motechproject.tasks.service.DataProviderService;
 import org.springframework.core.io.Resource;
 
@@ -18,38 +19,37 @@ import static org.mockito.MockitoAnnotations.initMocks;
 public class DataProviderRegisterTest {
 
     @Mock
-    InputStream inputStream;
-
-    @Mock
-    Resource resource;
-
-    @Mock
     DataProviderService dataProviderService;
 
+    @Mock
+    DataProviderLookup dataProviderLookup;
+
     DataProviderRegister dataProviderRegister;
+
+    String body = new DataProvider().toString();
 
     @Before
     public void setup() throws Exception {
         initMocks(this);
 
-        dataProviderRegister = new DataProviderRegister(resource);
+        dataProviderRegister = new DataProviderRegister(dataProviderService);
     }
 
     @Test
     public void shouldRegisterProviderWhenDataProviderServiceIsAvailable() throws IOException {
-        when(resource.getInputStream()).thenReturn(inputStream);
+        when(dataProviderLookup.toJSON()).thenReturn(body);
 
-        dataProviderRegister.registered(dataProviderService, null);
+        dataProviderRegister.bind(dataProviderLookup, null);
 
-        verify(dataProviderService).registerProvider(inputStream);
+        verify(dataProviderService).registerProvider(body);
     }
 
     @Test
     public void shouldNotRegisterProviderWhenGotOtherServices() throws IOException {
-        when(resource.getInputStream()).thenReturn(inputStream);
+        when(dataProviderLookup.toJSON()).thenReturn(body);
 
-        dataProviderRegister.registered(new Object(), null);
+        dataProviderRegister.bind(new Object(), null);
 
-        verify(dataProviderService, never()).registerProvider(inputStream);
+        verify(dataProviderService, never()).registerProvider(body);
     }
 }

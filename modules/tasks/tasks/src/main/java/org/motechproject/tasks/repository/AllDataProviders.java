@@ -2,7 +2,6 @@ package org.motechproject.tasks.repository;
 
 import org.ektorp.CouchDbConnector;
 import org.ektorp.support.View;
-import org.motechproject.commons.couchdb.dao.BusinessIdNotUniqueException;
 import org.motechproject.commons.couchdb.dao.MotechBaseRepository;
 import org.motechproject.tasks.domain.DataProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,13 +18,17 @@ public class AllDataProviders extends MotechBaseRepository<DataProvider> {
         super(DataProvider.class, connector);
     }
 
-    @Override
-    public void add(DataProvider entity) {
-        if (byName(entity.getName()) != null) {
-            throw new BusinessIdNotUniqueException("name", entity.getName());
-        }
+    public void addOrUpdate(DataProvider entity) {
+        DataProvider provider = byName(entity.getName());
 
-        super.add(entity);
+        if (provider != null) {
+            provider.setName(entity.getName());
+            provider.setObjects(entity.getObjects());
+
+            update(provider);
+        } else {
+            add(entity);
+        }
     }
 
     public DataProvider byName(String name) {

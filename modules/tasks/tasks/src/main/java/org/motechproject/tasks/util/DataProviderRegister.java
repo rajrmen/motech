@@ -1,32 +1,34 @@
 package org.motechproject.tasks.util;
 
-import org.eclipse.gemini.blueprint.service.exporter.OsgiServiceRegistrationListener;
+import org.eclipse.gemini.blueprint.service.importer.OsgiServiceLifecycleListener;
+import org.motechproject.commons.api.DataProviderLookup;
 import org.motechproject.tasks.service.DataProviderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.io.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 import java.util.Map;
 
-public class DataProviderRegister implements OsgiServiceRegistrationListener {
+public class DataProviderRegister implements OsgiServiceLifecycleListener {
     private static final Logger LOG = LoggerFactory.getLogger(ChannelRegister.class);
-    private Resource dataProviderResource;
+    private DataProviderService dataProviderService;
 
-    public DataProviderRegister(Resource dataProviderResource) {
-        this.dataProviderResource = dataProviderResource;
+    @Autowired
+    public DataProviderRegister(DataProviderService dataProviderService) {
+        this.dataProviderService = dataProviderService;
     }
 
     @Override
-    public void registered(Object service, Map serviceProperties) throws IOException {
-        if (service instanceof DataProviderService) {
-            ((DataProviderService) service).registerProvider(dataProviderResource.getInputStream());
+    public void bind(Object service, Map serviceProperties) throws IOException {
+        if (service instanceof DataProviderLookup) {
+            dataProviderService.registerProvider(((DataProviderLookup) service).toJSON());
             LOG.info("Data provider registered");
         }
     }
 
     @Override
-    public void unregistered(Object service, Map serviceProperties) {
+    public void unbind(Object service, Map serviceProperties) {
         LOG.info("DataProviderService unregistered");
     }
 

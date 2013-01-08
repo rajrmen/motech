@@ -6,6 +6,8 @@ import java.io.InputStream;
 
 public interface DataProviderService {
 
+    void registerProvider(String json);
+
     void registerProvider(final InputStream stream);
 
     DataProvider getProvider(String name);

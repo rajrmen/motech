@@ -8,6 +8,7 @@ import org.motechproject.tasks.service.DataProviderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.lang.reflect.Type;
 
@@ -27,11 +28,19 @@ public class DataProviderServiceImpl implements DataProviderService {
     }
 
     @Override
+    public void registerProvider(final String body) {
+        byte[] bytes = body.getBytes();
+        InputStream stream = new ByteArrayInputStream(bytes);
+
+        registerProvider(stream);
+    }
+
+    @Override
     public void registerProvider(final InputStream stream) {
         Type type = new TypeToken<DataProvider>() { }.getType();
         DataProvider provider = (DataProvider) motechJsonReader.readFromStream(stream, type);
 
-        allDataProviders.add(provider);
+        allDataProviders.addOrUpdate(provider);
     }
 
     @Override
