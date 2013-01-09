@@ -9,6 +9,6 @@
 
     <bean class="org.motechproject.event.listener.annotations.EventAnnotationBeanPostProcessor"/>
 
-    <bean id="mrsDataProvider" class="org.motechproject.mrs.MRSDataProvider"/>
+    <bean id="mrsDataProvider" class="org.motechproject.mrs.MRSDataProviderLookup"/>
 
 </beans>
