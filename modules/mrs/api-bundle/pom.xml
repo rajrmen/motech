@@ -46,6 +46,7 @@
                 <configuration>
                     <instructions>
                         <Export-Package>
+                            org.motechproject.mrs,
                             org.motechproject.mrs.exception,
                             org.motechproject.mrs.model,
                             org.motechproject.mrs.security,

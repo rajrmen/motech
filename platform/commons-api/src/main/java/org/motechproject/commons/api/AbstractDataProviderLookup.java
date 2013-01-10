@@ -23,7 +23,7 @@ public abstract class AbstractDataProviderLookup extends MotechObject implements
         boolean support;
 
         try {
-            support = isAssignable(Class.forName(clazz), getSupportClasses());
+            support = isAssignable(getClass().getClassLoader().loadClass(clazz), getSupportClasses());
         } catch (ClassNotFoundException e) {
             logError(e.getMessage(), e);
             support = false;
