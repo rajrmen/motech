@@ -91,6 +91,7 @@ angular.module('motech-tasks', ['motech-dashboard', 'channelServices', 'taskServ
                                     while ( (node = el.firstChild) ) {
                                         lastNode = frag.appendChild(node);
                                     }
+                                    $compile(frag)(scope);
                                     range.insertNode(frag);
 
                                     if (lastNode) {
@@ -100,6 +101,9 @@ angular.module('motech-tasks', ['motech-dashboard', 'channelServices', 'taskServ
                                         sel.removeAllRanges();
                                         sel.addRange(range);
                                     }
+                                } else {
+                                    $compile(dragElement)(scope);
+                                    dropElement.append(dragElement);
                                 }
                             }
                         } else if (document.selection && document.selection.type != "Control") {
@@ -220,10 +224,30 @@ angular.module('motech-tasks', ['motech-dashboard', 'channelServices', 'taskServ
            elm.append($compile(
                '<div contenteditable ui-if="data.type == \'TEXTAREA\'" rows="5" ng-model="data.value" droppable class="actionField input-block-level" data-index="{{$index}}" data-type="{{data.type}}"><span ng-bind-html-unsafe="data.value" ng-model="data.value" class="html"><h1 contentEditable="false"><span class="editable"></span></h1></span></div>' +
                '<div contenteditable ui-if="data.type == \'NUMBER\'" type="text" ng-model="data.value" droppable class="actionField input-block-level" data-index="{{$index}}" data-type="{{data.type}}" integer placeholder="{{msg(\'placeholder.numberOnly\')}}"><span ng-bind-html-unsafe="data.value" ng-model="data.value" class="html"><h1 contentEditable="false"><span class="editable"></span></h1></span></div>' +
-               '<div contenteditable ui-if="data.type == \'UNICODE\'" type="text" ng-model="data.value" droppable class="actionField input-block-level" data-index="{{$index}}" data-type="{{data.type}}"><span ng-bind-html-unsafe="data.value" ng-model="data.value" class="html"><h1 contentEditable="false"><span class="editable">Title</span></h1></span></div>'
+               '<div contenteditable ui-if="data.type == \'UNICODE\'" type="text" ng-model="data.value" droppable class="actionField input-block-level" data-index="{{$index}}" data-type="{{data.type}}"><span ng-bind-html-unsafe="data.value" ng-model="data.value" class="html"><h1 contentEditable="false"><span class="editable"></span></h1></span></div>'
            )(scope));
        }
 
    }
+}).directive('manipulationpopover', function($compile, $timeout) {
+    return {
+        restrict: 'A',
+        link: function(scope, el, attrs) {
+            var data = '<ul><li><span ng-click="selectManipulation(\'ToUpper\', i)">test</span></li><li><span ng-click="selectManipulation(\'ToLower\', i)">{{msg("ToLower")}}</span></li><li><span ng-click="selectManipulation(\'CapitalizeFirstLetter\', i)">{{msg("capitalizeFirstLetter")}}</span></li><li><span ng-click="selectManipulation(\'Join\', i)">{{msg("join")}}</span></li></ul>';
+            el.popover({
+                template : '<div contenteditable="false" class="popover"><div class="arrow"></div><div class="popover-inner"><h3 class="popover-title"></h3><div class="popover-content"><p></p></div></div></div>',
+                title: "String Manipulation",
+                html: true,
+                content: function() {
 
+                    $timeout(function(){
+                        $compile(el.data('popover').tip())(scope);
+                    });
+                    return data;
+                },
+                placement: "top",
+                trigger: 'click'
+            });
+        },
+    };
 });

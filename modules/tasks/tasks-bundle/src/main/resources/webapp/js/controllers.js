@@ -230,7 +230,7 @@ function ManageTaskCtrl($scope, Channels, Tasks, $routeParams, $http) {
 
         for (i = 0; i < action.eventParameters.length; i += 1) {
             eventKey = action.eventParameters[i].eventKey;
-            value = $scope.refactorDivEditable(action.eventParameters[i].value) || '';
+            value = $scope.refactorDivEditable(action.eventParameters[i].value  || '');
 
             $scope.task.actionInputFields[eventKey] = value;
         }
@@ -325,14 +325,19 @@ function ManageTaskCtrl($scope, Channels, Tasks, $routeParams, $http) {
     }
 
     $scope.cssClass = function(prop) {
-            var msg = 'validation-area';
+        var msg = 'validation-area';
 
-            if (!prop) {
-                msg = msg.concat(' error');
-            }
-
-            return msg;
+        if (!prop) {
+            msg = msg.concat(' error');
         }
+
+        return msg;
+    }
+
+    $scope.selectManipulation = function(manipulation, parameter) {
+          console.log("setManipulation")
+    }
+
 }
 
 function LogCtrl($scope, Tasks, Activities, $routeParams) {

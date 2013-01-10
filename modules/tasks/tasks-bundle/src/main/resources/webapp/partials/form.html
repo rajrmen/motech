@@ -95,7 +95,25 @@
                                 <p>{{msg('info.dragFieldBuildAction')}}</p>
                             </div>
                             <div class="control-group move-element">
-                                <span contenteditable="false" class="badge badge-info triggerField" draggable ng-repeat="i in selectedTrigger.eventParameters" data-index="{{$index}}" data-type="{{i.type}}">{{i.displayName}}</span>
+                                <div ng-repeat="i in selectedTrigger.eventParameters" class="float-left">
+                                    <div contenteditable="false" id="popover" style="display:none">
+                                        <ul>
+                                            <li>
+                                                <span ng-click="selectManipulation('ToUpper', i)">{{msg('toUpper')}}</span>
+                                            </li>
+                                            <li>
+                                                <span ng-click="selectManipulation('ToLower', i)">{{msg('ToLower')}}</span>
+                                            </li>
+                                            <li>
+                                                <span ng-click="selectManipulation('CapitalizeFirstLetter', i)">{{msg('capitalizeFirstLetter')}}</span>
+                                            </li>
+                                            <li>
+                                                <span ng-click="selectManipulation('Join', i)">{{msg('join')}}</span>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <span manipulationpopover="#popover" contenteditable="false" class="badge badge-info triggerField" draggable data-index="{{$index}}" data-type="{{i.type}}">{{i.displayName}}</span>​
+                                </div>
                             </div>
                             <!------------------  Include Additional Data  ------------------------>
                             <div class="accordion" id="accordion1">
