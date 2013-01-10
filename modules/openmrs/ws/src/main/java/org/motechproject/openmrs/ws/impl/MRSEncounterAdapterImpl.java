@@ -19,6 +19,7 @@ import org.motechproject.mrs.model.MRSPatient;
 import org.motechproject.mrs.model.MRSPerson;
 import org.motechproject.mrs.services.MRSEncounterAdapter;
 import org.motechproject.mrs.services.MRSPatientAdapter;
+import org.motechproject.mrs.services.MRSPersonAdapter;
 import org.motechproject.openmrs.ws.HttpException;
 import org.motechproject.openmrs.ws.resource.EncounterResource;
 import org.motechproject.openmrs.ws.resource.model.Concept;
@@ -41,13 +42,13 @@ public class MRSEncounterAdapterImpl implements MRSEncounterAdapter {
     private static final Logger LOGGER = LoggerFactory.getLogger(MRSEncounterAdapterImpl.class);
 
     private final MRSPatientAdapter patientAdapter;
-    private final MRSPersonAdapterImpl personAdapter;
+    private final MRSPersonAdapter personAdapter;
     private final MRSConceptAdapterImpl conceptAdapter;
     private final EncounterResource encounterResource;
 
     @Autowired
     public MRSEncounterAdapterImpl(EncounterResource encounterResource, MRSPatientAdapter patientAdapter,
-            MRSPersonAdapterImpl personAdapter, MRSConceptAdapterImpl conceptAdapter) {
+            MRSPersonAdapter personAdapter, MRSConceptAdapterImpl conceptAdapter) {
         this.encounterResource = encounterResource;
         this.patientAdapter = patientAdapter;
         this.personAdapter = personAdapter;

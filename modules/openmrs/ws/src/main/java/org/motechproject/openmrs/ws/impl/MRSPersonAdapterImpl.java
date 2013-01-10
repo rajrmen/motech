@@ -8,6 +8,7 @@ import java.util.Map;
 import org.apache.commons.lang.Validate;
 import org.motechproject.mrs.exception.MRSException;
 import org.motechproject.mrs.model.MRSPerson;
+import org.motechproject.mrs.services.MRSPersonAdapter;
 import org.motechproject.openmrs.ws.HttpException;
 import org.motechproject.openmrs.ws.resource.PersonResource;
 import org.motechproject.openmrs.ws.resource.model.Attribute;
@@ -23,8 +24,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-@Component
-public class MRSPersonAdapterImpl {
+@Component("personAdapter")
+public class MRSPersonAdapterImpl implements MRSPersonAdapter {
     private static final Logger LOGGER = LoggerFactory.getLogger(MRSPersonAdapterImpl.class);
 
     private final Map<String, String> attributeTypeUuidCache = new HashMap<String, String>();
@@ -36,6 +37,7 @@ public class MRSPersonAdapterImpl {
         this.personResource = personResource;
     }
 
+    @Override
     public MRSPerson getPerson(String uuid) {
         Person person = null;
         try {

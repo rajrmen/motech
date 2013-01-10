@@ -6,6 +6,7 @@ import org.motechproject.mrs.model.MRSPatient;
 import org.motechproject.mrs.model.MRSPerson;
 import org.motechproject.mrs.services.MRSFacilityAdapter;
 import org.motechproject.mrs.services.MRSPatientAdapter;
+import org.motechproject.mrs.services.MRSPersonAdapter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -19,6 +20,7 @@ public class MRSDataProviderLookup extends AbstractDataProviderLookup {
 
     private List<MRSPatientAdapter> patientAdapters;
     private List<MRSFacilityAdapter> facilityAdapters;
+    private List<MRSPersonAdapter> personAdapters;
 
     @Autowired
     public MRSDataProviderLookup(ResourceLoader resourceLoader) {
@@ -36,10 +38,18 @@ public class MRSDataProviderLookup extends AbstractDataProviderLookup {
         if (supports(clazz) && lookupFields.containsKey(SUPPORT_FIELD)) {
             String id = lookupFields.get(SUPPORT_FIELD);
 
-            if (MRSPatient.class.getName().equalsIgnoreCase(clazz)) {
-                obj = getPatient(id);
-            } else if (MRSFacility.class.getName().equalsIgnoreCase(clazz)) {
-                obj = getFacility(id);
+            try {
+                Class<?> cls = getClass().getClassLoader().loadClass(clazz);
+
+                if (MRSPatient.class.isAssignableFrom(cls)) {
+                    obj = getPatient(id);
+                } else if (MRSPerson.class.isAssignableFrom(cls)) {
+                    obj = getPerson(id);
+                } else if (MRSFacility.class.isAssignableFrom(cls)) {
+                    obj = getFacility(id);
+                }
+            } catch (ClassNotFoundException e) {
+                logError(e.getMessage(), e);
             }
         }
 
@@ -57,6 +67,10 @@ public class MRSDataProviderLookup extends AbstractDataProviderLookup {
 
     public void setFacilityAdapters(List<MRSFacilityAdapter> facilityAdapters) {
         this.facilityAdapters = facilityAdapters;
+    }
+
+    public void setPersonAdapters(List<MRSPersonAdapter> personAdapters) {
+        this.personAdapters = personAdapters;
     }
 
     private Object getPatient(String patientId) {
@@ -81,5 +95,17 @@ public class MRSDataProviderLookup extends AbstractDataProviderLookup {
         }
 
         return facility;
+    }
+
+    private MRSPerson getPerson(String personId) {
+        MRSPerson person = null;
+
+        if (personAdapters != null && !personAdapters.isEmpty()) {
+            for (MRSPersonAdapter adapter : personAdapters) {
+                person = adapter.getPerson(personId);
+            }
+        }
+
+        return person;
     }
 }

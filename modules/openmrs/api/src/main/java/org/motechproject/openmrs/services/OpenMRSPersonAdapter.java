@@ -3,6 +3,7 @@ package org.motechproject.openmrs.services;
 import org.apache.commons.collections.CollectionUtils;
 import org.motechproject.mrs.model.Attribute;
 import org.motechproject.mrs.model.MRSPerson;
+import org.motechproject.mrs.services.MRSPersonAdapter;
 import org.openmrs.Person;
 import org.openmrs.PersonAddress;
 import org.openmrs.PersonAttribute;
@@ -21,7 +22,7 @@ import static ch.lambdaj.Lambda.project;
 import static org.hamcrest.Matchers.is;
 
 @Service
-public class OpenMRSPersonAdapter {
+public class OpenMRSPersonAdapter implements MRSPersonAdapter {
 
     private PersonService personService;
 
@@ -29,6 +30,11 @@ public class OpenMRSPersonAdapter {
     @Autowired
     public OpenMRSPersonAdapter(PersonService personService) {
         this.personService = personService;
+    }
+
+    @Override
+    public MRSPerson getPerson(String personId) {
+        return openMRSToMRSPerson(getPersonById(personId));
     }
 
     MRSPerson openMRSToMRSPerson(Person person) {
