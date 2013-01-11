@@ -15,6 +15,7 @@ import org.osgi.util.tracker.ServiceTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.filter.DelegatingFilterProxy;
+import org.springframework.web.filter.RequestContextFilter;
 import org.springframework.web.servlet.DispatcherServlet;
 
 import java.io.IOException;
@@ -106,6 +107,9 @@ public class Activator implements BundleActivator {
 
                 filter = new MotechDelegatingFilterProxy("springSecurityFilterChain", dispatcherServlet.getWebApplicationContext());
                 service.registerFilter(filter, "/.*", null, 0, httpContext);
+
+                RequestContextFilter reqFilter = new RequestContextFilter();
+                service.registerFilter(reqFilter, "/.*", null, 1, httpContext);
                 logger.debug("Filter registered");
             } finally {
                 Thread.currentThread().setContextClassLoader(old);
