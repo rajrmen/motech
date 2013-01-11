@@ -268,6 +268,7 @@ function ManageTaskCtrl($scope, Channels, Tasks, $routeParams, $http) {
             }
             return '{{' + eventKey + '}}';
         });
+        result.find('em').remove();
         return result.text();
     }
 
@@ -309,10 +310,22 @@ function ManageTaskCtrl($scope, Channels, Tasks, $routeParams, $http) {
     }
 
     $scope.validateForm = function() {
+        var i, param;
+
+        if ($scope.selectedAction !== undefined) {
+            for (i = 0; i < $scope.selectedAction.eventParameters.length; i += 1) {
+                param = $scope.refactorDivEditable($scope.selectedAction.eventParameters[i].value || '');
+
+                if (param === null || param === undefined || !param.trim().length) {
+                    return false;
+                }
+            }
+        }
+
         if ($scope.filterForm.$invalid && $scope.filters.length != 0) {
-            return true;
-        } else {
             return false;
+        } else {
+            return true;
         }
     }
 

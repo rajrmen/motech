@@ -235,8 +235,7 @@
 
                             <div class="control-group" ng-repeat="i in selectedAction.eventParameters">
                                 <label>{{i.displayName}}</label>
-                                <editable-content data="i"></editable-content>
-
+                                <editable-content data="i" index="$index"></editable-content>
                             </div>
                         </form>
                     </div>
@@ -316,15 +315,15 @@
                     <div ng-hide="task._id">
                         <p class="centered spn9 margin-center">{{msg('info.addSave')}}</p>
                         <div class="control-group centered inside">
-                            <a ng-disabled="validateForm()" ng-click="save(true)" class="btn btn-primary"> {{msg('button.saveAndEnable')}}</a>
-                            <a ng-disabled="validateForm()" ng-click="save(false)" class="btn btn-success"> {{msg('button.save')}}</a>
+                            <input type="button" ng-disabled="!validateForm()" ng-click="save(true)" class="btn btn-primary" value="{{msg('button.saveAndEnable')}}"/>
+                            <input type="button" ng-disabled="!validateForm()" ng-click="save(false)" class="btn btn-success" value="{{msg('button.save')}}"/>
                             <a href="#/task/" class="btn"> {{msg('button.cancel')}}</a>
                         </div>
                     </div>
                     <div ng-show="task._id">
                         <p class="margin-center centered spn9">{{msg('info.editSave')}}</p>
                         <div class="control-group centered inside">
-                            <a ng-disabled="validateForm()" ng-click="save(task.enabled)" class="btn btn-success"> {{msg('button.save')}}</a>
+                            <input type="button" ng-disabled="!validateForm()" ng-click="save(task.enabled)" class="btn btn-success" value="{{msg('button.save')}}"/>
                             <a href="#/task/" class="btn"> {{msg('button.cancel')}}</a>
                         </div>
                     </div>

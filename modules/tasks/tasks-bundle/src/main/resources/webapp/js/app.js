@@ -115,16 +115,19 @@ angular.module('motech-tasks', ['motech-dashboard', 'channelServices', 'taskServ
                         dragType = angular.element(ui.draggable).data('type');
                         dropType = angular.element(element).data('type');
 
-                        if ((dragType == 'UNICODE' || dragType == 'TEXTAREA') && dropType == 'NUMBER') {
-                            return;
+                        dropElement = angular.element(element);
+
+                        if (dropType === 'DATE') {
+                            dropElement.text('');
                         }
 
-                        dropElement = angular.element(element);
+                        dropElement.find('em').remove();
+
                         var dragElement = angular.element(ui.draggable).clone()
                         dragElement.css("position", "relative");
                         dragElement.css("left", "0px");
                         dragElement.css("top", "0px");
-                        position(dropElement, dragElement)
+                        position(dropElement, dragElement);
 
                     } else if (angular.element(ui.draggable).hasClass('task-panel') && (element.hasClass('trigger') || element.hasClass('action'))) {
                         channelName = angular.element(ui.draggable).data('channel-name');
@@ -159,27 +162,15 @@ angular.module('motech-tasks', ['motech-dashboard', 'channelServices', 'taskServ
             });
         }
     }
-}).directive('integer', function () {
+}).directive('number', function () {
     return {
         restrict: 'A',
         link: function (scope, element, attrs) {
             element.keypress(function (evt) {
                 var charCode = (evt.which) ? evt.which : evt.keyCode,
-                    caret = element.caret(), value = element.val(),
-                    begin = value.indexOf('{{'), end = value.indexOf('}}') + 2;
+                    allow = [44, 46, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57]; // char code: , . 0 1 2 3 4 5 6 7 8 9
 
-                if (begin !== -1) {
-                    while (end !== -1) {
-                        if (caret > begin && caret < end) {
-                            return false;
-                        }
-
-                        begin = value.indexOf('{{', end);
-                        end = begin === -1 ? -1 : value.indexOf('}}', begin) + 2;
-                    }
-                }
-
-                return !(charCode > 31 && (charCode < 48 || charCode > 57));
+                return allow.indexOf(charCode) >= 0;
             });
         }
     };
@@ -213,19 +204,37 @@ angular.module('motech-tasks', ['motech-dashboard', 'channelServices', 'taskServ
             };
         }
     }
-}).directive('editableContent', function($compile) {
+}).directive('editableContent', function($compile, $timeout) {
    return {
        restrict: 'E',
        transclude: true,
        scope: {
-           data: '='
+           data: '=',
+           index: '='
        },
        link: function(scope, elm, attrs) {
-           elm.append($compile(
-               '<div contenteditable ui-if="data.type == \'TEXTAREA\'" rows="5" ng-model="data.value" droppable class="actionField input-block-level" data-index="{{$index}}" data-type="{{data.type}}"><span ng-bind-html-unsafe="data.value" ng-model="data.value" class="html"><h1 contentEditable="false"><span class="editable"></span></h1></span></div>' +
-               '<div contenteditable ui-if="data.type == \'NUMBER\'" type="text" ng-model="data.value" droppable class="actionField input-block-level" data-index="{{$index}}" data-type="{{data.type}}" integer placeholder="{{msg(\'placeholder.numberOnly\')}}"><span ng-bind-html-unsafe="data.value" ng-model="data.value" class="html"><h1 contentEditable="false"><span class="editable"></span></h1></span></div>' +
-               '<div contenteditable ui-if="data.type == \'UNICODE\'" type="text" ng-model="data.value" droppable class="actionField input-block-level" data-index="{{$index}}" data-type="{{data.type}}"><span ng-bind-html-unsafe="data.value" ng-model="data.value" class="html"><h1 contentEditable="false"><span class="editable"></span></h1></span></div>'
-           )(scope));
+           var type = scope.data.type, toCompile;
+
+           switch (type) {
+            case 'TEXTAREA':
+                toCompile = '<div contenteditable ng-model="data.value" droppable class="actionField input-block-level" data-index="{{index}}" data-type="{{data.type}}"><span ng-bind-html-unsafe="data.value" ng-model="data.value" class="html"><h1 contentEditable="false"><span class="editable"></span></h1></span></div>';
+                break;
+            case 'NUMBER':
+                toCompile = '<div number div-placeholder="placeholder.numberOnly" contenteditable ng-model="data.value" droppable class="actionField input-block-level" data-index="{{index}}" data-type="{{data.type}}"><span ng-bind-html-unsafe="data.value" ng-model="data.value" class="html"><h1 contentEditable="false"><span class="editable"></span></h1></span></div>';
+                break;
+            case 'UNICODE':
+                toCompile = '<div contenteditable ng-model="data.value" droppable class="actionField input-block-level" data-index="{{index}}" data-type="{{data.type}}"><span ng-bind-html-unsafe="data.value" ng-model="data.value" class="html"><h1 contentEditable="false"><span class="editable"></span></h1></span></div>';
+                break;
+            case 'DATE':
+                toCompile = '<input type="hidden" data-index="{{index}}" datetime-picker-input/><div date div-placeholder="placeholder.dateOnly" contenteditable ng-model="data.value" droppable class="actionField input-block-level" data-index="{{index}}" data-type="{{data.type}}" datetime-picker><span ng-bind-html-unsafe="data.value" ng-model="data.value" class="html"><h1 contentEditable="false"><span class="editable"></span></h1></span></div>';
+                break;
+           }
+
+           elm.append($compile(toCompile)(scope));
+
+           $timeout(function () {
+                elm.find('div').focusout();
+           });
        }
 
    }
@@ -250,4 +259,57 @@ angular.module('motech-tasks', ['motech-dashboard', 'channelServices', 'taskServ
             });
         },
     };
+}).directive('datetimePicker', function() {
+    return {
+        restrict: 'A',
+        link: function(scope, element, attrs) {
+            element.focus(function () {
+                $(this).prev('input').datepicker('show');
+            });
+        }
+    }
+}).directive('datetimePickerInput', function() {
+    return {
+        restrict: 'A',
+        link: function(scope, element, attrs) {
+            element.datetimepicker({
+                showTimezone: true,
+                useLocalTimezone: true,
+                dateFormat: 'yy-M-dd',
+                timeFormat: 'HH:mm z',
+                onSelect: function(dateTex, inst) {
+                    (inst.input || inst.$input).next('div').text(dateTex);
+                }
+            });
+        }
+    }
+}).directive('divPlaceholder', function() {
+    return {
+        restrict: 'A',
+        link: function(scope, element, attrs) {
+            var parent = scope, curText;
+
+            while (parent.msg === null || parent.msg === undefined) {
+                parent = parent.$parent;
+            }
+
+            curText = parent.msg(attrs.divPlaceholder);
+
+            if (!element.text().trim().length) {
+                element.text('<em style="color: gray;">' + curText + '</em>');
+            }
+
+            element.focusin(function() {
+                if ($(this).text().toLowerCase() == curText.toLowerCase() || !$(this).text().length) {
+                    $(this).empty();
+                }
+            });
+
+            element.focusout(function() {
+                if ($(this).text().toLowerCase() == curText.toLowerCase() || !$(this).text().length) {
+                    $(this).html('<em style="color: gray;">' + curText + '</em>');
+                }
+            });
+        }
+    }
 });
