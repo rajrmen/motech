@@ -233,7 +233,7 @@
                                 <label>{{selectedAction.description}}</label>
                             </div>
 
-                            <div class="control-group" ng-repeat="i in selectedAction.eventParameters">
+                            <div ng-class="actionCssClass(i)" ng-repeat="i in selectedAction.eventParameters">
                                 <label>{{i.displayName}}</label>
                                 <editable-content data="i" index="$index"></editable-content>
                             </div>

@@ -347,6 +347,16 @@ function ManageTaskCtrl($scope, Channels, Tasks, $routeParams, $http) {
         return msg;
     }
 
+    $scope.actionCssClass = function(prop) {
+        var msg = "control-group", value = $scope.refactorDivEditable(prop.value || '');
+
+        if (value.length === 0) {
+            msg = msg.concat(' error');
+        }
+
+        return msg;
+    }
+
     $scope.selectManipulation = function(manipulation, parameter) {
           console.log("setManipulation")
     }
