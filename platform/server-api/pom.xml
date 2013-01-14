@@ -56,7 +56,8 @@
                 <configuration>
                     <instructions>
                         <Export-Package>
-                            org.motechproject.server.api;version=${project.version}
+                            org.motechproject.server.api;version=${project.version},
+                            org.motechproject.server.service;version=${project.version},
                         </Export-Package>
                     </instructions>
                 </configuration>

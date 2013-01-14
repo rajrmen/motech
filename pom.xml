@@ -1190,8 +1190,6 @@
         <!-- Packaging modules -->
         <module>packaging/deb</module>
         <module>packaging/rpm</module>
-        <module>platform/tenant</module>
-
     </modules>
 
     <build>

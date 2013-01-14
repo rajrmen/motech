@@ -13,6 +13,7 @@ import org.motechproject.server.config.domain.SettingsRecord;
 import org.motechproject.server.config.service.AllSettings;
 import org.motechproject.server.config.service.PlatformSettingsService;
 import org.motechproject.server.config.settings.ConfigFileSettings;
+import org.motechproject.server.service.TenantService;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
@@ -54,6 +55,9 @@ public final class StartupManager {
 
     @Autowired
     private BundleContext bundleContext;
+
+    @Autowired
+    private TenantService tenantService;
 
     private StartupManager() {
 
@@ -99,7 +103,7 @@ public final class StartupManager {
         if (canLaunchBundles()) {
             if (startAllBundles) {
                 // send an OSGI event indicating that the modules can be started
-                eventAdmin.postEvent(new Event(STARTUP_TOPIC, (Map) null));
+                eventAdmin.postEvent(new Event(STARTUP_TOPIC + "/" + tenantService.getTenantId(), (Map) null));
             } else {
                 // only start the admin bundle
                 startAdmin();
