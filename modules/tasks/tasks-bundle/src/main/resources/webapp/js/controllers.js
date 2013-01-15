@@ -99,12 +99,14 @@ function DashboardCtrl($scope, Tasks, Activities) {
     };
 }
 
-function ManageTaskCtrl($scope, Channels, Tasks, $routeParams, $http) {
+function ManageTaskCtrl($scope, Channels, Tasks, DataSources, $routeParams, $http) {
     $scope.currentPage = 0;
     $scope.pageSize = 10;
     $scope.task = {};
     $scope.filters = [];
     $scope.negationOperators = [{key:'info.filter.is',value:'true'}, {key:'info.filter.isNot',value:'false'}];
+    $scope.dataSources = [];
+    $scope.availableDataSources = DataSources.query();
 
     $scope.channels = Channels.query(function (){
         if ($routeParams.taskId != undefined) {
@@ -266,25 +268,29 @@ function ManageTaskCtrl($scope, Channels, Tasks, $routeParams, $http) {
                     eventKey = $scope.selectedTrigger.eventParameters[i].eventKey;
                 }
             }
-            return '{{' + eventKey + '}}';
+            return '{{' + $(this).data('prefix') + '.' + eventKey + '}}';
         });
         result.find('em').remove();
         return result.text();
     }
 
     $scope.createDraggableElement = function (value) {
-        value = value.replace(/{{[a-zA-Z\-]*}}/g, $scope.buildSpan);
+        value = value.replace(/{{[a-zA-Z\-\.]*}}/g, $scope.buildSpan);
         return value;
     }
 
     $scope.buildSpan = function(eventParameterKey) {
-        eventParameterKey = eventParameterKey.slice(2, -2);
-        var span = "";
+        var key = eventParameterKey.slice(eventParameterKey.indexOf('.') + 1, -2),
+            prefix = eventParameterKey.slice(2, eventParameterKey.indexOf('.')),
+            span = "",
+            param;
+
         for (var i = 0; i < $scope.selectedTrigger.eventParameters.length; i += 1) {
-            if ($scope.selectedTrigger.eventParameters[i].eventKey == eventParameterKey) {
-                var eventParameter = $scope.selectedTrigger.eventParameters[i];
+            if ($scope.selectedTrigger.eventParameters[i].eventKey == key) {
+                param = $scope.selectedTrigger.eventParameters[i];
                 span = '<span contenteditable="false" class="badge badge-info triggerField ng-scope ng-binding ui-draggable" draggable ng-repeat="i in selectedTrigger.eventParameters" data-index="' + i +
-                '" data-type="' + eventParameter.type + '" style="position: relative;">' + eventParameter.displayName + '</span>'
+                '" data-type="' + param.type + '" data-prefix="' + prefix + '" style="position: relative;">' + param.displayName + '</span>';
+                break;
             }
         }
         return span;
@@ -355,6 +361,67 @@ function ManageTaskCtrl($scope, Channels, Tasks, $routeParams, $http) {
         }
 
         return msg;
+    }
+
+    $scope.getAvailableObjects = function (name) {
+        var i, select;
+
+        for(i = 0; i < $scope.availableDataSources.length; i += 1) {
+            if ($scope.availableDataSources[i].name === name) {
+                select = $scope.availableDataSources[i];
+                break;
+            }
+        }
+
+        return select === undefined ? [] : select.objects;
+    }
+
+    $scope.getAvailableLookupFields = function (dataSourceName, objectType) {
+        var i, j, select, item;
+
+        for(i = 0; i < $scope.availableDataSources.length; i += 1) {
+            item = $scope.availableDataSources[i];
+
+            for (j = 0; j < item.objects.length; j += 1) {
+                if (item.objects[j].type === objectType) {
+                    select = item.objects[j];
+                    break;
+                }
+            }
+
+            if (select !== undefined) {
+                break;
+            }
+        }
+
+        return select === undefined ? [] : select.lookupFields;
+    }
+
+    $scope.selectObject = function (object, selected) {
+        object.displayName = selected.displayName;
+        object.type = selected.type;
+        object.fields = selected.fields;
+        object.lookup.field = selected.lookupFields[0];
+    }
+
+    $scope.selectLookup = function (object, lookup) {
+        object.lookup.displayName = lookup.displayName;
+        object.lookup.by = lookup.eventKey;
+    }
+
+    $scope.addObject = function (dataSource) {
+        var first = $scope.getAvailableObjects(dataSource.name)[0];
+
+        dataSource.objects.push({
+            displayName: first.displayName,
+            type: first.type,
+            fields: first.fields,
+            lookup: {
+                displayName: $scope.selectedTrigger.eventParameters[0].displayName,
+                by: $scope.selectedTrigger.eventParameters[0].eventKey,
+                field: first.lookupFields[0]
+            }
+        });
     }
 
     $scope.selectManipulation = function(manipulation, parameter) {

@@ -161,7 +161,7 @@ public class TaskTriggerHandler {
                 throw new TaskException("error.templateNull", key);
             }
 
-            String userInput = replaceAll(template, trigger.getEventParameters(), event);
+            String userInput = replaceAll(template, trigger.getEventParameters(), event, "trigger");
             Object value;
 
             if (param.getType().isNumber()) {
@@ -194,15 +194,15 @@ public class TaskTriggerHandler {
         return parameters;
     }
 
-    private String replaceAll(final String template, final List<EventParameter> triggerParameters, final MotechEvent event) {
+    private String replaceAll(final String template, final List<EventParameter> parameters, final MotechEvent event, final String prefix) {
         String replaced = template;
 
-        for (EventParameter param : triggerParameters) {
+        for (EventParameter param : parameters) {
             String key = param.getEventKey();
 
             if (event.getParameters().containsKey(key)) {
                 String value = String.valueOf(event.getParameters().get(key));
-                replaced = replaced.replaceAll(String.format("\\{\\{%s\\}\\}", key), value);
+                replaced = replaced.replaceAll(String.format("\\{\\{%s.%s\\}\\}", prefix, key), value);
             }
         }
 

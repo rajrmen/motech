@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.lang.reflect.Type;
+import java.util.List;
 
 @Service("dataProviderService")
 public class DataProviderServiceImpl implements DataProviderService {
@@ -46,6 +47,11 @@ public class DataProviderServiceImpl implements DataProviderService {
     @Override
     public DataProvider getProvider(String name) {
         return allDataProviders.byName(name);
+    }
+
+    @Override
+    public List<DataProvider> getProviders() {
+        return allDataProviders.getAll();
     }
 
 }

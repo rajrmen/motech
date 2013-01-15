@@ -2,7 +2,8 @@
 
 /* App Module */
 
-angular.module('motech-tasks', ['motech-dashboard', 'channelServices', 'taskServices', 'activityServices', 'ngCookies', 'bootstrap']).config(['$routeProvider',
+angular.module('motech-tasks', ['motech-dashboard', 'channelServices', 'taskServices', 'activityServices',
+                                'dataSourceServices', 'ngCookies', 'bootstrap']).config(['$routeProvider',
     function ($routeProvider) {
         $routeProvider.
             when('/dashboard', {templateUrl: '../tasks/partials/tasks.html', controller: DashboardCtrl}).
