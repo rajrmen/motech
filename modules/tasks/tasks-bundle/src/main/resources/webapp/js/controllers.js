@@ -328,11 +328,7 @@ function ManageTaskCtrl($scope, Channels, Tasks, DataSources, $routeParams, $htt
             }
         }
 
-        if ($scope.filterForm.$invalid && $scope.filters.length != 0) {
-            return false;
-        } else {
-            return true;
-        }
+        return !($scope.filterForm.$invalid && $scope.filters.length != 0);
     }
 
     $scope.isDisabled = function(prop) {
