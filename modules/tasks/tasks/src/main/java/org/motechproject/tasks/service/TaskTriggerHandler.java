@@ -165,7 +165,8 @@ public class TaskTriggerHandler {
                 throw new TaskException("error.templateNull", key);
             }
 
-            String userInput = replaceAll(template, event, "trigger");
+            String userInput = replaceAll(template, event, null);
+            userInput = replaceAll(userInput, event, "trigger");
             Object value;
 
             if (param.getType().isNumber()) {
@@ -200,6 +201,8 @@ public class TaskTriggerHandler {
 
     private String replaceAll(final String template, final MotechEvent event, final String prefix) {
         String replaced = template;
+        String format = StringUtils.isNotBlank(prefix) ? "\\{\\{%1$s.%2$s\\}\\}" : "\\{\\{%2$s\\}\\}";
+
         Map<String , List<String>> keysWithManipulation = getKeysWithManipulation(replaced);
         for (Map.Entry<String, List<String>> key : keysWithManipulation.entrySet()) {
 
@@ -207,7 +210,7 @@ public class TaskTriggerHandler {
                 String value = String.valueOf(event.getParameters().get(key.getKey()));
                 String replaceKey = key.getKey() + (key.getValue().size() > 0 ? "\\?" + StringUtils.join(key.getValue(), "\\?") : "");
                 String replaceValue = manipulateValue(value, key.getValue());
-                replaced = replaced.replaceAll(String.format("\\{\\{%s.%s\\}\\}", prefix, replaceKey), replaceValue);
+                replaced = replaced.replaceAll(String.format(format, prefix, replaceKey), replaceValue);
             }
         }
         return replaced;

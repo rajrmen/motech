@@ -105,8 +105,15 @@ function ManageTaskCtrl($scope, Channels, Tasks, DataSources, $routeParams, $htt
     $scope.task = {};
     $scope.filters = [];
     $scope.negationOperators = [{key:'info.filter.is',value:'true'}, {key:'info.filter.isNot',value:'false'}];
-    $scope.dataSources = [];
-    $scope.availableDataSources = DataSources.query();
+    $scope.selectedDataSources = [];
+    $scope.availableDataSources = [];
+    $scope.allDataSources = DataSources.query(function () {
+        var i;
+
+        for (i = 0; i < $scope.allDataSources.length; i += 1) {
+            $scope.availableDataSources.push($scope.allDataSources[i]);
+        }
+    });
 
     $scope.channels = Channels.query(function (){
         if ($routeParams.taskId != undefined) {
@@ -376,24 +383,52 @@ function ManageTaskCtrl($scope, Channels, Tasks, DataSources, $routeParams, $htt
         return msg;
     }
 
-    $scope.getAvailableObjects = function (name) {
-        var i, select;
+    $scope.addDataSource = function () {
+        $scope.selectedDataSources.push({name: $scope.availableDataSources[0].name, objects: []});
+        $scope.availableDataSources.remove(0);
+    }
 
-        for(i = 0; i < $scope.availableDataSources.length; i += 1) {
-            if ($scope.availableDataSources[i].name === name) {
-                select = $scope.availableDataSources[i];
+    $scope.changeDataSource = function (dataSource, available) {
+        var i;
+
+        $scope.availableDataSources.removeObject(available);
+
+        for (i = 0; i < $scope.allDataSources.length; i += 1) {
+            if ($scope.allDataSources[i].name === dataSource.name) {
+                $scope.availableDataSources.push($scope.allDataSources[i]);
                 break;
             }
         }
 
-        return select === undefined ? [] : select.objects;
+        dataSource = available.copy();
+    }
+
+    $scope.getAvailableObjects = function (dataSource) {
+        var i, j, select = [];
+
+        for(i = 0; i < $scope.allDataSources.length; i += 1) {
+            if ($scope.allDataSources[i].name === dataSource.name) {
+                $.merge(select, $scope.allDataSources[i].objects);
+                break;
+            }
+        }
+
+        for (j = 0; j < dataSource.objects.length; j += 1) {
+            for (i = select.length - 1; i >= 0; i -= 1) {
+                if (select[i].type === dataSource.objects[j].type) {
+                    select.remove(i);
+                }
+            }
+        }
+
+        return select;
     }
 
     $scope.getAvailableLookupFields = function (dataSourceName, objectType) {
         var i, j, select, item;
 
-        for(i = 0; i < $scope.availableDataSources.length; i += 1) {
-            item = $scope.availableDataSources[i];
+        for(i = 0; i < $scope.allDataSources.length; i += 1) {
+            item = $scope.allDataSources[i];
 
             for (j = 0; j < item.objects.length; j += 1) {
                 if (item.objects[j].type === objectType) {
@@ -423,7 +458,7 @@ function ManageTaskCtrl($scope, Channels, Tasks, DataSources, $routeParams, $htt
     }
 
     $scope.addObject = function (dataSource) {
-        var first = $scope.getAvailableObjects(dataSource.name)[0];
+        var first = $scope.getAvailableObjects(dataSource)[0];
 
         dataSource.objects.push({
             displayName: first.displayName,

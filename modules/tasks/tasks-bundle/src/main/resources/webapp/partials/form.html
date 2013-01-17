@@ -98,7 +98,7 @@
                                 <span contenteditable="false" ng-repeat="i in selectedTrigger.eventParameters" class="badge badge-info triggerField" draggable data-prefix="trigger" data-index="{{$index}}" data-type="{{i.type}}">{{i.displayName}}</span>​
                             </div>
                             <!------------------  Include Additional Data  ------------------------>
-                            <div class="accordion" id="accordion1" ng-hide="availableDataSources == undefined || availableDataSources.length == 0">
+                            <div class="accordion" id="accordion1" ng-hide="allDataSources == undefined || allDataSources.length == 0">
                                 <div class="accordion-group">
                                     <div class="accordion-heading">
                                         <a class="accordion-toggle inbox-header" expandaccordion data-toggle="collapse" data-parent="#accordion1" href="#collapse1">
@@ -107,7 +107,7 @@
                                     </div>
                                     <div id="collapse1" class="accordion-body collapse stripes-bg">
                                         <div class="accordion-inner">
-                                            <div ng-repeat="dataSource in dataSources">
+                                            <div ng-repeat="dataSource in selectedDataSources">
                                                 <div class="control-group control-section">
                                                     <label class="control-label">{{msg('subsubsection.source')}} </label>
                                                     <div class="controls">
@@ -117,7 +117,9 @@
                                                                 <span class="caret"></span>
                                                             </a>
                                                             <ul class="dropdown-menu">
-                                                                <li ng-repeat="available in availableDataSources"><a ng-click="dataSource.name = available.name"><i></i> {{available.name}}</a></li>
+                                                                <li><a><i></i> {{dataSource.name}}</a></li>
+                                                                <li class="divider"></li>
+                                                                <li ng-repeat="available in allDataSources" ng-hide="dataSource.name == available.name"><a ng-click="changeDataSource(dataSource, available)"><i></i> {{available.name}}</a></li>
                                                             </ul>
                                                         </div>
                                                     </div>
@@ -132,7 +134,9 @@
                                                                     <span class="caret"></span>
                                                                 </a>
                                                                 <ul class="dropdown-menu">
-                                                                    <li ng-repeat="obj in getAvailableObjects(dataSource.name)"><a ng-click="selectObject(object, obj)"><i></i> {{obj.displayName}}</a></li>
+                                                                    <li><a><i></i> {{object.displayName}}</a></li>
+                                                                    <li class="divider"></li>
+                                                                    <li ng-repeat="obj in getAvailableObjects(dataSource)"><a ng-click="selectObject(object, obj)"><i></i> {{obj.displayName}}</a></li>
                                                                 </ul>
                                                             </div>
                                                         </div>
@@ -163,15 +167,15 @@
                                                     </div>
                                                     <div class="control-group move-element margin-before2" ng-hide="object.displayName == undefined">
                                                         <p><strong>{{msg('subsubsection.objectFields')}}</strong></p>
-                                                        <span ng-repeat="i in object.fields" class="badge badge-warning triggerField" draggable data-prefix="ad" data-index="{{$index}}" data-type="{{i.type}}">{{i.displayName}}</span>
+                                                        <span contenteditable="false" ng-repeat="i in object.fields" class="badge badge-warning triggerField" draggable data-prefix="ad" data-source="{{dataSource.name}}" data-object="{{object.displayName}}" data-index="{{$index}}" data-type="{{i.type}}">{{i.displayName}}</span>​
                                                     </div>
                                                 </div>
-                                                <div class="margin-before control-group section2" ng-hide="dataSource.name == undefined">
+                                                <div class="margin-before control-group section2" ng-hide="getAvailableObjects(dataSource).length == 0">
                                                     <button class="btn btn-primary" ng-click="addObject(dataSource)"><i class="icon-white icon-plus"></i> {{msg('button.addObject', dataSource.name)}}</button>
                                                 </div>
                                             </div>
-                                            <div class="control-group section2">
-                                                <button class="btn btn-warning" ng-click="dataSources.push({name: availableDataSources[0].name, objects: []})"><i class="icon-white icon-plus"></i> {{msg('button.addDataSource')}}</button>
+                                            <div class="control-group section2" ng-hide="availableDataSources.length == 0">
+                                                <button class="btn btn-warning" ng-click="addDataSource()"><i class="icon-white icon-plus"></i> {{msg('button.addDataSource')}}</button>
                                             </div>
                                         </div>
                                     </div>

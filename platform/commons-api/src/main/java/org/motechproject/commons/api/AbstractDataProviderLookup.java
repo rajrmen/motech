@@ -62,7 +62,7 @@ public abstract class AbstractDataProviderLookup extends MotechObject implements
             is = resource.getInputStream();
 
             IOUtils.copy(is, writer);
-            body = writer.toString().replaceAll("\\s+", "");
+            body = writer.toString().replaceAll("(^\\s+|\\s+$)", "");
         } catch (IOException e) {
             throw new MotechException("Can't read data from resource", e);
         } finally {

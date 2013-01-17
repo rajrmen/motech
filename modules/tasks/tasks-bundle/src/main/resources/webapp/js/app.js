@@ -124,13 +124,18 @@ angular.module('motech-tasks', ['motech-dashboard', 'channelServices', 'taskServ
 
                         dropElement.find('em').remove();
 
-                        var dragElement = angular.element(ui.draggable).clone()
+                        var dragElement = angular.element(ui.draggable).clone();
                         dragElement.css("position", "relative");
                         dragElement.css("left", "0px");
                         dragElement.css("top", "0px");
                         dragElement.attr("manipulationpopover", "");
                         dragElement.removeAttr("ng-repeat");
                         dragElement.removeAttr("draggable");
+
+                        if (dragElement.data('prefix') === 'ad') {
+                            dragElement.text(dragElement.data('source') + '.' + dragElement.data('object') + '.' + dragElement.text());
+                        }
+
                         position(dropElement, dragElement);
 
                     } else if (angular.element(ui.draggable).hasClass('task-panel') && (element.hasClass('trigger') || element.hasClass('action'))) {

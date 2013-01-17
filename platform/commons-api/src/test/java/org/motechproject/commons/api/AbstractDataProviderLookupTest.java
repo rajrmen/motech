@@ -75,7 +75,7 @@ public class AbstractDataProviderLookupTest {
         testDataProvider.setBody(resource);
 
         String actual = testDataProvider.getBody();
-        String expected = body.replaceAll("\\s+", "");
+        String expected = body.replaceAll("(^\\s+|\\s+$)", "");
 
         assertEquals(expected, actual);
     }
