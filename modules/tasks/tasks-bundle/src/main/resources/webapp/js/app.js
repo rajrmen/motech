@@ -128,6 +128,9 @@ angular.module('motech-tasks', ['motech-dashboard', 'channelServices', 'taskServ
                         dragElement.css("position", "relative");
                         dragElement.css("left", "0px");
                         dragElement.css("top", "0px");
+                        dragElement.attr("manipulationpopover", "");
+                        dragElement.removeAttr("ng-repeat");
+                        dragElement.removeAttr("draggable");
                         position(dropElement, dragElement);
 
                     } else if (angular.element(ui.draggable).hasClass('task-panel') && (element.hasClass('trigger') || element.hasClass('action'))) {
@@ -175,7 +178,7 @@ angular.module('motech-tasks', ['motech-dashboard', 'channelServices', 'taskServ
             });
         }
     };
-}).directive('contenteditable', function() {
+}).directive('contenteditable', function($compile) {
     return {
         restrict: 'A',
         require: '?ngModel',
@@ -188,7 +191,13 @@ angular.module('motech-tasks', ['motech-dashboard', 'channelServices', 'taskServ
                 var container = $('<div></div>');
                 container.html(ngModel.$viewValue);
                 container.find('.editable').attr('contenteditable', true);
-                return element.html(container.html());
+                if (container.text()!="") {
+                    container = container.contents();
+                    $compile(container)(scope);
+                } else {
+                    container = container.html();
+                }
+                return element.html(container);
             };
 
             element.bind('blur keyup change mouseleave', function() {
@@ -243,22 +252,42 @@ angular.module('motech-tasks', ['motech-dashboard', 'channelServices', 'taskServ
     return {
         restrict: 'A',
         link: function(scope, el, attrs) {
-            var data = '<ul><li><span ng-click="selectManipulation(\'ToUpper\', i)">test</span></li><li><span ng-click="selectManipulation(\'ToLower\', i)">{{msg("ToLower")}}</span></li><li><span ng-click="selectManipulation(\'CapitalizeFirstLetter\', i)">{{msg("capitalizeFirstLetter")}}</span></li><li><span ng-click="selectManipulation(\'Join\', i)">{{msg("join")}}</span></li></ul>';
-            el.popover({
-                template : '<div contenteditable="false" class="popover"><div class="arrow"></div><div class="popover-inner"><h3 class="popover-title"></h3><div class="popover-content"><p></p></div></div></div>',
-                title: "String Manipulation",
-                html: true,
-                content: function() {
+            var manipulationOptions = '', title = '';
+            var elType = el.data('type');
+            var msgScope = scope;
+            while (msgScope.msg==undefined) {
+                msgScope = msgScope.$parent;
+            }
+            if (elType == 'UNICODE' || elType == 'TEXTAREA') {
+                title = msgScope.msg('stringManipulation', '');
+                manipulationOptions = '<ul><li><span setmanipulation="toUpper">'+msgScope.msg('toUpper')+'</span></li><li><span setmanipulation="toLower">'+msgScope.msg('toLower')+'</span></li><li><span setmanipulation="capitalize">'+msgScope.msg('capitalizeFirstLetter')+'</span></li><li><span setmanipulation="join">'+msgScope.msg('join')+'</span></li></ul>';
+            } else if (elType == 'DATE') {
+                title = msgScope.msg('dataManipulation', '');
+                manipulationOptions = '<span>'+msgScope.msg('date.time')+'</span></br><input setmanipulation="dateTime" type="text" ng-model="dateFormat"/>';
+            }
 
-                    $timeout(function(){
-                        $compile(el.data('popover').tip())(scope);
-                    });
-                    return data;
-                },
-                placement: "top",
-                trigger: 'click'
+            el.bind('click', function() {
+                var man = $("[ismanipulate=true]").text();
+                if (man.length == 0) {
+                    angular.element(this).attr('ismanipulate', 'true');
+                } else {
+                    angular.element(this).removeAttr('ismanipulate');
+                }
             });
-        },
+
+            if (elType == 'UNICODE' || elType == 'TEXTAREA' || elType == 'DATE') {
+                el.popover({
+                    template : '<div contenteditable="false" class="popover"><div class="arrow"></div><div class="popover-inner"><h3 class="popover-title"></h3><div class="popover-content"><p></p></div></div></div>',
+                    title: title,
+                    html: true,
+                    content: function() {
+                            return $compile($(manipulationOptions))(msgScope)
+                        },
+                    placement: "top",
+                    trigger: 'click'
+                });
+            }
+        }
     };
 }).directive('datetimePicker', function() {
     return {
@@ -311,6 +340,42 @@ angular.module('motech-tasks', ['motech-dashboard', 'channelServices', 'taskServ
                     $(this).html('<em style="color: gray;">' + curText + '</em>');
                 }
             });
+        }
+    }
+}).directive('setmanipulation', function() {
+    return {
+        restrict : 'A',
+        require: '?ngModel',
+        link : function (scope, el, attrs) {
+
+            el.bind("click", function() {
+                var manipulateElement = $("[ismanipulate=true]");
+                if (manipulateElement.data('type') != "DATE") {
+                    var manipulation = this.getAttribute("setManipulation");
+                    var manipulateAttributes = manipulateElement.attr("manipulate") ? manipulateElement.attr("manipulate").split(" ") : [];
+                    if (manipulateAttributes.indexOf(manipulation) != -1) {
+                        manipulateAttributes.removeObject(manipulation)
+                    } else {
+                        manipulateAttributes.push(manipulation);
+                    }
+                    manipulateElement.attr('manipulate', manipulateAttributes.join(" "));
+                } else {
+                    this.value = manipulateElement.attr('manipulate').substring(9, manipulateElement.attr('manipulate').length-1);
+                }
+            });
+
+            el.bind("focusout", function() {
+                var dateFormat = this.value;
+                var manipulateElement = $("[ismanipulate=true]");
+                if (manipulateElement.data("type") == 'DATE') {
+                    var manipulation = this.getAttribute("setManipulation") + "("+ dateFormat + ")";
+                    if (dateFormat == "") {
+                        manipulateElement.removeAttr("manipulate");
+                    } else {
+                        manipulateElement.attr("manipulate", manipulation)
+                    }
+                }
+            })
         }
     }
 });

@@ -95,28 +95,10 @@
                                 <p>{{msg('info.dragFieldBuildAction')}}</p>
                             </div>
                             <div class="control-group move-element">
-                                <div ng-repeat="i in selectedTrigger.eventParameters" class="float-left">
-                                    <div contenteditable="false" id="popover" style="display:none">
-                                        <ul>
-                                            <li>
-                                                <span ng-click="selectManipulation('ToUpper', i)">{{msg('toUpper')}}</span>
-                                            </li>
-                                            <li>
-                                                <span ng-click="selectManipulation('ToLower', i)">{{msg('ToLower')}}</span>
-                                            </li>
-                                            <li>
-                                                <span ng-click="selectManipulation('CapitalizeFirstLetter', i)">{{msg('capitalizeFirstLetter')}}</span>
-                                            </li>
-                                            <li>
-                                                <span ng-click="selectManipulation('Join', i)">{{msg('join')}}</span>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                    <span manipulationpopover="#popover" contenteditable="false" class="badge badge-info triggerField" draggable data-index="{{$index}}" data-type="{{i.type}}" data-prefix="trigger">{{i.displayName}}</span>​
-                                </div>
+                                <span contenteditable="false" ng-repeat="i in selectedTrigger.eventParameters" class="badge badge-info triggerField" draggable data-prefix="trigger" data-index="{{$index}}" data-type="{{i.type}}">{{i.displayName}}</span>​
                             </div>
                             <!------------------  Include Additional Data  ------------------------>
-                            <div class="accordion" id="accordion1" ng-hide="availableDataSources == undefined || availableDataSources.length === 0">
+                            <div class="accordion" id="accordion1" ng-hide="availableDataSources == undefined || availableDataSources.length == 0">
                                 <div class="accordion-group">
                                     <div class="accordion-heading">
                                         <a class="accordion-toggle inbox-header" expandaccordion data-toggle="collapse" data-parent="#accordion1" href="#collapse1">
@@ -181,7 +163,7 @@
                                                     </div>
                                                     <div class="control-group move-element margin-before2" ng-hide="object.displayName == undefined">
                                                         <p><strong>{{msg('subsubsection.objectFields')}}</strong></p>
-                                                        <span ng-repeat="i in object.fields" class="badge badge-warning triggerField" draggable data-index="{{$index}}" data-type="{{i.type}}">{{i.displayName}}</span>
+                                                        <span ng-repeat="i in object.fields" class="badge badge-warning triggerField" draggable data-prefix="ad" data-index="{{$index}}" data-type="{{i.type}}">{{i.displayName}}</span>
                                                     </div>
                                                 </div>
                                                 <div class="margin-before control-group section2" ng-hide="dataSource.name == undefined">

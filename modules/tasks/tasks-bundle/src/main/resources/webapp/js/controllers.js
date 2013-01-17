@@ -268,6 +268,18 @@ function ManageTaskCtrl($scope, Channels, Tasks, DataSources, $routeParams, $htt
                     eventKey = $scope.selectedTrigger.eventParameters[i].eventKey;
                 }
             }
+
+            var manipulation = this.attributes.getNamedItem('manipulate')!=null ? this.attributes.getNamedItem('manipulate').value : '';
+            if (manipulation && manipulation != "" ) {
+                if (this.attributes.getNamedItem('data-type').value == 'UNICODE' || this.attributes.getNamedItem('data-type').value == 'TEXTAREA') {
+                    var man = manipulation.split(" ");
+                    for (var i = 0; i<man.length; i++) {
+                        eventKey = eventKey +"?" + man[i];
+                    }
+                } else if (this.attributes.getNamedItem('data-type').value == 'DATE') {
+                    eventKey = eventKey + "?" + manipulation;
+                }
+            }
             return '{{' + $(this).data('prefix') + '.' + eventKey + '}}';
         });
         result.find('em').remove();
@@ -275,21 +287,26 @@ function ManageTaskCtrl($scope, Channels, Tasks, DataSources, $routeParams, $htt
     }
 
     $scope.createDraggableElement = function (value) {
-        value = value.replace(/{{[a-zA-Z\-\.]*}}/g, $scope.buildSpan);
+        value = value.replace(/{{[^\s]+}}/g, $scope.buildSpan);
         return value;
     }
 
     $scope.buildSpan = function(eventParameterKey) {
-        var key = eventParameterKey.slice(eventParameterKey.indexOf('.') + 1, -2),
+
+        var key = eventParameterKey.slice(eventParameterKey.indexOf('.') + 1, -2).split("?"),
             prefix = eventParameterKey.slice(2, eventParameterKey.indexOf('.')),
             span = "",
             param;
+        eventParameterKey = key[0];
+        key.remove(0);
+        var manipulation = key;
 
         for (var i = 0; i < $scope.selectedTrigger.eventParameters.length; i += 1) {
-            if ($scope.selectedTrigger.eventParameters[i].eventKey == key) {
+            if ($scope.selectedTrigger.eventParameters[i].eventKey == eventParameterKey) {
                 param = $scope.selectedTrigger.eventParameters[i];
-                span = '<span contenteditable="false" class="badge badge-info triggerField ng-scope ng-binding ui-draggable" draggable ng-repeat="i in selectedTrigger.eventParameters" data-index="' + i +
-                '" data-type="' + param.type + '" data-prefix="' + prefix + '" style="position: relative;">' + param.displayName + '</span>';
+                span = '<span manipulationpopover contenteditable="false" class="badge badge-info triggerField ng-scope ng-binding ui-draggable" data-index="' + i +
+                '" data-type="' + param.type + '" data-prefix="' + prefix + '" style="position: relative;" ' +
+                (manipulation.length == 0 ? "" : 'manipulate="' + manipulation.join(" ") + '"') + '>' + param.displayName + '</span>';
                 break;
             }
         }
@@ -419,11 +436,6 @@ function ManageTaskCtrl($scope, Channels, Tasks, DataSources, $routeParams, $htt
             }
         });
     }
-
-    $scope.selectManipulation = function(manipulation, parameter) {
-          console.log("setManipulation")
-    }
-
 }
 
 function LogCtrl($scope, Tasks, Activities, $routeParams) {

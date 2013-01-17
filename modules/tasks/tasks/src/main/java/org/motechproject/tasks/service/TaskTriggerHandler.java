@@ -1,8 +1,11 @@
 package org.motechproject.tasks.service;
 
 import org.apache.commons.lang.StringUtils;
+
+import org.apache.commons.lang.WordUtils;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.motechproject.event.MotechEvent;
 import org.motechproject.event.listener.EventListener;
 import org.motechproject.event.listener.EventListenerRegistryService;
@@ -27,6 +30,7 @@ import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -104,7 +108,7 @@ public class TaskTriggerHandler {
                 }
 
                 try {
-                    Map<String, Object> parameters = createParameters(task, action.getEventParameters(), trigger, triggerEvent);
+                    Map<String, Object> parameters = createParameters(task, action.getEventParameters(), triggerEvent);
                     eventRelay.sendEventMessage(new MotechEvent(subject, parameters));
                     activityService.addSuccess(task);
                 } catch (TaskException e) {
@@ -150,7 +154,7 @@ public class TaskTriggerHandler {
         }
     }
 
-    private Map<String, Object> createParameters(Task task, List<EventParameter> actionParameters, TaskEvent trigger, MotechEvent event) throws TaskException {
+    private Map<String, Object> createParameters(Task task, List<EventParameter> actionParameters, MotechEvent event) throws TaskException {
         Map<String, Object> parameters = new HashMap<>(actionParameters.size());
 
         for (EventParameter param : actionParameters) {
@@ -161,7 +165,7 @@ public class TaskTriggerHandler {
                 throw new TaskException("error.templateNull", key);
             }
 
-            String userInput = replaceAll(template, trigger.getEventParameters(), event, "trigger");
+            String userInput = replaceAll(template, event, "trigger");
             Object value;
 
             if (param.getType().isNumber()) {
@@ -194,19 +198,72 @@ public class TaskTriggerHandler {
         return parameters;
     }
 
-    private String replaceAll(final String template, final List<EventParameter> parameters, final MotechEvent event, final String prefix) {
+    private String replaceAll(final String template, final MotechEvent event, final String prefix) {
         String replaced = template;
+        Map<String , List<String>> keysWithManipulation = getKeysWithManipulation(replaced);
+        for (Map.Entry<String, List<String>> key : keysWithManipulation.entrySet()) {
 
-        for (EventParameter param : parameters) {
-            String key = param.getEventKey();
-
-            if (event.getParameters().containsKey(key)) {
-                String value = String.valueOf(event.getParameters().get(key));
-                replaced = replaced.replaceAll(String.format("\\{\\{%s.%s\\}\\}", prefix, key), value);
+            if (event.getParameters().containsKey(key.getKey())) {
+                String value = String.valueOf(event.getParameters().get(key.getKey()));
+                String replaceKey = key.getKey() + (key.getValue().size() > 0 ? "\\?" + StringUtils.join(key.getValue(), "\\?") : "");
+                String replaceValue = manipulateValue(value, key.getValue());
+                replaced = replaced.replaceAll(String.format("\\{\\{%s.%s\\}\\}", prefix, replaceKey), replaceValue);
             }
         }
-
         return replaced;
+    }
+
+    private String manipulateValue(String value, List<String> manipulations) {
+        String manipulateValue = value;
+        for (String manipulation : manipulations) {
+            if (!manipulation.contains("join") && !manipulation.contains("dateTime")) {
+                switch (manipulation) {
+                    case "toUpper" :
+                        manipulateValue = manipulateValue.toUpperCase();
+                        break;
+                    case "toLower" :
+                        manipulateValue = manipulateValue.toLowerCase();
+                        break;
+                    case "capitalize" :
+                        manipulateValue = WordUtils.capitalize(manipulateValue);
+                        break;
+                    default:
+                        break;
+                }
+            } else if (manipulation.contains("join")) {
+                String[] splitValue = manipulateValue.split(" ");
+                manipulation = manipulation.substring(5 , manipulation.length()-1);
+                manipulateValue = StringUtils.join(splitValue, manipulation);
+            } else if (manipulation.contains("dateTime")) {
+                manipulation = manipulation.substring(9 , manipulation.length()-1);
+                DateTimeFormatter format = DateTimeFormat.forPattern(manipulation);
+                DateTime date = new DateTime(value);
+                manipulateValue = format.print(date);
+            }
+        }
+        return manipulateValue;
+    }
+
+    private Map<String,List<String>> getKeysWithManipulation(String replaced) {
+        Map<String,List<String>> keys = new HashMap<>();
+        String key = "";
+        int iteration = 0;
+        for (char c : replaced.toCharArray()) {
+            if (c == '{') {
+                   iteration++;
+            } else if (c == '}'){
+                if (iteration == 2) {
+                    List<String> splitKey = Arrays.asList(key.split("\\?"));
+                    keys.put(splitKey.get(0).split("\\.")[1], splitKey.subList(1, splitKey.size()));
+                    key = "";
+                }
+                iteration--;
+            }
+            if (iteration == 2 && c != '{') {
+                key=key+c;
+            }
+        }
+        return keys;
     }
 
     private boolean checkFilters(List<Filter> filters, Map<String, Object> triggerParameters) {
