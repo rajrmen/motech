@@ -30,6 +30,7 @@ import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -108,7 +109,7 @@ public class TaskTriggerHandler {
                 }
 
                 try {
-                    Map<String, Object> parameters = createParameters(task, action.getEventParameters(), triggerEvent);
+                    Map<String, Object> parameters = createParameters(task, action.getEventParameters(), triggerEvent, trigger);
                     eventRelay.sendEventMessage(new MotechEvent(subject, parameters));
                     activityService.addSuccess(task);
                 } catch (TaskException e) {
@@ -154,7 +155,7 @@ public class TaskTriggerHandler {
         }
     }
 
-    private Map<String, Object> createParameters(Task task, List<EventParameter> actionParameters, MotechEvent event) throws TaskException {
+    private Map<String, Object> createParameters(Task task, List<EventParameter> actionParameters, MotechEvent event, TaskEvent trigger) throws TaskException {
         Map<String, Object> parameters = new HashMap<>(actionParameters.size());
 
         for (EventParameter param : actionParameters) {
@@ -165,8 +166,8 @@ public class TaskTriggerHandler {
                 throw new TaskException("error.templateNull", key);
             }
 
-            String userInput = replaceAll(template, event, null);
-            userInput = replaceAll(userInput, event, "trigger");
+            String userInput = replaceAll(template, event);
+
             Object value;
 
             if (param.getType().isNumber()) {
@@ -199,24 +200,27 @@ public class TaskTriggerHandler {
         return parameters;
     }
 
-    private String replaceAll(final String template, final MotechEvent event, final String prefix) {
+    private String replaceAll(final String template, final MotechEvent event) throws TaskException {
         String replaced = template;
-        String format = StringUtils.isNotBlank(prefix) ? "\\{\\{%1$s.%2$s\\}\\}" : "\\{\\{%2$s\\}\\}";
+        String keyName;
+        List<String> keys = getKeys(replaced);
+        for (String key : keys) {
+            keyName = getKeyName(key);
 
-        Map<String , List<String>> keysWithManipulation = getKeysWithManipulation(replaced);
-        for (Map.Entry<String, List<String>> key : keysWithManipulation.entrySet()) {
-
-            if (event.getParameters().containsKey(key.getKey())) {
-                String value = String.valueOf(event.getParameters().get(key.getKey()));
-                String replaceKey = key.getKey() + (key.getValue().size() > 0 ? "\\?" + StringUtils.join(key.getValue(), "\\?") : "");
-                String replaceValue = manipulateValue(value, key.getValue());
-                replaced = replaced.replaceAll(String.format(format, prefix, replaceKey), replaceValue);
+            if (event.getParameters().containsKey(keyName)) {
+                Object obj = event.getParameters().get(keyName);
+                if (obj == null) {
+                    obj = "";
+                }
+                String value = String.valueOf(obj);
+                String replaceValue = manipulateValue(value, getManipulation(key));
+                replaced = replaced.replace(String.format("{{%s}}", key), replaceValue);
             }
         }
         return replaced;
     }
 
-    private String manipulateValue(String value, List<String> manipulations) {
+    private String manipulateValue(String value, List<String> manipulations) throws TaskException {
         String manipulateValue = value;
         for (String manipulation : manipulations) {
             if (!manipulation.contains("join") && !manipulation.contains("dateTime")) {
@@ -238,17 +242,21 @@ public class TaskTriggerHandler {
                 manipulation = manipulation.substring(5 , manipulation.length()-1);
                 manipulateValue = StringUtils.join(splitValue, manipulation);
             } else if (manipulation.contains("dateTime")) {
-                manipulation = manipulation.substring(9 , manipulation.length()-1);
-                DateTimeFormatter format = DateTimeFormat.forPattern(manipulation);
-                DateTime date = new DateTime(value);
-                manipulateValue = format.print(date);
+                try {
+                    manipulation = manipulation.substring(9 , manipulation.length()-1);
+                    DateTimeFormatter format = DateTimeFormat.forPattern(manipulation);
+                    DateTime date = new DateTime(manipulateValue);
+                    manipulateValue = format.print(date);
+                } catch (IllegalArgumentException e) {
+                    throw new TaskException("error.date.format", manipulation);
+                }
             }
         }
         return manipulateValue;
     }
 
-    private Map<String,List<String>> getKeysWithManipulation(String replaced) {
-        Map<String,List<String>> keys = new HashMap<>();
+    private List<String> getKeys(String replaced) {
+        List<String> keys = new ArrayList<>();
         String key = "";
         int iteration = 0;
         for (char c : replaced.toCharArray()) {
@@ -256,8 +264,7 @@ public class TaskTriggerHandler {
                    iteration++;
             } else if (c == '}'){
                 if (iteration == 2) {
-                    List<String> splitKey = Arrays.asList(key.split("\\?"));
-                    keys.put(splitKey.get(0).split("\\.")[1], splitKey.subList(1, splitKey.size()));
+                    keys.add(key);
                     key = "";
                 }
                 iteration--;
@@ -267,6 +274,17 @@ public class TaskTriggerHandler {
             }
         }
         return keys;
+    }
+
+    private String getKeyName(String key) {
+        List<String> splitKey = Arrays.asList(key.split("\\?"));
+        return splitKey.get(0).split("\\.")[1];
+    }
+
+    private List<String> getManipulation(String key) {
+        List<String> manipulation = new ArrayList<>(Arrays.asList(key.split("\\?")));
+        manipulation.remove(0);
+        return manipulation;
     }
 
     private boolean checkFilters(List<Filter> filters, Map<String, Object> triggerParameters) {

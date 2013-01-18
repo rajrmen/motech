@@ -278,7 +278,7 @@ public class TaskTriggerHandlerTest {
         assertEquals(3, motechEvent.getParameters().size());
         assertEquals(ACTION_SUBJECT, motechEvent.getSubject());
         assertEquals(task.getActionInputFields().get("phone"), motechEvent.getParameters().get("phone").toString());
-        assertEquals("Hello 123456789, You have an appointment on 2012-11-20", motechEvent.getParameters().get("message"));
+        assertEquals("Hello 123456789, You have an appointment on 2012-11-20,String manipulation: Event-Name, Date manipulation: 20121120", motechEvent.getParameters().get("message"));
     }
 
     @Test
@@ -298,13 +298,35 @@ public class TaskTriggerHandlerTest {
         verify(taskActivityService).addSuccess(task);
     }
 
+    @Test
+    public void shouldNotSendEventIfDateFormatInManipulationIsNotValid() throws Exception {
+        when(taskService.findTrigger(TRIGGER_SUBJECT)).thenReturn(triggerEvent);
+        when(taskService.findTasksForTrigger(triggerEvent)).thenReturn(tasks);
+        when(taskService.getActionEventFor(task)).thenReturn(actionEvent);
+
+        task.getActionInputFields().put("message", "{{trigger.startDate?dateTime(BadFormat)}}");
+
+        handler.handle(createEvent());
+        ArgumentCaptor<TaskException> captor = ArgumentCaptor.forClass(TaskException.class);
+
+        verify(taskService).findTrigger(TRIGGER_SUBJECT);
+        verify(taskService).findTasksForTrigger(triggerEvent);
+        verify(taskService).getActionEventFor(task);
+        verify(taskActivityService).addError(eq(task), captor.capture());
+
+        verify(eventRelay, never()).sendEventMessage(any(MotechEvent.class));
+        verify(taskActivityService, never()).addSuccess(task);
+
+        assertEquals("error.date.format", captor.getValue().getMessageKey());
+    }
+
     private MotechEvent createEvent() {
         Map<String, Object> param = new HashMap<>(4);
         param.put("externalId", 123456789);
         param.put("startDate", new LocalDate(2012, 11, 20));
         param.put("endDate", new LocalDate(2012, 11, 29));
         param.put("facilityId", 987654321);
-        param.put("eventName", "Event");
+        param.put("eventName", "event name");
 
         return new MotechEvent(TRIGGER_SUBJECT, param);
     }
@@ -319,7 +341,7 @@ public class TaskTriggerHandlerTest {
 
         Map<String, String> actionInputFields = new HashMap<>();
         actionInputFields.put("phone", "123456");
-        actionInputFields.put("message", "Hello {{trigger.externalId}}, You have an appointment on {{startDate}}");
+        actionInputFields.put("message", "Hello {{trigger.externalId}}, You have an appointment on {{trigger.startDate}},String manipulation: {{trigger.eventName?toUpper?toLower?capitalize?join(-)}}, Date manipulation: {{trigger.startDate?dateTime(yyyyMMdd)}}");
         actionInputFields.put("date", "2012-12-21 21:21 +0100");
 
         task = new Task(trigger, action, actionInputFields);
@@ -360,9 +382,9 @@ public class TaskTriggerHandlerTest {
         List<Filter> filters = new ArrayList<>();
         filters.add(new Filter(new EventParameter("EventName", "eventName"), true, CONTAINS.getValue(), "ven"));
         filters.add(new Filter(new EventParameter("EventName", "eventName"), true, EXIST.getValue(), ""));
-        filters.add(new Filter(new EventParameter("EventName", "eventName"), true, EQUALS.getValue(), "Event"));
-        filters.add(new Filter(new EventParameter("EventName", "eventName"), true, STARTSWITH.getValue(), "Ev"));
-        filters.add(new Filter(new EventParameter("EventName", "eventName"), true, ENDSWITH.getValue(), "nt"));
+        filters.add(new Filter(new EventParameter("EventName", "eventName"), true, EQUALS.getValue(), "event name"));
+        filters.add(new Filter(new EventParameter("EventName", "eventName"), true, STARTSWITH.getValue(), "ev"));
+        filters.add(new Filter(new EventParameter("EventName", "eventName"), true, ENDSWITH.getValue(), "me"));
         filters.add(new Filter(new EventParameter("ExternalID", "externalId", NUMBER), true, GT.getValue(), "19"));
         filters.add(new Filter(new EventParameter("ExternalID", "externalId", NUMBER), true, LT.getValue(), "1234567891"));
         filters.add(new Filter(new EventParameter("ExternalID", "externalId", NUMBER), true, EQUALS.getValue(), "123456789"));
