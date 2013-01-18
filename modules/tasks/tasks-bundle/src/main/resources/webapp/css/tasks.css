@@ -585,3 +585,12 @@ editable-content .actionField.input-block-level span.badge {
 .ui-datepicker, #ui-timepicker-div {
     z-index: 9999 !important;
 }
+
+#helpModal.modal {
+    width: 660px;
+}
+
+#helpModal.modal .header {
+    color: #224477;
+    font-size: 16px;
+}
