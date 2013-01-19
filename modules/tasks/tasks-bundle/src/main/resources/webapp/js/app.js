@@ -108,7 +108,7 @@ angular.module('motech-tasks', ['motech-dashboard', 'channelServices', 'taskServ
                                 }
                             }
                         } else if (document.selection && document.selection.type != "Control") {
-                            document.selection.createRange().pasteHTML(dragElement[0].outerHTML);
+                            document.selection.createRange().pasteHTML($compile(dragElement[0].outerHTML)(scope));
                         }
                     }
 
@@ -129,6 +129,7 @@ angular.module('motech-tasks', ['motech-dashboard', 'channelServices', 'taskServ
                         dragElement.css("left", "0px");
                         dragElement.css("top", "0px");
                         dragElement.attr("manipulationpopover", "");
+                        dragElement.addClass('pointer');
                         dragElement.removeAttr("ng-repeat");
                         dragElement.removeAttr("draggable");
 
@@ -265,10 +266,10 @@ angular.module('motech-tasks', ['motech-dashboard', 'channelServices', 'taskServ
             }
             if (elType == 'UNICODE' || elType == 'TEXTAREA') {
                 title = msgScope.msg('stringManipulation', '');
-                manipulationOptions = '<ul><li><span setmanipulation="toUpper">'+msgScope.msg('toUpper')+'</span></li><li><span setmanipulation="toLower">'+msgScope.msg('toLower')+'</span></li><li><span setmanipulation="capitalize">'+msgScope.msg('capitalizeFirstLetter')+'</span></li><li><span setmanipulation="join">'+msgScope.msg('join')+'</span></li></ul>';
+                manipulationOptions = '<ul><li class="padding-botton6"><span class="pointer" setmanipulation="toUpper">'+msgScope.msg('toUpper')+'</span></li><li class="padding-botton6"><span class="pointer" setmanipulation="toLower">'+msgScope.msg('toLower')+'</span></li><li class="padding-botton6"><span class="pointer" setmanipulation="capitalize">'+msgScope.msg('capitalizeFirstLetter')+'</span></li><li class="padding-botton6"><span class="pointer" setmanipulation="join">'+msgScope.msg('join')+'</span><input id="joinSeparator" join-update class="input-popover" style="display:none" type="text" ng-model="joinSeparator"/></li></ul>';
             } else if (elType == 'DATE') {
                 title = msgScope.msg('dataManipulation', '');
-                manipulationOptions = '<span>'+msgScope.msg('date.time')+'</span></br><input setmanipulation="dateTime" type="text" ng-model="dateFormat"/>';
+                manipulationOptions = '<span>'+msgScope.msg('date.time')+'</span></br><input id="dateFormat" setmanipulation="dateTime" type="text" ng-model="dateFormat"/>';
             }
 
             el.bind('click', function() {
@@ -282,12 +283,37 @@ angular.module('motech-tasks', ['motech-dashboard', 'channelServices', 'taskServ
 
             if (elType == 'UNICODE' || elType == 'TEXTAREA' || elType == 'DATE') {
                 el.popover({
-                    template : '<div contenteditable="false" class="popover"><div class="arrow"></div><div class="popover-inner"><h3 class="popover-title"></h3><div class="popover-content"><p></p></div></div></div>',
+                    template : '<div contenteditable="false" class="popover dragpopover"><div class="arrow"></div><div class="popover-inner"><h3 class="popover-title"></h3><div class="popover-content"><p></p></div></div></div>',
                     title: title,
                     html: true,
                     content: function() {
-                            return $compile($(manipulationOptions))(msgScope)
-                        },
+                        var elem = $(manipulationOptions);
+                        elem.find('span').replaceWith(function() {
+                            var element = $("[ismanipulate=true]");
+                            var manipulation = element.attr('manipulate');
+                            if (manipulation != undefined && manipulation.indexOf(this.attributes.getNamedItem('setmanipulation').value) != -1) {
+                                $(this).append('<span class="icon-ok" style="float: right"></span>');
+                                if (manipulation.indexOf("join") != -1) {
+                                    $(this.nextElementSibling).css({ 'display' : '' });
+                                    elem.find('input').val(manipulation.slice(manipulation.indexOf("join")+5, manipulation.indexOf(")")));
+                                } else {
+                                    elem.find('input').val("");
+                                }
+                            }
+                            return $(this)[0].outerHTML;
+                        });
+                        if (elem.is('span')) {
+                           var element = $("[ismanipulate=true]");
+                           var manipulation = element.attr('manipulate');
+                           if (manipulation != undefined) {
+                               elem.first().append('<span class="icon-ok" style="float: right"></span>');
+                               elem.find('input').val(manipulation.slice(manipulation.indexOf("dateTime")+9, manipulation.indexOf(")")));
+                           } else {
+                               elem.find('input').val("");
+                           }
+                        }
+                        return $compile(elem)(msgScope);
+                    },
                     placement: "top",
                     trigger: 'click'
                 });
@@ -351,36 +377,81 @@ angular.module('motech-tasks', ['motech-dashboard', 'channelServices', 'taskServ
     return {
         restrict : 'A',
         require: '?ngModel',
-        link : function (scope, el, attrs) {
+        link : function (scope, el, attrs, ngModel) {
 
             el.bind("click", function() {
                 var manipulateElement = $("[ismanipulate=true]");
+                var joinSeparator = "";
+                var reg;
                 if (manipulateElement.data('type') != "DATE") {
                     var manipulation = this.getAttribute("setManipulation");
-                    var manipulateAttributes = manipulateElement.attr("manipulate") ? manipulateElement.attr("manipulate").split(" ") : [];
+                    var manipulateAttributes = manipulateElement.attr("manipulate") ? manipulateElement.attr("manipulate") : "";
                     if (manipulateAttributes.indexOf(manipulation) != -1) {
-                        manipulateAttributes.removeObject(manipulation)
+                        var manipulationAttributesIndex = manipulateElement.attr("manipulate").indexOf(manipulation);
+                        if (manipulation != "join") {
+                            reg = new RegExp(manipulation, "g")
+                            manipulateAttributes = manipulateAttributes.replace(reg, '');
+                        } else {
+                            joinSeparator = manipulation + "\\(" + this.nextElementSibling.value + "\\)";
+                            reg = new RegExp(joinSeparator, "g")
+                            manipulateAttributes = manipulateAttributes.replace(reg, '');
+                        }
                     } else {
-                        manipulateAttributes.push(manipulation);
+                        manipulateAttributes = manipulateAttributes.replace(/ +(?= )/g, '');
+                        if (manipulation != "join") {
+                            manipulateAttributes = manipulateAttributes + manipulation + " ";
+                        } else {
+                            joinSeparator = this.nextElementSibling.value;
+                            manipulateAttributes = manipulateAttributes + manipulation + "(" + $("#joinSeparator").val() + ")" + " ";
+                        }
                     }
-                    manipulateElement.attr('manipulate', manipulateAttributes.join(" "));
+                    manipulateElement.attr('manipulate', manipulateAttributes);
+                }
+                if (this.children.length == 0) {
+                   $(this).append('<span class="icon-ok" style="float: right"></span>');
+                   $(this.nextElementSibling).css({ 'display' : '' });
                 } else {
-                    this.value = manipulateElement.attr('manipulate').substring(9, manipulateElement.attr('manipulate').length-1);
+                    $(this).children().remove();
+                    $(this.nextElementSibling).css({ 'display' : 'none' });
                 }
             });
 
-            el.bind("focusout", function() {
-                var dateFormat = this.value;
+            el.bind("focusout focusin keyup", function() {
+                var dateFormat = ngModel.$viewValue ? ngModel.$viewValue : "";
                 var manipulateElement = $("[ismanipulate=true]");
                 if (manipulateElement.data("type") == 'DATE') {
+                    var deleteButton = $('<span class="icon-remove" style="float: right"></span>');
                     var manipulation = this.getAttribute("setManipulation") + "("+ dateFormat + ")";
-                    if (dateFormat == "") {
                         manipulateElement.removeAttr("manipulate");
-                    } else {
-                        manipulateElement.attr("manipulate", manipulation)
+                    if (dateFormat.length != 0 && this.previousSibling.previousSibling.children.length == 0) {
+                        manipulateElement.attr("manipulate", manipulation) ;
+                        $(this.previousSibling.previousSibling).append(deleteButton);
+                        $(this.previousSibling.previousSibling).append('<span class="icon-ok" style="float: right"></span>');
+                    } else if (dateFormat.length == 0) {
+                        $(this.previousSibling.previousSibling).children().remove();
                     }
+                    $('span.icon-remove').live('click', function() {
+                        $(this.parentElement).children().remove();
+                        $("[ismanipulate=true]").removeAttr("manipulate");
+                        $("#dateFormat").value('');
+                    });
                 }
-            })
+            });
         }
     }
+}).directive('joinUpdate', function() {
+      return {
+          restrict : 'A',
+          require: '?ngModel',
+          link : function (scope, el, attrs, ngModel) {
+              el.bind("focusout focusin keyup", function() {
+                  var joinSeparator = ngModel.$viewValue ? ngModel.$viewValue : "";
+                  var manipulateElement = $("[ismanipulate=true]");
+                  var manipulation = "join("+ joinSeparator + ")";
+                  var elementManipulation = manipulateElement.attr("manipulate") ;
+                  elementManipulation = elementManipulation.replace(/join\(.*?\)/g, manipulation);
+                  manipulateElement.attr("manipulate", elementManipulation);
+              });
+          }
+      }
 });
