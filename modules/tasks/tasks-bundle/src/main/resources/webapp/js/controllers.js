@@ -294,7 +294,7 @@ function ManageTaskCtrl($scope, Channels, Tasks, DataSources, $routeParams, $htt
     }
 
     $scope.createDraggableElement = function (value) {
-        value = value.replace(/{{[^\s]+}}/g, $scope.buildSpan);
+        value = value.replace(/{{.*?}}/g, $scope.buildSpan);
         return value;
     }
 
