@@ -108,18 +108,14 @@ function ManageTaskCtrl($scope, Channels, Tasks, DataSources, $routeParams, $htt
     $scope.selectedDataSources = [];
     $scope.availableDataSources = [];
     $scope.allDataSources = DataSources.query(function () {
-        var i;
-
-        for (i = 0; i < $scope.allDataSources.length; i += 1) {
-            $scope.availableDataSources.push($scope.allDataSources[i]);
-        }
+        $.merge($scope.availableDataSources, $scope.allDataSources);
     });
 
     $scope.channels = Channels.query(function (){
         if ($routeParams.taskId != undefined) {
             $scope.task = Tasks.get({ taskId: $routeParams.taskId }, function () {
                 var trigger = $scope.task.trigger.split(':'), action = $scope.task.action.split(':'),
-                    i;
+                    i, source, dataSource, ds, object, obj;
 
                 $scope.setTaskEvent('trigger', trigger[0], trigger[1], trigger[2]);
                 $scope.setTaskEvent('action', action[0], action[1], action[2]);
@@ -138,6 +134,33 @@ function ManageTaskCtrl($scope, Channels, Tasks, DataSources, $routeParams, $htt
                         $scope.draggedAction.display = $scope.selectedAction.displayName;
                         break;
                     }
+                }
+
+                for (source in $scope.task.additionalData) {
+                    ds = $scope.findDataSource($scope.allDataSources, source);
+                    dataSource = { name: source, objects: []};
+
+                    for (i = 0; i < $scope.task.additionalData[source].length; i += 1) {
+                        object = $scope.task.additionalData[source][i];
+                        obj = $scope.findObject(ds, object.type);
+
+                        dataSource.objects.push({
+                            id: object.id,
+                            displayName: obj.displayName,
+                            type: object.type,
+                            fields: obj.fields,
+                            lookup: {
+                                displayName: $scope.findTriggerEventParameter(object.lookupValue).displayName,
+                                by: object.lookupValue,
+                                field: object.lookupField
+                            }
+                        });
+                    }
+
+                    $scope.selectedDataSources.push(dataSource);
+
+                    ds = $scope.findDataSource($scope.availableDataSources, source);
+                    $scope.availableDataSources.removeObject(ds);
                 }
 
                 for (i = 0; i < $scope.selectedAction.eventParameters.length; i += 1) {
@@ -237,6 +260,41 @@ function ManageTaskCtrl($scope, Channels, Tasks, DataSources, $routeParams, $htt
             }
         }
 
+        $scope.task.additionalData = {};
+        for (i = 0; i < action.eventParameters.length; i += 1) {
+            $('<div>' + action.eventParameters[i].value + "</div>").find('span[data-prefix="ad"]').each(function(index, value) {
+                var span = $(value),
+                    source = span.data('source'),
+                    objectType = span.data('object-type'),
+                    objectId = span.data('object-id'),
+                    exists = false,
+                    dataSource, object, i;
+
+                if ($scope.task.additionalData[source] === undefined) {
+                    $scope.task.additionalData[source] = [];
+                }
+
+                for (i = 0; i < $scope.task.additionalData[source].length; i += 1) {
+                    if ($scope.task.additionalData[source][i].id === objectId) {
+                        exists = true;
+                        break;
+                    }
+                }
+
+                if (!exists) {
+                    dataSource = $scope.findDataSource($scope.selectedDataSources, source);
+                    object = $scope.findObject(dataSource, objectType, objectId);
+
+                    $scope.task.additionalData[source].push({
+                        id: object.id,
+                        type: object.type,
+                        lookupField: object.lookup.field,
+                        lookupValue: object.lookup.by
+                    });
+                }
+            });
+        }
+
         for (i = 0; i < action.eventParameters.length; i += 1) {
             eventKey = action.eventParameters[i].eventKey;
             value = $scope.refactorDivEditable(action.eventParameters[i].value  || '');
@@ -261,6 +319,7 @@ function ManageTaskCtrl($scope, Channels, Tasks, DataSources, $routeParams, $htt
             }).error(function () {
                 delete $scope.task.actionInputFields;
                 delete $scope.task.enabled;
+                delete $scope.task.additionalData;
 
                 alertHandler('task.error.saved', 'header.error');
             });
@@ -268,12 +327,21 @@ function ManageTaskCtrl($scope, Channels, Tasks, DataSources, $routeParams, $htt
 
     $scope.refactorDivEditable = function (value) {
         var result = $('<div>' + value + '</div>');
+
         result.find('span').replaceWith(function() {
-            var eventKey = '';
-            for (var i = 0; i < $scope.selectedTrigger.eventParameters.length; i += 1) {
-                if ($scope.selectedTrigger.eventParameters[i].displayName == $(this).text()) {
-                    eventKey = $scope.selectedTrigger.eventParameters[i].eventKey;
+            var eventKey = '', source = $(this).data('source'),
+                type = $(this).data('object-type'), objectDisplayName = $(this).data('object'),
+                prefix = $(this).data('prefix'), field = $(this).data('field'), id = $(this).data('object-id'),
+                val;
+
+            if (prefix === 'trigger') {
+                for (var i = 0; i < $scope.selectedTrigger.eventParameters.length; i += 1) {
+                    if ($scope.selectedTrigger.eventParameters[i].displayName == $(this).text()) {
+                        eventKey = $scope.selectedTrigger.eventParameters[i].eventKey;
+                    }
                 }
+            } else if (prefix === 'ad') {
+                eventKey = field;
             }
 
             var manipulation = this.attributes.getNamedItem('manipulate')!=null ? this.attributes.getNamedItem('manipulate').value : '';
@@ -287,7 +355,14 @@ function ManageTaskCtrl($scope, Channels, Tasks, DataSources, $routeParams, $htt
                     eventKey = eventKey + "?" + manipulation;
                 }
             }
-            return '{{' + $(this).data('prefix') + '.' + eventKey + '}}';
+
+            if (prefix === 'trigger') {
+                val = '{{' + prefix + '.' + eventKey + '}}';
+            } else if (prefix === 'ad') {
+                val = '{{' + prefix + '.' + source + '.' + type + '#' + id + '.' + eventKey + '}}';
+            }
+
+            return val;
         });
         result.find('em').remove();
         return result.text();
@@ -299,24 +374,42 @@ function ManageTaskCtrl($scope, Channels, Tasks, DataSources, $routeParams, $htt
     }
 
     $scope.buildSpan = function(eventParameterKey) {
-
         var key = eventParameterKey.slice(eventParameterKey.indexOf('.') + 1, -2).split("?"),
             prefix = eventParameterKey.slice(2, eventParameterKey.indexOf('.')),
-            span = "",
-            param;
+            span = "", param, source, type, field, cuts, dataSource, object, id;
+
         eventParameterKey = key[0];
         key.remove(0);
         var manipulation = key;
 
-        for (var i = 0; i < $scope.selectedTrigger.eventParameters.length; i += 1) {
-            if ($scope.selectedTrigger.eventParameters[i].eventKey == eventParameterKey) {
-                param = $scope.selectedTrigger.eventParameters[i];
-                span = '<span manipulationpopover contenteditable="false" class="badge badge-info triggerField ng-scope ng-binding ui-draggable" data-index="' + i +
-                '" data-type="' + param.type + '" data-prefix="' + prefix + '" style="position: relative;" ' +
-                (manipulation.length == 0 ? "" : 'manipulate="' + manipulation.join(" ") + '"') + '>' + param.displayName + '</span>';
-                break;
-            }
+        if (prefix === 'trigger') {
+            param = $scope.findTriggerEventParameter(eventParameterKey);
+            span = '<span manipulationpopover contenteditable="false" class="badge badge-info triggerField ng-scope ng-binding ui-draggable" data-index="' + i +
+                   '" data-type="' + param.type + '" data-prefix="' + prefix + '" style="position: relative;" ' +
+                   (manipulation.length == 0 ? "" : 'manipulate="' + manipulation.join(" ") + '"') + '>' + param.displayName + '</span>';
+        } else if (prefix === 'ad') {
+            cuts = eventParameterKey.split('.');
+
+            source = cuts[0];
+            type = cuts[1].split('#');
+            id = type.last();
+
+            cuts.remove(0, 1);
+            type.removeObject(id);
+
+            field = cuts.join('.');
+            type = type.join('#');
+
+            dataSource = $scope.findDataSource($scope.selectedDataSources, source);
+            object = $scope.findObject(dataSource, type);
+            param = $scope.findObjectField(object, field);
+
+            span = '<span manipulationpopover contenteditable="false" class="badge badge-warning triggerField ng-scope ng-binding ui-draggable" data-type="' + param.type +
+                   '" data-prefix="' + prefix + '" data-source="' + source + '" data-object="' + param.displayName +'" data-object-type="' + type + '" data-field="' + field +
+                   '" data-object-id="' + id + '" style="position: relative;" ' + (manipulation.length == 0 ? "" : 'manipulate="' + manipulation.join(" ") + '"') + '>' +
+                   source + '.' + object.displayName + '#' + id + '.' + param.displayName + '</span>';
         }
+
         return span;
     }
 
@@ -389,67 +482,37 @@ function ManageTaskCtrl($scope, Channels, Tasks, DataSources, $routeParams, $htt
     }
 
     $scope.changeDataSource = function (dataSource, available) {
-        var i;
+        motechConfirm('task.confirm.changeDataSource', 'header.confirm', function (r) {
+            if (r) {
+                $('.actionField span[data-source="' + dataSource.name + '"]').remove();
 
-        $scope.availableDataSources.removeObject(available);
+                $scope.availableDataSources.removeObject(available);
+                $scope.selectedDataSources.removeObject(dataSource);
+                $scope.availableDataSources.push($scope.findDataSource($scope.allDataSources, dataSource.name));
 
-        for (i = 0; i < $scope.allDataSources.length; i += 1) {
-            if ($scope.allDataSources[i].name === dataSource.name) {
-                $scope.availableDataSources.push($scope.allDataSources[i]);
-                break;
+                dataSource = cloneObj(available);
             }
-        }
-
-        dataSource = available.copy();
-    }
-
-    $scope.getAvailableObjects = function (dataSource) {
-        var i, j, select = [];
-
-        for(i = 0; i < $scope.allDataSources.length; i += 1) {
-            if ($scope.allDataSources[i].name === dataSource.name) {
-                $.merge(select, $scope.allDataSources[i].objects);
-                break;
-            }
-        }
-
-        for (j = 0; j < dataSource.objects.length; j += 1) {
-            for (i = select.length - 1; i >= 0; i -= 1) {
-                if (select[i].type === dataSource.objects[j].type) {
-                    select.remove(i);
-                }
-            }
-        }
-
-        return select;
+        });
     }
 
     $scope.getAvailableLookupFields = function (dataSourceName, objectType) {
-        var i, j, select, item;
+        var dataSource = $scope.findDataSource($scope.allDataSources, dataSourceName),
+            object = $scope.findObject(dataSource, objectType);
 
-        for(i = 0; i < $scope.allDataSources.length; i += 1) {
-            item = $scope.allDataSources[i];
-
-            for (j = 0; j < item.objects.length; j += 1) {
-                if (item.objects[j].type === objectType) {
-                    select = item.objects[j];
-                    break;
-                }
-            }
-
-            if (select !== undefined) {
-                break;
-            }
-        }
-
-        return select === undefined ? [] : select.lookupFields;
+        return object === undefined ? [] : object.lookupFields;
     }
 
-    $scope.selectObject = function (object, selected) {
-        object.displayName = selected.displayName;
-        object.type = selected.type;
-        object.fields = selected.fields;
-        object.lookup.field = selected.lookupFields[0];
+    $scope.selectObject = function (dataSourceName, object, selected) {
+        motechConfirm('task.confirm.changeObject', 'header.confirm', function (r) {
+            if (r) {
+                $('.actionField span[data-source="' + dataSourceName + '"][data-object-type="' + object.type + '"][data-object-id="' + object.id + '"]').remove();
+
+                object.displayName = selected.displayName;
+                object.type = selected.type;
+                object.fields = selected.fields;
+                object.lookup.field = selected.lookupFields[0];
+            }
+        });
     }
 
     $scope.selectLookup = function (object, lookup) {
@@ -458,9 +521,11 @@ function ManageTaskCtrl($scope, Channels, Tasks, DataSources, $routeParams, $htt
     }
 
     $scope.addObject = function (dataSource) {
-        var first = $scope.getAvailableObjects(dataSource)[0];
+        var first = $scope.findDataSource($scope.allDataSources, dataSource.name).objects[0],
+            last = dataSource.objects.last();
 
         dataSource.objects.push({
+            id: (last === undefined ? 0 : last.id) + 1,
             displayName: first.displayName,
             type: first.type,
             fields: first.fields,
@@ -471,6 +536,65 @@ function ManageTaskCtrl($scope, Channels, Tasks, DataSources, $routeParams, $htt
             }
         });
     }
+
+    $scope.findTriggerEventParameter = function (eventKey) {
+        var i, found;
+
+        for (i = 0; i < $scope.selectedTrigger.eventParameters.length; i += 1) {
+            if ($scope.selectedTrigger.eventParameters[i].eventKey === eventKey) {
+                found = $scope.selectedTrigger.eventParameters[i];
+                break;
+            }
+        }
+
+        return found;
+    }
+
+    $scope.findDataSource = function (dataSources, name) {
+        var i, found;
+
+        for (i = 0; i < dataSources.length; i += 1) {
+            if (dataSources[i].name === name) {
+                found = dataSources[i];
+                break;
+            }
+        }
+
+        return found;
+    }
+
+    $scope.findObject = function (dataSource, type, id) {
+        var i, expression, found;
+
+        for (i = 0; i < dataSource.objects.length; i += 1) {
+            expression = dataSource.objects[i].type === type;
+
+            if (expression && id !== undefined) {
+                expression = expression && dataSource.objects[i].id === id;
+            }
+
+            if (expression) {
+                found = dataSource.objects[i];
+                break;
+            }
+        }
+
+        return found;
+    }
+
+    $scope.findObjectField = function (object, field) {
+        var i, found;
+
+        for (i = 0; i < object.fields.length; i += 1) {
+            if (object.fields[i].eventKey === field) {
+                found = object.fields[i];
+                break;
+            }
+        }
+
+        return found;
+    }
+
 }
 
 function LogCtrl($scope, Tasks, Activities, $routeParams) {

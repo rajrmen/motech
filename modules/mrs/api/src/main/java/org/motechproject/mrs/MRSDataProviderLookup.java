@@ -32,14 +32,14 @@ public class MRSDataProviderLookup extends AbstractDataProviderLookup {
     }
 
     @Override
-    public Object lookup(String clazz, Map<String, String> lookupFields) {
+    public Object lookup(String type, Map<String, String> lookupFields) {
         Object obj = null;
 
-        if (supports(clazz) && lookupFields.containsKey(SUPPORT_FIELD)) {
+        if (supports(type) && lookupFields.containsKey(SUPPORT_FIELD)) {
             String id = lookupFields.get(SUPPORT_FIELD);
 
             try {
-                Class<?> cls = getClass().getClassLoader().loadClass(clazz);
+                Class<?> cls = getClassForType(type);
 
                 if (MRSPatient.class.isAssignableFrom(cls)) {
                     obj = getPatient(id);
@@ -59,6 +59,11 @@ public class MRSDataProviderLookup extends AbstractDataProviderLookup {
     @Override
     public List<Class<?>> getSupportClasses() {
         return Arrays.asList(MRSPerson.class, MRSPatient.class, MRSFacility.class);
+    }
+
+    @Override
+    public String getPackageRoot() {
+        return "org.motechproject.mrs.model";
     }
 
     public void setPatientAdapters(List<MRSPatientAdapter> patientAdapters) {

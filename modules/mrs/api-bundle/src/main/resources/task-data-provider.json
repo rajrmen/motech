@@ -3,7 +3,7 @@
     "objects": [
         {
             "displayName": "Patient",
-            "type": "org.motechproject.mrs.model.MRSPatient",
+            "type": "MRSPatient",
             "lookupFields": ["id"],
             "fields": [
                 {
@@ -22,7 +22,7 @@
         },
         {
             "displayName": "Person",
-            "type": "org.motechproject.mrs.model.MRSPerson",
+            "type": "MRSPerson",
             "lookupFields": ["id"],
             "fields": [
                 {
@@ -80,7 +80,7 @@
         },
         {
             "displayName": "Facility",
-            "type": "org.motechproject.mrs.model.MRSFacility",
+            "type": "MRSFacility",
             "lookupFields": ["id"],
             "fields": [
                 {

@@ -6,8 +6,8 @@ public interface DataProviderLookup {
 
     String toJSON();
 
-    Object lookup(String clazz, Map<String, String> lookupFields);
+    Object lookup(String type, Map<String, String> lookupFields);
 
-    boolean supports(String clazz);
+    boolean supports(String type);
 
 }

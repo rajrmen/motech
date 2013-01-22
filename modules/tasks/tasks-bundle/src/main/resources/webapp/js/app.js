@@ -134,7 +134,7 @@ angular.module('motech-tasks', ['motech-dashboard', 'channelServices', 'taskServ
                         dragElement.removeAttr("draggable");
 
                         if (dragElement.data('prefix') === 'ad') {
-                            dragElement.text(dragElement.data('source') + '.' + dragElement.data('object') + '.' + dragElement.text());
+                            dragElement.text(dragElement.data('source') + '.' + dragElement.data('object') + "#" + dragElement.data('object-id') + '.' + dragElement.text());
                         }
 
                         position(dropElement, dragElement);

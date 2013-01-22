@@ -13,23 +13,29 @@ public abstract class AbstractDataProviderLookup extends MotechObject implements
 
     public abstract List<Class<?>> getSupportClasses();
 
+    public abstract String getPackageRoot();
+
     @Override
     public String toJSON() {
         return getBody();
     }
 
     @Override
-    public boolean supports(String clazz) {
+    public boolean supports(String type) {
         boolean support;
 
         try {
-            support = isAssignable(getClass().getClassLoader().loadClass(clazz), getSupportClasses());
+            support = isAssignable(getClassForType(type), getSupportClasses());
         } catch (ClassNotFoundException e) {
             logError(e.getMessage(), e);
             support = false;
         }
 
         return support;
+    }
+
+    protected Class<?> getClassForType(String type) throws ClassNotFoundException {
+        return getClass().getClassLoader().loadClass(String.format("%s.%s", getPackageRoot(), type));
     }
 
     protected boolean isAssignable(Class<?> check, List<Class<?>> classes) {

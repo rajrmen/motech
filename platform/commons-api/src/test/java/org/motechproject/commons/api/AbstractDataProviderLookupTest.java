@@ -28,6 +28,11 @@ public class AbstractDataProviderLookupTest {
         }
 
         @Override
+        public String getPackageRoot() {
+            return null;
+        }
+
+        @Override
         public Object lookup(String clazz, Map<String, String> lookupFields) {
             return null;
         }
@@ -98,7 +103,7 @@ public class AbstractDataProviderLookupTest {
 
     @Test
     public void shouldReturnFalseWhenClassIsNotSupported() {
-        String clazz = MotechException.class.getName();
+        String clazz = MotechException.class.getSimpleName();
 
         assertFalse(testDataProvider.supports(clazz));
     }
@@ -112,7 +117,7 @@ public class AbstractDataProviderLookupTest {
 
     @Test
     public void shouldReturnTrueWhenClassIsSupported() {
-        String clazz = MotechObject.class.getName();
+        String clazz = MotechObject.class.getSimpleName();
 
         assertTrue(testDataProvider.supports(clazz));
     }

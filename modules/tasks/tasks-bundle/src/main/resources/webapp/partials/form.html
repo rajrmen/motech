@@ -126,7 +126,7 @@
                                                 </div>
                                                 <div class="section" ng-hide="dataSource.name == undefined" ng-repeat="object in dataSource.objects">
                                                     <div class="control-group control-section">
-                                                        <label class="control-label">{{msg('subsubsection.object')}} </label>
+                                                        <label class="control-label">{{msg('subsubsection.object')}} #{{object.id}}</label>
                                                         <div class="controls">
                                                             <div class="btn-group">
                                                                 <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
@@ -134,9 +134,7 @@
                                                                     <span class="caret"></span>
                                                                 </a>
                                                                 <ul class="dropdown-menu">
-                                                                    <li><a><i></i> {{object.displayName}}</a></li>
-                                                                    <li class="divider"></li>
-                                                                    <li ng-repeat="obj in getAvailableObjects(dataSource)"><a ng-click="selectObject(object, obj)"><i></i> {{obj.displayName}}</a></li>
+                                                                    <li ng-repeat="obj in findDataSource(allDataSources, dataSource.name).objects"><a ng-click="selectObject(dataSource.name, object, obj)"><i></i> {{obj.displayName}}</a></li>
                                                                 </ul>
                                                             </div>
                                                         </div>
@@ -167,10 +165,12 @@
                                                     </div>
                                                     <div class="control-group move-element margin-before2" ng-hide="object.displayName == undefined">
                                                         <p><strong>{{msg('subsubsection.objectFields')}}</strong></p>
-                                                        <span contenteditable="false" ng-repeat="i in object.fields" class="badge badge-warning triggerField" draggable data-prefix="ad" data-source="{{dataSource.name}}" data-object="{{object.displayName}}" data-index="{{$index}}" data-type="{{i.type}}">{{i.displayName}}</span>​
+                                                        <span contenteditable="false" ng-repeat="i in object.fields" class="badge badge-warning triggerField" draggable
+                                                              data-prefix="ad" data-source="{{dataSource.name}}" data-object="{{object.displayName}}" data-object-type="{{object.type}}"
+                                                              data-field="{{i.eventKey}}" data-index="{{$index}}" data-object-id="{{object.id}}" data-type="{{i.type}}">{{i.displayName}}</span>​
                                                     </div>
                                                 </div>
-                                                <div class="margin-before control-group section2" ng-hide="getAvailableObjects(dataSource).length == 0">
+                                                <div class="margin-before control-group section2">
                                                     <button class="btn btn-primary" ng-click="addObject(dataSource)"><i class="icon-white icon-plus"></i> {{msg('button.addObject', dataSource.name)}}</button>
                                                 </div>
                                             </div>
