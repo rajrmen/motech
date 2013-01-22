@@ -163,6 +163,10 @@ editable-content .actionField.input-block-level span.badge {
     padding: 2px 8px;
 }
 
+#accordion3.accordion, #accordion4.accordion, .tasks-list.alert {
+    margin-bottom: 0;
+}
+
 #accordion3 .accordion-heading .accordion-toggle,
 #accordion4 .accordion-heading .accordion-toggle {
     padding: 0;
@@ -311,6 +315,10 @@ editable-content .actionField.input-block-level span.badge {
     margin-top: -1px;
 }
 
+.table-recent-activity.centered tbody td {
+    text-align: center;
+}
+
 .table-recent-activity tbody td {
     vertical-align: middle;
 }
@@ -320,6 +328,16 @@ editable-content .actionField.input-block-level span.badge {
 }
 
 /*----- Tasks - history -----*/
+
+.history {
+    max-width: 999px;
+}
+
+.history .task-element .icon-chevron-right {
+    height: 18px;
+    line-height: 18px;
+    vertical-align: middle;
+}
 
 .recent-activity-task-img {
     height: 54px;
@@ -585,7 +603,6 @@ editable-content .actionField.input-block-level span.badge {
 .ui-datepicker, #ui-timepicker-div {
     z-index: 9999 !important;
 }
-
 
 #helpModal.modal {
     width: 660px;

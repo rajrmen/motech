@@ -18,7 +18,7 @@
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>motech-decisiontree-core-bundle</artifactId>
+            <artifactId>motech-decisiontree-core</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -32,6 +32,10 @@
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>com.springsource.org.hamcrest.core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.github.ldriscoll</groupId>
+            <artifactId>org.motechproject.ektorplucene</artifactId>
         </dependency>
     </dependencies>
     <build>
