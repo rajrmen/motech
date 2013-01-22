@@ -6,10 +6,8 @@ import org.mockito.Mock;
 import org.motechproject.commons.api.DataProviderLookup;
 import org.motechproject.tasks.domain.DataProvider;
 import org.motechproject.tasks.service.DataProviderService;
-import org.springframework.core.io.Resource;
 
 import java.io.IOException;
-import java.io.InputStream;
 
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;

@@ -1,17 +1,18 @@
 package org.motechproject.tasks.service;
 
 import org.apache.commons.lang.StringUtils;
-
 import org.apache.commons.lang.WordUtils;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.motechproject.commons.api.DataProviderLookup;
 import org.motechproject.event.MotechEvent;
 import org.motechproject.event.listener.EventListener;
 import org.motechproject.event.listener.EventListenerRegistryService;
 import org.motechproject.event.listener.EventRelay;
 import org.motechproject.event.listener.annotations.MotechListenerEventProxy;
 import org.motechproject.server.config.SettingsFacade;
+import org.motechproject.tasks.domain.AdditionalData;
 import org.motechproject.tasks.domain.EventParamType;
 import org.motechproject.tasks.domain.EventParameter;
 import org.motechproject.tasks.domain.Filter;
@@ -28,6 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ReflectionUtils;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -43,6 +45,9 @@ public class TaskTriggerHandler {
     private static final String SERVICE_NAME = "taskTriggerHandler";
     private static final String TASK_POSSIBLE_ERRORS_KEY = "task.possible.errors";
 
+    private static final String TRIGGER_PREFIX = "trigger";
+    private static final String ADDITIONAL_DATA_PREFIX = "ad";
+
     private static final Logger LOG = LoggerFactory.getLogger(TaskTriggerHandler.class);
 
     private TaskService taskService;
@@ -50,6 +55,7 @@ public class TaskTriggerHandler {
     private EventListenerRegistryService registryService;
     private EventRelay eventRelay;
     private SettingsFacade settingsFacade;
+    private List<DataProviderLookup> dataProviders;
 
     @Autowired
     public TaskTriggerHandler(final TaskService taskService, final TaskActivityService activityService,
@@ -109,7 +115,7 @@ public class TaskTriggerHandler {
                 }
 
                 try {
-                    Map<String, Object> parameters = createParameters(task, action.getEventParameters(), triggerEvent, trigger);
+                    Map<String, Object> parameters = createParameters(task, action.getEventParameters(), triggerEvent);
                     eventRelay.sendEventMessage(new MotechEvent(subject, parameters));
                     activityService.addSuccess(task);
                 } catch (TaskException e) {
@@ -155,7 +161,7 @@ public class TaskTriggerHandler {
         }
     }
 
-    private Map<String, Object> createParameters(Task task, List<EventParameter> actionParameters, MotechEvent event, TaskEvent trigger) throws TaskException {
+    private Map<String, Object> createParameters(Task task, List<EventParameter> actionParameters, MotechEvent event) throws TaskException {
         Map<String, Object> parameters = new HashMap<>(actionParameters.size());
 
         for (EventParameter param : actionParameters) {
@@ -166,7 +172,7 @@ public class TaskTriggerHandler {
                 throw new TaskException("error.templateNull", key);
             }
 
-            String userInput = replaceAll(template, event);
+            String userInput = replaceAll(template, event, task);
 
             Object value;
 
@@ -200,23 +206,68 @@ public class TaskTriggerHandler {
         return parameters;
     }
 
-    private String replaceAll(final String template, final MotechEvent event) throws TaskException {
+    private String replaceAll(final String template, final MotechEvent event, Task task) throws TaskException {
         String replaced = template;
-        String keyName;
+        Key keyInfo;
         List<String> keys = getKeys(replaced);
         for (String key : keys) {
-            keyName = getKeyName(key);
+            keyInfo = new Key(key);
 
-            if (event.getParameters().containsKey(keyName)) {
-                Object obj = event.getParameters().get(keyName);
-                if (obj == null) {
-                    obj = "";
-                }
-                String value = String.valueOf(obj);
-                String replaceValue = manipulateValue(value, getManipulation(key));
-                replaced = replaced.replace(String.format("{{%s}}", key), replaceValue);
+            if (keyInfo.getPrefix().equalsIgnoreCase(TRIGGER_PREFIX)) {
+                replaced = replaceTriggerKey(event, replaced, keyInfo, key);
+            } else if (keyInfo.getPrefix().equalsIgnoreCase(ADDITIONAL_DATA_PREFIX)) {
+                replaced = replaceAdditionalDataKey(event, task, replaced, keyInfo, key);
             }
         }
+
+        return replaced;
+    }
+
+    private String replaceTriggerKey(MotechEvent event, String template, Key keyInfo, String key) throws TaskException {
+        String replaced = "";
+
+        if (event.getParameters().containsKey(keyInfo.getEventKey())) {
+            Object obj = event.getParameters().get(keyInfo.getEventKey());
+
+            if (obj == null) {
+                obj = "";
+            }
+
+            String value = String.valueOf(obj);
+            String replaceValue = manipulateValue(value, getManipulation(key));
+            replaced = template.replace(String.format("{{%s}}", key), replaceValue);
+        }
+
+        return replaced;
+    }
+
+    private String replaceAdditionalDataKey(MotechEvent event, Task task, String template, Key keyInfo, String key) throws TaskException {
+        String replaced;
+
+        if (dataProviders == null || dataProviders.isEmpty()) {
+            throw new TaskException("error.notFoundDataProvider", keyInfo.getObjectType());
+        }
+
+        DataProviderLookup provider = findDataProvider(keyInfo.getDataProviderName(), keyInfo.getObjectType());
+
+        if (provider == null || !provider.supports(keyInfo.getObjectType())) {
+            throw new TaskException("error.notFoundDataProvider", keyInfo.getObjectType());
+        }
+
+        AdditionalData ad = findAdditionalData(task, keyInfo);
+        Map<String, String> lookupFields = new HashMap<>();
+        lookupFields.put(ad.getLookupField(), event.getParameters().get(ad.getLookupValue()).toString());
+
+        Object found = provider.lookup(keyInfo.getObjectType(), lookupFields);
+
+        if (found == null) {
+            throw new TaskException("error.notFoundObjectForType", keyInfo.getObjectType());
+        }
+
+        String objectValue = getValueFromObject(found, keyInfo.getEventKey());
+        String replaceValue = manipulateValue(objectValue, getManipulation(key));
+        replaced = template.replace(String.format("{{%s}}", key), replaceValue);
+
         return replaced;
     }
 
@@ -225,13 +276,13 @@ public class TaskTriggerHandler {
         for (String manipulation : manipulations) {
             if (!manipulation.contains("join") && !manipulation.contains("dateTime")) {
                 switch (manipulation) {
-                    case "toUpper" :
+                    case "toUpper":
                         manipulateValue = manipulateValue.toUpperCase();
                         break;
-                    case "toLower" :
+                    case "toLower":
                         manipulateValue = manipulateValue.toLowerCase();
                         break;
-                    case "capitalize" :
+                    case "capitalize":
                         manipulateValue = WordUtils.capitalize(manipulateValue);
                         break;
                     default:
@@ -239,16 +290,16 @@ public class TaskTriggerHandler {
                 }
             } else if (manipulation.contains("join")) {
                 String[] splitValue = manipulateValue.split(" ");
-                manipulation = manipulation.substring(5 , manipulation.length()-1);
+                manipulation = manipulation.substring(5, manipulation.length() - 1);
                 manipulateValue = StringUtils.join(splitValue, manipulation);
             } else if (manipulation.contains("dateTime")) {
                 try {
-                    manipulation = manipulation.substring(9 , manipulation.length()-1);
+                    manipulation = manipulation.substring(9, manipulation.length() - 1);
                     DateTimeFormatter format = DateTimeFormat.forPattern(manipulation);
                     DateTime date = new DateTime(manipulateValue);
                     manipulateValue = format.print(date);
                 } catch (IllegalArgumentException e) {
-                    throw new TaskException("error.date.format", manipulation);
+                    throw new TaskException("error.date.format", manipulation, e);
                 }
             }
         }
@@ -261,8 +312,8 @@ public class TaskTriggerHandler {
         int iteration = 0;
         for (char c : replaced.toCharArray()) {
             if (c == '{') {
-                   iteration++;
-            } else if (c == '}'){
+                iteration++;
+            } else if (c == '}') {
                 if (iteration == 2) {
                     keys.add(key);
                     key = "";
@@ -270,15 +321,10 @@ public class TaskTriggerHandler {
                 iteration--;
             }
             if (iteration == 2 && c != '{') {
-                key=key+c;
+                key = key + c;
             }
         }
         return keys;
-    }
-
-    private String getKeyName(String key) {
-        List<String> splitKey = Arrays.asList(key.split("\\?"));
-        return splitKey.get(0).split("\\.")[1];
     }
 
     private List<String> getManipulation(String key) {
@@ -354,9 +400,125 @@ public class TaskTriggerHandler {
         }
     }
 
+    private DataProviderLookup findDataProvider(String name, String type) {
+        DataProviderLookup providerWithGivenName = null;
+        DataProviderLookup providerSupportsGivenType = null;
+
+        for (DataProviderLookup p : dataProviders) {
+            if (p.getName().equalsIgnoreCase(name)) {
+                providerWithGivenName = p;
+                break;
+            }
+
+            if (providerSupportsGivenType == null && p.supports(type)) {
+                providerSupportsGivenType = p;
+            }
+        }
+
+        return providerWithGivenName != null ? providerWithGivenName : providerSupportsGivenType;
+    }
+
+
+    private String getValueFromObject(Object object, String eventKey) throws TaskException {
+        String[] fields = eventKey.split("\\.");
+        Object current = object;
+
+        for (String f : fields) {
+            try {
+                Method method = current.getClass().getMethod("get" + WordUtils.capitalize(f));
+                current = method.invoke(current);
+            } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+                throw new TaskException("error.objectNotContainsField", e);
+            }
+        }
+
+        return current.toString();
+    }
+
+    private AdditionalData findAdditionalData(Task t, Key key) {
+        List<AdditionalData> additionalDatas = t.getAdditionalData(key.getDataProviderName());
+        AdditionalData additionalData = null;
+
+        for (AdditionalData ad : additionalDatas) {
+            if (ad.getId() == key.getObjectId() && ad.getType().equalsIgnoreCase(key.getObjectType())) {
+                additionalData = ad;
+                break;
+            }
+        }
+
+        return additionalData;
+    }
+
     private void logOmittedTask(Task task, Throwable e) {
         if (LOG.isDebugEnabled()) {
             LOG.debug(String.format("Omitted task with ID: %s because: ", task.getId()), e);
+        }
+    }
+
+    public void addDataProvider(DataProviderLookup provider) {
+        if (dataProviders == null) {
+            dataProviders = new ArrayList<>();
+        }
+
+        dataProviders.add(provider);
+    }
+
+    public void removeDataProvider(DataProviderLookup provider) {
+        if (dataProviders != null && !dataProviders.isEmpty()) {
+            dataProviders.remove(provider);
+        }
+    }
+
+    void setDataProviders(List<DataProviderLookup> dataProviders) {
+        this.dataProviders = dataProviders;
+    }
+
+    private final class Key {
+        private String prefix;
+        private String dataProviderName;
+        private String objectType;
+        private Long objectId;
+        private String eventKey;
+
+        private Key(String key) {
+            int questionMarkIndex = key.indexOf('?');
+            String withoutManipulation = questionMarkIndex == -1 ? key : key.substring(0, questionMarkIndex);
+            int endPrefixIndex = withoutManipulation.indexOf('.');
+            prefix = withoutManipulation.substring(0, endPrefixIndex);
+
+            if (prefix.equalsIgnoreCase(TRIGGER_PREFIX)) {
+                eventKey = withoutManipulation.substring(endPrefixIndex + 1);
+            } else if (prefix.equalsIgnoreCase(ADDITIONAL_DATA_PREFIX)) {
+                int endDataProviderNameIndex = withoutManipulation.indexOf('.', endPrefixIndex + 1);
+                int endObjectTypeIndex = withoutManipulation.indexOf('.', endDataProviderNameIndex + 1);
+                int endObjectId = withoutManipulation.indexOf('#', endDataProviderNameIndex + 1);
+                int startObjectId = endObjectTypeIndex - (endObjectTypeIndex - endObjectId);
+
+                dataProviderName = withoutManipulation.substring(endPrefixIndex + 1, endDataProviderNameIndex);
+                objectType = withoutManipulation.substring(endDataProviderNameIndex + 1, startObjectId);
+                objectId = Long.valueOf(withoutManipulation.substring(startObjectId + 1, endObjectTypeIndex));
+                eventKey = withoutManipulation.substring(endObjectTypeIndex + 1);
+            }
+        }
+
+        public String getPrefix() {
+            return prefix;
+        }
+
+        public String getDataProviderName() {
+            return dataProviderName;
+        }
+
+        public String getObjectType() {
+            return objectType;
+        }
+
+        public Long getObjectId() {
+            return objectId;
+        }
+
+        public String getEventKey() {
+            return eventKey;
         }
     }
 }

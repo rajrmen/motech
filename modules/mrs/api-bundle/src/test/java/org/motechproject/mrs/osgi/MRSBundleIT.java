@@ -26,7 +26,7 @@ public class MRSBundleIT extends BaseOsgiIT {
         List<Class<?>> classes = Arrays.asList(MRSPerson.class, MRSPatient.class, MRSFacility.class);
 
         for (Class<?> cls : classes) {
-            assertTrue(providerLookup.supports(cls.getName()));
+            assertTrue(providerLookup.supports(cls.getSimpleName()));
         }
     }
 

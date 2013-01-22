@@ -46,7 +46,7 @@ public class DataProviderObject {
         return (EventParameter) CollectionUtils.find(fields, new Predicate() {
             @Override
             public boolean evaluate(Object object) {
-                return ((EventParameter)object).getEventKey().equalsIgnoreCase(name);
+                return ((EventParameter) object).getEventKey().equalsIgnoreCase(name);
             }
         });
     }

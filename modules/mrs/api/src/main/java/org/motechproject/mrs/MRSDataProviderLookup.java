@@ -32,6 +32,11 @@ public class MRSDataProviderLookup extends AbstractDataProviderLookup {
     }
 
     @Override
+    public String getName() {
+        return "MRS";
+    }
+
+    @Override
     public Object lookup(String type, Map<String, String> lookupFields) {
         Object obj = null;
 

@@ -74,7 +74,7 @@ public class MRSDataProviderLookupTest {
     @Test
     public void shouldReturnNullWhenClassIsNotSupported() {
         // given
-        String clazz = MotechObject.class.getName();
+        String clazz = MotechObject.class.getSimpleName();
 
         // when
         Object object = providerLookup.lookup(clazz, lookupFields);
@@ -86,7 +86,7 @@ public class MRSDataProviderLookupTest {
     @Test
     public void shouldReturnNullWhenMapNotContainsSupportedField() {
         // given
-        String clazz = MRSFacility.class.getName();
+        String clazz = MRSFacility.class.getSimpleName();
         HashMap<String, String> fields = new HashMap<>();
 
         // when
@@ -99,9 +99,9 @@ public class MRSDataProviderLookupTest {
     @Test
     public void shouldReturnNullWhenListIsNull() {
         // given
-        String patientClass = MRSPatient.class.getName();
-        String facilityClass = MRSFacility.class.getName();
-        String personClass = MRSPerson.class.getName();
+        String patientClass = MRSPatient.class.getSimpleName();
+        String facilityClass = MRSFacility.class.getSimpleName();
+        String personClass = MRSPerson.class.getSimpleName();
 
         // when
         Object patient = providerLookup.lookup(patientClass, lookupFields);
@@ -117,9 +117,9 @@ public class MRSDataProviderLookupTest {
     @Test
     public void shouldReturnNullWhenListIsEmpty() {
         // given
-        String patientClass = MRSPatient.class.getName();
-        String facilityClass = MRSFacility.class.getName();
-        String personClass = MRSPerson.class.getName();
+        String patientClass = MRSPatient.class.getSimpleName();
+        String facilityClass = MRSFacility.class.getSimpleName();
+        String personClass = MRSPerson.class.getSimpleName();
 
         providerLookup.setFacilityAdapters(new ArrayList<MRSFacilityAdapter>());
         providerLookup.setPatientAdapters(new ArrayList<MRSPatientAdapter>());
@@ -139,9 +139,9 @@ public class MRSDataProviderLookupTest {
     @Test
     public void shouldReturnObject() {
         // given
-        String patientClass = MRSPatient.class.getName();
-        String facilityClass = MRSFacility.class.getName();
-        String personClass = MRSPerson.class.getName();
+        String patientClass = MRSPatient.class.getSimpleName();
+        String facilityClass = MRSFacility.class.getSimpleName();
+        String personClass = MRSPerson.class.getSimpleName();
 
         providerLookup.setPatientAdapters(Arrays.asList(patientAdapter));
         providerLookup.setFacilityAdapters(Arrays.asList(facilityAdapter));

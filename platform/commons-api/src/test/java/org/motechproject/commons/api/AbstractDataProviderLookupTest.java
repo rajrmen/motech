@@ -24,11 +24,16 @@ public class AbstractDataProviderLookupTest {
 
         @Override
         public List<Class<?>> getSupportClasses() {
-            return Arrays.asList(MotechObject.class, ExtensibleDataObject.class);
+            return Arrays.asList(MotechObject.class, MotechException.class);
         }
 
         @Override
         public String getPackageRoot() {
+            return "org.motechproject.commons.api";
+        }
+
+        @Override
+        public String getName() {
             return null;
         }
 
@@ -87,7 +92,7 @@ public class AbstractDataProviderLookupTest {
 
     @Test
     public void shouldReturnFalseWhenClassIsNotAssignable() {
-        Class<?> check = MotechException.class;
+        Class<?> check = ExtensibleDataObject.class;
         List<Class<?>> supportClasses = testDataProvider.getSupportClasses();
 
         assertFalse(testDataProvider.isAssignable(check, supportClasses));
@@ -95,7 +100,7 @@ public class AbstractDataProviderLookupTest {
 
     @Test
     public void shouldReturnTrueWhenClassIsAssignable() {
-        Class<?> check = ExtensibleDataObject.class;
+        Class<?> check = MotechException.class;
         List<Class<?>> supportClasses = testDataProvider.getSupportClasses();
 
         assertTrue(testDataProvider.isAssignable(check, supportClasses));
@@ -103,7 +108,7 @@ public class AbstractDataProviderLookupTest {
 
     @Test
     public void shouldReturnFalseWhenClassIsNotSupported() {
-        String clazz = MotechException.class.getSimpleName();
+        String clazz = ExtensibleDataObject.class.getName();
 
         assertFalse(testDataProvider.supports(clazz));
     }

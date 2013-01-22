@@ -1,15 +1,11 @@
 package org.motechproject.tasks.domain;
 
-import org.apache.commons.collections.Predicate;
-import org.codehaus.jackson.annotate.JsonIgnore;
 import org.ektorp.support.TypeDiscriminator;
 import org.motechproject.commons.couchdb.model.MotechBaseDataObject;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-
-import static org.apache.commons.collections.CollectionUtils.find;
 
 @TypeDiscriminator("doc.type == 'DataProvider'")
 public class DataProvider extends MotechBaseDataObject {
@@ -32,16 +28,6 @@ public class DataProvider extends MotechBaseDataObject {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    @JsonIgnore
-    public DataProviderObject getObject(final String type) {
-        return (DataProviderObject) find(objects, new Predicate() {
-            @Override
-            public boolean evaluate(Object object) {
-                return ((DataProviderObject) object).getType().equalsIgnoreCase(type);
-            }
-        });
     }
 
     public List<DataProviderObject> getObjects() {

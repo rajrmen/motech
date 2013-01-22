@@ -40,6 +40,11 @@ public class Task extends MotechBaseDataObject {
         return !filters.isEmpty();
     }
 
+    @JsonIgnore
+    public List<AdditionalData> getAdditionalData(String dataProviderName) {
+        return additionalData.get(dataProviderName);
+    }
+
     public String getTrigger() {
         return trigger;
     }
