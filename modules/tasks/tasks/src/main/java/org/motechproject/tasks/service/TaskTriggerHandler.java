@@ -428,7 +428,7 @@ public class TaskTriggerHandler {
                 Method method = current.getClass().getMethod("get" + WordUtils.capitalize(f));
                 current = method.invoke(current);
             } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-                throw new TaskException("error.objectNotContainsField", e);
+                throw new TaskException("error.objectNotContainsField", eventKey, e);
             }
         }
 

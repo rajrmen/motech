@@ -176,9 +176,7 @@ function ManageTaskCtrl($scope, Channels, Tasks, DataSources, $routeParams, $htt
                     }
 
                     $scope.selectedDataSources.push(dataSource);
-
-                    ds = $scope.findDataSource($scope.availableDataSources, source);
-                    $scope.availableDataSources.removeObject(ds);
+                    $scope.availableDataSources.removeObject($scope.findDataSource($scope.availableDataSources, source));
                 }
 
                 for (i = 0; i < $scope.selectedAction.eventParameters.length; i += 1) {
@@ -457,7 +455,7 @@ function ManageTaskCtrl($scope, Channels, Tasks, DataSources, $routeParams, $htt
             for (i = 0; i < $scope.selectedAction.eventParameters.length; i += 1) {
                 param = $scope.refactorDivEditable($scope.selectedAction.eventParameters[i].value || '');
 
-                if (param === null || param === undefined || !param.trim().length) {
+                if (!param.length) {
                     return false;
                 }
             }
@@ -495,7 +493,7 @@ function ManageTaskCtrl($scope, Channels, Tasks, DataSources, $routeParams, $htt
     }
 
     $scope.addDataSource = function () {
-        $scope.selectedDataSources.push({name: $scope.availableDataSources[0].name, objects: []});
+        $scope.selectedDataSources.push({name: $scope.availableDataSources[0].name, objects: [], available: $scope.availableDataSources[0].objects});
         $scope.availableDataSources.remove(0);
     }
 
@@ -508,16 +506,11 @@ function ManageTaskCtrl($scope, Channels, Tasks, DataSources, $routeParams, $htt
                 $scope.selectedDataSources.removeObject(dataSource);
                 $scope.availableDataSources.push($scope.findDataSource($scope.allDataSources, dataSource.name));
 
-                dataSource = cloneObj(available);
+                dataSource.name = available.name;
+                dataSource.objects = [];
+                dataSource.available = available.objects;
             }
         });
-    }
-
-    $scope.getAvailableLookupFields = function (dataSourceName, objectType) {
-        var dataSource = $scope.findDataSource($scope.allDataSources, dataSourceName),
-            object = $scope.findObject(dataSource, objectType);
-
-        return object === undefined ? [] : object.lookupFields;
     }
 
     $scope.selectObject = function (dataSourceName, object, selected) {
@@ -528,6 +521,7 @@ function ManageTaskCtrl($scope, Channels, Tasks, DataSources, $routeParams, $htt
                 object.displayName = selected.displayName;
                 object.type = selected.type;
                 object.fields = selected.fields;
+                object.lookupFields = selected.lookupFields;
                 object.lookup.field = selected.lookupFields[0];
             }
         });
@@ -539,7 +533,7 @@ function ManageTaskCtrl($scope, Channels, Tasks, DataSources, $routeParams, $htt
     }
 
     $scope.addObject = function (dataSource) {
-        var first = $scope.findDataSource($scope.allDataSources, dataSource.name).objects[0],
+        var first = dataSource.available[0],
             last = dataSource.objects.last();
 
         dataSource.objects.push({
@@ -547,6 +541,7 @@ function ManageTaskCtrl($scope, Channels, Tasks, DataSources, $routeParams, $htt
             displayName: first.displayName,
             type: first.type,
             fields: first.fields,
+            lookupFields: first.lookupFields,
             lookup: {
                 displayName: $scope.selectedTrigger.eventParameters[0].displayName,
                 by: $scope.selectedTrigger.eventParameters[0].eventKey,
@@ -568,47 +563,55 @@ function ManageTaskCtrl($scope, Channels, Tasks, DataSources, $routeParams, $htt
         return found;
     }
 
-    $scope.findDataSource = function (dataSources, name) {
-        var i, found;
+        $scope.installedBundlesCount = function() {
+            var count = 0;
+            angular.forEach($scope.bundles, function(bundle) {
+                if ($scope.filterBundles(bundle)) {
+                    count += bundle.isInstalled() ? 1 : 0;
+                }
+            });
 
-        for (i = 0; i < dataSources.length; i += 1) {
-            if (dataSources[i].name === name) {
-                found = dataSources[i];
-                break;
-            }
+            return count;
         }
+
+    $scope.findDataSource = function (dataSources, name) {
+        var found;
+
+        angular.forEach(dataSources, function (ds) {
+            if (ds.name === name) {
+                found = ds;
+            }
+        });
 
         return found;
     }
 
     $scope.findObject = function (dataSource, type, id) {
-        var i, expression, found;
+        var found;
 
-        for (i = 0; i < dataSource.objects.length; i += 1) {
-            expression = dataSource.objects[i].type === type;
+        angular.forEach(dataSource.objects, function (obj) {
+            var expression = obj.type === type;
 
             if (expression && id !== undefined) {
-                expression = expression && dataSource.objects[i].id === id;
+                expression = expression && obj.id === id;
             }
 
             if (expression) {
-                found = dataSource.objects[i];
-                break;
+                found = obj;
             }
-        }
+        });
 
         return found;
     }
 
     $scope.findObjectField = function (object, field) {
-        var i, found;
+        var found;
 
-        for (i = 0; i < object.fields.length; i += 1) {
-            if (object.fields[i].eventKey === field) {
-                found = object.fields[i];
-                break;
+        angular.forEach(object.fields, function (f) {
+            if (f.eventKey === field) {
+                found = f;
             }
-        }
+        });
 
         return found;
     }
