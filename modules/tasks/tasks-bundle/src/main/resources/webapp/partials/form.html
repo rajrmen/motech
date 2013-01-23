@@ -117,9 +117,10 @@
                                                                 <span class="caret"></span>
                                                             </a>
                                                             <ul class="dropdown-menu">
-                                                                <li><a><i></i> {{dataSource.name}}</a></li>
-                                                                <li class="divider"></li>
-                                                                <li ng-repeat="available in allDataSources" ng-hide="dataSource.name == available.name"><a ng-click="changeDataSource(dataSource, available)"><i></i> {{available.name}}</a></li>
+                                                                <li ng-repeat="available in allDataSources">
+                                                                    <a ui-if="dataSource.name == available.name">{{available.name}} <i class="icon-ok"></i></a>
+                                                                    <a ui-if="dataSource.name != available.name" ng-click="changeDataSource(dataSource, available)">{{available.name}} <i></i></a>
+                                                                </li>
                                                             </ul>
                                                         </div>
                                                     </div>
@@ -134,7 +135,10 @@
                                                                     <span class="caret"></span>
                                                                 </a>
                                                                 <ul class="dropdown-menu">
-                                                                    <li ng-repeat="obj in dataSource.available"><a ng-click="selectObject(dataSource.name, object, obj)"><i></i> {{obj.displayName}}</a></li>
+                                                                    <li ng-repeat="obj in dataSource.available">
+                                                                        <a ui-if="object.type == obj.type">{{obj.displayName}} <i class="icon-ok"></i></a>
+                                                                        <a ui-if="object.type != obj.type" ng-click="selectObject(dataSource.name, object, obj)">{{obj.displayName}} <i></i></a>
+                                                                    </li>
                                                                 </ul>
                                                             </div>
                                                         </div>
@@ -148,7 +152,10 @@
                                                                     <span class="caret"></span>
                                                                 </a>
                                                                 <ul class="dropdown-menu">
-                                                                    <li ng-repeat="i in object.lookupFields"><a ng-click="object.lookup.field = i"><i></i> {{i}}</a></li>
+                                                                    <li ng-repeat="i in object.lookupFields">
+                                                                        <a ui-if="object.lookup.field == i">{{i}} <i class="icon-ok"></i></a>
+                                                                        <a ui-if="object.lookup.field != i" ng-click="object.lookup.field = i">{{i}} <i></i></a>
+                                                                    </li>
                                                                 </ul>
                                                             </div>
                                                             <span> {{msg('equals') | lowercase}} </span>
@@ -158,7 +165,10 @@
                                                                     <span class="caret"></span>
                                                                 </a>
                                                                 <ul class="dropdown-menu">
-                                                                    <li ng-repeat="i in selectedTrigger.eventParameters"><a ng-click="selectLookup(object, i)"><i></i> {{i.displayName}}</a></li>
+                                                                    <li ng-repeat="i in selectedTrigger.eventParameters">
+                                                                        <a ui-if="object.lookup.by == i.eventKey">{{i.displayName}} <i class="icon-ok"></i></a>
+                                                                        <a ui-if="object.lookup.by != i.eventKey" ng-click="selectLookup(object, i)">{{i.displayName}} <i></i></a>
+                                                                    </li>
                                                                 </ul>
                                                             </div>
                                                         </div>

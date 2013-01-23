@@ -499,39 +499,57 @@ function ManageTaskCtrl($scope, Channels, Tasks, DataSources, $routeParams, $htt
     }
 
     $scope.changeDataSource = function (dataSource, available) {
-        motechConfirm('task.confirm.changeDataSource', 'header.confirm', function (r) {
-            if (r) {
-                angular.element('.actionField span[data-source="' + dataSource.name + '"]').remove();
-                angular.element('.actionField').mouseleave();
+        var spans = angular.element('.actionField span[data-source="' + dataSource.name + '"]'),
+            change = function (ds, a) {
+                $scope.availableDataSources.removeObject(a);
+                $scope.selectedDataSources.removeObject(ds);
+                $scope.availableDataSources.push($scope.findDataSource($scope.allDataSources, ds.name));
 
-                $scope.availableDataSources.removeObject(available);
-                $scope.selectedDataSources.removeObject(dataSource);
-                $scope.availableDataSources.push($scope.findDataSource($scope.allDataSources, dataSource.name));
+                ds.name = a.name;
+                ds.objects = [];
+                ds.available = a.objects;
+            };
 
-                dataSource.name = available.name;
-                dataSource.objects = [];
-                dataSource.available = available.objects;
+        if (spans.length > 0) {
+            motechConfirm('task.confirm.changeDataSource', 'header.confirm', function (r) {
+                if (r) {
+                    spans.remove();
+                    angular.element('.actionField').mouseleave();
 
-                $scope.$apply();
-            }
-        });
+                    change(dataSource, available);
+
+                    $scope.$apply();
+                }
+            });
+        } else {
+            change(dataSource, available);
+        }
     }
 
     $scope.selectObject = function (dataSourceName, object, selected) {
-        motechConfirm('task.confirm.changeObject', 'header.confirm', function (r) {
-            if (r) {
-                angular.element('.actionField span[data-source="' + dataSourceName + '"][data-object-type="' + object.type + '"][data-object-id="' + object.id + '"]').remove();
-                angular.element('.actionField').mouseleave();
+        var spans = angular.element('.actionField span[data-source="' + dataSourceName + '"][data-object-type="' + object.type + '"][data-object-id="' + object.id + '"]'),
+            change = function (obj, sel) {
+                obj.displayName = sel.displayName;
+                obj.type = sel.type;
+                obj.fields = sel.fields;
+                obj.lookupFields = sel.lookupFields;
+                obj.lookup.field = sel.lookupFields[0];
+            };
 
-                object.displayName = selected.displayName;
-                object.type = selected.type;
-                object.fields = selected.fields;
-                object.lookupFields = selected.lookupFields;
-                object.lookup.field = selected.lookupFields[0];
+        if (spans.length > 0) {
+            motechConfirm('task.confirm.changeDataSource', 'header.confirm', function (r) {
+                if (r) {
+                    spans.remove();
+                    angular.element('.actionField').mouseleave();
 
-                $scope.$apply();
-            }
-        });
+                    change(object, selected);
+
+                    $scope.$apply();
+                }
+            });
+        } else {
+            change(object, selected);
+        }
     }
 
     $scope.selectLookup = function (object, lookup) {
