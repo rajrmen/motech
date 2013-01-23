@@ -7,17 +7,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-@TypeDiscriminator("doc.type == 'DataProvider'")
-public class DataProvider extends MotechBaseDataObject {
+@TypeDiscriminator("doc.type == 'TaskDataProvider'")
+public class TaskDataProvider extends MotechBaseDataObject {
     private static final long serialVersionUID = -5427486904165895928L;
     private String name;
-    private List<DataProviderObject> objects;
+    private List<TaskDataProviderObject> objects;
 
-    public DataProvider() {
-        this(null, new ArrayList<DataProviderObject>());
+    public TaskDataProvider() {
+        this(null, new ArrayList<TaskDataProviderObject>());
     }
 
-    public DataProvider(String name, List<DataProviderObject> objects) {
+    public TaskDataProvider(String name, List<TaskDataProviderObject> objects) {
         this.name = name;
         this.objects = objects;
     }
@@ -30,11 +30,11 @@ public class DataProvider extends MotechBaseDataObject {
         this.name = name;
     }
 
-    public List<DataProviderObject> getObjects() {
+    public List<TaskDataProviderObject> getObjects() {
         return objects;
     }
 
-    public void setObjects(List<DataProviderObject> objects) {
+    public void setObjects(List<TaskDataProviderObject> objects) {
         this.objects = objects;
     }
 
@@ -48,7 +48,7 @@ public class DataProvider extends MotechBaseDataObject {
             return false;
         }
 
-        DataProvider that = (DataProvider) o;
+        TaskDataProvider that = (TaskDataProvider) o;
 
         return Objects.equals(name, that.name) && Objects.equals(objects, that.objects);
     }
@@ -63,6 +63,6 @@ public class DataProvider extends MotechBaseDataObject {
 
     @Override
     public String toString() {
-        return String.format("DataProvider{name='%s', objects=%s}", name, objects);
+        return String.format("TaskDataProvider{name='%s', objects=%s}", name, objects);
     }
 }

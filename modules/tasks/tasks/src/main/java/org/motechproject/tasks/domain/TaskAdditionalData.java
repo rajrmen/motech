@@ -2,17 +2,17 @@ package org.motechproject.tasks.domain;
 
 import java.util.Objects;
 
-public class AdditionalData {
+public class TaskAdditionalData {
     private Long id;
     private String type;
     private String lookupField;
     private String lookupValue;
 
-    public AdditionalData() {
+    public TaskAdditionalData() {
         this(null, null, null, null);
     }
 
-    public AdditionalData(Long id, String type, String lookupField, String lookupValue) {
+    public TaskAdditionalData(Long id, String type, String lookupField, String lookupValue) {
         this.id = id;
         this.type = type;
         this.lookupField = lookupField;
@@ -66,7 +66,7 @@ public class AdditionalData {
             return false;
         }
 
-        final AdditionalData other = (AdditionalData) obj;
+        final TaskAdditionalData other = (TaskAdditionalData) obj;
 
         return Objects.equals(this.id, other.id) && Objects.equals(this.type, other.type) &&
                 Objects.equals(this.lookupField, other.lookupField) &&
@@ -75,7 +75,7 @@ public class AdditionalData {
 
     @Override
     public String toString() {
-        return String.format("AdditionalData{id=%d, type='%s', lookupField='%s', lookupValue='%s'}",
+        return String.format("TaskAdditionalData{id=%d, type='%s', lookupField='%s', lookupValue='%s'}",
                 id, type, lookupField, lookupValue);
     }
 }

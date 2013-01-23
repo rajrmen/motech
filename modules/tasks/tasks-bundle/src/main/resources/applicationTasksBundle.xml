@@ -18,10 +18,10 @@
     <osgi:service id="channelServiceOsgi" auto-export="interfaces" ref="channelService"
                   interface="org.motechproject.tasks.service.ChannelService"/>
 
-    <osgi:service id="dataProviderServiceOsgi" auto-export="interfaces" ref="dataProviderService"
-                  interface="org.motechproject.tasks.service.DataProviderService"/>
+    <osgi:service id="dataProviderServiceOsgi" auto-export="interfaces" ref="taskDataProviderService"
+                  interface="org.motechproject.tasks.service.TaskDataProviderService"/>
 
-    <osgi:set id="dataProvidersOSGi" interface="org.motechproject.commons.api.DataProviderLookup" cardinality="0..N">
+    <osgi:set id="dataProvidersOSGi" interface="org.motechproject.commons.api.DataProvider" cardinality="0..N">
         <osgi:reference-listener>
             <bean class="org.motechproject.tasks.util.DataProviderRegister"/>
         </osgi:reference-listener>

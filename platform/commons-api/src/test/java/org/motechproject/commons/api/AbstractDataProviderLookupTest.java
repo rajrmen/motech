@@ -20,7 +20,7 @@ import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 public class AbstractDataProviderLookupTest {
-    private class TestDataProvider extends AbstractDataProviderLookup {
+    private class TestDataProvider extends AbstractDataProvider {
 
         @Override
         public List<Class<?>> getSupportClasses() {

@@ -3,9 +3,9 @@ package org.motechproject.tasks.util;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
-import org.motechproject.commons.api.DataProviderLookup;
-import org.motechproject.tasks.domain.DataProvider;
-import org.motechproject.tasks.service.DataProviderService;
+import org.motechproject.commons.api.DataProvider;
+import org.motechproject.tasks.domain.TaskDataProvider;
+import org.motechproject.tasks.service.TaskDataProviderService;
 
 import java.io.IOException;
 
@@ -17,37 +17,37 @@ import static org.mockito.MockitoAnnotations.initMocks;
 public class DataProviderRegisterTest {
 
     @Mock
-    DataProviderService dataProviderService;
+    TaskDataProviderService taskDataProviderService;
 
     @Mock
-    DataProviderLookup dataProviderLookup;
+    DataProvider dataProvider;
 
     DataProviderRegister dataProviderRegister;
 
-    String body = new DataProvider().toString();
+    String body = new TaskDataProvider().toString();
 
     @Before
     public void setup() throws Exception {
         initMocks(this);
 
-        dataProviderRegister = new DataProviderRegister(dataProviderService);
+        dataProviderRegister = new DataProviderRegister(taskDataProviderService);
     }
 
     @Test
     public void shouldRegisterProviderWhenDataProviderServiceIsAvailable() throws IOException {
-        when(dataProviderLookup.toJSON()).thenReturn(body);
+        when(dataProvider.toJSON()).thenReturn(body);
 
-        dataProviderRegister.bind(dataProviderLookup, null);
+        dataProviderRegister.bind(dataProvider, null);
 
-        verify(dataProviderService).registerProvider(body);
+        verify(taskDataProviderService).registerProvider(body);
     }
 
     @Test
     public void shouldNotRegisterProviderWhenGotOtherServices() throws IOException {
-        when(dataProviderLookup.toJSON()).thenReturn(body);
+        when(dataProvider.toJSON()).thenReturn(body);
 
         dataProviderRegister.bind(new Object(), null);
 
-        verify(dataProviderService, never()).registerProvider(body);
+        verify(taskDataProviderService, never()).registerProvider(body);
     }
 }

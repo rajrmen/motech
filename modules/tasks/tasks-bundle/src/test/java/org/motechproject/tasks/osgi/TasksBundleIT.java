@@ -4,11 +4,11 @@ import org.motechproject.event.listener.EventListenerRegistryService;
 import org.motechproject.event.listener.EventRelay;
 import org.motechproject.server.config.service.PlatformSettingsService;
 import org.motechproject.tasks.domain.Channel;
-import org.motechproject.tasks.domain.DataProvider;
+import org.motechproject.tasks.domain.TaskDataProvider;
 import org.motechproject.tasks.repository.AllChannels;
-import org.motechproject.tasks.repository.AllDataProviders;
+import org.motechproject.tasks.repository.AllTaskDataProviders;
 import org.motechproject.tasks.service.ChannelService;
-import org.motechproject.tasks.service.DataProviderService;
+import org.motechproject.tasks.service.TaskDataProviderService;
 import org.motechproject.testing.osgi.BaseOsgiIT;
 import org.osgi.framework.ServiceReference;
 
@@ -51,27 +51,27 @@ public class TasksBundleIT extends BaseOsgiIT {
     }
 
     public void testDataProviderService() throws InterruptedException {
-        DataProviderService dataProviderService = getService(DataProviderService.class);
-        DataProvider fromFile;
+        TaskDataProviderService taskDataProviderService = getService(TaskDataProviderService.class);
+        TaskDataProvider fromFile;
         int tries = 0;
 
         do {
-            fromFile = dataProviderService.getProvider("MRS");
+            fromFile = taskDataProviderService.getProvider("MRS");
             ++tries;
             Thread.sleep(500);
         } while (fromFile == null && tries < TRIES_COUNT);
 
         assertNotNull(fromFile);
 
-        AllDataProviders allDataProviders = getApplicationContext().getBean(AllDataProviders.class);
-        DataProvider fromDB = allDataProviders.byName("MRS");
+        AllTaskDataProviders allTaskDataProviders = getApplicationContext().getBean(AllTaskDataProviders.class);
+        TaskDataProvider fromDB = allTaskDataProviders.byName("MRS");
 
         assertNotNull(fromDB);
         assertEquals(fromDB, fromFile);
 
-        allDataProviders.remove(fromDB);
+        allTaskDataProviders.remove(fromDB);
 
-        fromDB = allDataProviders.byName("MRS");
+        fromDB = allTaskDataProviders.byName("MRS");
         assertNull(fromDB);
     }
 

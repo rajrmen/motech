@@ -5,7 +5,7 @@ import org.ektorp.CouchDbConnector;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.motechproject.commons.api.json.MotechJsonReader;
-import org.motechproject.tasks.domain.DataProvider;
+import org.motechproject.tasks.domain.TaskDataProvider;
 import org.motechproject.testing.utils.SpringIntegrationTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -19,10 +19,10 @@ import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath*:/META-INF/motech/*.xml"})
-public class AllDataProvidersIT extends SpringIntegrationTest {
+public class AllTaskDataProvidersIT extends SpringIntegrationTest {
 
     @Autowired
-    private AllDataProviders allDataProviders;
+    private AllTaskDataProviders allTaskDataProviders;
 
     @Autowired
     @Qualifier("taskDbConnector")
@@ -32,23 +32,23 @@ public class AllDataProvidersIT extends SpringIntegrationTest {
 
     @Test
     public void shouldAddDataProvider() {
-        DataProvider expected = loadDataProvider();
+        TaskDataProvider expected = loadDataProvider();
 
-        allDataProviders.addOrUpdate(expected);
+        allTaskDataProviders.addOrUpdate(expected);
 
-        DataProvider actual = allDataProviders.byName("MRS");
+        TaskDataProvider actual = allTaskDataProviders.byName("MRS");
 
         assertEquals(expected, actual);
 
         markForDeletion(actual);
     }
 
-    private DataProvider loadDataProvider() {
+    private TaskDataProvider loadDataProvider() {
         ClassLoader classLoader = getClass().getClassLoader();
         InputStream mrsDataProviderStream = classLoader.getResourceAsStream("mrs-test-data-provider.json");
-        Type type = new TypeToken<DataProvider>() { }.getType();
+        Type type = new TypeToken<TaskDataProvider>() { }.getType();
 
-        return (DataProvider) motechJsonReader.readFromStream(mrsDataProviderStream, type);
+        return (TaskDataProvider) motechJsonReader.readFromStream(mrsDataProviderStream, type);
     }
 
     @Override

@@ -2,7 +2,7 @@ package org.motechproject.commons.api;
 
 import java.util.Map;
 
-public interface DataProviderLookup {
+public interface DataProvider {
 
     String getName();
 

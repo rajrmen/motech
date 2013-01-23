@@ -8,17 +8,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class DataProviderObject {
+public class TaskDataProviderObject {
     private String displayName;
     private String type;
     private List<String> lookupFields;
     private List<EventParameter> fields;
 
-    public DataProviderObject() {
+    public TaskDataProviderObject() {
         this(null, null, new ArrayList<String>(), new ArrayList<EventParameter>());
     }
 
-    public DataProviderObject(String displayName, String type, List<String> lookupFields, List<EventParameter> fields) {
+    public TaskDataProviderObject(String displayName, String type, List<String> lookupFields, List<EventParameter> fields) {
         this.displayName = displayName;
         this.type = type;
         this.lookupFields = lookupFields;
@@ -77,7 +77,7 @@ public class DataProviderObject {
             return false;
         }
 
-        DataProviderObject that = (DataProviderObject) o;
+        TaskDataProviderObject that = (TaskDataProviderObject) o;
 
         return Objects.equals(displayName, that.displayName) && Objects.equals(fields, that.fields) &&
                 Objects.equals(type, that.type) && Objects.equals(lookupFields, that.lookupFields);
@@ -95,7 +95,7 @@ public class DataProviderObject {
 
     @Override
     public String toString() {
-        return String.format("DataProviderObject{displayName='%s', type='%s', lookupFields=%s, fields=%s}",
+        return String.format("TaskDataProviderObject{displayName='%s', type='%s', lookupFields=%s, fields=%s}",
                 displayName, type, lookupFields, fields);
     }
 }

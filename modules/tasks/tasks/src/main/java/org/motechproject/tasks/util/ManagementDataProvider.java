@@ -1,7 +1,7 @@
 package org.motechproject.tasks.util;
 
 import org.eclipse.gemini.blueprint.service.importer.OsgiServiceLifecycleListener;
-import org.motechproject.commons.api.DataProviderLookup;
+import org.motechproject.commons.api.DataProvider;
 import org.motechproject.tasks.service.TaskTriggerHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,8 +21,8 @@ public class ManagementDataProvider implements OsgiServiceLifecycleListener {
 
     @Override
     public void bind(Object service, Map serviceProperties) throws IOException {
-        if (service instanceof DataProviderLookup) {
-            DataProviderLookup provider = (DataProviderLookup) service;
+        if (service instanceof DataProvider) {
+            DataProvider provider = (DataProvider) service;
             handler.addDataProvider(provider);
             LOG.info(String.format("Added data provider: %s", provider.getName()));
         }
@@ -30,8 +30,8 @@ public class ManagementDataProvider implements OsgiServiceLifecycleListener {
 
     @Override
     public void unbind(Object service, Map serviceProperties) {
-        if (service instanceof DataProviderLookup) {
-            DataProviderLookup provider = (DataProviderLookup) service;
+        if (service instanceof DataProvider) {
+            DataProvider provider = (DataProvider) service;
             handler.removeDataProvider(provider);
             LOG.info(String.format("Removed data provider: %s", provider.getName()));
         }

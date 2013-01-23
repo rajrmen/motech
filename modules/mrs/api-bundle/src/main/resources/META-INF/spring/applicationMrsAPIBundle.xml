@@ -14,7 +14,7 @@
     <osgi:reference id="eventListenerRegistryServiceOsgi" interface="org.motechproject.event.listener.EventListenerRegistryService"/>
 
     <osgi:service id="mrsDataProviderOSGi" auto-export="interfaces" ref="mrsDataProvider"
-                  interface="org.motechproject.commons.api.DataProviderLookup"/>
+                  interface="org.motechproject.commons.api.DataProvider"/>
 
     <osgi:list id="patientAdapterList" interface="org.motechproject.mrs.services.MRSPatientAdapter" cardinality="0..N"/>
 
@@ -22,7 +22,7 @@
 
     <osgi:list id="personAdapterList" interface="org.motechproject.mrs.services.MRSPersonAdapter" cardinality="0..N"/>
 
-    <bean id="mrsDataProvider" class="org.motechproject.mrs.MRSDataProviderLookup">
+    <bean id="mrsDataProvider" class="org.motechproject.mrs.MRSDataProvider">
         <property name="patientAdapters" ref="patientAdapterList"/>
         <property name="facilityAdapters" ref="facilityAdapterList"/>
         <property name="personAdapters" ref="personAdapterList"/>

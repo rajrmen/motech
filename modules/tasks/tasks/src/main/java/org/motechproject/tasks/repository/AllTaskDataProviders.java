@@ -3,23 +3,23 @@ package org.motechproject.tasks.repository;
 import org.ektorp.CouchDbConnector;
 import org.ektorp.support.View;
 import org.motechproject.commons.couchdb.dao.MotechBaseRepository;
-import org.motechproject.tasks.domain.DataProvider;
+import org.motechproject.tasks.domain.TaskDataProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Repository
-@View(name = "by_name", map = "function(doc) { if(doc.type === 'DataProvider') emit(doc.name); }")
-public class AllDataProviders extends MotechBaseRepository<DataProvider> {
+@View(name = "by_name", map = "function(doc) { if(doc.type === 'TaskDataProvider') emit(doc.name); }")
+public class AllTaskDataProviders extends MotechBaseRepository<TaskDataProvider> {
 
     @Autowired
-    public AllDataProviders(final CouchDbConnector connector) {
-        super(DataProvider.class, connector);
+    public AllTaskDataProviders(final CouchDbConnector connector) {
+        super(TaskDataProvider.class, connector);
     }
 
-    public void addOrUpdate(DataProvider entity) {
-        DataProvider provider = byName(entity.getName());
+    public void addOrUpdate(TaskDataProvider entity) {
+        TaskDataProvider provider = byName(entity.getName());
 
         if (provider != null) {
             provider.setName(entity.getName());
@@ -31,8 +31,8 @@ public class AllDataProviders extends MotechBaseRepository<DataProvider> {
         }
     }
 
-    public DataProvider byName(String name) {
-        List<DataProvider> providers = queryView("by_name", name);
+    public TaskDataProvider byName(String name) {
+        List<TaskDataProvider> providers = queryView("by_name", name);
         return providers.isEmpty() ? null : providers.get(0);
     }
 }

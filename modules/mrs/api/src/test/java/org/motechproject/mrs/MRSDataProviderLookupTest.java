@@ -51,7 +51,7 @@ public class MRSDataProviderLookupTest {
     @Mock
     private ResourceLoader resourceLoader;
 
-    private MRSDataProviderLookup providerLookup;
+    private MRSDataProvider providerLookup;
 
     @BeforeClass
     public static void setLookupFields() {
@@ -68,7 +68,7 @@ public class MRSDataProviderLookupTest {
         when(facilityAdapter.getFacility(FIELD_VALUE)).thenReturn(mrsFacility);
         when(personAdapter.getPerson(FIELD_VALUE)).thenReturn(mrsPerson);
 
-        providerLookup = new MRSDataProviderLookup(resourceLoader);
+        providerLookup = new MRSDataProvider(resourceLoader);
     }
 
     @Test

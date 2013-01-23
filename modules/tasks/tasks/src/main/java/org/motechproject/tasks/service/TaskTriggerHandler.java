@@ -5,14 +5,14 @@ import org.apache.commons.lang.WordUtils;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-import org.motechproject.commons.api.DataProviderLookup;
+import org.motechproject.commons.api.DataProvider;
 import org.motechproject.event.MotechEvent;
 import org.motechproject.event.listener.EventListener;
 import org.motechproject.event.listener.EventListenerRegistryService;
 import org.motechproject.event.listener.EventRelay;
 import org.motechproject.event.listener.annotations.MotechListenerEventProxy;
 import org.motechproject.server.config.SettingsFacade;
-import org.motechproject.tasks.domain.AdditionalData;
+import org.motechproject.tasks.domain.TaskAdditionalData;
 import org.motechproject.tasks.domain.EventParamType;
 import org.motechproject.tasks.domain.EventParameter;
 import org.motechproject.tasks.domain.Filter;
@@ -55,7 +55,7 @@ public class TaskTriggerHandler {
     private EventListenerRegistryService registryService;
     private EventRelay eventRelay;
     private SettingsFacade settingsFacade;
-    private List<DataProviderLookup> dataProviders;
+    private List<DataProvider> dataProviders;
 
     @Autowired
     public TaskTriggerHandler(final TaskService taskService, final TaskActivityService activityService,
@@ -248,13 +248,13 @@ public class TaskTriggerHandler {
             throw new TaskException("error.notFoundDataProvider", keyInfo.getObjectType());
         }
 
-        DataProviderLookup provider = findDataProvider(keyInfo.getDataProviderName(), keyInfo.getObjectType());
+        DataProvider provider = findDataProvider(keyInfo.getDataProviderName(), keyInfo.getObjectType());
 
         if (provider == null || !provider.supports(keyInfo.getObjectType())) {
             throw new TaskException("error.notFoundDataProvider", keyInfo.getObjectType());
         }
 
-        AdditionalData ad = findAdditionalData(task, keyInfo);
+        TaskAdditionalData ad = findAdditionalData(task, keyInfo);
         Map<String, String> lookupFields = new HashMap<>();
         lookupFields.put(ad.getLookupField(), event.getParameters().get(ad.getLookupValue()).toString());
 
@@ -400,11 +400,11 @@ public class TaskTriggerHandler {
         }
     }
 
-    private DataProviderLookup findDataProvider(String name, String type) {
-        DataProviderLookup providerWithGivenName = null;
-        DataProviderLookup providerSupportsGivenType = null;
+    private DataProvider findDataProvider(String name, String type) {
+        DataProvider providerWithGivenName = null;
+        DataProvider providerSupportsGivenType = null;
 
-        for (DataProviderLookup p : dataProviders) {
+        for (DataProvider p : dataProviders) {
             if (p.getName().equalsIgnoreCase(name)) {
                 providerWithGivenName = p;
                 break;
@@ -435,18 +435,18 @@ public class TaskTriggerHandler {
         return current.toString();
     }
 
-    private AdditionalData findAdditionalData(Task t, Key key) {
-        List<AdditionalData> additionalDatas = t.getAdditionalData(key.getDataProviderName());
-        AdditionalData additionalData = null;
+    private TaskAdditionalData findAdditionalData(Task t, Key key) {
+        List<TaskAdditionalData> taskAdditionalDatas = t.getAdditionalData(key.getDataProviderName());
+        TaskAdditionalData taskAdditionalData = null;
 
-        for (AdditionalData ad : additionalDatas) {
+        for (TaskAdditionalData ad : taskAdditionalDatas) {
             if (ad.getId() == key.getObjectId() && ad.getType().equalsIgnoreCase(key.getObjectType())) {
-                additionalData = ad;
+                taskAdditionalData = ad;
                 break;
             }
         }
 
-        return additionalData;
+        return taskAdditionalData;
     }
 
     private void logOmittedTask(Task task, Throwable e) {
@@ -455,7 +455,7 @@ public class TaskTriggerHandler {
         }
     }
 
-    public void addDataProvider(DataProviderLookup provider) {
+    public void addDataProvider(DataProvider provider) {
         if (dataProviders == null) {
             dataProviders = new ArrayList<>();
         }
@@ -463,13 +463,13 @@ public class TaskTriggerHandler {
         dataProviders.add(provider);
     }
 
-    public void removeDataProvider(DataProviderLookup provider) {
+    public void removeDataProvider(DataProvider provider) {
         if (dataProviders != null && !dataProviders.isEmpty()) {
             dataProviders.remove(provider);
         }
     }
 
-    void setDataProviders(List<DataProviderLookup> dataProviders) {
+    void setDataProviders(List<DataProvider> dataProviders) {
         this.dataProviders = dataProviders;
     }
 

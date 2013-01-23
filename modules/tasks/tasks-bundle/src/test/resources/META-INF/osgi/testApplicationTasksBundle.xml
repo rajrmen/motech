@@ -22,7 +22,7 @@
         <constructor-arg ref="testTaskDbConnector"/>
     </bean>
 
-    <bean class="org.motechproject.tasks.repository.AllDataProviders">
+    <bean class="org.motechproject.tasks.repository.AllTaskDataProviders">
         <constructor-arg ref="testTaskDbConnector"/>
     </bean>
 
@@ -30,9 +30,9 @@
         <osgi:reference-listener ref="channelRegister" bind-method="registered" unbind-method="unregistered"/>
     </osgi:reference>
 
-    <osgi:reference id="dataProviderServiceOsgi" interface="org.motechproject.tasks.service.DataProviderService"/>
+    <osgi:reference id="dataProviderServiceOsgi" interface="org.motechproject.tasks.service.TaskDataProviderService"/>
 
-    <osgi:set id="dataProvidersOSGi" interface="org.motechproject.commons.api.DataProviderLookup" cardinality="0..N">
+    <osgi:set id="dataProvidersOSGi" interface="org.motechproject.commons.api.DataProvider" cardinality="0..N">
         <osgi:reference-listener>
             <bean class="org.motechproject.tasks.util.DataProviderRegister">
                 <constructor-arg ref="dataProviderServiceOsgi"/>

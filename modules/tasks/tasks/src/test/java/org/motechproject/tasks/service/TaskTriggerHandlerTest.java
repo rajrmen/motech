@@ -8,13 +8,13 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.motechproject.commons.api.DataProviderLookup;
+import org.motechproject.commons.api.DataProvider;
 import org.motechproject.event.MotechEvent;
 import org.motechproject.event.listener.EventListener;
 import org.motechproject.event.listener.EventListenerRegistryService;
 import org.motechproject.event.listener.EventRelay;
 import org.motechproject.server.config.SettingsFacade;
-import org.motechproject.tasks.domain.AdditionalData;
+import org.motechproject.tasks.domain.TaskAdditionalData;
 import org.motechproject.tasks.domain.EventParameter;
 import org.motechproject.tasks.domain.Filter;
 import org.motechproject.tasks.domain.Task;
@@ -92,7 +92,7 @@ public class TaskTriggerHandlerTest {
     EventRelay eventRelay;
 
     @Mock
-    DataProviderLookup dataProviderLookup;
+    DataProvider dataProvider;
 
     TestObject obj;
 
@@ -119,7 +119,7 @@ public class TaskTriggerHandlerTest {
 
         obj = new TestObject();
         handler = new TaskTriggerHandler(taskService, taskActivityService, registryService, eventRelay, settingsFacade);
-        handler.setDataProviders(Arrays.asList(dataProviderLookup));
+        handler.setDataProviders(Arrays.asList(dataProvider));
 
         verify(taskService).getAllTasks();
         verify(registryService).registerListener(any(EventListener.class), anyString());
@@ -293,8 +293,8 @@ public class TaskTriggerHandlerTest {
         verify(taskService).getActionEventFor(task);
         verify(taskActivityService).addError(eq(task), captor.capture());
 
-        verify(dataProviderLookup, never()).supports(anyString());
-        verify(dataProviderLookup, never()).lookup(anyString(), anyMap());
+        verify(dataProvider, never()).supports(anyString());
+        verify(dataProvider, never()).lookup(anyString(), anyMap());
         verify(eventRelay, never()).sendEventMessage(any(MotechEvent.class));
         verify(taskActivityService, never()).addSuccess(task);
 
@@ -311,7 +311,7 @@ public class TaskTriggerHandlerTest {
 
         assertTrue(task.isEnabled());
 
-        handler.setDataProviders(new ArrayList<DataProviderLookup>());
+        handler.setDataProviders(new ArrayList<DataProvider>());
         handler.handle(createEvent());
         ArgumentCaptor<TaskException> captor = ArgumentCaptor.forClass(TaskException.class);
 
@@ -320,8 +320,8 @@ public class TaskTriggerHandlerTest {
         verify(taskService).getActionEventFor(task);
         verify(taskActivityService).addError(eq(task), captor.capture());
 
-        verify(dataProviderLookup, never()).supports(anyString());
-        verify(dataProviderLookup, never()).lookup(anyString(), anyMap());
+        verify(dataProvider, never()).supports(anyString());
+        verify(dataProvider, never()).lookup(anyString(), anyMap());
         verify(eventRelay, never()).sendEventMessage(any(MotechEvent.class));
         verify(taskActivityService, never()).addSuccess(task);
 
@@ -336,9 +336,9 @@ public class TaskTriggerHandlerTest {
         when(taskService.getActionEventFor(task)).thenReturn(actionEvent);
         when(taskActivityService.errorsFromLastRun(task)).thenReturn(messages);
 
-        when(dataProviderLookup.getName()).thenReturn("TEST");
-        when(dataProviderLookup.supports("TestObject")).thenReturn(true);
-        when(dataProviderLookup.lookup("TestObject", lookupFields)).thenReturn(null);
+        when(dataProvider.getName()).thenReturn("TEST");
+        when(dataProvider.supports("TestObject")).thenReturn(true);
+        when(dataProvider.lookup("TestObject", lookupFields)).thenReturn(null);
 
         assertTrue(task.isEnabled());
 
@@ -348,8 +348,8 @@ public class TaskTriggerHandlerTest {
         verify(taskService).findTrigger(TRIGGER_SUBJECT);
         verify(taskService).findTasksForTrigger(triggerEvent);
         verify(taskService).getActionEventFor(task);
-        verify(dataProviderLookup).supports("TestObject");
-        verify(dataProviderLookup).lookup("TestObject", lookupFields);
+        verify(dataProvider).supports("TestObject");
+        verify(dataProvider).lookup("TestObject", lookupFields);
         verify(taskActivityService).addError(eq(task), captor.capture());
 
         verify(eventRelay, never()).sendEventMessage(any(MotechEvent.class));
@@ -366,9 +366,9 @@ public class TaskTriggerHandlerTest {
         when(taskService.getActionEventFor(task)).thenReturn(actionEvent);
         when(taskActivityService.errorsFromLastRun(task)).thenReturn(messages);
 
-        when(dataProviderLookup.getName()).thenReturn("TEST");
-        when(dataProviderLookup.supports("TestObject")).thenReturn(true);
-        when(dataProviderLookup.lookup("TestObject", lookupFields)).thenReturn(new Object());
+        when(dataProvider.getName()).thenReturn("TEST");
+        when(dataProvider.supports("TestObject")).thenReturn(true);
+        when(dataProvider.lookup("TestObject", lookupFields)).thenReturn(new Object());
 
         assertTrue(task.isEnabled());
 
@@ -378,8 +378,8 @@ public class TaskTriggerHandlerTest {
         verify(taskService).findTrigger(TRIGGER_SUBJECT);
         verify(taskService).findTasksForTrigger(triggerEvent);
         verify(taskService).getActionEventFor(task);
-        verify(dataProviderLookup).supports("TestObject");
-        verify(dataProviderLookup).lookup("TestObject", lookupFields);
+        verify(dataProvider).supports("TestObject");
+        verify(dataProvider).lookup("TestObject", lookupFields);
         verify(taskActivityService).addError(eq(task), captor.capture());
 
         verify(eventRelay, never()).sendEventMessage(any(MotechEvent.class));
@@ -411,9 +411,9 @@ public class TaskTriggerHandlerTest {
         when(taskService.findTasksForTrigger(triggerEvent)).thenReturn(tasks);
         when(taskService.getActionEventFor(task)).thenReturn(actionEvent);
 
-        when(dataProviderLookup.getName()).thenReturn("TEST");
-        when(dataProviderLookup.supports("TestObject")).thenReturn(true);
-        when(dataProviderLookup.lookup("TestObject", lookupFields)).thenReturn(obj);
+        when(dataProvider.getName()).thenReturn("TEST");
+        when(dataProvider.supports("TestObject")).thenReturn(true);
+        when(dataProvider.lookup("TestObject", lookupFields)).thenReturn(obj);
 
         ArgumentCaptor<MotechEvent> captor = ArgumentCaptor.forClass(MotechEvent.class);
 
@@ -446,9 +446,9 @@ public class TaskTriggerHandlerTest {
         when(taskService.findTasksForTrigger(triggerEvent)).thenReturn(tasks);
         when(taskService.getActionEventFor(task)).thenReturn(actionEvent);
 
-        when(dataProviderLookup.getName()).thenReturn("TEST");
-        when(dataProviderLookup.supports("TestObject")).thenReturn(true);
-        when(dataProviderLookup.lookup("TestObject", lookupFields)).thenReturn(obj);
+        when(dataProvider.getName()).thenReturn("TEST");
+        when(dataProvider.supports("TestObject")).thenReturn(true);
+        when(dataProvider.lookup("TestObject", lookupFields)).thenReturn(obj);
 
         addFilters();
         ArgumentCaptor<MotechEvent> captor = ArgumentCaptor.forClass(MotechEvent.class);
@@ -515,8 +515,8 @@ public class TaskTriggerHandlerTest {
         task.setFilters(new ArrayList<Filter>());
         tasks.add(task);
 
-        Map<String, List<AdditionalData>> additionalData = new HashMap<>(1);
-        additionalData.put("TEST", Arrays.asList(new AdditionalData(1L, "TestObject", "id", "externalId")));
+        Map<String, List<TaskAdditionalData>> additionalData = new HashMap<>(1);
+        additionalData.put("TEST", Arrays.asList(new TaskAdditionalData(1L, "TestObject", "id", "externalId")));
 
         task.setAdditionalData(additionalData);
 

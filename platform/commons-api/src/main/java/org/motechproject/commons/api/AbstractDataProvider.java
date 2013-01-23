@@ -8,7 +8,7 @@ import java.io.InputStream;
 import java.io.StringWriter;
 import java.util.List;
 
-public abstract class AbstractDataProviderLookup extends MotechObject implements DataProviderLookup {
+public abstract class AbstractDataProvider extends MotechObject implements DataProvider {
     private String body;
 
     public abstract List<Class<?>> getSupportClasses();

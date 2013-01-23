@@ -1,6 +1,6 @@
 package org.motechproject.mrs;
 
-import org.motechproject.commons.api.AbstractDataProviderLookup;
+import org.motechproject.commons.api.AbstractDataProvider;
 import org.motechproject.mrs.model.MRSFacility;
 import org.motechproject.mrs.model.MRSPatient;
 import org.motechproject.mrs.model.MRSPerson;
@@ -15,7 +15,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-public class MRSDataProviderLookup extends AbstractDataProviderLookup {
+public class MRSDataProvider extends AbstractDataProvider {
     private static final String SUPPORT_FIELD = "id";
 
     private List<MRSPatientAdapter> patientAdapters;
@@ -23,7 +23,7 @@ public class MRSDataProviderLookup extends AbstractDataProviderLookup {
     private List<MRSPersonAdapter> personAdapters;
 
     @Autowired
-    public MRSDataProviderLookup(ResourceLoader resourceLoader) {
+    public MRSDataProvider(ResourceLoader resourceLoader) {
         Resource resource = resourceLoader.getResource("task-data-provider.json");
 
         if (resource != null) {

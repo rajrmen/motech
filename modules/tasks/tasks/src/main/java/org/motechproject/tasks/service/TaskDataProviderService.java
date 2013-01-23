@@ -1,18 +1,18 @@
 package org.motechproject.tasks.service;
 
-import org.motechproject.tasks.domain.DataProvider;
+import org.motechproject.tasks.domain.TaskDataProvider;
 
 import java.io.InputStream;
 import java.util.List;
 
-public interface DataProviderService {
+public interface TaskDataProviderService {
 
     void registerProvider(String json);
 
     void registerProvider(final InputStream stream);
 
-    DataProvider getProvider(String name);
+    TaskDataProvider getProvider(String name);
 
-    List<DataProvider> getProviders();
+    List<TaskDataProvider> getProviders();
 
 }
