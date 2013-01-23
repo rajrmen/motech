@@ -65,6 +65,8 @@ angular.module('motech-tasks', ['motech-dashboard', 'channelServices', 'taskServ
                     if (element.hasClass('draggable')) {
                         element.find("div:first-child").popover('hide');
                     }
+
+                    $('#accordion1 .collapse.in').css('overflow', 'visible');
                 }
             });
         }
@@ -138,7 +140,7 @@ angular.module('motech-tasks', ['motech-dashboard', 'channelServices', 'taskServ
                         }
 
                         position(dropElement, dragElement);
-
+                        $('#accordion1 .collapse.in').css('overflow', 'hidden');
                     } else if (angular.element(ui.draggable).hasClass('task-panel') && (element.hasClass('trigger') || element.hasClass('action'))) {
                         channelName = angular.element(ui.draggable).data('channel-name');
                         moduleName = angular.element(ui.draggable).data('module-name');
