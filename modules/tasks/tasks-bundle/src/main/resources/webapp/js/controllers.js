@@ -156,7 +156,7 @@ function ManageTaskCtrl($scope, Channels, Tasks, DataSources, $routeParams, $htt
 
                 for (source in $scope.task.additionalData) {
                     ds = $scope.findDataSource($scope.allDataSources, source);
-                    dataSource = { name: source, objects: []};
+                    dataSource = { name: source, objects: [], available: ds.objects};
 
                     for (i = 0; i < $scope.task.additionalData[source].length; i += 1) {
                         object = $scope.task.additionalData[source][i];
@@ -344,7 +344,7 @@ function ManageTaskCtrl($scope, Channels, Tasks, DataSources, $routeParams, $htt
     $scope.refactorDivEditable = function (value) {
         var result = $('<div>' + value + '</div>');
 
-        result.find('span').replaceWith(function() {
+        result.find('span[data-prefix]').replaceWith(function() {
             var eventKey = '', source = $(this).data('source'),
                 type = $(this).data('object-type'), objectDisplayName = $(this).data('object'),
                 prefix = $(this).data('prefix'), field = $(this).data('field'), id = $(this).data('object-id'),
@@ -449,11 +449,12 @@ function ManageTaskCtrl($scope, Channels, Tasks, DataSources, $routeParams, $htt
     }
 
     $scope.validateForm = function() {
-        var i, param;
+        var i, param, value;
 
         if ($scope.selectedAction !== undefined) {
             for (i = 0; i < $scope.selectedAction.eventParameters.length; i += 1) {
-                param = $scope.refactorDivEditable($scope.selectedAction.eventParameters[i].value || '');
+                value = $scope.selectedAction.eventParameters[i].value || '';
+                param = $scope.refactorDivEditable(value);
 
                 if (!param.length) {
                     return false;
@@ -483,9 +484,9 @@ function ManageTaskCtrl($scope, Channels, Tasks, DataSources, $routeParams, $htt
     }
 
     $scope.actionCssClass = function(prop) {
-        var msg = "control-group", value = $scope.refactorDivEditable(prop.value || '');
+        var msg = "control-group", value = prop.value || '', param = $scope.refactorDivEditable(value);
 
-        if (value.length === 0) {
+        if (param.length === 0) {
             msg = msg.concat(' error');
         }
 
@@ -500,7 +501,8 @@ function ManageTaskCtrl($scope, Channels, Tasks, DataSources, $routeParams, $htt
     $scope.changeDataSource = function (dataSource, available) {
         motechConfirm('task.confirm.changeDataSource', 'header.confirm', function (r) {
             if (r) {
-                $('.actionField span[data-source="' + dataSource.name + '"]').remove();
+                angular.element('.actionField span[data-source="' + dataSource.name + '"]').remove();
+                angular.element('.actionField').mouseleave();
 
                 $scope.availableDataSources.removeObject(available);
                 $scope.selectedDataSources.removeObject(dataSource);
@@ -509,6 +511,8 @@ function ManageTaskCtrl($scope, Channels, Tasks, DataSources, $routeParams, $htt
                 dataSource.name = available.name;
                 dataSource.objects = [];
                 dataSource.available = available.objects;
+
+                $scope.$apply();
             }
         });
     }
@@ -516,13 +520,16 @@ function ManageTaskCtrl($scope, Channels, Tasks, DataSources, $routeParams, $htt
     $scope.selectObject = function (dataSourceName, object, selected) {
         motechConfirm('task.confirm.changeObject', 'header.confirm', function (r) {
             if (r) {
-                $('.actionField span[data-source="' + dataSourceName + '"][data-object-type="' + object.type + '"][data-object-id="' + object.id + '"]').remove();
+                angular.element('.actionField span[data-source="' + dataSourceName + '"][data-object-type="' + object.type + '"][data-object-id="' + object.id + '"]').remove();
+                angular.element('.actionField').mouseleave();
 
                 object.displayName = selected.displayName;
                 object.type = selected.type;
                 object.fields = selected.fields;
                 object.lookupFields = selected.lookupFields;
                 object.lookup.field = selected.lookupFields[0];
+
+                $scope.$apply();
             }
         });
     }
