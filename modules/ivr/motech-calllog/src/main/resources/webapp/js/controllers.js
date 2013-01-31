@@ -1,5 +1,7 @@
-function CalllogController($scope, CalllogService) {
-
+function CalllogController($scope, $rootScope,  CalllogService) {
+    $rootScope.currentPage = 0;
+    $scope.phoneNumber = "";
+    $scope.sortColumn = "";
 
     $scope.$on('$viewContentLoaded', function () {
 
@@ -27,9 +29,24 @@ function CalllogController($scope, CalllogService) {
              'minDuration': min,
              'maxDuration': max,
              'fromDate': $("#from").val(),
-             'toDate': $("#to").val()
+             'toDate': $("#to").val(),
+             'answered':$("#answered").is(':checked'),
+             'busy':$("#busy").is(':checked'),
+             'failed' :$('#failed').is(':checked'),
+             'noAnswer': $('#noAnswer').is(':checked'),
+             'unknown':$('#unknown').is(':checked'),
+              'page' : $rootScope.currentPage,
+              'sortColumn': $scope.sortColumn
             });
     };
-    $scope.phoneNumber = "";
-    $scope.calllogs = CalllogService.query();
+
+    //$scope.calllogs = $scope.search();
+    $scope.next = function() {
+        $rootScope.currentPage++;
+        $scope.search();
+    };
+    $scope.prev = function() {
+        $rootScope.currentPage--;
+        search();
+    };
 }
