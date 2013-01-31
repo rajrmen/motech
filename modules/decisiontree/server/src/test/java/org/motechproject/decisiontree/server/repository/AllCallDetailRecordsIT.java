@@ -22,8 +22,8 @@ import static org.junit.Assert.assertTrue;
 @ContextConfiguration(locations = "classpath*:META-INF/motech/*.xml")
 public class AllCallDetailRecordsIT {
 
-    public static final String PHONE_NUMBER_1 = "123456";
-    public static final String PHONE_NUMBER_2 = "123467";
+    public static final String PHONE_NUMBER_1 = "9999123456";
+    public static final String PHONE_NUMBER_2 = "9999123467";
     @Autowired AllCallDetailRecords allCallDetailRecords;
     private static final int PAGE_SIZE = 10;
 
@@ -60,15 +60,15 @@ public class AllCallDetailRecordsIT {
 
     @Test
     public void shouldReturnBasedOnGivenSortByParamInDescendingOrder() throws Exception{
-        List<CallDetail> rowList = allCallDetailRecords.search("1234*", null, null, null, null, null, 0, PAGE_SIZE, "phoneNumber", true);
-        assertEquals(rowList.get(0).getPhoneNumber(),PHONE_NUMBER_2);
+        List<CallDetail> rowList = allCallDetailRecords.search("99991234*", null, null, null, null, null, 0, PAGE_SIZE, "phoneNumber", true);
+        assertEquals(rowList.get(0).getPhoneNumber(), PHONE_NUMBER_2);
 
     }
 
     @Test
     public void shouldReturnBasedOnGivenSortByParamInAscendingOrder() throws Exception{
-        List<CallDetail> rowList = allCallDetailRecords.search("1234*", null, null, null, null, null, 0, PAGE_SIZE, "phoneNumber", false);
-        assertEquals(rowList.get(0).getPhoneNumber(),PHONE_NUMBER_1);
+        List<CallDetail> rowList = allCallDetailRecords.search("99991234*", null, null, null, null, null, 0, PAGE_SIZE, "phoneNumber", false);
+        assertEquals(PHONE_NUMBER_1, rowList.get(0).getPhoneNumber());
     }
 
     @After
