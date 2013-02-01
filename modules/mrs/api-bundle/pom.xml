@@ -3,7 +3,7 @@
     <parent>
         <artifactId>motech</artifactId>
         <groupId>org.motechproject</groupId>
-        <version>0.17-SNAPSHOT</version>
+        <version>0.18-SNAPSHOT</version>
         <relativePath>../../../</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -11,7 +11,7 @@
     <artifactId>motech-mrs-api-bundle</artifactId>
     <name>MOTECH MRS API Bundle</name>
     <description>MOTECH interface to MRS</description>
-    <version>0.17-SNAPSHOT</version>
+    <version>0.18-SNAPSHOT</version>
     <packaging>bundle</packaging>
     <properties>
         <modules.root.dir>${basedir}/../../..</modules.root.dir>
@@ -47,10 +47,10 @@
                 <configuration>
                     <instructions>
                         <Export-Package>
-                            org.motechproject.mrs.exception,
-                            org.motechproject.mrs.model,
-                            org.motechproject.mrs.security,
-                            org.motechproject.mrs.services
+                            org.motechproject.mrs.exception;version=${project.version},
+                            org.motechproject.mrs.security;version=${project.version},
+                            org.motechproject.mrs.services;version=${project.version},
+                            org.motechproject.mrs.domain;version=${project.version}
                         </Export-Package>
                         <Import-Package>
                             org.motechproject.event.listener,

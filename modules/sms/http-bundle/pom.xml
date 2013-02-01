@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <groupId>org.motechproject</groupId>
         <artifactId>motech</artifactId>
-        <version>0.17-SNAPSHOT</version>
+        <version>0.18-SNAPSHOT</version>
         <relativePath>../../../</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.motechproject</groupId>
     <artifactId>motech-sms-http-bundle</artifactId>
-    <version>0.17-SNAPSHOT</version>
+    <version>0.18-SNAPSHOT</version>
     <name>MOTECH SMS HTTP Bundle</name>
     <packaging>bundle</packaging>
     <properties>
@@ -68,8 +67,8 @@
                         <Context-File>applicationSmsHttpBundle.xml</Context-File>
                         <Context-Path>smshttp/api</Context-Path>
                         <Export-Package>
-                            org.motechproject.sms.http,
-                            org.motechproject.sms.http.service
+                            org.motechproject.sms.http;version=${project.version},
+                            org.motechproject.sms.http.service;version=${project.version}
                         </Export-Package>
                         <Bundle-Activator>
                             org.motechproject.osgi.web.Activator

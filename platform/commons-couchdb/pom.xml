@@ -5,13 +5,13 @@
     <parent>
         <groupId>org.motechproject</groupId>
         <artifactId>motech</artifactId>
-        <version>0.17-SNAPSHOT</version>
+        <version>0.18-SNAPSHOT</version>
         <relativePath>../../</relativePath>
     </parent>
 
     <groupId>org.motechproject</groupId>
     <artifactId>motech-platform-commons-couchdb</artifactId>
-    <version>0.17-SNAPSHOT</version>
+    <version>0.18-SNAPSHOT</version>
     <name>MOTECH Platform Commons Couchdb</name>
     <packaging>bundle</packaging>
 
@@ -39,9 +39,17 @@
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
+                        <Import-Package>
+                            !org.motechproject.commons.couchdb.*,
+                            *
+                        </Import-Package>
+                        <DynamicImport-Package>
+                            org.springframework.beans.*
+                        </DynamicImport-Package>
                         <Export-Package>
-                            org.motechproject.commons.couchdb.model,
-                            org.motechproject.commons.couchdb.dao
+                            org.motechproject.commons.couchdb.model;version=${project.version},
+                            org.motechproject.commons.couchdb.dao;version=${project.version},
+                            org.motechproject.commons.couchdb.service;version=${project.version}
                         </Export-Package>
                     </instructions>
                 </configuration>

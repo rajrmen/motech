@@ -7,7 +7,7 @@
     <parent>
         <artifactId>motech</artifactId>
         <groupId>org.motechproject</groupId>
-        <version>0.17-SNAPSHOT</version>
+        <version>0.18-SNAPSHOT</version>
         <relativePath>../../../</relativePath>
     </parent>
 
@@ -15,7 +15,7 @@
 
     <groupId>org.motechproject</groupId>
     <artifactId>motech-ivr-api-bundle</artifactId>
-    <version>0.17-SNAPSHOT</version>
+    <version>0.18-SNAPSHOT</version>
     <packaging>bundle</packaging>
 
     <properties>
@@ -75,13 +75,14 @@
                     <instructions>
                         <Bundle-Activator>org.motechproject.ivr.osgi.Activator</Bundle-Activator>
                         <Export-Package>
-                            org.motechproject.ivr.domain,
-                            org.motechproject.ivr.event,
-                            org.motechproject.ivr.message,
-                            org.motechproject.ivr.model,
-                            org.motechproject.ivr.service
+                            org.motechproject.ivr.domain;version=${project.version},
+                            org.motechproject.ivr.event;version=${project.version},
+                            org.motechproject.ivr.message;version=${project.version},
+                            org.motechproject.ivr.model;version=${project.version},
+                            org.motechproject.ivr.service;version=${project.version}
                         </Export-Package>
                         <Import-Package>
+                            org.motechproject.commons.couchdb.service,
                             org.motechproject.server.config,
                             org.motechproject.server.config.service,
                             org.springframework.beans.factory.xml,

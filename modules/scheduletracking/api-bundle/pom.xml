@@ -3,14 +3,14 @@
     <parent>
         <groupId>org.motechproject</groupId>
         <artifactId>motech</artifactId>
-        <version>0.17-SNAPSHOT</version>
+        <version>0.18-SNAPSHOT</version>
         <relativePath>../../../</relativePath>
     </parent>
     <groupId>org.motechproject</groupId>
     <artifactId>motech-scheduletracking-api-bundle</artifactId>
     <name>MOTECH Schedule Tracking API Bundle</name>
     <description>MOTECH Schedule Tracking API</description>
-    <version>0.17-SNAPSHOT</version>
+    <version>0.18-SNAPSHOT</version>
     <packaging>bundle</packaging>
     <properties>
         <modules.root.dir>${basedir}/../../..</modules.root.dir>
@@ -70,13 +70,14 @@
                 <configuration>
                     <instructions>
                         <Export-Package>
-                            org.motechproject.scheduletracking.api.service,
-                            org.motechproject.scheduletracking.api.service.impl,
-                            org.motechproject.scheduletracking.api.events,
-                            org.motechproject.scheduletracking.api.events.constants,
-                            org.motechproject.scheduletracking.api.domain
+                            org.motechproject.scheduletracking.api.service;version=${project.version},
+                            org.motechproject.scheduletracking.api.service.impl;version=${project.version},
+                            org.motechproject.scheduletracking.api.events;version=${project.version},
+                            org.motechproject.scheduletracking.api.events.constants;version=${project.version},
+                            org.motechproject.scheduletracking.api.domain;version=${project.version}
                         </Export-Package>
                         <Import-Package>
+                            org.motechproject.commons.couchdb.service,
                             org.motechproject.event.listener.annotations,
                             org.motechproject.server.config,
                             *

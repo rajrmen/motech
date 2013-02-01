@@ -8,17 +8,12 @@ function BundleListCtrl($scope, Bundle, i18nService, $routeParams, $http) {
 
     $scope.orderProp = 'name';
     $scope.invert = false;
+    $scope.startUpload = false;
     $scope.versionOrder = new Array("version.major", "version.minor", "version.micro", "version.qualifier");
 
-    $scope.FILTER_MOTECH_BUNDLES = 'org.motechproject.motech-';
-
-    $scope.filterBundles = function(bundle) {
-        if (bundle.symbolicName.search("motech-admin") != -1 || bundle.symbolicName.search("motech-platform") != -1) {
-            return false;
-        }
-
-        return bundle.symbolicName.search($scope.FILTER_MOTECH_BUNDLES) == 0;
-    }
+    $scope.reloadPage = function(){
+        location.reload();
+    };
 
     $scope.bundlesWithSettings = [];
     $http({method: 'GET', url: '../admin/api/settings/bundles/list'}).
@@ -58,22 +53,17 @@ function BundleListCtrl($scope, Bundle, i18nService, $routeParams, $http) {
     }
 
     $scope.allBundlesCount = function() {
-        var count = 0;
-        angular.forEach($scope.bundles, function(bundle) {
-            if ($scope.filterBundles(bundle)) {
-                count ++;
-            }
-        });
-
-        return count;
+        if ($scope.bundles) {
+            return $scope.bundles.length;
+        } else {
+            return 0;
+        }
     }
 
     $scope.activeBundlesCount = function() {
         var count = 0;
         angular.forEach($scope.bundles, function(bundle) {
-            if ($scope.filterBundles(bundle)) {
-                count += bundle.isActive() ? 1 : 0;
-            }
+            count += bundle.isActive() ? 1 : 0;
         });
 
         return count;
@@ -82,9 +72,7 @@ function BundleListCtrl($scope, Bundle, i18nService, $routeParams, $http) {
     $scope.installedBundlesCount = function() {
         var count = 0;
         angular.forEach($scope.bundles, function(bundle) {
-            if ($scope.filterBundles(bundle)) {
-                count += bundle.isInstalled() ? 1 : 0;
-            }
+            count += bundle.isInstalled() ? 1 : 0;
         });
 
         return count;
@@ -93,25 +81,23 @@ function BundleListCtrl($scope, Bundle, i18nService, $routeParams, $http) {
     $scope.resolvedBundlesCount = function() {
         var count = 0;
         angular.forEach($scope.bundles, function(bundle) {
-            if ($scope.filterBundles(bundle)) {
-                count += bundle.isResolved() ? 1 : 0;
-            }
+            count += bundle.isResolved() ? 1 : 0;
         });
 
         return count;
     }
 
     $scope.stopBundle = function(bundle) {
-        bundle.$stop(dummyHandler, angularErrorHandler);
+        bundle.$stop(dummyHandler, angularHandler('error', 'bundles.error.stop'));
     }
 
     $scope.startBundle = function(bundle) {
-        bundle.state = LOADING_STATE;
-        bundle.$start(dummyHandler, function() {
-            bundle.state = 'RESOLVED';
-            motechAlert('bundles.error.start', 'error');
-        });
-    }
+            bundle.state = LOADING_STATE;
+            bundle.$start(dummyHandler, function(response) {
+                bundle.state = 'RESOLVED';
+                handleWithStackTrace('error', 'bundles.error.start', response);
+            });
+        }
 
     $scope.restartBundle = function(bundle) {
         bundle.state = LOADING_STATE;
@@ -130,6 +116,7 @@ function BundleListCtrl($scope, Bundle, i18nService, $routeParams, $http) {
                 bundle.$uninstall(function() {
                     // remove bundle from list
                     $scope.bundles.removeObject(bundle);
+                    $scope.reloadPage();
                 },
                 function() {
                     motechAlert('bundles.error.uninstall', 'error');
@@ -151,14 +138,31 @@ function BundleListCtrl($scope, Bundle, i18nService, $routeParams, $http) {
         return bundle.state != LOADING_STATE;
     }
 
+
+    $scope.startOnUpload = function() {
+        if ($scope.startUpload !=true) {
+            $scope.startUpload = true;
+            $('.start-on-upload').find('i').removeClass("icon-ban-circle").addClass('icon-ok');
+        } else {
+            $scope.startUpload = false;
+            $('.start-on-upload').find('i').removeClass("icon-ok").addClass('icon-ban-circle');
+        }
+    }
+
+
+
     $scope.submitBundle = function() {
         blockUI();
         $('#bundleUploadForm').ajaxSubmit({
             success : function(data) {
                 $scope.bundles = Bundle.query();
-                unblockUI();
+                $scope.reloadPage();
+//                unblockUI();
             },
-            error : jFormErrorHandler
+            error : function(response) {
+                handleWithStackTrace('error', 'bundles.error.start', response);
+                unblockUI();
+            }
         });
     }
 
@@ -345,7 +349,7 @@ function BundleSettingsCtrl($scope, Bundle, ModuleSettings, $routeParams, $http)
         }
 
         blockUI();
-        mSettings.$save({bundleId: $scope.module.bundleId}, successHandler, angularErrorHandler);
+        mSettings.$save({bundleId: $scope.module.bundleId}, successHandler, angularHandler('error', 'settings.error'));
     }
 
     $scope.uploadRaw = function(filename, doRestart) {

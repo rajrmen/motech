@@ -3,14 +3,14 @@
     <parent>
         <artifactId>motech</artifactId>
         <groupId>org.motechproject</groupId>
-        <version>0.17-SNAPSHOT</version>
+        <version>0.18-SNAPSHOT</version>
         <relativePath>../../../</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.motechproject</groupId>
     <artifactId>motech-admin-bundle</artifactId>
-    <version>0.17-SNAPSHOT</version>
+    <version>0.18-SNAPSHOT</version>
 
     <name>MOTECH Admin Bundle</name>
     <packaging>bundle</packaging>
@@ -80,6 +80,7 @@
                             org.ektorp.impl,
                             org.ektorp.spring,
                             org.ektorp.support,
+                            org.motechproject.commons.couchdb.service,
                             org.motechproject.event.listener,
                             org.motechproject.event.listener.annotations,
                             org.motechproject.security.annotations,
@@ -102,12 +103,11 @@
                             *
                         </Import-Package>
                         <Export-Package>
-                            org.motechproject.admin.service,
-                            org.motechproject.admin.domain,
-                            org.motechproject.admin.messages
+                            org.motechproject.admin.service;version=${project.version},
+                            org.motechproject.admin.domain;version=${project.version},
+                            org.motechproject.admin.messages;version=${project.version}
                         </Export-Package>
-                        <Embed-Dependency>motech-admin</Embed-Dependency>
-                        <Embed-Transitive>true</Embed-Transitive>
+                        <Embed-Dependency>motech-admin;inline=true</Embed-Dependency>
                     </instructions>
                 </configuration>
             </plugin>

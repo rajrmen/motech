@@ -13,17 +13,21 @@ import org.motechproject.server.api.BundleInformation;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
+import org.osgi.framework.ServiceReference;
+import org.osgi.framework.Version;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Dictionary;
 import java.util.List;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
@@ -32,6 +36,8 @@ public class BundleAdminServiceTest {
 
     private static final long BUNDLE_ID = 1;
     private static final String ICON_MIME = "image/png";
+    private static final String BUNDLE_LOCATION = "C:\bundles";
+    private static final String name = "Bundle name";
 
     @InjectMocks
     ModuleAdminService moduleAdminService = new ModuleAdminServiceImpl();
@@ -51,18 +57,36 @@ public class BundleAdminServiceTest {
     @Mock
     File file;
 
+    @Mock
+    ImportExportResolver importExportResolver;
+
+    @Mock
+    Version version;
+
+    @Mock
+    ServiceReference serviceReference;
+
+    @Mock
+    ServiceReference exposedServiceReference;
+
+    @Mock
+    MotechBundleFilter motechBundleFilter;
+
     @Before
     public void setUp() {
         initMocks(this);
-        when(bundle.getHeaders()).thenReturn(headers);
     }
 
     @Test
     public void testGetBundles() {
-        List<Bundle> bundles = dummyBundleList();
-        when(bundleContext.getBundles()).thenReturn(bundles.toArray(new Bundle[bundles.size()]));
+        List<Bundle> bundleList = dummyBundleList();
+        Bundle[] bundles = bundleList.toArray(new Bundle[bundleList.size()]);
 
-        assertEquals(toBundleInfoList(bundles), moduleAdminService.getBundles());
+        setupBundleRetrieval();
+        when(bundleContext.getBundles()).thenReturn(bundles);
+        when(motechBundleFilter.filter(bundles)).thenReturn(bundleList);
+
+        assertEquals(toBundleInfoList(bundleList), moduleAdminService.getBundles());
         verify(bundleContext).getBundles();
     }
 
@@ -151,6 +175,44 @@ public class BundleAdminServiceTest {
         verify(bundle).uninstall();
     }
 
+    @Test
+    public void testGetBundleDetails() {
+        setupBundleRetrieval();
+        when(bundle.getVersion()).thenReturn(version);
+        when(bundle.getState()).thenReturn(Bundle.ACTIVE);
+        when(bundle.getHeaders()).thenReturn(headers);
+        when(bundle.getRegisteredServices()).thenReturn(new ServiceReference[]{ serviceReference });
+        when(bundleContext.getService(serviceReference)).thenReturn(new Object());
+        when(bundle.getServicesInUse()).thenReturn(new ServiceReference[]{ exposedServiceReference });
+        when(bundleContext.getService(exposedServiceReference)).thenReturn(new Object());
+        when(headers.get(ExtendedBundleInformation.BUILD_JDK)).thenReturn("JDK 7");
+        when(headers.get(ExtendedBundleInformation.TOOL)).thenReturn("Hammer");
+        when(headers.get(ExtendedBundleInformation.CREATED_BY)).thenReturn("Me");
+        when(headers.get(ExtendedBundleInformation.VENDOR)).thenReturn("GF");
+        when(headers.get(ExtendedBundleInformation.BUNDLE_ACTIVATOR)).thenReturn("org.my.Activator");
+        when(headers.get(ExtendedBundleInformation.DESCRIPTION)).thenReturn("bla bla");
+        when(headers.get(ExtendedBundleInformation.DOC_URL)).thenReturn("www.doc.org");
+        when(headers.get(ExtendedBundleInformation.IMPORT_PACKAGE)).thenReturn("imp1,imp2");
+        when(headers.get(ExtendedBundleInformation.EXPORT_PACKAGE)).thenReturn("exp1,exp2");
+
+        ExtendedBundleInformation bundleInfo = moduleAdminService.getBundleDetails(BUNDLE_ID);
+
+        verify(importExportResolver).resolveBundleWiring(bundleInfo);
+        verify(bundleContext).getBundle(BUNDLE_ID);
+        assertEquals(BundleInformation.State.ACTIVE, bundleInfo.getState());
+        assertEquals(Arrays.asList(Object.class.getName()), bundleInfo.getRegisteredServices());
+        assertEquals(Arrays.asList(Object.class.getName()), bundleInfo.getServicesInUse());
+        assertEquals("JDK 7", bundleInfo.getBuildJDK());
+        assertEquals("Hammer", bundleInfo.getTool());
+        assertEquals("Me", bundleInfo.getCreatedBy());
+        assertEquals("GF", bundleInfo.getVendor());;
+        assertEquals("org.my.Activator", bundleInfo.getBundleActivator());
+        assertEquals("bla bla", bundleInfo.getDescription());
+        assertEquals("www.doc.org", bundleInfo.getDocURL());
+        assertEquals("imp1, imp2", bundleInfo.getImportPackageHeader());
+        assertEquals("exp1, exp2", bundleInfo.getExportPackageHeader());
+    }
+
     @Test(expected = BundleNotFoundException.class)
     public void testBundleStartNotFound() throws BundleException {
         moduleAdminService.startBundle(BUNDLE_ID);
@@ -171,6 +233,14 @@ public class BundleAdminServiceTest {
         moduleAdminService.getBundleInfo(BUNDLE_ID);
     }
 
+    @Test(expected = BundleNotFoundException.class)
+    public void testGet3rdPartyBundle() {
+        setupBundleRetrieval();
+        when(motechBundleFilter.passesCriteria(bundle)).thenReturn(false);
+
+        moduleAdminService.getBundleInfo(BUNDLE_ID);
+    }
+
     private List<Bundle> dummyBundleList() {
         List<Bundle> bundles = new ArrayList<>();
         for(int i = 0; i < 3; i++) {
@@ -184,6 +254,9 @@ public class BundleAdminServiceTest {
         when(bundle.getBundleId()).thenReturn(BUNDLE_ID);
         when(bundle.getState()).thenReturn(Bundle.ACTIVE);
         when(bundle.getSymbolicName()).thenReturn("Bundle");
+        when(bundle.getBundleContext()).thenReturn(bundleContext);
+        when(bundle.getHeaders()).thenReturn(headers);
+        when(motechBundleFilter.passesCriteria(any(Bundle.class))).thenReturn(true);
     }
 
     private static List<BundleInformation> toBundleInfoList(List<Bundle> bundles) {

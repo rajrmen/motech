@@ -90,6 +90,11 @@
                 <div class="box-divider">
                     <div class="span6">
                         <form class="inside form-horizontal">
+                            <div ng-class="actionNameCssClass(task)">
+                                <h4>{{msg('task.data.name')}}</h4>
+                                <label>{{msg('task.name')}}</label>
+                                <input class="span8" type='text' ng-model='task.name' id="task.name" maxlength="30" required />
+                            </div>
                             <div class="control-group">
                                 <h4>{{selectedTrigger.displayName}}</h4>
                                 <p>{{msg('info.dragFieldBuildAction')}}</p>
@@ -108,11 +113,12 @@
                             <div class="control-group" ng-show="selectedAction.description">
                                 <label>{{selectedAction.description}}</label>
                             </div>
-                            <div class="control-group" ng-repeat="i in selectedAction.eventParameters">
+                            <div ng-class="actionCssClass(i)" ng-repeat="i in selectedAction.eventParameters">
                                 <label>{{i.displayName}}</label>
                                 <textarea ui-if="i.type == 'TEXTAREA'" rows="5" ng-model="i.value" droppable class="actionField input-block-level" data-index="{{$index}}" data-type="{{i.type}}"></textarea>
                                 <input ui-if="i.type == 'NUMBER'" type="text" ng-model="i.value" droppable class="actionField input-block-level" data-index="{{$index}}" data-type="{{i.type}}" integer placeholder="{{msg('placeholder.numberOnly')}}"/>
                                 <input ui-if="i.type == 'UNICODE'" type="text" ng-model="i.value" droppable class="actionField input-block-level" data-index="{{$index}}" data-type="{{i.type}}"/>
+                                <input ui-if="i.type == 'DATE'" type="text" ng-model="i.value" droppable class="actionField input-block-level" data-index="{{$index}}" data-type="{{i.type}}" datetime-picker-input placeholder="{{msg('placeholder.dateOnly')}}" readonly="readonly" style="background:white;"/>
                             </div>
                         </form>
                     </div>
@@ -128,9 +134,9 @@
                         </div>
                         <div id="collapse21" ng-class="{true:'collapse in', false:'collapse'}[filters.length!=0]" class="accordion-body stripes-bg">
                             <div class="accordion-inner">
-                                <form id="filtersForm" name="filterForm" class="form-horizontal" novalidate>
+                                <ng-form id="filtersForm" name="filterForm" class="form-horizontal" novalidate>
                                     <div class="margin-center">
-                                        <p class="centered">{{msg('info.filter.title')}}</p>
+                                        <p class="centered">{{msg('info.filter.title', [selectedTrigger.displayName, selectedAction.displayName])}}</p>
                                         <p class="centered"><strong>{{msg('info.filter.run')}}</strong></p>
 
                                         <div ng-repeat="filter in filters">
@@ -138,32 +144,33 @@
                                                 <div class="control-group centered">
                                                     <span ng-class="cssClass(filter.eventParameter)" class="">
                                                         <label><i class="icon icon-plus"></i> {{msg('info.if')}} {{selectedTrigger.displayName}}</label>
-                                                        <select ng-model="filter.eventParameter" class="input-medium" ng-options="c.displayName for c in selectedTrigger.eventParameters" required>
+                                                        <select ng-model="filter.eventParameter" class="input-medium" ng-options="c.displayName for c in selectedTrigger.eventParameters">
                                                             <option value="">{{msg('info.filter.select')}}</option>
                                                         </select>
                                                     </span>
                                                     <span ng-class="cssClass(filter.negationOperator)" class="">
-                                                        <select ng-disabled="isDisabled(filter.eventParameter)" ng-model="filter.negationOperator" ng-options="msg(c.key) for c in negationOperators" class="input-medium" required>
+                                                        <select ng-disabled="isDisabled(filter.eventParameter)" ng-model="filter.negationOperator" ng-options="msg(c.key) for c in negationOperators" class="input-medium">
                                                             <option value="">{{msg('info.filter.select')}}</option>
                                                         </select>
                                                     </span>
                                                     <span ng-class="cssClass(filter.operator)" class="">
-                                                        <select ng-disabled="isDisabled(filter.negationOperator)" ng-model="filter.operator" class="input-medium" ng-options="msg(c) for c in operators(filter.eventParameter)" required>
+                                                        <select ng-disabled="isDisabled(filter.negationOperator)" ng-model="filter.operator" class="input-medium" ng-options="msg(c) for c in operators(filter.eventParameter)" >
                                                             <option value="">{{msg('info.filter.select')}}</option>
                                                         </select>
                                                     </span>
                                                     <span ng-class="cssClass(filter.expression)">
-                                                        <input ng-disabled="isDisabled(filter.operator)" ng-model="filter.expression" class="input-medium" ng-show="filter.operator!='exist'" type="text" value="" ng-required="filter.operator!='exist'"/>
+                                                        <input ng-disabled="isDisabled(filter.operator)" ng-model="filter.expression" class="input-medium" ng-show="filter.operator!='exist'" type="text" value=""/>
                                                     </span>
-                                                     <a ng-click="filters.splice($index, 1)" class="btn btn-small btn-danger"><i class="icon-remove icon-white"></i></a>
+                                                     <a ng-click="removeNode(filter)" class="btn btn-small btn-danger"><i class="icon-remove icon-white"></i></a>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="control-group centered">
-                                        <button class="btn btn-success" ng-click="addFilter()"><i class="icon-plus icon-white"></i> {{msg('button.addAnotherFilter')}}</button>
+                                        <button ui-if="filters.length==0" class="btn btn-success" ng-click="addFilter()"><i class="icon-plus icon-white"></i> {{msg('button.addFilter')}}</button>
+                                        <button ui-if="filters.length!=0" class="btn btn-success" ng-click="addFilter()"><i class="icon-plus icon-white"></i> {{msg('button.addAnotherFilter')}}</button>
                                     </div>
-                                </form>
+                                </ng-form>
                             </div>
                         </div>
                     </div>
@@ -192,15 +199,15 @@
                     <div ng-hide="task._id">
                         <p class="centered spn9 margin-center">{{msg('info.addSave')}}</p>
                         <div class="control-group centered inside">
-                            <a ng-disabled="validateForm()" ng-click="save(true)" class="btn btn-primary"> {{msg('button.saveAndEnabled')}}</a>
-                            <a ng-disabled="validateForm()" ng-click="save(false)" class="btn btn-success"> {{msg('button.save')}}</a>
+                            <input type="button" ng-disabled="!validateForm()" ng-click="save(true)" class="btn btn-primary" value="{{msg('button.saveAndEnable')}}"/>
+                            <input type="button" ng-disabled="!validateForm()" ng-click="save(false)" class="btn btn-success" value="{{msg('button.save')}}"/>
                             <a href="#/task/" class="btn"> {{msg('button.cancel')}}</a>
                         </div>
                     </div>
                     <div ng-show="task._id">
                         <p class="margin-center centered spn9">{{msg('info.editSave')}}</p>
                         <div class="control-group centered inside">
-                            <a ng-disabled="validateForm()" ng-click="save(task.enabled)" class="btn btn-success"> {{msg('button.save')}}</a>
+                            <input type="button" ng-disabled="!validateForm()" ng-click="save(task.enabled)" class="btn btn-success" value="{{msg('button.save')}}"/>
                             <a href="#/task/" class="btn"> {{msg('button.cancel')}}</a>
                         </div>
                     </div>

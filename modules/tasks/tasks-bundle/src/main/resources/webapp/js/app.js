@@ -43,16 +43,16 @@ angular.module('motech-tasks', ['motech-dashboard', 'channelServices', 'taskServ
     }
 }).directive('expandaccordion', function () {
     return {
-       restrict: 'A',
-       link: function (scope, element, attrs) {
-           $('.accordion').on('show', function (e) {
-                   $(e.target).prev('.accordion-heading').find('i.icon-chevron-right').removeClass("icon-chevron-right").addClass('icon-chevron-down');
-               });
+        restrict: 'A',
+        link: function (scope, element, attrs) {
+          $('.accordion').on('show', function (e) {
+              $(e.target).siblings('.accordion-heading').find('.accordion-toggle i').removeClass("icon-chevron-right").addClass('icon-chevron-down');
+          });
 
-               $('.accordion').on('hide', function (e) {
-                   $(this).find("i.icon-chevron-down").not($(e.target)).removeClass("icon-chevron-down").addClass("icon-chevron-right");
-               });
-       }
+          $('.accordion').on('hide', function (e) {
+              $(e.target).siblings('.accordion-heading').find('.accordion-toggle i').removeClass("icon-chevron-down").addClass("icon-chevron-right");
+          });
+        }
     }
 }).directive('draggable', function () {
     return {
@@ -85,6 +85,10 @@ angular.module('motech-tasks', ['motech-dashboard', 'channelServices', 'taskServ
 
                         if ((dragType == 'UNICODE' || dragType == 'TEXTAREA') && dropType == 'NUMBER') {
                             return;
+                        }
+
+                        if (dropType === 'DATE') {
+                            delete scope.selectedAction.eventParameters[dropIndex].value;
                         }
 
                         eventKey = '{{' + scope.selectedTrigger.eventParameters[dragIndex].eventKey + '}}';
@@ -149,4 +153,20 @@ angular.module('motech-tasks', ['motech-dashboard', 'channelServices', 'taskServ
             });
         }
     };
+}).directive('datetimePickerInput', function() {
+    return {
+        restrict: 'A',
+        link: function(scope, element, attrs) {
+            element.datetimepicker({
+                showTimezone: true,
+                useLocalTimezone: true,
+                dateFormat: 'yy-mm-dd',
+                timeFormat: 'HH:mm z',
+                onSelect: function(dateTex) {
+                    scope.selectedAction.eventParameters[$(this).data('index')].value = dateTex;
+                    scope.$apply();
+                }
+            });
+        }
+    }
 });

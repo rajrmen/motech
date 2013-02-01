@@ -4,7 +4,7 @@
     <parent>
         <artifactId>motech</artifactId>
         <groupId>org.motechproject</groupId>
-        <version>0.17-SNAPSHOT</version>
+        <version>0.18-SNAPSHOT</version>
         <relativePath>../../../</relativePath>
     </parent>
     <groupId>org.motechproject</groupId>
@@ -23,6 +23,11 @@
         <dependency>
             <groupId>${project.parent.groupId}</groupId>
             <artifactId>motech-mrs-api-bundle</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.parent.groupId}</groupId>
+            <artifactId>motech-openmrs-domain-bundle</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

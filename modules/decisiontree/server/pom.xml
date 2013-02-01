@@ -4,12 +4,12 @@
     <parent>
         <artifactId>motech</artifactId>
         <groupId>org.motechproject</groupId>
-        <version>0.17-SNAPSHOT</version>
+        <version>0.18-SNAPSHOT</version>
         <relativePath>../../../</relativePath>
     </parent>
     <groupId>org.motechproject</groupId>
     <artifactId>motech-decisiontree-server</artifactId>
-    <version>0.17-SNAPSHOT</version>
+    <version>0.18-SNAPSHOT</version>
     <name>MOTECH Decision Tree Server</name>
     <description>MOTECH Decision Tree Server</description>
     <properties>
@@ -18,7 +18,12 @@
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>motech-decisiontree-core-bundle</artifactId>
+            <artifactId>motech-decisiontree-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>motech-platform-commons-couchdb</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -32,6 +37,10 @@
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>com.springsource.org.hamcrest.core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.github.ldriscoll</groupId>
+            <artifactId>org.motechproject.ektorplucene</artifactId>
         </dependency>
     </dependencies>
     <build>

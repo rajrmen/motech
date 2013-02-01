@@ -4,13 +4,14 @@ import org.ektorp.CouchDbConnector;
 import org.motechproject.commons.couchdb.dao.MotechBaseRepository;
 import org.motechproject.tasks.domain.Task;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public class AllTasks extends MotechBaseRepository<Task> {
 
     @Autowired
-    public AllTasks(final CouchDbConnector connector) {
+    public AllTasks(final @Qualifier("taskDbConnector") CouchDbConnector connector) {
         super(Task.class, connector);
     }
 
@@ -25,6 +26,7 @@ public class AllTasks extends MotechBaseRepository<Task> {
             existing.setEnabled(task.isEnabled());
             existing.setFilters(task.getFilters());
             existing.setTrigger(task.getTrigger());
+            existing.setName(task.getName());
 
             update(existing);
         } else {

@@ -1,13 +1,15 @@
 package org.motechproject.tasks.service;
 
 import org.apache.commons.lang.StringUtils;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
 import org.motechproject.event.MotechEvent;
 import org.motechproject.event.listener.EventListener;
 import org.motechproject.event.listener.EventListenerRegistryService;
 import org.motechproject.event.listener.EventRelay;
 import org.motechproject.event.listener.annotations.MotechListenerEventProxy;
 import org.motechproject.server.config.SettingsFacade;
-import org.motechproject.tasks.domain.EventParamType;
+import org.motechproject.tasks.domain.ParameterType;
 import org.motechproject.tasks.domain.EventParameter;
 import org.motechproject.tasks.domain.Filter;
 import org.motechproject.tasks.domain.OperatorType;
@@ -176,6 +178,12 @@ public class TaskTriggerHandler {
                 } else {
                     value = decimal.doubleValue();
                 }
+            } else if (param.getType().isDate()) {
+                try {
+                    value = DateTime.parse(userInput, DateTimeFormat.forPattern("yyyy-MM-dd HH:mm Z"));
+                } catch (IllegalArgumentException e) {
+                    throw new TaskException("error.convertToDate", key, e);
+                }
             } else {
                 value = userInput;
             }
@@ -208,7 +216,7 @@ public class TaskTriggerHandler {
             EventParameter eventParameter = filter.getEventParameter();
 
             if (triggerParameters.containsKey(eventParameter.getEventKey())) {
-                EventParamType type = eventParameter.getType();
+                ParameterType type = eventParameter.getType();
                 Object object = triggerParameters.get(eventParameter.getEventKey());
 
                 if (type.isString()) {

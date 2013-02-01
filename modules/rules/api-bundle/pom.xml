@@ -3,13 +3,13 @@
     <parent>
         <artifactId>motech</artifactId>
         <groupId>org.motechproject</groupId>
-        <version>0.17-SNAPSHOT</version>
+        <version>0.18-SNAPSHOT</version>
         <relativePath>../../../</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.motechproject</groupId>
     <artifactId>motech-rules-api-bundle</artifactId>
-    <version>0.17-SNAPSHOT</version>
+    <version>0.18-SNAPSHOT</version>
     <name>MOTECH Rules API Bundle</name>
     <packaging>bundle</packaging>
     <properties>
@@ -64,8 +64,8 @@
                 <configuration>
                     <instructions>
                         <Export-Package>
-                            org.motechproject.rules,
-                            org.motechproject.rules.service
+                            org.motechproject.rules;version=${project.version},
+                            org.motechproject.rules.service;version=${project.version}
                         </Export-Package>
                         <Bundle-Activator>
                             org.motechproject.rules.osgi.Activator
@@ -76,6 +76,7 @@
                             !org.mvel2.*,
                             org.ektorp.impl,
                             org.ektorp.spring,
+                            org.motechproject.commons.couchdb.service,
                             org.motechproject.event.listener,
                             org.motechproject.event.listener.annotations,
                             org.motechproject.server.config,

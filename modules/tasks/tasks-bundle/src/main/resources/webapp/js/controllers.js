@@ -8,6 +8,8 @@ function DashboardCtrl($scope, Tasks, Activities) {
     $scope.activeTasks = [];
     $scope.pausedTasks = [];
     $scope.activities = [];
+    $scope.showActive = true;
+    $scope.showPaused = true;
 
     var tasks = Tasks.query(function () {
         var activities = Activities.query(function () {
@@ -45,7 +47,8 @@ function DashboardCtrl($scope, Tasks, Activities) {
                             trigger: tasks[j].trigger,
                             action: tasks[j].action,
                             date: activities[i].date,
-                            type: activities[i].activityType
+                            type: activities[i].activityType,
+                            name: tasks[j].name
                         });
                         break;
                     }
@@ -97,6 +100,22 @@ function DashboardCtrl($scope, Tasks, Activities) {
             }
         });
     };
+
+    $scope.setShowActive = function () {
+       if($scope.showActive != true) {
+            $scope.showActive = true;
+       } else {
+            $scope.showActive = false;
+       }
+    }
+
+    $scope.setShowPaused = function () {
+       if($scope.showPaused != true) {
+            $scope.showPaused = true;
+       } else {
+            $scope.showPaused = false;
+       }
+    }
 }
 
 function ManageTaskCtrl($scope, Channels, Tasks, $routeParams, $http) {
@@ -275,17 +294,40 @@ function ManageTaskCtrl($scope, Channels, Tasks, $routeParams, $http) {
         $scope.filters.push({})
     }
 
-    $scope.setEventParameter = function(eventParameter, filterParameter) {
-
-        return filterParameter;
+    $scope.removeNode = function(filter) {
+       $scope.filters.removeObject(filter);
     }
 
     $scope.validateForm = function() {
-        if ($scope.filterForm.$invalid && $scope.filters.length != 0) {
-            return true;
-        } else {
+        var i, param;
+
+        if ($scope.selectedAction !== undefined) {
+            for (i = 0; i < $scope.selectedAction.eventParameters.length; i += 1) {
+                param = $scope.selectedAction.eventParameters[i].value;
+
+                if (param === null || param === undefined || !param.trim().length) {
+                    return false;
+                }
+            }
+        }
+        if ($scope.task.name === undefined){
             return false;
         }
+
+        return $scope.validateFilterForm();
+    }
+
+    $scope.validateFilterForm = function () {
+        var isPass = true
+        for(var i = 0; i < $scope.filters.length; i++) {
+            if (!$scope.filters[i].eventParameter || !$scope.filters[i].negationOperator || !$scope.filters[i].operator) {
+                isPass = false;
+            }
+            if ($scope.filters[i].operator && $scope.filters[i].operator!='exist' && !$scope.filters[i].expression ) {
+                isPass = false;
+            }
+        }
+        return isPass;
     }
 
     $scope.isDisabled = function(prop) {
@@ -297,14 +339,34 @@ function ManageTaskCtrl($scope, Channels, Tasks, $routeParams, $http) {
     }
 
     $scope.cssClass = function(prop) {
-            var msg = 'validation-area';
+        var msg = 'validation-area';
 
-            if (!prop) {
-                msg = msg.concat(' error');
-            }
-
-            return msg;
+        if (!prop) {
+            msg = msg.concat(' error');
         }
+
+        return msg;
+    }
+
+    $scope.actionCssClass = function(prop) {
+        var msg = "control-group";
+
+        if (!prop.value) {
+            msg = msg.concat(' error');
+        }
+
+        return msg;
+     }
+
+    $scope.actionNameCssClass = function(prop) {
+        var msg = "control-group";
+
+        if (!prop.name) {
+            msg = msg.concat(' error');
+        }
+
+        return msg;
+     }
 }
 
 function LogCtrl($scope, Tasks, Activities, $routeParams) {
@@ -329,6 +391,10 @@ function LogCtrl($scope, Tasks, Activities, $routeParams) {
                 module: $scope.get(task.action, 'moduleName'),
                 version: $scope.get(task.action, 'moduleVersion')
             };
+
+            $scope.description = task.description;
+            $scope.enabled = task.enabled;
+            $scope.name = task.name;
         });
     }
 

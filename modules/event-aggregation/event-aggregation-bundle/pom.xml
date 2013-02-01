@@ -7,13 +7,13 @@
     <parent>
         <artifactId>motech</artifactId>
         <groupId>org.motechproject</groupId>
-        <version>0.17-SNAPSHOT</version>
+        <version>0.18-SNAPSHOT</version>
         <relativePath>../../../</relativePath>
     </parent>
 
     <groupId>org.motechproject</groupId>
     <artifactId>motech-event-aggregation-bundle</artifactId>
-    <version>0.17-SNAPSHOT</version>
+    <version>0.18-SNAPSHOT</version>
     <name>MOTECH Event Aggregation Bundle</name>
     <description>MOTECH Event Aggregation Bundle</description>
     <packaging>bundle</packaging>
@@ -57,7 +57,7 @@
                         <Context-Path>/event-aggregation/api</Context-Path>
                         <Context-File>META-INF/osgi/applicationEventAggregationBundle.xml</Context-File>
                         <Export-Package>
-                            org.motechproject.event.aggregation.model.schedule
+                            org.motechproject.event.aggregation.model.schedule;version=${project.version}
                         </Export-Package>
                         <Bundle-Activator>
                             org.motechproject.event.aggregation.osgi.Activator
@@ -66,6 +66,7 @@
                             org.ektorp.impl,
                             org.ektorp.spring,
                             org.ektorp.support,
+                            org.motechproject.commons.couchdb.service,
                             org.mvel,
                             org.motechproject.event.listener,
                             org.motechproject.event.listener.annotations,

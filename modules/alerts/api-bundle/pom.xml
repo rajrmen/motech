@@ -4,13 +4,13 @@
     <parent>
         <artifactId>motech</artifactId>
         <groupId>org.motechproject</groupId>
-        <version>0.17-SNAPSHOT</version>
+        <version>0.18-SNAPSHOT</version>
         <relativePath>../../../</relativePath>
     </parent>
     <groupId>org.motechproject</groupId>
     <artifactId>motech-alerts-api-bundle</artifactId>
     <name>MOTECH Alerts API Bundle</name>
-    <version>0.17-SNAPSHOT</version>
+    <version>0.18-SNAPSHOT</version>
     <packaging>bundle</packaging>
     <properties>
         <modules.root.dir>${basedir}/../../..</modules.root.dir>
@@ -19,16 +19,6 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>motech-alerts-api</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>motech-platform-event</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>motech-platform-server-config</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -54,12 +44,13 @@
                 <configuration>
                     <instructions>
                         <Export-Package>
-                            org.motechproject.server.alerts.contract,
-                            org.motechproject.server.alerts.domain,
-                            org.motechproject.server.alerts.repository,
-                            org.motechproject.server.alerts.service,
+                            org.motechproject.server.alerts.contract;version=${project.version},
+                            org.motechproject.server.alerts.domain;version=${project.version},
+                            org.motechproject.server.alerts.repository;version=${project.version},
+                            org.motechproject.server.alerts.service;version=${project.version},
                         </Export-Package>
                         <Import-Package>
+                            org.motechproject.commons.couchdb.service,
                             org.motechproject.server.config,
                             org.motechproject.server.config.service,
                             org.motechproject.event.listener,

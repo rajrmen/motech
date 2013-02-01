@@ -7,13 +7,13 @@
     <parent>
         <artifactId>motech</artifactId>
         <groupId>org.motechproject</groupId>
-        <version>0.17-SNAPSHOT</version>
+        <version>0.18-SNAPSHOT</version>
         <relativePath>../../../</relativePath>
     </parent>
 
     <groupId>org.motechproject</groupId>
     <artifactId>motech-ivr-asterisk-bundle</artifactId>
-    <version>0.17-SNAPSHOT</version>
+    <version>0.18-SNAPSHOT</version>
     <packaging>bundle</packaging>
 
     <name>MOTECH IVR Asterisk Bundle</name>
@@ -65,7 +65,7 @@
                 <configuration>
                     <instructions>
                         <Export-Package>
-                            org.motechproject.server.asterisk.*;
+                            org.motechproject.server.asterisk.*;version=${project.version}
                         </Export-Package>
                         <Bundle-Activator>
                             org.motechproject.server.asterisk.osgi.Activator
@@ -76,6 +76,7 @@
                             org.asteriskjava.live,
                             org.ektorp.impl,
                             org.ektorp.spring,
+                            org.motechproject.commons.couchdb.service,
                             org.motechproject.decisiontree.server.domain,
                             org.motechproject.event.listener.annotations,
                             org.motechproject.server.config,

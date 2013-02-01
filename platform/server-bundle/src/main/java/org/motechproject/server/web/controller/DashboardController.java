@@ -83,11 +83,6 @@ public class DashboardController {
         return mav;
     }
 
-    @RequestMapping("/old")
-    public ModelAndView oldIndex() {
-        return new ModelAndView("oldindex");
-    }
-
     private String getUptime(HttpServletRequest request) {
         RuntimeMXBean mx = ManagementFactory.getRuntimeMXBean();
         Period uptime = new Duration(mx.getUptime()).toPeriod();
@@ -96,7 +91,7 @@ public class DashboardController {
         PeriodFormatter formatter = new PeriodFormatterBuilder()
                 .appendDays()
                 .appendSuffix(" " + messageSource.getMessage("day", null, locale), " " + messageSource.getMessage("days", null, locale))
-                .appendSeparator(" " + messageSource.getMessage("and", null, locale))
+                .appendSeparator(" " + messageSource.getMessage("and", null, locale)+" ")
                 .appendHours()
                 .appendSuffix(" " + messageSource.getMessage("hour", null, locale), " " + messageSource.getMessage("hours", null, locale))
                 .appendSeparator(" " + messageSource.getMessage("and", null, locale) + " ")

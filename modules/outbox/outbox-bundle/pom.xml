@@ -4,12 +4,12 @@
     <parent>
         <artifactId>motech</artifactId>
         <groupId>org.motechproject</groupId>
-        <version>0.17-SNAPSHOT</version>
+        <version>0.18-SNAPSHOT</version>
         <relativePath>../../../</relativePath>
     </parent>
     <groupId>org.motechproject</groupId>
     <artifactId>motech-outbox-bundle</artifactId>
-    <version>0.17-SNAPSHOT</version>
+    <version>0.18-SNAPSHOT</version>
     <name>MOTECH Outbox Bundle</name>
     <packaging>bundle</packaging>
     <properties>
@@ -62,12 +62,13 @@
                         <Bundle-Activator>org.motechproject.osgi.web.Activator</Bundle-Activator>
                         <Context-Path>outbox</Context-Path>
                         <Export-Package>
-                            org.motechproject.outbox.api,
-                            org.motechproject.outbox.api.domain,
-                            org.motechproject.outbox.api.context,
-                            org.motechproject.outbox.api.service
+                            org.motechproject.outbox.api;version=${project.version},
+                            org.motechproject.outbox.api.domain;version=${project.version},
+                            org.motechproject.outbox.api.context;version=${project.version},
+                            org.motechproject.outbox.api.service;version=${project.version}
                         </Export-Package>
                         <Import-Package>
+                            org.motechproject.commons.couchdb.service,
                             org.motechproject.event.listener.annotations,
                             org.motechproject.server.config,
                             org.springframework.context.support,

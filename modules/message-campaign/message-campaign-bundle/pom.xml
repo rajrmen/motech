@@ -4,14 +4,14 @@
     <parent>
         <artifactId>motech</artifactId>
         <groupId>org.motechproject</groupId>
-        <version>0.17-SNAPSHOT</version>
+        <version>0.18-SNAPSHOT</version>
         <relativePath>../../../</relativePath>
     </parent>
     <groupId>org.motechproject</groupId>
     <artifactId>motech-message-campaign-bundle</artifactId>
     <name>MOTECH Message Campaign Bundle</name>
     <description>MOTECH Message Campaign</description>
-    <version>0.17-SNAPSHOT</version>
+    <version>0.18-SNAPSHOT</version>
     <packaging>bundle</packaging>
     <properties>
         <modules.root.dir>${basedir}/../../..</modules.root.dir>
@@ -87,15 +87,16 @@
                 <configuration>
                     <instructions>
                         <Export-Package>
-                            org.motechproject.server.messagecampaign,
-                            org.motechproject.server.messagecampaign.contract,
-                            org.motechproject.server.messagecampaign.service
+                            org.motechproject.server.messagecampaign;version=${project.version},
+                            org.motechproject.server.messagecampaign.contract;version=${project.version},
+                            org.motechproject.server.messagecampaign.service;version=${project.version}
                         </Export-Package>
                         <Import-Package>
                             net.sf.cglib.core,
                             net.sf.cglib.proxy,
                             org.ektorp.impl,
                             org.ektorp.spring,
+                            org.motechproject.commons.couchdb.service,
                             org.motechproject.event,
                             org.motechproject.event.listener.annotations,
                             org.motechproject.server.config,

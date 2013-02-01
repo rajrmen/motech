@@ -3,13 +3,13 @@
     <parent>
         <artifactId>motech</artifactId>
         <groupId>org.motechproject</groupId>
-        <version>0.17-SNAPSHOT</version>
+        <version>0.18-SNAPSHOT</version>
         <relativePath>../../../</relativePath>
     </parent>
     <groupId>org.motechproject</groupId>
     <artifactId>motech-pillreminder-api-bundle</artifactId>
     <name>MOTECH Pill Reminder API Bundle</name>
-    <version>0.17-SNAPSHOT</version>
+    <version>0.18-SNAPSHOT</version>
     <packaging>bundle</packaging>
     <description>MOTECH Pill Reminder API</description>
     <properties>
@@ -86,11 +86,12 @@
                 <configuration>
                     <instructions>
                         <Export-Package>
-                            org.motechproject.server.pillreminder.api,
-                            org.motechproject.server.pillreminder.api.contract,
-                            org.motechproject.server.pillreminder.api.service
+                            org.motechproject.server.pillreminder.api;version=${project.version},
+                            org.motechproject.server.pillreminder.api.contract;version=${project.version},
+                            org.motechproject.server.pillreminder.api.service;version=${project.version}
                         </Export-Package>
                         <Import-Package>
+                            org.motechproject.commons.couchdb.service,
                             org.motechproject.event.listener,
                             org.motechproject.server.config,
                             org.motechproject.server.config.service,

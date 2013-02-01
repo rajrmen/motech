@@ -8,11 +8,15 @@
 
     <import resource="classpath*:META-INF/motech/*.xml"/>
 
+    <osgi:reference id="couchDbManager" interface="org.motechproject.commons.couchdb.service.CouchDbManager" />
+
     <osgi:service id="decisionTreeServerServiceOsgi" auto-export="interfaces" ref="decisionTreeServerImpl"
                   interface="org.motechproject.decisiontree.server.service.DecisionTreeServer"/>
 
     <osgi:service id="flowSessionServiceOsgi" auto-export="interfaces" ref="flowSessionService"
                   interface="org.motechproject.decisiontree.server.service.FlowSessionService"/>
+
+    <osgi:service id="calllogSearchServiceOsgi" ref="calllogSearchService" auto-export="interfaces" interface="org.motechproject.decisiontree.server.service.CalllogSearchService" />
 
     <osgi:reference id="decisionTreeService" interface="org.motechproject.decisiontree.core.DecisionTreeService"/>
 

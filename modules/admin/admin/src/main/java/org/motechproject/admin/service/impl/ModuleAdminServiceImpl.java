@@ -4,10 +4,12 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.motechproject.admin.bundles.BundleDirectoryManager;
 import org.motechproject.admin.bundles.ExtendedBundleInformation;
+import org.motechproject.admin.bundles.ImportExportResolver;
+import org.motechproject.admin.bundles.MotechBundleFilter;
 import org.motechproject.admin.ex.BundleNotFoundException;
 import org.motechproject.admin.service.ModuleAdminService;
-import org.motechproject.server.api.BundleIcon;
 import org.motechproject.commons.api.MotechException;
+import org.motechproject.server.api.BundleIcon;
 import org.motechproject.server.api.BundleInformation;
 import org.motechproject.server.api.JarInformation;
 import org.osgi.framework.Bundle;
@@ -42,12 +44,22 @@ public class ModuleAdminServiceImpl implements ModuleAdminService {
     @Autowired
     private BundleDirectoryManager bundleDirectoryManager;
 
+    @Autowired
+    private ImportExportResolver importExportResolver;
+
+    @Autowired
+    private MotechBundleFilter motechBundleFilter;
+
     @Override
     public List<BundleInformation> getBundles() {
         List<BundleInformation> bundles = new ArrayList<>();
-        for (Bundle bundle : bundleContext.getBundles()) {
+
+        List<Bundle> motechBundles = motechBundleFilter.filter(bundleContext.getBundles());
+
+        for (Bundle bundle : motechBundles) {
             bundles.add(new BundleInformation(bundle));
         }
+
         return bundles;
     }
 
@@ -140,7 +152,7 @@ public class ModuleAdminServiceImpl implements ModuleAdminService {
                 LOG.error("Removing bundle due to exception", e);
                 savedBundleFile.delete();
             }
-            throw new MotechException("Error saving file", e);
+            throw new MotechException("Cannot install file", e);
         } finally {
             IOUtils.closeQuietly(bundleInputStream);
         }
@@ -149,7 +161,11 @@ public class ModuleAdminServiceImpl implements ModuleAdminService {
     @Override
     public ExtendedBundleInformation getBundleDetails(long bundleId) {
         Bundle bundle = getBundle(bundleId);
-        return new ExtendedBundleInformation(bundle);
+
+        ExtendedBundleInformation bundleInfo = new ExtendedBundleInformation(bundle);
+        importExportResolver.resolveBundleWiring(bundleInfo);
+
+        return bundleInfo;
     }
 
     private BundleIcon loadBundleIcon(URL iconURL) {
@@ -171,7 +187,7 @@ public class ModuleAdminServiceImpl implements ModuleAdminService {
 
     private Bundle getBundle(long bundleId) {
         Bundle bundle = bundleContext.getBundle(bundleId);
-        if (bundle == null) {
+        if (bundle == null || !motechBundleFilter.passesCriteria(bundle)) {
             throw new BundleNotFoundException("Bundle with id [" + bundleId + "] not found");
         }
         return bundle;

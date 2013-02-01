@@ -4,12 +4,12 @@
     <parent>
         <artifactId>motech</artifactId>
         <groupId>org.motechproject</groupId>
-        <version>0.17-SNAPSHOT</version>
+        <version>0.18-SNAPSHOT</version>
         <relativePath>../../../</relativePath>
     </parent>
     <groupId>org.motechproject</groupId>
     <artifactId>motech-ivr-voxeo-bundle</artifactId>
-    <version>0.17-SNAPSHOT</version>
+    <version>0.18-SNAPSHOT</version>
     <name>MOTECH IVR Voxeo Bundle</name>
     <packaging>bundle</packaging>
     <description>Voxeo IVR Provider</description>
@@ -81,16 +81,19 @@
                             org.ektorp.impl,
                             org.ektorp.spring,
                             org.motechproject.event.listener.annotations,
+                            org.motechproject.commons.couchdb.service,
                             org.motechproject.ivr.service,
                             org.motechproject.server.config,
                             org.motechproject.server.config.service,
                             org.springframework.beans.factory.xml,
                             org.springframework.context.config,
                             org.springframework.context.support,
+                            org.springframework.ui.velocity,
                             org.springframework.web.context.support,
                             org.springframework.web.servlet.config,
                             org.springframework.web.servlet.mvc,
                             org.springframework.web.servlet.support,
+                            org.springframework.web.servlet.view.velocity,
                             org.eclipse.gemini.blueprint.config,
                             *
                         </Import-Package>

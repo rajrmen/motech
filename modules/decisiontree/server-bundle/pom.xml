@@ -4,12 +4,12 @@
     <parent>
         <artifactId>motech</artifactId>
         <groupId>org.motechproject</groupId>
-        <version>0.17-SNAPSHOT</version>
+        <version>0.18-SNAPSHOT</version>
         <relativePath>../../../</relativePath>
     </parent>
     <groupId>org.motechproject</groupId>
     <artifactId>motech-decisiontree-server-bundle</artifactId>
-    <version>0.17-SNAPSHOT</version>
+    <version>0.18-SNAPSHOT</version>
     <name>MOTECH Decision Tree Server Bundle</name>
     <packaging>bundle</packaging>
     <description>MOTECH Decision Tree Server Bundle</description>
@@ -54,14 +54,15 @@
                 <configuration>
                     <instructions>
                         <Export-Package>
-                            org.motechproject.decisiontree.server.domain,
-                            org.motechproject.decisiontree.server.repository,
-                            org.motechproject.decisiontree.server.service
+                            org.motechproject.decisiontree.server.domain;version=${project.version},
+                            org.motechproject.decisiontree.server.repository;version=${project.version},
+                            org.motechproject.decisiontree.server.service;version=${project.version}
                         </Export-Package>
                         <Import-Package>
                             org.ektorp.impl,
                             org.ektorp.spring,
                             org.ektorp.support,
+                            org.motechproject.commons.couchdb.service,
                             org.motechproject.decisiontree.core,
                             org.motechproject.decisiontree.core.model,
                             org.motechproject.decisiontree.core.repository,
@@ -74,6 +75,8 @@
                             org.springframework.context.config,
                             org.springframework.context.support,
                             org.eclipse.gemini.blueprint.config,
+                            org.codehaus.jackson.map,
+                            org.codehaus.jackson.type,
                             *
                         </Import-Package>
                         <Embed-Dependency>motech-decisiontree-server;inline=true</Embed-Dependency>

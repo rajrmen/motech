@@ -3,14 +3,14 @@
     <parent>
         <artifactId>motech</artifactId>
         <groupId>org.motechproject</groupId>
-        <version>0.17-SNAPSHOT</version>
+        <version>0.18-SNAPSHOT</version>
         <relativePath>../../../</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.motechproject</groupId>
     <artifactId>motech-cmslite-api-bundle</artifactId>
     <name>MOTECH CMS lite API Bundle</name>
-    <version>0.17-SNAPSHOT</version>
+    <version>0.18-SNAPSHOT</version>
     <packaging>bundle</packaging>
     <properties>
         <modules.root.dir>${basedir}/../../..</modules.root.dir>
@@ -42,16 +42,17 @@
                     <instructions>
                         <Context-Path>cmsliteapi</Context-Path>
                         <Export-Package>
-                            org.motechproject.cmslite.api.model,
-                            org.motechproject.cmslite.api.repository,
-                            org.motechproject.cmslite.api.service,
-                            org.motechproject.cmslite.api.web
+                            org.motechproject.cmslite.api.model;version=${project.version},
+                            org.motechproject.cmslite.api.repository;version=${project.version},
+                            org.motechproject.cmslite.api.service;version=${project.version},
+                            org.motechproject.cmslite.api.web;version=${project.version}
                         </Export-Package>
                         <Bundle-Activator>org.motechproject.osgi.web.Activator</Bundle-Activator>
                         <Import-Package>
                             javax.servlet.*;resolution:=optional,
                             org.ektorp.impl,
                             org.ektorp.spring,
+                            org.motechproject.commons.couchdb.service,
                             org.motechproject.server.config,
                             org.motechproject.server.config.service,
                             org.osgi.framework;version="0.0.0",

@@ -3,7 +3,7 @@
     <parent>
         <artifactId>motech</artifactId>
         <groupId>org.motechproject</groupId>
-        <version>0.17-SNAPSHOT</version>
+        <version>0.18-SNAPSHOT</version>
         <relativePath>../../../</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -11,7 +11,7 @@
     <groupId>org.motechproject</groupId>
     <artifactId>motech-tasks-bundle</artifactId>
     <name>MOTECH Tasks Bundle</name>
-    <version>0.17-SNAPSHOT</version>
+    <version>0.18-SNAPSHOT</version>
     <packaging>bundle</packaging>
 
     <properties>
@@ -44,7 +44,7 @@
                             org.motechproject.tasks.osgi.Activator
                         </Bundle-Activator>
                         <Export-Package>
-                            org.motechproject.tasks.*
+                            org.motechproject.tasks.*;version=${project.version}
                         </Export-Package>
                         <Import-Package>
                             org.eclipse.gemini.blueprint.config,
@@ -52,6 +52,7 @@
                             org.motechproject.event.listener.annotations,
                             org.motechproject.server.config,
                             org.motechproject.server.config.service,
+                            org.motechproject.commons.couchdb.service,
                             org.springframework.beans.factory.xml,
                             org.springframework.context.config,
                             org.springframework.web.servlet.config,

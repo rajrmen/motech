@@ -3,12 +3,12 @@
     <parent>
         <artifactId>motech</artifactId>
         <groupId>org.motechproject</groupId>
-        <version>0.17-SNAPSHOT</version>
+        <version>0.18-SNAPSHOT</version>
         <relativePath>../../../</relativePath>
     </parent>
     <groupId>org.motechproject</groupId>
     <artifactId>motech-appointments-api-bundle</artifactId>
-    <version>0.17-SNAPSHOT</version>
+    <version>0.18-SNAPSHOT</version>
     <name>MOTECH Appointments API Bundle</name>
     <packaging>bundle</packaging>
     <description>MOTECH Appointments API Bundle</description>
@@ -31,11 +31,6 @@
             <artifactId>motech-scheduler-bundle</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>motech-platform-server-config</artifactId>
-            <version>${project.version}</version>
-        </dependency>
         <!-- OSGI dependencies -->
         <dependency>
             <groupId>javax.servlet</groupId>
@@ -56,12 +51,13 @@
                 <configuration>
                     <instructions>
                         <Export-Package>
-                            org.motechproject.appointments.api,
-                            org.motechproject.appointments.api.model,
-                            org.motechproject.appointments.api.service,
-                            org.motechproject.appointments.api.service.contract
+                            org.motechproject.appointments.api;version=${project.version},
+                            org.motechproject.appointments.api.model;version=${project.version},
+                            org.motechproject.appointments.api.service;version=${project.version},
+                            org.motechproject.appointments.api.service.contract;version=${project.version}
                         </Export-Package>
                         <Import-Package>
+                            org.motechproject.commons.couchdb.service,
                             org.motechproject.event.listener,
                             org.motechproject.server.config,
                             org.motechproject.server.config.service,
