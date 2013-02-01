@@ -11,8 +11,6 @@
 
     <osgi:reference id="platformSettingsServiceOsgi" interface="org.motechproject.server.config.service.PlatformSettingsService" />
 
-    <osgi:reference id="tenantService" interface="org.motechproject.tenant.service.TenantRepositoryService" />
-
     <osgi:service id="motechPermissionServiceOsgi" ref="motechPermissionService"
                   interface="org.motechproject.security.service.MotechPermissionService"/>
 
