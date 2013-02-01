@@ -34,5 +34,45 @@
             <groupId>org.springframework</groupId>
             <artifactId>org.springframework.web.servlet</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>org.motechproject.org.codehaus.jackson</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>org.motechproject.org.hibernate.validator</artifactId>
+        </dependency>
+
+        <!-- test -->
+        <dependency>
+            <groupId>org.motechproject</groupId>
+            <artifactId>motech-testing-utils</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test-mvc</artifactId>
+            <version>1.0.0.M1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kubek2k</groupId>
+            <artifactId>springockito</artifactId>
+            <version>1.0.5</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kubek2k</groupId>
+            <artifactId>springockito-annotations</artifactId>
+            <version>1.0.6</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-all</artifactId>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 </project>

@@ -7,6 +7,7 @@ import org.motechproject.event.listener.EventListenerRegistryService;
 import org.motechproject.event.listener.EventRelay;
 import org.motechproject.scheduler.MotechSchedulerService;
 import org.motechproject.sms.api.constants.EventSubjects;
+import org.motechproject.sms.api.service.SendSmsRequest;
 import org.motechproject.sms.api.service.SmsService;
 import org.motechproject.testing.osgi.BaseOsgiIT;
 import org.motechproject.testing.utils.Wait;
@@ -14,6 +15,8 @@ import org.osgi.framework.ServiceReference;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static java.util.Arrays.asList;
 
 public class SMSServiceBundleIT extends BaseOsgiIT {
 
@@ -58,7 +61,7 @@ public class SMSServiceBundleIT extends BaseOsgiIT {
         assertNotNull(smsService);
 
 
-        smsService.sendSMS("1234", "Hi");
+        smsService.sendSMS(new SendSmsRequest(asList("1234"), "Hi"));
 
 
         new Wait(lock, 2000).start();
