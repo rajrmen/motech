@@ -15,6 +15,7 @@ import org.osgi.framework.Constants;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceEvent;
 import org.osgi.framework.ServiceListener;
+import org.osgi.framework.hooks.bundle.FindHook;
 import org.osgi.framework.launch.Framework;
 import org.osgi.service.event.EventConstants;
 import org.osgi.service.event.EventHandler;
@@ -99,6 +100,8 @@ public class OsgiFrameworkService implements ApplicationContextAware {
             // This is mandatory for Felix http servlet bridge
             servletContext.setAttribute(BundleContext.class.getName(), bundleContext);
 
+            registerHooks();
+
             installAllBundles(servletContext, bundleContext);
 
             registerHttpServiceListener();
@@ -119,6 +122,12 @@ public class OsgiFrameworkService implements ApplicationContextAware {
             logger.error("Failed to start OSGi framework", e);
             throw new OsgiException(e);
         }
+    }
+
+    private void registerHooks() {
+        BundleContext bundleContext = osgiFramework.getBundleContext();
+
+        bundleContext.registerService(FindHook.class.getName(), new MotechBundleHook(), null);
     }
 
     private synchronized void startupModules() {
