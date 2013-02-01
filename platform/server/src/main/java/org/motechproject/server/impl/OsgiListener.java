@@ -8,36 +8,35 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
-import java.util.HashMap;
-import java.util.Map;
 
 public class OsgiListener implements ServletContextListener {
     private static final Logger LOGGER = LoggerFactory.getLogger(OsgiListener.class);
 
-    private static Map<String, OsgiFrameworkService> services = new HashMap<>();
+    private static OsgiFrameworkService service;
 
     @Override
     public void contextInitialized(ServletContextEvent servletContextEvent) {
         LOGGER.debug("Starting OSGi framework...");
-
-        ApplicationContext applicationContext = WebApplicationContextUtils.getRequiredWebApplicationContext(
-                servletContextEvent.getServletContext());
-
-        services = applicationContext.getBeansOfType(OsgiFrameworkService.class);
-
-        for (OsgiFrameworkService ofs : services.values()) {
-            ofs.start();
-        }
+        getOsgiService(servletContextEvent).start();
     }
 
     @Override
     public void contextDestroyed(ServletContextEvent servletContextEvent) {
-        for (OsgiFrameworkService ofs : services.values()) {
-            ofs.stop();
-        }
+        getOsgiService(servletContextEvent).stop();
     }
 
-    public static OsgiFrameworkService getOsgiService(String serviceName) {
-        return services.get(serviceName);
+    private OsgiFrameworkService getOsgiService(ServletContextEvent servletContextEvent) {
+        if (service == null) {
+            LOGGER.debug("Finding OsgiService instance in context...");
+            ServletContext servletContext = servletContextEvent.getServletContext();
+            ApplicationContext applicationContext = WebApplicationContextUtils.getRequiredWebApplicationContext(servletContext);
+            service = applicationContext.getBean(OsgiFrameworkService.class);
+        }
+        return service;
     }
+
+    public static OsgiFrameworkService getOsgiService() {
+        return service;
+    }
+
 }

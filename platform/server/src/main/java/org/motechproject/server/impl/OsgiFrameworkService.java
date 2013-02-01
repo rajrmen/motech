@@ -3,9 +3,7 @@ package org.motechproject.server.impl;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.SuffixFileFilter;
 import org.apache.commons.lang.StringUtils;
-import org.apache.felix.framework.Felix;
 import org.eclipse.gemini.blueprint.OsgiException;
-import org.eclipse.gemini.blueprint.util.BundleDelegatingClassLoader;
 import org.motechproject.server.api.BundleLoader;
 import org.motechproject.server.api.BundleLoadingException;
 import org.motechproject.server.api.JarInformation;
@@ -24,9 +22,7 @@ import org.osgi.service.http.HttpService;
 import org.osgi.util.tracker.BundleTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.web.context.WebApplicationContext;
@@ -35,8 +31,6 @@ import javax.servlet.ServletContext;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Proxy;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -47,7 +41,6 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -59,12 +52,12 @@ import static org.apache.commons.lang.StringUtils.startsWith;
 /**
  * @author Ricky Wang
  */
-public class OsgiFrameworkService implements ApplicationContextAware, BeanNameAware {
+public class OsgiFrameworkService implements ApplicationContextAware {
     private static final String PLATFORM_BUNDLES = "platform";
     private static final String MODULE_BUNDLES = "module";
     private static final String THIRD_PARTY_BUNDLES = "3party";
 
-    private String startupTopic = "org/motechproject/osgi/event/STARTUP";
+    private static final String STARTUP_TOPIC = "org/motechproject/osgi/event/STARTUP";
 
     private static Logger logger = LoggerFactory.getLogger(OsgiFrameworkService.class);
 
@@ -77,9 +70,6 @@ public class OsgiFrameworkService implements ApplicationContextAware, BeanNameAw
     private String fragmentSubFolder;
 
     @Autowired
-    @Qualifier("osgiConfig")
-    private Properties osgiConfig;
-
     private Framework osgiFramework;
 
     private List<BundleLoader> bundleLoaders;
@@ -95,23 +85,11 @@ public class OsgiFrameworkService implements ApplicationContextAware, BeanNameAw
     private boolean httpServiceRegistered = false;
     private boolean startupEventReceived = false;
 
-    private String beanName;
-
-    private String tenantId;
-
     /**
      * Initialize, install and start bundles and the OSGi framework
      */
     public void start() {
         try {
-            startupTopic += ("/" + tenantId);
-
-            Properties config = new Properties();
-            config.putAll(osgiConfig);
-            config.setProperty("org.osgi.framework.storage", "/home/pawel/.motech/cache/" + getTenantId());
-
-            osgiFramework = new Felix(config);
-
             ServletContext servletContext = ((WebApplicationContext) applicationContext).getServletContext();
 
             osgiFramework.init();
@@ -119,7 +97,7 @@ public class OsgiFrameworkService implements ApplicationContextAware, BeanNameAw
             BundleContext bundleContext = osgiFramework.getBundleContext();
 
             // This is mandatory for Felix http servlet bridge
-            // moteservletContext.setAttribute(BundleContext.class.getName(), bundleContext);
+            servletContext.setAttribute(BundleContext.class.getName(), bundleContext);
 
             installAllBundles(servletContext, bundleContext);
 
@@ -133,12 +111,11 @@ public class OsgiFrameworkService implements ApplicationContextAware, BeanNameAw
 
             startBundles(PLATFORM_BUNDLES);
 
-            registerTenantService();
-
             osgiFramework.start();
 
             logger.info("OSGi framework started");
-        } catch (Exception e) {
+        } catch (BundleException | BundleLoadingException | IOException | ClassNotFoundException |
+                InvalidSyntaxException e) {
             logger.error("Failed to start OSGi framework", e);
             throw new OsgiException(e);
         }
@@ -162,28 +139,13 @@ public class OsgiFrameworkService implements ApplicationContextAware, BeanNameAw
         } else {
             Class<?> eventHandlerClass = eventAdminCl.loadClass(EventHandler.class.getName());
 
-            Object proxy = Proxy.newProxyInstance(eventAdminCl, new Class[] { eventHandlerClass },
-                    new StartupListener(beanName));
+            Object proxy = Proxy.newProxyInstance(eventAdminCl, new Class[] { eventHandlerClass }, new StartupListener());
 
             Dictionary<String, String[]> properties = new Hashtable<>();
-            properties.put(EventConstants.EVENT_TOPIC, new String[] { startupTopic });
+            properties.put(EventConstants.EVENT_TOPIC, new String[] { STARTUP_TOPIC });
 
             bundleContext.registerService(EventHandler.class.getName(), proxy, properties);
         }
-    }
-
-
-    private void registerTenantService() throws ClassNotFoundException, NoSuchMethodException,
-            IllegalAccessException, InvocationTargetException, InstantiationException {
-        BundleContext bundleContext = osgiFramework.getBundleContext();
-
-        ClassLoader serverApiCl = getClassLoaderBySymbolicName("org.motechproject.motech-platform-server-api");
-        Class tenantServiceClazz = serverApiCl.loadClass("org.motechproject.server.service.TenantServiceImpl");
-        Constructor constr = tenantServiceClazz.getConstructor(String.class);
-
-        Object service = constr.newInstance(getTenantId());
-
-        bundleContext.registerService("org.motechproject.server.service.TenantService", service, null);
     }
 
     private void registerHttpServiceListener() throws InvalidSyntaxException {
@@ -345,8 +307,6 @@ public class OsgiFrameworkService implements ApplicationContextAware, BeanNameAw
                     bundleLocationMapping.put(bundle.getBundleId() + ".0", bundleLocation);
                 }
             }
-        } else {
-            bundleClassLoaderLookup.put(key, BundleDelegatingClassLoader.createBundleClassLoaderFor(bundle));
         }
     }
 
@@ -490,19 +450,6 @@ public class OsgiFrameworkService implements ApplicationContextAware, BeanNameAw
     public void allowStartup() {
         startupEventReceived = true;
         startupModules();
-    }
-
-    public String getTenantId() {
-        return tenantId;
-    }
-
-    public void setTenantId(String tenantId) {
-        this.tenantId = tenantId;
-    }
-
-    @Override
-    public void setBeanName(String beanName) {
-        this.beanName  = beanName;
     }
 
     private class BundleStarter implements Runnable {

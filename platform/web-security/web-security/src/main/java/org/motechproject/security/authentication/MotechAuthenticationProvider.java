@@ -6,6 +6,7 @@ import org.motechproject.security.helper.SecurityHelper;
 import org.motechproject.security.repository.AllMotechRoles;
 import org.motechproject.security.repository.AllMotechUsers;
 import org.motechproject.security.service.MotechUserProfile;
+import org.motechproject.tenant.service.TenantRepositoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -15,6 +16,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+
+import javax.servlet.http.HttpServletRequest;
 
 @Component
 public class MotechAuthenticationProvider extends AbstractUserDetailsAuthenticationProvider {
@@ -26,6 +30,9 @@ public class MotechAuthenticationProvider extends AbstractUserDetailsAuthenticat
     private AllMotechUsers allMotechUsers;
     private MotechPasswordEncoder passwordEncoder;
     private AllMotechRoles allMotechRoles;
+
+    @Autowired
+    private TenantRepositoryService tenantRepositoryService;
 
     @Autowired
     public MotechAuthenticationProvider(AllMotechUsers allMotechUsers, MotechPasswordEncoder motechPasswordEncoder, AllMotechRoles allMotechRoles) {
@@ -48,6 +55,8 @@ public class MotechAuthenticationProvider extends AbstractUserDetailsAuthenticat
     @Override
     protected UserDetails retrieveUser(String username, UsernamePasswordAuthenticationToken authentication) {
         RequestAttributes request =  RequestContextHolder.currentRequestAttributes();
+        String tenantId = tenantRepositoryService.getTenantId(request);
+
         // we can use the tenant ID here to retrieve the user
 
         MotechUser user = allMotechUsers.findByUserName(username);

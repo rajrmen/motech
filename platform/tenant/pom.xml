@@ -1,51 +1,38 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>motech</artifactId>
         <groupId>org.motechproject</groupId>
         <version>0.17-SNAPSHOT</version>
-        <relativePath>../../</relativePath>
+        <relativePath>../../pom.xml</relativePath>
     </parent>
-    <artifactId>motech-platform-server-api</artifactId>
-    <name>MOTECH Platform Server API</name>
-    <packaging>bundle</packaging>
-    <properties>
-        <modules.root.dir>${basedir}/../..</modules.root.dir>
-    </properties>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>motech-platform-tenant</artifactId>
+    <version>0.17-SNAPSHOT</version>
+
     <dependencies>
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>com.springsource.javax.servlet</artifactId>
-            <scope>provided</scope>
-        </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>org.springframework.web</artifactId>
-            <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>org.springframework.aop</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>org.springframework.transaction</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>com.springsource.org.apache.commons.lang</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>junit-addons</groupId>
-            <artifactId>junit-addons</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>com.springsource.org.apache.commons.io</artifactId>
+            <groupId>javax.servlet</groupId>
+            <artifactId>com.springsource.javax.servlet</artifactId>
         </dependency>
     </dependencies>
+
+    <name>MOTECH Platform Tenant</name>
+    <description>MOTECH multi-tenancy utilities</description>
+
+    <packaging>bundle</packaging>
+
+    <properties>
+        <modules.root.dir>${basedir}/../..</modules.root.dir>
+    </properties>
+
     <build>
         <plugins>
             <plugin>
@@ -53,13 +40,16 @@
                 <artifactId>maven-bundle-plugin</artifactId>
                 <version>2.3.4</version>
                 <extensions>true</extensions>
-                <configuration>
+<!--                <configuration>
                     <instructions>
-                        <Export-Package>
-                            org.motechproject.server.api;version=${project.version}
-                        </Export-Package>
+                        <Export-Package>org.motechproject.osgi.web</Export-Package>
+                        <Import-Package>
+                            org.osgi.util.tracker;version="0.0.0",
+                            org.osgi.framework;version="0.0.0",
+                            *
+                        </Import-Package>
                     </instructions>
-                </configuration>
+                </configuration>-->
             </plugin>
             <plugin>
                 <artifactId>maven-resources-plugin</artifactId>
