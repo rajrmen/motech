@@ -67,16 +67,18 @@
             </form>
         </div>
     </div>
-    <div class="pagination pagination-right">
+
+    <div class="pagination pagination-right pagination-condensed lightblue" ng-show="pageCount.count  > 1">
         <ul>
-            <li><a href="#" ng-click="prev()">«</a></li>
-            <li><a href="#">1</a></li>
-            <li><a href="#">2</a></li>
-            <li><a href="#">3</a></li>
-            <li><a href="#">4</a></li>
-            <li><a href="#" ng-click="next()">»</a></li>
+            <li ng-class="{disabled: currentPage == 0}"><a href ng-click="prevPage()">{{msg('calllog.pagination.prev')}}</a></li>
+
+            <li ng-repeat="selectedPage in range(pageCount.count)" ng-class="{active: selectedPage == currentPage}" ng-click="setPage()">
+                <a href ng-bind="selectedPage + 1"></a>
+            </li>
+            <li ng-class="{disabled: currentPage == pageCount.count - 1}"><a href ng-click="nextPage()">{{msg('calllog.pagination.next')}}</a></li>
         </ul>
     </div>
+
     <table class="table table-bundles table-bordered table-striped table-lightblue">
         <thead>
         <tr>

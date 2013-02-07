@@ -1,7 +1,8 @@
-function CalllogController($scope, $rootScope,  CalllogService) {
-    $rootScope.currentPage = 0;
+function CalllogController($scope, CalllogSearch, CalllogCount) {
     $scope.phoneNumber = "";
     $scope.sortColumn = "";
+    $scope.currentPage = 0;
+    $scope.pageCount = 0;
 
     $scope.$on('$viewContentLoaded', function () {
 
@@ -24,7 +25,24 @@ function CalllogController($scope, $rootScope,  CalllogService) {
     $scope.search = function () {
         var min = $("#slider").slider("values",0);
         var max = $("#slider").slider("values",1);
-        $scope.calllogs = CalllogService.query(
+
+        $scope.pageCount=CalllogCount.query(
+          {'phoneNumber': $scope.phoneNumber,
+           'minDuration': min,
+           'maxDuration': max,
+           'fromDate': $("#from").val(),
+           'toDate': $("#to").val(),
+           'answered': $("#answered").is(':checked'),
+           'busy': $("#busy").is(':checked'),
+           'failed': $('#failed').is(':checked'),
+           'noAnswer': $('#noAnswer').is(':checked'),
+           'unknown': $('#unknown').is(':checked'),
+           'page': $scope.currentPage,
+           'sortColumn': $scope.sortColumn,
+           'sortReverse' : false
+          });
+
+        $scope.calllogs = CalllogSearch.query(
             {'phoneNumber': $scope.phoneNumber,
              'minDuration': min,
              'maxDuration': max,
@@ -35,19 +53,40 @@ function CalllogController($scope, $rootScope,  CalllogService) {
              'failed': $('#failed').is(':checked'),
              'noAnswer': $('#noAnswer').is(':checked'),
              'unknown': $('#unknown').is(':checked'),
-              'page': $rootScope.currentPage,
-              'sortColumn': $scope.sortColumn,
-              'sortReverse' : false
+             'page': $scope.currentPage,
+             'sortColumn': $scope.sortColumn,
+             'sortReverse' : false
             });
     };
 
-    //$scope.calllogs = $scope.search();
-    $scope.next = function() {
-        $rootScope.currentPage++;
+    $scope.prevPage = function () {
+        if ($scope.currentPage > 0) {
+            $scope.currentPage--;
+            $scope.search();
+        }
+    };
+
+    $scope.nextPage = function () {
+        if ($scope.currentPage < $scope.pageCount.count - 1) {
+            $scope.currentPage++;
+            $scope.search();
+        }
+    };
+
+    $scope.setPage = function () {
+        $scope.currentPage = this.selectedPage;
         $scope.search();
     };
-    $scope.prev = function() {
-        $rootScope.currentPage--;
-        search();
+
+    $scope.range = function (start, end) {
+        var ret = [];
+        if (!end) {
+            end = start;
+            start = 0;
+        }
+        for (var i = start; i < end; i++) {
+            ret.push(i);
+        }
+        return ret;
     };
 }

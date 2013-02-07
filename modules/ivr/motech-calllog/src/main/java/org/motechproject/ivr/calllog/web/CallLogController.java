@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 
 @Controller
@@ -21,8 +22,16 @@ public class CallLogController {    // service methods for angular ui
 
     @RequestMapping("/search")
     @ResponseBody
-    public String getAllObjects(@ModelAttribute CalllogSearchParameters params) throws IOException {
+    public String search(@ModelAttribute CalllogSearchParameters params) throws IOException {
         List<CallDetail> result = calllogSearchService.search(params);
         return new ObjectMapper().writeValueAsString(result);
+    }
+
+    @RequestMapping("/count")
+    @ResponseBody
+    public String count(@ModelAttribute CalllogSearchParameters params) throws IOException {
+        HashMap<String, Long> map = new HashMap<>();
+        map.put("count", calllogSearchService.count(params));
+        return new ObjectMapper().writeValueAsString(map);
     }
 }

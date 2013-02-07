@@ -14,7 +14,7 @@ import java.util.List;
 @Service("calllogSearchService")
 public class CalllogSearchServiceImpl implements CalllogSearchService {
     private AllCallDetailRecords allCallDetailRecords;
-    private static final int PAGE_SIZE = 10;
+    private static final int PAGE_SIZE = 2;
 
     @Autowired
     public CalllogSearchServiceImpl(AllCallDetailRecords allCallDetailRecords) {
@@ -47,6 +47,11 @@ public class CalllogSearchServiceImpl implements CalllogSearchService {
                 searchParameters.getMaxDuration(),
                 dispositions, searchParameters.getPage(), PAGE_SIZE, searchParameters.getSortColumn(), searchParameters.isSortReverse());
         return callLogs;
+    }
+
+    @Override
+    public long count(CalllogSearchParameters params) {
+        return search(params).size();
     }
 
 }
