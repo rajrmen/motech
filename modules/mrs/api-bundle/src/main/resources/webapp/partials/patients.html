@@ -1,0 +1,138 @@
+<div class="row-fluid"><!------------------------  All Patients  ------------------------------------->
+    <div class="span10 margin-after mrs">
+        <div class="box-header">{{msg('mrs.patients')}}</div>
+        <div class="box-content inside clearfix">
+<!--                        <div class="control-group">
+                <a ng-click="addPatient()" role="button" class="btn btn-primary"><i class="icon-plus icon-white"></i> {{msg('addPatient')}}</a>
+            </div>
+            <h4>{{msg('All Patients')}}</h4>
+            <div class="control-group form-inline">
+                <label >{{msg('mrs.searchPatient')}}</label>
+                <input type="text" class="input-medium search-query" placeholder="{{msg('mrs.searchByIdOrName')}}">
+            </div>
+            <div class="margin-before">
+                <table class="table table-condensed table-bordered table-striped table-lightblue table-mrs">
+                    <thead>
+                    <tr>
+                        <th ng-click="setOrder('patientId')">
+                            <img src=../admin/img/trans.gif alt="{{msg('mrs.sortingId')}}" title="{{msg('mrs.sortingId')}}"
+                                 ng-class="getSortClass('patientId')" class="sorting-no" />{{msg('mrs.patient.ID')}} </th>
+                        <th ng-click="setOrder('patientGivenName')">
+                            <img src=../admin/img/trans.gif alt="{{msg('mrs.sortingGivenName')}}" title="{{msg('mrs.sortingGivenName')}}"
+                                 ng-class="getSortClass('patientGivenName')" class="sorting-no" />{{msg('mrs.patient.givenName')}} </th>
+                        <th ng-click="setOrder('patientFamilyName')">
+                            <img src=../admin/img/trans.gif alt="{{msg('mrs.sortingFamilyName')}}" title="{{msg('mrs.sortingFamilyName')}}"
+                                 ng-class="getSortClass('patientFamilyName')" class="sorting-no" />{{msg('mrs.patient.familyName')}} </th>
+                        <th ng-click="setOrder('patientId')">
+                            <img src=../admin/img/trans.gif alt="{{msg('mrs.sortingAge')}}" title="{{msg('mrs.sortingAge')}}"
+                                 ng-class="getSortClass('patientAge')" class="sorting-no" />{{msg('mrs.patient.age')}} </th>
+                        <th ng-click="setOrder('patientGender')">
+                            <img src=../admin/img/trans.gif alt="{{msg('mrs.sortingId')}}" title="{{msg('mrs.sortingGender')}}"
+                                 ng-class="getSortClass('patientGender')" class="sorting-no" />{{msg('mrs.patient.gender')}} </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-click="getPatient(patient)" ng-repeat="patient in patientList">
+                        <td>{{patient.id}}</td>
+                        <td>{{patient.givenName}}</td>
+                        <td>{{patient.familyName}}</td>
+                        <td>{{patient.age}}</td>
+                        <td>{{patient.gender}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="pagination pagination-centered pagination-condensed lightblue" ng-show="numberOfPages() &gt; 1">
+                <ul>
+                    <li ng-class="{true:'disabled', false:''}[currentPage==0]"><a ng-click="changeCurrentPage(0)">{{msg('first')}}</a></li>
+                    <li ng-repeat="number in [] | repeat:numberOfPages()" ng-class="{true:'active', false:''}[number==currentPage]"><a ng-click="changeCurrentPage(number)">{{number+1}}</a></li>
+                    <li ng-class="{true:'disabled', false:''}[currentPage==(numberOfPages()-1)]"><a ng-click="changeCurrentPage(numberOfPages()-1)">{{msg('last')}}</a></li>
+                </ul>
+            </div>
+-->
+        </div>
+    </div>
+</div>
+
+<div class="row-fluid"><!------------------------  Patient  ------------------------------------->
+    <div class="span10 margin-after mrs">
+        <div class="box-header">{{msg('mrs.patient')}}</div>
+        <div class="box-content inside clearfix">
+<!--            <h4>{{msg('mrs.patient.patient:')}} {{patient.fullName }}</h4>
+                <h6>{{msg('mrs.patient.editPatientDetails')}}<span class="pull-right">{{msg('mrs.patient.motechId')} {{patient.id}}</span></h6>
+
+            <div class="controll-group form-inline">
+                <label >{{msg('mrs.searchPatient')}}</label>
+                <input type="text" class="input-medium search-query" placeholder="Search by Id or name">
+            </div>
+            <div class="dialog-panel">
+                <table class="table table-condensed table-bordered table-striped table-lightblue table-mrs">
+                    <tbody>
+                    <tr>
+                        <td>{{msg('mrs.patient.firstName'}}</td>
+                        <td>{{patient.firstName}}</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>{{msg('mrs.patient.familyName'}}</td>
+                        <td>{{patient.familyName}}</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>{{msg('mrs.patient.lastName')}}</td>
+                        <td>{{patient.lastName}}</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>{{msg('mrs.patient.preferredName')}}</td>
+                        <td>{{patient.preferredName}}</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>{{msg('mrs.patient.address')}}</td>
+                        <td>{{patient.address}}</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>{{msg('mrs.patient.gender')}}</td>
+                        <td>{{patient.gender}}</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>{{msg('mrs.patient.birth')}}</td>
+                        <td>{{patient.birth}}</td>
+                        <td>{{msg('mrs.patient.estimate')}} {{patient.birthEstimate}}</td>
+                    </tr>
+                    <tr>
+                        <td>{{msg('mrs.patient.deceased')}}</td>
+                        <td>{{patient.familyName}}</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>{{msg('mrs.patient.facilityId')}}</td>
+                        <td>{{patient.facilityId}}</td>
+                        <td></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="dialog-panel css-output">legenda
+                <table class="table table-condensed table-bordered table-striped table-lightblue table-mrs">
+                    <tbody>
+                    <tr>
+                        <td>{{msg('mrs.patient.edd'}}</td>
+                        <td>{{patient.edd}}</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>{{msg('mrs.patient.hivStatus'}}</td>
+                        <td>{{patient.hivStatus}}</td>
+                        <td></td>
+                    </tr>
+                </table>
+            </div>
+-->
+        </div>
+   </div>
+</div>
+
