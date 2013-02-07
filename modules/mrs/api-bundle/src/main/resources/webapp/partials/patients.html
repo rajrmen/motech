@@ -8,7 +8,7 @@
             <h4>{{msg('All Patients')}}</h4>
             <div class="control-group form-inline">
                 <label >{{msg('mrs.searchPatient')}}</label>
-                <input type="text" class="input-medium search-query" placeholder="{{msg('mrs.searchByIdOrName')}}">
+                <input type="text" ng-model="query" ng-change="search()" class="input-medium search-query" placeholder="{{msg('mrs.searchByIdOrName')}}">
             </div>
             <div class="margin-before">
                 <table class="table table-condensed table-bordered table-striped table-lightblue table-mrs">
