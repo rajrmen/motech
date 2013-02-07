@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import static org.apache.commons.lang.StringUtils.isBlank;
 
 @Repository
 public class AllCallDetailRecords extends CouchDbRepositorySupportWithLucene<CallDetailRecord> {
@@ -58,7 +59,7 @@ public class AllCallDetailRecords extends CouchDbRepositorySupportWithLucene<Cal
             name = "search",
             index = "function(doc) { var ret=new Document(); ret.add(doc.phoneNumber,{'field':'phoneNumber'}); ret.add(doc.startDate, {'type':'date', 'field':'startDate'});ret.add(doc.duration, {'type':'int', 'field':'duration'}); ret.add(doc.disposition,{'field':'disposition'}); return ret }"
     )})
-    public List<CallDetail> search(String phoneNumber, DateTime startTime, DateTime endTime, Integer minDurationInSeconds, Integer maxDurationInSeconds, List<String> dispositions, int page, int pageSize) {
+    public List<CallDetail> search(String phoneNumber, DateTime startTime, DateTime endTime, Integer minDurationInSeconds, Integer maxDurationInSeconds, List<String> dispositions, int page, int pageSize, String sortby, boolean reverse) {
 
         StringBuilder queryString = new StringBuilder();
         if (maxDurationInSeconds != null && minDurationInSeconds != null) {
@@ -80,8 +81,9 @@ public class AllCallDetailRecords extends CouchDbRepositorySupportWithLucene<Cal
         }
         addDispositionFilter(dispositions, queryString);
 
-        return runQuery(queryString, page, pageSize);
+        return runQuery(queryString, page, pageSize, sortby, reverse);
     }
+
 
     private void addDispositionFilter(List<String> dispositions, StringBuilder queryString) {
         if (isNotEmpty(dispositions)) {
@@ -96,13 +98,17 @@ public class AllCallDetailRecords extends CouchDbRepositorySupportWithLucene<Cal
         }
     }
 
-    private List<CallDetail> runQuery(StringBuilder queryString, int page, int pageSize) {
+    private List<CallDetail> runQuery(StringBuilder queryString, int page, int pageSize, String sortBy, boolean reverse) {
         LuceneQuery query = new LuceneQuery("CallDetailRecord", "search");
         query.setQuery(queryString.toString());
         query.setStaleOk(false);
         query.setIncludeDocs(true);
         query.setLimit(pageSize);
         query.setSkip(page * pageSize);
+        if (!isBlank(sortBy)) {
+            String sortString = reverse ? "\\" + sortBy : sortBy;
+            query.setSort(sortString);
+        }
         TypeReference<CustomLuceneResult<CallDetailRecord>> typeRef
                 = new TypeReference<CustomLuceneResult<CallDetailRecord>>() {
         };

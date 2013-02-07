@@ -25,6 +25,16 @@ public class CalllogSearchParameters {
     private int page;
     private String sortColumn;
 
+    private boolean sortReverse;
+
+    public void setSortReverse(boolean sortReverse) {
+        this.sortReverse = sortReverse;
+    }
+
+    public boolean isSortReverse() {
+        return sortReverse;
+    }
+
     public int getPage() {
         return page;
     }
@@ -61,10 +71,10 @@ public class CalllogSearchParameters {
         return fromDate.toString(DEFAULT_DATE_FORMAT);
     }
 
+
     public DateTime getFromDateAsDateTime() {
         return fromDate;
     }
-
 
     public void setFromDate(String fromDate) {
         this.fromDate = toDate(fromDate);

@@ -30,13 +30,14 @@ function CalllogController($scope, $rootScope,  CalllogService) {
              'maxDuration': max,
              'fromDate': $("#from").val(),
              'toDate': $("#to").val(),
-             'answered':$("#answered").is(':checked'),
-             'busy':$("#busy").is(':checked'),
-             'failed' :$('#failed').is(':checked'),
+             'answered': $("#answered").is(':checked'),
+             'busy': $("#busy").is(':checked'),
+             'failed': $('#failed').is(':checked'),
              'noAnswer': $('#noAnswer').is(':checked'),
-             'unknown':$('#unknown').is(':checked'),
-              'page' : $rootScope.currentPage,
-              'sortColumn': $scope.sortColumn
+             'unknown': $('#unknown').is(':checked'),
+              'page': $rootScope.currentPage,
+              'sortColumn': $scope.sortColumn,
+              'sortReverse' : false
             });
     };
 

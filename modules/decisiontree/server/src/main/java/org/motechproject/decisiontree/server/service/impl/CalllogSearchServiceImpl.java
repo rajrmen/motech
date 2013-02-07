@@ -45,7 +45,7 @@ public class CalllogSearchServiceImpl implements CalllogSearchService {
                 searchParameters.getToDateAsDateTime(),
                 searchParameters.getMinDuration(),
                 searchParameters.getMaxDuration(),
-                dispositions, searchParameters.getPage(), PAGE_SIZE);
+                dispositions, searchParameters.getPage(), PAGE_SIZE, searchParameters.getSortColumn(), searchParameters.isSortReverse());
         return callLogs;
     }
 
