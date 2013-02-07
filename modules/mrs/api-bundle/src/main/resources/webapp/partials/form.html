@@ -1,0 +1,148 @@
+<div class="row-fluid"><!------------------------  Edit Patient Details  ------------------------------------->
+    <div class="span10 margin-after mrs">
+        <div class="box-header">{{msg('mrs.patients')}}</div>
+        <div class="box-content inside clearfix">
+            <h4>{{msg('mrs.patient.patient:')}}Mariah Maclachlan</h4>
+            <h6>{{msg('mrs.patient.editPatientDetails')}}<span class="">{{msg('mrs.patient.motechId')}}  {{patient.id}}</span></h6>
+
+
+            <form name="form" class="form-horizontal inside">
+
+                <div class="control-group">
+                    <label class="control-label"></label>
+                    <div class="form-actions">
+                        <input class="btn btn-primary" type="submit" value="{{msg('save')}}" ng-disabled="form.$invalid">
+                        <button type="button" class="btn">{{msg('cancel')}}</button>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label">{{msg('mrs.patient.motechId')}}</label>
+                    <div class="controls">
+                        <input class="span10" type="text" ng-model="mrs.patient.id">
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label">{{msg('mrs.patient.firstName')}}</label>
+                    <div class="controls">
+                        <input class="span10" type="text" ng-model="mrs.patient.firstName">
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label">{{msg('mrs.patient.middleName')}}</label>
+                    <div class="controls">
+                        <input class="span10" type="text" ng-model="mrs.patient.middleName">
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label">{{msg('mrs.patient.lastName')}}</label>
+                    <div class="controls">
+                        <input class="span10" type="text" ng-model="mrs.patient.lastName">
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label span4">{{msg('mrs.patient.preferredName')}}</label>
+                    <div class="controls">
+                        <input class="span10" type="text" ng-model="mrs.patient.preferredName">
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label" for="message">{{msg('mrs.patient.address')}}</label>
+                    <div class="controls">
+                        <textarea class="span10" rows="3" ng-model="mrs.patient.address" id="message" placeholder="{{msg('111 1st St Seattle, WA USA')}}"></textarea>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label">{{msg('mrs.patient.gender')}}</label>
+                    <div class="controls">
+                        <label class="radio inline">
+                            <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked>
+                            {{msg('mrs.patient.male')}}
+                        </label>
+                        <label class="radio inline">
+                            <input type="radio" name="optionsRadios" id="optionsRadios2" value="option1" checked>
+                            {{msg('mrs.patient.female')}}
+                        </label>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label">{{msg('mrs.patient.dateOfBirth')}}</label>
+                    <div class="controls">
+                        <div class="input-append span11">
+                            <input class="span10" id="appendedInputButton" type="date" ng-model="mrs.patient.birth">
+                            <button class="btn" type="button"><i class="icon-th"></i></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label">{{msg('mrs.patient.dobEstimated')}}</label>
+                    <div class="controls">
+                        <label class="checkbox">
+                            <input type="checkbox" value="">
+                        </label>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label">{{msg('mrs.patient.deceased')}}</label>
+                    <div class="controls">
+                        <label class="checkbox">
+                            <input type="checkbox" value="">
+                        </label>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label">{{msg('mrs.patient.facilityId')}}</label>
+                    <div class="controls">
+                        <input class="span10" type="text" ng-model="mrs.patient.preferredName">
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label"></label>
+                    <div class="form-actions">
+                        <input class="btn btn-primary" type="submit" value="{{msg('save')}}" ng-disabled="form.$invalid">
+                        <button type="button" class="btn">{{msg('cancel')}}</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="row-fluid"><!------------------------  Edit Custom Attributes  ------------------------------------->
+    <div class="span10 margin-after mrs">
+        <div class="box-header">{{msg('mrs.patients')}}</div>
+        <div class="box-content inside clearfix">
+
+            <h4>{{msg('mrs.patient.allPatient:')}}Mariah Maclachlan</h4>
+            <h6>{{msg('mrs.patient.editCustomAttributes')}}<span class="">{{msg('mrs.patient.motechId')}} 9C8</span></h6>
+
+
+            <form name="form" class="form-inline inside">
+
+                <div class="control-group">
+                    <label class="control-label"></label>
+                    <div class="form-actions">
+                        <input class="btn btn-primary" type="submit" value="{{msg('save')}}" >
+                        <button type="button" class="btn">{{msg('cancel')}}</button>
+                    </div>
+                </div>
+                <div class="control-group centered">
+                    <label class="control-label">{{msg('mrs.patient.attribute')}}</label>
+                    <input class="span3" type="text" ng-model="mrs.patient.id">
+                    <label class="">{{msg('mrs.patient.pvalue')}}</label>
+                    <input class="span3" type="text" ng-model="mrs.patient.pvalue">
+                </div>
+                <div class="control-group centered">
+                    <button ng-show="patient.attribute.length==0" type="button" class="btn btn-success"><i class="icon-plus icon-white"></i>{{msg('mrs.patient.addAttribute')}}</button>
+                    <button ng-hide="patient.attribute.length==0" type="button" class="btn btn-success"><i class="icon-plus icon-white"></i>{{msg('mrs.patient.addAnotherAttribute')}}</button>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+</div>
+
+
+

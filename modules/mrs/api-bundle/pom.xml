@@ -45,6 +45,9 @@
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
+                        <Bundle-Activator>
+                            org.motechproject.mrs.osgi.Activator
+                        </Bundle-Activator>
                         <Export-Package>
                             org.motechproject.mrs;version=${project.version},
                             org.motechproject.mrs.exception;version=${project.version},

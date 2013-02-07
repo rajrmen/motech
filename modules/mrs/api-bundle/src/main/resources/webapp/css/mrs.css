@@ -1,0 +1,23 @@
+.mrs .form-horizontal .control-label  {
+    width: 200px;
+}
+
+.mrs .form-horizontal .controls {
+    margin-left: 220px;
+}
+
+.mrs .form-actions {
+    margin: 0 -20px 0 -20px;
+    padding-left: 240px;
+    background-color: #E3EDF8;
+}
+
+.css-output {
+    padding-top: 5px;
+}
+
+.dialog-panel {
+    border: 1px solid #999999;
+    margin-top: 20px;
+    position: relative;
+    }
