@@ -2,7 +2,8 @@ function CalllogController($scope, CalllogSearch, CalllogCount) {
     $scope.phoneNumber = "";
     $scope.sortColumn = "";
     $scope.currentPage = 0;
-    $scope.pageCount = 0;
+    $scope.sortReverse= false;
+    $scope.pageCount = {'count': 0 };
 
     $scope.$on('$viewContentLoaded', function () {
 
@@ -22,60 +23,86 @@ function CalllogController($scope, CalllogSearch, CalllogCount) {
         $("#jqxexpander").jqxExpander();
     });
 
+    $scope.countPages = function(){
+            var min = $("#slider").slider("values",0);
+            var max = $("#slider").slider("values",1);
+
+            $scope.pageCount=CalllogCount.query(
+              {'phoneNumber': $scope.phoneNumber,
+               'minDuration': min,
+               'maxDuration': max,
+               'fromDate': $("#from").val(),
+               'toDate': $("#to").val(),
+               'answered': $("#answered").is(':checked'),
+               'busy': $("#busy").is(':checked'),
+               'failed': $('#failed').is(':checked'),
+               'noAnswer': $('#noAnswer').is(':checked'),
+               'unknown': $('#unknown').is(':checked'),
+               'page': 0,
+               'sortColumn': "",
+               'sortReverse' : false
+              });
+
+    };
+
+
+    $scope.getCalllogs = function() {
+              var min = $("#slider").slider("values",0);
+              var max = $("#slider").slider("values",1);
+
+              $scope.calllogs = CalllogSearch.query(
+                  {'phoneNumber': $scope.phoneNumber,
+                   'minDuration': min,
+                   'maxDuration': max,
+                   'fromDate': $("#from").val(),
+                   'toDate': $("#to").val(),
+                   'answered': $("#answered").is(':checked'),
+                   'busy': $("#busy").is(':checked'),
+                   'failed': $('#failed').is(':checked'),
+                   'noAnswer': $('#noAnswer').is(':checked'),
+                   'unknown': $('#unknown').is(':checked'),
+                   'page': $scope.currentPage,
+                   'sortColumn': $scope.sortColumn,
+                   'sortReverse' : $scope.sortReverse
+                  });
+    };
+
+    $scope.sort = function(column){
+        if($scope.sortColumn == column){
+            $scope.sortReverse = !$scope.sortReverse;
+        }else{
+            $scope.sortReverse = false;
+        }
+        $scope.sortColumn = column;
+        $scope.getCalllogs();
+    }
+
     $scope.search = function () {
-        var min = $("#slider").slider("values",0);
-        var max = $("#slider").slider("values",1);
+        $scope.currentPage = 0;
+        $scope.sortColumn = "";
+        $scope.sortReverse=false;
 
-        $scope.pageCount=CalllogCount.query(
-          {'phoneNumber': $scope.phoneNumber,
-           'minDuration': min,
-           'maxDuration': max,
-           'fromDate': $("#from").val(),
-           'toDate': $("#to").val(),
-           'answered': $("#answered").is(':checked'),
-           'busy': $("#busy").is(':checked'),
-           'failed': $('#failed').is(':checked'),
-           'noAnswer': $('#noAnswer').is(':checked'),
-           'unknown': $('#unknown').is(':checked'),
-           'page': $scope.currentPage,
-           'sortColumn': $scope.sortColumn,
-           'sortReverse' : false
-          });
-
-        $scope.calllogs = CalllogSearch.query(
-            {'phoneNumber': $scope.phoneNumber,
-             'minDuration': min,
-             'maxDuration': max,
-             'fromDate': $("#from").val(),
-             'toDate': $("#to").val(),
-             'answered': $("#answered").is(':checked'),
-             'busy': $("#busy").is(':checked'),
-             'failed': $('#failed').is(':checked'),
-             'noAnswer': $('#noAnswer').is(':checked'),
-             'unknown': $('#unknown').is(':checked'),
-             'page': $scope.currentPage,
-             'sortColumn': $scope.sortColumn,
-             'sortReverse' : false
-            });
+        $scope.getCalllogs();
+        $scope.countPages();
     };
 
     $scope.prevPage = function () {
         if ($scope.currentPage > 0) {
             $scope.currentPage--;
-            $scope.search();
+            $scope.getCalllogs();
         }
     };
 
     $scope.nextPage = function () {
         if ($scope.currentPage < $scope.pageCount.count - 1) {
             $scope.currentPage++;
-            $scope.search();
+            $scope.getCalllogs();
         }
     };
 
     $scope.setPage = function () {
         $scope.currentPage = this.selectedPage;
-        $scope.search();
+        $scope.getCalllogs();
     };
 
     $scope.range = function (start, end) {

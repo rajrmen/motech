@@ -82,12 +82,12 @@
     <table class="table table-bundles table-bordered table-striped table-lightblue">
         <thead>
         <tr>
-            <th>{{msg('calllog.phoneNumber')}}</th>
-            <th>{{msg('calllog.direction')}}</th>
-            <th>{{msg('calllog.startDate')}}</th>
-            <th>{{msg('calllog.endDate')}}</th>
-            <th>{{msg('calllog.disposition')}}</th>
-            <th>{{msg('calllog.duration')}}</th>
+            <th><a href  ng-click="sort('phoneNumber')">{{msg('calllog.phoneNumber')}}</a></th>
+            <th><a href  ng-click="sort('direction')">{{msg('calllog.direction')}}</a></th>
+            <th><a href  ng-click="sort('startDate')">{{msg('calllog.startDate')}}</a></th>
+            <th><a href  ng-click="sort('endDate')">{{msg('calllog.endDate')}}</a></th>
+            <th><a href  ng-click="sort('disposition')">{{msg('calllog.disposition')}}</a></th>
+            <th><a href  ng-click="sort('duration')">{{msg('calllog.duration')}}</a></th>
         </tr>
         </thead>
         <tbody>

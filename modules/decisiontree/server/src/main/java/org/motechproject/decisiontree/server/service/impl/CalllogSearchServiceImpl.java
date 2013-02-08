@@ -23,30 +23,29 @@ public class CalllogSearchServiceImpl implements CalllogSearchService {
 
 
     @Override
-    public List<CallDetail> search(CalllogSearchParameters searchParameters) {
+    public List<CallDetail> search(CalllogSearchParameters params) {
         List<String> dispositions = new ArrayList<>();
-        if (searchParameters.getAnswered()) {
+        if (params.getAnswered()) {
             dispositions.add(CallDetailRecord.Disposition.ANSWERED.name());
         }
-        if (searchParameters.getBusy()) {
+        if (params.getBusy()) {
             dispositions.add(CallDetailRecord.Disposition.BUSY.name());
         }
-        if (searchParameters.getFailed()) {
+        if (params.getFailed()) {
             dispositions.add(CallDetailRecord.Disposition.FAILED.name());
         }
-        if (searchParameters.getNoAnswer()) {
+        if (params.getNoAnswer()) {
             dispositions.add(CallDetailRecord.Disposition.NO_ANSWER.name());
         }
-        if (searchParameters.getUnknown()) {
+        if (params.getUnknown()) {
             dispositions.add(CallDetailRecord.Disposition.UNKNOWN.name());
         }
-        List<CallDetail> callLogs = allCallDetailRecords.search(searchParameters.getPhoneNumber(),
-                searchParameters.getFromDateAsDateTime(),
-                searchParameters.getToDateAsDateTime(),
-                searchParameters.getMinDuration(),
-                searchParameters.getMaxDuration(),
-                dispositions, searchParameters.getPage(), PAGE_SIZE, searchParameters.getSortColumn(), searchParameters.isSortReverse());
-        return callLogs;
+        return allCallDetailRecords.search(params.getPhoneNumber(),
+                params.getFromDateAsDateTime(),
+                params.getToDateAsDateTime(),
+                params.getMinDuration(),
+                params.getMaxDuration(),
+                dispositions, params.getPage(), PAGE_SIZE, params.getSortColumn(), params.isSortReverse());
     }
 
     @Override
