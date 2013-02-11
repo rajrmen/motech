@@ -46,6 +46,7 @@ public class AllCallDetailRecords extends CouchDbRepositorySupportWithLucene<Cal
         return queryView("by_phoneNumber", phoneNumber);
     }
 
+    @View(name="countLogs", map="function(doc){ emit(null, 1);}", reduce="function(keys, values) { return sum(values); }")
      public long countRecords(String phoneNumber, DateTime startTime, DateTime endTime, Integer minDurationInSeconds, Integer maxDurationInSeconds, List<String> dispositions){
          StringBuilder queryString = generateQueryString(phoneNumber, startTime, endTime, minDurationInSeconds, maxDurationInSeconds, dispositions);
          return runQuery(queryString,0,0,null,false).size();

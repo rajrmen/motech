@@ -24,47 +24,41 @@ function CalllogController($scope, CalllogSearch, CalllogCount) {
     });
 
     $scope.countPages = function(){
-            var min = $("#slider").slider("values",0);
-            var max = $("#slider").slider("values",1);
-
             $scope.pageCount=CalllogCount.query(
-              {'phoneNumber': $scope.phoneNumber,
-               'minDuration': min,
-               'maxDuration': max,
-               'fromDate': $("#from").val(),
-               'toDate': $("#to").val(),
-               'answered': $("#answered").is(':checked'),
-               'busy': $("#busy").is(':checked'),
-               'failed': $('#failed').is(':checked'),
-               'noAnswer': $('#noAnswer').is(':checked'),
-               'unknown': $('#unknown').is(':checked'),
-               'page': 0,
-               'sortColumn': "",
-               'sortReverse' : false
+              { 'phoneNumber': $scope.phoneNumber,
+                'minDuration': $scope.min,
+                'maxDuration': $scope.max,
+                'fromDate': $scope.from,
+                'toDate': $scope.to,
+                'answered': $scope.answered,
+                'busy': $scope.busy,
+                'failed': $scope.failed,
+                'noAnswer': $scope.noAnswer,
+                'unknown': $scope.unknown,
+                'page': 0,
+                'sortColumn': "",
+                'sortReverse' : false
               });
-
     };
 
 
     $scope.getCalllogs = function() {
-              var min = $("#slider").slider("values",0);
-              var max = $("#slider").slider("values",1);
 
-              $scope.calllogs = CalllogSearch.query(
-                  {'phoneNumber': $scope.phoneNumber,
-                   'minDuration': min,
-                   'maxDuration': max,
-                   'fromDate': $("#from").val(),
-                   'toDate': $("#to").val(),
-                   'answered': $("#answered").is(':checked'),
-                   'busy': $("#busy").is(':checked'),
-                   'failed': $('#failed').is(':checked'),
-                   'noAnswer': $('#noAnswer').is(':checked'),
-                   'unknown': $('#unknown').is(':checked'),
-                   'page': $scope.currentPage,
-                   'sortColumn': $scope.sortColumn,
-                   'sortReverse' : $scope.sortReverse
-                  });
+      $scope.calllogs = CalllogSearch.query(
+      {'phoneNumber': $scope.phoneNumber,
+       'minDuration': $scope.min,
+       'maxDuration': $scope.max,
+       'fromDate': $scope.from,
+       'toDate': $scope.to,
+       'answered': $scope.answered,
+       'busy': $scope.busy,
+       'failed': $scope.failed,
+       'noAnswer': $scope.noAnswer,
+       'unknown': $scope.unknown,
+       'page': $scope.currentPage,
+       'sortColumn': $scope.sortColumn,
+       'sortReverse' : $scope.sortReverse
+      });
     };
 
     $scope.sort = function(column){
@@ -81,6 +75,16 @@ function CalllogController($scope, CalllogSearch, CalllogCount) {
         $scope.currentPage = 0;
         $scope.sortColumn = "";
         $scope.sortReverse=false;
+
+        $scope.min = $("#slider").slider("values",0);
+        $scope.max = $("#slider").slider("values",1);
+        $scope.from = $("#from").val();
+        $scope.to = $("#to").val();
+        $scope.answered = $("#answered").is(':checked');
+        $scope.busy = $("#busy").is(':checked');
+        $scope.failed = $('#failed').is(':checked');
+        $scope.noAnswer = $('#noAnswer').is(':checked');
+        $scope.unknown = $('#unknown').is(':checked');
 
         $scope.getCalllogs();
         $scope.countPages();
