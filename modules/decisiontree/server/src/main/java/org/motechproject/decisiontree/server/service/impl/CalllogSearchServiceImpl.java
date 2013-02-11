@@ -24,7 +24,28 @@ public class CalllogSearchServiceImpl implements CalllogSearchService {
 
     @Override
     public List<CallDetail> search(CalllogSearchParameters params) {
+
+        return allCallDetailRecords.search(params.getPhoneNumber(),
+                params.getFromDateAsDateTime(),
+                params.getToDateAsDateTime(),
+                params.getMinDuration(),
+                params.getMaxDuration(),
+                mapToDispositions(params), params.getPage(), PAGE_SIZE, params.getSortColumn(), params.isSortReverse());
+    }
+
+    @Override
+    public long count(CalllogSearchParameters params) {
+        double numOfPages = allCallDetailRecords.countRecords(params.getPhoneNumber(),
+                params.getFromDateAsDateTime(),
+                params.getToDateAsDateTime(),
+                params.getMinDuration(),
+                params.getMaxDuration(), mapToDispositions(params)) / (PAGE_SIZE * 1.0 );
+        return Math.round(Math.ceil(numOfPages));
+    }
+
+    private List<String> mapToDispositions(CalllogSearchParameters params) {
         List<String> dispositions = new ArrayList<>();
+
         if (params.getAnswered()) {
             dispositions.add(CallDetailRecord.Disposition.ANSWERED.name());
         }
@@ -40,17 +61,7 @@ public class CalllogSearchServiceImpl implements CalllogSearchService {
         if (params.getUnknown()) {
             dispositions.add(CallDetailRecord.Disposition.UNKNOWN.name());
         }
-        return allCallDetailRecords.search(params.getPhoneNumber(),
-                params.getFromDateAsDateTime(),
-                params.getToDateAsDateTime(),
-                params.getMinDuration(),
-                params.getMaxDuration(),
-                dispositions, params.getPage(), PAGE_SIZE, params.getSortColumn(), params.isSortReverse());
-    }
-
-    @Override
-    public long count(CalllogSearchParameters params) {
-        return search(params).size();
+        return dispositions;
     }
 
 }
