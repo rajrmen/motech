@@ -20,6 +20,7 @@ public class CallLogController {    // service methods for angular ui
     @Autowired
     private CalllogSearchService calllogSearchService;
 
+    // TODO: should return application/json content
     @RequestMapping("/search")
     @ResponseBody
     public String search(@ModelAttribute CalllogSearchParameters params) throws IOException {
@@ -33,5 +34,11 @@ public class CallLogController {    // service methods for angular ui
         HashMap<String, Long> map = new HashMap<>();
         map.put("count", calllogSearchService.count(params));
         return new ObjectMapper().writeValueAsString(map);
+    }
+
+    @RequestMapping("/phone-numbers")
+    @ResponseBody
+    public List<String> allPhoneNumbers() throws IOException {
+        return calllogSearchService.getAllPhoneNumbers();
     }
 }

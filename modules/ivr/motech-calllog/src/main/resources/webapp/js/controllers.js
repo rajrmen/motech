@@ -1,4 +1,4 @@
-function CalllogController($scope, CalllogSearch, CalllogCount) {
+function CalllogController($scope, CalllogSearch, CalllogCount, CalllogPhoneNumber, $http) {
     $scope.phoneNumber = "";
     $scope.sortColumn = "";
     $scope.currentPage = 0;

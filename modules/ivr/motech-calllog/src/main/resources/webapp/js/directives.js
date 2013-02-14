@@ -18,3 +18,17 @@ angular.module('callLog').directive('tooltip', function() {
         }
     }
 });
+
+angular.module('callLog').directive('typeahead', function() {
+
+    return {
+        restrict: 'A',
+        link: function(scope, element, attr) {
+            $.get("../callLog/phone-numbers", function(data) {
+                element.typeahead({
+                    source: data
+                });
+            });
+        }
+    }
+});

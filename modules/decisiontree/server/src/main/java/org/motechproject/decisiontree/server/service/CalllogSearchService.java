@@ -8,4 +8,6 @@ public interface CalllogSearchService {
     List<CallDetail> search(CalllogSearchParameters searchParameters);
 
     long count(CalllogSearchParameters params);
+
+    List<String> getAllPhoneNumbers();
 }

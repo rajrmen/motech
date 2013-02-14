@@ -64,4 +64,8 @@ public class CalllogSearchServiceImpl implements CalllogSearchService {
         return dispositions;
     }
 
+    @Override
+    public List<String> getAllPhoneNumbers() {
+        return allCallDetailRecords.getAllPhoneNumbers();
+    }
 }

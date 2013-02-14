@@ -9,6 +9,8 @@ import com.github.ldriscoll.ektorplucene.designdocument.annotation.Index;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.type.TypeReference;
 import org.ektorp.CouchDbConnector;
+import org.ektorp.ViewQuery;
+import org.ektorp.ViewResult;
 import org.ektorp.impl.StdCouchDbInstance;
 import org.ektorp.support.View;
 import org.joda.time.DateTime;
@@ -22,6 +24,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static ch.lambdaj.Lambda.extract;
+import static ch.lambdaj.Lambda.on;
+import static java.util.Arrays.asList;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang.StringUtils.isBlank;
 
@@ -41,9 +46,19 @@ public class AllCallDetailRecords extends CouchDbRepositorySupportWithLucene<Cal
         return singleResult(queryView("by_call_id", callId));
     }
 
-    @View(name = "by_phoneNumber", map = "function(doc) { emit(doc.phoneNumber); }")
+    @View(name = "by_phoneNumber", map = "function(doc) { emit(doc.phoneNumber, doc.phoneNumber); }", reduce = "function() { return null; }")
     public List<CallDetailRecord> findByPhoneNumber(String phoneNumber) {
         return queryView("by_phoneNumber", phoneNumber);
+    }
+
+    public List<String> getAllPhoneNumbers() {
+        ViewQuery query = createQuery("by_phoneNumber").group(true);
+        ViewResult r = db.queryView(query);
+        List<String> allPhoneNumbers =  new ArrayList<>();
+        for (ViewResult.Row row : r.getRows()) {
+            allPhoneNumbers.add(row.getKey());
+        }
+        return allPhoneNumbers;
     }
 
     @View(name="countLogs", map="function(doc){ emit(null, 1);}", reduce="function(keys, values) { return sum(values); }")
