@@ -120,4 +120,8 @@ function CalllogController($scope, CalllogSearch, CalllogCount) {
         }
         return ret;
     };
+
+    $scope.isEmpty = function (obj) {
+        return angular.equals({}, obj);
+    };
 }

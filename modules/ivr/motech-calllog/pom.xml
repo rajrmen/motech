@@ -93,7 +93,7 @@
                 <configuration>
                     <instructions>
                         <Bundle-Activator>
-                            org.motechproject.osgi.web.WebUIBundleActivator
+                            org.motechproject.ivr.calllog.tmp.WebUIBundleActivator
                         </Bundle-Activator>
                         <Context-Path>callLog</Context-Path>
                         <Import-Package>

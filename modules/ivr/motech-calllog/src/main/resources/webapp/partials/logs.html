@@ -79,26 +79,46 @@
         </ul>
     </div>
 
-    <table class="table table-bundles table-bordered table-striped table-lightblue">
-        <thead>
-        <tr>
-            <th><a href  ng-click="sort('phoneNumber')">{{msg('calllog.phoneNumber')}}</a></th>
-            <th><a href  ng-click="sort('direction')">{{msg('calllog.direction')}}</a></th>
-            <th><a href  ng-click="sort('startDate')">{{msg('calllog.startDate')}}</a></th>
-            <th><a href  ng-click="sort('endDate')">{{msg('calllog.endDate')}}</a></th>
-            <th><a href  ng-click="sort('disposition')">{{msg('calllog.disposition')}}</a></th>
-            <th><a href  ng-click="sort('duration')">{{msg('calllog.duration')}}</a></th>
-        </tr>
-        </thead>
+    <table class="calllogs-head single-row-table table table-bundles table-bordered table-striped table-lightblue">
         <tbody>
-        <tr ng-repeat="calllog in calllogs" class="calllogs" ng-model="calllogs">
-            <td>{{calllog.phoneNumber}}</td>
-            <td>{{calllog.callDirection}}</td>
-            <td>{{calllog.startDate | date:'yyyy-MM-dd hh:mm:ss'}}</td>
-            <td>{{calllog.endDate | date:'yyyy-MM-dd hh:mm:ss'}}</td>
-            <td>{{calllog.disposition}}</td>
-            <td>{{calllog.duration}}</td>
+        <tr>
+            <th><a href ng-click="sort('phoneNumber')">{{msg('calllog.phoneNumber')}}</a></th>
+            <th><a href ng-click="sort('direction')">{{msg('calllog.direction')}}</a></th>
+            <th><a href ng-click="sort('startDate')">{{msg('calllog.startDate')}}</a></th>
+            <th><a href ng-click="sort('endDate')">{{msg('calllog.endDate')}}</a></th>
+            <th><a href ng-click="sort('disposition')">{{msg('calllog.disposition')}}</a></th>
+            <th><a href ng-click="sort('duration')">{{msg('calllog.duration')}}</a></th>
         </tr>
         </tbody>
     </table>
+
+    <div class="calllogs-body accordion" id="calllogs">
+        <div ng-repeat="calllog in calllogs" class="" ng-model="calllogs">
+            <div class="accordion-group">
+                <div class="accordion-heading">
+                    <a class="accordion-toggle" data-toggle="collapse" data-parent="#calllogs" href="#item{{$index}}">
+                        <table class="single-row-table table table-bundles table-bordered table-striped table-lightblue">
+                            <tbody>
+                            <tr>
+                                <td>{{calllog.phoneNumber}}</td>
+                                <td>{{calllog.callDirection}}</td>
+                                <td>{{calllog.startDate | date:'yyyy-MM-dd hh:mm:ss'}}</td>
+                                <td>{{calllog.endDate | date:'yyyy-MM-dd hh:mm:ss'}}</td>
+                                <td>{{calllog.disposition}}</td>
+                                <td>{{calllog.duration}}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </a>
+                </div>
+                <div id="item{{$index}}" class="accordion-body collapse clearfix">
+                    <div class="accordion-inner">
+                        <div ng-repeat="callEvent in calllog.callEvents" ng-model="calllogs">
+                            <div ng-include="'../callLog/resources/partials/event.html'"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
