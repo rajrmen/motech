@@ -31,7 +31,6 @@
 
     <bean id="vxmlOutboxController" class="org.motechproject.server.outbox.web.VxmlOutboxController"/>
 
-    <bean class="org.motechproject.event.listener.annotations.EventAnnotationBeanPostProcessor"/>
 
     <bean id="velocityConfig" class="org.springframework.web.servlet.view.velocity.VelocityConfigurer">
         <property name="resourceLoaderPath" value="/" />

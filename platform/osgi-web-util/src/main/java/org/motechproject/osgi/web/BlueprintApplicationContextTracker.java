@@ -18,18 +18,22 @@ public class BlueprintApplicationContextTracker extends ServiceTracker {
 
     private HttpServiceTrackers httpServiceTrackers;
     private final UIServiceTrackers uiServiceTrackers;
+    private final EventListenerRegistrar eventListenerRegistrar;
 
     public BlueprintApplicationContextTracker(BundleContext context) {
         super(context, ApplicationContext.class.getName(), null);
         this.httpServiceTrackers = new HttpServiceTrackers();
         this.uiServiceTrackers = new UIServiceTrackers();
+        this.eventListenerRegistrar = new EventListenerRegistrar(context).start();
         registerServiceTrackersAsService(context);
     }
 
     @Override
     public Object addingService(ServiceReference serviceReference) {
-        Object applicationContext = super.addingService(serviceReference);
+        ApplicationContext applicationContext = (ApplicationContext) super.addingService(serviceReference);
         Bundle bundle = serviceReference.getBundle();
+
+        eventListenerRegistrar.registerEventAnnotatedBeansIn(applicationContext);
 
         if (!isBlueprintEnabledBundle(bundle)) {
             return applicationContext;
@@ -41,7 +45,7 @@ public class BlueprintApplicationContextTracker extends ServiceTracker {
         }
 
         httpServiceTrackers.addTrackerFor(bundle);
-        uiServiceTrackers.addTrackerFor(bundle, (ApplicationContext) applicationContext);
+        uiServiceTrackers.addTrackerFor(bundle, applicationContext);
         return applicationContext;
     }
 
@@ -49,6 +53,9 @@ public class BlueprintApplicationContextTracker extends ServiceTracker {
     public void removedService(ServiceReference reference, Object service) {
         super.removedService(reference, service);
         Bundle bundle = reference.getBundle();
+
+        eventListenerRegistrar.unregisterEventAnnotatedBeansIn((ApplicationContext) service);
+
         if (!isBlueprintEnabledBundle(bundle)) {
             return;
         }

@@ -23,10 +23,7 @@
     <osgi:reference id="eventListenerRegistry"
                     interface="org.motechproject.event.listener.EventListenerRegistryService"/>
 
-    <bean id="eventAnnotationBeanPostProcessor"
-          class="org.motechproject.event.listener.annotations.EventAnnotationBeanPostProcessor">
-        <property name="eventListenerRegistry" ref="eventListenerRegistry"/>
-    </bean>
+
     <bean id="callMeController" class="org.motechproject.server.demo.web.CallMeController">
         <property name="ivrServices" ref="ivrServiceList"/>
     </bean>

@@ -6,7 +6,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.DestructionAwareBeanPostProcessor;
-import org.springframework.stereotype.Component;
 import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Method;
@@ -16,16 +15,22 @@ import java.util.Map;
 
 /**
  * Responsible for registering handlers based on annotations
- *
+ * <p/>
  * Create a bean only when module has MotechEvent annotations.
  *
  * @author yyonkov
  */
-@Component
 public class EventAnnotationBeanPostProcessor implements DestructionAwareBeanPostProcessor {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private EventListenerRegistryService eventListenerRegistry;
+
+    public EventAnnotationBeanPostProcessor() {
+    }
+
+    public EventAnnotationBeanPostProcessor(EventListenerRegistryService eventListenerRegistryService) {
+        this.eventListenerRegistry = eventListenerRegistryService;
+    }
 
     /* (non-Javadoc)
      * @see org.springframework.beans.factory.config.BeanPostProcessor#postProcessBeforeInitialization(java.lang.Object, java.lang.String)
@@ -44,7 +49,14 @@ public class EventAnnotationBeanPostProcessor implements DestructionAwareBeanPos
         return bean;
     }
 
-    private void processAnnotations(final Object bean, final String beanName) {
+    public void processAnnotations(final Object bean, final String beanName) {
+
+        logger.info("Bean name " + beanName);
+        if (!beanName.contains("testEventListnerOsgi")) {
+            return;
+        }
+        logger.info("yahooo @@" + beanName);
+
         ReflectionUtils.doWithMethods(bean.getClass(), new ReflectionUtils.MethodCallback() {
 
             @Override
@@ -95,13 +107,18 @@ public class EventAnnotationBeanPostProcessor implements DestructionAwareBeanPos
 
     @Override
     public void postProcessBeforeDestruction(Object bean, String beanName) {
+        clearListenerForBean(beanName);
+    }
+
+
+    public void clearListenerForBean(String beanName) {
         if (eventListenerRegistry != null) {
             eventListenerRegistry.clearListenersForBean(beanName);
         }
     }
 
     //TODO:keeping required false for now, should be removed.
-    @Autowired (required = false)
+    @Autowired(required = false)
     public void setEventListenerRegistry(EventListenerRegistryService eventListenerRegistry) {
         this.eventListenerRegistry = eventListenerRegistry;
     }
