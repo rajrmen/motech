@@ -1,0 +1,15 @@
+{
+   "externalId": "47sf6a",
+   "subscriptions" : [
+   {
+       "campaignName": "PREGNANCY",
+       "startTime": "20:01:00",
+       "referenceDate" : "Mon, 1 Apr 2013"
+   },
+   {
+       "campaignName": "CHILD_DEVELOPMENT",
+       "startTime": "10:00:00",
+       "referenceDate" : "Sun, 18 Aug 2013"
+   }
+   ]
+}

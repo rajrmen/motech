@@ -52,6 +52,11 @@ public class CampaignSchedulerFactory {
 
     public CampaignSchedulerService getCampaignScheduler(final String campaignName) {
         final Campaign campaign = allMessageCampaigns.get(campaignName);
+
+        if (campaign == null) {
+            throw new CampaignNotFoundException(format("Campaign (%s) not found.", campaignName));
+        }
+
         CampaignSchedulerService schedulerService = campaignSchedulerServices.get(campaign.getClass());
 
         if (schedulerService == null) {
