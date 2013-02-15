@@ -380,7 +380,7 @@ public class SubscriptionControllerTest {
     }
 
     private String loadJson(String filename) throws IOException {
-        try (InputStream in = getClass().getClassLoader().getResourceAsStream("rest/" + filename)) {
+        try (InputStream in = getClass().getClassLoader().getResourceAsStream("rest/enrollments/" + filename)) {
             return IOUtils.toString(in);
         }
     }

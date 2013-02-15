@@ -70,18 +70,18 @@ public class SubscriptionController {
     }
 
     @RequestMapping(value = "/{campaignName}/users/{externalId}", method = RequestMethod.DELETE)
-    public void removeSubscription(@PathVariable String campaignName, @PathVariable String externalId) {
+    public void removeSubscription(@PathVariable String campaignName, @PathVariable String userId) {
         CampaignEnrollmentsQuery query = new CampaignEnrollmentsQuery()
-                .withCampaignName(campaignName).withExternalId(externalId);
+                .withCampaignName(campaignName).withExternalId(userId);
 
         List<CampaignEnrollment> enrollments = enrollmentService.search(query);
 
         if (enrollments.isEmpty()) {
-            throw subscriptionsNotFoundException(externalId);
+            throw subscriptionsNotFoundException(userId);
         } else {
             CampaignRequest campaignRequest = new CampaignRequest();
             campaignRequest.setCampaignName(campaignName);
-            campaignRequest.setExternalId(externalId);
+            campaignRequest.setExternalId(userId);
 
             messageCampaignService.stopAll(campaignRequest);
         }
