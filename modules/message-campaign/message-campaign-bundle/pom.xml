@@ -87,8 +87,8 @@
                 <configuration>
                     <instructions>
                         <Context-File>META-INF/osgi/applicationMessageCampaignBundle.xml</Context-File>
-                        <Context-Path>message-campaign</Context-Path>
-                        <Resource-Path>message-campaign/resource</Resource-Path>
+                        <Context-Path>messagecampaign</Context-Path>
+                        <Resource-Path>messagecampaign/resources</Resource-Path>
                         <Blueprint-Enabled>true</Blueprint-Enabled>
                         <Export-Package>
                             org.motechproject.server.messagecampaign;version=${project.version},

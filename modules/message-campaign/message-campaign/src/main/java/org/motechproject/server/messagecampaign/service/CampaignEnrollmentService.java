@@ -42,4 +42,8 @@ public class CampaignEnrollmentService {
         }
         return enrollments;
     }
+
+    public List<CampaignEnrollment> findAllEnrollments() {
+        return allCampaignEnrollments.getAll();
+    }
 }

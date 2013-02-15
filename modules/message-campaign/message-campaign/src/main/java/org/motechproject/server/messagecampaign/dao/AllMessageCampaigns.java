@@ -42,6 +42,10 @@ public class AllMessageCampaigns {
         return CollectionUtils.isEmpty(campaign) ? null : campaign.get(0);
     }
 
+    public List<Campaign> findAllCampaigns() {
+        return readCampaignsFromJSON();
+    }
+
     private List<Campaign> readCampaignsFromJSON() {
         if (CollectionUtils.isEmpty(campaigns)) {
             List<CampaignRecord> campaignRecords = (List<CampaignRecord>) motechJsonReader.readFromStream(

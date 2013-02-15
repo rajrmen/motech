@@ -3,6 +3,8 @@ package org.motechproject.server.messagecampaign.service;
 import org.joda.time.DateTime;
 import org.motechproject.server.messagecampaign.contract.CampaignRequest;
 import org.motechproject.server.messagecampaign.dao.AllCampaignEnrollments;
+import org.motechproject.server.messagecampaign.dao.AllMessageCampaigns;
+import org.motechproject.server.messagecampaign.domain.campaign.Campaign;
 import org.motechproject.server.messagecampaign.domain.campaign.CampaignEnrollment;
 import org.motechproject.server.messagecampaign.scheduler.CampaignSchedulerFactory;
 import org.motechproject.server.messagecampaign.scheduler.CampaignSchedulerService;
@@ -20,13 +22,18 @@ public class MessageCampaignServiceImpl implements MessageCampaignService {
     private CampaignEnrollmentService campaignEnrollmentService;
     private CampaignEnrollmentRecordMapper campaignEnrollmentRecordMapper;
     private AllCampaignEnrollments allCampaignEnrollments;
+    private AllMessageCampaigns allMessageCampaigns;
     private CampaignSchedulerFactory campaignSchedulerFactory;
 
     @Autowired
-    public MessageCampaignServiceImpl(CampaignEnrollmentService campaignEnrollmentService, CampaignEnrollmentRecordMapper campaignEnrollmentRecordMapper, AllCampaignEnrollments allCampaignEnrollments, CampaignSchedulerFactory campaignSchedulerFactory) {
+    public MessageCampaignServiceImpl(CampaignEnrollmentService campaignEnrollmentService,
+      CampaignEnrollmentRecordMapper campaignEnrollmentRecordMapper, AllCampaignEnrollments allCampaignEnrollments,
+      AllMessageCampaigns allMessageCampaigns, CampaignSchedulerFactory campaignSchedulerFactory) {
+
         this.campaignEnrollmentService = campaignEnrollmentService;
         this.campaignEnrollmentRecordMapper = campaignEnrollmentRecordMapper;
         this.allCampaignEnrollments = allCampaignEnrollments;
+        this.allMessageCampaigns = allMessageCampaigns;
         this.campaignSchedulerFactory = campaignSchedulerFactory;
     }
 
@@ -60,5 +67,10 @@ public class MessageCampaignServiceImpl implements MessageCampaignService {
             return new HashMap<>();
         }
         return campaignSchedulerFactory.getCampaignScheduler(campaignName).getCampaignTimings(startDate, endDate, enrollment);
+    }
+
+    @Override
+    public List<Campaign> findAllCampaigns() {
+        return allMessageCampaigns.findAllCampaigns();
     }
 }

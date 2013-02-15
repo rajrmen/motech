@@ -35,8 +35,6 @@ import static org.motechproject.commons.date.util.DateUtil.now;
 public class MessageCampaignServiceImplTest {
     private MessageCampaignServiceImpl messageCampaignService;
     @Mock
-    private AllMessageCampaigns allMessageCampaigns;
-    @Mock
     private CampaignEnrollmentService campaignEnrollmentService;
     @Mock
     private MotechSchedulerService schedulerService;
@@ -47,12 +45,15 @@ public class MessageCampaignServiceImplTest {
     @Mock
     private AllCampaignEnrollments allCampaignEnrollments;
     @Mock
+    private AllMessageCampaigns allMessageCampaigns;
+    @Mock
     private CampaignSchedulerFactory campaignSchedulerFactory;
 
     @Before
     public void setUp() {
         initMocks(this);
-        messageCampaignService = new MessageCampaignServiceImpl(campaignEnrollmentService, campaignEnrollmentRecordMapper, allCampaignEnrollments, campaignSchedulerFactory);
+        messageCampaignService = new MessageCampaignServiceImpl(campaignEnrollmentService, campaignEnrollmentRecordMapper,
+                allCampaignEnrollments, allMessageCampaigns, campaignSchedulerFactory);
     }
 
     @Test
