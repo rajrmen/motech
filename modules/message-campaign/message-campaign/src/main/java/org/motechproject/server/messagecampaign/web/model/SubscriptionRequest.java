@@ -1,11 +1,9 @@
 package org.motechproject.server.messagecampaign.web.model;
 
 import org.codehaus.jackson.annotate.JsonProperty;
-import org.codehaus.jackson.map.annotate.JsonDeserialize;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.joda.time.LocalDate;
 import org.motechproject.commons.date.model.Time;
-import org.motechproject.server.messagecampaign.web.util.RestDateDeserializer;
 import org.motechproject.server.messagecampaign.web.util.RestDateSerializer;
 import org.motechproject.server.messagecampaign.web.util.RestTimeSerializer;
 
@@ -20,7 +18,6 @@ public class SubscriptionRequest implements Serializable {
     private Time startTime;
 
     @JsonProperty
-    @JsonDeserialize(using = RestDateDeserializer.class)
     @JsonSerialize(using = RestDateSerializer.class)
     private LocalDate referenceDate;
 

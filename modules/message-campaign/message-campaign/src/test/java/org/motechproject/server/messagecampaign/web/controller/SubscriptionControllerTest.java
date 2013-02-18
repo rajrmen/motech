@@ -110,11 +110,11 @@ public class SubscriptionControllerTest {
         controller.perform(
             get("/subscriptions/{campaignName}/users/{userId}", CAMPAIGN_NAME, USER_ID)
         ).andExpect(
-                status().is(HttpStatus.OK.value())
+            status().is(HttpStatus.OK.value())
         ).andExpect(
             content().type(APPLICATION_JSON_UTF8)
         ).andExpect(
-                content().string(jsonMatcher(expectedResponse))
+            content().string(jsonMatcher(expectedResponse))
         );
 
         ArgumentCaptor<CampaignEnrollmentsQuery> captor = ArgumentCaptor.forClass(CampaignEnrollmentsQuery.class);
@@ -137,7 +137,7 @@ public class SubscriptionControllerTest {
         ).andExpect(
             status().is(HttpStatus.NOT_FOUND.value())
         ).andExpect(
-                content().string(expectedResponse)
+            content().string(expectedResponse)
         );
     }
 

@@ -4,19 +4,19 @@
        "campaignName": "PREGNANCY",
        "externalId": "47sf6a",
        "startTime": "20:01:00",
-       "referenceDate" : "Mon, 2 Jan 2012"
+       "referenceDate" : "2012-01-02"
    },
    {
        "campaignName": "PREGNANCY",
        "externalId": "d6gt40",
        "startTime": "10:00:00",
-       "referenceDate" : "Wed, 15 Feb 2012"
+       "referenceDate" : "2012-02-15"
    },
    {
        "campaignName": "CHILD_DEVELOPMENT",
        "externalId": "o34j6f",
        "startTime": "10:00:00",
-       "referenceDate" : "Tue, 13 Mar 2012"
+       "referenceDate" : "2012-03-13"
    }
    ]
 }

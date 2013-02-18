@@ -58,7 +58,7 @@ public class MessageCampaignServiceImplTest {
     @Test
     public void shouldCreateEnrollmentWhenScheduleIsStarted() {
         Campaign campaign = mock(Campaign.class);
-        when(allMessageCampaigns.get("testCampaign")).thenReturn(campaign);
+        when(allMessageCampaigns.getCampaign("testCampaign")).thenReturn(campaign);
 
         CampaignSchedulerService campaignScheduler = mock(CampaignSchedulerService.class);
         when(campaignSchedulerFactory.getCampaignScheduler("testCampaign")).thenReturn(campaignScheduler);
@@ -79,7 +79,7 @@ public class MessageCampaignServiceImplTest {
     @Test
     public void shouldUnRegisterEnrollmentWhenScheduleIsStopped() {
         Campaign campaign = mock(Campaign.class);
-        when(allMessageCampaigns.get("testCampaign")).thenReturn(campaign);
+        when(allMessageCampaigns.getCampaign("testCampaign")).thenReturn(campaign);
 
         CampaignSchedulerService campaignScheduler = mock(CampaignSchedulerService.class);
         when(campaignSchedulerFactory.getCampaignScheduler("testCampaign")).thenReturn(campaignScheduler);
@@ -98,7 +98,7 @@ public class MessageCampaignServiceImplTest {
         CampaignRequest campaignRequest = new CampaignRequest("entity_1", "campaign-name", null, null, null);
 
         AbsoluteCampaign absoluteCampaign = mock(AbsoluteCampaign.class);
-        when(allMessageCampaigns.get("campaign-name")).thenReturn(absoluteCampaign);
+        when(allMessageCampaigns.getCampaign("campaign-name")).thenReturn(absoluteCampaign);
 
         CampaignSchedulerService campaignScheduler = mock(CampaignSchedulerService.class);
         when(campaignSchedulerFactory.getCampaignScheduler("campaign-name")).thenReturn(campaignScheduler);
@@ -131,7 +131,7 @@ public class MessageCampaignServiceImplTest {
     public void shouldGetCampaignTimings() {
         AbsoluteCampaign campaign = mock(AbsoluteCampaign.class);
 
-        when(allMessageCampaigns.get("campaign")).thenReturn(campaign);
+        when(allMessageCampaigns.getCampaign("campaign")).thenReturn(campaign);
 
         CampaignSchedulerService campaignScheduler = mock(CampaignSchedulerService.class);
         when(campaignSchedulerFactory.getCampaignScheduler("campaign")).thenReturn(campaignScheduler);
@@ -151,7 +151,7 @@ public class MessageCampaignServiceImplTest {
     public void shouldGetEmptyCampaignTimingsMapIfEnrollmentIsNotActive() {
         AbsoluteCampaign campaign = mock(AbsoluteCampaign.class);
 
-        when(allMessageCampaigns.get("campaign")).thenReturn(campaign);
+        when(allMessageCampaigns.getCampaign("campaign")).thenReturn(campaign);
 
         CampaignSchedulerService campaignScheduler = mock(CampaignSchedulerService.class);
         when(campaignSchedulerFactory.getCampaignScheduler("campaign")).thenReturn(campaignScheduler);

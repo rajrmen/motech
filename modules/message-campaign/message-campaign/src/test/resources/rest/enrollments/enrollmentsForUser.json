@@ -4,12 +4,12 @@
    {
        "campaignName": "PREGNANCY",
        "startTime": "20:01:00",
-       "referenceDate" : "Mon, 1 Apr 2013"
+       "referenceDate" : "2013-04-01"
    },
    {
        "campaignName": "CHILD_DEVELOPMENT",
        "startTime": "10:00:00",
-       "referenceDate" : "Sun, 18 Aug 2013"
+       "referenceDate" : "2013-08-18"
    }
    ]
 }
