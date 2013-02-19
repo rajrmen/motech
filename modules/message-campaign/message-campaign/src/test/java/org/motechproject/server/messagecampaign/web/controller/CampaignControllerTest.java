@@ -2,7 +2,6 @@ package org.motechproject.server.messagecampaign.web.controller;
 
 
 import org.apache.commons.io.IOUtils;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -44,8 +43,6 @@ public class CampaignControllerTest {
     private static final MediaType APPLICATION_JSON_UTF8 = new MediaType("application", "json", Charset.forName("UTF-8"));
 
     private CampaignJsonLoader campaignJsonLoader = new CampaignJsonLoader();
-
-    private ObjectMapper objectMapper = new ObjectMapper();
 
     private MockMvc controller;
 

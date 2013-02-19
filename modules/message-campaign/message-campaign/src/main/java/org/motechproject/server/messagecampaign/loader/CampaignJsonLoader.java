@@ -7,10 +7,7 @@ import org.motechproject.server.config.SettingsFacade;
 import org.motechproject.server.messagecampaign.dao.AllMessageCampaigns;
 import org.motechproject.server.messagecampaign.userspecified.CampaignRecord;
 import org.motechproject.server.messagecampaign.web.model.CampaignDto;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
-import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -20,11 +17,8 @@ public class CampaignJsonLoader {
 
     private String messageCampaignsJsonFile = "message-campaigns.json";
 
-    @Autowired
-    @Qualifier("messageCampaignSettings")
     private SettingsFacade settings;
 
-    @Autowired
     private AllMessageCampaigns allMessageCampaigns;
 
     private MotechJsonReader motechJsonReader;
@@ -73,7 +67,6 @@ public class CampaignJsonLoader {
         }
     }
 
-    @PostConstruct
     public void loadAferInit() {
         List<CampaignRecord> records = loadCampaigns(settings.getRawConfig(messageCampaignsJsonFile));
         for (CampaignRecord record : records) {
@@ -87,5 +80,13 @@ public class CampaignJsonLoader {
 
     public void setMessageCampaignsJsonFile(String messageCampaignsJsonFile) {
         this.messageCampaignsJsonFile = messageCampaignsJsonFile;
+    }
+
+    public void setSettings(SettingsFacade settings) {
+        this.settings = settings;
+    }
+
+    public void setAllMessageCampaigns(AllMessageCampaigns allMessageCampaigns) {
+        this.allMessageCampaigns = allMessageCampaigns;
     }
 }

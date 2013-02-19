@@ -29,8 +29,4 @@
     </bean>
 
     <bean class="org.motechproject.event.listener.annotations.EventAnnotationBeanPostProcessor"/>
-
-    <bean id="campaignJsonLoader" class="org.motechproject.server.messagecampaign.loader.CampaignJsonLoader">
-        <property name="messageCampaignsJsonFile" value="message-campaigns.json"/>
-    </bean>
 </beans>

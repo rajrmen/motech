@@ -1,7 +1,6 @@
 package org.motechproject.server.messagecampaign.web.controller;
 
 import org.apache.commons.io.IOUtils;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.joda.time.LocalDate;
 import org.junit.Before;
 import org.junit.Test;
@@ -50,8 +49,6 @@ public class SubscriptionControllerTest {
     private static final MediaType APPLICATION_JSON_UTF8 = new MediaType("application", "json", Charset.forName("UTF-8"));
 
     private MockMvc controller;
-
-    private ObjectMapper objectMapper = new ObjectMapper();
 
     @InjectMocks
     private SubscriptionController subscriptionController = new SubscriptionController();
