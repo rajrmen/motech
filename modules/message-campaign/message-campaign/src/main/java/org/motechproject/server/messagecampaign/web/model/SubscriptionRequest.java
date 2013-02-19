@@ -4,8 +4,8 @@ import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.joda.time.LocalDate;
 import org.motechproject.commons.date.model.Time;
-import org.motechproject.server.messagecampaign.web.util.RestDateSerializer;
-import org.motechproject.server.messagecampaign.web.util.RestTimeSerializer;
+import org.motechproject.server.messagecampaign.web.util.LocalDateSerializer;
+import org.motechproject.server.messagecampaign.web.util.TimeSerializer;
 
 import java.io.Serializable;
 
@@ -14,11 +14,11 @@ public class SubscriptionRequest implements Serializable {
     private static final long serialVersionUID = 8082316095036755730L;
 
     @JsonProperty
-    @JsonSerialize(using = RestTimeSerializer.class)
+    @JsonSerialize(using = TimeSerializer.class)
     private Time startTime;
 
     @JsonProperty
-    @JsonSerialize(using = RestDateSerializer.class)
+    @JsonSerialize(using = LocalDateSerializer.class)
     private LocalDate referenceDate;
 
     public Time getStartTime() {

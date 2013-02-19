@@ -17,7 +17,7 @@ import java.util.List;
 public class AllMessageCampaigns extends MotechBaseRepository<CampaignRecord> {
 
     @Autowired
-    protected AllMessageCampaigns(@Qualifier("messageCampaignDBConnector") CouchDbConnector db) {
+    public AllMessageCampaigns(@Qualifier("messageCampaignDBConnector") CouchDbConnector db) {
         super(CampaignRecord.class, db);
     }
 

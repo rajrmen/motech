@@ -7,7 +7,7 @@ import org.motechproject.commons.date.model.Time;
 
 import java.io.IOException;
 
-public class RestTimeSerializer extends JsonSerializer<Time> {
+public class TimeSerializer extends JsonSerializer<Time> {
 
     @Override
     public void serialize(Time time, JsonGenerator jsonGenerator, SerializerProvider serializerProvider)

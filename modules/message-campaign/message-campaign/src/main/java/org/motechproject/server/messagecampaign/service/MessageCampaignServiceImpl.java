@@ -61,4 +61,13 @@ public class MessageCampaignServiceImpl implements MessageCampaignService {
         }
         return campaignSchedulerFactory.getCampaignScheduler(campaignName).getCampaignTimings(startDate, endDate, enrollment);
     }
+
+    @Override
+    public void stopAll(CampaignEnrollmentsQuery query) {
+        List<CampaignEnrollment> enrollments = campaignEnrollmentService.search(query);
+        for (CampaignEnrollment enrollment : enrollments) {
+            campaignEnrollmentService.unregister(enrollment.getExternalId(), enrollment.getCampaignName());
+            campaignSchedulerFactory.getCampaignScheduler(enrollment.getCampaignName()).stop(enrollment);
+        }
+    }
 }

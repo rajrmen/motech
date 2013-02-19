@@ -18,6 +18,7 @@ import org.motechproject.server.messagecampaign.domain.campaign.CampaignEnrollme
 import org.motechproject.server.messagecampaign.domain.campaign.CampaignEnrollmentStatus;
 import org.motechproject.server.messagecampaign.scheduler.CampaignSchedulerFactory;
 import org.motechproject.server.messagecampaign.scheduler.CampaignSchedulerService;
+import org.motechproject.server.messagecampaign.search.Criterion;
 
 import java.util.List;
 import java.util.Map;
@@ -26,7 +27,9 @@ import static java.util.Arrays.asList;
 import static junit.framework.Assert.assertEquals;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
@@ -91,6 +94,38 @@ public class MessageCampaignServiceImplTest {
         messageCampaignService.stopAll(request);
 
         verify(campaignEnrollmentService).unregister(request.externalId(), request.campaignName());
+    }
+
+    @Test
+    public void shouldUnregisterAllCampaignsMatchingQuery() {
+        Campaign campaign = mock(Campaign.class);
+        when(allMessageCampaigns.getCampaign("testCampaign")).thenReturn(campaign);
+
+        CampaignEnrollment enrollment1 = new CampaignEnrollment("external_id_1", "testCampaign");
+        CampaignEnrollment enrollment2 = new CampaignEnrollment("external_id_2", "testCampaign");
+        when(campaignEnrollmentService.search(any(CampaignEnrollmentsQuery.class)))
+                .thenReturn(asList(enrollment1, enrollment2));
+
+        CampaignSchedulerService campaignScheduler = mock(CampaignSchedulerService.class);
+        when(campaignSchedulerFactory.getCampaignScheduler("testCampaign")).thenReturn(campaignScheduler);
+
+        CampaignEnrollmentsQuery query = new CampaignEnrollmentsQuery().withCampaignName("testCampaign");
+
+        messageCampaignService.stopAll(query);
+
+        ArgumentCaptor<CampaignEnrollmentsQuery> captor = ArgumentCaptor.forClass(CampaignEnrollmentsQuery.class);
+        verify(campaignEnrollmentService).search(captor.capture());
+
+        assertEquals(0, captor.getValue().getSecondaryCriteria().size());
+        Criterion primaryCriterion = captor.getValue().getPrimaryCriterion();
+        primaryCriterion.fetch(allCampaignEnrollments);
+        verify(allCampaignEnrollments).findByCampaignName("testCampaign");
+
+        verify(campaignEnrollmentService).unregister(enrollment1.getExternalId(), enrollment2.getCampaignName());
+        verify(campaignEnrollmentService).unregister(enrollment2.getExternalId(), enrollment2.getCampaignName());
+        verify(campaignSchedulerFactory, times(2)).getCampaignScheduler("testCampaign");
+        verify(campaignScheduler).stop(enrollment1);
+        verify(campaignScheduler).stop(enrollment2);
     }
 
     @Test

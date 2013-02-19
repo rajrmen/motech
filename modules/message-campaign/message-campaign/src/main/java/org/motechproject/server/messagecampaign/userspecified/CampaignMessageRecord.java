@@ -12,7 +12,7 @@ import org.motechproject.server.messagecampaign.domain.message.CronBasedCampaign
 import org.motechproject.server.messagecampaign.domain.message.DayOfWeekCampaignMessage;
 import org.motechproject.server.messagecampaign.domain.message.OffsetCampaignMessage;
 import org.motechproject.server.messagecampaign.domain.message.RepeatIntervalCampaignMessage;
-import org.motechproject.server.messagecampaign.web.util.RestDateSerializer;
+import org.motechproject.server.messagecampaign.web.util.LocalDateSerializer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +30,7 @@ public class CampaignMessageRecord {
     private String messageKey;
     private String startTime;
 
-    @JsonSerialize(using = RestDateSerializer.class)
+    @JsonSerialize(using = LocalDateSerializer.class, include = JsonSerialize.Inclusion.NON_NULL)
     private LocalDate date;
 
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)

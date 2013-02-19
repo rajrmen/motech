@@ -7,7 +7,7 @@ import org.joda.time.LocalDate;
 
 import java.io.IOException;
 
-public class RestDateSerializer extends JsonSerializer<LocalDate> {
+public class LocalDateSerializer extends JsonSerializer<LocalDate> {
 
     @Override
     public void serialize(LocalDate localDate, JsonGenerator jsonGenerator, SerializerProvider serializerProvider)

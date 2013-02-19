@@ -1,11 +1,7 @@
 package org.motechproject.server.messagecampaign.web.controller;
 
 import org.apache.commons.io.IOUtils;
-import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.hamcrest.BaseMatcher;
-import org.hamcrest.Description;
-import org.hamcrest.Matcher;
 import org.joda.time.LocalDate;
 import org.junit.Before;
 import org.junit.Test;
@@ -13,7 +9,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.motechproject.commons.api.MotechException;
 import org.motechproject.commons.date.model.Time;
 import org.motechproject.server.messagecampaign.contract.CampaignRequest;
 import org.motechproject.server.messagecampaign.dao.AllCampaignEnrollments;
@@ -39,6 +34,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.motechproject.testing.utils.rest.RestTestUtil.jsonMatcher;
 import static org.springframework.test.web.server.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.server.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.server.request.MockMvcRequestBuilders.post;
@@ -79,7 +75,7 @@ public class SubscriptionControllerTest {
     }
 
     @Test
-    public void testUserEnrollment() throws Exception {
+    public void shouldEnrollUser() throws Exception {
         controller.perform(
             post("/subscriptions/{campaignName}/users/{userId}", CAMPAIGN_NAME, USER_ID)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -98,7 +94,7 @@ public class SubscriptionControllerTest {
     }
 
     @Test
-    public void testGetUserEnrollmentDetails() throws Exception {
+    public void shouldReturnUserEnrollmentDetails() throws Exception {
         CampaignEnrollment enrollment = new CampaignEnrollment(USER_ID, CAMPAIGN_NAME);
         enrollment.setReferenceDate(new LocalDate(2013, 3, 10));
         enrollment.setDeliverTime(new Time(20, 30));
@@ -126,7 +122,7 @@ public class SubscriptionControllerTest {
     }
 
     @Test
-    public void testGetNonExistentDetails() throws Exception {
+    public void shouldReturn404ForNonExistentEnrollment() throws Exception {
         when(enrollmentService.search(any(CampaignEnrollmentsQuery.class)))
                 .thenReturn(Collections.<CampaignEnrollment>emptyList());
 
@@ -142,7 +138,7 @@ public class SubscriptionControllerTest {
     }
 
     @Test
-    public void testGetSubscriptionsForCampaigns() throws Exception {
+    public void shouldReturnSubscriptionsForCampaigns() throws Exception {
         CampaignEnrollment enrollment1 = new CampaignEnrollment("47sf6a", CAMPAIGN_NAME);
         enrollment1.setDeliverTime(new Time(20, 1));
         enrollment1.setReferenceDate(new LocalDate(2013, 4, 1));
@@ -176,7 +172,7 @@ public class SubscriptionControllerTest {
     }
 
     @Test
-    public void testSubscriptionsForCampaignNotFound() throws Exception {
+    public void shouldReturn404ForCampaignNotFound() throws Exception {
         when(enrollmentService.search(any(CampaignEnrollmentsQuery.class)))
                 .thenReturn(Collections.<CampaignEnrollment>emptyList());
 
@@ -194,7 +190,7 @@ public class SubscriptionControllerTest {
     }
 
     @Test
-    public void testGetSubscriptionsForUser() throws Exception {
+    public void shouldReturnSubscriptionsForUser() throws Exception {
         CampaignEnrollment enrollment1 = new CampaignEnrollment(USER_ID, CAMPAIGN_NAME);
         enrollment1.setDeliverTime(new Time(20, 1));
         enrollment1.setReferenceDate(new LocalDate(2013, 4, 1));
@@ -225,7 +221,7 @@ public class SubscriptionControllerTest {
     }
 
     @Test
-    public void testSubscriptionsForUserNotFound() throws Exception {
+    public void shouldReturn404WhenUserHasNoEntrollments() throws Exception {
         when(enrollmentService.search(any(CampaignEnrollmentsQuery.class)))
                 .thenReturn(Collections.<CampaignEnrollment>emptyList());
 
@@ -241,7 +237,7 @@ public class SubscriptionControllerTest {
     }
 
     @Test
-    public void testGetAllSubscriptionsFilteredByStatus() throws Exception {
+    public void shouldReturnAllSubscriptionsFilteredByStatus() throws Exception {
         CampaignEnrollment enrollment1 = new CampaignEnrollment(USER_ID, CAMPAIGN_NAME);
         enrollment1.setDeliverTime(new Time(20, 1));
         enrollment1.setReferenceDate(new LocalDate(2012, 1, 2));
@@ -275,12 +271,12 @@ public class SubscriptionControllerTest {
     }
 
     @Test
-    public void testGetAllFiltering() throws Exception {
+    public void shouldFilterSubscriptionsByExternalIdAndCampaignName() throws Exception {
         when(enrollmentService.search(any(CampaignEnrollmentsQuery.class)))
                 .thenReturn(Collections.<CampaignEnrollment>emptyList());
 
         controller.perform(
-                get("/subscriptions/users/?campaignName={campaignName}&externalId={externalId}", CAMPAIGN_NAME, USER_ID)
+            get("/subscriptions/users/?campaignName={campaignName}&externalId={externalId}", CAMPAIGN_NAME, USER_ID)
         ).andExpect(
             status().is(HttpStatus.OK.value())
         );
@@ -294,7 +290,7 @@ public class SubscriptionControllerTest {
     }
 
     @Test
-    public void testSubscriptionUpdate() throws Exception {
+    public void shouldUpdateSubscription() throws Exception {
         controller.perform(
             put("/subscriptions/{campaignName}/users/{userId}", CAMPAIGN_NAME, USER_ID)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -324,7 +320,7 @@ public class SubscriptionControllerTest {
     }
 
     @Test
-    public void testDeleteSubscription() throws Exception {
+    public void shouldDeleteSubscription() throws Exception {
         when(enrollmentService.search(any(CampaignEnrollmentsQuery.class)))
                 .thenReturn(asList(new CampaignEnrollment(CAMPAIGN_NAME, USER_ID)));
 
@@ -349,7 +345,7 @@ public class SubscriptionControllerTest {
     }
 
     @Test
-    public void testDeleteNonExistingSubscription() throws Exception {
+    public void shouldReturn404WhenDeletingNonExistingSubscription() throws Exception {
         when(enrollmentService.search(any(CampaignEnrollmentsQuery.class)))
                 .thenReturn(Collections.<CampaignEnrollment>emptyList());
 
@@ -383,29 +379,6 @@ public class SubscriptionControllerTest {
         try (InputStream in = getClass().getClassLoader().getResourceAsStream("rest/enrollments/" + filename)) {
             return IOUtils.toString(in);
         }
-    }
-
-    private Matcher<String> jsonMatcher(final String expected) {
-        return new BaseMatcher<String>() {
-            @Override
-            public boolean matches(Object argument) {
-                try {
-                    String actual = (String) argument;
-
-                    JsonNode expectedTree = objectMapper.readTree(expected);
-                    JsonNode actualTree = objectMapper.readTree(actual);
-
-                    return expectedTree.equals(actualTree);
-                } catch (IOException e) {
-                    throw new MotechException("Json parsing failure", e);
-                }
-            }
-
-            @Override
-            public void describeTo(Description description) {
-                description.appendText(expected);
-            }
-        };
     }
 }
 

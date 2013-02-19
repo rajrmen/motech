@@ -5,8 +5,8 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.joda.time.LocalDate;
 import org.motechproject.commons.date.model.Time;
 import org.motechproject.server.messagecampaign.domain.campaign.CampaignEnrollment;
-import org.motechproject.server.messagecampaign.web.util.RestDateSerializer;
-import org.motechproject.server.messagecampaign.web.util.RestTimeSerializer;
+import org.motechproject.server.messagecampaign.web.util.LocalDateSerializer;
+import org.motechproject.server.messagecampaign.web.util.TimeSerializer;
 
 import java.util.Objects;
 
@@ -21,11 +21,11 @@ public class Subscription {
     private String campaignName;
 
     @JsonProperty
-    @JsonSerialize(using = RestTimeSerializer.class)
+    @JsonSerialize(using = TimeSerializer.class)
     private Time startTime;
 
     @JsonProperty
-    @JsonSerialize(using = RestDateSerializer.class)
+    @JsonSerialize(using = LocalDateSerializer.class)
     private LocalDate referenceDate;
 
     public String getExternalId() {

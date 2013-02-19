@@ -175,8 +175,17 @@ public class AllMessageCampaignsIT {
     }
 
     @Test
-    public void testFindByName() {
-        assertTrue(false);
+    public void shouldFindCampaignsByName() {
+        CampaignRecord campaign = createCampaignRecord();
+        CampaignRecord campaign2 = createCampaignRecord();
+        campaign2.setName("Different Name");
+
+        allMessageCampaigns.saveOrUpdate(campaign);
+        allMessageCampaigns.saveOrUpdate(campaign2);
+
+        assertEquals(asList(campaign), allMessageCampaigns.findByName("PREGNANCY"));
+        assertEquals(campaign, allMessageCampaigns.findFirstByName("PREGNANCY"));
+        assertEquals(asList(campaign2), allMessageCampaigns.findByName("Different Name"));
     }
 
     private void assertMessageWithAbsoluteSchedule(AbsoluteCampaignMessage message, String name, String[] formats, Object messageKey, LocalDate date) {

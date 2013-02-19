@@ -30,4 +30,6 @@ public interface MessageCampaignService {
     List<CampaignEnrollmentRecord> search(CampaignEnrollmentsQuery query);
 
     Map<String, List<DateTime>> getCampaignTimings(String externalId, String campaignName, DateTime startDate, DateTime endDate);
+
+    void stopAll(CampaignEnrollmentsQuery query);
 }
