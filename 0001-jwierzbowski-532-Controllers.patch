@@ -1,0 +1,873 @@
+From f94324456aca7472d7eef0ab42bd4c926af396c8 Mon Sep 17 00:00:00 2001
+From: Jakub Wierzbowski <jwierzbowski@soldevelo.com>
+Date: Tue, 19 Feb 2013 12:38:44 +0100
+Subject: [PATCH] jwierzbowski|#532|Controllers
+
+Change-Id: Iefdae259b16af382d524a1a80f2951a77ec772ec
+---
+ .../couch/mrs/impl/CouchPatientAdapter.java        |   25 ++-
+ modules/mrs/api-bundle/pom.xml                     |    5 +-
+ .../src/main/resources/applicationMrsAPIBundle.xml |   15 +-
+ .../resources/webapp/bundles/messages.properties   |    9 +-
+ .../api-bundle/src/main/resources/webapp/js/app.js |    2 +-
+ .../src/main/resources/webapp/js/controllers.js    |  194 +++++++++++++++++++-
+ .../src/main/resources/webapp/js/services.js       |    2 +-
+ .../src/main/resources/webapp/partials/form.html   |   43 ++---
+ .../main/resources/webapp/partials/patients.html   |   63 +++----
+ modules/mrs/api/pom.xml                            |   14 ++
+ .../org/motechproject/mrs/MRSDataProvider.java     |    6 +
+ .../org/motechproject/mrs/model/ContainerDto.java  |   37 ++++
+ .../org/motechproject/mrs/model/FacilityDto.java   |   61 ++++++
+ .../org/motechproject/mrs/model/PatientDto.java    |   52 ++++++
+ .../org/motechproject/mrs/model/PersonDto.java     |  133 ++++++++++++++
+ .../motechproject/mrs/services/PatientAdapter.java |    2 +
+ .../motechproject/mrs/web/PatientsController.java  |   76 ++++++++
+ .../openmrs/services/OpenMRSPatientAdapter.java    |   14 ++
+ .../openmrs/ws/impl/MRSPatientAdapterImpl.java     |   20 ++
+ .../openmrs/ws/resource/PatientResource.java       |    2 +
+ .../ws/resource/impl/PatientResourceImpl.java      |    6 +
+ 21 files changed, 708 insertions(+), 73 deletions(-)
+ create mode 100644 modules/mrs/api/src/main/java/org/motechproject/mrs/model/ContainerDto.java
+ create mode 100644 modules/mrs/api/src/main/java/org/motechproject/mrs/model/FacilityDto.java
+ create mode 100644 modules/mrs/api/src/main/java/org/motechproject/mrs/model/PatientDto.java
+ create mode 100644 modules/mrs/api/src/main/java/org/motechproject/mrs/model/PersonDto.java
+ create mode 100644 modules/mrs/api/src/main/java/org/motechproject/mrs/web/PatientsController.java
+
+diff --git a/modules/couchmrs/mrs-couchdb/src/main/java/org/motechproject/couch/mrs/impl/CouchPatientAdapter.java b/modules/couchmrs/mrs-couchdb/src/main/java/org/motechproject/couch/mrs/impl/CouchPatientAdapter.java
+index 10a4943..ac5c54d 100644
+--- a/modules/couchmrs/mrs-couchdb/src/main/java/org/motechproject/couch/mrs/impl/CouchPatientAdapter.java
++++ b/modules/couchmrs/mrs-couchdb/src/main/java/org/motechproject/couch/mrs/impl/CouchPatientAdapter.java
+@@ -29,7 +29,7 @@ public class CouchPatientAdapter implements PatientAdapter {
+     @Autowired
+     private AllCouchFacilities allCouchFacilities;
+ 
+-    @Override
++    /*@Override
+     public Patient savePatient(Patient patient) {
+         Facility facility = patient.getFacility();
+ 
+@@ -47,6 +47,24 @@ public class CouchPatientAdapter implements PatientAdapter {
+         }
+ 
+         return patient;
++    }*/
++
++    //Remove Before commit!
++    public Patient savePatient(Patient patient) {
++        Person person = new CouchPerson();
++        person.setAddress(patient.getPerson().getAddress());
++        person.setFirstName(patient.getPerson().getFirstName());
++        person.setLastName(patient.getPerson().getLastName());
++
++        CouchPatientImpl couchPatient = new CouchPatientImpl(patient.getPatientId(), patient.getMotechId(), person, patient.getFacility().getFacilityId());
++
++        try {
++            allCouchPatients.addPatient(couchPatient);
++        } catch (MRSCouchException e) {
++            return null;
++        }
++
++        return patient;
+     }
+ 
+     @Override
+@@ -149,4 +167,9 @@ public class CouchPatientAdapter implements PatientAdapter {
+ 
+         return patientsList;
+     }
++
++    @Override
++    public List<Patient> getAllPatients(){
++        return generatePatientList(allCouchPatients.findAllPatients());
++    }
+ }
+diff --git a/modules/mrs/api-bundle/pom.xml b/modules/mrs/api-bundle/pom.xml
+index 400a153..7890c93 100644
+--- a/modules/mrs/api-bundle/pom.xml
++++ b/modules/mrs/api-bundle/pom.xml
+@@ -35,6 +35,10 @@
+             <groupId>org.springframework</groupId>
+             <artifactId>org.springframework.web.servlet</artifactId>
+         </dependency>
++        <dependency>
++            <groupId>org.codehaus.jackson</groupId>
++            <artifactId>org.motechproject.org.codehaus.jackson</artifactId>
++        </dependency>
+     </dependencies>
+     <build>
+         <plugins>
+@@ -60,7 +64,6 @@
+                             org.motechproject.event.listener.annotations,
+                             org.springframework.beans.factory.xml,
+                             org.springframework.context.config,
+-                            org.springframework.stereotype,
+                             *
+                         </Import-Package>
+                         <Embed-Dependency>motech-mrs-api</Embed-Dependency>
+diff --git a/modules/mrs/api-bundle/src/main/resources/applicationMrsAPIBundle.xml b/modules/mrs/api-bundle/src/main/resources/applicationMrsAPIBundle.xml
+index a951341..d52f54d 100644
+--- a/modules/mrs/api-bundle/src/main/resources/applicationMrsAPIBundle.xml
++++ b/modules/mrs/api-bundle/src/main/resources/applicationMrsAPIBundle.xml
+@@ -3,11 +3,14 @@
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:context="http://www.springframework.org/schema/context"
+        xmlns:osgi="http://www.eclipse.org/gemini/blueprint/schema/blueprint"
+-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+-       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+-       http://www.eclipse.org/gemini/blueprint/schema/blueprint http://www.eclipse.org/gemini/blueprint/schema/blueprint/gemini-blueprint.xsd">
++       xmlns:mvc="http://www.springframework.org/schema/mvc"
++       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
++            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
++            http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd
++            http://www.eclipse.org/gemini/blueprint/schema/blueprint http://www.eclipse.org/gemini/blueprint/schema/blueprint/gemini-blueprint.xsd">
+ 
+     <context:annotation-config/>
++    <mvc:annotation-driven/>
+ 
+     <import resource="classpath*:META-INF/motech/*.xml"/>
+ 
+@@ -28,4 +31,10 @@
+         <property name="personAdapters" ref="personAdapterList"/>
+     </bean>
+ 
++    <bean id="PatientsController" class="org.motechproject.mrs.web.PatientsController">
++        <property name="patientAdapters" ref="patientAdapterList"/>
++        <!--<property name="facilityAdapters" ref="facilityAdapterList"/>
++        <property name="personAdapters" ref="personAdapterList"/>-->
++    </bean>
++
+ </beans>
+\ No newline at end of file
+diff --git a/modules/mrs/api-bundle/src/main/resources/webapp/bundles/messages.properties b/modules/mrs/api-bundle/src/main/resources/webapp/bundles/messages.properties
+index 505d2f6..6c72f3e 100644
+--- a/modules/mrs/api-bundle/src/main/resources/webapp/bundles/messages.properties
++++ b/modules/mrs/api-bundle/src/main/resources/webapp/bundles/messages.properties
+@@ -7,14 +7,13 @@ mrs.patient.editPatientDetails=Edit Patient Details
+ mrs.patient.Edit=Patient Edit
+ mrs.patient.attribute=Patient attribute
+ mrs.patient.editCustomAttributes=Edit Custom Attributes
++mrs.patient.add=Add Patient
+ 
+ mrs.searchPatient=Search Patient
+ mrs.searchByIdOrName=Search by Id or name
+ mrs.sortingId=Sorting Id
+ 
+-cancel=Cancel
+-save=Save
+-
++mrs.patient.ID=ID
+ mrs.patient.motechId=MOTECH ID
+ mrs.patient.firstName=First Name
+ mrs.patient.middleName=Middle Name
+@@ -26,13 +25,15 @@ mrs.patient.male=Male
+ mrs.patient.female=Female
+ mrs.patient.dateOfBirth=Date Of Birth
+ mrs.patient.dobEstimated=DOB Estimated
+-mrs.patient.deceased=Deceased
++mrs.patient.deceased=Deceased?
+ mrs.patient.facilityId=Facility Id
+ mrs.patient.pvalue=Value
+ mrs.patient.addAttribute=Add Attribute
+ mrs.patient.addAnotherAttribute=Add Another Attribute
+ mrs.patient.edd=Edd
+ mrs.patient.hivStatus=Hiv Status
++mrs.patient.age=Age
++mrs.patient.estimate=Estimated?
+ 
+ 
+ 
+diff --git a/modules/mrs/api-bundle/src/main/resources/webapp/js/app.js b/modules/mrs/api-bundle/src/main/resources/webapp/js/app.js
+index f5d688f..73148fa 100644
+--- a/modules/mrs/api-bundle/src/main/resources/webapp/js/app.js
++++ b/modules/mrs/api-bundle/src/main/resources/webapp/js/app.js
+@@ -5,7 +5,7 @@
+ angular.module('motech-mrs', ['motech-dashboard', 'patientsServices', 'ngCookies', 'bootstrap', 'motech-widgets']).config(['$routeProvider',
+     function ($routeProvider) {
+         $routeProvider.
+-            when('/dashboard', {templateUrl: '../mrs/partials/patients.html', controller: DashboardCtrl}).
++            when('/dashboard', {templateUrl: '../mrs/partials/patients.html', controller: DashboardMrsCtrl}).
+             when('/mrs/new', {templateUrl: '../mrs/partials/form.html', controller: ManageMrsCtrl}).
+             when('/mrs/:mrsId/edit', {templateUrl: '../mrs/partials/form.html', controller: ManageMrsCtrl}).
+             otherwise({redirectTo: '/dashboard'});
+diff --git a/modules/mrs/api-bundle/src/main/resources/webapp/js/services.js b/modules/mrs/api-bundle/src/main/resources/webapp/js/services.js
+index 922a5a5..b04c898 100644
+--- a/modules/mrs/api-bundle/src/main/resources/webapp/js/services.js
++++ b/modules/mrs/api-bundle/src/main/resources/webapp/js/services.js
+@@ -3,5 +3,5 @@
+ /* Services */
+ 
+ angular.module('patientsServices', ['ngResource']).factory('Patients', function ($resource) {
+-    return $resource('../mrs/api/patient/:patientId', {patientId: '@_id'});
++    return $resource('../mrs/api/patients');
+ });
+\ No newline at end of file
+diff --git a/modules/mrs/api-bundle/src/main/resources/webapp/partials/form.html b/modules/mrs/api-bundle/src/main/resources/webapp/partials/form.html
+index d82008c..86b2cee 100644
+--- a/modules/mrs/api-bundle/src/main/resources/webapp/partials/form.html
++++ b/modules/mrs/api-bundle/src/main/resources/webapp/partials/form.html
+@@ -2,8 +2,8 @@
+     <div class="span10 margin-after mrs">
+         <div class="box-header">{{msg('mrs.patients')}}</div>
+         <div class="box-content inside clearfix">
+-            <h4>{{msg('mrs.patient.patient:')}}Mariah Maclachlan</h4>
+-            <h6>{{msg('mrs.patient.editPatientDetails')}}<span class="">{{msg('mrs.patient.motechId')}}  {{patient.id}}</span></h6>
++            <!--<h4>{{msg('mrs.patient.patient')}}</h4>
++            <h6>{{msg('mrs.patient.editPatientDetails')}}<span class=""> {{msg('mrs.patient.motechId')}}  {{patient.id}}</span></h6>-->
+ 
+ 
+             <form name="form" class="form-horizontal inside">
+@@ -11,45 +11,46 @@
+                 <div class="control-group">
+                     <label class="control-label"></label>
+                     <div class="form-actions">
+-                        <input class="btn btn-primary" type="submit" value="{{msg('save')}}" ng-disabled="form.$invalid">
+-                        <button type="button" class="btn">{{msg('cancel')}}</button>
++                        <input class="btn btn-primary" ng-disabled="form.$invalid" type="button" ng-click="save()" value="{{msg('save')}}" >
++                        <a href="#/dashboard/" class="btn"> {{msg('cancel')}}</a>
+                     </div>
+                 </div>
+-                <div class="control-group">
++                <div ng-class="cssClass('motechID')">
+                     <label class="control-label">{{msg('mrs.patient.motechId')}}</label>
+                     <div class="controls">
+-                        <input class="span10" type="text" ng-model="mrs.patient.id">
++                        <input class="span10" type="text" ng-model="patientDto.motechId" required />
++                        <span ng-hide="hasValue('motechId')" class="form-hint">{{msg('settings.error.username')}}</span>
+                     </div>
+                 </div>
+                 <div class="control-group">
+                     <label class="control-label">{{msg('mrs.patient.firstName')}}</label>
+                     <div class="controls">
+-                        <input class="span10" type="text" ng-model="mrs.patient.firstName">
++                        <input class="span10" type="text" ng-model="personDto.firstName" required>
+                     </div>
+                 </div>
+                 <div class="control-group">
+                     <label class="control-label">{{msg('mrs.patient.middleName')}}</label>
+                     <div class="controls">
+-                        <input class="span10" type="text" ng-model="mrs.patient.middleName">
++                        <input class="span10" type="text" ng-model="personDto.middleName" required>
+                     </div>
+                 </div>
+                 <div class="control-group">
+                     <label class="control-label">{{msg('mrs.patient.lastName')}}</label>
+                     <div class="controls">
+-                        <input class="span10" type="text" ng-model="mrs.patient.lastName">
++                        <input class="span10" type="text" ng-model="personDto.lastName" required>
+                     </div>
+                 </div>
+                 <div class="control-group">
+                     <label class="control-label span4">{{msg('mrs.patient.preferredName')}}</label>
+                     <div class="controls">
+-                        <input class="span10" type="text" ng-model="mrs.patient.preferredName">
++                        <input class="span10" type="text" ng-model="personDto.preferredName">
+                     </div>
+                 </div>
+ 
+                 <div class="control-group">
+                     <label class="control-label" for="message">{{msg('mrs.patient.address')}}</label>
+                     <div class="controls">
+-                        <textarea class="span10" rows="3" ng-model="mrs.patient.address" id="message" placeholder="{{msg('111 1st St Seattle, WA USA')}}"></textarea>
++                        <textarea class="span10" rows="3" ng-model="personDto.address" id="message" placeholder="{{msg('111 1st St Seattle, WA USA')}}"></textarea>
+                     </div>
+                 </div>
+                 <div class="control-group">
+@@ -69,7 +70,7 @@
+                     <label class="control-label">{{msg('mrs.patient.dateOfBirth')}}</label>
+                     <div class="controls">
+                         <div class="input-append span11">
+-                            <input class="span10" id="appendedInputButton" type="date" ng-model="mrs.patient.birth">
++                            <input class="span10" id="appendedInputButton" type="date" ng-model="personDto.dateOfBirth">
+                             <button class="btn" type="button"><i class="icon-th"></i></button>
+                         </div>
+                     </div>
+@@ -78,7 +79,7 @@
+                     <label class="control-label">{{msg('mrs.patient.dobEstimated')}}</label>
+                     <div class="controls">
+                         <label class="checkbox">
+-                            <input type="checkbox" value="">
++                            <input ng-model="personDto.birthDateEstimated" type="checkbox" value="">
+                         </label>
+                     </div>
+                 </div>
+@@ -86,22 +87,14 @@
+                     <label class="control-label">{{msg('mrs.patient.deceased')}}</label>
+                     <div class="controls">
+                         <label class="checkbox">
+-                            <input type="checkbox" value="">
++                            <input ng-model="personDto.dead" type="checkbox" value="">
+                         </label>
+                     </div>
+                 </div>
+                 <div class="control-group">
+                     <label class="control-label">{{msg('mrs.patient.facilityId')}}</label>
+                     <div class="controls">
+-                        <input class="span10" type="text" ng-model="mrs.patient.preferredName">
+-                    </div>
+-                </div>
+-
+-                <div class="control-group">
+-                    <label class="control-label"></label>
+-                    <div class="form-actions">
+-                        <input class="btn btn-primary" type="submit" value="{{msg('save')}}" ng-disabled="form.$invalid">
+-                        <button type="button" class="btn">{{msg('cancel')}}</button>
++                        <input class="span10" type="text" ng-model="facilityDto.facilityId">
+                     </div>
+                 </div>
+             </form>
+@@ -109,7 +102,8 @@
+     </div>
+ </div>
+ 
+-<div class="row-fluid"><!------------------------  Edit Custom Attributes  ------------------------------------->
++<!--
++<div class="row-fluid">&lt;!&ndash;----------------------  Edit Custom Attributes  -----------------------------------&ndash;&gt;
+     <div class="span10 margin-after mrs">
+         <div class="box-header">{{msg('mrs.patients')}}</div>
+         <div class="box-content inside clearfix">
+@@ -143,6 +137,7 @@
+         </div>
+     </div>
+ </div>
++-->
+ 
+ 
+ 
+
+-
+diff --git a/modules/mrs/api/pom.xml b/modules/mrs/api/pom.xml
+index 42bdadc..f958088 100644
+--- a/modules/mrs/api/pom.xml
++++ b/modules/mrs/api/pom.xml
+@@ -41,5 +41,19 @@
+             <groupId>org.apache.commons</groupId>
+             <artifactId>com.springsource.org.apache.commons.collections</artifactId>
+         </dependency>
++        <dependency>
++            <groupId>org.springframework</groupId>
++            <artifactId>spring-web</artifactId>
++            <version>3.0.5.RELEASE</version>
++        </dependency>
++        <dependency>
++            <groupId>org.springframework</groupId>
++            <artifactId>spring-webmvc</artifactId>
++            <version>3.0.5.RELEASE</version>
++        </dependency>
++        <dependency>
++            <groupId>org.codehaus.jackson</groupId>
++            <artifactId>org.motechproject.org.codehaus.jackson</artifactId>
++        </dependency>
+     </dependencies>
+ </project>
+diff --git a/modules/mrs/api/src/main/java/org/motechproject/mrs/MRSDataProvider.java b/modules/mrs/api/src/main/java/org/motechproject/mrs/MRSDataProvider.java
+index 862bcae..a027052 100644
+--- a/modules/mrs/api/src/main/java/org/motechproject/mrs/MRSDataProvider.java
++++ b/modules/mrs/api/src/main/java/org/motechproject/mrs/MRSDataProvider.java
+@@ -10,6 +10,11 @@ import org.motechproject.mrs.services.PersonAdapter;
+ import org.springframework.beans.factory.annotation.Autowired;
+ import org.springframework.core.io.Resource;
+ import org.springframework.core.io.ResourceLoader;
++import org.springframework.http.HttpStatus;
++import org.springframework.web.bind.annotation.RequestBody;
++import org.springframework.web.bind.annotation.RequestMapping;
++import org.springframework.web.bind.annotation.RequestMethod;
++import org.springframework.web.bind.annotation.ResponseStatus;
+ 
+ import java.util.Arrays;
+ import java.util.List;
+@@ -119,4 +124,5 @@ public class MRSDataProvider extends AbstractDataProvider {
+ 
+         return person;
+     }
++
+ }
+diff --git a/modules/mrs/api/src/main/java/org/motechproject/mrs/model/ContainerDto.java b/modules/mrs/api/src/main/java/org/motechproject/mrs/model/ContainerDto.java
+new file mode 100644
+index 0000000..28228d5
+--- /dev/null
++++ b/modules/mrs/api/src/main/java/org/motechproject/mrs/model/ContainerDto.java
+@@ -0,0 +1,37 @@
++package org.motechproject.mrs.model;
++
++import org.motechproject.mrs.model.PatientDto;
++import org.motechproject.mrs.model.PersonDto;
++
++public class ContainerDto {
++
++    private PersonDto personDto;
++    private PatientDto patientDto;
++    private FacilityDto facilityDto;
++
++    public FacilityDto getFacilityDto() {
++        return facilityDto;
++    }
++
++    public void setFacilityDto(FacilityDto facilityDto) {
++        this.facilityDto = facilityDto;
++    }
++
++    public PersonDto getPersonDto() {
++        return personDto;
++    }
++
++    public void setPersonDto(PersonDto personDto) {
++        this.personDto = personDto;
++    }
++
++    public PatientDto getPatientDto() {
++        return patientDto;
++    }
++
++    public void setPatientDto(PatientDto patientDto) {
++        this.patientDto = patientDto;
++    }
++
++
++}
+diff --git a/modules/mrs/api/src/main/java/org/motechproject/mrs/model/FacilityDto.java b/modules/mrs/api/src/main/java/org/motechproject/mrs/model/FacilityDto.java
+new file mode 100644
+index 0000000..884fc9b
+--- /dev/null
++++ b/modules/mrs/api/src/main/java/org/motechproject/mrs/model/FacilityDto.java
+@@ -0,0 +1,61 @@
++package org.motechproject.mrs.model;
++
++import org.motechproject.mrs.domain.Facility;
++
++public class FacilityDto implements Facility{
++
++    private String facilityId;
++    private String name;
++    private String country;
++    private String region;
++    private String countyDistrict;
++    private String stateProvince;
++
++    public String getFacilityId() {
++        return facilityId;
++    }
++
++    public void setFacilityId(String facilityId) {
++        this.facilityId = facilityId;
++    }
++
++    public String getName() {
++        return name;
++    }
++
++    public void setName(String name) {
++        this.name = name;
++    }
++
++    public String getCountry() {
++        return country;
++    }
++
++    public void setCountry(String country) {
++        this.country = country;
++    }
++
++    public String getRegion() {
++        return region;
++    }
++
++    public void setRegion(String region) {
++        this.region = region;
++    }
++
++    public String getCountyDistrict() {
++        return countyDistrict;
++    }
++
++    public void setCountyDistrict(String countyDistrict) {
++        this.countyDistrict = countyDistrict;
++    }
++
++    public String getStateProvince() {
++        return stateProvince;
++    }
++
++    public void setStateProvince(String stateProvince) {
++        this.stateProvince = stateProvince;
++    }
++}
+diff --git a/modules/mrs/api/src/main/java/org/motechproject/mrs/model/PatientDto.java b/modules/mrs/api/src/main/java/org/motechproject/mrs/model/PatientDto.java
+new file mode 100644
+index 0000000..85edafa
+--- /dev/null
++++ b/modules/mrs/api/src/main/java/org/motechproject/mrs/model/PatientDto.java
+@@ -0,0 +1,52 @@
++package org.motechproject.mrs.model;
++
++import org.codehaus.jackson.annotate.JsonIgnore;
++import org.motechproject.mrs.domain.Facility;
++import org.motechproject.mrs.domain.Patient;
++import org.motechproject.mrs.domain.Person;
++
++public class PatientDto implements Patient{
++
++    private String patientId;
++    private Facility facility;
++    private Person person;
++    private String motechId;
++
++    public String getPatientId() {
++        return patientId;
++    }
++
++    public void setPatientId(String patientId) {
++        this.patientId = patientId;
++    }
++
++    public Facility getFacility() {
++        return facility;
++    }
++
++    public void setFacility(Facility facility) {
++        this.facility = facility;
++    }
++
++    public Person getPerson() {
++        return person;
++    }
++
++    public void setPerson(Person person) {
++        this.person = person;
++    }
++
++    public String getMotechId() {
++        return motechId;
++    }
++
++    public void setMotechId(String motechId) {
++        this.motechId = motechId;
++    }
++
++
++
++
++
++
++}
+diff --git a/modules/mrs/api/src/main/java/org/motechproject/mrs/model/PersonDto.java b/modules/mrs/api/src/main/java/org/motechproject/mrs/model/PersonDto.java
+new file mode 100644
+index 0000000..2580f37
+--- /dev/null
++++ b/modules/mrs/api/src/main/java/org/motechproject/mrs/model/PersonDto.java
+@@ -0,0 +1,133 @@
++package org.motechproject.mrs.model;
++
++
++import org.joda.time.DateTime;
++import org.motechproject.mrs.domain.Attribute;
++import org.motechproject.mrs.domain.Person;
++import org.codehaus.jackson.annotate.JsonIgnore;
++
++import java.util.ArrayList;
++import java.util.List;
++
++public class PersonDto implements Person{
++    private String personId;
++    private String firstName;
++    private String middleName;
++    private String lastName;
++    private String preferredName;
++    private String address;
++    private DateTime dateOfBirth;
++    private Boolean birthDateEstimated;
++    private Integer age;
++    private String gender;
++    private Boolean dead;
++    private List<Attribute> attributes = new ArrayList<Attribute>();
++    private DateTime deathDate;
++
++
++    public String getPersonId() {
++        return personId;
++    }
++
++    public void setPersonId(String personId) {
++        this.personId = personId;
++    }
++
++    public String getFirstName() {
++        return firstName;
++    }
++
++    public void setFirstName(String firstName) {
++        this.firstName = firstName;
++    }
++
++    public String getMiddleName() {
++        return middleName;
++    }
++
++    public void setMiddleName(String middleName) {
++        this.middleName = middleName;
++    }
++
++    public String getLastName() {
++        return lastName;
++    }
++
++    public void setLastName(String lastName) {
++        this.lastName = lastName;
++    }
++
++    public String getPreferredName() {
++        return preferredName;
++    }
++
++    public void setPreferredName(String preferredName) {
++        this.preferredName = preferredName;
++    }
++
++    public String getAddress() {
++        return address;
++    }
++
++    public void setAddress(String address) {
++        this.address = address;
++    }
++
++    public DateTime getDateOfBirth() {
++        return dateOfBirth;
++    }
++
++    public void setDateOfBirth(DateTime dateOfBirth) {
++        this.dateOfBirth = dateOfBirth;
++    }
++
++    public Boolean getBirthDateEstimated() {
++        return birthDateEstimated;
++    }
++
++    public void setBirthDateEstimated(Boolean birthDateEstimated) {
++        this.birthDateEstimated = birthDateEstimated;
++    }
++
++    public Integer getAge() {
++        return age;
++    }
++
++    public void setAge(Integer age) {
++        this.age = age;
++    }
++
++    public String getGender() {
++        return gender;
++    }
++
++    public void setGender(String gender) {
++        this.gender = gender;
++    }
++
++    public Boolean isDead() {
++        return dead;
++    }
++
++    public void setDead(Boolean dead) {
++        this.dead = dead;
++    }
++
++    public List<Attribute> getAttributes() {
++        return attributes;
++    }
++
++    public void setAttributes(List<Attribute> attributes) {
++        this.attributes = attributes;
++    }
++
++    public DateTime getDeathDate() {
++        return deathDate;
++    }
++
++    public void setDeathDate(DateTime deathDate) {
++        this.deathDate = deathDate;
++    }
++
++
++}
+diff --git a/modules/mrs/api/src/main/java/org/motechproject/mrs/services/PatientAdapter.java b/modules/mrs/api/src/main/java/org/motechproject/mrs/services/PatientAdapter.java
+index 579aca2..6b09ded 100644
+--- a/modules/mrs/api/src/main/java/org/motechproject/mrs/services/PatientAdapter.java
++++ b/modules/mrs/api/src/main/java/org/motechproject/mrs/services/PatientAdapter.java
+@@ -54,6 +54,8 @@ public interface PatientAdapter {
+      */
+     List<Patient> search(String name, String motechId);
+ 
++    List<Patient> getAllPatients();
++
+     /**
+      * Gets the age of a patient by MOTECH id
+      * Deprecated: The caller should instead get Patient and get the age from that
+diff --git a/modules/mrs/api/src/main/java/org/motechproject/mrs/web/PatientsController.java b/modules/mrs/api/src/main/java/org/motechproject/mrs/web/PatientsController.java
+new file mode 100644
+index 0000000..3ff764a
+--- /dev/null
++++ b/modules/mrs/api/src/main/java/org/motechproject/mrs/web/PatientsController.java
+@@ -0,0 +1,76 @@
++package org.motechproject.mrs.web;
++
++import org.apache.commons.lang.StringUtils;
++import org.joda.time.DateTime;
++import org.motechproject.mrs.domain.Patient;
++import org.motechproject.mrs.model.ContainerDto;
++import org.motechproject.mrs.model.FacilityDto;
++import org.motechproject.mrs.model.PatientDto;
++import org.motechproject.mrs.model.PersonDto;
++import org.motechproject.mrs.services.PatientAdapter;
++import org.springframework.stereotype.Controller;
++import org.springframework.web.bind.annotation.RequestBody;
++import org.springframework.web.bind.annotation.RequestMapping;
++import org.springframework.web.bind.annotation.RequestMethod;
++import org.springframework.web.bind.annotation.ResponseBody;
++import org.springframework.web.bind.annotation.ResponseStatus;
++import org.springframework.http.HttpStatus;
++
++import java.util.List;
++
++@Controller
++public class PatientsController {
++
++    //private PatientAdapter patientAdapter;
++    private List<PatientAdapter> patientAdapters;
++
++    public void setPatientAdapters(List<PatientAdapter> patientAdapters) {
++        this.patientAdapters = patientAdapters;
++    }
++
++
++
++   /* @Autowired
++    public PatientsController(PatientAdapter patientAdapter){
++        this.patientAdaptersList = patientAdapter;
++    }
++*/
++
++    @ResponseStatus(HttpStatus.OK)
++    @RequestMapping(value = "/patients/save", method = RequestMethod.POST)
++    public void save(@RequestBody ContainerDto containerDto) {
++        FacilityDto facilityDto = containerDto.getFacilityDto();
++        PersonDto person = containerDto.getPersonDto();
++        PatientDto patient = containerDto.getPatientDto();
++        patient.setPerson(person);
++        patient.setFacility(facilityDto);
++
++        patientAdapters.get(0).savePatient(patient);
++    }
++
++    @ResponseStatus(HttpStatus.OK)
++    @RequestMapping(value = "/patients/update", method = RequestMethod.POST)
++    public void update(@RequestBody ContainerDto containerDto) {
++        PersonDto person = containerDto.getPersonDto();
++        PatientDto patient = containerDto.getPatientDto();
++        patient.setPerson(person);
++
++        patientAdapters.get(0).updatePatient(patient);
++    }
++
++    @RequestMapping(value = "/patients", method = RequestMethod.GET)
++    @ResponseBody public List<Patient> getPatient() {
++        List<Patient> patients = patientAdapters.get(0).getAllPatients();
++
++        return patients;
++    }
++
++    @ResponseStatus(HttpStatus.OK)
++    @RequestMapping(value = "/patients/getPatient", method = RequestMethod.POST)
++    @ResponseBody public Patient getPatient(@RequestBody String motechID) {
++        return patientAdapters.get(0).getPatientByMotechId(motechID);
++    }
++
++
++
++}
+diff --git a/modules/openmrs/api/src/main/java/org/motechproject/openmrs/services/OpenMRSPatientAdapter.java b/modules/openmrs/api/src/main/java/org/motechproject/openmrs/services/OpenMRSPatientAdapter.java
+index 32ece8e..b94f222 100644
+--- a/modules/openmrs/api/src/main/java/org/motechproject/openmrs/services/OpenMRSPatientAdapter.java
++++ b/modules/openmrs/api/src/main/java/org/motechproject/openmrs/services/OpenMRSPatientAdapter.java
+@@ -33,6 +33,7 @@ import java.util.List;
+ import java.util.Set;
+ 
+ import static ch.lambdaj.Lambda.convert;
++import static ch.lambdaj.Lambda.forEach;
+ 
+ /**
+  * Manages Patients in OpenMRS
+@@ -275,4 +276,17 @@ public class OpenMRSPatientAdapter implements PatientAdapter {
+         List<org.openmrs.Patient> patients = patientService.getPatients(null, motechId, idTypes, true);
+         return (CollectionUtils.isNotEmpty(patients)) ? patients.get(0) : null;
+     }
++
++    @Override
++    public List<org.motechproject.mrs.domain.Patient> getAllPatients(){
++
++        List<org.openmrs.Patient> patientsOpenMRS =  patientService.getAllPatients();
++        List<org.motechproject.mrs.domain.Patient> patiensMRS = new ArrayList<org.motechproject.mrs.domain.Patient>();
++
++        for(org.openmrs.Patient patient : patientsOpenMRS){
++            patiensMRS.add(getMrsPatient(patient));
++        }
++
++        return patiensMRS;
++    }
+ }
+diff --git a/modules/openmrs/ws/src/main/java/org/motechproject/openmrs/ws/impl/MRSPatientAdapterImpl.java b/modules/openmrs/ws/src/main/java/org/motechproject/openmrs/ws/impl/MRSPatientAdapterImpl.java
+index ed74e3b..1e4fb4a 100644
+--- a/modules/openmrs/ws/src/main/java/org/motechproject/openmrs/ws/impl/MRSPatientAdapterImpl.java
++++ b/modules/openmrs/ws/src/main/java/org/motechproject/openmrs/ws/impl/MRSPatientAdapterImpl.java
+@@ -270,4 +270,24 @@ public class MRSPatientAdapterImpl implements PatientAdapter {
+ 
+         personAdapter.savePersonCauseOfDeath(patient.getPatientId(), dateOfDeath, conceptName);
+     }
++
++    @Override
++    public List<org.motechproject.mrs.domain.Patient> getAllPatients(){
++        PatientListResult result = null;
++
++        try {
++            result = patientResource.findAllPatients();
++        } catch (HttpException e) {
++            logger.error("Patients list empty");
++            return Collections.emptyList();
++        }
++
++        List<org.motechproject.mrs.domain.Patient> patiensMRS = new ArrayList<org.motechproject.mrs.domain.Patient>();
++
++        for (Patient patient : result.getResults()) {
++                patiensMRS.add(getPatient(patient.getUuid()));
++        }
++
++        return patiensMRS;
++    }
+ }
+diff --git a/modules/openmrs/ws/src/main/java/org/motechproject/openmrs/ws/resource/PatientResource.java b/modules/openmrs/ws/src/main/java/org/motechproject/openmrs/ws/resource/PatientResource.java
+index 288eaac..008d454 100644
+--- a/modules/openmrs/ws/src/main/java/org/motechproject/openmrs/ws/resource/PatientResource.java
++++ b/modules/openmrs/ws/src/main/java/org/motechproject/openmrs/ws/resource/PatientResource.java
+@@ -13,4 +13,6 @@ public interface PatientResource {
+     Patient getPatientById(String patientId) throws HttpException;
+ 
+     String getMotechPatientIdentifierUuid() throws HttpException;
++
++    PatientListResult findAllPatients() throws  HttpException;
+ }
+diff --git a/modules/openmrs/ws/src/main/java/org/motechproject/openmrs/ws/resource/impl/PatientResourceImpl.java b/modules/openmrs/ws/src/main/java/org/motechproject/openmrs/ws/resource/impl/PatientResourceImpl.java
+index f54748c..56a42a3 100644
+--- a/modules/openmrs/ws/src/main/java/org/motechproject/openmrs/ws/resource/impl/PatientResourceImpl.java
++++ b/modules/openmrs/ws/src/main/java/org/motechproject/openmrs/ws/resource/impl/PatientResourceImpl.java
+@@ -85,4 +85,10 @@ public class PatientResourceImpl implements PatientResource {
+         String responseJson = restfulClient.getJson(openmrsInstance.toInstancePath("/patientidentifiertype?v=full"));
+         return (PatientIdentifierListResult) JsonUtils.readJson(responseJson, PatientIdentifierListResult.class);
+     }
++
++    public PatientListResult findAllPatients() throws HttpException {
++        String responseJson = restfulClient.getJson(openmrsInstance.toInstancePath("/patient"));
++
++        return (PatientListResult) JsonUtils.readJson(responseJson, PatientListResult.class);
++    }
+ }
+-- 
+1.7.10.4
+

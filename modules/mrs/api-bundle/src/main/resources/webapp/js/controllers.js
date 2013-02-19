@@ -2,14 +2,31 @@
 
 /* Controllers */
 
-function DashboardCtrl($scope, Patients, $http) {
+function DashboardMrsCtrl($scope, Patients, $http) {
 
-      //$scope.patients = Patents.query();
+    $scope.patientsList = Patients.query();
     $scope.filteredItems = [];
     $scope.groupedItems = [];
     $scope.itemsPerPage = 10;
     $scope.pagedItems = [];
     $scope.currentPage = 0;
+    $scope.patientList = Patients.query();
+    $scope.showPatientsView=true;
+    $scope.selectedPatientView=true;
+
+    $scope.patientDto = {};
+
+
+    $scope.getPatient = function(patient)  {
+        $scope.successfulMessage='';
+        $scope.failureMessage='';
+        $http.post('../mrs/api/patients/getPatient', patient.motechId).success(function(data) {
+            $scope.patientDto = data;
+        });
+        $scope.showPatientsView=!$scope.selectedPatientView;
+        $scope.selectedPatientView=!$scope.selectedPatientView;
+    }
+
 
     var searchMatch = function (item, searchQuery) {
         if (!searchQuery) {
@@ -73,7 +90,110 @@ function DashboardCtrl($scope, Patients, $http) {
 
 }
 
-function ManageMrsCtrl($scope, $routeParams, $http) {
+function ManageMrsCtrl($scope, Patients, $routeParams, $http) {
+    $scope.currentPage = 0;
+    $scope.pageSize = 10;
+    $scope.personDto = {};
+    $scope.facilityDto = {};
+    $scope.containerDto = {};
 
 
+    $scope.patientDto = Patients.query(function() {
+        blockUI();
+        if ($routeParams.mrsId != undefined) {
+            $http.post('../mrs/api/patients/getPatient', $routeParams.mrsId).success(function(data) {
+                $scope.patientDto = data;
+                $scope.personDto = $scope.patientDto.person;
+                $scope.facilityDto = $scope.patientDto.facility ;
+            });
+        } else {
+            $scope.resetValues();
+        }
+        unblockUI();
+    });
+
+    $scope.resetValues = function() {
+        $scope.patientDto = {
+            patientId : "" ,
+            facility : null,
+            person : null
+        };
+        $scope.personDto = {
+            personId : "",
+            //dateOfBirth: null,
+            birthDateEstimated: false,
+            age: 0,
+            gender: "",
+            dead: false
+            //deathDate: null
+            //attributes: []
+        };
+        $scope.facilityDto = {
+            name : "",
+            country : "",
+            region : "",
+            countyDistrict : "",
+            stateProvince : ""
+        };
+    }
+
+
+    $scope.save = function() {
+        blockUI();
+        $scope.containerDto.personDto = $scope.personDto;
+        $scope.containerDto.patientDto = $scope.patientDto;
+        $scope.containerDto.facilityDto = $scope.facilityDto;
+
+        if ($routeParams.mrsId != undefined) {
+            $http.post('../mrs/api/patients/update', $scope.containerDto).
+                success(function () {
+                    var loc, indexOf;
+                    unblockUI();
+
+                    motechAlert('task.success.saved', 'header.saved', function () {
+                        loc = new String(window.location);
+                        indexOf = loc.indexOf('#');
+
+                        window.location = loc.substring(0, indexOf) + "#/dashboard";
+                    });
+                }).error(function () {
+                    delete $scope.containerDto;
+
+                    alertHandler('task.error.saved', 'header.error');
+                    unblockUI();
+                });
+        } else {
+            $http.post('../mrs/api/patients/save', $scope.containerDto).
+                success(function () {
+                    var loc, indexOf;
+                    unblockUI();
+
+                    motechAlert('task.success.saved', 'header.saved', function () {
+                        loc = new String(window.location);
+                        indexOf = loc.indexOf('#');
+
+                        window.location = loc.substring(0, indexOf) + "#/dashboard";
+                    });
+                }).error(function () {
+                    delete $scope.containerDto;
+
+                    alertHandler('task.error.saved', 'header.error');
+                    unblockUI();
+                });
+        }
+    }
+
+    $scope.cssClass = function(prop) {
+        var msg = 'control-group';
+
+        if (!$scope.hasValue(prop)) {
+            msg = msg.concat(' error');
+        }
+
+        return msg;
+    }
+
+    $scope.hasValue = function(prop) {
+        return $scope.patientDto.hasOwnProperty(prop) && $scope.patientDto[prop] != undefined;
+    }
 }

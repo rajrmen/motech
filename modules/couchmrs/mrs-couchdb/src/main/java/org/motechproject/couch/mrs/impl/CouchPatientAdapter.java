@@ -29,7 +29,7 @@ public class CouchPatientAdapter implements PatientAdapter {
     @Autowired
     private AllCouchFacilities allCouchFacilities;
 
-    @Override
+    /*@Override
     public Patient savePatient(Patient patient) {
         Facility facility = patient.getFacility();
 
@@ -39,6 +39,24 @@ public class CouchPatientAdapter implements PatientAdapter {
         }
 
         CouchPatientImpl couchPatient = new CouchPatientImpl(patient.getPatientId(), patient.getMotechId(), patient.getPerson(), facilityId);
+
+        try {
+            allCouchPatients.addPatient(couchPatient);
+        } catch (MRSCouchException e) {
+            return null;
+        }
+
+        return patient;
+    }*/
+
+    //Remove Before commit!
+    public Patient savePatient(Patient patient) {
+        Person person = new CouchPerson();
+        person.setAddress(patient.getPerson().getAddress());
+        person.setFirstName(patient.getPerson().getFirstName());
+        person.setLastName(patient.getPerson().getLastName());
+
+        CouchPatientImpl couchPatient = new CouchPatientImpl(patient.getPatientId(), patient.getMotechId(), person, patient.getFacility().getFacilityId());
 
         try {
             allCouchPatients.addPatient(couchPatient);
@@ -148,5 +166,10 @@ public class CouchPatientAdapter implements PatientAdapter {
         }
 
         return patientsList;
+    }
+
+    @Override
+    public List<Patient> getAllPatients(){
+        return generatePatientList(allCouchPatients.findAllPatients());
     }
 }

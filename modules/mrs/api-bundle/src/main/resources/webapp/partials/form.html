@@ -2,8 +2,8 @@
     <div class="span10 margin-after mrs">
         <div class="box-header">{{msg('mrs.patients')}}</div>
         <div class="box-content inside clearfix">
-            <h4>{{msg('mrs.patient.patient:')}}Mariah Maclachlan</h4>
-            <h6>{{msg('mrs.patient.editPatientDetails')}}<span class="">{{msg('mrs.patient.motechId')}}  {{patient.id}}</span></h6>
+            <!--<h4>{{msg('mrs.patient.patient')}}</h4>
+            <h6>{{msg('mrs.patient.editPatientDetails')}}<span class=""> {{msg('mrs.patient.motechId')}}  {{patient.id}}</span></h6>-->
 
 
             <form name="form" class="form-horizontal inside">
@@ -11,45 +11,46 @@
                 <div class="control-group">
                     <label class="control-label"></label>
                     <div class="form-actions">
-                        <input class="btn btn-primary" type="submit" value="{{msg('save')}}" ng-disabled="form.$invalid">
-                        <button type="button" class="btn">{{msg('cancel')}}</button>
+                        <input class="btn btn-primary" ng-disabled="form.$invalid" type="button" ng-click="save()" value="{{msg('save')}}" >
+                        <a href="#/dashboard/" class="btn"> {{msg('cancel')}}</a>
                     </div>
                 </div>
-                <div class="control-group">
+                <div ng-class="cssClass('motechID')">
                     <label class="control-label">{{msg('mrs.patient.motechId')}}</label>
                     <div class="controls">
-                        <input class="span10" type="text" ng-model="mrs.patient.id">
+                        <input class="span10" type="text" ng-model="patientDto.motechId" required />
+                        <span ng-hide="hasValue('motechId')" class="form-hint">{{msg('settings.error.username')}}</span>
                     </div>
                 </div>
                 <div class="control-group">
                     <label class="control-label">{{msg('mrs.patient.firstName')}}</label>
                     <div class="controls">
-                        <input class="span10" type="text" ng-model="mrs.patient.firstName">
+                        <input class="span10" type="text" ng-model="personDto.firstName" required>
                     </div>
                 </div>
                 <div class="control-group">
                     <label class="control-label">{{msg('mrs.patient.middleName')}}</label>
                     <div class="controls">
-                        <input class="span10" type="text" ng-model="mrs.patient.middleName">
+                        <input class="span10" type="text" ng-model="personDto.middleName" required>
                     </div>
                 </div>
                 <div class="control-group">
                     <label class="control-label">{{msg('mrs.patient.lastName')}}</label>
                     <div class="controls">
-                        <input class="span10" type="text" ng-model="mrs.patient.lastName">
+                        <input class="span10" type="text" ng-model="personDto.lastName" required>
                     </div>
                 </div>
                 <div class="control-group">
                     <label class="control-label span4">{{msg('mrs.patient.preferredName')}}</label>
                     <div class="controls">
-                        <input class="span10" type="text" ng-model="mrs.patient.preferredName">
+                        <input class="span10" type="text" ng-model="personDto.preferredName">
                     </div>
                 </div>
 
                 <div class="control-group">
                     <label class="control-label" for="message">{{msg('mrs.patient.address')}}</label>
                     <div class="controls">
-                        <textarea class="span10" rows="3" ng-model="mrs.patient.address" id="message" placeholder="{{msg('111 1st St Seattle, WA USA')}}"></textarea>
+                        <textarea class="span10" rows="3" ng-model="personDto.address" id="message" placeholder="{{msg('111 1st St Seattle, WA USA')}}"></textarea>
                     </div>
                 </div>
                 <div class="control-group">
@@ -69,7 +70,7 @@
                     <label class="control-label">{{msg('mrs.patient.dateOfBirth')}}</label>
                     <div class="controls">
                         <div class="input-append span11">
-                            <input class="span10" id="appendedInputButton" type="date" ng-model="mrs.patient.birth">
+                            <input class="span10" id="appendedInputButton" type="date" ng-model="personDto.dateOfBirth">
                             <button class="btn" type="button"><i class="icon-th"></i></button>
                         </div>
                     </div>
@@ -78,7 +79,7 @@
                     <label class="control-label">{{msg('mrs.patient.dobEstimated')}}</label>
                     <div class="controls">
                         <label class="checkbox">
-                            <input type="checkbox" value="">
+                            <input ng-model="personDto.birthDateEstimated" type="checkbox" value="">
                         </label>
                     </div>
                 </div>
@@ -86,22 +87,14 @@
                     <label class="control-label">{{msg('mrs.patient.deceased')}}</label>
                     <div class="controls">
                         <label class="checkbox">
-                            <input type="checkbox" value="">
+                            <input ng-model="personDto.dead" type="checkbox" value="">
                         </label>
                     </div>
                 </div>
                 <div class="control-group">
                     <label class="control-label">{{msg('mrs.patient.facilityId')}}</label>
                     <div class="controls">
-                        <input class="span10" type="text" ng-model="mrs.patient.preferredName">
-                    </div>
-                </div>
-
-                <div class="control-group">
-                    <label class="control-label"></label>
-                    <div class="form-actions">
-                        <input class="btn btn-primary" type="submit" value="{{msg('save')}}" ng-disabled="form.$invalid">
-                        <button type="button" class="btn">{{msg('cancel')}}</button>
+                        <input class="span10" type="text" ng-model="facilityDto.facilityId">
                     </div>
                 </div>
             </form>
@@ -109,7 +102,8 @@
     </div>
 </div>
 
-<div class="row-fluid"><!------------------------  Edit Custom Attributes  ------------------------------------->
+<!--
+<div class="row-fluid">&lt;!&ndash;----------------------  Edit Custom Attributes  -----------------------------------&ndash;&gt;
     <div class="span10 margin-after mrs">
         <div class="box-header">{{msg('mrs.patients')}}</div>
         <div class="box-content inside clearfix">
@@ -143,6 +137,7 @@
         </div>
     </div>
 </div>
+-->
 
 
 
