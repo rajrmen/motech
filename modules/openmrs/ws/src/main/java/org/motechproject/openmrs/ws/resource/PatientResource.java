@@ -13,4 +13,6 @@ public interface PatientResource {
     Patient getPatientById(String patientId) throws HttpException;
 
     String getMotechPatientIdentifierUuid() throws HttpException;
+
+    PatientListResult findAllPatients() throws  HttpException;
 }

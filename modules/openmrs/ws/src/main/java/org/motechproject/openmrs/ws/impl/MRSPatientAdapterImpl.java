@@ -270,4 +270,24 @@ public class MRSPatientAdapterImpl implements PatientAdapter {
 
         personAdapter.savePersonCauseOfDeath(patient.getPatientId(), dateOfDeath, conceptName);
     }
+
+    @Override
+    public List<org.motechproject.mrs.domain.Patient> getAllPatients(){
+        PatientListResult result = null;
+
+        try {
+            result = patientResource.findAllPatients();
+        } catch (HttpException e) {
+            logger.error("Patients list empty");
+            return Collections.emptyList();
+        }
+
+        List<org.motechproject.mrs.domain.Patient> patiensMRS = new ArrayList<org.motechproject.mrs.domain.Patient>();
+
+        for (Patient patient : result.getResults()) {
+                patiensMRS.add(getPatient(patient.getUuid()));
+        }
+
+        return patiensMRS;
+    }
 }

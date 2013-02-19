@@ -41,5 +41,19 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>com.springsource.org.apache.commons.collections</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+            <version>3.0.5.RELEASE</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
+            <version>3.0.5.RELEASE</version>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>org.motechproject.org.codehaus.jackson</artifactId>
+        </dependency>
     </dependencies>
 </project>

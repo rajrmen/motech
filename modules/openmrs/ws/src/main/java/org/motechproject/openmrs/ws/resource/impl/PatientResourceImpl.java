@@ -85,4 +85,10 @@ public class PatientResourceImpl implements PatientResource {
         String responseJson = restfulClient.getJson(openmrsInstance.toInstancePath("/patientidentifiertype?v=full"));
         return (PatientIdentifierListResult) JsonUtils.readJson(responseJson, PatientIdentifierListResult.class);
     }
+
+    public PatientListResult findAllPatients() throws HttpException {
+        String responseJson = restfulClient.getJson(openmrsInstance.toInstancePath("/patient"));
+
+        return (PatientListResult) JsonUtils.readJson(responseJson, PatientListResult.class);
+    }
 }
