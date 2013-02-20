@@ -9,7 +9,7 @@ import org.motechproject.server.messagecampaign.web.util.TimeSerializer;
 
 import java.io.Serializable;
 
-public class SubscriptionRequest implements Serializable {
+public class EnrollmentRequest implements Serializable {
 
     private static final long serialVersionUID = 8082316095036755730L;
 
@@ -37,12 +37,12 @@ public class SubscriptionRequest implements Serializable {
         this.referenceDate = referenceDate;
     }
 
-    public SubscriptionRequest(Time startTime, LocalDate referenceDate) {
+    public EnrollmentRequest(Time startTime, LocalDate referenceDate) {
         this.startTime = startTime;
         this.referenceDate = referenceDate;
     }
 
-    public SubscriptionRequest() {
+    public EnrollmentRequest() {
         this(null, null);
     }
 }

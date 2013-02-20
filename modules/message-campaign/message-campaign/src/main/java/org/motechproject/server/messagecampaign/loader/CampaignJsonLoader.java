@@ -70,7 +70,7 @@ public class CampaignJsonLoader {
     public void loadAferInit() {
         List<CampaignRecord> records = loadCampaigns(settings.getRawConfig(messageCampaignsJsonFile));
         for (CampaignRecord record : records) {
-            allMessageCampaigns.addButDontUpdate(record);
+            allMessageCampaigns.saveOrUpdate(record);
         }
     }
 

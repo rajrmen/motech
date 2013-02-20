@@ -50,15 +50,6 @@ public class AllMessageCampaigns extends MotechBaseRepository<CampaignRecord> {
         }
     }
 
-    public void addButDontUpdate(CampaignRecord campaignRecord) {
-        List<CampaignRecord> records = findByName(campaignRecord.getName());
-        CampaignRecord existingRecord = CollectionUtils.isEmpty(records) ? null : records.get(0);
-
-        if (existingRecord == null) {
-            add(campaignRecord);
-        }
-    }
-
     @View(name = "by_name", map = "function(doc) { if(doc.type === 'CampaignRecord') emit(doc.name); }")
     public List<CampaignRecord> findByName(String campaignName) {
         return queryView("by_name", campaignName);

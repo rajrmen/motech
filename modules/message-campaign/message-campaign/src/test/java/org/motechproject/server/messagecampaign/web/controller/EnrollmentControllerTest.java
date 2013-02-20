@@ -41,7 +41,7 @@ import static org.springframework.test.web.server.request.MockMvcRequestBuilders
 import static org.springframework.test.web.server.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.server.result.MockMvcResultMatchers.status;
 
-public class SubscriptionControllerTest {
+public class EnrollmentControllerTest {
 
     private static final String USER_ID = "47sf6a";
     private static final String CAMPAIGN_NAME = "PREGNANCY";
@@ -51,7 +51,7 @@ public class SubscriptionControllerTest {
     private MockMvc controller;
 
     @InjectMocks
-    private SubscriptionController subscriptionController = new SubscriptionController();
+    private EnrollmentController enrollmentController = new EnrollmentController();
 
     @Mock
     private MessageCampaignService messageCampaignService;
@@ -68,13 +68,13 @@ public class SubscriptionControllerTest {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        controller = MockMvcBuilders.standaloneSetup(subscriptionController).build();
+        controller = MockMvcBuilders.standaloneSetup(enrollmentController).build();
     }
 
     @Test
     public void shouldEnrollUser() throws Exception {
         controller.perform(
-            post("/subscriptions/{campaignName}/users/{userId}", CAMPAIGN_NAME, USER_ID)
+            post("/web-api/enrollments/{campaignName}/users/{userId}", CAMPAIGN_NAME, USER_ID)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(loadJson("enrollmentRequest.json").getBytes("UTF-8"))
         ).andExpect(
@@ -101,7 +101,7 @@ public class SubscriptionControllerTest {
         final String expectedResponse = loadJson("enrollmentDetails.json");
 
         controller.perform(
-            get("/subscriptions/{campaignName}/users/{userId}", CAMPAIGN_NAME, USER_ID)
+            get("/web-api/enrollments/{campaignName}/users/{userId}", CAMPAIGN_NAME, USER_ID)
         ).andExpect(
             status().is(HttpStatus.OK.value())
         ).andExpect(
@@ -126,7 +126,7 @@ public class SubscriptionControllerTest {
         final String expectedResponse = "No enrollments found for user " + USER_ID;
 
         controller.perform(
-            get("/subscriptions/{campaignName}/users/{userId}", CAMPAIGN_NAME, USER_ID)
+            get("/web-api/enrollments/{campaignName}/users/{userId}", CAMPAIGN_NAME, USER_ID)
         ).andExpect(
             status().is(HttpStatus.NOT_FOUND.value())
         ).andExpect(
@@ -135,7 +135,7 @@ public class SubscriptionControllerTest {
     }
 
     @Test
-    public void shouldReturnSubscriptionsForCampaigns() throws Exception {
+    public void shouldReturnEnrollmentsForCampaigns() throws Exception {
         CampaignEnrollment enrollment1 = new CampaignEnrollment("47sf6a", CAMPAIGN_NAME);
         enrollment1.setDeliverTime(new Time(20, 1));
         enrollment1.setReferenceDate(new LocalDate(2013, 4, 1));
@@ -152,7 +152,7 @@ public class SubscriptionControllerTest {
         final String expectedResponse = loadJson("enrollmentsForCampaign.json");
 
         controller.perform(
-            get("/subscriptions/{campaignName}/users", CAMPAIGN_NAME)
+            get("/web-api/enrollments/{campaignName}/users", CAMPAIGN_NAME)
         ).andExpect(
             status().is(HttpStatus.OK.value())
         ).andExpect(
@@ -173,10 +173,10 @@ public class SubscriptionControllerTest {
         when(enrollmentService.search(any(CampaignEnrollmentsQuery.class)))
                 .thenReturn(Collections.<CampaignEnrollment>emptyList());
 
-        final String expectedResponse = "{\"campaignName\":\"PREGNANCY\", \"subscriptions\":[]}";
+        final String expectedResponse = "{\"campaignName\":\"PREGNANCY\", \"enrollments\":[]}";
 
         controller.perform(
-            get("/subscriptions/{campaignName}/users", CAMPAIGN_NAME)
+            get("/web-api/enrollments/{campaignName}/users", CAMPAIGN_NAME)
         ).andExpect(
             status().is(HttpStatus.OK.value())
         ).andExpect(
@@ -187,7 +187,7 @@ public class SubscriptionControllerTest {
     }
 
     @Test
-    public void shouldReturnSubscriptionsForUser() throws Exception {
+    public void shouldReturnEnrollmentsForUser() throws Exception {
         CampaignEnrollment enrollment1 = new CampaignEnrollment(USER_ID, CAMPAIGN_NAME);
         enrollment1.setDeliverTime(new Time(20, 1));
         enrollment1.setReferenceDate(new LocalDate(2013, 4, 1));
@@ -201,7 +201,7 @@ public class SubscriptionControllerTest {
         final String expectedResponse = loadJson("enrollmentsForUser.json");
 
         controller.perform(
-            get("/subscriptions/users/{user_id}", USER_ID)
+            get("/web-api/enrollments/users/{user_id}", USER_ID)
         ).andExpect(
             status().is(HttpStatus.OK.value())
         ).andExpect(
@@ -218,14 +218,14 @@ public class SubscriptionControllerTest {
     }
 
     @Test
-    public void shouldReturn404WhenUserHasNoEntrollments() throws Exception {
+    public void shouldReturn404WhenUserHasNoEnrollments() throws Exception {
         when(enrollmentService.search(any(CampaignEnrollmentsQuery.class)))
                 .thenReturn(Collections.<CampaignEnrollment>emptyList());
 
         final String expectedResponse = "No enrollments found for user " + USER_ID;
 
         controller.perform(
-            get("/subscriptions/users/{user_id}", USER_ID)
+            get("/web-api/enrollments/users/{user_id}", USER_ID)
         ).andExpect(
             status().is(HttpStatus.NOT_FOUND.value())
         ).andExpect(
@@ -234,7 +234,7 @@ public class SubscriptionControllerTest {
     }
 
     @Test
-    public void shouldReturnAllSubscriptionsFilteredByStatus() throws Exception {
+    public void shouldReturnAllEnrollmentsFilteredByStatus() throws Exception {
         CampaignEnrollment enrollment1 = new CampaignEnrollment(USER_ID, CAMPAIGN_NAME);
         enrollment1.setDeliverTime(new Time(20, 1));
         enrollment1.setReferenceDate(new LocalDate(2012, 1, 2));
@@ -251,7 +251,7 @@ public class SubscriptionControllerTest {
         final String expectedResponse = loadJson("enrollmentList.json");
 
         controller.perform(
-            get("/subscriptions/users/?enrollmentStatus=COMPLETED")
+            get("/web-api/enrollments/users/?enrollmentStatus=COMPLETED")
         ).andExpect(
             status().is(HttpStatus.OK.value())
         ).andExpect(
@@ -268,12 +268,12 @@ public class SubscriptionControllerTest {
     }
 
     @Test
-    public void shouldFilterSubscriptionsByExternalIdAndCampaignName() throws Exception {
+    public void shouldFilterEnrollmentsByExternalIdAndCampaignName() throws Exception {
         when(enrollmentService.search(any(CampaignEnrollmentsQuery.class)))
                 .thenReturn(Collections.<CampaignEnrollment>emptyList());
 
         controller.perform(
-            get("/subscriptions/users/?campaignName={campaignName}&externalId={externalId}", CAMPAIGN_NAME, USER_ID)
+            get("/web-api/enrollments/users/?campaignName={campaignName}&externalId={externalId}", CAMPAIGN_NAME, USER_ID)
         ).andExpect(
             status().is(HttpStatus.OK.value())
         );
@@ -287,9 +287,9 @@ public class SubscriptionControllerTest {
     }
 
     @Test
-    public void shouldUpdateSubscription() throws Exception {
+    public void shouldUpdateEnrollment() throws Exception {
         controller.perform(
-            put("/subscriptions/{campaignName}/users/{userId}", CAMPAIGN_NAME, USER_ID)
+            put("/web-api/enrollments/{campaignName}/users/{userId}", CAMPAIGN_NAME, USER_ID)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(loadJson("enrollmentUpdate.json").getBytes("UTF-8"))
         ).andExpect(
@@ -317,12 +317,12 @@ public class SubscriptionControllerTest {
     }
 
     @Test
-    public void shouldDeleteSubscription() throws Exception {
+    public void shouldDeleteEnrollment() throws Exception {
         when(enrollmentService.search(any(CampaignEnrollmentsQuery.class)))
                 .thenReturn(asList(new CampaignEnrollment(CAMPAIGN_NAME, USER_ID)));
 
         controller.perform(
-            delete("/subscriptions/{campaignName}/users/{userId}", CAMPAIGN_NAME, USER_ID)
+            delete("/web-api/enrollments/{campaignName}/users/{userId}", CAMPAIGN_NAME, USER_ID)
         ).andExpect(
             status().is(HttpStatus.OK.value())
         );
@@ -342,14 +342,14 @@ public class SubscriptionControllerTest {
     }
 
     @Test
-    public void shouldReturn404WhenDeletingNonExistingSubscription() throws Exception {
+    public void shouldReturn404WhenDeletingNonExistingEnrollment() throws Exception {
         when(enrollmentService.search(any(CampaignEnrollmentsQuery.class)))
                 .thenReturn(Collections.<CampaignEnrollment>emptyList());
 
         final String expectedResponse = "No enrollments found for user " + USER_ID;
 
         controller.perform(
-            delete("/subscriptions/{campaignName}/users/{userId}", CAMPAIGN_NAME, USER_ID)
+            delete("/web-api/enrollments/{campaignName}/users/{userId}", CAMPAIGN_NAME, USER_ID)
         ).andExpect(
             status().is(HttpStatus.NOT_FOUND.value())
         ).andExpect(

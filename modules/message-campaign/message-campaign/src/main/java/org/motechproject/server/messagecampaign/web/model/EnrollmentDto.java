@@ -10,7 +10,7 @@ import org.motechproject.server.messagecampaign.web.util.TimeSerializer;
 
 import java.util.Objects;
 
-public class Subscription {
+public class EnrollmentDto {
 
     @JsonProperty
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
@@ -60,10 +60,10 @@ public class Subscription {
         this.referenceDate = referenceDate;
     }
 
-    public Subscription() {
+    public EnrollmentDto() {
     }
 
-    public Subscription(CampaignEnrollment enrollment) {
+    public EnrollmentDto(CampaignEnrollment enrollment) {
         externalId = enrollment.getExternalId();
         campaignName = enrollment.getCampaignName();
         referenceDate = enrollment.getReferenceDate();
@@ -75,11 +75,11 @@ public class Subscription {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof Subscription)) {
+        if (!(o instanceof EnrollmentDto)) {
             return false;
         }
 
-        Subscription that = (Subscription) o;
+        EnrollmentDto that = (EnrollmentDto) o;
 
         return Objects.equals(externalId, that.externalId) && Objects.equals(campaignName, that.campaignName)
                 && Objects.equals(referenceDate, that.referenceDate) && Objects.equals(startTime, that.startTime);

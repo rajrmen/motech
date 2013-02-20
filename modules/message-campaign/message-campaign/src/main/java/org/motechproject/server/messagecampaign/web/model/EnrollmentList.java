@@ -8,7 +8,7 @@ import org.motechproject.server.messagecampaign.domain.campaign.CampaignEnrollme
 import java.util.ArrayList;
 import java.util.List;
 
-public class SubscriptionList {
+public class EnrollmentList {
 
     @JsonProperty
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
@@ -19,32 +19,32 @@ public class SubscriptionList {
     private String externalId;
 
     @JsonProperty
-    private List<Subscription> subscriptions = new ArrayList<>();
+    private List<EnrollmentDto> enrollments = new ArrayList<>();
 
-    public SubscriptionList() {
+    public EnrollmentList() {
     }
 
-    public SubscriptionList(List<CampaignEnrollment> enrollments) {
+    public EnrollmentList(List<CampaignEnrollment> enrollments) {
         addEnrollments(enrollments);
     }
 
     public final void addEnrollments(List<CampaignEnrollment> enrollments) {
         for (CampaignEnrollment enrollment : enrollments) {
-            subscriptions.add(new Subscription(enrollment));
+            this.enrollments.add(new EnrollmentDto(enrollment));
         }
     }
 
     public void setCommonCampaignName(String campaignName) {
         this.campaignName = campaignName;
-        for (Subscription subscription : subscriptions) {
-            subscription.setCampaignName(null);
+        for (EnrollmentDto enrollmentDto : enrollments) {
+            enrollmentDto.setCampaignName(null);
         }
     }
 
     public void setCommonExternalId(String externalId) {
         this.externalId = externalId;
-        for (Subscription subscription : subscriptions) {
-            subscription.setExternalId(null);
+        for (EnrollmentDto enrollmentDto : enrollments) {
+            enrollmentDto.setExternalId(null);
         }
     }
 
@@ -64,11 +64,11 @@ public class SubscriptionList {
         this.externalId = externalId;
     }
 
-    public List<Subscription> getSubscriptions() {
-        return subscriptions;
+    public List<EnrollmentDto> getEnrollments() {
+        return enrollments;
     }
 
-    public void setSubscriptions(List<Subscription> subscriptions) {
-        this.subscriptions = subscriptions;
+    public void setEnrollments(List<EnrollmentDto> enrollments) {
+        this.enrollments = enrollments;
     }
 }

@@ -7,12 +7,13 @@ import org.motechproject.server.messagecampaign.domain.campaign.CampaignEnrollme
 import org.motechproject.server.messagecampaign.service.CampaignEnrollmentService;
 import org.motechproject.server.messagecampaign.service.CampaignEnrollmentsQuery;
 import org.motechproject.server.messagecampaign.service.MessageCampaignService;
-import org.motechproject.server.messagecampaign.web.ex.SubscriptionsNotFoundException;
-import org.motechproject.server.messagecampaign.web.model.Subscription;
-import org.motechproject.server.messagecampaign.web.model.SubscriptionList;
-import org.motechproject.server.messagecampaign.web.model.SubscriptionRequest;
+import org.motechproject.server.messagecampaign.web.ex.EnrollmentNotFoundException;
+import org.motechproject.server.messagecampaign.web.model.EnrollmentDto;
+import org.motechproject.server.messagecampaign.web.model.EnrollmentList;
+import org.motechproject.server.messagecampaign.web.model.EnrollmentRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,8 +28,10 @@ import java.util.List;
 import java.util.Locale;
 
 @Controller
-@RequestMapping(value = "subscriptions")
-public class SubscriptionController {
+@RequestMapping(value = "web-api/enrollments")
+public class EnrollmentController {
+
+    private static final String HAS_MANAGE_ENROLLMENTS_ROLE = "hasRole('manageEnrollments')";
 
     @Autowired
     private MessageCampaignService messageCampaignService;
@@ -37,16 +40,20 @@ public class SubscriptionController {
     private CampaignEnrollmentService enrollmentService;
 
     @RequestMapping(value = "/{campaignName}/users/{userId}", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize(HAS_MANAGE_ENROLLMENTS_ROLE)
     public void enrollUser(@PathVariable String campaignName, @PathVariable String userId,
-                           @RequestBody SubscriptionRequest subscriptionRequest) {
+                           @RequestBody EnrollmentRequest enrollmentRequest) {
         CampaignRequest campaignRequest = new CampaignRequest(userId, campaignName,
-                subscriptionRequest.getReferenceDate(), null, subscriptionRequest.getStartTime());
+                enrollmentRequest.getReferenceDate(), null, enrollmentRequest.getStartTime());
 
         messageCampaignService.startFor(campaignRequest);
     }
 
     @RequestMapping(value = "/{campaignName}/users/{userId}", method = RequestMethod.GET)
-    public @ResponseBody Subscription getEnrollment(@PathVariable String campaignName, @PathVariable String userId) {
+    @PreAuthorize(HAS_MANAGE_ENROLLMENTS_ROLE)
+    public @ResponseBody
+    EnrollmentDto getEnrollment(@PathVariable String campaignName, @PathVariable String userId) {
         CampaignEnrollmentsQuery query = new CampaignEnrollmentsQuery()
                 .withCampaignName(campaignName).withExternalId(userId);
 
@@ -55,22 +62,26 @@ public class SubscriptionController {
         if (enrollments.isEmpty()) {
             throw subscriptionsNotFoundException(userId);
         } else {
-            return new Subscription(enrollments.get(0));
+            return new EnrollmentDto(enrollments.get(0));
         }
     }
 
     @RequestMapping(value = "/{campaignName}/users/{userId}", method = RequestMethod.PUT)
-    public void updateSubscription(@PathVariable String campaignName, @PathVariable String userId,
-                                   @RequestBody SubscriptionRequest subscriptionRequest) {
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize(HAS_MANAGE_ENROLLMENTS_ROLE)
+    public void updateEnrollment(@PathVariable String campaignName, @PathVariable String userId,
+                                 @RequestBody EnrollmentRequest enrollmentRequest) {
         CampaignRequest campaignRequest = new CampaignRequest(userId, campaignName,
-                subscriptionRequest.getReferenceDate(), null, subscriptionRequest.getStartTime());
+                enrollmentRequest.getReferenceDate(), null, enrollmentRequest.getStartTime());
 
         messageCampaignService.stopAll(campaignRequest);
         messageCampaignService.startFor(campaignRequest);
     }
 
     @RequestMapping(value = "/{campaignName}/users/{externalId}", method = RequestMethod.DELETE)
-    public void removeSubscription(@PathVariable String campaignName, @PathVariable String externalId) {
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize(HAS_MANAGE_ENROLLMENTS_ROLE)
+    public void removeEnrollment(@PathVariable String campaignName, @PathVariable String externalId) {
         CampaignEnrollmentsQuery query = new CampaignEnrollmentsQuery()
                 .withCampaignName(campaignName).withExternalId(externalId);
 
@@ -88,19 +99,21 @@ public class SubscriptionController {
     }
     
     @RequestMapping(value = "/{campaignName}/users", method = RequestMethod.GET)
-    public @ResponseBody SubscriptionList getSubscriptionsForCampaign(@PathVariable String campaignName) {
+    @PreAuthorize(HAS_MANAGE_ENROLLMENTS_ROLE)
+    public @ResponseBody EnrollmentList getEnrollmentsForCampaign(@PathVariable String campaignName) {
         CampaignEnrollmentsQuery query = new CampaignEnrollmentsQuery().withCampaignName(campaignName);
 
         List<CampaignEnrollment> enrollments = enrollmentService.search(query);
 
-        SubscriptionList subscriptionList = new SubscriptionList(enrollments);
-        subscriptionList.setCommonCampaignName(campaignName);
+        EnrollmentList enrollmentList = new EnrollmentList(enrollments);
+        enrollmentList.setCommonCampaignName(campaignName);
 
-        return subscriptionList;
+        return enrollmentList;
     }
 
     @RequestMapping(value = "/users/{userId}", method = RequestMethod.GET)
-    public @ResponseBody SubscriptionList getSubscriptionsForUser(@PathVariable String userId) {
+    @PreAuthorize(HAS_MANAGE_ENROLLMENTS_ROLE)
+    public @ResponseBody EnrollmentList getEnrollmentsForUser(@PathVariable String userId) {
         CampaignEnrollmentsQuery query = new CampaignEnrollmentsQuery().withExternalId(userId);
 
         List<CampaignEnrollment> enrollments = enrollmentService.search(query);
@@ -108,15 +121,16 @@ public class SubscriptionController {
         if (enrollments.isEmpty()) {
             throw subscriptionsNotFoundException(userId);
         } else {
-            SubscriptionList subscriptionList = new SubscriptionList(enrollments);
-            subscriptionList.setCommonExternalId(userId);
+            EnrollmentList enrollmentList = new EnrollmentList(enrollments);
+            enrollmentList.setCommonExternalId(userId);
 
-            return subscriptionList;
+            return enrollmentList;
         }
     }
 
     @RequestMapping(value = "/users", method = RequestMethod.GET)
-    public @ResponseBody SubscriptionList getAllSubscriptions(
+    @PreAuthorize(HAS_MANAGE_ENROLLMENTS_ROLE)
+    public @ResponseBody EnrollmentList getAllEnrollments(
             @RequestParam(required = false) String enrollmentStatus,
             @RequestParam(required = false) String externalId, @RequestParam(required = false) String campaignName) {
         CampaignEnrollmentsQuery query = new CampaignEnrollmentsQuery();
@@ -133,16 +147,16 @@ public class SubscriptionController {
 
         List<CampaignEnrollment> enrollments = enrollmentService.search(query);
 
-        return new SubscriptionList(enrollments);
+        return new EnrollmentList(enrollments);
     }
 
-    @ExceptionHandler({ SubscriptionsNotFoundException.class, CampaignNotFoundException.class})
+    @ExceptionHandler({ EnrollmentNotFoundException.class, CampaignNotFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public @ResponseBody String handleException(Exception e) {
         return e.getMessage();
     }
 
-    private SubscriptionsNotFoundException subscriptionsNotFoundException(String userId) {
-        return new SubscriptionsNotFoundException("No enrollments found for user " + userId);
+    private EnrollmentNotFoundException subscriptionsNotFoundException(String userId) {
+        return new EnrollmentNotFoundException("No enrollments found for user " + userId);
     }
 }

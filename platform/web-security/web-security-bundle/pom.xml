@@ -97,6 +97,10 @@
             <groupId>org.springframework.security</groupId>
             <artifactId>org.springframework.security.openid</artifactId>
         </dependency>
+        <dependency>
+            <groupId>javax.validation</groupId>
+            <artifactId>com.springsource.javax.validation</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

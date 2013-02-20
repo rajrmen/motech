@@ -73,7 +73,7 @@ public class CampaignControllerTest {
         final String expectedResponse = loadJson("campaignDetails.json");
 
         controller.perform(
-            get("/campaigns/{campaignName}", campaignName)
+            get("/web-api/campaigns/{campaignName}", campaignName)
         ).andExpect(
             status().is(HttpStatus.OK.value())
         ).andExpect(
@@ -93,7 +93,7 @@ public class CampaignControllerTest {
         final String expectedResponse = "Campaign not found: " + campaignName;
 
         controller.perform(
-            get("/campaigns/{campaignName}", campaignName)
+            get("/web-api/campaigns/{campaignName}", campaignName)
         ).andExpect(
             status().is(HttpStatus.NOT_FOUND.value())
         ).andExpect(
@@ -108,7 +108,7 @@ public class CampaignControllerTest {
         final CampaignRecord campaignRecord = readSingleCampaign("campaignDetails.json");
 
         controller.perform(
-            post("/campaigns/")
+            post("/web-api/campaigns/")
             .body(loadJson("campaignDetails.json").getBytes())
             .contentType(MediaType.APPLICATION_JSON)
         ).andExpect(
@@ -129,7 +129,7 @@ public class CampaignControllerTest {
         final String expectedResponse = loadJson("campaignList.json");
 
         controller.perform(
-            get("/campaigns/")
+            get("/web-api/campaigns/")
         ).andExpect(
             status().is(HttpStatus.OK.value())
         ).andExpect(
@@ -149,7 +149,7 @@ public class CampaignControllerTest {
         when(allMessageCampaigns.findFirstByName(campaignName)).thenReturn(campaignRecord);
 
         controller.perform(
-            delete("/campaigns/{campaignName}", campaignName)
+            delete("/web-api/campaigns/{campaignName}", campaignName)
         ).andExpect(
             status().is(HttpStatus.OK.value())
         );
@@ -173,7 +173,7 @@ public class CampaignControllerTest {
         final String expectedResponse = "Campaign not found: " + campaignName;
 
         controller.perform(
-            delete("/campaigns/{campaignName}", campaignName)
+            delete("/web-api/campaigns/{campaignName}", campaignName)
         ).andExpect(
             status().is(HttpStatus.NOT_FOUND.value())
         ).andExpect(

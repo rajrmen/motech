@@ -159,22 +159,6 @@ public class AllMessageCampaignsIT {
     }
 
     @Test
-    public void testAddButNotUpdate() {
-        CampaignRecord campaign = createCampaignRecord();
-        CampaignRecord campaign2 = createCampaignRecord();
-
-        allMessageCampaigns.saveOrUpdate(campaign);
-
-        assertEquals(asList(campaign), allMessageCampaigns.getAll());
-
-        campaign2.setMaxDuration("20");
-
-        allMessageCampaigns.addButDontUpdate(campaign2);
-
-        assertEquals(asList(campaign), allMessageCampaigns.getAll());
-    }
-
-    @Test
     public void shouldFindCampaignsByName() {
         CampaignRecord campaign = createCampaignRecord();
         CampaignRecord campaign2 = createCampaignRecord();

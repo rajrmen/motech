@@ -8,6 +8,7 @@ import org.motechproject.server.messagecampaign.userspecified.CampaignRecord;
 import org.motechproject.server.messagecampaign.web.model.CampaignDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,8 +22,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Controller
-@RequestMapping(value = "campaigns")
+@RequestMapping(value = "web-api")
 public class CampaignController {
+
+    private static final String HAS_MANAGE_CAMPAIGNS_ROLE = "hasRole('manageCampaigns')";
 
     @Autowired
     private AllMessageCampaigns allMessageCampaigns;
@@ -30,9 +33,9 @@ public class CampaignController {
     @Autowired
     private MessageCampaignService messageCampaignService;
 
-    @RequestMapping(value = "/{campaignName}", method = RequestMethod.GET)
-    public @ResponseBody
-    CampaignDto getCampaign(@PathVariable String campaignName) {
+    @RequestMapping(value = "/campaigns/{campaignName}", method = RequestMethod.GET)
+    @PreAuthorize(HAS_MANAGE_CAMPAIGNS_ROLE)
+    public @ResponseBody CampaignDto getCampaign(@PathVariable String campaignName) {
         CampaignRecord campaignRecord = allMessageCampaigns.findFirstByName(campaignName);
 
         if (campaignRecord == null) {
@@ -42,13 +45,16 @@ public class CampaignController {
         return new CampaignDto(campaignRecord);
     }
 
-    @RequestMapping(value = "/", method = RequestMethod.POST)
+    @RequestMapping(value = "/campaigns", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize(HAS_MANAGE_CAMPAIGNS_ROLE)
     public void createCampaign(@RequestBody CampaignDto campaign) {
         CampaignRecord campaignRecord = campaign.toCampaignRecord();
         allMessageCampaigns.add(campaignRecord);
     }
 
-    @RequestMapping(value = "/", method = RequestMethod.GET)
+    @RequestMapping(value = "/campaigns", method = RequestMethod.GET)
+    @PreAuthorize(HAS_MANAGE_CAMPAIGNS_ROLE)
     public @ResponseBody List<CampaignDto> getAllCampaigns() {
         List<CampaignRecord> campaignRecords = allMessageCampaigns.getAll();
 
@@ -60,7 +66,9 @@ public class CampaignController {
         return campaignDtos;
     }
 
-    @RequestMapping(value = "/{campaignName}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/campaigns/{campaignName}", method = RequestMethod.DELETE)
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize(HAS_MANAGE_CAMPAIGNS_ROLE)
     public void deleteCampaign(@PathVariable String campaignName) {
         CampaignRecord campaign = allMessageCampaigns.findFirstByName(campaignName);
 
