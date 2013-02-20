@@ -5,25 +5,36 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd">
 
+    <import resource="classpath*:META-INF/motech/*.xml" />
 
     <context:annotation-config/>
 
     <bean class="org.motechproject.event.listener.annotations.EventAnnotationBeanPostProcessor" />
 
+    <bean id="header" class="org.motechproject.osgi.web.Header"></bean>
+
     <bean id="bundleWrapper" class="org.motechproject.osgi.web.BundleContextWrapper"/>
 
-    <bean id="mrsUIServiceTracker" class="org.motechproject.osgi.web.UIServiceTracker">
+    <bean id="MrsUIServiceTracker" class="org.motechproject.osgi.web.UIServiceTracker">
         <constructor-arg name="wrapper" ref="bundleWrapper"/>
-        <constructor-arg name="moduleRegistrationData" ref="mrsRegistrationData"/>
+        <constructor-arg name="moduleRegistrationData" ref="moduleRegistrationData"/>
     </bean>
 
-    <bean id="mrsRegistrationData" class="org.motechproject.osgi.web.ModuleRegistrationData">
+    <bean id="moduleRegistrationData" class="org.motechproject.osgi.web.ModuleRegistrationData">
+        <constructor-arg name="url" value="../mrs/index.html"/>
         <constructor-arg name="moduleName" value="mrs"/>
+        <constructor-arg name="angularModules">
+            <list>
+                <value>motech-mrs</value>
+            </list>
+        </constructor-arg>
         <constructor-arg name="i18n">
             <map>
-                <entry key="messages" value="../mrs/resource/bundles/"/>
+                <entry key="messages" value="../mrs/bundles/"/>
             </map>
         </constructor-arg>
+        <constructor-arg name="header" ref="header"/>
     </bean>
+
 
 </beans>
