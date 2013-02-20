@@ -11,14 +11,7 @@
 
     <bean class="org.motechproject.event.listener.annotations.EventAnnotationBeanPostProcessor" />
 
-    <bean id="header" class="org.motechproject.osgi.web.Header"></bean>
 
-    <bean id="bundleWrapper" class="org.motechproject.osgi.web.BundleContextWrapper"/>
-
-    <bean id="MrsUIServiceTracker" class="org.motechproject.osgi.web.UIServiceTracker">
-        <constructor-arg name="wrapper" ref="bundleWrapper"/>
-        <constructor-arg name="moduleRegistrationData" ref="moduleRegistrationData"/>
-    </bean>
 
     <bean id="moduleRegistrationData" class="org.motechproject.osgi.web.ModuleRegistrationData">
         <constructor-arg name="url" value="../mrs/index.html"/>
@@ -35,6 +28,8 @@
         </constructor-arg>
         <constructor-arg name="header" ref="header"/>
     </bean>
+
+    <bean id="header" class="org.motechproject.osgi.web.Header"></bean>
 
 
 </beans>
