@@ -97,14 +97,15 @@ function ManageMrsCtrl($scope, Patients, $routeParams, $http) {
     $scope.facilityDto = {};
     $scope.containerDto = {};
 
-
     $scope.patientDto = Patients.query(function() {
         blockUI();
         if ($routeParams.mrsId != undefined) {
             $http.post('../mrs/api/patients/getPatient', $routeParams.mrsId).success(function(data) {
                 $scope.patientDto = data;
                 $scope.personDto = $scope.patientDto.person;
-                $scope.facilityDto = $scope.patientDto.facility ;
+                $scope.facilityDto = $scope.patientDto.facility;
+                $scope.patientDto.person = null;
+                $scope.patientDto.facility = null;
             });
         } else {
             $scope.resetValues();
@@ -122,18 +123,14 @@ function ManageMrsCtrl($scope, Patients, $routeParams, $http) {
             personId : "",
             //dateOfBirth: null,
             birthDateEstimated: false,
-            age: 0,
+            //age: 0,
             gender: "",
-            dead: false
-            //deathDate: null
-            //attributes: []
+            dead: false,
+            //deathDate: null,
+            attributes: []
         };
         $scope.facilityDto = {
             name : "",
-            country : "",
-            region : "",
-            countyDistrict : "",
-            stateProvince : ""
         };
     }
 
@@ -150,7 +147,7 @@ function ManageMrsCtrl($scope, Patients, $routeParams, $http) {
                     var loc, indexOf;
                     unblockUI();
 
-                    motechAlert('task.success.saved', 'header.saved', function () {
+                    motechAlert('mrs.success.saved', 'header.saved', function () {
                         loc = new String(window.location);
                         indexOf = loc.indexOf('#');
 
@@ -159,7 +156,7 @@ function ManageMrsCtrl($scope, Patients, $routeParams, $http) {
                 }).error(function () {
                     delete $scope.containerDto;
 
-                    alertHandler('task.error.saved', 'header.error');
+                    alertHandler('mrs.error.saved', 'header.error');
                     unblockUI();
                 });
         } else {
@@ -168,7 +165,7 @@ function ManageMrsCtrl($scope, Patients, $routeParams, $http) {
                     var loc, indexOf;
                     unblockUI();
 
-                    motechAlert('task.success.saved', 'header.saved', function () {
+                    motechAlert('mrs.success.saved', 'header.saved', function () {
                         loc = new String(window.location);
                         indexOf = loc.indexOf('#');
 
@@ -176,9 +173,9 @@ function ManageMrsCtrl($scope, Patients, $routeParams, $http) {
                     });
                 }).error(function () {
                     delete $scope.containerDto;
-
-                    alertHandler('task.error.saved', 'header.error');
                     unblockUI();
+
+                    alertHandler('mrs.error.saved', 'header.error');
                 });
         }
     }
@@ -193,7 +190,18 @@ function ManageMrsCtrl($scope, Patients, $routeParams, $http) {
         return msg;
     }
 
-    $scope.hasValue = function(prop) {
-        return $scope.patientDto.hasOwnProperty(prop) && $scope.patientDto[prop] != undefined;
+    $scope.hasValue = function(prop, option) {
+        switch(option)
+        {
+            case '1':
+                return $scope.patientDto.hasOwnProperty(prop) && $scope.patientDto[prop] != undefined;
+            case '2':
+                return $scope.personDto.hasOwnProperty(prop) && $scope.personDto[prop] != undefined;
+            case '3':
+                return $scope.facilityDto.hasOwnProperty(prop) && $scope.facilityDto[prop] != undefined;
+            default:
+                break;
+        }
     }
+
 }
