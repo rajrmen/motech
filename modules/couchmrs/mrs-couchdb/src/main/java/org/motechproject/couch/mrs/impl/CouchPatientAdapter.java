@@ -29,7 +29,7 @@ public class CouchPatientAdapter implements PatientAdapter {
     @Autowired
     private AllCouchFacilities allCouchFacilities;
 
-    @Override
+    /*@Override
     public Patient savePatient(Patient patient) {
         Facility facility = patient.getFacility();
 
@@ -65,6 +65,78 @@ public class CouchPatientAdapter implements PatientAdapter {
             patientToUpdate.setMotechId(patient.getMotechId());
             patientToUpdate.setPatientId(patient.getPatientId());
             patientToUpdate.setPerson((CouchPerson) patient.getPerson());
+            allCouchPatients.update(patientToUpdate);
+        }
+
+        return patient;
+    } */
+
+    //Remove Before commit!
+    public Patient savePatient(Patient patient) {
+        CouchPerson person = new CouchPerson();
+        person.setAddress(patient.getPerson().getAddress());
+        person.setFirstName(patient.getPerson().getFirstName());
+        person.setLastName(patient.getPerson().getLastName());
+        person.setAge(patient.getPerson().getAge());
+        person.setBirthDateEstimated(patient.getPerson().getBirthDateEstimated());
+        person.setDateOfBirth(patient.getPerson().getDateOfBirth());
+        person.setDead(patient.getPerson().isDead());
+        person.setDeathDate(patient.getPerson().getDeathDate());
+        person.setGender(patient.getPerson().getGender());
+        person.setMiddleName(patient.getPerson().getMiddleName());
+        person.setPersonId(patient.getPerson().getPersonId());
+        person.setPreferredName(patient.getPerson().getPreferredName());
+        person.setAttributes(patient.getPerson().getAttributes());
+
+        Facility facility = patient.getFacility();
+
+        String facilityId = null;
+        if (facility != null) {
+            facilityId = facility.getFacilityId();
+        }
+
+
+        CouchPatientImpl couchPatient = new CouchPatientImpl(patient.getPatientId(), patient.getMotechId(), person, facilityId);
+
+        try {
+            allCouchPatients.addPatient(couchPatient);
+        } catch (MRSCouchException e) {
+            return null;
+        }
+
+        return patient;
+    }
+
+    public Patient updatePatient(Patient patient) {
+        List<CouchPatientImpl> patients = allCouchPatients.findByMotechId(patient.getMotechId());
+
+        if (patients != null && patients.get(0) != null) {
+
+            CouchPatientImpl patientToUpdate = patients.get(0);
+            patientToUpdate.setMotechId(patient.getMotechId());
+            patientToUpdate.setPatientId(patient.getPatientId());
+
+            Facility updatedFacility = patient.getFacility();
+            if (updatedFacility != null) {
+                patientToUpdate.setFacilityId(updatedFacility.getFacilityId());
+            }
+
+            CouchPerson person = new CouchPerson();
+            person.setAddress(patient.getPerson().getAddress());
+            person.setFirstName(patient.getPerson().getFirstName());
+            person.setLastName(patient.getPerson().getLastName());
+            person.setAge(patient.getPerson().getAge());
+            person.setBirthDateEstimated(patient.getPerson().getBirthDateEstimated());
+            person.setDateOfBirth(patient.getPerson().getDateOfBirth());
+            person.setDead(patient.getPerson().isDead());
+            person.setDeathDate(patient.getPerson().getDeathDate());
+            person.setGender(patient.getPerson().getGender());
+            person.setMiddleName(patient.getPerson().getMiddleName());
+            person.setPersonId(patient.getPerson().getPersonId());
+            person.setPreferredName(patient.getPerson().getPreferredName());
+            person.setAttributes(patient.getPerson().getAttributes());
+
+            patientToUpdate.setPerson(person);
             allCouchPatients.update(patientToUpdate);
         }
 
@@ -148,5 +220,10 @@ public class CouchPatientAdapter implements PatientAdapter {
         }
 
         return patientsList;
+    }
+
+    @Override
+    public List<Patient> getAllPatients(){
+        return generatePatientList(allCouchPatients.findAllPatients());
     }
 }
