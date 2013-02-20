@@ -59,7 +59,7 @@
     <div class="span10 margin-after mrs">
         <div class="box-header">{{msg('mrs.patient')}}</div>
         <div class="box-content inside clearfix">
-            <h4>{{msg('mrs.patient.patient')}} {{patient.fullName}}</h4>
+            <h4>{{msg('mrs.patient.patient')}} {{patientDto.person.firstName}} {{patientDto.person.lastName}}</h4>
             <a href="#/mrs/{{patientDto.motechId}}/edit"><h6>{{msg('mrs.patient.editPatientDetails')}}</a>  <span class="pull-right">{{msg('mrs.patient.motechId')}} {{patientDto.motechId}}</span></h6>
 
             <div class="dialog-panel">
@@ -67,47 +67,47 @@
                     <tbody>
                     <tr>
                         <td>{{msg('mrs.patient.firstName')}}</td>
-                        <td>{{patient.person.firstName}}</td>
+                        <td>{{patientDto.person.firstName}}</td>
                         <td></td>
                     </tr>
                     <tr>
                         <td>{{msg('mrs.patient.middleName')}}</td>
-                        <td>{{patient.person.familyName}}</td>
+                        <td>{{patientDto.person.middleName}}</td>
                         <td></td>
                     </tr>
                     <tr>
                         <td>{{msg('mrs.patient.lastName')}}</td>
-                        <td>{{patient.person.lastName}}</td>
+                        <td>{{patientDto.person.lastName}}</td>
                         <td></td>
                     </tr>
                     <tr>
                         <td>{{msg('mrs.patient.preferredName')}}</td>
-                        <td>{{patient.preferredName}}</td>
+                        <td>{{patientDto.person.preferredName}}</td>
                         <td></td>
                     </tr>
                     <tr>
                         <td>{{msg('mrs.patient.address')}}</td>
-                        <td>{{patient.person.address}}</td>
+                        <td>{{patientDto.person.address}}</td>
                         <td></td>
                     </tr>
                     <tr>
                         <td>{{msg('mrs.patient.gender')}}</td>
-                        <td>{{patient.gender}}</td>
+                        <td>{{patientDto.person.gender}}</td>
                         <td></td>
                     </tr>
                     <tr>
                         <td>{{msg('mrs.patient.dateOfBirth')}}</td>
-                        <td>{{patient.birth}}</td>
-                        <td>{{msg('mrs.patient.estimate')}} {{patient.birthEstimate}}</td>
+                        <td>{{patientDto.person.dateOfBirth | date:'dd/MM/yyyy'}}</td>
+                        <td>{{msg('mrs.patient.estimate')}} {{patientDto.person.birthDateEstimated}}</td>
                     </tr>
                     <tr>
                         <td>{{msg('mrs.patient.deceased')}}</td>
-                        <td>{{patient.familyName}}</td>
+                        <td>{{patientDto.person.dead}}</td>
                         <td></td>
                     </tr>
                     <tr>
                         <td>{{msg('mrs.patient.facilityId')}}</td>
-                        <td>{{patient.facilityId}}</td>
+                        <td>{{patientDto.person.facilityId}}</td>
                         <td></td>
                     </tr>
                     </tbody>
