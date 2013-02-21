@@ -96,16 +96,28 @@ function ManageMrsCtrl($scope, Patients, $routeParams, $http) {
     $scope.personDto = {};
     $scope.facilityDto = {};
     $scope.containerDto = {};
+    $scope.attributesDto = [];
 
-    $scope.patientDto = Patients.query(function() {
+    // $(document).ready(function() {
+    //Patients.get
+    $scope.patientDto = Patients.get(function() {
         blockUI();
         if ($routeParams.mrsId != undefined) {
             $http.post('../mrs/api/patients/getPatient', $routeParams.mrsId).success(function(data) {
                 $scope.patientDto = data;
                 $scope.personDto = $scope.patientDto.person;
+
+                $scope.attributesDto = [];
+                if($scope.personDto.attributes){
+                    for (i = 0; i<$scope.personDto.attributes.length; i += 1) {
+                        $scope.attributesDto.push($scope.personDto.attributes[i]);
+                    }
+                }
+
                 $scope.facilityDto = $scope.patientDto.facility;
                 $scope.patientDto.person = null;
                 $scope.patientDto.facility = null;
+                $scope.personDto.attributes = [];
             });
         } else {
             $scope.resetValues();
@@ -121,25 +133,34 @@ function ManageMrsCtrl($scope, Patients, $routeParams, $http) {
         };
         $scope.personDto = {
             personId : "",
-            //dateOfBirth: null,
             birthDateEstimated: false,
-            //age: 0,
-            gender: "",
+            gender: 'male',
             dead: false,
-            //deathDate: null,
-            attributes: []
+            attributes : []
         };
         $scope.facilityDto = {
             name : "",
         };
+        $scope.attributesDto = [];
     }
 
 
     $scope.save = function() {
         blockUI();
+
+        //$scope.personDto.dateOfBirth = moment(parseInt($scope.personDto.dateOfBirth)).format('DD/MM/YYYY');
+
         $scope.containerDto.personDto = $scope.personDto;
         $scope.containerDto.patientDto = $scope.patientDto;
         $scope.containerDto.facilityDto = $scope.facilityDto;
+
+
+        $scope.containerDto.attributesDto = [];
+        if ($scope.attributesDto.length!=0) {
+            for (i = 0; i < $scope.attributesDto.length; i += 1) {
+                $scope.containerDto.attributesDto.push($scope.attributesDto[i]);
+            }
+        }
 
         if ($routeParams.mrsId != undefined) {
             $http.post('../mrs/api/patients/update', $scope.containerDto).
@@ -147,7 +168,7 @@ function ManageMrsCtrl($scope, Patients, $routeParams, $http) {
                     var loc, indexOf;
                     unblockUI();
 
-                    motechAlert('mrs.success.saved', 'header.saved', function () {
+                    motechAlert('data.provider.mrs.success.saved', 'header.saved', function () {
                         loc = new String(window.location);
                         indexOf = loc.indexOf('#');
 
@@ -156,7 +177,7 @@ function ManageMrsCtrl($scope, Patients, $routeParams, $http) {
                 }).error(function () {
                     delete $scope.containerDto;
 
-                    alertHandler('mrs.error.saved', 'header.error');
+                    alertHandler('data.provider.mrs.error.saved', 'header.error');
                     unblockUI();
                 });
         } else {
@@ -165,7 +186,7 @@ function ManageMrsCtrl($scope, Patients, $routeParams, $http) {
                     var loc, indexOf;
                     unblockUI();
 
-                    motechAlert('mrs.success.saved', 'header.saved', function () {
+                    motechAlert('data.provider.mrs.success.saved', 'header.saved', function () {
                         loc = new String(window.location);
                         indexOf = loc.indexOf('#');
 
@@ -175,10 +196,14 @@ function ManageMrsCtrl($scope, Patients, $routeParams, $http) {
                     delete $scope.containerDto;
                     unblockUI();
 
-                    alertHandler('mrs.error.saved', 'header.error');
+                    alertHandler('data.provider.mrs.error.saved', 'header.error');
                 });
         }
     }
+
+    $scope.addAttribute = function() {
+            $scope.attributesDto.push({})
+        }
 
     $scope.cssClass = function(prop) {
         var msg = 'control-group';

@@ -18,12 +18,13 @@ widgetModule.directive('datepicker', function() {
         restrict: 'A',
         require: 'ngModel',
         link: function(scope, element, attrs, ngModel) {
-            ngModel.$parsers.push(fromFormattedDate);
             ngModel.$formatters.push(toFormattedDate);
+            ngModel.$parsers.push(fromFormattedDate);
             element.datepicker({
                 dateFormat: 'dd/mm/yy',
                 onSelect: function(formattedDate) {
                     ngModel.$setViewValue(element.val());
+                    scope.$apply();
                 }
             });
         }

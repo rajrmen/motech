@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.joda.time.DateTime;
+import org.motechproject.couch.mrs.model.CouchAttribute;
 import org.motechproject.couch.mrs.model.CouchFacility;
 import org.motechproject.couch.mrs.model.CouchPatient;
 import org.motechproject.couch.mrs.model.CouchPatientImpl;
@@ -12,6 +13,7 @@ import org.motechproject.couch.mrs.model.CouchPerson;
 import org.motechproject.couch.mrs.model.MRSCouchException;
 import org.motechproject.couch.mrs.repository.AllCouchFacilities;
 import org.motechproject.couch.mrs.repository.AllCouchPatients;
+import org.motechproject.mrs.domain.Attribute;
 import org.motechproject.mrs.domain.Facility;
 import org.motechproject.mrs.domain.Patient;
 import org.motechproject.mrs.domain.Person;
@@ -73,6 +75,18 @@ public class CouchPatientAdapter implements PatientAdapter {
 
     //Remove Before commit!
     public Patient savePatient(Patient patient) {
+        List<Attribute> attributeList = new ArrayList<>();
+
+        if (patient.getPerson() != null) {
+            for (Attribute attribute : patient.getPerson().getAttributes()){
+                CouchAttribute couchAttribute = new CouchAttribute();
+                couchAttribute.setName(attribute.getName());
+                couchAttribute.setValue(attribute.getValue());
+
+                attributeList.add(couchAttribute);
+            }
+        }
+
         CouchPerson person = new CouchPerson();
         person.setAddress(patient.getPerson().getAddress());
         person.setFirstName(patient.getPerson().getFirstName());
@@ -86,7 +100,7 @@ public class CouchPatientAdapter implements PatientAdapter {
         person.setMiddleName(patient.getPerson().getMiddleName());
         person.setPersonId(patient.getPerson().getPersonId());
         person.setPreferredName(patient.getPerson().getPreferredName());
-        person.setAttributes(patient.getPerson().getAttributes());
+        person.setAttributes(attributeList);
 
         Facility facility = patient.getFacility();
 
@@ -111,6 +125,17 @@ public class CouchPatientAdapter implements PatientAdapter {
         List<CouchPatientImpl> patients = allCouchPatients.findByMotechId(patient.getMotechId());
 
         if (patients != null && patients.get(0) != null) {
+            List<Attribute> attributeList = new ArrayList<>();
+
+            if (patient.getPerson() != null) {
+                for (Attribute attribute : patient.getPerson().getAttributes()){
+                    CouchAttribute couchAttribute = new CouchAttribute();
+                    couchAttribute.setName(attribute.getName());
+                    couchAttribute.setValue(attribute.getValue());
+
+                    attributeList.add(couchAttribute);
+                }
+            }
 
             CouchPatientImpl patientToUpdate = patients.get(0);
             patientToUpdate.setMotechId(patient.getMotechId());
@@ -134,7 +159,7 @@ public class CouchPatientAdapter implements PatientAdapter {
             person.setMiddleName(patient.getPerson().getMiddleName());
             person.setPersonId(patient.getPerson().getPersonId());
             person.setPreferredName(patient.getPerson().getPreferredName());
-            person.setAttributes(patient.getPerson().getAttributes());
+            person.setAttributes(attributeList);
 
             patientToUpdate.setPerson(person);
             allCouchPatients.update(patientToUpdate);

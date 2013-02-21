@@ -1,15 +1,14 @@
 <div ng-show="showPatientsView" class="row-fluid"><!------------------------  All Patients  ------------------------------------->
     <div class="span10 margin-after mrs">
-        <div class="box-header">{{msg('mrs.patients')}}</div>
+        <div class="box-header">{{msg('data.provider.mrs.patients')}}</div>
         <div class="box-content inside clearfix">
             <div class="control-group">
-                <a href="#/mrs/new" role="button" class="btn btn-primary"><i class="icon-plus icon-white"></i> {{msg('mrs.patient.add')}}</a>
-                <!--<a ng-click="addPatient()" role="button" class="btn btn-primary"><i class="icon-plus icon-white"></i> {{msg('mrs.patient.add')}}</a>-->
+                <a href="#/mrs/new" role="button" class="btn btn-primary"><i class="icon-plus icon-white"></i> {{msg('data.provider.mrs.add.patient')}}</a>
             </div>
-            <h4>{{msg('mrs.patient.allPatient')}}</h4>
+            <h4>{{msg('data.provider.mrs.all.patients')}}</h4>
             <div class="control-group form-inline">
-                <label >{{msg('mrs.searchPatient')}}</label>
-                <input type="text" ng-model="query" ng-change="search()" class="input-medium search-query" placeholder="{{msg('mrs.searchByIdOrName')}}">
+                <label >{{msg('data.provider.mrs.search.patient')}}</label>
+                <input type="text" ng-model="query" ng-change="search()" class="input-medium search-query" placeholder="{{msg('data.provider.mrs.searchByIdOrName')}}">
             </div>
             <div class="margin-before">
                 <table class="table table-condensed table-bordered table-striped table-lightblue table-mrs">
@@ -17,19 +16,19 @@
                     <tr>
                         <th ng-click="setOrder('patientId')">
                             <img src=../admin/img/trans.gif alt="{{msg('mrs.sortingId')}}" title="{{msg('mrs.sortingId')}}"
-                                 ng-class="getSortClass('patientId')" class="sorting-no" />{{msg('mrs.patient.ID')}} </th>
+                                 ng-class="getSortClass('patientId')" class="sorting-no" />{{msg('data.provider.mrs.patient.lookupField.id')}} </th>
                         <th ng-click="setOrder('patientGivenName')">
                             <img src=../admin/img/trans.gif alt="{{msg('mrs.sortingGivenName')}}" title="{{msg('mrs.sortingGivenName')}}"
-                                 ng-class="getSortClass('patientGivenName')" class="sorting-no" />{{msg('mrs.patient.firstName')}} </th>
+                                 ng-class="getSortClass('patientGivenName')" class="sorting-no" />{{msg('data.provider.mrs.person.field.firstName')}} </th>
                         <th ng-click="setOrder('patientFamilyName')">
                             <img src=../admin/img/trans.gif alt="{{msg('mrs.sortingFamilyName')}}" title="{{msg('mrs.sortingFamilyName')}}"
-                                 ng-class="getSortClass('patientFamilyName')" class="sorting-no" />{{msg('mrs.patient.lastName')}} </th>
+                                 ng-class="getSortClass('patientFamilyName')" class="sorting-no" />{{msg('data.provider.mrs.person.field.lastName')}} </th>
                         <th ng-click="setOrder('patientId')">
                             <img src=../admin/img/trans.gif alt="{{msg('mrs.sortingAge')}}" title="{{msg('mrs.sortingAge')}}"
-                                 ng-class="getSortClass('patientAge')" class="sorting-no" />{{msg('mrs.patient.age')}} </th>
+                                 ng-class="getSortClass('patientAge')" class="sorting-no" />{{msg('data.provider.mrs.person.field.age')}} </th>
                         <th ng-click="setOrder('patientGender')">
                             <img src=../admin/img/trans.gif alt="{{msg('mrs.sortingId')}}" title="{{msg('mrs.sortingGender')}}"
-                                 ng-class="getSortClass('patientGender')" class="sorting-no" />{{msg('mrs.patient.gender')}} </th>
+                                 ng-class="getSortClass('patientGender')" class="sorting-no" />{{msg('data.provider.mrs.person.field.gender')}} </th>
                     </tr>
                     </thead>
                     <tbody>
@@ -57,56 +56,56 @@
 
 <div ng-hide="selectedPatientView" class="row-fluid"><!------------------------  Patient  ------------------------------------->
     <div class="span10 margin-after mrs">
-        <div class="box-header">{{msg('mrs.patient')}}</div>
+        <div class="box-header">{{msg('data.provider.mrs.patients')}}</div>
         <div class="box-content inside clearfix">
-            <h4>{{msg('mrs.patient.patient')}} {{patientDto.person.firstName}} {{patientDto.person.lastName}}</h4>
-            <a href="#/mrs/{{patientDto.motechId}}/edit"><h6>{{msg('mrs.patient.editPatientDetails')}}</a>  <span class="pull-right">{{msg('mrs.patient.motechId')}} {{patientDto.motechId}}</span></h6>
+            <h4>{{msg('data.provider.mrs.patient.name')}} {{patientDto.person.firstName}} {{patientDto.person.lastName}}</h4>
+            <a href="#/mrs/{{patientDto.motechId}}/edit"><h6>{{msg('data.provider.mrs.edit.patientDetails')}}</a>  <span class="pull-right">{{msg('data.provider.mrs.patient.motechId')}} {{patientDto.motechId}}</span></h6>
 
             <div class="dialog-panel">
                 <table class="table table-condensed table-bordered table-striped table-lightblue table-mrs">
                     <tbody>
                     <tr>
-                        <td>{{msg('mrs.patient.firstName')}}</td>
+                        <td>{{msg('data.provider.mrs.person.field.firstName')}}</td>
                         <td>{{patientDto.person.firstName}}</td>
                         <td></td>
                     </tr>
                     <tr>
-                        <td>{{msg('mrs.patient.middleName')}}</td>
+                        <td>{{msg('data.provider.mrs.person.field.middleName')}}</td>
                         <td>{{patientDto.person.middleName}}</td>
                         <td></td>
                     </tr>
                     <tr>
-                        <td>{{msg('mrs.patient.lastName')}}</td>
+                        <td>{{msg('data.provider.mrs.person.field.lastName')}}</td>
                         <td>{{patientDto.person.lastName}}</td>
                         <td></td>
                     </tr>
                     <tr>
-                        <td>{{msg('mrs.patient.preferredName')}}</td>
+                        <td>{{msg('data.provider.mrs.person.field.preferredName')}}</td>
                         <td>{{patientDto.person.preferredName}}</td>
                         <td></td>
                     </tr>
                     <tr>
-                        <td>{{msg('mrs.patient.address')}}</td>
+                        <td>{{msg('data.provider.mrs.person.field.address')}}</td>
                         <td>{{patientDto.person.address}}</td>
                         <td></td>
                     </tr>
                     <tr>
-                        <td>{{msg('mrs.patient.gender')}}</td>
+                        <td>{{msg('data.provider.mrs.person.field.gender')}}</td>
                         <td>{{patientDto.person.gender}}</td>
                         <td></td>
                     </tr>
                     <tr>
-                        <td>{{msg('mrs.patient.dateOfBirth')}}</td>
+                        <td>{{msg('data.provider.mrs.person.field.dateOfBirth')}}</td>
                         <td>{{patientDto.person.dateOfBirth | date:'dd/MM/yyyy'}}</td>
-                        <td>{{msg('mrs.patient.estimate')}} {{patientDto.person.birthDateEstimated}}</td>
+                        <td>{{msg('data.provider.mrs.person.field.birthDateEstimated')}} {{patientDto.person.birthDateEstimated}}</td>
                     </tr>
                     <tr>
-                        <td>{{msg('mrs.patient.deceased')}}</td>
+                        <td>{{msg('data.provider.mrs.person.field.dead')}}</td>
                         <td>{{patientDto.person.dead}}</td>
                         <td></td>
                     </tr>
                     <tr>
-                        <td>{{msg('mrs.patient.facilityId')}}</td>
+                        <td>{{msg('data.provider.mrs.facility.field.facilityId')}}</td>
                         <td>{{patientDto.person.facilityId}}</td>
                         <td></td>
                     </tr>
@@ -114,17 +113,12 @@
                 </table>
             </div>
             <div class="dialog-panel css-output">
+                <a href="#/mrs/{{patientDto.motechId}}/editAttributes"><h6>{{msg('data.provider.mrs.edit.attributes')}}</a></h6>
                 <table class="table table-condensed table-bordered table-striped table-lightblue table-mrs">
                     <tbody>
-                    <tr>
-                        <td>{{msg('mrs.patient.edd')}}</td>
-                        <td>{{patient.edd}}</td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td>{{msg('mrs.patient.hivStatus')}}</td>
-                        <td>{{patient.hivStatus}}</td>
-                        <td></td>
+                    <tr ng-repeat="attribute in patientDto.person.attributes">
+                        <td>{{attribute.name}}</td>
+                        <td>{{attribute.value}}</td>
                     </tr>
                 </table>
             </div>

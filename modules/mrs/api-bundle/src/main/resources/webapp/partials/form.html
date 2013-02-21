@@ -1,10 +1,9 @@
 <div class="row-fluid"><!------------------------  Edit Patient Details  ------------------------------------->
     <div class="span10 margin-after mrs">
-        <div class="box-header">{{msg('mrs.patients')}}</div>
+        <div class="box-header">{{msg('data.provider.mrs.patients')}}</div>
         <div class="box-content inside clearfix">
-            <!--<h4>{{msg('mrs.patient.patient')}}</h4>
-            <h6>{{msg('mrs.patient.editPatientDetails')}}<span class=""> {{msg('mrs.patient.motechId')}}  {{patient.id}}</span></h6>-->
-
+            <h4>{{msg('data.provider.mrs.patient.name')}} {{personDto.firstName}} {{personDto.lastName}}</h4>
+            <h6><span class="pull-right">{{msg('data.provider.mrs.patient.motechId')}} {{patientDto.motechId}}</span></h6>
 
             <form name="form" class="form-horizontal inside">
 
@@ -16,72 +15,72 @@
                     </div>
                 </div>
                 <div ng-class="cssClass('motechID')">
-                    <label class="control-label">{{msg('mrs.patient.motechId')}}</label>
+                    <label class="control-label">{{msg('data.provider.mrs.patient.motechId')}}</label>
                     <div class="controls">
                         <input class="span10" type="text" ng-model="patientDto.motechId" required />
-                        <span ng-hide="hasValue('motechId','1')" class="form-hint">{{msg('mrs.error.motechId')}}</span>
+                        <span ng-hide="hasValue('motechId','1')" class="form-hint">{{msg('data.provider.mrs.error.motechId')}}</span>
                     </div>
                 </div>
                 <div ng-class="cssClass('firstName')">
-                    <label class="control-label">{{msg('mrs.patient.firstName')}}</label>
+                    <label class="control-label">{{msg('data.provider.mrs.person.field.firstName')}}</label>
                     <div class="controls">
                         <input class="span10" type="text" ng-model="personDto.firstName" required />
-                        <span ng-hide="hasValue('firstName','2')" class="form-hint">{{msg('mrs.error.firstName')}}</span>
+                        <span ng-hide="hasValue('firstName','2')" class="form-hint">{{msg('data.provider.mrs.error.firstName')}}</span>
                     </div>
                 </div>
                 <div ng-class="cssClass('middleName')">
-                    <label class="control-label">{{msg('mrs.patient.middleName')}}</label>
+                    <label class="control-label">{{msg('data.provider.mrs.person.field.middleName')}}</label>
                     <div class="controls">
                         <input class="span10" type="text" ng-model="personDto.middleName" required />
-                        <span ng-hide="hasValue('middleName','2')" class="form-hint">{{msg('mrs.error.middleName')}}</span>
+                        <span ng-hide="hasValue('middleName','2')" class="form-hint">{{msg('data.provider.mrs.error.middleName')}}</span>
                     </div>
                 </div>
                 <div ng-class="cssClass('lastName')">
-                    <label class="control-label">{{msg('mrs.patient.lastName')}}</label>
+                    <label class="control-label">{{msg('data.provider.mrs.person.field.lastName')}}</label>
                     <div class="controls">
                         <input class="span10" type="text" ng-model="personDto.lastName" required />
-                        <span ng-hide="hasValue('lastName','2')" class="form-hint">{{msg('mrs.error.lastName')}}</span>
+                        <span ng-hide="hasValue('lastName','2')" class="form-hint">{{msg('data.provider.mrs.error.lastName')}}</span>
                     </div>
                 </div>
                 <div ng-class="cssClass('preferredName')">
-                    <label class="control-label span4">{{msg('mrs.patient.preferredName')}}</label>
+                    <label class="control-label span4">{{msg('data.provider.mrs.person.field.preferredName')}}</label>
                     <div class="controls">
                         <input class="span10" type="text" ng-model="personDto.preferredName" required />
-                        <span ng-hide="hasValue('preferredName','2')" class="form-hint">{{msg('mrs.error.preferredName')}}</span>
+                        <span ng-hide="hasValue('preferredName','2')" class="form-hint">{{msg('data.provider.mrs.error.preferredName')}}</span>
                     </div>
                 </div>
                 <div ng-class="cssClass('address')">
-                    <label class="control-label" for="message">{{msg('mrs.patient.address')}}</label>
+                    <label class="control-label" for="message">{{msg('data.provider.mrs.person.field.address')}}</label>
                     <div class="controls">
                         <textarea class="span10" rows="3" ng-model="personDto.address" id="message" placeholder="{{msg('111 1st St Seattle, WA USA')}}" required></textarea>
-                        <span ng-hide="hasValue('address','2')" class="form-hint">{{msg('mrs.error.address')}}</span>
+                        <span ng-hide="hasValue('address','2')" class="form-hint">{{msg('data.provider.mrs.error.address')}}</span>
                     </div>
                 </div>
                 <div class="control-group">
-                    <label class="control-label">{{msg('mrs.patient.gender')}}</label>
-                    <div class="controls">
+                    <label class="control-label">{{msg('data.provider.mrs.person.field.gender')}}</label>
+                    <div class="controls" data-role="content">
                         <label class="radio inline">
-                            <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked>
-                            {{msg('mrs.patient.male')}}
+                            <input type="radio" ng-model='personDto.gender' id="optionsRadios1" value="male" >
+                            {{msg('data.provider.mrs.person.field.gender.male')}}
                         </label>
                         <label class="radio inline">
-                            <input type="radio" name="optionsRadios" id="optionsRadios2" value="option1" checked>
-                            {{msg('mrs.patient.female')}}
+                            <input type="radio" ng-model='personDto.gender' id="optionsRadios2" value="female" >
+                            {{msg('data.provider.mrs.person.field.gender.female')}}
                         </label>
                     </div>
                 </div>
-                <div class="control-group">
-                    <label class="control-label">{{msg('mrs.patient.dateOfBirth')}}</label>
+                <div ng-class="cssClass('dateOfBirth')">
+                    <label class="control-label">{{msg('data.provider.mrs.person.field.dateOfBirth')}}</label>
                     <div class="controls">
                         <div class="input-append span11">
                             <input type='text' ng-model='personDto.dateOfBirth' datepicker required />
-                            <span ng-hide="hasValue('dateOfBirth','2')" class="form-hint">{{msg('mrs.error.dateOfBirth')}}</span>
+                            <span ng-hide="hasValue('dateOfBirth','2')" class="form-hint">{{msg('data.provider.mrs.error.dateOfBirth')}}</span>
                             <!-- <button class="btn" type="button"><i class="icon-th"></i></button>-->
                         </div>
                     </div>
                 </div>
                 <div class="control-group">
-                    <label class="control-label">{{msg('mrs.patient.dobEstimated')}}</label>
+                    <label class="control-label">{{msg('data.provider.mrs.person.field.birthDateEstimated')}}</label>
                     <div class="controls">
                         <label class="checkbox">
                             <input ng-model="personDto.birthDateEstimated" type="checkbox" value="">
@@ -89,7 +88,7 @@
                     </div>
                 </div>
                 <div class="control-group">
-                    <label class="control-label">{{msg('mrs.patient.deceased')}}</label>
+                    <label class="control-label">{{msg('data.provider.mrs.person.field.dead')}}</label>
                     <div class="controls">
                         <label class="checkbox">
                             <input ng-model="personDto.dead" type="checkbox" value="">
@@ -97,53 +96,13 @@
                     </div>
                 </div>
                 <div ng-class="cssClass('facilityId')">
-                    <label class="control-label">{{msg('mrs.patient.facilityId')}}</label>
+                    <label class="control-label">{{msg('data.provider.mrs.facility.field.facilityId')}}</label>
                     <div class="controls">
                         <input class="span10" type="text" ng-model="facilityDto.facilityId" />
-                        <!--<span ng-hide="hasValue('facilityId','3')" class="form-hint">{{msg('mrs.error.facilityId')}}</span>-->
+                        <!--<span ng-hide="hasValue('facilityId','3')" class="form-hint">{{msg('data.provider.mrs.error.facilityId')}}</span>-->
                     </div>
                 </div>
             </form>
         </div>
     </div>
 </div>
-
-<!--
-<div class="row-fluid">&lt;!&ndash;----------------------  Edit Custom Attributes  -----------------------------------&ndash;&gt;
-    <div class="span10 margin-after mrs">
-        <div class="box-header">{{msg('mrs.patients')}}</div>
-        <div class="box-content inside clearfix">
-
-            <h4>{{msg('mrs.patient.allPatient:')}}Mariah Maclachlan</h4>
-            <h6>{{msg('mrs.patient.editCustomAttributes')}}<span class="">{{msg('mrs.patient.motechId')}} 9C8</span></h6>
-
-
-            <form name="form" class="form-inline inside">
-
-                <div class="control-group">
-                    <label class="control-label"></label>
-                    <div class="form-actions">
-                        <input class="btn btn-primary" type="submit" value="{{msg('save')}}" >
-                        <button type="button" class="btn">{{msg('cancel')}}</button>
-                    </div>
-                </div>
-                <div class="control-group centered">
-                    <label class="control-label">{{msg('mrs.patient.attribute')}}</label>
-                    <input class="span3" type="text" ng-model="mrs.patient.id">
-                    <label class="">{{msg('mrs.patient.pvalue')}}</label>
-                    <input class="span3" type="text" ng-model="mrs.patient.pvalue">
-                </div>
-                <div class="control-group centered">
-                    <button ng-show="patient.attribute.length==0" type="button" class="btn btn-success"><i class="icon-plus icon-white"></i>{{msg('mrs.patient.addAttribute')}}</button>
-                    <button ng-hide="patient.attribute.length==0" type="button" class="btn btn-success"><i class="icon-plus icon-white"></i>{{msg('mrs.patient.addAnotherAttribute')}}</button>
-                </div>
-
-            </form>
-
-        </div>
-    </div>
-</div>
--->
-
-
-
