@@ -2,7 +2,9 @@ package org.motechproject.mrs.web;
 
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
+import org.motechproject.mrs.domain.Attribute;
 import org.motechproject.mrs.domain.Patient;
+import org.motechproject.mrs.model.AttributeDto;
 import org.motechproject.mrs.model.ContainerDto;
 import org.motechproject.mrs.model.FacilityDto;
 import org.motechproject.mrs.model.PatientDto;
@@ -16,31 +18,26 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.http.HttpStatus;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
 public class PatientsController {
 
-    //private PatientAdapter patientAdapter;
     private List<PatientAdapter> patientAdapters;
 
     public void setPatientAdapters(List<PatientAdapter> patientAdapters) {
         this.patientAdapters = patientAdapters;
     }
 
-
-
-   /* @Autowired
-    public PatientsController(PatientAdapter patientAdapter){
-        this.patientAdaptersList = patientAdapter;
-    }
-*/
-
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/patients/save", method = RequestMethod.POST)
     public void save(@RequestBody ContainerDto containerDto) {
         FacilityDto facilityDto = containerDto.getFacilityDto();
+
         PersonDto person = containerDto.getPersonDto();
+        person.setAttributes(attributesListHelper(containerDto.getAttributesDto()));
+
         PatientDto patient = containerDto.getPatientDto();
         patient.setPerson(person);
         patient.setFacility(facilityDto);
@@ -52,7 +49,10 @@ public class PatientsController {
     @RequestMapping(value = "/patients/update", method = RequestMethod.POST)
     public void update(@RequestBody ContainerDto containerDto) {
         FacilityDto facilityDto = containerDto.getFacilityDto();
+
         PersonDto person = containerDto.getPersonDto();
+        person.setAttributes(attributesListHelper(containerDto.getAttributesDto()));
+
         PatientDto patient = containerDto.getPatientDto();
         patient.setPerson(person);
         patient.setFacility(facilityDto);
@@ -80,6 +80,18 @@ public class PatientsController {
         FacilityDto facilityDto = new FacilityDto();
         facilityDto.setFacilityId(facilityId);
 
+        List<Attribute> attributeList = new ArrayList<>();
+
+        if (patient.getPerson() != null) {
+           for (Attribute attribute : patient.getPerson().getAttributes()){
+               AttributeDto attributeDto = new AttributeDto();
+               attributeDto.setName(attribute.getName());
+               attributeDto.setValue(attribute.getValue());
+
+               attributeList.add(attributeDto);
+           }
+        }
+
         PersonDto personDto = null;
         if (patient.getPerson() != null) {
             personDto = new PersonDto();
@@ -94,7 +106,7 @@ public class PatientsController {
             personDto.setAge(patient.getPerson().getAge());
             personDto.setGender(patient.getPerson().getGender());
             personDto.setDead(patient.getPerson().isDead());
-            personDto.setAttributes(patient.getPerson().getAttributes());
+            personDto.setAttributes(attributeList);
             personDto.setDeathDate(patient.getPerson().getDeathDate());
         }
 
@@ -105,6 +117,20 @@ public class PatientsController {
         patientDto.setPatientId(patient.getPatientId());
 
         return patientDto;
+    }
+
+    private List<Attribute> attributesListHelper (List<AttributeDto> attributesDto) {
+        List<Attribute> attributesList = new ArrayList<>();
+
+        for (Attribute attribute : attributesDto){
+            AttributeDto attributeDto = new AttributeDto();
+            attributeDto.setName(attribute.getName());
+            attributeDto.setValue(attribute.getValue());
+
+            attributesList.add(attributeDto);
+        }
+
+        return attributesList;
     }
 
 
