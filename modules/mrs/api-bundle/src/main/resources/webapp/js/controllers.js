@@ -2,14 +2,11 @@
 
 /* Controllers */
 
-function DashboardMrsCtrl($scope, Patients, $http) {
+function DashboardMrsCtrl($scope, Patients, $filter, $http) {
 
-    $scope.patientsList = Patients.query();
     $scope.filteredItems = [];
-    $scope.groupedItems = [];
-    $scope.itemsPerPage = 10;
-    $scope.pagedItems = [];
-    $scope.currentPage = 0;
+    $scope.itemsPerPage = 3;
+    $scope.resetItemsPagination();
     $scope.patientList = Patients.query();
     $scope.showPatientsView=true;
     $scope.selectedPatientView=true;
@@ -28,66 +25,26 @@ function DashboardMrsCtrl($scope, Patients, $http) {
     }
 
 
-    var searchMatch = function (item, searchQuery) {
+    var searchMatch = function (patient, searchQuery) {
         if (!searchQuery) {
             return true;
         }
-        return item.toLowerCase().indexOf(searchQuery.toLowerCase()) !== -1;
+        return patient.motechId.toLowerCase().indexOf(searchQuery.toLowerCase()) !== -1;
     };
 
     $scope.search = function () {
-
-        $scope.filteredItems = $filter('filter')($scope.allPatients, function (item) {
-            for(var attr in item) {
-                if (searchMatch(item[attr], $scope.query))
+        $scope.filteredItems = $filter('filter')($scope.patientList, function (item) {
+            if(item) {
+                if (searchMatch(item, $scope.query))
                     return true;
             }
             return false;
         });
-        $scope.currentPage = 0;
-        $scope.groupToPages();
+        $scope.setCurrentPage(0);
+        $scope.groupToPages($scope.filteredItems, $scope.itemsPerPage);
     };
 
-    $scope.groupToPages = function () {
-        $scope.pagedItems = [];
-
-        for (var i = 0; i < $scope.filteredItems.length; i++) {
-            if (i % $scope.itemsPerPage === 0) {
-                $scope.pagedItems[Math.floor(i / $scope.itemsPerPage)] = [ $scope.filteredItems[i] ];
-            } else {
-                $scope.pagedItems[Math.floor(i / $scope.itemsPerPage)].push($scope.filteredItems[i]);
-            }
-        }
-    };
-
-    $scope.range = function (start, end) {
-        var ret = [];
-        if (!end) {
-            end = start;
-            start = 0;
-        }
-        for (var i = start; i < end; i++) {
-            ret.push(i);
-        }
-        return ret;
-    };
-
-    $scope.prevPage = function () {
-        if ($scope.currentPage > 0) {
-            $scope.currentPage--;
-        }
-    };
-
-    $scope.nextPage = function () {
-        if ($scope.currentPage < $scope.pagedItems.length - 1) {
-            $scope.currentPage++;
-        }
-    };
-
-    $scope.setPage = function () {
-        $scope.currentPage = this.number;
-    };
-
+    $scope.search();
 }
 
 function ManageMrsCtrl($scope, Patients, $routeParams, $http) {

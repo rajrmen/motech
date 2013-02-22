@@ -1,4 +1,4 @@
-.mrs .form-horizontal .control-label  {
+.mrs .form-horizontal .control-label {
     width: 200px;
 }
 
@@ -12,12 +12,40 @@
     background-color: #E3EDF8;
 }
 
-.css-output {
-    padding-top: 5px;
+.mrs .table-patient {
+    border-radius: 0 0 6px 6px;
+    border: none;
+    font-size: 14px;
+    margin: 0;
 }
 
-.dialog-panel {
-    border: 1px solid #999999;
-    margin-top: 20px;
+.table-patient tbody tr > td:first-child {
+    text-align: right;
+    width: 220px;
+    font-weight: bold;
+}
+
+.mrs .table-patient tbody tr > td:nth-child(2) {
+    width: 220px;
+}
+
+.mrs .table-mrs tbody > tr:first-child {
+    border: none;
+}
+
+.details-panel {
+    border: 1px solid #dddddd;
+    border-radius: 6px;
     position: relative;
-    }
+    padding: 0;
+}
+
+.label-legend {
+    margin: -10px 0 0 30px;
+    background: #F2FAFD;
+    color: #538FE3;
+    padding: 0 3px;
+    position: absolute;
+    font-size: 12px;
+    border-radius: 4px;
+}

@@ -1,9 +1,11 @@
 <div class="row-fluid"><!------------------------  Edit Patient Details  ------------------------------------->
     <div class="span10 margin-after mrs">
-        <div class="box-header">{{msg('data.provider.mrs.patients')}}</div>
+        <div class="box-header">{{msg('data.provider.mrs.patient')}}</div>
         <div class="box-content inside clearfix">
             <h4>{{msg('data.provider.mrs.patient.name')}} {{personDto.firstName}} {{personDto.lastName}}</h4>
-            <h6><span class="pull-right">{{msg('data.provider.mrs.patient.motechId')}} {{patientDto.motechId}}</span></h6>
+            <div class="control-group clearfix">
+                <span class="pull-right"><h5>{{msg('data.provider.mrs.patient.motechId')}} {{patientDto.motechId}}</h5></span>
+            </div>
 
             <form name="form" class="form-horizontal inside">
 
@@ -100,6 +102,13 @@
                     <div class="controls">
                         <input class="span10" type="text" ng-model="facilityDto.facilityId" />
                         <!--<span ng-hide="hasValue('facilityId','3')" class="form-hint">{{msg('data.provider.mrs.error.facilityId')}}</span>-->
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label"></label>
+                    <div class="form-actions">
+                        <input class="btn btn-primary" ng-disabled="form.$invalid" type="button" ng-click="save()" value="{{msg('save')}}" >
+                        <a href="#/dashboard/" class="btn"> {{msg('cancel')}}</a>
                     </div>
                 </div>
             </form>
