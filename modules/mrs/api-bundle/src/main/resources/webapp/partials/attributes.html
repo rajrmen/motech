@@ -1,20 +1,20 @@
 <div class="row-fluid"><!------------------------  Edit Custom Attributes  ------------------------------------->
     <div class="span10 margin-after mrs">
-        <div class="box-header">{{msg('data.provider.mrs.patients')}}</div>
+        <div class="box-header">{{msg('data.provider.mrs.patient')}}</div>
         <div class="box-content inside clearfix">
             <h4>{{msg('data.provider.mrs.patient.name')}} {{personDto.firstName}} {{personDto.lastName}}</h4>
-            <h6><span class="pull-right">{{msg('data.provider.mrs.patient.motechId')}} {{patientDto.motechId}}</span></h6>
+            <div class="control-group inside">
+                <span class="pull-right"><h5>{{msg('data.provider.mrs.patient.motechId')}} {{patientDto.motechId}}</h5></span>
+            </div>
 
-            <ng-form name="form" class="form-inline inside">
-                <div class="form-inline">
-                <div class="control-group">
+            <ng-form name="form" class="form-inline">
+                <div class="control-group inside">
                     <label class="control-label"></label>
                     <div class="form-actions">
                         <input class="btn btn-primary" ng-disabled="form.$invalid" type="button" ng-click="save()" value="{{msg('save')}}" >
                         <input class="btn" type="button" ng-click="cancel()" value="{{msg('cancel')}}" >
                     </div>
                 </div>
-
                 <div ng-repeat="attribute in attributesDto">
                 <div class="control-group centered">
                     <span>
@@ -32,7 +32,6 @@
                 <div class="control-group centered">
                     <button ui-if="attributesDto.length==0" type="button" class="btn btn-success" ng-click="addAttribute()"><i class="icon-plus icon-white"></i>{{msg('data.provider.mrs.patient.addAttribute')}}</button>
                     <button ui-if="attributesDto.length!=0" type="button" class="btn btn-success" ng-click="addAttribute()"><i class="icon-plus icon-white"></i>{{msg('data.provider.mrs.patient.addAnotherAttribute')}}</button>
-                </div>
                 </div>
             </ng-form>
 
