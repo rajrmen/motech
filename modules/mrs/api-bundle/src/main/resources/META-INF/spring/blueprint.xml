@@ -15,7 +15,7 @@
 
     <bean id="moduleRegistrationData" class="org.motechproject.osgi.web.ModuleRegistrationData">
         <constructor-arg name="url" value="../mrs/index.html"/>
-        <constructor-arg name="moduleName" value="mrs"/>
+        <constructor-arg name="moduleName" value="data.provider.mrs.name"/>
         <constructor-arg name="angularModules">
             <list>
                 <value>motech-mrs</value>
