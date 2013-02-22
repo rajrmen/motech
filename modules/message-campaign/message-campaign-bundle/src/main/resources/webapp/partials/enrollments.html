@@ -1,0 +1,25 @@
+<div ng-controller="EnrollmentsCtrl">
+    <!--<div>Enrollments for {{campaignName}}</div>
+    <table class="table table-bundles table-bordered table-striped table-lightblue">
+        <thead>
+        <tr>
+            <th>Select/Deselect</th>
+            <th>{{msg('msgCampaign.enrollment.name')}}</th>
+            <th>Edit</th>
+            <th>Delete</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="enrollment in enrollmentDS.subscriptions">
+            <td class="span1"><input type="checkbox"/></td>
+            <td>{{enrollment.externalId}}</td>
+            <td><a href="javascript:void(0);" class="edit" ng-click="edit(this)">Edit</a></td>
+            <td><a href="javascript:void(0);" class="edit" ng-click="delete()">Delete</a></td>
+        </tr>
+        </tbody>
+    </table>-->
+
+    <table id="enrollmentsTable"></table>
+    <a href="javascript:void(0)" id="addEnrollment">Add row</a>
+    <a href="javascript:void(0)" id="deleteEnrollments">Delete row</a>
+</div>
