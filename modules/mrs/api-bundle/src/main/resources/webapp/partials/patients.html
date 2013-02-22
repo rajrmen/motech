@@ -43,83 +43,88 @@
                     </tbody>
                 </table>
             </div>
-            <!--<div class="pagination pagination-centered pagination-condensed lightblue" ng-show="numberOfPages() &gt; 1">
-                <ul>
-                    <li ng-class="{true:'disabled', false:''}[currentPage==0]"><a ng-click="changeCurrentPage(0)">{{msg('first')}}</a></li>
-                    <li ng-repeat="number in [] | repeat:numberOfPages()" ng-class="{true:'active', false:''}[number==currentPage]"><a ng-click="changeCurrentPage(number)">{{number+1}}</a></li>
-                    <li ng-class="{true:'disabled', false:''}[currentPage==(numberOfPages()-1)]"><a ng-click="changeCurrentPage(numberOfPages()-1)">{{msg('last')}}</a></li>
-                </ul>
-            </div>-->
+
         </div>
     </div>
 </div>
 
 <div ng-hide="selectedPatientView" class="row-fluid"><!------------------------  Patient  ------------------------------------->
     <div class="span10 margin-after mrs">
-        <div class="box-header">{{msg('data.provider.mrs.patients')}}</div>
+        <div class="box-header">{{msg('data.provider.mrs.patient')}}</div>
         <div class="box-content inside clearfix">
             <h4>{{msg('data.provider.mrs.patient.name')}} {{patientDto.person.firstName}} {{patientDto.person.lastName}}</h4>
-            <a href="#/mrs/{{patientDto.motechId}}/edit"><h6>{{msg('data.provider.mrs.edit.patientDetails')}}</a>  <span class="pull-right">{{msg('data.provider.mrs.patient.motechId')}} {{patientDto.motechId}}</span></h6>
 
-            <div class="dialog-panel">
-                <table class="table table-condensed table-bordered table-striped table-lightblue table-mrs">
+            <div class="control-group clearfix">
+                <span class="pull-right"><h5>{{msg('data.provider.mrs.patient.motechId')}} {{patientDto.motechId}}</h5></span>
+            </div>
+
+            <div class="details-panel">
+                <div class="label-legend">{{msg('data.provider.mrs.patientDetails')}}</div>
+                <div class="control-group inside pull-right">
+                    <a class="btn btn-primary" href="#/mrs/{{patientDto.motechId}}/edit">{{msg('data.provider.mrs.edit.patientDetails')}}</a>
+                </div>
+                <table class="table table-lightblue table-patient">
                     <tbody>
-                    <tr>
-                        <td>{{msg('data.provider.mrs.person.field.firstName')}}</td>
-                        <td>{{patientDto.person.firstName}}</td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td>{{msg('data.provider.mrs.person.field.middleName')}}</td>
-                        <td>{{patientDto.person.middleName}}</td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td>{{msg('data.provider.mrs.person.field.lastName')}}</td>
-                        <td>{{patientDto.person.lastName}}</td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td>{{msg('data.provider.mrs.person.field.preferredName')}}</td>
-                        <td>{{patientDto.person.preferredName}}</td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td>{{msg('data.provider.mrs.person.field.address')}}</td>
-                        <td>{{patientDto.person.address}}</td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td>{{msg('data.provider.mrs.person.field.gender')}}</td>
-                        <td>{{patientDto.person.gender}}</td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td>{{msg('data.provider.mrs.person.field.dateOfBirth')}}</td>
-                        <td>{{patientDto.person.dateOfBirth | date:'dd/MM/yyyy'}}</td>
-                        <td>{{msg('data.provider.mrs.person.field.birthDateEstimated')}} {{patientDto.person.birthDateEstimated}}</td>
-                    </tr>
-                    <tr>
-                        <td>{{msg('data.provider.mrs.person.field.dead')}}</td>
-                        <td>{{patientDto.person.dead}}</td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td>{{msg('data.provider.mrs.facility.field.facilityId')}}</td>
-                        <td>{{patientDto.person.facilityId}}</td>
-                        <td></td>
-                    </tr>
+                        <tr>
+                            <td>{{msg('data.provider.mrs.person.field.firstName')}}</td>
+                            <td>{{patientDto.person.firstName}}</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>{{msg('data.provider.mrs.person.field.middleName')}}</td>
+                            <td>{{patientDto.person.middleName}}</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>{{msg('data.provider.mrs.person.field.lastName')}}</td>
+                            <td>{{patientDto.person.lastName}}</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>{{msg('data.provider.mrs.person.field.preferredName')}}</td>
+                            <td>{{patientDto.person.preferredName}}</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>{{msg('data.provider.mrs.person.field.address')}}</td>
+                            <td>{{patientDto.person.address}}</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>{{msg('data.provider.mrs.person.field.gender')}}</td>
+                            <td>{{patientDto.person.gender}}</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>{{msg('data.provider.mrs.person.field.dateOfBirth')}}</td>
+                            <td>{{patientDto.person.dateOfBirth | date:'dd/MM/yyyy'}}</td>
+                            <td><strong>{{msg('data.provider.mrs.person.field.birthDateEstimated')}}</strong> {{patientDto.person.birthDateEstimated}}</td>
+                        </tr>
+                        <tr>
+                            <td>{{msg('data.provider.mrs.person.field.dead')}}</td>
+                            <td>{{patientDto.person.dead}}</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>{{msg('data.provider.mrs.facility.field.facilityId')}}</td>
+                            <td>{{patientDto.person.facilityId}}</td>
+                            <td></td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
-            <div class="dialog-panel css-output">
-                <a href="#/mrs/{{patientDto.motechId}}/editAttributes"><h6>{{msg('data.provider.mrs.edit.attributes')}}</a></h6>
-                <table class="table table-condensed table-bordered table-striped table-lightblue table-mrs">
+            <div class="details-panel margin-before3">
+                <div class="label-legend">{{msg('data.provider.mrs.customAttributes')}}</div>
+                <div class="control-group inside pull-right">
+                    <a class="btn btn-primary" href="#/mrs/{{patientDto.motechId}}/editAttributes">{{msg('data.provider.mrs.edit.customAttributes')}}</a>
+                </div>
+                <table class="table table-lightblue table-patient">
                     <tbody>
-                    <tr ng-repeat="attribute in patientDto.person.attributes">
-                        <td>{{attribute.name}}</td>
-                        <td>{{attribute.value}}</td>
-                    </tr>
+                        <tr ng-repeat="attribute in patientDto.person.attributes">
+                            <td>{{attribute.name}}</td>
+                            <td>{{attribute.value}}</td>
+                        </tr>
+                    </tbody>
                 </table>
             </div>
         </div>
