@@ -12,16 +12,22 @@
                 <div class="control-group">
                     <label class="control-label"></label>
                     <div class="form-actions">
-                        <input class="btn btn-primary" ng-disabled="form.$invalid" type="button" ng-click="save()" value="{{msg('save')}}" >
+                        <input class="btn btn-primary" ng-disabled="!validateForm()" type="button" ng-click="save()" value="{{msg('save')}}" >
                         <input class="btn" type="button" ng-click="cancel()" value="{{msg('cancel')}}" >
                     </div>
                 </div>
                 <div ng-class="cssClass('motechId','1')">
                     <label class="control-label">{{msg('data.provider.mrs.patient.motechId')}}</label>
                     <div class="controls">
-                        <input class="span10" type="text" ng-model="patientDto.motechId" required />
+                        <input class="span10" type="text" ng-model="patientDto.motechId" ng-change="change(patientDto.motechId)" required />
+                        <span ng-hide="motechIdValidate" class="form-hint">{{msg('data.provider.mrs.error.patient.exist')}}</span>
                         <span ng-hide="hasValue('motechId','1')" class="form-hint">{{msg('data.provider.mrs.error.motechId')}}</span>
                     </div>
+                    <!--<div class="controls">
+                        <input class="span10" type="text" ng-model="patientDto.motechId" required />
+                        <span ng-hide="hasValue(patientDto.motechId,'4')" class="form-hint">{{msg('data.provider.mrs.error.patient.exist')}}</span>
+                        <span ng-hide="hasValue('motechId','1')" class="form-hint">{{msg('data.provider.mrs.error.motechId')}}</span>
+                    </div>-->
                 </div>
                 <div ng-class="cssClass('firstName','2')">
                     <label class="control-label">{{msg('data.provider.mrs.person.field.firstName')}}</label>
@@ -107,7 +113,7 @@
                 <div class="control-group">
                     <label class="control-label"></label>
                     <div class="form-actions">
-                        <input class="btn btn-primary" ng-disabled="form.$invalid" type="button" ng-click="save()" value="{{msg('save')}}" >
+                        <input class="btn btn-primary" ng-disabled="!validateForm()" type="button" ng-click="save()" value="{{msg('save')}}" >
                         <a href="#/dashboard/" class="btn"> {{msg('cancel')}}</a>
                     </div>
                 </div>
