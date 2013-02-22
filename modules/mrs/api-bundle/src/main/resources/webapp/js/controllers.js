@@ -2,9 +2,7 @@
 
 /* Controllers */
 
-function DashboardMrsCtrl($scope, Patients, $http) {
-
-    $scope.patientsList = Patients.query();
+function DashboardMrsCtrl($scope, Patients, $http, $routeParams) {
     $scope.filteredItems = [];
     $scope.groupedItems = [];
     $scope.itemsPerPage = 10;
@@ -13,20 +11,23 @@ function DashboardMrsCtrl($scope, Patients, $http) {
     $scope.patientList = Patients.query();
     $scope.showPatientsView=true;
     $scope.selectedPatientView=true;
-
     $scope.patientDto = {};
 
-
-    $scope.getPatient = function(patient)  {
+    $scope.getPatient = function (motechId) {
         $scope.successfulMessage='';
         $scope.failureMessage='';
-        $http.post('../mrs/api/patients/getPatient', patient.motechId).success(function(data) {
+        $http.post('../mrs/api/patients/getPatient', motechId).success(function(data) {
             $scope.patientDto = data;
         });
         $scope.showPatientsView=!$scope.selectedPatientView;
         $scope.selectedPatientView=!$scope.selectedPatientView;
     }
 
+    if ($routeParams.mrsId != undefined) {
+        $scope.getPatient($routeParams.mrsId);
+    } else {
+        $scope.patientsList = Patients.query();
+    }
 
     var searchMatch = function (item, searchQuery) {
         if (!searchQuery) {
@@ -161,7 +162,7 @@ function ManageMrsCtrl($scope, Patients, Patient, $routeParams, $http) {
                         loc = new String(window.location);
                         indexOf = loc.indexOf('#');
 
-                        window.location = loc.substring(0, indexOf) + "#/dashboard";
+                        window.location = loc.substring(0, indexOf) + "#/dashboard/" + $routeParams.mrsId;
                     });
                 }).error(function () {
                     delete $scope.containerDto;
@@ -191,13 +192,17 @@ function ManageMrsCtrl($scope, Patients, Patient, $routeParams, $http) {
     }
 
     $scope.addAttribute = function() {
-            $scope.attributesDto.push({})
-        }
+        $scope.attributesDto.push({})
+    }
 
-    $scope.cssClass = function(prop) {
+    $scope.removeAttribute = function(attribute) {
+           $scope.attributesDto.removeObject(attribute);
+    }
+
+    $scope.cssClass = function(prop, option) {
         var msg = 'control-group';
 
-        if (!$scope.hasValue(prop)) {
+        if (!$scope.hasValue(prop, option)) {
             msg = msg.concat(' error');
         }
 
@@ -216,6 +221,16 @@ function ManageMrsCtrl($scope, Patients, Patient, $routeParams, $http) {
             default:
                 break;
         }
+    }
+
+    $scope.cancel = function() {
+        if ($routeParams.mrsId != undefined) {
+            var url = "#/dashboard/" + $routeParams.mrsId;
+            window.location.href = url;
+        } else {
+            window.location.href = '#/dashboard/';
+        }
+
     }
 
 }

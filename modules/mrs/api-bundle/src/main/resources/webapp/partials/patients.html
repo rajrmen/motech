@@ -32,7 +32,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr ng-click="getPatient(patient)" ng-repeat="patient in patientList">
+                    <tr ng-click="getPatient(patient.motechId)" ng-repeat="patient in patientList">
                         <!--motechId na Id zmienic!-->
                         <td>{{patient.motechId}}</td>
                         <td>{{patient.person.firstName}}</td>

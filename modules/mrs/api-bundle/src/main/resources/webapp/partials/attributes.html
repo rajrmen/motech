@@ -5,14 +5,13 @@
             <h4>{{msg('data.provider.mrs.patient.name')}} {{personDto.firstName}} {{personDto.lastName}}</h4>
             <h6><span class="pull-right">{{msg('data.provider.mrs.patient.motechId')}} {{patientDto.motechId}}</span></h6>
 
-
             <ng-form name="form" class="form-inline inside">
                 <div class="form-inline">
                 <div class="control-group">
                     <label class="control-label"></label>
                     <div class="form-actions">
                         <input class="btn btn-primary" ng-disabled="form.$invalid" type="button" ng-click="save()" value="{{msg('save')}}" >
-                        <a href="#/dashboard/" class="btn"> {{msg('cancel')}}</a>
+                        <input class="btn" type="button" ng-click="cancel()" value="{{msg('cancel')}}" >
                     </div>
                 </div>
 
@@ -20,18 +19,19 @@
                 <div class="control-group centered">
                     <span>
                         <label class="control-label">{{msg('data.provider.mrs.attribute')}}</label>
-                        <input class="span3" type="text" ng-model="attribute.name">
+                        <input class="span3" type="text" ng-model="attribute.name" required>
                     </span>
                     <span>
                         <label class="">{{msg('data.provider.mrs.value')}}</label>
-                        <input class="span3" type="text" ng-model="attribute.value">
+                        <input class="span3" type="text" ng-model="attribute.value" required>
                     </span>
+                    <a ng-click="removeAttribute(attribute)" class="btn btn-small btn-danger"><i class="icon-remove icon-white"></i></a>
                 </div>
                 </div>
 
                 <div class="control-group centered">
                     <button ui-if="attributesDto.length==0" type="button" class="btn btn-success" ng-click="addAttribute()"><i class="icon-plus icon-white"></i>{{msg('data.provider.mrs.patient.addAttribute')}}</button>
-                    <button type="button" class="btn btn-success" ng-click="addAttribute()"><i class="icon-plus icon-white"></i>{{msg('data.provider.mrs.patient.addAnotherAttribute')}}</button>
+                    <button ui-if="attributesDto.length!=0" type="button" class="btn btn-success" ng-click="addAttribute()"><i class="icon-plus icon-white"></i>{{msg('data.provider.mrs.patient.addAnotherAttribute')}}</button>
                 </div>
                 </div>
             </ng-form>
