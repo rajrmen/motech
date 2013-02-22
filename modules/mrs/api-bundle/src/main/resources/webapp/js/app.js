@@ -6,6 +6,7 @@ angular.module('motech-mrs', ['motech-dashboard', 'patientsServices', 'patientSe
     function ($routeProvider) {
         $routeProvider.
             when('/dashboard', {templateUrl: '../mrs/partials/patients.html', controller: DashboardMrsCtrl}).
+            when('/dashboard/:mrsId', {templateUrl: '../mrs/partials/patients.html', controller: DashboardMrsCtrl}).
             when('/mrs/new', {templateUrl: '../mrs/partials/form.html', controller: ManageMrsCtrl}).
             when('/mrs/:mrsId/edit', {templateUrl: '../mrs/partials/form.html', controller: ManageMrsCtrl}).
             when('/mrs/:mrsId/editAttributes', {templateUrl: '../mrs/partials/attributes.html', controller: ManageMrsCtrl}).

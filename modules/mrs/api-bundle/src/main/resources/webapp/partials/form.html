@@ -13,45 +13,45 @@
                     <label class="control-label"></label>
                     <div class="form-actions">
                         <input class="btn btn-primary" ng-disabled="form.$invalid" type="button" ng-click="save()" value="{{msg('save')}}" >
-                        <a href="#/dashboard/" class="btn"> {{msg('cancel')}}</a>
+                        <input class="btn" type="button" ng-click="cancel()" value="{{msg('cancel')}}" >
                     </div>
                 </div>
-                <div ng-class="cssClass('motechID')">
+                <div ng-class="cssClass('motechId','1')">
                     <label class="control-label">{{msg('data.provider.mrs.patient.motechId')}}</label>
                     <div class="controls">
                         <input class="span10" type="text" ng-model="patientDto.motechId" required />
                         <span ng-hide="hasValue('motechId','1')" class="form-hint">{{msg('data.provider.mrs.error.motechId')}}</span>
                     </div>
                 </div>
-                <div ng-class="cssClass('firstName')">
+                <div ng-class="cssClass('firstName','2')">
                     <label class="control-label">{{msg('data.provider.mrs.person.field.firstName')}}</label>
                     <div class="controls">
                         <input class="span10" type="text" ng-model="personDto.firstName" required />
                         <span ng-hide="hasValue('firstName','2')" class="form-hint">{{msg('data.provider.mrs.error.firstName')}}</span>
                     </div>
                 </div>
-                <div ng-class="cssClass('middleName')">
+                <div ng-class="cssClass('middleName','2')">
                     <label class="control-label">{{msg('data.provider.mrs.person.field.middleName')}}</label>
                     <div class="controls">
                         <input class="span10" type="text" ng-model="personDto.middleName" required />
                         <span ng-hide="hasValue('middleName','2')" class="form-hint">{{msg('data.provider.mrs.error.middleName')}}</span>
                     </div>
                 </div>
-                <div ng-class="cssClass('lastName')">
+                <div ng-class="cssClass('lastName','2')">
                     <label class="control-label">{{msg('data.provider.mrs.person.field.lastName')}}</label>
                     <div class="controls">
                         <input class="span10" type="text" ng-model="personDto.lastName" required />
                         <span ng-hide="hasValue('lastName','2')" class="form-hint">{{msg('data.provider.mrs.error.lastName')}}</span>
                     </div>
                 </div>
-                <div ng-class="cssClass('preferredName')">
+                <div ng-class="cssClass('preferredName','2')">
                     <label class="control-label span4">{{msg('data.provider.mrs.person.field.preferredName')}}</label>
                     <div class="controls">
                         <input class="span10" type="text" ng-model="personDto.preferredName" required />
                         <span ng-hide="hasValue('preferredName','2')" class="form-hint">{{msg('data.provider.mrs.error.preferredName')}}</span>
                     </div>
                 </div>
-                <div ng-class="cssClass('address')">
+                <div ng-class="cssClass('address','2')">
                     <label class="control-label" for="message">{{msg('data.provider.mrs.person.field.address')}}</label>
                     <div class="controls">
                         <textarea class="span10" rows="3" ng-model="personDto.address" id="message" placeholder="{{msg('111 1st St Seattle, WA USA')}}" required></textarea>
@@ -71,7 +71,7 @@
                         </label>
                     </div>
                 </div>
-                <div ng-class="cssClass('dateOfBirth')">
+                <div ng-class="cssClass('dateOfBirth','2')">
                     <label class="control-label">{{msg('data.provider.mrs.person.field.dateOfBirth')}}</label>
                     <div class="controls">
                         <div class="input-append span11">
@@ -97,7 +97,7 @@
                         </label>
                     </div>
                 </div>
-                <div ng-class="cssClass('facilityId')">
+                <div ng-class="cssClass('facilityId','3')">
                     <label class="control-label">{{msg('data.provider.mrs.facility.field.facilityId')}}</label>
                     <div class="controls">
                         <input class="span10" type="text" ng-model="facilityDto.facilityId" />
