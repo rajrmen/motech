@@ -1,6 +1,7 @@
 package org.motechproject.mrs.web;
 
 import org.motechproject.mrs.domain.Patient;
+import org.motechproject.mrs.exception.PatientNotFoundException;
 import org.motechproject.mrs.helper.PatientHelper;
 import org.motechproject.mrs.model.ContainerDto;
 import org.motechproject.mrs.model.FacilityDto;
@@ -64,7 +65,7 @@ public class PatientsController {
 
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/patients/getPatient", method = RequestMethod.POST)
-    @ResponseBody public Patient getPatient(@RequestBody String motechID) {
+    @ResponseBody public Patient getPatient(@RequestBody String motechID) throws PatientNotFoundException {
         return PatientHelper.getPatientDto(patientAdapters.get(0).getPatientByMotechId(motechID));
     }
 

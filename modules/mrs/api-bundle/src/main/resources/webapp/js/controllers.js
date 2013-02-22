@@ -2,7 +2,7 @@
 
 /* Controllers */
 
-function DashboardMrsCtrl($scope, Patients, $filter, $http, $routeParams) {
+function PatientMrsCtrl($scope, Patients, $http, $routeParams, $filter) {
     $scope.filteredItems = [];
     $scope.itemsPerPage = 3;
     $scope.resetItemsPagination();
@@ -12,8 +12,6 @@ function DashboardMrsCtrl($scope, Patients, $filter, $http, $routeParams) {
     $scope.patientDto = {};
 
     $scope.getPatient = function (motechId) {
-        $scope.successfulMessage='';
-        $scope.failureMessage='';
         $http.post('../mrs/api/patients/getPatient', motechId).success(function(data) {
             $scope.patientDto = data;
         });
@@ -49,13 +47,15 @@ function DashboardMrsCtrl($scope, Patients, $filter, $http, $routeParams) {
     $scope.search();
 }
 
-function ManageMrsCtrl($scope, Patients, Patient, $routeParams, $http) {
+function ManagePatientMrsCtrl($scope, Patient, $routeParams, $http) {
     $scope.currentPage = 0;
     $scope.pageSize = 10;
     $scope.personDto = {};
     $scope.facilityDto = {};
     $scope.containerDto = {};
     $scope.attributesDto = [];
+    $scope.temp = {};
+    $scope.motechIdValidate=true;
 
     function resetValues() {
             $scope.patientDto = {
@@ -123,7 +123,7 @@ function ManageMrsCtrl($scope, Patients, Patient, $routeParams, $http) {
                         window.location = loc.substring(0, indexOf) + "#/dashboard/" + $routeParams.mrsId;
                     });
                 }).error(function () {
-                    delete $scope.containerDto;
+                    $scope.containerDto = {};
 
                     alertHandler('data.provider.mrs.error.saved', 'data.provider.mrs.header.error');
                     unblockUI();
@@ -141,12 +141,29 @@ function ManageMrsCtrl($scope, Patients, Patient, $routeParams, $http) {
                         window.location = loc.substring(0, indexOf) + "#/dashboard";
                     });
                 }).error(function () {
-                    delete $scope.containerDto;
+                    $scope.containerDto = {};
                     unblockUI();
 
                     alertHandler('data.provider.mrs.error.saved', 'data.provider.mrs.header.error');
                 });
         }
+    }
+
+    $scope.change = function (motechId) {
+        checkIsPatientExist(motechId);
+    };
+
+    function checkIsPatientExist (motechId) {
+            $scope.motechIdValidate = true;
+            $http.post('../mrs/api/patients/getPatient', motechId).success(function(data) {
+                if (data == "") return $scope.motechIdValidate;
+                else $scope.motechIdValidate = false;
+            });
+            return $scope.motechIdValidate;
+        }
+
+    $scope.validateForm = function() {
+        return !($scope.form.$invalid || !$scope.motechIdValidate);
     }
 
     $scope.addAttribute = function() {
@@ -176,6 +193,8 @@ function ManageMrsCtrl($scope, Patients, Patient, $routeParams, $http) {
                 return $scope.personDto.hasOwnProperty(prop) && $scope.personDto[prop] != undefined;
             case '3':
                 return $scope.facilityDto.hasOwnProperty(prop) && $scope.facilityDto[prop] != undefined;
+ /*           case '4':
+                return change(prop);*/
             default:
                 break;
         }
