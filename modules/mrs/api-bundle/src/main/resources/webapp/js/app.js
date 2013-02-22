@@ -2,7 +2,7 @@
 
 /* App Module */
 
-angular.module('motech-mrs', ['motech-dashboard', 'patientsServices', 'ngCookies', 'bootstrap', 'motech-widgets']).config(['$routeProvider',
+angular.module('motech-mrs', ['motech-dashboard', 'patientsServices', 'patientService', 'ngCookies', 'bootstrap', 'motech-widgets']).config(['$routeProvider',
     function ($routeProvider) {
         $routeProvider.
             when('/dashboard', {templateUrl: '../mrs/partials/patients.html', controller: DashboardMrsCtrl}).

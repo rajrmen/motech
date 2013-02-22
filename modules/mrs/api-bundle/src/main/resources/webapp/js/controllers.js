@@ -90,7 +90,7 @@ function DashboardMrsCtrl($scope, Patients, $http) {
 
 }
 
-function ManageMrsCtrl($scope, Patients, $routeParams, $http) {
+function ManageMrsCtrl($scope, Patients, Patient, $routeParams, $http) {
     $scope.currentPage = 0;
     $scope.pageSize = 10;
     $scope.personDto = {};
@@ -98,62 +98,51 @@ function ManageMrsCtrl($scope, Patients, $routeParams, $http) {
     $scope.containerDto = {};
     $scope.attributesDto = [];
 
-    // $(document).ready(function() {
-    //Patients.get
-    $scope.patientDto = Patients.get(function() {
-        blockUI();
-        if ($routeParams.mrsId != undefined) {
-            $http.post('../mrs/api/patients/getPatient', $routeParams.mrsId).success(function(data) {
-                $scope.patientDto = data;
-                $scope.personDto = $scope.patientDto.person;
-
-                $scope.attributesDto = [];
-                if($scope.personDto.attributes){
-                    for (i = 0; i<$scope.personDto.attributes.length; i += 1) {
-                        $scope.attributesDto.push($scope.personDto.attributes[i]);
-                    }
-                }
-
-                $scope.facilityDto = $scope.patientDto.facility;
-                $scope.patientDto.person = null;
-                $scope.patientDto.facility = null;
-                $scope.personDto.attributes = [];
-            });
-        } else {
-            $scope.resetValues();
+    function resetValues() {
+            $scope.patientDto = {
+                patientId : "" ,
+                facility : null,
+                person : null
+            };
+            $scope.personDto = {
+                personId : "",
+                birthDateEstimated: false,
+                gender: 'male',
+                dead: false,
+                attributes : []
+            };
+            $scope.facilityDto = {
+                name : "",
+            };
+            $scope.attributesDto = [];
         }
-        unblockUI();
-    });
 
-    $scope.resetValues = function() {
-        $scope.patientDto = {
-            patientId : "" ,
-            facility : null,
-            person : null
-        };
-        $scope.personDto = {
-            personId : "",
-            birthDateEstimated: false,
-            gender: 'male',
-            dead: false,
-            attributes : []
-        };
-        $scope.facilityDto = {
-            name : "",
-        };
-        $scope.attributesDto = [];
+    if ($routeParams.mrsId != undefined) {
+        $scope.patientDto = Patient.get( { mrsId: $routeParams.mrsId }, function () {
+            $scope.personDto = $scope.patientDto.person;
+
+            $scope.attributesDto = [];
+            if($scope.personDto.attributes){
+                for (i = 0; i<$scope.personDto.attributes.length; i += 1) {
+                    $scope.attributesDto.push($scope.personDto.attributes[i]);
+                }
+            }
+
+            $scope.facilityDto = $scope.patientDto.facility;
+            $scope.patientDto.person = null;
+            $scope.patientDto.facility = null;
+            $scope.personDto.attributes = [];
+        });
+    } else {
+        resetValues();
     }
-
 
     $scope.save = function() {
         blockUI();
 
-        //$scope.personDto.dateOfBirth = moment(parseInt($scope.personDto.dateOfBirth)).format('DD/MM/YYYY');
-
         $scope.containerDto.personDto = $scope.personDto;
         $scope.containerDto.patientDto = $scope.patientDto;
         $scope.containerDto.facilityDto = $scope.facilityDto;
-
 
         $scope.containerDto.attributesDto = [];
         if ($scope.attributesDto.length!=0) {
@@ -168,7 +157,7 @@ function ManageMrsCtrl($scope, Patients, $routeParams, $http) {
                     var loc, indexOf;
                     unblockUI();
 
-                    motechAlert('data.provider.mrs.success.saved', 'header.saved', function () {
+                    motechAlert('data.provider.mrs.success.saved', 'data.provider.mrs.header.saved', function () {
                         loc = new String(window.location);
                         indexOf = loc.indexOf('#');
 
@@ -177,7 +166,7 @@ function ManageMrsCtrl($scope, Patients, $routeParams, $http) {
                 }).error(function () {
                     delete $scope.containerDto;
 
-                    alertHandler('data.provider.mrs.error.saved', 'header.error');
+                    alertHandler('data.provider.mrs.error.saved', 'data.provider.mrs.header.error');
                     unblockUI();
                 });
         } else {
@@ -186,7 +175,7 @@ function ManageMrsCtrl($scope, Patients, $routeParams, $http) {
                     var loc, indexOf;
                     unblockUI();
 
-                    motechAlert('data.provider.mrs.success.saved', 'header.saved', function () {
+                    motechAlert('data.provider.mrs.success.saved', 'data.provider.mrs.header.saved', function () {
                         loc = new String(window.location);
                         indexOf = loc.indexOf('#');
 
@@ -196,7 +185,7 @@ function ManageMrsCtrl($scope, Patients, $routeParams, $http) {
                     delete $scope.containerDto;
                     unblockUI();
 
-                    alertHandler('data.provider.mrs.error.saved', 'header.error');
+                    alertHandler('data.provider.mrs.error.saved', 'data.provider.mrs.header.error');
                 });
         }
     }

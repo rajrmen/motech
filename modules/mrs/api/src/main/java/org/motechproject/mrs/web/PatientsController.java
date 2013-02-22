@@ -11,6 +11,7 @@ import org.motechproject.mrs.model.PatientDto;
 import org.motechproject.mrs.model.PersonDto;
 import org.motechproject.mrs.services.PatientAdapter;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -70,6 +71,11 @@ public class PatientsController {
     @RequestMapping(value = "/patients/getPatient", method = RequestMethod.POST)
     @ResponseBody public Patient getPatient(@RequestBody String motechID) {
         return patientHelper(patientAdapters.get(0).getPatientByMotechId(motechID));
+    }
+
+    @RequestMapping(value = "/patients/{mrsId}", method = RequestMethod.GET)
+    @ResponseBody public Patient getPatient2(@PathVariable String mrsId) {
+        return patientHelper(patientAdapters.get(0).getPatientByMotechId(mrsId));
     }
 
     private PatientDto patientHelper(Patient patient){
