@@ -3,10 +3,11 @@
 /* Controllers */
 
 function PatientMrsCtrl($scope, Patients, $http, $routeParams, $filter) {
+    $scope.sortingOrder = 'motechId';
+    $scope.reverse = false;
     $scope.filteredItems = [];
-    $scope.itemsPerPage = 3;
+    $scope.itemsPerPage = 10;
     $scope.resetItemsPagination();
-    $scope.patientList = Patients.query();
     $scope.showPatientsView=true;
     $scope.selectedPatientView=true;
     $scope.patientDto = {};
@@ -28,8 +29,12 @@ function PatientMrsCtrl($scope, Patients, $http, $routeParams, $filter) {
     var searchMatch = function (patient, searchQuery) {
         if (!searchQuery) {
             return true;
-        }
-        return patient.motechId.toLowerCase().indexOf(searchQuery.toLowerCase()) !== -1;
+        } else if (patient.person.firstName.toLowerCase().indexOf(searchQuery.toLowerCase()) !== -1) {
+            return true;
+        } else if (patient.person.lastName.toLowerCase().indexOf(searchQuery.toLowerCase()) !== -1) {
+            return true;
+        } else
+            return patient.motechId.toLowerCase().indexOf(searchQuery.toLowerCase()) !== -1;
     };
 
     $scope.search = function () {
@@ -40,11 +45,36 @@ function PatientMrsCtrl($scope, Patients, $http, $routeParams, $filter) {
             }
             return false;
         });
+
+        if ($scope.sortingOrder !== '') {
+            $scope.filteredItems = $filter('orderBy')($scope.filteredItems, $scope.sortingOrder, $scope.reverse);
+        }
         $scope.setCurrentPage(0);
         $scope.groupToPages($scope.filteredItems, $scope.itemsPerPage);
     };
 
-    $scope.search();
+    $scope.sort_by = function (newSortingOrder) {
+        if ($scope.sortingOrder == newSortingOrder) {
+            $scope.reverse = !$scope.reverse;
+        }
+
+        $scope.sortingOrder = newSortingOrder;
+
+        $('th img').each(function(){
+            // icon reset
+            $(this).removeClass().addClass('sorting-no');
+        });
+
+        $scope.sortingOrderClass = $scope.sortingOrder.replace("person.","");
+
+        if ($scope.reverse)
+            $('th.'+$scope.sortingOrderClass+' img').removeClass('sorting-no').addClass('sorting-desc');
+        else
+            $('th.'+$scope.sortingOrderClass+' img').removeClass('sorting-no').addClass('sorting-asc');
+    };
+
+    $scope.patientList = Patients.query({}, $scope.search);
+
 }
 
 function ManagePatientMrsCtrl($scope, Patient, $routeParams, $http) {
