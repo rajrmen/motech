@@ -14,20 +14,18 @@
                     <div class="form-actions">
                         <input class="btn btn-primary" ng-disabled="!validateForm()" type="button" ng-click="save()" value="{{msg('save')}}" >
                         <input class="btn" type="button" ng-click="cancel()" value="{{msg('cancel')}}" >
+                        <span class="loader.wrapper" ng-hide="!inProgress">
+                        <img src="../mrs/img/load.gif" alt="loading"/>
+                    </span>
                     </div>
                 </div>
                 <div ng-class="cssClass('motechId','1')">
                     <label class="control-label">{{msg('data.provider.mrs.patient.motechId')}}</label>
                     <div class="controls">
-                        <input class="span10" type="text" ng-model="patientDto.motechId" ng-change="change(patientDto.motechId)" required />
+                        <input class="span10" type="text" id="inputMotechId"  ng-model="patientDto.motechId" required />
                         <span ng-hide="motechIdValidate" class="form-hint">{{msg('data.provider.mrs.error.patient.exist')}}</span>
                         <span ng-hide="hasValue('motechId','1')" class="form-hint">{{msg('data.provider.mrs.error.motechId')}}</span>
                     </div>
-                    <!--<div class="controls">
-                        <input class="span10" type="text" ng-model="patientDto.motechId" required />
-                        <span ng-hide="hasValue(patientDto.motechId,'4')" class="form-hint">{{msg('data.provider.mrs.error.patient.exist')}}</span>
-                        <span ng-hide="hasValue('motechId','1')" class="form-hint">{{msg('data.provider.mrs.error.motechId')}}</span>
-                    </div>-->
                 </div>
                 <div ng-class="cssClass('firstName','2')">
                     <label class="control-label">{{msg('data.provider.mrs.person.field.firstName')}}</label>
@@ -81,7 +79,7 @@
                     <label class="control-label">{{msg('data.provider.mrs.person.field.dateOfBirth')}}</label>
                     <div class="controls">
                         <div class="input-append span11">
-                            <input type='text' ng-model='personDto.dateOfBirth' datepicker required />
+                            <input type='text' ng-model='personDto.dateOfBirth' datepicker required placeholder="{{msg('30/02/2000')}}"/>
                             <span ng-hide="hasValue('dateOfBirth','2')" class="form-hint">{{msg('data.provider.mrs.error.dateOfBirth')}}</span>
                             <!-- <button class="btn" type="button"><i class="icon-th"></i></button>-->
                         </div>

@@ -54,27 +54,42 @@ function ManagePatientMrsCtrl($scope, Patient, $routeParams, $http) {
     $scope.facilityDto = {};
     $scope.containerDto = {};
     $scope.attributesDto = [];
-    $scope.temp = {};
     $scope.motechIdValidate=true;
 
+    var typingTimer;
+    var doneTypingInterval = 3000;
+    $scope.inProgress = false;
+
     function resetValues() {
-            $scope.patientDto = {
-                patientId : "" ,
-                facility : null,
-                person : null
-            };
-            $scope.personDto = {
-                personId : "",
-                birthDateEstimated: false,
-                gender: 'male',
-                dead: false,
-                attributes : []
-            };
-            $scope.facilityDto = {
-                name : "",
-            };
-            $scope.attributesDto = [];
+        $scope.patientDto = {
+            patientId : "" ,
+            facility : null,
+            person : null
+        };
+        $scope.personDto = {
+            personId : "",
+            birthDateEstimated: false,
+            gender: 'male',
+            dead: false,
+            attributes : []
+        };
+        $scope.facilityDto = {
+            name : "",
+        };
+        $scope.attributesDto = [];
+    }
+
+    $('#inputMotechId').keyup(function(){
+        $scope.inProgress = true;
+        clearTimeout(typingTimer);
+        if ($('#inputMotechId').val) {
+            typingTimer = setTimeout(checkIsPatientExist, doneTypingInterval);
         }
+    });
+
+    $('#inputMotechId').keydown(function(){
+        $scope.inProgress = true;
+    });
 
     if ($routeParams.mrsId != undefined) {
         $scope.patientDto = Patient.get( { mrsId: $routeParams.mrsId }, function () {
@@ -91,9 +106,12 @@ function ManagePatientMrsCtrl($scope, Patient, $routeParams, $http) {
             $scope.patientDto.person = null;
             $scope.patientDto.facility = null;
             $scope.personDto.attributes = [];
+            $scope.inProgress = false;
+            $('#inputMotechId').prop('readonly', true);
         });
     } else {
         resetValues();
+        $scope.inProgress = false;
     }
 
     $scope.save = function() {
@@ -149,21 +167,17 @@ function ManagePatientMrsCtrl($scope, Patient, $routeParams, $http) {
         }
     }
 
-    $scope.change = function (motechId) {
-        checkIsPatientExist(motechId);
-    };
-
-    function checkIsPatientExist (motechId) {
+    function checkIsPatientExist () {
             $scope.motechIdValidate = true;
-            $http.post('../mrs/api/patients/getPatient', motechId).success(function(data) {
+            $http.post('../mrs/api/patients/getPatient', $scope.patientDto.motechId).success(function(data) {
                 if (data == "") return $scope.motechIdValidate;
                 else $scope.motechIdValidate = false;
             });
-            return $scope.motechIdValidate;
+            $scope.inProgress = false;
         }
 
     $scope.validateForm = function() {
-        return !($scope.form.$invalid || !$scope.motechIdValidate);
+        return !($scope.form.$invalid || !$scope.motechIdValidate || $scope.inProgress);
     }
 
     $scope.addAttribute = function() {
@@ -193,8 +207,6 @@ function ManagePatientMrsCtrl($scope, Patient, $routeParams, $http) {
                 return $scope.personDto.hasOwnProperty(prop) && $scope.personDto[prop] != undefined;
             case '3':
                 return $scope.facilityDto.hasOwnProperty(prop) && $scope.facilityDto[prop] != undefined;
- /*           case '4':
-                return change(prop);*/
             default:
                 break;
         }
