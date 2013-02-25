@@ -1,0 +1,29 @@
+<div class="row-fluid"><!------------------------  Settings  ------------------------------------->
+    <div class="span8 margin-after mrs">
+        <div class="clearfix">
+            <div class="margin-after"  ng-show="providers.length &gt; 1">
+                <div class="form-inline">
+                    <label class="help-inline">{{msg('data.provider.mrs.settings.selectedProvider')}}</label>
+                    <div class="btn-group">
+                        <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+                            {{provider}}
+                            <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li ng-repeat="provider in providers">
+                                <a ng-click="changeProvider(provider)"> {{provider}}</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="margin-after"  ng-show="providers.length == 1">
+                    <div class="control-group">
+                        <label class="help-inline">{{msg('data.provider.mrs.settings.providerName')}}</label>
+                        <span>{{provider}}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
