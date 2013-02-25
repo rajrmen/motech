@@ -66,11 +66,21 @@ public class PatientsController {
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/patients/getPatient", method = RequestMethod.POST)
     @ResponseBody public Patient getPatient(@RequestBody String motechID) throws PatientNotFoundException {
-        return PatientHelper.getPatientDto(patientAdapters.get(0).getPatientByMotechId(motechID));
+        try{
+            return PatientHelper.getPatientDto(patientAdapters.get(0).getPatientByMotechId(motechID));
+        } catch (Exception ex) {
+            throw new PatientNotFoundException(ex.toString());
+        }
+
     }
 
     @RequestMapping(value = "/patients/{mrsId}", method = RequestMethod.GET)
     @ResponseBody public Patient getPatientByPath(@PathVariable String mrsId) {
         return PatientHelper.getPatientDto(patientAdapters.get(0).getPatientByMotechId(mrsId));
+    }
+
+    @RequestMapping(value = "/patientsAdapters", method = RequestMethod.GET)
+    @ResponseBody public List<PatientAdapter> getpatientsAdapters() {
+        return patientAdapters;
     }
 }
