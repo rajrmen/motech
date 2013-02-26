@@ -1,5 +1,5 @@
 <div ng-show="showPatientsView" class="row-fluid"><!------------------------  All Patients  ------------------------------------->
-    <div class="span10 margin-after mrs">
+    <div class="span12 margin-after mrs">
         <div class="box-header">{{msg('data.provider.mrs.patients')}}</div>
         <div class="box-content inside clearfix">
             <div class="control-group">
@@ -19,23 +19,23 @@
             <div class="margin-before">
                 <table class="table table-condensed table-bordered table-striped table-lightblue table-mrs">
                     <thead>
-                    <tr>
-                        <th class="motechId" ng-click="sort_by('motechId')">
-                            <img src=../mrs/img/trans.gif alt="{{msg('data.provider.mrs.sortingId')}}" title="{{msg('data.provider.mrs.sortingId')}}"
-                                 class="sorting-no" />{{msg('data.provider.mrs.patient.lookupField.id')}} </a></th>
-                        <th class="firstName" ng-click="sort_by('person.firstName')">
-                            <img src=../mrs/img/trans.gif alt="{{msg('data.provider.mrs.sortingFirstName')}}" title="{{msg('data.provider.mrs.sortingFirstName')}}"
-                                 class="sorting-no" />{{msg('data.provider.mrs.person.field.firstName')}} </th>
-                        <th class="lastName" ng-click="sort_by('person.lastName')">
-                            <img src=../mrs/img/trans.gif alt="{{msg('data.provider.mrs.sortingLastName')}}" title="{{msg('data.provider.mrs.sortingLastName')}}"
-                                 class="sorting-no" />{{msg('data.provider.mrs.person.field.lastName')}} </th>
-                        <th class="age" ng-click="sort_by('person.age')">
-                            <img src=../mrs/img/trans.gif alt="{{msg('data.provider.mrs.sortingAge')}}" title="{{msg('data.provider.mrs.sortingAge')}}"
-                                 class="sorting-no" />{{msg('data.provider.mrs.person.field.age')}} </th>
-                        <th class="gender" ng-click="sort_by('person.gender')">
-                            <img src=../mrs/img/trans.gif alt="{{msg('data.provider.mrs.sortingGender')}}" title="{{msg('data.provider.mrs.sortingGender')}}"
-                                 class="sorting-no" />{{msg('data.provider.mrs.person.field.gender')}} </th>
-                    </tr>
+                        <tr>
+                            <th class="motechId" ng-click="sort_by('motechId')">
+                                <img src=../mrs/img/trans.gif alt="{{msg('data.provider.mrs.sortingId')}}" title="{{msg('data.provider.mrs.sortingId')}}"
+                                     class="sorting-asc" />{{msg('data.provider.mrs.patient.lookupField.id')}} </a></th>
+                            <th class="firstName" ng-click="sort_by('person.firstName')">
+                                <img src=../mrs/img/trans.gif alt="{{msg('data.provider.mrs.sortingFirstName')}}" title="{{msg('data.provider.mrs.sortingFirstName')}}"
+                                     class="sorting-no" />{{msg('data.provider.mrs.person.field.firstName')}} </th>
+                            <th class="lastName" ng-click="sort_by('person.lastName')">
+                                <img src=../mrs/img/trans.gif alt="{{msg('data.provider.mrs.sortingLastName')}}" title="{{msg('data.provider.mrs.sortingLastName')}}"
+                                     class="sorting-no" />{{msg('data.provider.mrs.person.field.lastName')}} </th>
+                            <th class="age" ng-click="sort_by('person.age')">
+                                <img src=../mrs/img/trans.gif alt="{{msg('data.provider.mrs.sortingAge')}}" title="{{msg('data.provider.mrs.sortingAge')}}"
+                                     class="sorting-no" />{{msg('data.provider.mrs.person.field.age')}} </th>
+                            <th class="gender" ng-click="sort_by('person.gender')">
+                                <img src=../mrs/img/trans.gif alt="{{msg('data.provider.mrs.sortingGender')}}" title="{{msg('data.provider.mrs.sortingGender')}}"
+                                     class="sorting-no" />{{msg('data.provider.mrs.person.field.gender')}} </th>
+                        </tr>
                     </thead>
                     <tbody>
                     <tr ng-click="getPatient(patient.motechId)" ng-repeat="patient in pagedItems[currentPage] | orderBy:sortingOrder:reverse">

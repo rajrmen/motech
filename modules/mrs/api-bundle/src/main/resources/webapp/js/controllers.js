@@ -89,6 +89,15 @@ function PatientMrsCtrl($scope, Patients, $http, $routeParams, $filter) {
 
 }
 
+function SettingsMrsCtrl($scope, $routeParams) {
+    $scope.providers = ['MRS', 'OpenMRS', 'MRS3', 'MRS4'];
+    $scope.provider = $scope.providers[0];
+
+    $scope.changeProvider = function (provider) {
+        $scope.provider = provider;
+    }
+}
+
 function ManagePatientMrsCtrl($scope, Patient, $routeParams, $http) {
     $scope.currentPage = 0;
     $scope.pageSize = 10;
