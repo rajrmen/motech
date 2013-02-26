@@ -10,6 +10,6 @@ angular.module('motech-mrs', ['motech-dashboard', 'patientsServices', 'patientSe
             when('/mrs/new', {templateUrl: '../mrs/partials/form.html', controller: ManagePatientMrsCtrl}).
             when('/mrs/:mrsId/edit', {templateUrl: '../mrs/partials/form.html', controller: ManagePatientMrsCtrl}).
             when('/mrs/:mrsId/editAttributes', {templateUrl: '../mrs/partials/attributes.html', controller: ManagePatientMrsCtrl}).
-            otherwise({redirectTo: '/dashboard'});
+            otherwise({redirectTo: '/patients'});
     }
 ]);

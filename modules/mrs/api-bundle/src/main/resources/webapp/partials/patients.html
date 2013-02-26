@@ -4,6 +4,12 @@
         <div class="box-content inside clearfix">
             <div class="control-group">
                 <a href="#/mrs/new" role="button" class="btn btn-primary"><i class="icon-plus icon-white"></i> {{msg('data.provider.mrs.add.patient')}}</a>
+
+                <select ng-model="selectedItem" ng-options="provider for provider in mrsProvidersList">
+                    <option value="">-- {{msg('chooseRole')}} --</option>
+                </select>
+                <input class="btn btn-primary" type="button" ng-click="chooseAdapter()" value="{{msg('save')}}" >
+
             </div>
             <h4>{{msg('data.provider.mrs.all.patients')}}</h4>
             <div class="control-group form-inline">
@@ -14,27 +20,6 @@
                 <table class="table table-condensed table-bordered table-striped table-lightblue table-mrs">
                     <thead>
                     <tr>
-<<<<<<< HEAD
-                        <th ng-click="setOrder('patientId')">
-                            <img src=../admin/img/trans.gif alt="{{msg('mrs.sortingId')}}" title="{{msg('mrs.sortingId')}}"
-                                 ng-class="getSortClass('patientId')" class="sorting-no" />{{msg('data.provider.mrs.patient.lookupField.id')}} </th>
-                        <th ng-click="setOrder('patientGivenName')">
-                            <img src=../admin/img/trans.gif alt="{{msg('mrs.sortingGivenName')}}" title="{{msg('mrs.sortingGivenName')}}"
-                                 ng-class="getSortClass('patientGivenName')" class="sorting-no" />{{msg('data.provider.mrs.person.field.firstName')}} </th>
-                        <th ng-click="setOrder('patientFamilyName')">
-                            <img src=../admin/img/trans.gif alt="{{msg('mrs.sortingFamilyName')}}" title="{{msg('mrs.sortingFamilyName')}}"
-                                 ng-class="getSortClass('patientFamilyName')" class="sorting-no" />{{msg('data.provider.mrs.person.field.lastName')}} </th>
-                        <th ng-click="setOrder('patientId')">
-                            <img src=../admin/img/trans.gif alt="{{msg('mrs.sortingAge')}}" title="{{msg('mrs.sortingAge')}}"
-                                 ng-class="getSortClass('patientAge')" class="sorting-no" />{{msg('data.provider.mrs.person.field.age')}} </th>
-                        <th ng-click="setOrder('patientGender')">
-                            <img src=../admin/img/trans.gif alt="{{msg('mrs.sortingId')}}" title="{{msg('mrs.sortingGender')}}"
-                                 ng-class="getSortClass('patientGender')" class="sorting-no" />{{msg('data.provider.mrs.person.field.gender')}} </th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr ng-click="getPatient(patient.motechId)" ng-repeat="patient in patientList">
-=======
                         <th class="motechId" ng-click="sort_by('motechId')">
                             <img src=../mrs/img/trans.gif alt="{{msg('data.provider.mrs.sortingId')}}" title="{{msg('data.provider.mrs.sortingId')}}"
                                  class="sorting-no" />{{msg('data.provider.mrs.patient.lookupField.id')}} </a></th>
@@ -54,8 +39,6 @@
                     </thead>
                     <tbody>
                     <tr ng-click="getPatient(patient.motechId)" ng-repeat="patient in pagedItems[currentPage] | orderBy:sortingOrder:reverse">
->>>>>>> 10297ad50d587dea54bd8f378ca2a0f5b1bc291c
-                        <!--motechId na Id zmienic!-->
                         <td>{{patient.motechId}}</td>
                         <td>{{patient.person.firstName}}</td>
                         <td>{{patient.person.lastName}}</td>
@@ -65,9 +48,6 @@
                     </tbody>
                 </table>
             </div>
-<<<<<<< HEAD
-
-=======
             <div class="pagination pagination-centered pagination-condensed lightblue" ng-show="pagedItems.length &gt; 1">
                 <ul>
                     <li ng-class="{disabled: currentPage == 0}"><a href ng-click="firstPage()">{{msg('pagination.first')}}</a></li>
@@ -82,7 +62,6 @@
                     <li ng-class="{disabled: currentPage == pagedItems.length - 1}"><a href ng-click="lastPage(pagedItems.length - 1)">{{msg('pagination.last')}}</a></li>
                 </ul>
             </div>
->>>>>>> 10297ad50d587dea54bd8f378ca2a0f5b1bc291c
         </div>
     </div>
 </div>
@@ -92,12 +71,7 @@
         <div class="box-header">{{msg('data.provider.mrs.patient')}}</div>
         <div class="box-content inside clearfix">
             <h4>{{msg('data.provider.mrs.patient.name')}} {{patientDto.person.firstName}} {{patientDto.person.lastName}}</h4>
-<<<<<<< HEAD
-            <a ng-href="#/mrs/{{patientDto.motechId}}/edit"><h6>{{msg('data.provider.mrs.edit.patientDetails')}}</a>  <span class="pull-right">{{msg('data.provider.mrs.patient.motechId')}} {{patientDto.motechId}}</span></h6>
-
-=======
-            <a class="btn btn-primary" href="#/dashboard/"> {{msg('data.provider.mrs.button.back')}}</a>
->>>>>>> 10297ad50d587dea54bd8f378ca2a0f5b1bc291c
+            <a ng-href="#/mrs/{{patientDto.motechId}}/edit"><h6>{{msg('data.provider.mrs.edit.patientDetails')}}</h6></a>  <span class="pull-right">{{msg('data.provider.mrs.patient.motechId')}} {{patientDto.motechId}}</span>
             <div class="control-group clearfix">
                 <span class="pull-right"><h5>{{msg('data.provider.mrs.patient.motechId')}} {{patientDto.motechId}}</h5></span>
             </div>

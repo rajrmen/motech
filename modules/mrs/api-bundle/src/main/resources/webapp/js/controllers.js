@@ -11,6 +11,7 @@ function PatientMrsCtrl($scope, Patients, $http, $routeParams, $filter) {
     $scope.showPatientsView=true;
     $scope.selectedPatientView=true;
     $scope.patientDto = {};
+    $scope.selectedItem;
 
     $scope.getPatient = function (motechId) {
         $http.post('../mrs/api/patients/getPatient', motechId).success(function(data) {
@@ -20,10 +21,23 @@ function PatientMrsCtrl($scope, Patients, $http, $routeParams, $filter) {
         $scope.selectedPatientView=!$scope.selectedPatientView;
     }
 
+    function getMrsProviders() {
+        $http.post('../mrs/api/patientsAdapters/getAll').success(function(data) {
+            $scope.mrsProvidersList = data;
+        });
+    }
+
+    $scope.chooseAdapter = function () {
+        $http.post('../mrs/api/patientsAdapters/set', $scope.selectedItem).success(function() {
+            window.location.href = '#/patients/';
+        });
+    }
+
     if ($routeParams.mrsId != undefined) {
         $scope.getPatient($routeParams.mrsId);
     } else {
         $scope.patientsList = Patients.query();
+        getMrsProviders();
     }
 
     var searchMatch = function (patient, searchQuery) {
@@ -45,6 +59,9 @@ function PatientMrsCtrl($scope, Patients, $http, $routeParams, $filter) {
             }
             return false;
         });
+        if ($scope.sortingOrder !== '') {
+            $scope.filteredItems = $filter('orderBy')($scope.filteredItems, $scope.sortingOrder, $scope.reverse);
+        }
         $scope.setCurrentPage(0);
         $scope.groupToPages($scope.filteredItems, $scope.itemsPerPage);
     };
@@ -163,7 +180,7 @@ function ManagePatientMrsCtrl($scope, Patient, $routeParams, $http) {
                         loc = new String(window.location);
                         indexOf = loc.indexOf('#');
 
-                        window.location = loc.substring(0, indexOf) + "#/dashboard/" + $routeParams.mrsId;
+                        window.location = loc.substring(0, indexOf) + "#/patients/" + $routeParams.mrsId;
                     });
                 }).error(function () {
                     $scope.containerDto = {};
@@ -181,7 +198,7 @@ function ManagePatientMrsCtrl($scope, Patient, $routeParams, $http) {
                         loc = new String(window.location);
                         indexOf = loc.indexOf('#');
 
-                        window.location = loc.substring(0, indexOf) + "#/dashboard";
+                        window.location = loc.substring(0, indexOf) + "#/patients";
                     });
                 }).error(function () {
                     $scope.containerDto = {};
@@ -239,10 +256,10 @@ function ManagePatientMrsCtrl($scope, Patient, $routeParams, $http) {
 
     $scope.cancel = function() {
         if ($routeParams.mrsId != undefined) {
-            var url = "#/dashboard/" + $routeParams.mrsId;
+            var url = "#/patients/" + $routeParams.mrsId;
             window.location.href = url;
         } else {
-            window.location.href = '#/dashboard/';
+            window.location.href = '#/patients/';
         }
 
     }
