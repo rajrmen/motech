@@ -11,33 +11,19 @@ function PatientMrsCtrl($scope, Patients, $http, $routeParams, $filter) {
     $scope.showPatientsView=true;
     $scope.selectedPatientView=true;
     $scope.patientDto = {};
-    $scope.selectedItem;
 
     $scope.getPatient = function (motechId) {
-        $http.post('../mrs/api/patients/getPatient', motechId).success(function(data) {
+        $http.post('../mrs/api/patients/get/patient', motechId).success(function(data) {
             $scope.patientDto = data;
         });
         $scope.showPatientsView=!$scope.selectedPatientView;
         $scope.selectedPatientView=!$scope.selectedPatientView;
     }
 
-    function getMrsProviders() {
-        $http.post('../mrs/api/patientsAdapters/getAll').success(function(data) {
-            $scope.mrsProvidersList = data;
-        });
-    }
-
-    $scope.chooseAdapter = function () {
-        $http.post('../mrs/api/patientsAdapters/set', $scope.selectedItem).success(function() {
-            window.location.href = '#/patients/';
-        });
-    }
-
     if ($routeParams.mrsId != undefined) {
         $scope.getPatient($routeParams.mrsId);
     } else {
         $scope.patientsList = Patients.query();
-        getMrsProviders();
     }
 
     var searchMatch = function (patient, searchQuery) {
@@ -53,10 +39,10 @@ function PatientMrsCtrl($scope, Patients, $http, $routeParams, $filter) {
 
     $scope.search = function () {
         $scope.filteredItems = $filter('filter')($scope.patientList, function (item) {
-            if(item) {
+            if (item) {
                 if (searchMatch(item, $scope.query))
                     return true;
-            }
+                }
             return false;
         });
         if ($scope.sortingOrder !== '') {
@@ -65,18 +51,21 @@ function PatientMrsCtrl($scope, Patients, $http, $routeParams, $filter) {
         $scope.setCurrentPage(0);
         $scope.groupToPages($scope.filteredItems, $scope.itemsPerPage);
     };
+
     $scope.sort_by = function (newSortingOrder) {
-        if ($scope.sortingOrder == newSortingOrder) {
-            $scope.reverse = !$scope.reverse;
+       if ($scope.sortingOrder == newSortingOrder) {
+           $scope.reverse = !$scope.reverse;
+       }
+
+       $scope.sortingOrder = newSortingOrder;
+
+       $('th img').each(function(){
+           $(this).removeClass().addClass('sorting-no');
+       });
+
+        if ($scope.sortingOrder !== '') {
+            $scope.filteredItems = $filter('orderBy')($scope.filteredItems, $scope.sortingOrder, $scope.reverse);
         }
-
-        $scope.sortingOrder = newSortingOrder;
-
-        $('th img').each(function(){
-            // icon reset
-            $(this).removeClass().addClass('sorting-no');
-        });
-
         $scope.sortingOrderClass = $scope.sortingOrder.replace("person.","");
 
         if ($scope.reverse)
@@ -89,12 +78,24 @@ function PatientMrsCtrl($scope, Patients, $http, $routeParams, $filter) {
 
 }
 
-function SettingsMrsCtrl($scope, $routeParams) {
-    $scope.providers = ['MRS', 'OpenMRS', 'MRS3', 'MRS4'];
-    $scope.provider = $scope.providers[0];
+function SettingsMrsCtrl($scope, $http) {
+    getMrsProviders();
+
+    function getMrsProviders() {
+        $http.post('../mrs/api/patients/adapters/get/all').success(function(data) {
+            $scope.mrsProvidersList = data;
+        });
+
+        $http.post('../mrs/api/patients/adapters/get/default').success(function(data) {
+            $scope.provider = data;
+        });
+    }
 
     $scope.changeProvider = function (provider) {
-        $scope.provider = provider;
+        $http.post('../mrs/api/patients/adapters/set', provider).success(function() {
+            $scope.provider = provider;
+              motechAlert('data.provider.mrs.provider.success.saved', 'data.provider.mrs.header.changed');
+        });
     }
 }
 
@@ -220,7 +221,7 @@ function ManagePatientMrsCtrl($scope, Patient, $routeParams, $http) {
 
     function checkIsPatientExist () {
             $scope.motechIdValidate = true;
-            $http.post('../mrs/api/patients/getPatient', $scope.patientDto.motechId).success(function(data) {
+            $http.post('../mrs/api/patients/get/patient', $scope.patientDto.motechId).success(function(data) {
                 if (data == "") return $scope.motechIdValidate;
                 else $scope.motechIdValidate = false;
             });

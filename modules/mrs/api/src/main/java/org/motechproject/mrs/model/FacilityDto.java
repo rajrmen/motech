@@ -2,8 +2,7 @@ package org.motechproject.mrs.model;
 
 import org.motechproject.mrs.domain.Facility;
 
-public class FacilityDto implements Facility{
-
+public class FacilityDto implements Facility {
     private String facilityId;
     private String name;
     private String country;

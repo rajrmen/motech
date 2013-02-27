@@ -30,9 +30,7 @@
         <property name="personAdapters" ref="personAdapterList"/>
     </bean>
 
-    <bean id="PatientsController" class="org.motechproject.mrs.web.PatientsController">
-        <property name="patientAdapters" ref="patientAdapterList"/>
-    </bean>
+    <bean id="PatientsController" class="org.motechproject.mrs.web.PatientsController"/>
 
     <osgi:set id="dataProvidersOSGi" interface="org.motechproject.mrs.services.PatientAdapter" cardinality="0..N">
         <osgi:reference-listener>

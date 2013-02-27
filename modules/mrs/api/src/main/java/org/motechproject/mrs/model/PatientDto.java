@@ -1,12 +1,10 @@
 package org.motechproject.mrs.model;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
 import org.motechproject.mrs.domain.Facility;
 import org.motechproject.mrs.domain.Patient;
 import org.motechproject.mrs.domain.Person;
 
-public class PatientDto implements Patient{
-
+public class PatientDto implements Patient {
     private String patientId;
     private Facility facility;
     private Person person;
@@ -43,10 +41,4 @@ public class PatientDto implements Patient{
     public void setMotechId(String motechId) {
         this.motechId = motechId;
     }
-
-
-
-
-
-
 }

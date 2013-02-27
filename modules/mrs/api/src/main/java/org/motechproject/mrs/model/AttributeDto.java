@@ -4,7 +4,6 @@ import org.motechproject.mrs.domain.Attribute;
 import java.lang.String;
 
 public class AttributeDto implements Attribute {
-
     private String name;
     private String value;
 

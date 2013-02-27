@@ -33,7 +33,6 @@ import java.util.List;
 import java.util.Set;
 
 import static ch.lambdaj.Lambda.convert;
-import static ch.lambdaj.Lambda.forEach;
 
 /**
  * Manages Patients in OpenMRS
@@ -278,12 +277,11 @@ public class OpenMRSPatientAdapter implements PatientAdapter {
     }
 
     @Override
-    public List<org.motechproject.mrs.domain.Patient> getAllPatients(){
-
+    public List<org.motechproject.mrs.domain.Patient> getAllPatients() {
         List<org.openmrs.Patient> patientsOpenMRS =  patientService.getAllPatients();
         List<org.motechproject.mrs.domain.Patient> patiensMRS = new ArrayList<org.motechproject.mrs.domain.Patient>();
 
-        for(org.openmrs.Patient patient : patientsOpenMRS){
+        for (org.openmrs.Patient patient : patientsOpenMRS) {
             patiensMRS.add(getMrsPatient(patient));
         }
 

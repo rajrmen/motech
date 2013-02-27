@@ -3,8 +3,8 @@ package org.motechproject.mrs.util;
 import org.motechproject.mrs.services.PatientAdapter;
 
 public class DefaultPatientAdapter {
-    String name;
-    PatientAdapter patientAdapter;
+    private String name;
+    private PatientAdapter patientAdapter;
 
     public String getName() {
         return name;

@@ -2,11 +2,8 @@ package org.motechproject.mrs.util;
 
 import org.eclipse.gemini.blueprint.service.importer.OsgiServiceLifecycleListener;
 import org.motechproject.mrs.services.PatientAdapter;
-import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.annotation.PostConstruct;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -17,14 +14,10 @@ public class MrsImplementationsDataProvider implements OsgiServiceLifecycleListe
         return patientAdapterMap;
     }
 
-    public static void setPatientAdapterMap(Map<String, PatientAdapter> patientAdapterMap) {
-        MrsImplementationsDataProvider.patientAdapterMap = patientAdapterMap;
-    }
-
     @Override
     public void bind(Object service, Map serviceProperties) throws IOException {
         if (service instanceof PatientAdapter) {
-            patientAdapterMap.put(serviceProperties.get("Bundle-SymbolicName").toString(), (PatientAdapter)service);
+            patientAdapterMap.put(serviceProperties.get("Bundle-SymbolicName").toString(), (PatientAdapter) service);
         }
     }
 

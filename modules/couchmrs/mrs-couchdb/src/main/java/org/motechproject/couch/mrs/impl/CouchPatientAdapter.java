@@ -31,50 +31,7 @@ public class CouchPatientAdapter implements PatientAdapter {
     @Autowired
     private AllCouchFacilities allCouchFacilities;
 
-    /*@Override
-    public Patient savePatient(Patient patient) {
-        Facility facility = patient.getFacility();
-
-        String facilityId = null;
-        if (facility != null) {
-            facilityId = facility.getFacilityId();
-        }
-
-        CouchPatientImpl couchPatient = new CouchPatientImpl(patient.getPatientId(), patient.getMotechId(), patient.getPerson(), facilityId);
-
-        try {
-            allCouchPatients.addPatient(couchPatient);
-        } catch (MRSCouchException e) {
-            return null;
-        }
-
-        return patient;
-    }
-
-    @Override
-    public Patient updatePatient(Patient patient) {
-        List<CouchPatientImpl> patients = allCouchPatients.findByMotechId(patient.getMotechId());
-
-        if (patients != null && patients.get(0) != null) {
-
-            CouchPatientImpl patientToUpdate = patients.get(0);
-            Facility updatedFacility = patient.getFacility();
-
-            if (updatedFacility != null) {
-                patientToUpdate.setFacilityId(updatedFacility.getFacilityId());
-            }
-
-            patientToUpdate.setMotechId(patient.getMotechId());
-            patientToUpdate.setPatientId(patient.getPatientId());
-            patientToUpdate.setPerson((CouchPerson) patient.getPerson());
-            allCouchPatients.update(patientToUpdate);
-        }
-
-        return patient;
-    } */
-
-    //Remove Before commit!
-    public Patient savePatient(Patient patient) {
+    private CouchPatientImpl createPatient (Patient patient) {
         List<Attribute> attributeList = new ArrayList<>();
 
         if (patient.getPerson() != null) {
@@ -109,8 +66,11 @@ public class CouchPatientAdapter implements PatientAdapter {
             facilityId = facility.getFacilityId();
         }
 
+        return new CouchPatientImpl(patient.getPatientId(), patient.getMotechId(), person, facilityId);
+    }
 
-        CouchPatientImpl couchPatient = new CouchPatientImpl(patient.getPatientId(), patient.getMotechId(), person, facilityId);
+    public Patient savePatient(Patient patient) {
+        CouchPatientImpl couchPatient = createPatient(patient);
 
         try {
             allCouchPatients.addPatient(couchPatient);
@@ -125,43 +85,14 @@ public class CouchPatientAdapter implements PatientAdapter {
         List<CouchPatientImpl> patients = allCouchPatients.findByMotechId(patient.getMotechId());
 
         if (patients != null && patients.get(0) != null) {
-            List<Attribute> attributeList = new ArrayList<>();
-
-            if (patient.getPerson() != null) {
-                for (Attribute attribute : patient.getPerson().getAttributes()){
-                    CouchAttribute couchAttribute = new CouchAttribute();
-                    couchAttribute.setName(attribute.getName());
-                    couchAttribute.setValue(attribute.getValue());
-
-                    attributeList.add(couchAttribute);
-                }
-            }
-
             CouchPatientImpl patientToUpdate = patients.get(0);
+            CouchPatientImpl patientFromDto = createPatient(patient);
+
             patientToUpdate.setMotechId(patient.getMotechId());
             patientToUpdate.setPatientId(patient.getPatientId());
+            patientToUpdate.setFacilityId(patientFromDto.getFacilityId());
+            patientToUpdate.setPerson(patientFromDto.getPerson());
 
-            Facility updatedFacility = patient.getFacility();
-            if (updatedFacility != null) {
-                patientToUpdate.setFacilityId(updatedFacility.getFacilityId());
-            }
-
-            CouchPerson person = new CouchPerson();
-            person.setAddress(patient.getPerson().getAddress());
-            person.setFirstName(patient.getPerson().getFirstName());
-            person.setLastName(patient.getPerson().getLastName());
-            person.setAge(patient.getPerson().getAge());
-            person.setBirthDateEstimated(patient.getPerson().getBirthDateEstimated());
-            person.setDateOfBirth(patient.getPerson().getDateOfBirth());
-            person.setDead(patient.getPerson().isDead());
-            person.setDeathDate(patient.getPerson().getDeathDate());
-            person.setGender(patient.getPerson().getGender());
-            person.setMiddleName(patient.getPerson().getMiddleName());
-            person.setPersonId(patient.getPerson().getPersonId());
-            person.setPreferredName(patient.getPerson().getPreferredName());
-            person.setAttributes(attributeList);
-
-            patientToUpdate.setPerson(person);
             allCouchPatients.update(patientToUpdate);
         }
 

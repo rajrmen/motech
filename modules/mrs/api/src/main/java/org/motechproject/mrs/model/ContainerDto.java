@@ -1,14 +1,9 @@
 package org.motechproject.mrs.model;
 
-import org.motechproject.mrs.domain.Attribute;
-import org.motechproject.mrs.model.PatientDto;
-import org.motechproject.mrs.model.PersonDto;
-
 import java.util.ArrayList;
 import java.util.List;
 
 public class ContainerDto {
-
     private PersonDto personDto;
     private PatientDto patientDto;
     private FacilityDto facilityDto;
@@ -45,6 +40,4 @@ public class ContainerDto {
     public void setPatientDto(PatientDto patientDto) {
         this.patientDto = patientDto;
     }
-
-
 }

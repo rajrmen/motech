@@ -14,4 +14,8 @@ public class PatientNotFoundException extends Exception {
     public PatientNotFoundException(String message) {
         super(message);
     }
+    public PatientNotFoundException(Exception e) {
+        super(e.getMessage());
+    }
+
 }

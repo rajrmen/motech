@@ -4,12 +4,11 @@ package org.motechproject.mrs.model;
 import org.joda.time.DateTime;
 import org.motechproject.mrs.domain.Attribute;
 import org.motechproject.mrs.domain.Person;
-import org.codehaus.jackson.annotate.JsonIgnore;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class PersonDto implements Person{
+public class PersonDto implements Person {
     private String personId;
     private String firstName;
     private String middleName;
@@ -23,7 +22,6 @@ public class PersonDto implements Person{
     private Boolean dead;
     private List<Attribute> attributes = new ArrayList<Attribute>();
     private DateTime deathDate;
-
 
     public String getPersonId() {
         return personId;
@@ -128,6 +126,4 @@ public class PersonDto implements Person{
     public void setDeathDate(DateTime deathDate) {
         this.deathDate = deathDate;
     }
-
-
 }

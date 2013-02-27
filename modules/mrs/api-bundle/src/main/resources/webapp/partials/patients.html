@@ -4,12 +4,6 @@
         <div class="box-content inside clearfix">
             <div class="control-group">
                 <a href="#/mrs/new" role="button" class="btn btn-primary"><i class="icon-plus icon-white"></i> {{msg('data.provider.mrs.add.patient')}}</a>
-
-                <select ng-model="selectedItem" ng-options="provider for provider in mrsProvidersList">
-                    <option value="">-- {{msg('chooseRole')}} --</option>
-                </select>
-                <input class="btn btn-primary" type="button" ng-click="chooseAdapter()" value="{{msg('save')}}" >
-
             </div>
             <h4>{{msg('data.provider.mrs.all.patients')}}</h4>
             <div class="control-group form-inline">
@@ -71,7 +65,7 @@
         <div class="box-header">{{msg('data.provider.mrs.patient')}}</div>
         <div class="box-content inside clearfix">
             <h4>{{msg('data.provider.mrs.patient.name')}} {{patientDto.person.firstName}} {{patientDto.person.lastName}}</h4>
-            <a ng-href="#/mrs/{{patientDto.motechId}}/edit"><h6>{{msg('data.provider.mrs.edit.patientDetails')}}</h6></a>  <span class="pull-right">{{msg('data.provider.mrs.patient.motechId')}} {{patientDto.motechId}}</span>
+            <a ng-href="#/mrs/{{patientDto.motechId}}/edit"><h6>{{msg('data.provider.mrs.edit.patientDetails')}}</h6></a>
             <div class="control-group clearfix">
                 <span class="pull-right"><h5>{{msg('data.provider.mrs.patient.motechId')}} {{patientDto.motechId}}</h5></span>
             </div>
