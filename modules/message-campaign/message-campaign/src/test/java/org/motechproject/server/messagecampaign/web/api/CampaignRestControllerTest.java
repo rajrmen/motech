@@ -1,4 +1,4 @@
-package org.motechproject.server.messagecampaign.web.controller;
+package org.motechproject.server.messagecampaign.web.api;
 
 
 import org.apache.commons.io.IOUtils;
@@ -34,7 +34,7 @@ import static org.springframework.test.web.server.request.MockMvcRequestBuilders
 import static org.springframework.test.web.server.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.server.result.MockMvcResultMatchers.status;
 
-public class CampaignControllerTest {
+public class CampaignRestControllerTest {
 
     private static final MediaType APPLICATION_JSON_UTF8 = new MediaType("application", "json", Charset.forName("UTF-8"));
 

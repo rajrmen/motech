@@ -1,4 +1,4 @@
-package org.motechproject.server.messagecampaign.web.controller;
+package org.motechproject.server.messagecampaign.web.api;
 
 import org.apache.commons.lang.StringUtils;
 import org.motechproject.server.messagecampaign.contract.CampaignRequest;
@@ -14,6 +14,7 @@ import org.motechproject.server.messagecampaign.web.model.EnrollmentList;
 import org.motechproject.server.messagecampaign.web.model.EnrollmentRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,7 +32,7 @@ import java.util.Locale;
 @RequestMapping(value = "web-api/enrollments")
 public class EnrollmentController {
 
-    //private static final String HAS_MANAGE_ENROLLMENTS_ROLE = "hasRole('manageEnrollments')";
+    private static final String HAS_MANAGE_ENROLLMENTS_ROLE = "hasRole('manageEnrollments')";
 
     @Autowired
     private MessageCampaignService messageCampaignService;
@@ -41,7 +42,7 @@ public class EnrollmentController {
 
     @RequestMapping(value = "/{campaignName}/users/{userId}", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.OK)
-    //@PreAuthorize(HAS_MANAGE_ENROLLMENTS_ROLE)
+    @PreAuthorize(HAS_MANAGE_ENROLLMENTS_ROLE)
     public void enrollUser(@PathVariable String campaignName, @PathVariable String userId,
                            @RequestBody EnrollmentRequest enrollmentRequest) {
 
@@ -58,7 +59,7 @@ public class EnrollmentController {
     }
 
     @RequestMapping(value = "/{campaignName}/users/{userId}", method = RequestMethod.GET)
-    //@PreAuthorize(HAS_MANAGE_ENROLLMENTS_ROLE)
+    @PreAuthorize(HAS_MANAGE_ENROLLMENTS_ROLE)
     public @ResponseBody
     EnrollmentDto getEnrollment(@PathVariable String campaignName, @PathVariable String userId) {
         CampaignEnrollmentsQuery query = new CampaignEnrollmentsQuery()
@@ -75,7 +76,7 @@ public class EnrollmentController {
 
     @RequestMapping(value = "/{campaignName}/users/{userId}", method = RequestMethod.PUT)
     @ResponseStatus(HttpStatus.OK)
-    //@PreAuthorize(HAS_MANAGE_ENROLLMENTS_ROLE)
+    @PreAuthorize(HAS_MANAGE_ENROLLMENTS_ROLE)
     public void updateEnrollment(@PathVariable String campaignName, @PathVariable String userId,
                                  @RequestBody EnrollmentRequest enrollmentRequest) {
         CampaignRequest campaignRequest = new CampaignRequest(userId, campaignName,
@@ -87,7 +88,7 @@ public class EnrollmentController {
 
     @RequestMapping(value = "/{campaignName}/users/{externalId}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.OK)
-    //@PreAuthorize(HAS_MANAGE_ENROLLMENTS_ROLE)
+    @PreAuthorize(HAS_MANAGE_ENROLLMENTS_ROLE)
     public void removeEnrollment(@PathVariable String campaignName, @PathVariable String externalId) {
         CampaignEnrollmentsQuery query = new CampaignEnrollmentsQuery()
                 .withCampaignName(campaignName).withExternalId(externalId);
@@ -106,7 +107,7 @@ public class EnrollmentController {
     }
     
     @RequestMapping(value = "/{campaignName}/users", method = RequestMethod.GET)
-    //@PreAuthorize(HAS_MANAGE_ENROLLMENTS_ROLE)
+    @PreAuthorize(HAS_MANAGE_ENROLLMENTS_ROLE)
     public @ResponseBody EnrollmentList getEnrollmentsForCampaign(@PathVariable String campaignName) {
         CampaignEnrollmentsQuery query = new CampaignEnrollmentsQuery().withCampaignName(campaignName);
 
@@ -119,7 +120,7 @@ public class EnrollmentController {
     }
 
     @RequestMapping(value = "/users/{userId}", method = RequestMethod.GET)
-    //@PreAuthorize(HAS_MANAGE_ENROLLMENTS_ROLE)
+    @PreAuthorize(HAS_MANAGE_ENROLLMENTS_ROLE)
     public @ResponseBody EnrollmentList getEnrollmentsForUser(@PathVariable String userId) {
         CampaignEnrollmentsQuery query = new CampaignEnrollmentsQuery().withExternalId(userId);
 
@@ -136,7 +137,7 @@ public class EnrollmentController {
     }
 
     @RequestMapping(value = "/users", method = RequestMethod.GET)
-    //@PreAuthorize(HAS_MANAGE_ENROLLMENTS_ROLE)
+    @PreAuthorize(HAS_MANAGE_ENROLLMENTS_ROLE)
     public @ResponseBody EnrollmentList getAllEnrollments(
             @RequestParam(required = false) String enrollmentStatus,
             @RequestParam(required = false) String externalId, @RequestParam(required = false) String campaignName) {

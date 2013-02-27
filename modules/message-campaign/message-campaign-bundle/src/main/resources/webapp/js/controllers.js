@@ -7,13 +7,13 @@ function CampaignsCtrl($scope, Campaigns) {
 
 function EnrollmentsCtrl($scope, $routeParams, Enrollments) {
 
+    $scope.campaignName = $routeParams.campaignName;
+
     $scope.$on('$viewContentLoaded', function () {
 
-        $scope.campaignName = $routeParams.campaignName;
-
-        var createOrUpdateEnrollementUrl = "../messagecampaign/web-api/enrollments/users/" + +$scope.campaignName + "/users/";
-        var getEnrollementsUrl = "../messagecampaign/web-api/enrollments/users?campaignName=" + $scope.campaignName; //enrollmentStatus=ACTIVE&
-        var deleteEnrollementUrl = "../messagecampaign/web-api/enrollments/" + $scope.campaignName + "/users/";
+        var createOrUpdateEnrollementUrl = "../messagecampaign/enrollments/users/" + $scope.campaignName + "/users/";
+        var getEnrollementsUrl = "../messagecampaign/enrollments/users?campaignName=" + $scope.campaignName; //enrollmentStatus=ACTIVE&
+        var deleteEnrollementUrl = "../messagecampaign/enrollments/" + $scope.campaignName + "/users/";
 
         jQuery("#enrollmentsTable").jqGrid({
             caption:"Enrollments for Campaign - " + $scope.campaignName,
@@ -36,6 +36,7 @@ function EnrollmentsCtrl($scope, $routeParams, Enrollments) {
                     }}}
             ],
             autowidth:true,
+            height: "auto",
             multiselect:true
         });
 
