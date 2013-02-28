@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Controller
-public class CampaignRestController {
+public class CampaignController {
 
     @Autowired
     private MessageCampaignService messageCampaignService;

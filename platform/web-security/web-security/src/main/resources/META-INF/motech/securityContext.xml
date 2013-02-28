@@ -39,10 +39,11 @@ under different authorization schemes.  i.e. no security, api key, etc. -->
 
     <bean id="basicAuthenticationEntryPoint" class="org.motechproject.security.authentication.ChallengelessBasicAuthenticationEntryPoint"/>
 
-    <!--<security:http auto-config="false" pattern="/**/web-api/**" entry-point-ref="basicAuthenticationEntryPoint" create-session="stateless" use-expressions="true">
+    <security:http auto-config="false" pattern="/**/web-api/**" entry-point-ref="basicAuthenticationEntryPoint" create-session="stateless" use-expressions="true">
         <security:custom-filter position="BASIC_AUTH_FILTER" ref="basicAuthenticationFilter" />
+        <security:custom-filter position="FORM_LOGIN_FILTER" ref="userAuthenticationProcessingFilter" />
         <security:intercept-url pattern="/**/web-api/**" access="isFullyAuthenticated()"/>
-    </security:http>-->
+    </security:http>
 
     <bean id="loginFormAuthentication" class="org.motechproject.security.authentication.MotechLoginUrlAuthenticationEntryPoint">
         <property name="loginFormUrl" value="/module/server/login" />

@@ -43,7 +43,7 @@ public class CampaignRestControllerTest {
     private MockMvc controller;
 
     @InjectMocks
-    private CampaignController campaignController = new CampaignController();
+    private CampaignRestController campaignController = new CampaignRestController();
 
     @Mock
     private MessageCampaignService messageCampaignService;

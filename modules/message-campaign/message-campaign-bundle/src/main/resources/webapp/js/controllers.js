@@ -11,7 +11,7 @@ function EnrollmentsCtrl($scope, $routeParams, Enrollments) {
 
     $scope.$on('$viewContentLoaded', function () {
 
-        var createOrUpdateEnrollementUrl = "../messagecampaign/enrollments/users/" + $scope.campaignName + "/users/";
+        var createOrUpdateEnrollementUrl = "../messagecampaign/enrollments/" + $scope.campaignName + "/users";
         var getEnrollementsUrl = "../messagecampaign/enrollments/users?campaignName=" + $scope.campaignName; //enrollmentStatus=ACTIVE&
         var deleteEnrollementUrl = "../messagecampaign/enrollments/" + $scope.campaignName + "/users/";
 
@@ -24,11 +24,12 @@ function EnrollmentsCtrl($scope, $routeParams, Enrollments) {
                 id:"0",
                 repeatitems:false
             },
-            colNames:['ID', 'Edit', 'Delete'],
+            colNames:['Enrollment ID', 'ID', 'Edit', 'Delete'],
             colModel:[
+                {name:'enrollmentId', index:'enrollmentId', hidden:true},
                 {name:'externalId', index:'externalId', sortable:false, editable:true},
                 {name:'edit', formatter:'actions',
-                    formatoptions:{keys:true, editbutton:true, delbutton:false, url:createOrUpdateEnrollementUrl + this.externalId, mtype:"POST" }},
+                    formatoptions:{keys:true, editbutton:true, delbutton:false, url:createOrUpdateEnrollementUrl, mtype:"POST" }},
                 {name:'delete', formatter:'actions',
                     formatoptions:{editbutton:false, delbutton:true, delOptions:{
                         url:deleteEnrollementUrl,

@@ -21,7 +21,7 @@ import java.util.List;
 
 @Controller
 @RequestMapping(value = "web-api")
-public class CampaignController {
+public class CampaignRestController {
 
     private static final String HAS_MANAGE_CAMPAIGNS_ROLE = "hasRole('manageCampaigns')";
 

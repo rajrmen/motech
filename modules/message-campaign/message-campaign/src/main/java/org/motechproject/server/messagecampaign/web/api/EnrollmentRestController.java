@@ -30,7 +30,7 @@ import java.util.Locale;
 
 @Controller
 @RequestMapping(value = "web-api/enrollments")
-public class EnrollmentController {
+public class EnrollmentRestController {
 
     private static final String HAS_MANAGE_ENROLLMENTS_ROLE = "hasRole('manageEnrollments')";
 
@@ -43,7 +43,7 @@ public class EnrollmentController {
     @RequestMapping(value = "/{campaignName}/users/{userId}", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize(HAS_MANAGE_ENROLLMENTS_ROLE)
-    public void enrollUser(@PathVariable String campaignName, @PathVariable String userId,
+    public void enrollOrUpdateUser(@PathVariable String campaignName, @PathVariable String userId,
                            @RequestBody EnrollmentRequest enrollmentRequest) {
 
         CampaignRequest campaignRequest = new CampaignRequest(userId, campaignName,
@@ -140,7 +140,8 @@ public class EnrollmentController {
     @PreAuthorize(HAS_MANAGE_ENROLLMENTS_ROLE)
     public @ResponseBody EnrollmentList getAllEnrollments(
             @RequestParam(required = false) String enrollmentStatus,
-            @RequestParam(required = false) String externalId, @RequestParam(required = false) String campaignName) {
+            @RequestParam(required = false) String externalId,
+            @RequestParam(required = false) String campaignName) {
         CampaignEnrollmentsQuery query = new CampaignEnrollmentsQuery();
 
         if (enrollmentStatus != null) {

@@ -54,7 +54,7 @@ public class EnrollmentRestControllerTest {
     private MockMvc controller;
 
     @InjectMocks
-    private EnrollmentController enrollmentController = new EnrollmentController();
+    private EnrollmentRestController enrollmentController = new EnrollmentRestController();
 
     @Mock
     private MessageCampaignService messageCampaignService;
@@ -145,7 +145,7 @@ public class EnrollmentRestControllerTest {
         ).andExpect(
             status().is(HttpStatus.BAD_REQUEST.value())
         ).andExpect(
-            content().string(expectedResponse)
+                content().string(expectedResponse)
         );
     }
 
