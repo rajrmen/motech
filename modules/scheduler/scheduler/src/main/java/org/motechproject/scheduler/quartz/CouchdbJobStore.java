@@ -24,7 +24,6 @@ import static ch.lambdaj.Lambda.on;
 @Repository
 public class CouchdbJobStore extends CouchDbRepositorySupport {
 
-    private int numberOfJobs;
 
     @Autowired
     protected CouchdbJobStore(@Qualifier("schedulerConnector") CouchDbConnector db) {
@@ -32,7 +31,7 @@ public class CouchdbJobStore extends CouchDbRepositorySupport {
         initStandardDesignDocument();
     }
 
-    public void storeJob(JobDetail newJob, boolean replaceExisting) throws ObjectAlreadyExistsException, JobPersistenceException {
+    public void storeJob(JobDetail newJob, boolean replaceExisting) throws JobPersistenceException {
         CouchdbJobDetail existingJob = (CouchdbJobDetail) retrieveJob(newJob.getKey());
         if (existingJob == null) {
             db.create(new CouchdbJobDetail(newJob));
@@ -69,7 +68,7 @@ public class CouchdbJobStore extends CouchDbRepositorySupport {
     @View(name = "by_jobKey", map = "function(doc) { if (doc.type === 'CouchdbJobDetail') emit([doc.name, doc.group], doc._id); }")
     public JobDetail retrieveJob(JobKey jobKey) throws JobPersistenceException {
         List<JobDetail> jobs = db.queryView(createQuery("by_jobKey").key(ComplexKey.of(jobKey.getName(), jobKey.getGroup())).includeDocs(true), type);
-        return jobs != null && jobs.size() > 0? jobs.get(0) : null;
+        return jobs != null && jobs.size() > 0 ? jobs.get(0) : null;
     }
 
     @View(name = "all_jobs", map = "function(doc) { if (doc.type === 'CouchdbJobDetail') emit(doc._id, doc._id); }")

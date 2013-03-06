@@ -25,25 +25,21 @@ public class CouchdbJobDetail extends JobDetailImpl {
         type = "CouchdbJobDetail";
     }
 
+    @SuppressWarnings("PMD")
     public CouchdbJobDetail(JobDetail newJob) {
         this();
         if (newJob instanceof JobDetailImpl) {
-            setName(((JobDetailImpl) newJob).getName());
-            setGroup(((JobDetailImpl) newJob).getGroup());
+            super.setName(((JobDetailImpl) newJob).getName());
+            super.setGroup(((JobDetailImpl) newJob).getGroup());
         } else if (newJob instanceof CouchdbJobDetail) {
-            setName((((CouchdbJobDetail) newJob).getName()));
-            setGroup(((CouchdbJobDetail) newJob).getGroup());
+            super.setName((((CouchdbJobDetail) newJob).getName()));
+            super.setGroup(((CouchdbJobDetail) newJob).getGroup());
         }
-        setDescription(newJob.getDescription());
-        setJobClass(newJob.getJobClass());
-        setDurability(newJob.isDurable());
-        setRequestsRecovery(newJob.requestsRecovery());
-        setJobDataMap((JobDataMap) newJob.getJobDataMap().clone());
-    }
-
-    @JsonProperty("_id")
-    public String getId() {
-        return id;
+        super.setDescription(newJob.getDescription());
+        super.setJobClass(newJob.getJobClass());
+        super.setDurability(newJob.isDurable());
+        super.setRequestsRecovery(newJob.requestsRecovery());
+        super.setJobDataMap((JobDataMap) newJob.getJobDataMap().clone());
     }
 
     @JsonProperty("_id")
@@ -51,14 +47,19 @@ public class CouchdbJobDetail extends JobDetailImpl {
         this.id = id;
     }
 
+    @JsonProperty("type")
+    public void setType(String type) {
+        this.type = type;
+    }
+
     @JsonProperty("_rev")
     public String getRevision() {
         return revision;
     }
 
-    @JsonProperty("_rev")
-    public void setRevision(String revision) {
-        this.revision = revision;
+    @JsonProperty("_id")
+    public String getId() {
+        return id;
     }
 
     @JsonProperty("type")
@@ -66,9 +67,9 @@ public class CouchdbJobDetail extends JobDetailImpl {
         return type;
     }
 
-    @JsonProperty("type")
-    public void setType(String type) {
-        this.type = type;
+    @JsonProperty("_rev")
+    public void setRevision(String revision) {
+        this.revision = revision;
     }
 
     @Override

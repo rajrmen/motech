@@ -9,6 +9,7 @@ import org.quartz.impl.triggers.SimpleTriggerImpl;
 
 import java.util.Date;
 
+@SuppressWarnings("PMD")
 @JsonAutoDetect(
     fieldVisibility = JsonAutoDetect.Visibility.NONE,
     getterVisibility = JsonAutoDetect.Visibility.NONE,

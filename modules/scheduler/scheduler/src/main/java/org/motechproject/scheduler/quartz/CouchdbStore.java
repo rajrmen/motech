@@ -25,6 +25,7 @@ import org.quartz.spi.TriggerFiredResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -32,13 +33,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Repository
 public class CouchdbStore implements JobStore {
 
-    protected String instanceId;
-    protected String instanceName;
-    private int theadPoolSize;
+    private Logger logger = Logger.getLogger(CouchdbStore.class.getName());
+    private String instanceId;
+    private String instanceName;
 
     @Autowired
     private CouchdbJobStore jobStore;
@@ -48,19 +51,22 @@ public class CouchdbStore implements JobStore {
     public CouchdbStore() {
     }
 
-    public void setProperties(String propertiesFile) throws Exception {
+    public void setProperties(String propertiesFile) throws IOException, CouchJobStoreException {
         Properties properties = new Properties();
         properties.load(ClassLoader.class.getResourceAsStream(propertiesFile));
 
         HttpClientFactoryBean httpClientFactoryBean = new HttpClientFactoryBean();
         httpClientFactoryBean.setProperties(properties);
         httpClientFactoryBean.setCaching(false);
-        httpClientFactoryBean.afterPropertiesSet();
-
-        CouchDbConnector connector = new StdCouchDbConnector("scheduler", new StdCouchDbInstance(httpClientFactoryBean.getObject()));
-
-        this.jobStore = new CouchdbJobStore(connector);
-        this.triggerStore = new CouchdbTriggerStore(connector);
+        try {
+            httpClientFactoryBean.afterPropertiesSet();
+            CouchDbConnector connector = new StdCouchDbConnector("scheduler", new StdCouchDbInstance(httpClientFactoryBean.getObject()));
+            this.jobStore = new CouchdbJobStore(connector);
+            this.triggerStore = new CouchdbTriggerStore(connector);
+        } catch (Exception e) {
+            logger.log(Level.SEVERE, e.getMessage(), e);
+            throw new CouchJobStoreException(e);
+        }
     }
 
     @Override
@@ -99,18 +105,18 @@ public class CouchdbStore implements JobStore {
     }
 
     @Override
-    public void storeJobAndTrigger(JobDetail newJob, OperableTrigger newTrigger) throws ObjectAlreadyExistsException, JobPersistenceException {
+    public void storeJobAndTrigger(JobDetail newJob, OperableTrigger newTrigger) throws JobPersistenceException {
         jobStore.storeJob(newJob, false);
         triggerStore.storeTrigger(newTrigger, false);
     }
 
     @Override
-    public void storeJob(JobDetail newJob, boolean replaceExisting) throws ObjectAlreadyExistsException, JobPersistenceException {
+    public void storeJob(JobDetail newJob, boolean replaceExisting) throws JobPersistenceException {
         jobStore.storeJob(newJob, replaceExisting);
     }
 
     @Override
-    public void storeJobsAndTriggers(Map<JobDetail, List<Trigger>> triggersAndJobs, boolean replace) throws ObjectAlreadyExistsException, JobPersistenceException {
+    public void storeJobsAndTriggers(Map<JobDetail, List<Trigger>> triggersAndJobs, boolean replace) throws JobPersistenceException {
         if (!replace) {
             for (Map.Entry<JobDetail, List<Trigger>> e: triggersAndJobs.entrySet()) {
                 if (checkExists(e.getKey().getKey())) {
@@ -192,7 +198,7 @@ public class CouchdbStore implements JobStore {
     }
 
     @Override
-    public void storeCalendar(String name, Calendar calendar, boolean replaceExisting, boolean updateTriggers) throws ObjectAlreadyExistsException, JobPersistenceException {
+    public void storeCalendar(String name, Calendar calendar, boolean replaceExisting, boolean updateTriggers) throws JobPersistenceException {
     }
 
     @Override
@@ -347,6 +353,13 @@ public class CouchdbStore implements JobStore {
 
     @Override
     public void setThreadPoolSize(int poolSize) {
-        theadPoolSize = poolSize;
+    }
+
+    public String getInstanceId() {
+        return instanceId;
+    }
+
+    public String getInstanceName() {
+        return instanceName;
     }
 }
