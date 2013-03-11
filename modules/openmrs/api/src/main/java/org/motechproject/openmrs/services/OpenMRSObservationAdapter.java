@@ -2,10 +2,10 @@ package org.motechproject.openmrs.services;
 
 import org.motechproject.mrs.domain.Observation;
 import org.motechproject.mrs.exception.ObservationNotFoundException;
-import org.motechproject.mrs.model.OpenMRSConcept;
-import org.motechproject.mrs.model.OpenMRSObservation;
 import org.motechproject.mrs.services.ObservationAdapter;
 import org.motechproject.openmrs.IdentifierType;
+import org.motechproject.openmrs.model.OpenMRSConcept;
+import org.motechproject.openmrs.model.OpenMRSObservation;
 import org.openmrs.Concept;
 import org.openmrs.ConceptDatatype;
 import org.openmrs.Encounter;
@@ -17,11 +17,13 @@ import org.openmrs.User;
 import org.openmrs.api.ObsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
 import static org.apache.commons.lang.math.NumberUtils.isNumber;
 
 @Service
@@ -128,8 +130,8 @@ public class OpenMRSObservationAdapter implements ObservationAdapter {
         return obsService.saveObs(createOpenMRSObservationForEncounter(mrsObservation, encounter, patient, facility, creator), null);
     }
 
-    Set<OpenMRSObservation> convertOpenMRSToMRSObservations(Set<Obs> openMrsObservations) {
-        Set<OpenMRSObservation> mrsObservations = new HashSet<OpenMRSObservation>();
+    Set<Observation> convertOpenMRSToMRSObservations(Set<Obs> openMrsObservations) {
+        Set<Observation> mrsObservations = new HashSet<>();
         for (Obs obs : openMrsObservations) {
             mrsObservations.add(convertOpenMRSToMRSObservation(obs));
         }

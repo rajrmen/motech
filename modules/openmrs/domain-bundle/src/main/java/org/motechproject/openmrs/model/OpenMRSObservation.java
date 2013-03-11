@@ -1,4 +1,4 @@
-package org.motechproject.mrs.model;
+package org.motechproject.openmrs.model;
 
 import ch.lambdaj.Lambda;
 import java.util.Date;

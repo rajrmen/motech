@@ -1,7 +1,4 @@
-package org.motechproject.mrs.model;
-
-import java.util.Date;
-import java.util.Set;
+package org.motechproject.openmrs.model;
 
 import org.joda.time.DateTime;
 import org.motechproject.mrs.domain.Encounter;
@@ -11,18 +8,21 @@ import org.motechproject.mrs.domain.Patient;
 import org.motechproject.mrs.domain.Provider;
 import org.motechproject.mrs.domain.User;
 
+import java.util.Date;
+import java.util.Set;
+
 /**
  * Class to maintain Patients visits as Encounters
  */
 public class OpenMRSEncounter implements Encounter {
 
     private String id;
-    private OpenMRSProvider provider;
-    private OpenMRSUser creator;
-    private OpenMRSFacility facility;
+    private Provider provider;
+    private User creator;
+    private Facility facility;
     private Date date;
-    private Set<OpenMRSObservation> observations;
-    private OpenMRSPatient patient;
+    private Set<? extends Observation> observations;
+    private Patient patient;
     private String encounterType;
 
     public OpenMRSEncounter() {
@@ -39,7 +39,7 @@ public class OpenMRSEncounter implements Encounter {
      * @param observations  Observations collected during the encounter
      * @param encounterType Type of the encounter.
      */
-    private OpenMRSEncounter(OpenMRSProvider provider, OpenMRSUser creator, OpenMRSFacility facility, Date date, OpenMRSPatient patient, Set<OpenMRSObservation> observations, String encounterType) {
+    private OpenMRSEncounter(Provider provider, User creator, Facility facility, Date date, Patient patient, Set<? extends Observation> observations, String encounterType) {
         this.creator = creator;
         this.provider = provider;
         this.facility = facility;
@@ -49,15 +49,15 @@ public class OpenMRSEncounter implements Encounter {
         this.encounterType = encounterType;
     }
 
-    public OpenMRSUser getCreator() {
+    public User getCreator() {
         return creator;
     }
 
-    public OpenMRSProvider getProvider() {
+    public Provider getProvider() {
         return provider;
     }
 
-    public OpenMRSFacility getFacility() {
+    public Facility getFacility() {
         return facility;
     }
 
@@ -65,11 +65,11 @@ public class OpenMRSEncounter implements Encounter {
         return (date != null) ? new DateTime(date) : null;
     }
 
-    public OpenMRSPatient getPatient() {
+    public Patient getPatient() {
         return patient;
     }
 
-    public Set<OpenMRSObservation> getObservations() {
+    public Set<? extends Observation> getObservations() {
         return observations;
     }
 
@@ -94,27 +94,27 @@ public class OpenMRSEncounter implements Encounter {
     }
 
     public static class MRSEncounterBuilder {
-        private OpenMRSProvider provider;
-        private OpenMRSUser creator;
-        private OpenMRSFacility facility;
+        private Provider provider;
+        private User creator;
+        private Facility facility;
         private Date date;
-        private OpenMRSPatient patient;
-        private Set<OpenMRSObservation> observations;
+        private Patient patient;
+        private Set<? extends Observation> observations;
         private String encounterType;
         private String id;
 
-        public MRSEncounterBuilder withProvider(OpenMRSProvider provider) {
+        public MRSEncounterBuilder withProvider(Provider provider) {
             this.provider = provider;
             return this;
         }
 
-        public MRSEncounterBuilder withCreator(OpenMRSUser creator) {
+        public MRSEncounterBuilder withCreator(User creator) {
             this.creator = creator;
             return this;
         }
 
         public MRSEncounterBuilder withFacility(Facility facility2) {
-            this.facility = (OpenMRSFacility) facility2;
+            this.facility = facility2;
             return this;
         }
 
@@ -123,13 +123,13 @@ public class OpenMRSEncounter implements Encounter {
             return this;
         }
 
-        public MRSEncounterBuilder withPatient(OpenMRSPatient patient) {
+        public MRSEncounterBuilder withPatient(Patient patient) {
             this.patient = patient;
             return this;
         }
 
         public MRSEncounterBuilder withObservations(Set<? extends Observation> observations) {
-            this.observations = (Set<OpenMRSObservation>) observations;
+            this.observations = observations;
             return this;
         }
 
@@ -216,6 +216,6 @@ public class OpenMRSEncounter implements Encounter {
 
     @Override
     public void setObservations(Set<? extends Observation> observations) {
-        this.observations = (Set<OpenMRSObservation>) observations;
+        this.observations = observations;
     }
 }

@@ -1,4 +1,4 @@
-package org.motechproject.mrs.model;
+package org.motechproject.openmrs.model;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

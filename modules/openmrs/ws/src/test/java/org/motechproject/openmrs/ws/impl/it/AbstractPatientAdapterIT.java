@@ -4,10 +4,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.motechproject.mrs.domain.Patient;
 import org.motechproject.mrs.exception.PatientNotFoundException;
-import org.motechproject.mrs.model.OpenMRSAttribute;
-import org.motechproject.mrs.model.OpenMRSFacility;
-import org.motechproject.mrs.model.OpenMRSPatient;
-import org.motechproject.mrs.model.OpenMRSPerson;
+import org.motechproject.openmrs.model.OpenMRSAttribute;
+import org.motechproject.openmrs.model.OpenMRSFacility;
+import org.motechproject.openmrs.model.OpenMRSPatient;
+import org.motechproject.openmrs.model.OpenMRSPerson;
 import org.motechproject.mrs.services.FacilityAdapter;
 import org.motechproject.mrs.services.PatientAdapter;
 import org.motechproject.openmrs.ws.HttpException;
@@ -49,8 +49,8 @@ public abstract class AbstractPatientAdapterIT {
     @Test
     public void shouldUpdatePatient() {
         OpenMRSPatient patient = (OpenMRSPatient) patientAdapter.getPatientByMotechId("750");
-        patient.getPerson().firstName("Changed Name");
-        patient.getPerson().address("Changed Address");
+        patient.getPerson().setFirstName("Changed Name");
+        patient.getPerson().setAddress("Changed Address");
         patientAdapter.updatePatient(patient);
 
         Patient fetched = patientAdapter.getPatientByMotechId("750");

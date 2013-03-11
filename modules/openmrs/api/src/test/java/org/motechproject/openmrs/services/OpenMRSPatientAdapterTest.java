@@ -10,10 +10,10 @@ import org.mockito.InOrder;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.motechproject.mrs.exception.PatientNotFoundException;
-import org.motechproject.mrs.model.OpenMRSAttribute;
-import org.motechproject.mrs.model.OpenMRSFacility;
-import org.motechproject.mrs.model.OpenMRSPatient;
-import org.motechproject.mrs.model.OpenMRSPerson;
+import org.motechproject.openmrs.model.OpenMRSAttribute;
+import org.motechproject.openmrs.model.OpenMRSFacility;
+import org.motechproject.openmrs.model.OpenMRSPatient;
+import org.motechproject.openmrs.model.OpenMRSPerson;
 import org.motechproject.openmrs.IdentifierType;
 import org.motechproject.openmrs.helper.PatientHelper;
 import org.motechproject.openmrs.util.PatientTestUtil;
@@ -99,7 +99,7 @@ public class OpenMRSPatientAdapterTest {
         when(mockPersonAdapter.openMRSToMRSPerson(openMRSPatient)).thenReturn(mrsPerson);
 
         OpenMRSPatient mrsPatient = new OpenMRSPatient(motechId, mrsPerson, facility);
-        final OpenMRSPatient actualPatient = openMRSPatientAdapter.savePatient(mrsPatient);
+        final org.motechproject.mrs.domain.Patient actualPatient = openMRSPatientAdapter.savePatient(mrsPatient);
 
         verify(mockPersonAdapter).openMRSToMRSPerson(openMRSPatient);
 
@@ -131,7 +131,7 @@ public class OpenMRSPatientAdapterTest {
         OpenMRSPerson mrsPerson = new OpenMRSPerson().firstName(first).middleName(middle).lastName(last).birthDateEstimated(birthDateEstimated).dateOfBirth(new DateTime(birthDate)).address(address1).gender(gender);
         when(mockPersonAdapter.openMRSToMRSPerson(openMRSPatient)).thenReturn(mrsPerson);
 
-        OpenMRSPatient returnedPatient = openMRSPatientAdapter.getPatient(String.valueOf(patientId));
+        org.motechproject.mrs.domain.Patient returnedPatient = openMRSPatientAdapter.getPatient(String.valueOf(patientId));
 
         verify(mockPatientService).getPatient(patientId);
         verify(mockPersonAdapter).openMRSToMRSPerson(openMRSPatient);
@@ -162,7 +162,7 @@ public class OpenMRSPatientAdapterTest {
         OpenMRSPerson mrsPerson = new OpenMRSPerson().firstName(first).middleName(middle).lastName(last).birthDateEstimated(birthDateEstimated).dateOfBirth(new DateTime(birthDate)).address(address1).gender(gender);
         when(mockPersonAdapter.openMRSToMRSPerson(openMRSPatient)).thenReturn(mrsPerson);
 
-        OpenMRSPatient returnedPatient = openMRSPatientAdapter.getPatientByMotechId(motechId);
+        org.motechproject.mrs.domain.Patient returnedPatient = openMRSPatientAdapter.getPatientByMotechId(motechId);
 
         verify(mockPersonAdapter).openMRSToMRSPerson(openMRSPatient);
         patientTestUtil.verifyReturnedPatient(first, middle, last, address1, birthDate, birthDateEstimated, gender, facility, returnedPatient, motechId);

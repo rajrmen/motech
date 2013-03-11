@@ -2,7 +2,7 @@ package org.motechproject.openmrs.helper;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.motechproject.mrs.domain.Attribute;
-import org.motechproject.mrs.model.OpenMRSPerson;
+import org.motechproject.openmrs.model.OpenMRSPerson;
 import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;

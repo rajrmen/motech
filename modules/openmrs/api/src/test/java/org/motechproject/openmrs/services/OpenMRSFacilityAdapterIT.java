@@ -2,7 +2,7 @@ package org.motechproject.openmrs.services;
 
 import org.junit.Test;
 import org.motechproject.mrs.domain.Facility;
-import org.motechproject.mrs.model.OpenMRSFacility;
+import org.motechproject.openmrs.model.OpenMRSFacility;
 import org.motechproject.mrs.services.FacilityAdapter;
 import org.motechproject.openmrs.OpenMRSIntegrationTestBase;
 import org.openmrs.api.LocationService;

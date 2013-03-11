@@ -1,4 +1,4 @@
-package org.motechproject.mrs.model;
+package org.motechproject.openmrs.model;
 
 import java.util.Objects;
 

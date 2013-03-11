@@ -6,7 +6,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.motechproject.mrs.domain.Facility;
-import org.motechproject.mrs.model.OpenMRSFacility;
+import org.motechproject.openmrs.model.OpenMRSFacility;
 import org.motechproject.mrs.services.FacilityAdapter;
 import org.openmrs.Location;
 import org.openmrs.api.LocationService;

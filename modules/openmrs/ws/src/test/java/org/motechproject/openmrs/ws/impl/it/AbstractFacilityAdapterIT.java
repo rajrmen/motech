@@ -9,7 +9,7 @@ import java.util.List;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.motechproject.mrs.domain.Facility;
-import org.motechproject.mrs.model.OpenMRSFacility;
+import org.motechproject.openmrs.model.OpenMRSFacility;
 import org.motechproject.mrs.services.FacilityAdapter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;

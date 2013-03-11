@@ -2,9 +2,9 @@ package org.motechproject.openmrs.services;
 
 import org.junit.Test;
 import org.motechproject.mrs.exception.UserAlreadyExistsException;
-import org.motechproject.mrs.model.OpenMRSAttribute;
-import org.motechproject.mrs.model.OpenMRSUser;
-import org.motechproject.mrs.model.OpenMRSPerson;
+import org.motechproject.openmrs.model.OpenMRSAttribute;
+import org.motechproject.openmrs.model.OpenMRSUser;
+import org.motechproject.openmrs.model.OpenMRSPerson;
 import org.motechproject.mrs.services.UserAdapter;
 import org.motechproject.openmrs.OpenMRSIntegrationTestBase;
 import org.openmrs.api.UserService;

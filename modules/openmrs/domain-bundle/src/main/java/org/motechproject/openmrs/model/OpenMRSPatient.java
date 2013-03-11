@@ -1,4 +1,4 @@
-package org.motechproject.mrs.model;
+package org.motechproject.openmrs.model;
 
 import java.util.Objects;
 
@@ -12,8 +12,8 @@ import org.motechproject.mrs.domain.Person;
 public class OpenMRSPatient implements Patient {
 
     private String id;
-    private OpenMRSFacility facility;
-    private OpenMRSPerson person;
+    private Facility facility;
+    private Person person;
     private String motechId;
 
     /**
@@ -32,7 +32,7 @@ public class OpenMRSPatient implements Patient {
      * @param person      Person object containing the personal details of the patient
      * @param mrsFacility Location of the patient
      */
-    public OpenMRSPatient(String motechId, OpenMRSPerson person, OpenMRSFacility mrsFacility) {
+    public OpenMRSPatient(String motechId, Person person, Facility mrsFacility) {
         this.facility = mrsFacility;
         this.person = person;
         this.motechId = motechId;
@@ -46,7 +46,7 @@ public class OpenMRSPatient implements Patient {
      * @param person      Person object containing the personal details of the patient
      * @param mrsFacility Location of the patient
      */
-    public OpenMRSPatient(String id, String motechId, OpenMRSPerson person, OpenMRSFacility mrsFacility) {
+    public OpenMRSPatient(String id, String motechId, Person person, Facility mrsFacility) {
         this(motechId, person, mrsFacility);
         this.id = id;
     }
@@ -55,11 +55,11 @@ public class OpenMRSPatient implements Patient {
         return id;
     }
 
-    public OpenMRSFacility getFacility() {
+    public Facility getFacility() {
         return facility;
     }
 
-    public OpenMRSPerson getPerson() {
+    public Person getPerson() {
         return person;
     }
 

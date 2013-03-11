@@ -1,4 +1,4 @@
-package org.motechproject.mrs.model;
+package org.motechproject.openmrs.model;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.motechproject.mrs.domain.Person;
@@ -20,16 +20,19 @@ public class OpenMRSUser implements User {
      * @param id User ID
      * @return
      */
+    @Deprecated
     public OpenMRSUser id(String id) {
         this.id = id;
         return this;
     }
 
+    @Deprecated
     public OpenMRSUser userName(String userName) {
         this.userName = userName;
         return this;
     }
 
+    @Deprecated
     public OpenMRSUser securityRole(String securityRole) {
         this.securityRole = securityRole;
         return this;
@@ -47,6 +50,7 @@ public class OpenMRSUser implements User {
         return systemId;
     }
 
+    @Deprecated
     public OpenMRSUser systemId(String systemId) {
         this.systemId = systemId;
         return this;
@@ -56,6 +60,7 @@ public class OpenMRSUser implements User {
         return person;
     }
 
+    @Deprecated
     public OpenMRSUser person(OpenMRSPerson person) {
         this.person = person;
         return this;
@@ -106,7 +111,7 @@ public class OpenMRSUser implements User {
     }
 
     @Override
-    public void setUserId(String userId) {
+    public void setUserId(String id) {
         this.id = id;
     }
 

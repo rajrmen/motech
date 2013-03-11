@@ -2,7 +2,7 @@
  * \ingroup MRS
  * Domain classes for MRS
  */
-package org.motechproject.mrs.model;
+package org.motechproject.openmrs.model;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.motechproject.mrs.domain.Attribute;

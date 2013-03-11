@@ -6,7 +6,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.motechproject.mrs.domain.Facility;
-import org.motechproject.mrs.model.OpenMRSFacility;
+import org.motechproject.openmrs.model.OpenMRSFacility;
 import org.openmrs.Location;
 import org.openmrs.api.LocationService;
 import org.springframework.test.util.ReflectionTestUtils;

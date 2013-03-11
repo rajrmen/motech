@@ -11,11 +11,11 @@ import org.motechproject.mrs.domain.Observation;
 import org.motechproject.mrs.domain.Patient;
 import org.motechproject.mrs.domain.Person;
 import org.motechproject.mrs.exception.UserAlreadyExistsException;
-import org.motechproject.mrs.model.OpenMRSEncounter;
-import org.motechproject.mrs.model.OpenMRSObservation;
-import org.motechproject.mrs.model.OpenMRSUser;
-import org.motechproject.mrs.model.OpenMRSFacility;
-import org.motechproject.mrs.model.OpenMRSPerson;
+import org.motechproject.openmrs.model.OpenMRSEncounter;
+import org.motechproject.openmrs.model.OpenMRSObservation;
+import org.motechproject.openmrs.model.OpenMRSUser;
+import org.motechproject.openmrs.model.OpenMRSFacility;
+import org.motechproject.openmrs.model.OpenMRSPerson;
 import org.motechproject.mrs.services.EncounterAdapter;
 import org.motechproject.openmrs.OpenMRSIntegrationTestBase;
 import org.motechproject.commons.date.util.DateUtil;
@@ -129,9 +129,9 @@ public class OpenMRSEncounterAdapterIT extends OpenMRSIntegrationTestBase {
         assertEncounter(duplicateEncounter, newEncounter);
         assertThat(newEncounter.getId(), not(is(oldEncounter.getId())));
 
-        List<OpenMRSObservation> oldObservations = Lambda.select(oldEncounter.getObservations(), having(on(OpenMRSObservation.class).getConceptName(), isIn(asList("SERIAL NUMBER", "NEXT ANC DATE"))));
-        List<OpenMRSObservation> newObservations = Lambda.select(newEncounter.getObservations(), having(on(OpenMRSObservation.class).getConceptName(), isIn(asList("SERIAL NUMBER", "NEXT ANC DATE"))));
-        assertObservation(new HashSet<Observation>(oldObservations), new HashSet<Observation>(newObservations));
+        List<? extends Observation> oldObservations = Lambda.select(oldEncounter.getObservations(), having(on(OpenMRSObservation.class).getConceptName(), isIn(asList("SERIAL NUMBER", "NEXT ANC DATE"))));
+        List<? extends Observation> newObservations = Lambda.select(newEncounter.getObservations(), having(on(OpenMRSObservation.class).getConceptName(), isIn(asList("SERIAL NUMBER", "NEXT ANC DATE"))));
+        assertObservation(new HashSet<>(oldObservations), new HashSet<>(newObservations));
 
         assertTrue(CollectionUtils.isEmpty(Lambda.select(newEncounter.getObservations(), having(on(OpenMRSObservation.class).getConceptName(), is("GRAVIDA")))));
         assertTrue(CollectionUtils.isNotEmpty(Lambda.select(newEncounter.getObservations(), having(on(OpenMRSObservation.class).getConceptName(), is("PREGNANCY STATUS")))));
@@ -146,7 +146,7 @@ public class OpenMRSEncounterAdapterIT extends OpenMRSIntegrationTestBase {
         assertEquals(expectedEncounter.getDate(), actualMRSEncounter.getDate());
         assertEquals(expectedEncounter.getCreator().getUserId(), actualMRSEncounter.getCreator().getUserId());
         assertEquals(expectedEncounter.getProvider().getProviderId(), actualMRSEncounter.getProvider().getProviderId());
-        assertEquals(expectedEncounter.getFacility().getId(), actualMRSEncounter.getFacility().getId());
+        assertEquals(expectedEncounter.getFacility().getFacilityId(), actualMRSEncounter.getFacility().getFacilityId());
         assertEquals(expectedEncounter.getEncounterType(), actualMRSEncounter.getEncounterType());
         assertEquals(expectedEncounter.getPatient().getPatientId(), actualMRSEncounter.getPatient().getPatientId());
         assertObservation(expectedEncounter.getObservations(), actualMRSEncounter.getObservations());

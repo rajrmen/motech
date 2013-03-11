@@ -1,12 +1,8 @@
 package org.motechproject.openmrs.ws.impl;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import org.apache.commons.lang.Validate;
 import org.apache.log4j.Logger;
 import org.motechproject.mrs.domain.Facility;
-import org.motechproject.mrs.model.OpenMRSFacility;
 import org.motechproject.mrs.services.FacilityAdapter;
 import org.motechproject.openmrs.ws.HttpException;
 import org.motechproject.openmrs.ws.resource.LocationResource;
@@ -15,6 +11,10 @@ import org.motechproject.openmrs.ws.resource.model.LocationListResult;
 import org.motechproject.openmrs.ws.util.ConverterUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 @Component("facilityAdapter")
 public class MRSFacilityAdapterImpl implements FacilityAdapter {
@@ -28,7 +28,7 @@ public class MRSFacilityAdapterImpl implements FacilityAdapter {
     }
 
     @Override
-    public List<OpenMRSFacility> getFacilities() {
+    public List<? extends Facility> getFacilities() {
         LocationListResult result = null;
         try {
             result = locationResource.getAllLocations();
@@ -40,8 +40,8 @@ public class MRSFacilityAdapterImpl implements FacilityAdapter {
         return mapLocationToMrsFacility(result.getResults());
     }
 
-    private List<OpenMRSFacility> mapLocationToMrsFacility(List<Location> facilities) {
-        List<OpenMRSFacility> mrsFacilities = new ArrayList<OpenMRSFacility>();
+    private List<? extends Facility> mapLocationToMrsFacility(List<Location> facilities) {
+        List<Facility> mrsFacilities = new ArrayList<>();
         for (Location location : facilities) {
             mrsFacilities.add(ConverterUtils.convertLocationToMrsLocation(location));
         }
@@ -49,7 +49,7 @@ public class MRSFacilityAdapterImpl implements FacilityAdapter {
     }
 
     @Override
-    public List<OpenMRSFacility> getFacilities(String locationName) {
+    public List<? extends Facility> getFacilities(String locationName) {
         Validate.notEmpty(locationName, "Location name cannot be empty");
         LocationListResult result = null;
         try {
@@ -63,7 +63,7 @@ public class MRSFacilityAdapterImpl implements FacilityAdapter {
     }
 
     @Override
-    public OpenMRSFacility getFacility(String facilityId) {
+    public Facility getFacility(String facilityId) {
         Validate.notEmpty(facilityId, "Facility id cannot be empty");
         Location location = null;
         try {
@@ -77,7 +77,7 @@ public class MRSFacilityAdapterImpl implements FacilityAdapter {
     }
 
     @Override
-    public OpenMRSFacility saveFacility(Facility facility) {
+    public Facility saveFacility(Facility facility) {
         Validate.notNull(facility, "Facility cannot be null");
 
         // The uuid cannot be included with the request, otherwise OpenMRS will

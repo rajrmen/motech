@@ -1,4 +1,4 @@
-package org.motechproject.mrs.model;
+package org.motechproject.openmrs.model;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ObjectUtils;
@@ -131,6 +131,7 @@ public class OpenMRSPerson implements Person {
         return this;
     }
 
+    @Deprecated
     public String attrValue(String key) {
         List<Attribute> filteredItems = select(attributes, having(on(Attribute.class).getName(), equalTo(key)));
         return CollectionUtils.isNotEmpty(filteredItems) ? filteredItems.get(0).getValue() : null;
@@ -172,6 +173,7 @@ public class OpenMRSPerson implements Person {
         this.deathDate = deathDate;
     }
 
+    @Deprecated
     public void setId(String id) {
         this.id = id;
     }

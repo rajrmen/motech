@@ -10,8 +10,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.motechproject.mrs.domain.Observation;
 import org.motechproject.mrs.exception.ObservationNotFoundException;
-import org.motechproject.mrs.model.OpenMRSConcept;
-import org.motechproject.mrs.model.OpenMRSObservation;
+import org.motechproject.openmrs.model.OpenMRSConcept;
+import org.motechproject.openmrs.model.OpenMRSObservation;
 import org.openmrs.Concept;
 import org.openmrs.ConceptDatatype;
 import org.openmrs.ConceptName;
@@ -238,7 +238,7 @@ public class OpenMRSObservationAdapterTest {
             add(obs1);
             add(obs2);
         }};
-        Set<OpenMRSObservation> actualMrsObservations = observationAdapter.convertOpenMRSToMRSObservations(openMRSObservations);
+        Set<? extends Observation> actualMrsObservations = observationAdapter.convertOpenMRSToMRSObservations(openMRSObservations);
 
         assertThat(actualMrsObservations.size(), Matchers.is(equalTo(2)));
         final OpenMRSObservation expectedObservation1 = new OpenMRSObservation(obs1.getObsDatetime(), conceptName1.getName(), obs1.getValueText());

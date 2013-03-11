@@ -2,6 +2,14 @@ package org.motechproject.mrs.model;
 
 import org.joda.time.DateTime;
 import org.junit.Test;
+import org.motechproject.mrs.domain.Facility;
+import org.motechproject.mrs.domain.Provider;
+import org.motechproject.mrs.domain.User;
+import org.motechproject.openmrs.model.OpenMRSEncounter;
+import org.motechproject.openmrs.model.OpenMRSFacility;
+import org.motechproject.openmrs.model.OpenMRSPatient;
+import org.motechproject.openmrs.model.OpenMRSProvider;
+import org.motechproject.openmrs.model.OpenMRSUser;
 
 import java.util.Date;
 import java.util.Set;
@@ -17,9 +25,9 @@ public class OpenMRSEncounterTest {
         final Set observations = mock(Set.class);
         final OpenMRSPatient patient = mock(OpenMRSPatient.class);
         final Date date = mock(Date.class);
-        final OpenMRSFacility facility = mock(OpenMRSFacility.class);
-        final OpenMRSUser creator = mock(OpenMRSUser.class);
-        final OpenMRSProvider provider = mock(OpenMRSProvider.class);
+        final Facility facility = mock(OpenMRSFacility.class);
+        final User creator = mock(OpenMRSUser.class);
+        final Provider provider = mock(OpenMRSProvider.class);
         OpenMRSEncounter fromEncounter = new OpenMRSEncounter.MRSEncounterBuilder().withId("id").withProvider(provider).withCreator(creator)
                 .withFacility(facility).withDate(date).withPatient(patient).withObservations(observations)
                 .withEncounterType(encounterTpye).build();

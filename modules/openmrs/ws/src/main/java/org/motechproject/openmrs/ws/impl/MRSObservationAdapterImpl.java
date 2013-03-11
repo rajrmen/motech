@@ -1,13 +1,9 @@
 package org.motechproject.openmrs.ws.impl;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import org.apache.commons.lang.Validate;
 import org.apache.log4j.Logger;
 import org.motechproject.mrs.domain.Patient;
 import org.motechproject.mrs.exception.ObservationNotFoundException;
-import org.motechproject.mrs.model.OpenMRSObservation;
 import org.motechproject.mrs.services.ObservationAdapter;
 import org.motechproject.mrs.services.PatientAdapter;
 import org.motechproject.openmrs.ws.HttpException;
@@ -18,6 +14,10 @@ import org.motechproject.openmrs.ws.util.ConverterUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 @Component("observationAdapter")
 public class MRSObservationAdapterImpl implements ObservationAdapter {
@@ -79,7 +79,7 @@ public class MRSObservationAdapterImpl implements ObservationAdapter {
     }
 
     @Override
-    public OpenMRSObservation findObservation(String patientMotechId, String conceptName) {
+    public org.motechproject.mrs.domain.Observation findObservation(String patientMotechId, String conceptName) {
         Validate.notEmpty(patientMotechId, "MoTeCH Id cannot be empty");
         Validate.notEmpty(conceptName, "Concept name cannot be empty");
 
@@ -88,11 +88,11 @@ public class MRSObservationAdapterImpl implements ObservationAdapter {
             return null;
         }
 
-        return (OpenMRSObservation) observations.get(0);
+        return observations.get(0);
     }
 
     @Override
-    public OpenMRSObservation getObservationById(String id) {
+    public org.motechproject.mrs.domain.Observation getObservationById(String id) {
         try {
             Observation obs = obsResource.getObservationById(id);
             return ConverterUtils.convertObservationToMrsObservation(obs);

@@ -1,11 +1,12 @@
 package org.motechproject.openmrs.services;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.motechproject.mrs.domain.Attribute;
 import org.motechproject.mrs.exception.MRSException;
 import org.motechproject.mrs.exception.UserAlreadyExistsException;
-import org.motechproject.mrs.model.OpenMRSPerson;
-import org.motechproject.mrs.model.OpenMRSUser;
-import org.motechproject.mrs.model.Password;
+import org.motechproject.openmrs.model.OpenMRSPerson;
+import org.motechproject.openmrs.model.OpenMRSUser;
+import org.motechproject.openmrs.model.Password;
 import org.motechproject.mrs.services.UserAdapter;
 import org.openmrs.Person;
 import org.openmrs.PersonAttribute;
@@ -26,7 +27,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import static ch.lambdaj.Lambda.having;
+import static ch.lambdaj.Lambda.on;
+import static ch.lambdaj.Lambda.select;
 import static org.apache.commons.lang.StringUtils.isNotEmpty;
+import static org.hamcrest.Matchers.equalTo;
 
 @Service
 public class OpenMRSUserAdapter implements UserAdapter {
@@ -69,8 +75,10 @@ public class OpenMRSUserAdapter implements UserAdapter {
      */
     @Override
     public Map<String, Object> saveUser(org.motechproject.mrs.domain.User mrsUser) throws UserAlreadyExistsException {
-        OpenMRSPerson person = (OpenMRSPerson) mrsUser.getPerson();
-        OpenMRSUser userByUserName = getUserByUserName(person.attrValue("Email"));
+        org.motechproject.mrs.domain.Person person = mrsUser.getPerson();
+        List<Attribute> filteredItems = select(person.getAttributes(), having(on(Attribute.class).getName(), equalTo("Email")));
+        String email = CollectionUtils.isNotEmpty(filteredItems) ? filteredItems.get(0).getValue() : null;
+        org.motechproject.mrs.domain.User userByUserName = getUserByUserName(email);
         if (userByUserName != null && !isSystemAdmin(userByUserName.getSystemId())) {
             throw new UserAlreadyExistsException();
         }
@@ -95,7 +103,7 @@ public class OpenMRSUserAdapter implements UserAdapter {
      * @return The User object, if found, else null.
      */
     @Override
-    public OpenMRSUser getUserByUserName(String userId) {
+    public org.motechproject.mrs.domain.User getUserByUserName(String userId) {
         org.openmrs.User openMrsUser = getOpenMrsUserByUserName(userId);
         if (openMrsUser == null) {
             return null;
@@ -120,7 +128,7 @@ public class OpenMRSUserAdapter implements UserAdapter {
      */
     @Override
     public List<org.motechproject.mrs.domain.User> getAllUsers() {
-        List<org.motechproject.mrs.domain.User> mrsUsers = new ArrayList<org.motechproject.mrs.domain.User>();
+        List<org.motechproject.mrs.domain.User> mrsUsers = new ArrayList<>();
         List<org.openmrs.User> openMRSUsers = userService.getAllUsers();
         for (org.openmrs.User openMRSUser : openMRSUsers) {
             if (isSystemAdmin(openMRSUser.getSystemId())) {
@@ -131,12 +139,15 @@ public class OpenMRSUserAdapter implements UserAdapter {
         return mrsUsers;
     }
 
-    OpenMRSUser openMrsToMrsUser(org.openmrs.User openMRSUser) {
+    org.motechproject.mrs.domain.User openMrsToMrsUser(org.openmrs.User openMRSUser) {
         OpenMRSUser mrsUser = new OpenMRSUser();
-        OpenMRSPerson mrsPerson = openMRSPersonAdapter.openMRSToMRSPerson(openMRSUser.getPerson());
+        org.motechproject.mrs.domain.Person mrsPerson = openMRSPersonAdapter.openMRSToMRSPerson(openMRSUser.getPerson());
 
-        mrsUser.id(Integer.toString(openMRSUser.getId())).systemId(openMRSUser.getSystemId()).userName(openMRSUser.getUsername()).person(mrsPerson).
-                securityRole(getRoleFromOpenMRSUser(openMRSUser.getRoles()));
+        mrsUser.setUserId(Integer.toString(openMRSUser.getId()));
+        mrsUser.setSystemId(openMRSUser.getSystemId());
+        mrsUser.setUserName(openMRSUser.getUsername());
+        mrsUser.setPerson(mrsPerson);
+        mrsUser.setSecurityRole(getRoleFromOpenMRSUser(openMRSUser.getRoles()));
 
         return mrsUser;
     }

@@ -1,14 +1,13 @@
 package org.motechproject.openmrs.services;
 
 import org.motechproject.mrs.domain.Facility;
-import org.motechproject.mrs.model.OpenMRSEncounter;
-import org.motechproject.mrs.model.OpenMRSEncounter.MRSEncounterBuilder;
-import org.motechproject.mrs.model.OpenMRSObservation;
-import org.motechproject.mrs.model.OpenMRSPatient;
-import org.motechproject.mrs.model.OpenMRSPerson;
-import org.motechproject.mrs.model.OpenMRSProvider;
-import org.motechproject.mrs.model.OpenMRSUser;
+import org.motechproject.mrs.domain.Observation;
 import org.motechproject.mrs.services.EncounterAdapter;
+import org.motechproject.openmrs.model.OpenMRSEncounter;
+import org.motechproject.openmrs.model.OpenMRSPatient;
+import org.motechproject.openmrs.model.OpenMRSPerson;
+import org.motechproject.openmrs.model.OpenMRSProvider;
+import org.motechproject.openmrs.model.OpenMRSUser;
 import org.openmrs.Encounter;
 import org.openmrs.EncounterType;
 import org.openmrs.Location;
@@ -19,10 +18,12 @@ import org.openmrs.api.EncounterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+
 import static ch.lambdaj.Lambda.on;
 import static ch.lambdaj.Lambda.sort;
 import static java.util.Arrays.asList;
@@ -106,12 +107,12 @@ public class OpenMRSEncounterAdapter implements EncounterAdapter {
         Date date = openMrsEncounter.getEncounterDatetime();
         Facility facility = openMRSFacilityAdapter.convertLocationToFacility(openMrsEncounter.getLocation());
         OpenMRSPatient patient = openMRSPatientAdapter.getMrsPatient(openMrsEncounter.getPatient());
-        Set<OpenMRSObservation> observations = openMRSObservationAdapter.convertOpenMRSToMRSObservations(openMrsEncounter.getObs());
+        Set<? extends Observation> observations = openMRSObservationAdapter.convertOpenMRSToMRSObservations(openMrsEncounter.getObs());
         OpenMRSUser creator = new OpenMRSUser().systemId(openMrsEncounter.getCreator().getSystemId()).id(openMrsEncounter.getCreator().getId().toString());
         OpenMRSPerson person = new OpenMRSPerson().id(String.valueOf(openMrsEncounter.getProvider().getId()));
         OpenMRSProvider provider = new OpenMRSProvider(person);
         provider.setProviderId(String.valueOf(openMrsEncounter.getProvider().getId()));
-        return new MRSEncounterBuilder().withId(id).withProvider(provider).withCreator(creator).withFacility(facility)
+        return new OpenMRSEncounter.MRSEncounterBuilder().withId(id).withProvider(provider).withCreator(creator).withFacility(facility)
                 .withDate(date).withPatient(patient).withObservations(observations).withEncounterType(encounterType).build();
     }
 

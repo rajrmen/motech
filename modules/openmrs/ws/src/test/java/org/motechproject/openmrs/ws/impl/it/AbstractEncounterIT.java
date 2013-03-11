@@ -1,29 +1,31 @@
 package org.motechproject.openmrs.ws.impl.it;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.HashSet;
-import java.util.Set;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.motechproject.mrs.exception.UserAlreadyExistsException;
-import org.motechproject.mrs.model.OpenMRSEncounter;
-import org.motechproject.mrs.model.OpenMRSEncounter.MRSEncounterBuilder;
-import org.motechproject.mrs.model.OpenMRSFacility;
-import org.motechproject.mrs.model.OpenMRSObservation;
-import org.motechproject.mrs.model.OpenMRSPatient;
-import org.motechproject.mrs.model.OpenMRSPerson;
-import org.motechproject.mrs.model.OpenMRSProvider;
-import org.motechproject.mrs.model.OpenMRSUser;
 import org.motechproject.mrs.services.EncounterAdapter;
 import org.motechproject.mrs.services.FacilityAdapter;
 import org.motechproject.mrs.services.PatientAdapter;
 import org.motechproject.mrs.services.UserAdapter;
+import org.motechproject.openmrs.model.OpenMRSEncounter;
+import org.motechproject.openmrs.model.OpenMRSEncounter.MRSEncounterBuilder;
+import org.motechproject.openmrs.model.OpenMRSFacility;
+import org.motechproject.openmrs.model.OpenMRSObservation;
+import org.motechproject.openmrs.model.OpenMRSPatient;
+import org.motechproject.openmrs.model.OpenMRSPerson;
+import org.motechproject.openmrs.model.OpenMRSProvider;
+import org.motechproject.openmrs.model.OpenMRSUser;
 import org.motechproject.openmrs.ws.HttpException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.HashSet;
+import java.util.Set;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 public abstract class AbstractEncounterIT {

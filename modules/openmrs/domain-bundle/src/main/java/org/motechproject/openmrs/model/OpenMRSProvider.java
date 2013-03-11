@@ -1,4 +1,4 @@
-package org.motechproject.mrs.model;
+package org.motechproject.openmrs.model;
 
 import org.motechproject.mrs.domain.Person;
 import org.motechproject.mrs.domain.Provider;
@@ -6,14 +6,13 @@ import org.motechproject.mrs.domain.Provider;
 public class OpenMRSProvider implements Provider {
 
     private String providerId;
-    private OpenMRSPerson person;
+    private Person person;
 
-    public OpenMRSProvider(OpenMRSPerson person) {
+    public OpenMRSProvider(Person person) {
         this.person = person;
     }
 
     public OpenMRSProvider() {
-        // TODO Auto-generated constructor stub
     }
 
     @Override
@@ -23,7 +22,7 @@ public class OpenMRSProvider implements Provider {
 
     @Override
     public void setPerson(Person person) {
-        this.person = (OpenMRSPerson) person;
+        this.person = person;
     }
 
     @Override
