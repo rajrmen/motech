@@ -1,23 +1,34 @@
 package org.motechproject.cmslite.api.web;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
 import org.apache.commons.io.IOUtils;
 import org.ektorp.AttachmentInputStream;
+import org.motechproject.cmslite.api.model.CMSLiteException;
+import org.motechproject.cmslite.api.model.Content;
 import org.motechproject.cmslite.api.model.ContentNotFoundException;
 import org.motechproject.cmslite.api.model.StringContent;
 import org.motechproject.cmslite.api.service.CMSLiteService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 @Controller
 public class ResourceController {
@@ -28,6 +39,71 @@ public class ResourceController {
 
     @Autowired
     private CMSLiteService cmsLiteService;
+
+    @RequestMapping(value = "/resource", method = RequestMethod.GET)
+    @ResponseBody
+    public List<ContentDto> getContents() {
+        List<Content> contents = cmsLiteService.getAllContents();
+        List<ContentDto> contentDtos = new ArrayList<>(contents.size());
+
+        for (final Content content : contents) {
+            ContentDto dto = (ContentDto) CollectionUtils.find(contentDtos, new Predicate() {
+                @Override
+                public boolean evaluate(Object object) {
+                    return object instanceof ContentDto &&
+                            ((ContentDto) object).getName().equalsIgnoreCase(content.getName()) &&
+                            ((ContentDto) object).getType().equalsIgnoreCase(content.getType());
+                }
+            });
+
+            if (dto == null) {
+                contentDtos.add(new ContentDto(content));
+            } else {
+                dto.addLanguage(content.getLanguage());
+            }
+        }
+
+        return contentDtos;
+    }
+
+    @RequestMapping(value = "/resource/{type}/{language}/{name}", method = RequestMethod.GET)
+    @ResponseBody
+    public Content getContent(@PathVariable String type, @PathVariable String language, @PathVariable String name) throws ContentNotFoundException {
+        Content content;
+
+        switch (type) {
+            case "stream":
+                content = cmsLiteService.getStreamContent(language, name);
+                break;
+            case "string":
+                content = cmsLiteService.getStringContent(language, name);
+                break;
+            default:
+                content = null;
+        }
+
+        return content;
+    }
+
+    @RequestMapping(value = "/resource/{type}/{language}/{name}", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.OK)
+    public void addOrUpdateContent(@RequestBody Content content) throws CMSLiteException {
+        cmsLiteService.addContent(content);
+    }
+
+    @RequestMapping(value = "/resource/{type}/{language}/{name}", method = RequestMethod.DELETE)
+    @ResponseStatus(HttpStatus.OK)
+    public void removeContent(@PathVariable String type, @PathVariable String language, @PathVariable String name) throws ContentNotFoundException {
+        switch (type) {
+            case "stream":
+                cmsLiteService.removeStreamContent(language, name);
+                break;
+            case "string":
+                cmsLiteService.removeStringContent(language, name);
+                break;
+            default:
+        }
+    }
 
     @RequestMapping(value = "/stream/{language}/{name}", method = RequestMethod.GET)
     public void getStreamContent(@PathVariable String language, @PathVariable String name, HttpServletResponse response)
@@ -82,6 +158,13 @@ public class ResourceController {
         } finally {
             IOUtils.closeQuietly(writer);
         }
+    }
+
+    @ExceptionHandler({ContentNotFoundException.class, CMSLiteException.class })
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseBody
+    public String handleException(Exception e) {
+        return e.getMessage();
     }
 
 }

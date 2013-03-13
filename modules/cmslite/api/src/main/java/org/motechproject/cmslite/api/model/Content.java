@@ -9,6 +9,8 @@ import java.util.Map;
  * Abstract representation of CMS Lite content. Identified by name and language.
  */
 public abstract class Content extends MotechBaseDataObject {
+    private static final long serialVersionUID = 753195533829136573L;
+
     @JsonProperty
     private String language;
     @JsonProperty

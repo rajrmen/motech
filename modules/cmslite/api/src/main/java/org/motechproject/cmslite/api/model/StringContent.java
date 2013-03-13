@@ -11,6 +11,8 @@ import java.util.Map;
  */
 @TypeDiscriminator("doc.type === 'StringContent'")
 public class StringContent extends Content {
+    private static final long serialVersionUID = -8406650651634017618L;
+
     @JsonProperty
     private String value;
 

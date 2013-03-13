@@ -13,6 +13,8 @@ import java.io.InputStream;
  */
 @TypeDiscriminator("doc.type === 'StreamContent'")
 public class StreamContent extends Content {
+    private static final long serialVersionUID = 8169367710567919494L;
+
     private InputStream inputStream;
     @JsonProperty
     private String checksum;
