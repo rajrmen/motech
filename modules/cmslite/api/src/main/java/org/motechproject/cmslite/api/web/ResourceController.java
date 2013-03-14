@@ -94,10 +94,10 @@ public class ResourceController {
 
     @RequestMapping(value = "/resource", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.OK)
-    public void addContent(@RequestParam(value = "name") String name,
-                           @RequestParam(value = "language") String language,
-                           @RequestParam(value = "value", required = false) String value,
-                           @RequestParam(value = "contentFile", required = false) MultipartFile contentFile) throws CMSLiteException, IOException {
+    public void addContent(@RequestParam String name,
+                           @RequestParam String language,
+                           @RequestParam(required = false) String value,
+                           @RequestParam(required = false) MultipartFile contentFile) throws CMSLiteException, IOException {
         if (StringUtils.isNotBlank(value)) {
             cmsLiteService.addContent(new StringContent(language, name, value));
         } else if (null != contentFile) {

@@ -15,6 +15,7 @@
             $('#newResourceForm').ajaxSubmit({
                 success: function (data) {
                     $scope.resources = Resources.query();
+                    $('#newResourceModal').modal('hide');
                     unblockUI();
                 },
                 error: function (response) {

@@ -64,16 +64,17 @@
                             org.motechproject.server.config,
                             org.motechproject.server.config.service,
                             org.osgi.framework;version="0.0.0",
-                            org.osgi.util.tracker;version="0.0.0",
                             org.osgi.service.http,
-                            org.springframework.web.context,
-                            org.springframework.web.servlet,
+                            org.osgi.util.tracker;version="0.0.0",
                             org.springframework.beans.factory.xml,
                             org.springframework.cache.config,
                             org.springframework.cache.support,
                             org.springframework.context.config,
                             org.springframework.integration.config.xml,
                             org.springframework.integration.jms.config,
+                            org.springframework.web.context,
+                            org.springframework.web.multipart.commons,
+                            org.springframework.web.servlet,
                             *
                         </Import-Package>
                         <Embed-Dependency>motech-cmslite-api;inline=true</Embed-Dependency>
