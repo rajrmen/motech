@@ -47,6 +47,7 @@
                 <configuration>
                     <instructions>
                         <Context-Path>cmsliteapi</Context-Path>
+                        <Resource-Path>cmsliteapi/resources</Resource-Path>
                         <Blueprint-Enabled>true</Blueprint-Enabled>
                         <Context-File>META-INF/osgi/applicationCmsLiteApiBundle.xml</Context-File>
                         <Export-Package>

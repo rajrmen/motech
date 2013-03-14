@@ -1,0 +1,50 @@
+<div id="newResourceModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="newResourceLabel" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="newResourceLabel">{{msg('header.addNewResource')}}</h3>
+    </div>
+    <div class="modal-body">
+        <form id="newResourceForm" class="form-horizontal" action="../cmsliteapi/resource"  enctype="multipart/form-data" method="POST">
+            <div class="control-group">
+                <label class="control-label" for="name">{{msg('resource.name')}}</label>
+                <div class="controls">
+                    <input type="text" id="name" name="name"/>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="language">{{msg('resource.language')}}</label>
+                <div class="controls">
+                    <input type="text" id="language" name="language"/>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">{{msg('resource.type')}}</label>
+                <div class="controls">
+                    <div class="btn-group" ng-init="resourceType = 'string'">
+                        <button class="btn dropdown-toggle" data-toggle="dropdown">
+                            {{msg('resource.type.' + resourceType)}} <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a ng-click="resourceType = 'string'">{{msg('resource.type.string')}}</a></li>
+                            <li><a ng-click="resourceType = 'stream'">{{msg('resource.type.stream')}}</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="control-group" ui-if="resourceType == 'string'">
+                <div class="controls">
+                    <textarea rows="3" id="value" name="value"></textarea>
+                </div>
+            </div>
+            <div class="control-group" ui-if="resourceType == 'stream'">
+                <div class="controls">
+                    {{msg('info.fileChosen')}} <input type="file" id="contentFile" name="contentFile">
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" ng-click="saveNewResource()"><i class="icon-ok icon-white"></i> {{msg('button.save')}}</button>
+        <button class="btn" data-dismiss="modal" aria-hidden="true"><i class="icon-remove"></i> {{msg('button.close')}}</button>
+    </div>
+</div>

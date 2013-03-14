@@ -1,12 +1,15 @@
 package org.motechproject.cmslite.api.web;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.ektorp.AttachmentInputStream;
 import org.motechproject.cmslite.api.model.CMSLiteException;
 import org.motechproject.cmslite.api.model.Content;
 import org.motechproject.cmslite.api.model.ContentNotFoundException;
+import org.motechproject.cmslite.api.model.StreamContent;
 import org.motechproject.cmslite.api.model.StringContent;
 import org.motechproject.cmslite.api.service.CMSLiteService;
 import org.slf4j.Logger;
@@ -16,14 +19,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -59,6 +64,8 @@ public class ResourceController {
             if (dto == null) {
                 contentDtos.add(new ContentDto(content));
             } else {
+
+
                 dto.addLanguage(content.getLanguage());
             }
         }
@@ -85,10 +92,23 @@ public class ResourceController {
         return content;
     }
 
-    @RequestMapping(value = "/resource/{type}/{language}/{name}", method = RequestMethod.POST)
+    @RequestMapping(value = "/resource", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.OK)
-    public void addOrUpdateContent(@RequestBody Content content) throws CMSLiteException {
-        cmsLiteService.addContent(content);
+    public void addContent(@RequestParam(value = "name") String name,
+                           @RequestParam(value = "language") String language,
+                           @RequestParam(value = "value", required = false) String value,
+                           @RequestParam(value = "contentFile", required = false) MultipartFile contentFile) throws CMSLiteException, IOException {
+        if (StringUtils.isNotBlank(value)) {
+            cmsLiteService.addContent(new StringContent(language, name, value));
+        } else if (null != contentFile) {
+            InputStream inputStream = contentFile.getInputStream();
+            String checksum = DigestUtils.md5Hex(contentFile.getBytes());
+            String contentType = contentFile.getContentType();
+
+            cmsLiteService.addContent(new StreamContent(language,name, inputStream, checksum, contentType));
+        } else {
+            throw new CMSLiteException("Can't recognize content type");
+        }
     }
 
     @RequestMapping(value = "/resource/{type}/{language}/{name}", method = RequestMethod.DELETE)
@@ -125,7 +145,7 @@ public class ResourceController {
 
             IOUtils.copy(contentStream, out);
         } catch (ContentNotFoundException e) {
-            LOG.error(String.format("Content not found for : stream:%s:%s\n:%s", language, name,
+            LOG.error(String.format("Content not found for : stream:%s:%s%n:%s", language, name,
                     Arrays.toString(e.getStackTrace())));
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, NOT_FOUND_RESPONSE);
         } finally {
@@ -152,7 +172,7 @@ public class ResourceController {
 
             writer.print(stringContent.getValue());
         } catch (ContentNotFoundException e) {
-            LOG.error(String.format("Content not found for : string:%s:%s\n:%s", language, name,
+            LOG.error(String.format("Content not found for : string:%s:%s%n:%s", language, name,
                     Arrays.toString(e.getStackTrace())));
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, NOT_FOUND_RESPONSE);
         } finally {
@@ -160,7 +180,7 @@ public class ResourceController {
         }
     }
 
-    @ExceptionHandler({ContentNotFoundException.class, CMSLiteException.class })
+    @ExceptionHandler({ContentNotFoundException.class, CMSLiteException.class, IOException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ResponseBody
     public String handleException(Exception e) {

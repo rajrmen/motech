@@ -10,10 +10,12 @@ import org.motechproject.cmslite.api.repository.AllStreamContents;
 import org.motechproject.cmslite.api.repository.AllStringContents;
 import org.motechproject.cmslite.api.repository.BaseContentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Service("cmsLiteService")
 public class CMSLiteServiceImpl implements CMSLiteService {
     private AllStreamContents allStreamContents;
     private AllStringContents allStringContents;
