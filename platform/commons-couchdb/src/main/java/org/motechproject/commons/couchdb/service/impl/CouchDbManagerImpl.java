@@ -9,6 +9,7 @@ import org.motechproject.commons.couchdb.service.DbConnectionException;
 import org.springframework.core.io.FileSystemResource;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
@@ -67,7 +68,7 @@ public class CouchDbManagerImpl implements CouchDbManager {
     private String getDbPrefix() {
         Properties motechProperties = new Properties();
         try {
-            motechProperties.load(getClass().getClassLoader().getResourceAsStream("motech.properties"));
+            motechProperties.load(new FileInputStream(String.format("%s/.motech/config/motech.properties", System.getProperty("user.home"))));
         } catch (Exception ignore) {
         }
 
