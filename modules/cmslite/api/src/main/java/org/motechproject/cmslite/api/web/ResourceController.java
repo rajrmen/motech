@@ -98,6 +98,14 @@ public class ResourceController {
                            @RequestParam String language,
                            @RequestParam(required = false) String value,
                            @RequestParam(required = false) MultipartFile contentFile) throws CMSLiteException, IOException {
+        if (StringUtils.isBlank(name)) {
+            throw new CMSLiteException("Resource name is required");
+        }
+
+        if (StringUtils.isBlank(language)) {
+            throw new CMSLiteException("Resource language is required");
+        }
+
         if (StringUtils.isNotBlank(value)) {
             cmsLiteService.addContent(new StringContent(language, name, value));
         } else if (null != contentFile) {
@@ -107,7 +115,7 @@ public class ResourceController {
 
             cmsLiteService.addContent(new StreamContent(language,name, inputStream, checksum, contentType));
         } else {
-            throw new CMSLiteException("Can't recognize content type");
+            throw new CMSLiteException("Resource content is required");
         }
     }
 
