@@ -31,6 +31,10 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>com.springsource.org.apache.commons.fileupload</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.motechproject</groupId>
             <artifactId>motech-testing-utils</artifactId>
             <version>${project.version}</version>
@@ -39,6 +43,27 @@
     </dependencies>
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>jslint-maven-plugin</artifactId>
+                <version>1.0.1</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>jslint</goal>
+                        </goals>
+                        <configuration>
+                            <sourceJsFolder>${basedir}/src/main/resources/webapp/js</sourceJsFolder>
+                            <disallowIncrAndDecr>true</disallowIncrAndDecr>
+                            <requireUseStrict>true</requireUseStrict>
+                            <predefinedVars>
+                                $, angular, blockUI, unblockUI, handleWithStackTrace
+                            </predefinedVars>
+                            <failOnIssues>false</failOnIssues>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
@@ -58,6 +83,7 @@
                         </Export-Package>
                         <Import-Package>
                             javax.servlet.*;resolution:=optional,
+                            org.apache.commons.fileupload,
                             org.ektorp.impl,
                             org.ektorp.spring,
                             org.motechproject.commons.couchdb.service,

@@ -109,11 +109,12 @@ public class ResourceController {
         if (StringUtils.isNotBlank(value)) {
             cmsLiteService.addContent(new StringContent(language, name, value));
         } else if (null != contentFile) {
-            InputStream inputStream = contentFile.getInputStream();
-            String checksum = DigestUtils.md5Hex(contentFile.getBytes());
-            String contentType = contentFile.getContentType();
+            try (InputStream inputStream = contentFile.getInputStream()) {
+                String checksum = DigestUtils.md5Hex(contentFile.getBytes());
+                String contentType = contentFile.getContentType();
 
-            cmsLiteService.addContent(new StreamContent(language,name, inputStream, checksum, contentType));
+                cmsLiteService.addContent(new StreamContent(language, name, inputStream, checksum, contentType));
+            }
         } else {
             throw new CMSLiteException("Resource content is required");
         }

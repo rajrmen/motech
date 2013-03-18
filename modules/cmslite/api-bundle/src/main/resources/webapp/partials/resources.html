@@ -2,5 +2,27 @@
     <div>
         <a href="#newResourceModal" role="button" class="btn btn-warning" data-toggle="modal">{{msg('button.newResource')}}</a>
     </div>
+    <table>
+        <thead>
+            <tr>
+                <th>Resource name</th>
+                <th>Languages</th>
+                <th>Type</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="resource in resources">
+                <td>{{resource.name}}</td>
+                <td>
+                    <ul>
+                        <li ng-repeat="language in resource.languages">
+                            <a href="#">{{language}}</a>
+                        </li>
+                    </ul>
+                </td>
+                <td>{{msg('resource.type.' + showType(resource))}}</td>
+            </tr>
+        </tbody>
+    </table>
     <div ng-include="'../cmsliteapi/resources/partials/widgets/new-resource-modal.html'"></div>
 </div>
