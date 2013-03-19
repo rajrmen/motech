@@ -7,6 +7,7 @@
     var widgetModule = angular.module('motech-cmslite');
 
     widgetModule.controller('ResourceCtrl', function ($scope, $http, Resources) {
+        $scope.select = {};
         $scope.resourceType = 'string';
         $scope.resources = [];
         $scope.resources = Resources.query();
@@ -30,6 +31,33 @@
         $scope.changeResourceType = function (type) {
             $scope.resourceType = type;
         };
+
+        $scope.showResource = function(type, language, name) {
+            switch (type) {
+            case 'string':
+                $scope.select = Resources.get({ type: type, language: language, name: name}, function () {
+                    $('#stringResourceModal').modal('show');
+                });
+            break;
+            case 'stream':
+                $scope.select = Resources.get({ type: type, language: language, name: name}, function () {
+                    $('#streamResourceModal').modal('show');
+                });
+            break;
+            }
+        }
+
+        $scope.removeResource = function(type, language, name) {
+            jConfirm(jQuery.i18n.prop('header.confirm.remove'), jQuery.i18n.prop("header.confirm"), function (val) {
+                if (val) {
+                    $scope.select.$remove({ type: type, language: language, name: name}, function () {
+                        $scope.select = {};
+                        $scope.resources = Resources.query();
+                        $('#stringResourceModal').modal('hide');
+                    }, alertHandler('error.removed', 'header.error'));
+                }
+            });
+        }
 
         $scope.saveNewResource = function () {
             if ($scope.validateForm('newResourceForm')) {

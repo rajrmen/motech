@@ -2,6 +2,7 @@
     <div>
         <a href="#newResourceModal" role="button" class="btn btn-warning" data-toggle="modal">{{msg('button.newResource')}}</a>
     </div>
+    <pre>{{select | json}}</pre>
     <table>
         <thead>
             <tr>
@@ -16,7 +17,7 @@
                 <td>
                     <ul>
                         <li ng-repeat="language in resource.languages">
-                            <a href="#">{{language}}</a>
+                            <a ng-click="showResource(showType(resource), language, resource.name)">{{language}}</a>
                         </li>
                     </ul>
                 </td>
@@ -25,4 +26,5 @@
         </tbody>
     </table>
     <div ng-include="'../cmsliteapi/resources/partials/widgets/new-resource-modal.html'"></div>
+    <div ng-include="'../cmsliteapi/resources/partials/widgets/string-resource-modal.html'"></div>
 </div>

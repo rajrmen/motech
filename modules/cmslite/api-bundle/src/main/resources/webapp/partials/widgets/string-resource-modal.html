@@ -1,0 +1,21 @@
+<div id="stringResourceModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="stringResourceLabel" aria-hidden="true" clear-form="stringResourceForm">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="stringResourceLabel">{{msg('header.resource')}}: {{select.name}}, {{select.language}}</h3>
+    </div>
+    <div class="modal-body">
+        <form id="stringResourceForm" name="stringResourceForm" class="form-horizontal">
+            <div class="control-group">
+                <div class="controls">
+                    <textarea rows="3" id="value" name="value" ng-model="select.value"></textarea>
+                    <span class="form-hint" style="display: none;">{{msg('error.required.string')}}</span>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" ng-click="editResource(select)"><i class="icon-ok icon-white"></i> {{msg('button.edit')}}</button>
+        <button class="btn btn-danger" ng-click="removeResource('string', select.language, select.name)"><i class="icon-remove"></i> {{msg('button.delete')}}</button>
+        <button class="btn" data-dismiss="modal" aria-hidden="true">{{msg('button.close')}}</button>
+    </div>
+</div>
