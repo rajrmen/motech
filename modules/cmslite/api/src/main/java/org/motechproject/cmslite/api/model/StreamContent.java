@@ -2,7 +2,6 @@ package org.motechproject.cmslite.api.model;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonProperty;
-import org.ektorp.AttachmentInputStream;
 import org.ektorp.support.TypeDiscriminator;
 
 import java.io.InputStream;
@@ -40,7 +39,7 @@ public class StreamContent extends Content {
         return checksum;
     }
 
-    public void setInputStream(AttachmentInputStream inputStream) {
+    public void setInputStream(InputStream inputStream) {
         this.inputStream = inputStream;
     }
 

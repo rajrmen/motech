@@ -92,6 +92,16 @@ public class ResourceController {
         return content;
     }
 
+    @RequestMapping(value = "/resource/string/{language}/{name}", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.OK)
+    public void editStringContent(@PathVariable String language, @PathVariable String name,
+                                  @RequestParam(required = false) String value) throws ContentNotFoundException, CMSLiteException, IOException {
+        StringContent stringContent = cmsLiteService.getStringContent(language, name);
+        stringContent.setValue(value);
+
+        cmsLiteService.addContent(stringContent);
+    }
+
     @RequestMapping(value = "/resource", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.OK)
     public void addContent(@RequestParam String name,

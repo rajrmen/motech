@@ -47,14 +47,35 @@
             }
         }
 
-        $scope.removeResource = function(type, language, name) {
-            jConfirm(jQuery.i18n.prop('header.confirm.remove'), jQuery.i18n.prop("header.confirm"), function (val) {
-                if (val) {
-                    $scope.select.$remove({ type: type, language: language, name: name}, function () {
+        $scope.editStringResource = function() {
+            if ($scope.validateField('stringResourceForm', 'value')) {
+                blockUI();
+
+                $('#stringResourceForm').ajaxSubmit({
+                    success: function (data) {
                         $scope.select = {};
                         $scope.resources = Resources.query();
+
                         $('#stringResourceModal').modal('hide');
-                    }, alertHandler('error.removed', 'header.error'));
+
+                        unblockUI();
+                    },
+                    error: function (response) {
+                        handleWithStackTrace('header.error', 'error.resource.save', response);
+                        unblockUI();
+                    }
+                });
+            }
+        }
+
+        $scope.removeResource = function(type, resource) {
+            jConfirm(jQuery.i18n.prop('header.confirm.remove'), jQuery.i18n.prop("header.confirm"), function (val) {
+                if (val) {
+                    $scope.select.$remove({ type: type, language: resource.language, name: resource.name}, function () {
+                            $scope.select = {};
+                            $scope.resources = Resources.query();
+                            $('#' + type + 'ResourceModal').modal('hide');
+                        }, alertHandler('error.removed', 'header.error'));
                 }
             });
         }
