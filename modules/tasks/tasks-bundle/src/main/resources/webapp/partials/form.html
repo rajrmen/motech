@@ -173,6 +173,14 @@
                                                             </div>
                                                         </div>
                                                     </div>
+                                                    <div class="control-group control-section">
+                                                        <label class="control-label">{{msg('subsubsection.fail')}}</label>
+                                                        <div class="controls">
+                                                            <div class="btn-group">
+                                                               <input type="checkbox" ng-model="object.fail"/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                     <div class="control-group move-element margin-before2" ng-hide="object.displayName == undefined">
                                                         <p><strong>{{msg('subsubsection.objectFields')}}</strong></p>
                                                         <span contenteditable="false" ng-repeat="i in object.fields" class="badge badge-warning triggerField" draggable

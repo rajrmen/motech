@@ -1,5 +1,6 @@
 package org.motechproject.tasks.service.impl;
 
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.motechproject.tasks.domain.Task;
 import org.motechproject.tasks.domain.TaskActivity;
 import org.motechproject.tasks.domain.TaskActivityType;
@@ -31,7 +32,7 @@ public class TaskActivityServiceImpl implements TaskActivityService {
 
     @Override
     public void addError(Task task, TaskException e) {
-        allTaskActivities.add(new TaskActivity(e.getMessageKey(), e.getFields(), task.getId(), TaskActivityType.ERROR));
+        allTaskActivities.add(new TaskActivity(e.getMessageKey(), e.getFields(), task.getId(), TaskActivityType.ERROR, ExceptionUtils.getStackTrace(e.getCause())));
     }
 
     @Override
