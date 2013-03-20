@@ -119,10 +119,15 @@ public class ResourceController {
 
     @RequestMapping(value = "/resource", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.OK)
-    public void addContent(@RequestParam String name,
+    public void addContent(@RequestParam String type,
+                           @RequestParam String name,
                            @RequestParam String language,
                            @RequestParam(required = false) String value,
                            @RequestParam(required = false) MultipartFile contentFile) throws CMSLiteException, IOException {
+        if (StringUtils.isBlank(type)) {
+            throw new CMSLiteException("Resource type is required");
+        }
+
         if (StringUtils.isBlank(name)) {
             throw new CMSLiteException("Resource name is required");
         }
@@ -131,17 +136,35 @@ public class ResourceController {
             throw new CMSLiteException("Resource language is required");
         }
 
-        if (StringUtils.isNotBlank(value)) {
-            cmsLiteService.addContent(new StringContent(language, name, value));
-        } else if (null != contentFile) {
-            try (InputStream inputStream = contentFile.getInputStream()) {
-                String checksum = DigestUtils.md5Hex(contentFile.getBytes());
-                String contentType = contentFile.getContentType();
+        switch (type) {
+            case "string":
+                if (StringUtils.isBlank(value)) {
+                    throw new CMSLiteException("Resource content is required");
+                }
 
-                cmsLiteService.addContent(new StreamContent(language, name, inputStream, checksum, contentType));
-            }
-        } else {
-            throw new CMSLiteException("Resource content is required");
+                if (cmsLiteService.isStringContentAvailable(language, name)) {
+                    throw new CMSLiteException(String.format("Resource %s in %s language already exists.", name, language));
+                }
+
+                cmsLiteService.addContent(new StringContent(language, name, value));
+                break;
+            case "stream":
+                if (null == contentFile) {
+                    throw new CMSLiteException("Resource content is required");
+                }
+
+                if (cmsLiteService.isStreamContentAvailable(language, name)) {
+                    throw new CMSLiteException(String.format("Resource %s in %s language already exists.", name, language));
+                }
+
+                try (InputStream inputStream = contentFile.getInputStream()) {
+                    String checksum = DigestUtils.md5Hex(contentFile.getBytes());
+                    String contentType = contentFile.getContentType();
+
+                    cmsLiteService.addContent(new StreamContent(language, name, inputStream, checksum, contentType));
+                }
+                break;
+            default:
         }
     }
 

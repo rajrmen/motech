@@ -57,7 +57,8 @@
                             <disallowIncrAndDecr>true</disallowIncrAndDecr>
                             <requireUseStrict>true</requireUseStrict>
                             <predefinedVars>
-                                $, angular, blockUI, unblockUI, handleWithStackTrace
+                                $, angular, blockUI, unblockUI, handleWithStackTrace, alertHandler,
+                                jConfirm, jQuery
                             </predefinedVars>
                             <failOnIssues>false</failOnIssues>
                         </configuration>

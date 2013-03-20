@@ -6,7 +6,7 @@
 
     var widgetModule = angular.module('motech-cmslite');
 
-    widgetModule.controller('ResourceCtrl', function ($scope, $http, Resources) {
+    widgetModule.controller('ResourceCtrl', function ($scope, Resources) {
         $scope.select = {};
         $scope.mode = 'read';
         $scope.resourceType = 'string';
@@ -27,7 +27,7 @@
             }
 
             return value;
-        }
+        };
 
         $scope.changeResourceType = function (type) {
             $scope.resourceType = type;
@@ -35,7 +35,7 @@
 
         $scope.changeMode = function(mode) {
             $scope.mode = mode;
-        }
+        };
 
         $scope.showNewResourceModal = function () {
             $scope.resourceType = 'string';
@@ -43,7 +43,7 @@
             $scope.select = {};
 
             $('#newResourceModal').modal('show');
-        }
+        };
 
         $scope.showResource = function(type, language, name) {
             switch (type) {
@@ -51,21 +51,21 @@
                 $scope.select = Resources.get({ type: type, language: language, name: name}, function () {
                     $('#stringResourceModal').modal('show');
                 });
-            break;
+                break;
             case 'stream':
                 $scope.select = Resources.get({ type: type, language: language, name: name}, function () {
                     $('#streamResourceModal').modal('show');
                 });
-            break;
+                break;
             }
-        }
+        };
 
         $scope.editStringResource = function() {
             if ($scope.validateField('stringResourceForm', 'value')) {
                 blockUI();
 
                 $('#stringResourceForm').ajaxSubmit({
-                    success: function (data) {
+                    success: function () {
                         $scope.select = Resources.get({ type: 'string', language: $scope.select.language, name: $scope.select.name}, function () {
                             $scope.changeMode('read');
                             unblockUI();
@@ -77,14 +77,14 @@
                     }
                 });
             }
-        }
+        };
 
         $scope.editStreamResource = function() {
             if ($scope.validateField('streamResourceForm', 'contentFile')) {
                 blockUI();
 
                 $('#streamResourceForm').ajaxSubmit({
-                    success: function (data) {
+                    success: function () {
                         $scope.select = Resources.get({ type: 'stream', language: $scope.select.language, name: $scope.select.name}, function () {
                             $scope.changeMode('read');
                             unblockUI();
@@ -96,25 +96,25 @@
                     }
                 });
             }
-        }
+        };
 
         $scope.removeResource = function(type, resource) {
             jConfirm(jQuery.i18n.prop('header.confirm.remove'), jQuery.i18n.prop("header.confirm"), function (val) {
                 if (val) {
                     $scope.select.$remove({ type: type, language: resource.language, name: resource.name}, function () {
-                            $scope.select = {};
-                            $scope.resources = Resources.query();
-                            $('#' + type + 'ResourceModal').modal('hide');
-                        }, alertHandler('error.removed', 'header.error'));
+                        $scope.select = {};
+                        $scope.resources = Resources.query();
+                        $('#' + type + 'ResourceModal').modal('hide');
+                    }, alertHandler('error.removed', 'header.error'));
                 }
             });
-        }
+        };
 
         $scope.saveNewResource = function () {
             if ($scope.validateForm('newResourceForm')) {
                 blockUI();
                 $('#newResourceForm').ajaxSubmit({
-                    success: function (data) {
+                    success: function () {
                         $scope.resources = Resources.query();
                         $('#newResourceModal').modal('hide');
                         unblockUI();
