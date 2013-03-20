@@ -13,7 +13,7 @@ rm -rf /var/cache/motech/motech-default/*
 rm -rf /var/lib/motech/motech-default/webapps/ROOT
 
 # Remove fragment dir if empty
-FRAGMENT_DIR=/usr/share/motech/motech-default/.motech/bundles/fragments
+FRAGMENT_DIR=/var/lib/motech/motech-default/data/bundles/fragments
 
 if [ -d $FRAGMENT_DIR ] && [ ! "$(ls -A $FRAGMENT_DIR)" ]; then
     rm -rf $FRAGMENT_DIR

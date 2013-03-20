@@ -8,26 +8,38 @@
 set -e
 
 motech_default_package="motech-base"
-
+sytem_type=unknown
 
 # Check if motech default package is already installed in system
-if [ $(dpkg -s $motech_default_package | grep -c "Status: install ok installed") -ne 1 ]; then
-	echo "Please install first $motech_default_package package"
-	exit
+if [ -f /etc/redhat-release ] ; then
+	system_type=rpm
+	rpmpattern=$(rpm -qa | grep -c $motech_default_package)
+	if [ "$rpmpattern" -lt 1 ]; then	
+		echo "Please install first $motech_default_package package"
+		exit
+	fi
+elif [ -f /etc/debian_version ] ; then
+	system_type=deb
+	debpattern=$(dpkg -l | grep -c $motech_default_package)
+	if [ "$debpattern" -lt 1 ]; then	
+		echo "Please install first $motech_default_package package"
+		exit
+	fi
+fi
 
-elif [ "$#" -eq 4 -a "$1" = add -a $3 -eq $3 2>/dev/null -a $4 -eq $4 2>/dev/null ]; then
-
+if [ "$#" -eq 4 -a "$1" = add -a $3 -eq $3 2>/dev/null -a $4 -eq $4 2>/dev/null ]; then
 	mkdir -p /var/cache/motech/motech-$2/work/Catalina/localhost
 	mkdir -p /var/cache/motech/motech-$2/temp
 	mkdir -p /var/cache/motech/motech-$2/felix-cache
 	mkdir -p /usr/share/motech/motech-$2
 	mkdir -p /var/lib/motech/motech-$2/webapps
+	mkdir -p /var/lib/motech/motech-$2/data
 	mkdir -p /var/log/motech/motech-$2
 	mkdir -p /etc/motech/motech-$2/
 
 	cp -r /usr/share/motech/motech-default/conf /usr/share/motech/motech-$2/conf
-	cp -r /usr/share/motech/motech-default/.motech /usr/share/motech/motech-$2/.motech
 	cp -r /var/lib/motech/motech-default/webapps/ROOT.war /var/lib/motech/motech-$2/webapps
+	cp -r /var/lib/motech/motech-default/data /var/lib/motech/motech-$2
 
 	cp -r /etc/init.d/motech-default /etc/init.d/motech-$2
 	cp -r /etc/motech/motech-default/motech.conf /etc/motech/motech-$2/motech.conf 
@@ -37,11 +49,13 @@ elif [ "$#" -eq 4 -a "$1" = add -a $3 -eq $3 2>/dev/null -a $4 -eq $4 2>/dev/nul
 	perl -p -i -e "s/8080/$3/g" /usr/share/motech/motech-$2/conf/server.xml
 	perl -p -i -e "s/8005/$4/g" /usr/share/motech/motech-$2/conf/server.xml
 
-	perl -p -i -e "s/motech.app.name=/motech.app.name=$2/g" /usr/share/motech/motech-$2/.motech/config/motech.properties
+	rm -r /var/lib/motech/motech-$2/data/config/motech-settings.conf
+	echo "motech.app.name=$2" > /var/lib/motech/motech-$2/data/config/motech.properties
 
-	rm -r /usr/share/motech/motech-$2/.motech/config/motech-settings.conf
 
+	#create symlinks
 	ln -s /var/lib/motech/motech-$2/webapps/ /usr/share/motech/motech-$2/webapps
+	ln -s /var/lib/motech/motech-$2/data/ /usr/share/motech/motech-$2/.motech
 	ln -s /var/cache/motech/motech-$2/felix-cache/ /usr/share/motech/motech-$2/felix-cache
 	ln -s /var/cache/motech/motech-$2/temp/ /usr/share/motech/motech-$2/temp
 	ln -s /var/cache/motech/motech-$2/work/ /usr/share/motech/motech-$2/work
@@ -62,21 +76,33 @@ elif [ "$#" -eq 4 -a "$1" = add -a $3 -eq $3 2>/dev/null -a $4 -eq $4 2>/dev/nul
 	if [ -d /var/lib/motech/motech-$2 ]; then
     		chown -R motech-$2:motech-$2 /var/lib/motech/motech-$2
 	fi
-	if [ -d /usr/share/motech/motech-$2/.motech ]; then
-    		chown -R motech-$2:motech-$2 /usr/share/motech/motech-$2/.motech
-	fi
 
 	# Register motech service with udpate-rc.d
-	update-rc.d motech-$2 defaults 1>/dev/null
-
-elif [ "$#" -eq 2 -a "$1" = remove ]; then
-	# Stop the motech server
-	if [ -f /etc/init.d/motech-$2 ]; then
-    		invoke-rc.d motech-$2 stop
+	if [ "$system_type" = deb ]; then
+		update-rc.d motech-$2 defaults 1>/dev/null
+	elif [ "$system_type" = rpm ]; then
+		chkconfig --add motech-$2
+	else
+		echo "Unrecognized Os"
 	fi
-	
+
+elif [ "$#" -eq 2 -a "$1" = remove ]; then	
 	# Unregister motech service from rc.d
-	update-rc.d -f motech-$2 remove 1>/dev/null
+	if [ "$system_type" = deb ]; then
+		# Stop the motech server
+		if [ -f /etc/init.d/motech-$2 ]; then
+    			invoke-rc.d motech-$2 stop
+		fi
+		update-rc.d -f motech-$2 remove 1>/dev/null
+	elif [ "$system_type" = rpm ]; then
+		# Stop the motech server
+		if [ -f /etc/init.d/motech-$2 ]; then
+    			/etc/init.d/motech-$2 stop
+		fi
+		chkconfig --del motech-$2
+	else
+		echo "Unrecognized Os"
+	fi
 
 	# Delete the motech user, if he exists
 	if [ ! `grep -c motech-$2: /etc/passwd` -eq 0 ]; then
@@ -96,9 +122,21 @@ elif [ "$#" -eq 2 -a "$1" = remove ]; then
 	rm -rf /etc/motech/motech-$2/
 
 elif [ "$#" -eq 2 -a "$1" = update ]; then
-	# Stop the motech server
-	if [ -f /etc/init.d/motech-$2 ]; then
-    		invoke-rc.d motech-$2 stop
+	# Unregister motech service from rc.d
+	if [ "$system_type" = deb ]; then
+		# Stop the motech server
+		if [ -f /etc/init.d/motech-$2 ]; then
+    			invoke-rc.d motech-$2 stop
+		fi
+		update-rc.d -f motech-$2 remove 1>/dev/null
+	elif [ "$system_type" = rpm ]; then
+		# Stop the motech server
+		if [ -f /etc/init.d/motech-$2 ]; then
+    			/etc/init.d/motech-$2 stop
+		fi
+		chkconfig --del motech-$2
+	else
+		echo "Unrecognized Os"
 	fi
 	
 	cd /var/lib/motech/motech-default/webapps/
@@ -122,7 +160,7 @@ elif [ "$#" -eq 2 -a "$1" = update ]; then
 		if [ ! `grep -c motech-$2: /etc/passwd` -eq 0 ]; then
 			rm -rf /var/lib/motech/motech-$2/webapps/*
 			cp -r /var/lib/motech/motech-default/webapps/ROOT.war /var/lib/motech/motech-$2/webapps
-			cp -r /usr/share/motech/motech-default/.motech/bundles /usr/share/motech/motech-$2/.motech	
+			cp -r /var/lib/motech/motech-default/data/bundles /var/lib/motech/motech-$2/data	
 			echo "Motech-$2 package updated"	
 		fi
 	else
@@ -136,7 +174,8 @@ elif [ "$#" -eq 1 -a "$1" = users ]; then
 	for motech_user in `cut -d: -f1 < /etc/passwd | grep motech`
 	do
 		cd /var/lib/motech/${motech_user}/webapps/
-  		echo ${motech_user} $(sudo unzip -p ROOT.war META-INF/MANIFEST.MF | grep Implementation-Version)	
+  		echo ${motech_user} $(cat /usr/share/motech/${motech_user}/conf/server.xml | grep -m 1 "Connector port" | awk '{ print $2 }') $(sudo unzip -p ROOT.war META-INF/MANIFEST.MF | grep Implementation-Version) 
+		
 	done
 
 else	

@@ -8,6 +8,10 @@ if [ `grep -c motech-default: /etc/passwd` -eq 0 ]; then
     useradd -r -c "Motech-default user" -d /usr/share/motech/motech-default motech-default
 fi
 
+#Create motech.properties
+touch /var/lib/motech/motech-default/data/config/motech.properties
+echo "motech.app.name=default" > /var/lib/motech/motech-default/data/config/motech.properties
+
 # Make motech the owner of relevant directories
 if [ -d /var/log/motech/motech-default ]; then
     chown -R motech-default:motech-default /var/log/motech/motech-default
@@ -18,9 +22,7 @@ fi
 if [ -d /var/lib/motech/motech-default ]; then
     chown -R motech-default:motech-default /var/lib/motech/motech-default
 fi
-if [ -d /usr/share/motech/motech-default/.motech ]; then
-    chown -R motech-default:motech-default /usr/share/motech/motech-default/.motech
-fi
 
 # Register motech service with udpate-rc.d
 update-rc.d motech-default defaults 1>/dev/null
+
