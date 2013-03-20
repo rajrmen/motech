@@ -6,17 +6,25 @@
     <div class="modal-body">
         <form id="stringResourceForm" name="stringResourceForm" class="form-horizontal" action="../cmsliteapi/resource/string/{{select.language}}/{{select.name}}" method="POST">
             <div class="control-group">
-                <div class="controls">
+                <div class="controls" ui-if="mode == 'read'">
+                    <p>{{select.value}}</p>
+                    <span>{{msg('info.characters')}}: {{select.value.length}}</span>
+                </div>
+                <div class="controls" ui-if="mode == 'write'">
                     <textarea rows="3" id="value" name="value" ng-model="select.value"></textarea>
                     <span class="form-hint" style="display: none;">{{msg('error.required.string')}}</span>
-                    <span>{{msg('info.characters')}}: {{select.value.length}}</span>
                 </div>
             </div>
         </form>
     </div>
     <div class="modal-footer">
-        <button class="btn btn-primary" ng-click="editStringResource()"><i class="icon-ok icon-white"></i> {{msg('button.edit')}}</button>
-        <button class="btn btn-danger" ng-click="removeResource('string', select)"><i class="icon-remove"></i> {{msg('button.delete')}}</button>
-        <button class="btn" data-dismiss="modal" aria-hidden="true">{{msg('button.close')}}</button>
+        <!-- read mode -->
+        <button ui-if="mode == 'read'" class="btn btn-primary" ng-click="changeMode('write')"><i class="icon-ok icon-white"></i> {{msg('button.edit')}}</button>
+        <button ui-if="mode == 'read'" class="btn btn-danger" ng-click="removeResource('string', select)"><i class="icon-remove"></i> {{msg('button.delete')}}</button>
+        <button ui-if="mode == 'read'" class="btn" data-dismiss="modal" aria-hidden="true">{{msg('button.close')}}</button>
+
+        <!-- write mode -->
+        <button ui-if="mode == 'write'" class="btn btn-primary" ng-click="editStringResource()"><i class="icon-ok icon-white"></i> {{msg('button.save')}}</button>
+        <button ui-if="mode == 'write'" class="btn" ng-click="changeMode('read')">{{msg('button.cancel')}}</button>
     </div>
 </div>

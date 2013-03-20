@@ -8,6 +8,7 @@
 
     widgetModule.controller('ResourceCtrl', function ($scope, $http, Resources) {
         $scope.select = {};
+        $scope.mode = 'read';
         $scope.resourceType = 'string';
         $scope.resources = [];
         $scope.resources = Resources.query();
@@ -32,6 +33,18 @@
             $scope.resourceType = type;
         };
 
+        $scope.changeMode = function(mode) {
+            $scope.mode = mode;
+        }
+
+        $scope.showNewResourceModal = function () {
+            $scope.resourceType = 'string';
+            $scope.mode = 'read';
+            $scope.select = {};
+
+            $('#newResourceModal').modal('show');
+        }
+
         $scope.showResource = function(type, language, name) {
             switch (type) {
             case 'string':
@@ -53,12 +66,29 @@
 
                 $('#stringResourceForm').ajaxSubmit({
                     success: function (data) {
-                        $scope.select = {};
-                        $scope.resources = Resources.query();
-
-                        $('#stringResourceModal').modal('hide');
-
+                        $scope.select = Resources.get({ type: 'string', language: $scope.select.language, name: $scope.select.name}, function () {
+                            $scope.changeMode('read');
+                            unblockUI();
+                        });
+                    },
+                    error: function (response) {
+                        handleWithStackTrace('header.error', 'error.resource.save', response);
                         unblockUI();
+                    }
+                });
+            }
+        }
+
+        $scope.editStreamResource = function() {
+            if ($scope.validateField('streamResourceForm', 'contentFile')) {
+                blockUI();
+
+                $('#streamResourceForm').ajaxSubmit({
+                    success: function (data) {
+                        $scope.select = Resources.get({ type: 'stream', language: $scope.select.language, name: $scope.select.name}, function () {
+                            $scope.changeMode('read');
+                            unblockUI();
+                        });
                     },
                     error: function (response) {
                         handleWithStackTrace('header.error', 'error.resource.save', response);

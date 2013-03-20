@@ -95,11 +95,26 @@ public class ResourceController {
     @RequestMapping(value = "/resource/string/{language}/{name}", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.OK)
     public void editStringContent(@PathVariable String language, @PathVariable String name,
-                                  @RequestParam(required = false) String value) throws ContentNotFoundException, CMSLiteException, IOException {
+                                  @RequestParam String value) throws ContentNotFoundException, CMSLiteException, IOException {
         StringContent stringContent = cmsLiteService.getStringContent(language, name);
         stringContent.setValue(value);
 
         cmsLiteService.addContent(stringContent);
+    }
+
+    @RequestMapping(value = "/resource/stream/{language}/{name}", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.OK)
+    public void editStreamContent(@PathVariable String language, @PathVariable String name,
+                                  @RequestParam MultipartFile contentFile) throws ContentNotFoundException, CMSLiteException, IOException {
+        StreamContent streamContent = cmsLiteService.getStreamContent(language, name);
+
+        try (InputStream inputStream = contentFile.getInputStream()) {
+            streamContent.setChecksum(DigestUtils.md5Hex(contentFile.getBytes()));
+            streamContent.setContentType(contentFile.getContentType());
+            streamContent.setInputStream(inputStream);
+
+            cmsLiteService.addContent(streamContent);
+        }
     }
 
     @RequestMapping(value = "/resource", method = RequestMethod.POST)
