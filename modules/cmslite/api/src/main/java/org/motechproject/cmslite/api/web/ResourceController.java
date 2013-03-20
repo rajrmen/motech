@@ -1,10 +1,8 @@
 package org.motechproject.cmslite.api.web;
 
-import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
 import org.ektorp.AttachmentInputStream;
 import org.motechproject.cmslite.api.model.CMSLiteException;
 import org.motechproject.cmslite.api.model.Content;
@@ -33,7 +31,15 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
+import java.util.Set;
+
+import static java.util.Locale.getAvailableLocales;
+import static org.apache.commons.codec.digest.DigestUtils.md5Hex;
+import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.apache.commons.lang.StringUtils.startsWithIgnoreCase;
 
 @Controller
 public class ResourceController {
@@ -44,6 +50,32 @@ public class ResourceController {
 
     @Autowired
     private CMSLiteService cmsLiteService;
+
+    @RequestMapping(value = "/resource/available/{field}", method = RequestMethod.GET)
+    @ResponseBody
+    public Set<String> availableField(@PathVariable String field, @RequestParam String term) {
+        Set<String> strings = new HashSet<>();
+
+        switch (field) {
+            case "name":
+                for (ContentDto dto : getContents()) {
+                    if (startsWithIgnoreCase(dto.getName(), term)) {
+                        strings.add(dto.getName());
+                    }
+                }
+                break;
+            case "language":
+                for (Locale locale : getAvailableLocales()) {
+                    if (startsWithIgnoreCase(locale.getDisplayLanguage(), term)) {
+                        strings.add(locale.getDisplayLanguage());
+                    }
+                }
+                break;
+            default:
+        }
+
+        return strings;
+    }
 
     @RequestMapping(value = "/resource", method = RequestMethod.GET)
     @ResponseBody
@@ -109,7 +141,7 @@ public class ResourceController {
         StreamContent streamContent = cmsLiteService.getStreamContent(language, name);
 
         try (InputStream inputStream = contentFile.getInputStream()) {
-            streamContent.setChecksum(DigestUtils.md5Hex(contentFile.getBytes()));
+            streamContent.setChecksum(md5Hex(contentFile.getBytes()));
             streamContent.setContentType(contentFile.getContentType());
             streamContent.setInputStream(inputStream);
 
@@ -124,21 +156,21 @@ public class ResourceController {
                            @RequestParam String language,
                            @RequestParam(required = false) String value,
                            @RequestParam(required = false) MultipartFile contentFile) throws CMSLiteException, IOException {
-        if (StringUtils.isBlank(type)) {
+        if (isBlank(type)) {
             throw new CMSLiteException("Resource type is required");
         }
 
-        if (StringUtils.isBlank(name)) {
+        if (isBlank(name)) {
             throw new CMSLiteException("Resource name is required");
         }
 
-        if (StringUtils.isBlank(language)) {
+        if (isBlank(language)) {
             throw new CMSLiteException("Resource language is required");
         }
 
         switch (type) {
             case "string":
-                if (StringUtils.isBlank(value)) {
+                if (isBlank(value)) {
                     throw new CMSLiteException("Resource content is required");
                 }
 
@@ -158,7 +190,7 @@ public class ResourceController {
                 }
 
                 try (InputStream inputStream = contentFile.getInputStream()) {
-                    String checksum = DigestUtils.md5Hex(contentFile.getBytes());
+                    String checksum = md5Hex(contentFile.getBytes());
                     String contentType = contentFile.getContentType();
 
                     cmsLiteService.addContent(new StreamContent(language, name, inputStream, checksum, contentType));

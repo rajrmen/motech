@@ -6,10 +6,13 @@
     <div class="modal-body">
         <form id="stringResourceForm" name="stringResourceForm" class="form-horizontal" action="../cmsliteapi/resource/string/{{select.language}}/{{select.name}}" method="POST">
             <div class="control-group">
+                <!-- read mode -->
                 <div class="controls" ui-if="mode == 'read'">
                     <p>{{select.value}}</p>
                     <span>{{msg('info.characters')}}: {{select.value.length}}</span>
                 </div>
+
+                <!-- write mode -->
                 <div class="controls" ui-if="mode == 'write'">
                     <textarea rows="3" id="value" name="value" ng-model="select.value"></textarea>
                     <span class="form-hint" style="display: none;">{{msg('error.required.string')}}</span>

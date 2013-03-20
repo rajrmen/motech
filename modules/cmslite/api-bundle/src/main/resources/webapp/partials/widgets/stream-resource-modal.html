@@ -6,9 +6,12 @@
     <div class="modal-body">
         <form id="streamResourceForm" name="streamResourceForm" class="form-horizontal" action="../cmsliteapi/resource/stream/{{select.language}}/{{select.name}}" enctype="multipart/form-data" method="POST">
             <div class="control-group">
+                <!-- read mode -->
                 <div class="controls" ui-if="mode == 'read'">
                     <a href="../cmsliteapi/stream/{{select.language}}/{{select.name}}">{{msg('button.openRawFile')}}</a>
                 </div>
+
+                <!-- write mode -->
                 <div class="controls" ui-if="mode == 'write'">
                     {{msg('info.fileChosen')}} <input type="file" id="contentFile" name="contentFile">
                     <span class="form-hint" style="display: none;">{{msg('error.required.stream')}}</span>
