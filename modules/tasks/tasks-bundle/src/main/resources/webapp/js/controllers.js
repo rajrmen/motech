@@ -252,7 +252,8 @@
                                     displayName: object.lookupValue,
                                     by: object.lookupValue,
                                     field: object.lookupField
-                                }
+                                },
+                                fail : object.fail
                             });
                         }
 
@@ -455,6 +456,10 @@
                         for (i = 0; i < $scope.task.additionalData[ds._id].length; i += 1) {
                             if ($scope.task.additionalData[ds._id][i].id === id) {
                                 exists = true;
+                                object = $scope.findObject(ds, type, id);
+                                if ($scope.task.additionalData[ds._id][i].fail !== object.fail) {
+                                    $scope.task.additionalData[ds._id][i].fail = object.fail;
+                                }
                                 break;
                             }
                         }
@@ -466,7 +471,8 @@
                                 id: object.id,
                                 type: object.type,
                                 lookupField: object.lookup.field,
-                                lookupValue: object.lookup.by
+                                lookupValue: object.lookup.by,
+                                fail: object.fail
                             });
                         }
 
@@ -490,6 +496,10 @@
                         for (i = 0; i < $scope.task.additionalData[dataSource._id].length; i += 1) {
                             if ($scope.task.additionalData[dataSource._id][i].id === objectId) {
                                 exists = true;
+                                object = $scope.findObject(dataSource, objectType, objectId);
+                                if ($scope.task.additionalData[dataSource._id][i].fail !== object.fail) {
+                                    $scope.task.additionalData[dataSource._id][i].fail = object.fail;
+                                }
                                 break;
                             }
                         }
@@ -501,7 +511,8 @@
                                 id: object.id,
                                 type: object.type,
                                 lookupField: object.lookup.field,
-                                lookupValue: object.lookup.by
+                                lookupValue: object.lookup.by,
+                                fail: object.fail
                             });
                         }
                     });
@@ -537,7 +548,8 @@
                                 id: obj.id,
                                 type: obj.type,
                                 lookupField: obj.lookup.field,
-                                lookupValue: obj.lookup.by
+                                lookupValue: obj.lookup.by,
+                                fail : obj.fail
                             });
                         }
                     }

@@ -12,16 +12,18 @@ public class TaskAdditionalData implements Serializable {
     private String type;
     private String lookupField;
     private String lookupValue;
+    private boolean fail;
 
     public TaskAdditionalData() {
-        this(null, null, null, null);
+        this(null, null, null, null, false);
     }
 
-    public TaskAdditionalData(Long id, String type, String lookupField, String lookupValue) {
+    public TaskAdditionalData(Long id, String type, String lookupField, String lookupValue, boolean fail) {
         this.id = id;
         this.type = type;
         this.lookupField = lookupField;
         this.lookupValue = lookupValue;
+        this.fail = fail;
     }
 
     @JsonIgnore
@@ -61,9 +63,17 @@ public class TaskAdditionalData implements Serializable {
         this.lookupValue = lookupValue;
     }
 
+    public boolean isFail() {
+        return fail;
+    }
+
+    public void setFail(boolean fail) {
+        this.fail = fail;
+    }
+
     @Override
     public int hashCode() {
-        return Objects.hash(id, type, lookupField, lookupValue);
+        return Objects.hash(id, type, lookupField, lookupValue, fail);
     }
 
     @Override
@@ -85,7 +95,7 @@ public class TaskAdditionalData implements Serializable {
 
     @Override
     public String toString() {
-        return String.format("TaskAdditionalData{id=%d, type='%s', lookupField='%s', lookupValue='%s'}",
-                id, type, lookupField, lookupValue);
+        return String.format("TaskAdditionalData{id=%d, type='%s', lookupField='%s', lookupValue='%s', fail='%s'}",
+                id, type, lookupField, lookupValue, fail);
     }
 }
