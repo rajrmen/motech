@@ -1,0 +1,50 @@
+.ui-widget-header {
+    background: #224477 url("../../../server/resources/img/navbar.jpg") repeat-x 0 0;
+}
+.ui-jqgrid input.ui-pg-input {
+    width: auto;
+}
+
+.ui-jqgrid select.ui-pg-selbox {
+    width: auto;
+}
+
+.cms-lite.tab-content {
+    padding-left: 0;
+}
+
+.cms-lite.nav.nav-tabs {
+    border-bottom: none;
+    margin-left: 0;
+    margin-right: 10px;
+    margin-bottom: 0;
+}
+
+.cms-lite .accordion-group {
+    border: 1px solid #B2D8F8;
+    background: #DEEEFF;
+}
+
+.cms-lite .accordion-inner {
+    border-top: 1px solid #B2D8F8;
+}
+
+fieldset {
+    border: 1px solid #B2D8F8;
+    border-radius: 6px;
+}
+
+legend  {
+    border: none;
+    color: #165384;
+    display: block;
+    font-size: 16px;
+    line-height: 20px;
+    margin: 0 20px;
+    padding: 5px;
+    width: auto;
+}
+
+legend + .control-group {
+    margin-top: 2px;
+}

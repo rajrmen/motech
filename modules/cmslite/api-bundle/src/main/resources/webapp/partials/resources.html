@@ -1,6 +1,9 @@
-<div>
+<div class="row-fluid tab-frame inside">
+    <div class="margin-after clearfix">
+        <h4>{{msg('header.resourceCMS')}}</h4>
+    </div>
     <div>
-        <a ng-click="showNewResourceModal()" class="btn btn-warning">{{msg('button.newResource')}}</a>
+        <a ng-click="showNewResourceModal()" class="btn btn-success">{{msg('button.newResource')}}</a>
     </div>
     <table>
         <thead>
@@ -27,4 +30,55 @@
     <div ng-include="'../cmsliteapi/resources/partials/widgets/new-resource-modal.html'"></div>
     <div ng-include="'../cmsliteapi/resources/partials/widgets/string-resource-modal.html'"></div>
     <div ng-include="'../cmsliteapi/resources/partials/widgets/stream-resource-modal.html'"></div>
+
+    <div class="accordion margin-before2" id="accordion-resource">
+        <!------------------------  Filters  ------------------------>
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                <a class="accordion-toggle" expandaccordion data-toggle="collapse" data-parent="#accordion-resource" href="#collapse-resource1">
+                    <i ng-class="{true:'icon-chevron-down', false:'icon-chevron-right'}[1!=0]"></i>&nbsp;{{msg('resource.filters')}}
+                </a>
+            </div>
+            <div id="collapse-resource1" ng-class="{true:'collapse in', false:'collapse'}[1!=0]" class="accordion-body">
+                <div class="accordion-inner">
+                    <fieldset class="inside"><legend>{{msg('resource.filterBy')}}</legend>
+                        <div class="row-fluid">
+                        <div class="control-group form-inline">
+                            <label >{{msg('resource.name')}}</label>
+                            <input type="text" class="input-large search-query" placeholder="{{msg('resource.search')}}">
+                        </div></div>
+                        <div class="row-fluid">
+                            <div class="span4">
+                                <fieldset class="inside stripes-bg"><legend>{{msg('resource.type')}}</legend>
+                                    <div data-toggle="buttons-checkbox" class="btn-group">
+                                        <button class="btn btn-primary setHideActive" type="button"><i class="icon-white icon-ok"></i> {{msg('resource.type.string')}}</button>
+                                        <button class="btn btn-primary setHidePaused" type="button"><i class="icon-white icon-ok"></i> {{msg('resource.type.stream')}}</button>
+                                    </div>
+                                </fieldset>
+                            </div>
+                            <div class="span4">
+                                <fieldset class="inside stripes-bg"><legend>{{msg('resource.languages')}}</legend>
+                                    <div class="btn-group">
+                                        <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+                                            Languages
+                                            <span class="caret"></span>
+                                        </a>
+                                        <ul class="dropdown-menu">
+                                            <li><a>Language1</a></li>
+                                            <li><a>Language2</a></li>
+                                        </ul>
+                                    </div>
+                                </fieldset>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="margin-before2">
+        <table id="resourceTable"></table>
+        <div id="pageResourceTable"></div>
+    </div>
 </div>

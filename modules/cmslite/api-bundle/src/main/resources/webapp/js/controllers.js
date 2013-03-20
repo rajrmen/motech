@@ -12,6 +12,7 @@
         $scope.resourceType = 'string';
         $scope.resources = [];
         $scope.resources = Resources.query();
+        var getResourcesUrl = "../cmsliteapi/resource";
 
         $scope.showType = function (resource) {
             var value = '', type;
@@ -149,6 +150,30 @@
 
             return validate;
         };
+
+        jQuery("#resourceTable").jqGrid({
+            caption:"Resources",
+            url:getResourcesUrl,
+            datatype:"json",
+            jsonReader:{
+                repeatitems: false,
+                root: function (obj) { return obj; },
+                records: function (obj) { return obj.length; }
+            },
+            shrinkToFit: true,
+            rowNum: 5,
+            rowList: [5,20,30],
+            colNames:['Name', 'Languages', 'Type'],
+            colModel:[
+                {name:'name', index:'name'},
+                {name:'languages', index:'languages'},
+                {name:'type', index:'type'}
+            ],
+            pager: "#pageResourceTable",
+            width: '100%',
+            height:"auto",
+            viewrecords: true
+        });
 
     });
 
