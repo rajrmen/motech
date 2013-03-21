@@ -1,14 +1,6 @@
 #!/bin/bash
 
-function purge_motech() {
-    $CHROOT yum remove motech-base -y
-    $CHROOT rm -rf /var/log/motech
-    $CHROOT rm -rf /var/cache/motech
-    $CHROOT rm -rf /usr/share/motech
-    $CHROOT rm -rf /etc/motech
-    $CHROOT rm -rf /var/lib/motech
-    $CHROOT rm -f /etc/init.d/motech
-}
+source /tmp/functions.sh
 
 while getopts "d:b:e:" opt; do
 	case $opt in
@@ -52,9 +44,6 @@ fi
 
 CHROOT="$MAKEROOT chroot $CHROOT_DIR"
 
-NON_MOTECH_OWNED="/usr/share/motech"
-MOTECH_OWNED="/var/lib/motech/webapps /var/cache/motech /var/lib/motech/data/bundles"
-
 # Remove previous installation if any
 purge_motech
 
@@ -63,16 +52,16 @@ cp $BUILD_DIR/$BASE_PACKAGE $CHROOT_DIR/tmp
 $CHROOT yum install /tmp/$BASE_PACKAGE -y
 
 # Change the ports
-$CHROOT sed -i "s/8080/$PORT/i" /usr/share/motech/conf/server.xml
-$CHROOT sed -i "s/8005/8095/i" /usr/share/motech/conf/server.xml
+$CHROOT sed -i "s/8080/$PORT/i" /usr/share/motech/motech-default/conf/server.xml
+$CHROOT sed -i "s/8005/8095/i" /usr/share/motech/motech-default/conf/server.xml
 
-$CHROOT service motech start
+$CHROOT service motech-default start
 
 # Make sure files/directories exist with correct permissions
 
 for dir in $MOTECH_OWNED; do
-    if [ `$CHROOT stat -c %U $dir` != "motech" ]; then
-        echo "$dir is not owned by motech" > $ERROR_LOG
+    if [ `$CHROOT stat -c %U $dir` != "motech-default" ]; then
+        echo "$dir is not owned by motech-default" > $ERROR_LOG
         purge_motech
         exit 1
     fi
@@ -92,29 +81,13 @@ done
 sleep 5
 
 # Check the homepage
-curl -L "localhost:$PORT" --retry 5 --connect-timeout 15 | grep -i motech
+curl -L "localhost:$PORT" --retry 5 --connect-timeout 30 | grep -i motech
 RET=$? # Success?
 if [ $RET -ne 0 ]; then
     echo "Failed getting motech page" > $ERROR_LOG
-    cat $CHROOT_DIR/var/log/motech/catalina.out >> $ERROR_LOG
+    cat $CHROOT_DIR/var/log/motech/motech-default/catalina.out >> $ERROR_LOG
     purge_motech
     exit $RET
 fi
-
-$CHROOT service motech stop
-
-# Make sure some dirs are empty, so they can be removed
-$CHROOT rm -rf /var/log/motech/*
-
-# Remove motech
-$CHROOT yum remove motech-base -y
-
-for dir in $MOTECH_OWNED; do
-    if [ -d $CHROOT_DIR/$dir ]; then
-        echo "$dir still exists after uninstall" > $ERROR_LOG
-        purge_motech
-        exit 1
-    fi
-done
 
 exit 0 # Victory

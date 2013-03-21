@@ -13,11 +13,15 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 public abstract class BasePkgTest {
 
     private static final String ERROR_FILENAME = "err.log";
 
+    private List<String> scriptsList = new ArrayList<>();
     private String script;
     private String chrootDir;
     private String tmpDir = "/tmp";
@@ -42,7 +46,6 @@ public abstract class BasePkgTest {
             tmpDir = "/tmp";
         }
 
-        script = tmpDir + File.separatorChar + "motech-osi-it.sh";
         errorFile = buildDir + File.separatorChar + ERROR_FILENAME;
     }
 
@@ -58,6 +61,8 @@ public abstract class BasePkgTest {
     }
 
     protected int runScript(String scriptName, String... attrs) throws IOException, InterruptedException {
+        this.script = tmpDir + File.separatorChar + scriptName;
+        this.scriptsList.add(script);
         installScript(scriptName);
 
         String[] arguments = (String[]) ArrayUtils.addAll(new String[] { script, "-d", chrootDir, "-b", buildDir,
@@ -79,7 +84,9 @@ public abstract class BasePkgTest {
 
     @After
     public void cleanUp() {
-        FileUtils.deleteQuietly(new File(script));
+        for (String script : scriptsList) {
+            FileUtils.deleteQuietly(new File(script));
+        }
     }
 
     public abstract String getChrootDirProp();
