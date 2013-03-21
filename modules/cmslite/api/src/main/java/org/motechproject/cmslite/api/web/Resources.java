@@ -1,6 +1,7 @@
 package org.motechproject.cmslite.api.web;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.List;
 
 public class Resources implements Serializable {
@@ -11,11 +12,17 @@ public class Resources implements Serializable {
     private final Integer records;
     private final List<ResourceDto> rows;
 
-    public Resources(Integer page, Integer total, Integer records, List<ResourceDto> rows) {
+    public Resources(Integer rows, Integer page, String sortColumn, String sortDirection, List<ResourceDto> list) {
         this.page = page;
-        this.total = total;
-        this.records = records;
-        this.rows = rows;
+        this.records = list.size();
+        this.total = (records / rows) + 1;
+
+        Integer start = rows * (page > total ? total : page) - rows;
+        Integer count = start + rows;
+        Integer end = count > records ? records : count;
+
+        Collections.sort(list, new ResourceComparator(sortColumn, sortDirection));
+        this.rows = list.subList(start, end);
     }
 
     public Integer getPage() {

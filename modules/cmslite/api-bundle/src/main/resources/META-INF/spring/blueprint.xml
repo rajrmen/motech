@@ -32,12 +32,13 @@
         </constructor-arg>
     </bean>
 
-    <osgi:service ref="cmsLiteService" interface="org.motechproject.cmslite.api.service.CMSLiteService" />
+    <osgi:service ref="cmsLiteService" interface="org.motechproject.cmslite.api.service.CMSLiteService"/>
 
-    <osgi:reference id="couchDbManager" interface="org.motechproject.commons.couchdb.service.CouchDbManager" />
+    <osgi:reference id="couchDbManager" interface="org.motechproject.commons.couchdb.service.CouchDbManager"/>
 
-    <osgi:reference id="platformSettingsServiceOsgi" interface="org.motechproject.server.config.service.PlatformSettingsService" />
+    <osgi:reference id="platformSettingsServiceOsgi"
+                    interface="org.motechproject.server.config.service.PlatformSettingsService"/>
 
-    <osgi:reference id="settingsFacade" interface="org.motechproject.server.config.SettingsFacade" />
+    <osgi:reference id="settingsFacade" interface="org.motechproject.server.config.SettingsFacade"/>
 
 </beans>

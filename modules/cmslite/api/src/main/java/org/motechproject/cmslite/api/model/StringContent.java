@@ -23,7 +23,7 @@ public class StringContent extends Content {
         super(language, name);
         this.value = value;
     }
-    
+
     public StringContent(String language, String name, String value, Map<String, String> metadata) {
         super(language, name, metadata);
         this.value = value;

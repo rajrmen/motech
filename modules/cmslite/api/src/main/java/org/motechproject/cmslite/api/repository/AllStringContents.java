@@ -25,7 +25,9 @@ public class AllStringContents extends BaseContentRepository<StringContent> {
         ViewQuery query = createQuery("by_language_and_name").key(ComplexKey.of(language, name));
         List<StringContent> result = db.queryView(query, StringContent.class);
 
-        if (result == null || result.isEmpty()) { return null; }
+        if (result == null || result.isEmpty()) {
+            return null;
+        }
         return result.get(0);
     }
 

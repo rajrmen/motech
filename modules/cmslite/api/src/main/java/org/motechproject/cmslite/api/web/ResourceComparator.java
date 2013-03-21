@@ -2,11 +2,15 @@ package org.motechproject.cmslite.api.web;
 
 import java.util.Comparator;
 
+import static org.apache.commons.lang.StringUtils.equalsIgnoreCase;
+
 public class ResourceComparator implements Comparator<ResourceDto> {
     private final String field;
+    private final boolean descending;
 
-    public ResourceComparator(String field) {
+    public ResourceComparator(String field, String sortDirection) {
         this.field = field;
+        this.descending = equalsIgnoreCase(sortDirection, "desc");
     }
 
     @Override
@@ -24,6 +28,6 @@ public class ResourceComparator implements Comparator<ResourceDto> {
                 compare = 0;
         }
 
-        return compare;
+        return compare * (descending ? -1 : 1);
     }
 }

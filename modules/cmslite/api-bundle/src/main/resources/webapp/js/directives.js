@@ -36,7 +36,9 @@
         return {
             restrict: 'A',
             link: function (scope, element, attrs) {
-                angular.element(element).jqGrid({
+                var elem = angular.element(element);
+
+                elem.jqGrid({
                     caption: 'Resources',
                     url: '../cmsliteapi/resource',
                     datatype: 'json',
@@ -47,21 +49,19 @@
                     rowNum: 5,
                     rowList: [5, 20, 30],
                     colModel: [{
-                        label: scope.msg('resource.name'),
                         name: 'name',
                         index: 'name'
                     }, {
-                        label: scope.msg('resource.languages'),
                         name: 'languages',
                         index: 'languages',
                         sortable: false,
-                        formatter: function (value, options, data) {
+                        formatter: function (array, options, data) {
                             var ul = $('<ul>');
 
-                            $.each(value, function (index, val) {
+                            angular.forEach(array, function (value) {
                                 ul.append($('<li>').append($('<a>')
-                                    .append(val)
-                                    .attr('ng-click', 'showResource("{0}", "{1}", "{2}")'.format(data.type, val, data.name))
+                                    .append(value)
+                                    .attr('ng-click', 'showResource("{0}", "{1}", "{2}")'.format(data.type, value, data.name))
                                     .css('cursor', 'pointer')
                                 ));
                             });
@@ -69,7 +69,6 @@
                             return '<ul>' + ul.html() + '</ul>';
                         }
                     }, {
-                        label: scope.msg('resource.type'),
                         name: 'type',
                         index: 'type',
                         formatter: function (value) {
@@ -81,8 +80,12 @@
                     height: 'auto',
                     viewrecords: true,
                     gridComplete: function () {
-                        angular.element(element).find('ul').each(function(index, value) {
+                        angular.forEach(elem.find('ul'), function(value) {
                             $compile(value)(scope);
+                        });
+
+                        angular.forEach(['name', 'languages', 'type'], function (value) {
+                            elem.jqGrid('setLabel', value, scope.msg('resource.' + value));
                         });
                     }
                 });

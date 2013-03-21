@@ -2,7 +2,6 @@ package org.motechproject.cmslite.api.web;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
-import org.apache.commons.collections.comparators.ReverseComparator;
 import org.apache.commons.io.IOUtils;
 import org.ektorp.AttachmentInputStream;
 import org.motechproject.cmslite.api.model.CMSLiteException;
@@ -32,8 +31,6 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -41,7 +38,6 @@ import java.util.Set;
 
 import static java.util.Locale.getAvailableLocales;
 import static org.apache.commons.codec.digest.DigestUtils.md5Hex;
-import static org.apache.commons.lang.StringUtils.equalsIgnoreCase;
 import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.apache.commons.lang.StringUtils.startsWithIgnoreCase;
 
@@ -85,21 +81,16 @@ public class ResourceController {
     @ResponseBody
     public Resources getContents(final @RequestParam Integer rows,
                                  final @RequestParam Integer page,
-                                 final @RequestParam(value = "sidx", defaultValue = "1") String sortColumn,
+                                 final @RequestParam(value = "sidx") String sortColumn,
                                  final @RequestParam(value = "sord") String sortDirection) {
         List<Content> contents = cmsLiteService.getAllContents();
-        List<ResourceDto> resourceDtos = new ArrayList<>(contents.size());
-        Integer totalPages = (contents.size() / rows) + 1;
-        Integer start = rows * (page > totalPages ? totalPages : page) - rows;
-        Integer limit = start + rows > contents.size() ? contents.size() : start + rows;
+        List<ResourceDto> resourceDtos = new ArrayList<>();
 
         for (final Content content : contents) {
             ResourceDto dto = (ResourceDto) CollectionUtils.find(resourceDtos, new Predicate() {
                 @Override
                 public boolean evaluate(Object object) {
-                    return object instanceof ResourceDto &&
-                            ((ResourceDto) object).getName().equalsIgnoreCase(content.getName()) &&
-                            ((ResourceDto) object).getType().equalsIgnoreCase(content.getType());
+                    return object instanceof ResourceDto && ((ResourceDto) object).equalsContent(content);
                 }
             });
 
@@ -110,14 +101,7 @@ public class ResourceController {
             }
         }
 
-        ResourceComparator comparator = new ResourceComparator(sortColumn);
-        Collections.sort(resourceDtos, comparator);
-
-        if (equalsIgnoreCase(sortDirection, "desc")) {
-            Collections.sort(resourceDtos, Collections.reverseOrder(comparator));
-        }
-
-        return new Resources(page, totalPages, contents.size(), resourceDtos.subList(start, limit));
+        return new Resources(rows, page, sortColumn, sortDirection, resourceDtos);
     }
 
     @RequestMapping(value = "/resource/{type}/{language}/{name}", method = RequestMethod.GET)

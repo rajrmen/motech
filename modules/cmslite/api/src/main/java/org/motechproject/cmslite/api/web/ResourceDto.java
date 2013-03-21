@@ -1,12 +1,12 @@
 package org.motechproject.cmslite.api.web;
 
-import org.apache.commons.lang.StringUtils;
 import org.motechproject.cmslite.api.model.Content;
 
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
+import static org.apache.commons.lang.StringUtils.equalsIgnoreCase;
 import static org.apache.commons.lang.StringUtils.startsWithIgnoreCase;
 
 public class ResourceDto implements Serializable {
@@ -43,6 +43,20 @@ public class ResourceDto implements Serializable {
 
     public String getType() {
         return type;
+    }
+
+    public boolean equalsContent(Content content) {
+        String contentType;
+
+        if (startsWithIgnoreCase(content.getType(), "string")) {
+            contentType = "string";
+        } else if (startsWithIgnoreCase(content.getType(), "stream")) {
+            contentType = "stream";
+        } else {
+            contentType = null;
+        }
+
+        return equalsIgnoreCase(type, contentType) && equalsIgnoreCase(name, content.getName());
     }
 
     @Override
