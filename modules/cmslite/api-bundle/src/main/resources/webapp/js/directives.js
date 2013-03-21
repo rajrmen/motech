@@ -31,4 +31,45 @@
             }
         };
     });
+
+    widgetModule.directive('resourcesGrid', function () {
+        return {
+            restrict: 'A',
+            link: function (scope, element, attrs) {
+                angular.element(element).jqGrid({
+                    caption: 'Resources',
+                    url: '../cmsliteapi/resource',
+                    datatype: 'json',
+                    jsonReader: {
+                        repeatitems: false,
+                        root: function (obj) {
+                            return obj;
+                        },
+                        records: function (obj) {
+                            return obj.length;
+                        }
+                    },
+                    shrinkToFit: true,
+                    rowNum: 5,
+                    rowList: [5, 20, 30],
+                    colNames: [
+                        scope.msg('resource.name'),
+                        scope.msg('resource.languages'),
+                        scope.msg('resource.type')
+                    ],
+                    colModel: [
+                        {name: 'name', index: 'name'},
+                        {name: 'languages', index: 'languages'},
+                        {name: 'type', index: 'type'}
+                    ],
+                    pager: '#' + attrs.resourcesGrid,
+                    width: '100%',
+                    height: 'auto',
+                    viewrecords: true
+                });
+
+                scope.$apply();
+            }
+        };
+    });
 }());
