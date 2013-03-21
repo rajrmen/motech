@@ -26,10 +26,10 @@ public class DebIT extends BasePkgTest {
 
     @Test
     public void testMotechDebInstallation() throws IOException, InterruptedException {
-        runScript("functions.sh");
+        //runScript("functions.sh");
         testInstall();
         testLoginAndMainPage();
-        testUninstall();
+        //testUninstall();
     }
 
     private void testInstall() throws IOException, InterruptedException {
@@ -55,11 +55,13 @@ public class DebIT extends BasePkgTest {
         request.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
         HttpResponse response = httpClient.execute(request);
+        //assertEquals("Location: http://localhost:8099/module/server/home", response.getFirstHeader("Location").toString());
+        //assertFalse(response.getFirstHeader("Location").toString().contains("error=true"));
         assertEquals(HttpStatus.SC_OK, response.getStatusLine().getStatusCode());
         login();
     }
-
-    private void testUninstall() throws IOException, InterruptedException {
+    @Test
+    public void testUninstall() throws IOException, InterruptedException {
         int retVal = runScript("test-uninstall.sh");
         if (retVal != 0) {
             LOG.error("Error log: " + readErrors());

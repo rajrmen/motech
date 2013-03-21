@@ -21,7 +21,7 @@ public abstract class BasePkgTest {
 
     private static final String ERROR_FILENAME = "err.log";
 
-    private List<String> scriptsList = new ArrayList<>();
+    //private List<String> scriptsList = new ArrayList<>();
     private String script;
     private String chrootDir;
     private String tmpDir = "/tmp";
@@ -45,7 +45,7 @@ public abstract class BasePkgTest {
         if (StringUtils.isBlank(tmpDir)) {
             tmpDir = "/tmp";
         }
-
+        script = tmpDir + File.separatorChar + "motech-osi-it.sh";
         errorFile = buildDir + File.separatorChar + ERROR_FILENAME;
     }
 
@@ -61,8 +61,8 @@ public abstract class BasePkgTest {
     }
 
     protected int runScript(String scriptName, String... attrs) throws IOException, InterruptedException {
-        this.script = tmpDir + File.separatorChar + scriptName;
-        this.scriptsList.add(script);
+        //this.script = tmpDir + File.separatorChar + scriptName;
+        //this.scriptsList.add(script);
         installScript(scriptName);
 
         String[] arguments = (String[]) ArrayUtils.addAll(new String[] { script, "-d", chrootDir, "-b", buildDir,
@@ -84,9 +84,9 @@ public abstract class BasePkgTest {
 
     @After
     public void cleanUp() {
-        for (String script : scriptsList) {
+        //for (String script : scriptsList) {
             FileUtils.deleteQuietly(new File(script));
-        }
+        //}
     }
 
     public abstract String getChrootDirProp();
