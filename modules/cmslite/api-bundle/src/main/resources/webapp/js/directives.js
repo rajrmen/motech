@@ -65,16 +65,14 @@
                             var ul = $('<ul>');
 
                             $.each(value, function (index, val) {
-                                var a = $('<a>');
-
-                                a.append(val);
-                                a.attr('ng-click', 'showResource("{0}", "{1}", "{2}")'.format(scope.showType(data.type), val, data.name));
-                                a.attr('href', '#');
-
-                                ul.append($('<li>').append(a));
+                                ul.append($('<li>').append($('<a>')
+                                    .append(val)
+                                    .attr('ng-click', 'showResource("{0}", "{1}", "{2}")'.format(scope.showType(data.type), val, data.name))
+                                    .css('cursor', 'pointer')
+                                ));
                             });
 
-                            return '<ul>' + $compile(ul)(scope).html() + '</ul>';
+                            return '<ul>' + ul.html() + '</ul>';
                         }
                     }, {
                         label: scope.msg('resource.type'),
@@ -87,7 +85,12 @@
                     pager: '#' + attrs.resourcesGrid,
                     width: '100%',
                     height: 'auto',
-                    viewrecords: true
+                    viewrecords: true,
+                    gridComplete: function () {
+                        angular.element(element).find('ul').each(function(index, value) {
+                            $compile(value)(scope);
+                        });
+                    }
                 });
             }
         };
