@@ -60,6 +60,7 @@
                         label: scope.msg('resource.languages'),
                         name: 'languages',
                         index: 'languages',
+                        sortable: false,
                         formatter: function (value, options, data) {
                             var ul = $('<ul>');
 
