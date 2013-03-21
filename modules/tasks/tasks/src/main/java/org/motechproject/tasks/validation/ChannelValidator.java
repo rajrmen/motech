@@ -1,13 +1,14 @@
 package org.motechproject.tasks.validation;
 
 import org.motechproject.tasks.domain.ActionEvent;
+import org.motechproject.tasks.domain.ActionParameter;
 import org.motechproject.tasks.domain.Channel;
 import org.motechproject.tasks.domain.TriggerEvent;
 
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
 
 public final class ChannelValidator extends GeneralValidator {
-    private static final String CHANNEL = "channel";
+    public static final String CHANNEL = "channel";
 
     private ChannelValidator() {
     }
@@ -55,10 +56,8 @@ public final class ChannelValidator extends GeneralValidator {
             result.addError(checkBlankValue(objectName, "displayName", trigger.getDisplayName()));
             result.addError(checkBlankValue(objectName, "subject", trigger.getSubject()));
 
-            if (trigger.getEventParameters() != null) {
-                for (int i = 0; i < trigger.getEventParameters().size(); ++i) {
-                    result.addErrors(validateEventParameter(objectName, "eventParameters[" + i + "]", trigger.getEventParameters().get(i)));
-                }
+            for (int i = 0; i < trigger.getEventParameters().size(); ++i) {
+                result.addErrors(validateEventParameter(objectName, "eventParameters[" + i + "]", trigger.getEventParameters().get(i)));
             }
         }
 
@@ -80,10 +79,8 @@ public final class ChannelValidator extends GeneralValidator {
                 result.addError(new CustomTaskError("validation.error.channelAction"));
             }
 
-            if (action.getActionParameters() != null) {
-                for (int i = 0; i < action.getActionParameters().size(); ++i) {
-                    result.addErrors(validateActionParameter(objectName, "actionParameters[" + i + "]", action.getActionParameters().get(i)));
-                }
+            for (ActionParameter parameter : action.getActionParameters()) {
+                result.addErrors(validateActionParameter(objectName, "actionParameters[" + parameter.getOrder() + "]", parameter));
             }
         }
 
