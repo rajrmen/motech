@@ -13,15 +13,13 @@ sytem_type=unknown
 # Check if motech default package is already installed in system
 if [ -f /etc/redhat-release ] ; then
 	system_type=rpm
-	rpmpattern=$(rpm -qa | grep -c $motech_default_package)
-	if [ "$rpmpattern" -lt 1 ]; then	
+	if [ `rpm -qa | grep -c $motech_default_package` -lt 1 ]; then	
 		echo "Please install first $motech_default_package package"
 		exit
 	fi
 elif [ -f /etc/debian_version ] ; then
 	system_type=deb
-	debpattern=$(dpkg -l | grep -c $motech_default_package)
-	if [ "$debpattern" -lt 1 ]; then	
+	if [ `dpkg -l | grep -c $motech_default_package` -lt 1 ]; then	
 		echo "Please install first $motech_default_package package"
 		exit
 	fi

@@ -71,7 +71,7 @@ $CHROOT service motech-default start
 # Make sure files/directories exist with correct permissions
 
 for dir in $MOTECH_OWNED; do
-    if [ `$CHROOT stat -c %U $dir` != "motech-default" ]; then
+    if [ `$CHROOT stat -c %U /var/lib/motech/motech-default` != "motech-default" ]; then
         echo "$dir is not owned by motech-default" > $ERROR_LOG
         purge_motech
         exit 1
