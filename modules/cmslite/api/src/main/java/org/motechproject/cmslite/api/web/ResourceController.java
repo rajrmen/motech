@@ -2,6 +2,7 @@ package org.motechproject.cmslite.api.web;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
+import org.apache.commons.collections.comparators.ReverseComparator;
 import org.apache.commons.io.IOUtils;
 import org.ektorp.AttachmentInputStream;
 import org.motechproject.cmslite.api.model.CMSLiteException;
@@ -31,6 +32,8 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -38,6 +41,7 @@ import java.util.Set;
 
 import static java.util.Locale.getAvailableLocales;
 import static org.apache.commons.codec.digest.DigestUtils.md5Hex;
+import static org.apache.commons.lang.StringUtils.equalsIgnoreCase;
 import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.apache.commons.lang.StringUtils.startsWithIgnoreCase;
 
@@ -58,9 +62,9 @@ public class ResourceController {
 
         switch (field) {
             case "name":
-                for (ContentDto dto : getContents()) {
-                    if (startsWithIgnoreCase(dto.getName(), term)) {
-                        strings.add(dto.getName());
+                for (Content content : cmsLiteService.getAllContents()) {
+                    if (startsWithIgnoreCase(content.getName(), term)) {
+                        strings.add(content.getName());
                     }
                 }
                 break;
@@ -79,30 +83,41 @@ public class ResourceController {
 
     @RequestMapping(value = "/resource", method = RequestMethod.GET)
     @ResponseBody
-    public List<ContentDto> getContents() {
+    public Resources getContents(final @RequestParam Integer rows,
+                                 final @RequestParam Integer page,
+                                 final @RequestParam(value = "sidx", defaultValue = "1") String sortColumn,
+                                 final @RequestParam(value = "sord") String sortDirection) {
         List<Content> contents = cmsLiteService.getAllContents();
-        List<ContentDto> contentDtos = new ArrayList<>(contents.size());
+        List<ResourceDto> resourceDtos = new ArrayList<>(contents.size());
+        Integer totalPages = (contents.size() / rows) + 1;
+        Integer start = rows * (page > totalPages ? totalPages : page) - rows;
+        Integer limit = start + rows > contents.size() ? contents.size() : start + rows;
 
         for (final Content content : contents) {
-            ContentDto dto = (ContentDto) CollectionUtils.find(contentDtos, new Predicate() {
+            ResourceDto dto = (ResourceDto) CollectionUtils.find(resourceDtos, new Predicate() {
                 @Override
                 public boolean evaluate(Object object) {
-                    return object instanceof ContentDto &&
-                            ((ContentDto) object).getName().equalsIgnoreCase(content.getName()) &&
-                            ((ContentDto) object).getType().equalsIgnoreCase(content.getType());
+                    return object instanceof ResourceDto &&
+                            ((ResourceDto) object).getName().equalsIgnoreCase(content.getName()) &&
+                            ((ResourceDto) object).getType().equalsIgnoreCase(content.getType());
                 }
             });
 
             if (dto == null) {
-                contentDtos.add(new ContentDto(content));
+                resourceDtos.add(new ResourceDto(content));
             } else {
-
-
                 dto.addLanguage(content.getLanguage());
             }
         }
 
-        return contentDtos;
+        ResourceComparator comparator = new ResourceComparator(sortColumn);
+        Collections.sort(resourceDtos, comparator);
+
+        if (equalsIgnoreCase(sortDirection, "desc")) {
+            Collections.sort(resourceDtos, Collections.reverseOrder(comparator));
+        }
+
+        return new Resources(page, totalPages, contents.size(), resourceDtos.subList(start, limit));
     }
 
     @RequestMapping(value = "/resource/{type}/{language}/{name}", method = RequestMethod.GET)

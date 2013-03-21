@@ -40,14 +40,8 @@
                     caption: 'Resources',
                     url: '../cmsliteapi/resource',
                     datatype: 'json',
-                    jsonReader: {
-                        repeatitems: false,
-                        root: function (obj) {
-                            return obj;
-                        },
-                        records: function (obj) {
-                            return obj.length;
-                        }
+                    jsonReader:{
+                        repeatitems:false
                     },
                     shrinkToFit: true,
                     rowNum: 5,
@@ -67,7 +61,7 @@
                             $.each(value, function (index, val) {
                                 ul.append($('<li>').append($('<a>')
                                     .append(val)
-                                    .attr('ng-click', 'showResource("{0}", "{1}", "{2}")'.format(scope.showType(data.type), val, data.name))
+                                    .attr('ng-click', 'showResource("{0}", "{1}", "{2}")'.format(data.type, val, data.name))
                                     .css('cursor', 'pointer')
                                 ));
                             });
@@ -79,7 +73,7 @@
                         name: 'type',
                         index: 'type',
                         formatter: function (value) {
-                            return scope.msg('resource.type.' + scope.showType(value));
+                            return scope.msg('resource.type.' + value);
                         }
                     }],
                     pager: '#' + attrs.resourcesGrid,

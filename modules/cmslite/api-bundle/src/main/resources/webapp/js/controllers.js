@@ -10,20 +10,6 @@
         $scope.select = {};
         $scope.mode = 'read';
         $scope.resourceType = 'string';
-        $scope.resources = [];
-        $scope.resources = Resources.query();
-
-        $scope.showType = function (type) {
-            var value = '', lowerCase = type.toLowerCase();;
-
-            if (lowerCase.indexOf('string') === 0) {
-                value = 'string';
-            } else if (lowerCase.indexOf('stream') === 0) {
-                value = 'stream';
-            }
-
-            return value;
-        };
 
         $scope.changeResourceType = function (type) {
             $scope.resourceType = type;
