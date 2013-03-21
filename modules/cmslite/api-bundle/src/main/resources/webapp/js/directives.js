@@ -32,7 +32,7 @@
         };
     });
 
-    widgetModule.directive('resourcesGrid', function () {
+    widgetModule.directive('resourcesGrid', function ($compile) {
         return {
             restrict: 'A',
             link: function (scope, element, attrs) {
@@ -62,7 +62,24 @@
                         index: 'name'
                     }, {
                         name: 'languages',
-                        index: 'languages'
+                        index: 'languages',
+                        formatter: function (value, options, data) {
+                            var ul = $('<ul>');
+
+                            $.each(value, function (index, val) {
+                                var a = $('<a>');
+
+                                a.append(val);
+                                a.attr('ng-click', 'showResource("{0}", "{1}", "{2}")'.format(scope.showType(data.type), val, data.name));
+                                a.attr('href', '#');
+
+                                ul.append($('<li>').append(a));
+                            });
+
+                            $compile(ul)(scope);
+
+                            return '<ul>' + ul.html() + '</ul>';
+                        }
                     }, {
                         name: 'type',
                         index: 'type',
