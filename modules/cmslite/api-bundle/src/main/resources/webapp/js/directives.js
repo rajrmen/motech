@@ -52,15 +52,12 @@
                     shrinkToFit: true,
                     rowNum: 5,
                     rowList: [5, 20, 30],
-                    colNames: [
-                        scope.msg('resource.name'),
-                        scope.msg('resource.languages'),
-                        scope.msg('resource.type')
-                    ],
                     colModel: [{
+                        label: scope.msg('resource.name'),
                         name: 'name',
                         index: 'name'
                     }, {
+                        label: scope.msg('resource.languages'),
                         name: 'languages',
                         index: 'languages',
                         formatter: function (value, options, data) {
@@ -76,11 +73,10 @@
                                 ul.append($('<li>').append(a));
                             });
 
-                            $compile(ul)(scope);
-
-                            return '<ul>' + ul.html() + '</ul>';
+                            return '<ul>' + $compile(ul)(scope).html() + '</ul>';
                         }
                     }, {
+                        label: scope.msg('resource.type'),
                         name: 'type',
                         index: 'type',
                         formatter: function (value) {
@@ -92,8 +88,6 @@
                     height: 'auto',
                     viewrecords: true
                 });
-
-                scope.$apply();
             }
         };
     });
