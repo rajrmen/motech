@@ -13,17 +13,13 @@
         $scope.resources = [];
         $scope.resources = Resources.query();
 
-        $scope.showType = function (resource) {
-            var value = '', type;
+        $scope.showType = function (type) {
+            var value = '', lowerCase = type.toLowerCase();;
 
-            if (resource.type) {
-                type = resource.type.toLowerCase();
-
-                if (type.indexOf('string') === 0) {
-                    value = 'string';
-                } else if (type.indexOf('stream') === 0) {
-                    value = 'stream';
-                }
+            if (lowerCase.indexOf('string') === 0) {
+                value = 'string';
+            } else if (lowerCase.indexOf('stream') === 0) {
+                value = 'stream';
             }
 
             return value;

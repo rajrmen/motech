@@ -57,11 +57,19 @@
                         scope.msg('resource.languages'),
                         scope.msg('resource.type')
                     ],
-                    colModel: [
-                        {name: 'name', index: 'name'},
-                        {name: 'languages', index: 'languages'},
-                        {name: 'type', index: 'type'}
-                    ],
+                    colModel: [{
+                        name: 'name',
+                        index: 'name'
+                    }, {
+                        name: 'languages',
+                        index: 'languages'
+                    }, {
+                        name: 'type',
+                        index: 'type',
+                        formatter: function (value) {
+                            return scope.msg('resource.type.' + scope.showType(value));
+                        }
+                    }],
                     pager: '#' + attrs.resourcesGrid,
                     width: '100%',
                     height: 'auto',
