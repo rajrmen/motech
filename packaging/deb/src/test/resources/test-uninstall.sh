@@ -10,11 +10,6 @@ function purge_motech() {
     $CHROOT rm -f /etc/init.d/motech-default
 }
 
-function init_data() {
-	MOTECH_OWNED="/var/lib/motech/motech-default /var/cache/motech/motech-default"
-	NON_MOTECH_OWNED="/var/lib/motech/motech-default /var/cache/motech/motech-default"
-}
-
 while getopts "d:b:e:" opt; do
 	case $opt in
 	d)
@@ -57,7 +52,8 @@ fi
 
 CHROOT="$MAKEROOT chroot $CHROOT_DIR"
 
-init_data
+MOTECH_OWNED="/var/lib/motech/motech-default /var/cache/motech/motech-default"
+NON_MOTECH_OWNED="/var/lib/motech/motech-default /var/cache/motech/motech-default"
 
 $CHROOT service motech-default stop
 

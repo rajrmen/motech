@@ -10,7 +10,6 @@ function purge_motech() {
     $CHROOT rm -f /etc/init.d/motech-default
 }
 
-
 while getopts "d:b:e:" opt; do
 	case $opt in
 	d)
@@ -53,8 +52,8 @@ fi
 
 CHROOT="$MAKEROOT chroot $CHROOT_DIR"
 
-	MOTECH_OWNED="/var/lib/motech/motech-default /var/cache/motech/motech-default"
-	NON_MOTECH_OWNED="/var/lib/motech/motech-default /var/cache/motech/motech-default"
+MOTECH_OWNED="/var/lib/motech/motech-default /var/cache/motech/motech-default"
+NON_MOTECH_OWNED="/var/lib/motech/motech-default /var/cache/motech/motech-default"
 
 # Remove previous installation if any
 purge_motech

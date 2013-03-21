@@ -26,9 +26,9 @@ public class RpmIT extends BasePkgTest {
 
     @Test
     public void testMotechDebInstallation() throws IOException, InterruptedException {
-        runScript("functions.sh");
         testInstall();
         testLoginAndMainPage();
+        cleanUp();
         testUninstall();
     }
 

@@ -13,15 +13,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
 
 public abstract class BasePkgTest {
 
     private static final String ERROR_FILENAME = "err.log";
 
-    //private List<String> scriptsList = new ArrayList<>();
     private String script;
     private String chrootDir;
     private String tmpDir = "/tmp";
@@ -61,16 +57,14 @@ public abstract class BasePkgTest {
     }
 
     protected int runScript(String scriptName, String... attrs) throws IOException, InterruptedException {
-        //this.script = tmpDir + File.separatorChar + scriptName;
-        //this.scriptsList.add(script);
         installScript(scriptName);
 
-        String[] arguments = (String[]) ArrayUtils.addAll(new String[] { script, "-d", chrootDir, "-b", buildDir,
-                                                                        "-e", errorFile }, attrs);
+        String[] arguments = (String[]) ArrayUtils.addAll(new String[]{script, "-d", chrootDir, "-b", buildDir,
+                "-e", errorFile}, attrs);
 
         ProcessBuilder pb = new ProcessBuilder(arguments)
-                                .redirectError(ProcessBuilder.Redirect.INHERIT)
-                                .redirectOutput(ProcessBuilder.Redirect.INHERIT);
+                .redirectError(ProcessBuilder.Redirect.INHERIT)
+                .redirectOutput(ProcessBuilder.Redirect.INHERIT);
         Process proc = pb.start();
         proc.waitFor();
 
@@ -84,9 +78,7 @@ public abstract class BasePkgTest {
 
     @After
     public void cleanUp() {
-        //for (String script : scriptsList) {
-            FileUtils.deleteQuietly(new File(script));
-        //}
+        FileUtils.deleteQuietly(new File(script));
     }
 
     public abstract String getChrootDirProp();
