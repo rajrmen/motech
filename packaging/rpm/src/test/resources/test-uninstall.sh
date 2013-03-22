@@ -1,7 +1,7 @@
 #!/bin/bash
 
 function purge_motech() {
-    $CHROOT yum purge motech-base -y
+    $CHROOT yum remove motech-base -y
     $CHROOT rm -rf /var/log/motech/motech-default
     $CHROOT rm -rf /var/cache/motech/motech-default
     $CHROOT rm -rf /usr/share/motech/motech-default
@@ -38,13 +38,6 @@ if [ -z $CHROOT_DIR ]; then
     exit 1
 fi
 
-BASE_PACKAGE=`ls $BUILD_DIR | grep motech-base`
-
-if [ ! -f $BUILD_DIR/$BASE_PACKAGE ]; then
-    echo "Base package does not exist: $BASE_PACKAGE" > $ERROR_LOG
-    exit 1
-fi
-
 MAKEROOT=""
 if [[ $EUID -ne 0 ]];then
     MAKEROOT="sudo"
@@ -55,7 +48,7 @@ CHROOT="$MAKEROOT chroot $CHROOT_DIR"
 MOTECH_OWNED="/var/lib/motech/motech-default /var/cache/motech/motech-default"
 NON_MOTECH_OWNED="/var/lib/motech/motech-default /var/cache/motech/motech-default"
 
-$CHROOT service motech-default stop
+$CHROOT service motech stop
 
 # Make sure some dirs are empty, so they can be removed
 $CHROOT rm -rf /var/log/motech/*

@@ -4,7 +4,7 @@
 set -e
 
 # Unregister motech service from rc.d
-update-rc.d -f motech-default remove 1>/dev/null
+update-rc.d -f motech remove 1>/dev/null
 
 # Delete the motech user, if he exists
 if [ ! `grep -c motech-default: /etc/passwd` -eq 0 ]; then

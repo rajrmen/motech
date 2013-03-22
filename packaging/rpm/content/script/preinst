@@ -5,5 +5,5 @@ set -e
 
 # Create the motech user, if he doesn't exist
 if [ `grep -c motech-default: /etc/passwd` -eq 0 ]; then
-    useradd -r -c "Motech0-default user" -d /usr/share/motech/motech-default motech-default
+    useradd -r -c "Motech-default user" -d /usr/share/motech/motech-default motech-default
 fi

@@ -4,7 +4,7 @@
 set -e
 
 # Unregister service
-chkconfig --del motech-default
+chkconfig --del motech
 
 # Remove fragment dir if empty
 FRAGMENT_DIR=/usr/share/motech/motech-default/.motech/bundles/fragments

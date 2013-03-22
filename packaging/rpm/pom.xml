@@ -196,6 +196,11 @@
                                     <groupname>motech-default</groupname>
                                 </mapping>
                                 <mapping>
+                                    <directory>/var/lib/motech/motech-default</directory>
+                                    <username>motech-default</username>
+                                    <groupname>motech-default</groupname>
+                                </mapping>
+                                <mapping>
                                     <directory>/var/lib/motech/motech-default/webapps</directory>
                                     <username>motech-default</username>
                                     <groupname>motech-default</groupname>

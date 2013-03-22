@@ -18,7 +18,7 @@ ln -s /var/lib/motech/motech-default/data /usr/share/motech/motech-default/.mote
 mv /var/lib/motech/motech-default/webapps/motech-platform-server.war /var/lib/motech/motech-default/webapps/ROOT.war
 
 # Register service
-chkconfig --add motech-default
+chkconfig --add motech
 
 #Create motech.properties
 touch /var/lib/motech/motech-default/data/config/motech.properties

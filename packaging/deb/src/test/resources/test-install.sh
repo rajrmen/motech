@@ -67,7 +67,7 @@ $CHROOT apt-get install -f $YES # install dependencies
 $CHROOT sed -i "s/8080/$PORT/i" /usr/share/motech/motech-default/conf/server.xml
 $CHROOT sed -i "s/8005/8095/i" /usr/share/motech/motech-default/conf/server.xml
 
-$CHROOT service motech-default start
+$CHROOT service motech start
 
 # Make sure files/directories exist with correct permissions
 

@@ -20,6 +20,6 @@ if [ -d $FRAGMENT_DIR ] && [ ! "$(ls -A $FRAGMENT_DIR)" ]; then
 fi
 
 # Stop the motech server
-if [ -f /etc/init.d/motech-default ]; then
-    invoke-rc.d motech-default stop
+if [ -f /etc/init.d/motech ]; then
+    invoke-rc.d motech stop
 fi

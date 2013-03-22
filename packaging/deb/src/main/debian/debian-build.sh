@@ -114,7 +114,7 @@ chmod 755 ./motech-base/DEBIAN/postinst
 chmod 755 ./motech-base/DEBIAN/prerm
 chmod 755 ./motech-base/DEBIAN/postrm
 chmod 755 ./motech-base/DEBIAN/control
-chmod 755 ./motech-base/etc/init.d/motech-default
+chmod 755 ./motech-base/etc/init.d/motech
 
 # Build package
 echo "Building package"

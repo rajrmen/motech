@@ -24,5 +24,5 @@ if [ -d /var/lib/motech/motech-default ]; then
 fi
 
 # Register motech service with udpate-rc.d
-update-rc.d motech-default defaults 1>/dev/null
+update-rc.d motech defaults 1>/dev/null
 

@@ -26,123 +26,133 @@ elif [ -f /etc/debian_version ] ; then
 fi
 
 if [ "$#" -eq 4 -a "$1" = add -a $3 -eq $3 2>/dev/null -a $4 -eq $4 2>/dev/null ]; then
-	mkdir -p /var/cache/motech/motech-$2/work/Catalina/localhost
-	mkdir -p /var/cache/motech/motech-$2/temp
-	mkdir -p /var/cache/motech/motech-$2/felix-cache
-	mkdir -p /usr/share/motech/motech-$2
-	mkdir -p /var/lib/motech/motech-$2/webapps
-	mkdir -p /var/lib/motech/motech-$2/data
-	mkdir -p /var/log/motech/motech-$2
-	mkdir -p /etc/motech/motech-$2/
+	sudo mkdir -p /var/cache/motech/motech-$2/work/Catalina/localhost
+	sudo mkdir -p /var/cache/motech/motech-$2/temp
+	sudo mkdir -p /var/cache/motech/motech-$2/felix-cache
+	sudo mkdir -p /usr/share/motech/motech-$2
+	sudo mkdir -p /var/lib/motech/motech-$2/webapps
+	sudo mkdir -p /var/lib/motech/motech-$2/data
+	sudo mkdir -p /var/log/motech/motech-$2
+	sudo mkdir -p /etc/motech/motech-$2/
 
-	cp -r /usr/share/motech/motech-default/conf /usr/share/motech/motech-$2/conf
-	cp -r /var/lib/motech/motech-default/webapps/ROOT.war /var/lib/motech/motech-$2/webapps
-	cp -r /var/lib/motech/motech-default/data /var/lib/motech/motech-$2
+	sudo cp -r /usr/share/motech/motech-default/conf /usr/share/motech/motech-$2/conf
+	sudo cp -r /var/lib/motech/motech-default/webapps/ROOT.war /var/lib/motech/motech-$2/webapps
+	sudo cp -r /var/lib/motech/motech-default/data /var/lib/motech/motech-$2
 
-	cp -r /etc/init.d/motech-default /etc/init.d/motech-$2
-	cp -r /etc/motech/motech-default/motech.conf /etc/motech/motech-$2/motech.conf 
-	perl -p -i -e "s/motech-default/motech-$2/g" /etc/init.d/motech-$2
-	perl -p -i -e "s/motech-default/motech-$2/g" /etc/motech/motech-$2/motech.conf 
+	sudo cp -r /etc/init.d/motech /etc/init.d/motech-$2
+	sudo cp -r /etc/motech/motech-default/motech.conf /etc/motech/motech-$2/motech.conf 
+	sudo perl -p -i -e "s/motech-default/motech-$2/g" /etc/init.d/motech-$2
+	sudo perl -p -i -e "s/motech-default/motech-$2/g" /etc/motech/motech-$2/motech.conf 
 
-	perl -p -i -e "s/8080/$3/g" /usr/share/motech/motech-$2/conf/server.xml
-	perl -p -i -e "s/8005/$4/g" /usr/share/motech/motech-$2/conf/server.xml
+	sudo perl -p -i -e "s/8080/$3/g" /usr/share/motech/motech-$2/conf/server.xml
+	sudo perl -p -i -e "s/8005/$4/g" /usr/share/motech/motech-$2/conf/server.xml
 
-	rm -r /var/lib/motech/motech-$2/data/config/motech-settings.conf
-	echo "motech.app.name=$2" > /var/lib/motech/motech-$2/data/config/motech.properties
+	sudo rm -rf /var/lib/motech/motech-$2/data/config/motech-settings.conf
+	echo "motech.app.name=$2" | sudo tee /var/lib/motech/motech-$2/data/config/motech.properties > /dev/null
 
 
 	#create symlinks
-	ln -s /var/lib/motech/motech-$2/webapps/ /usr/share/motech/motech-$2/webapps
-	ln -s /var/lib/motech/motech-$2/data/ /usr/share/motech/motech-$2/.motech
-	ln -s /var/cache/motech/motech-$2/felix-cache/ /usr/share/motech/motech-$2/felix-cache
-	ln -s /var/cache/motech/motech-$2/temp/ /usr/share/motech/motech-$2/temp
-	ln -s /var/cache/motech/motech-$2/work/ /usr/share/motech/motech-$2/work
-	ln -s /var/log/motech/motech-$2/ /usr/share/motech/motech-$2/logs
+	sudo ln -s /var/lib/motech/motech-$2/webapps/ /usr/share/motech/motech-$2/webapps
+	sudo ln -s /var/lib/motech/motech-$2/data/ /usr/share/motech/motech-$2/.motech
+	sudo ln -s /var/cache/motech/motech-$2/felix-cache/ /usr/share/motech/motech-$2/felix-cache
+	sudo ln -s /var/cache/motech/motech-$2/temp/ /usr/share/motech/motech-$2/temp
+	sudo ln -s /var/cache/motech/motech-$2/work/ /usr/share/motech/motech-$2/work
+	sudo ln -s /var/log/motech/motech-$2/ /usr/share/motech/motech-$2/logs
 
 	# Create the motech user, if he doesn't exist
 	if [ `grep -c motech-$2: /etc/passwd` -eq 0 ]; then
-    		useradd -r -c "motech-$2 user" -d /usr/share/motech/motech-$2 motech-$2
+    		sudo useradd -r -c "motech-$2 user" -d /usr/share/motech/motech-$2 motech-$2
 	fi
 
 	# Make motech the owner of relevant directories
 	if [ -d /var/log/motech/motech-$2 ]; then
-    		chown -R motech-$2:motech-$2 /var/log/motech/motech-$2
+    		sudo chown -R motech-$2:motech-$2 /var/log/motech/motech-$2
 	fi
 	if [ -d /var/cache/motech/motech-$2 ]; then
-    		chown -R motech-$2:motech-$2 /var/cache/motech/motech-$2
+    		sudo chown -R motech-$2:motech-$2 /var/cache/motech/motech-$2
 	fi
 	if [ -d /var/lib/motech/motech-$2 ]; then
-    		chown -R motech-$2:motech-$2 /var/lib/motech/motech-$2
+    		sudo chown -R motech-$2:motech-$2 /var/lib/motech/motech-$2
 	fi
 
 	# Register motech service with udpate-rc.d
 	if [ "$system_type" = deb ]; then
-		update-rc.d motech-$2 defaults 1>/dev/null
+		sudo update-rc.d motech-$2 defaults 1>/dev/null
 	elif [ "$system_type" = rpm ]; then
-		chkconfig --add motech-$2
+		sudo chkconfig --add motech-$2
 	else
 		echo "Unrecognized Os"
 	fi
 
-elif [ "$#" -eq 2 -a "$1" = remove ]; then	
+elif [ "$#" -eq 2 -a "$1" = remove ]; then
+	if [ "$2" = motech-default ]; then
+		echo "You can't remove base package by this script!"
+		exit
+	fi
+	
 	# Unregister motech service from rc.d
 	if [ "$system_type" = deb ]; then
 		# Stop the motech server
 		if [ -f /etc/init.d/motech-$2 ]; then
-    			invoke-rc.d motech-$2 stop
+    			sudo invoke-rc.d motech-$2 stop
 		fi
-		update-rc.d -f motech-$2 remove 1>/dev/null
+		sudo update-rc.d -f motech-$2 remove 1>/dev/null
 	elif [ "$system_type" = rpm ]; then
 		# Stop the motech server
 		if [ -f /etc/init.d/motech-$2 ]; then
-    			/etc/init.d/motech-$2 stop
+    			sudo /etc/init.d/motech-$2 stop
 		fi
-		chkconfig --del motech-$2
+		sudo chkconfig --del motech-$2
 	else
 		echo "Unrecognized Os"
 	fi
 
 	# Delete the motech user, if he exists
 	if [ ! `grep -c motech-$2: /etc/passwd` -eq 0 ]; then
-    		userdel motech-$2
+    		sudo userdel motech-$2
 	fi	
 	
 	# Remove cache
-	rm -rf /var/cache/motech/motech-$2/
+	sudo rm -rf /var/cache/motech/motech-$2/
 
 	# Clean up the webapp
-	rm -rf /var/lib/motech/motech-$2/
+	sudo rm -rf /var/lib/motech/motech-$2/
 
-	rm -rf /var/log/motech/motech-$2/
-	rm -rf /usr/share/motech/motech-$2/
+	sudo rm -rf /var/log/motech/motech-$2/
+	sudo rm -rf /usr/share/motech/motech-$2/
 	
-	rm -rf /etc/init.d/motech-$2
-	rm -rf /etc/motech/motech-$2/
+	sudo rm -rf /etc/init.d/motech-$2
+	sudo rm -rf /etc/motech/motech-$2/
 
 elif [ "$#" -eq 2 -a "$1" = update ]; then
+	if [ "$2" = motech-default ]; then
+		echo "You can't u update base package by this script!"
+		exit
+	fi
+
 	# Unregister motech service from rc.d
 	if [ "$system_type" = deb ]; then
 		# Stop the motech server
 		if [ -f /etc/init.d/motech-$2 ]; then
-    			invoke-rc.d motech-$2 stop
+    			sudo invoke-rc.d motech-$2 stop
 		fi
-		update-rc.d -f motech-$2 remove 1>/dev/null
+		sudo update-rc.d -f motech-$2 remove 1>/dev/null
 	elif [ "$system_type" = rpm ]; then
 		# Stop the motech server
 		if [ -f /etc/init.d/motech-$2 ]; then
-    			/etc/init.d/motech-$2 stop
+    			sudo /etc/init.d/motech-$2 stop
 		fi
-		chkconfig --del motech-$2
+		sudo chkconfig --del motech-$2
 	else
 		echo "Unrecognized Os"
 	fi
 	
 	cd /var/lib/motech/motech-default/webapps/
-	temp_motech_default=$(sudo unzip -p ROOT.war META-INF/MANIFEST.MF | grep Implementation-Version)
+	sudo temp_motech_default=$(sudo unzip -p ROOT.war META-INF/MANIFEST.MF | grep Implementation-Version)
 	echo "$motech_default_package" $temp_motech_default 
 
 	cd /var/lib/motech/motech-$2/webapps/
-	temp_motech_tenant=$(sudo unzip -p ROOT.war META-INF/MANIFEST.MF | grep Implementation-Version)
+	sudo temp_motech_tenant=$(sudo unzip -p ROOT.war META-INF/MANIFEST.MF | grep Implementation-Version)
 	echo "Motech-$2" $temp_motech_tenant
 
 	if [ "$temp_motech_default"="$temp_motech_tenant" ]; then
@@ -156,9 +166,9 @@ elif [ "$#" -eq 2 -a "$1" = update ]; then
 	if [ "$answer" = y ]; then
 		# Copy and replace new file
 		if [ ! `grep -c motech-$2: /etc/passwd` -eq 0 ]; then
-			rm -rf /var/lib/motech/motech-$2/webapps/*
-			cp -r /var/lib/motech/motech-default/webapps/ROOT.war /var/lib/motech/motech-$2/webapps
-			cp -r /var/lib/motech/motech-default/data/bundles /var/lib/motech/motech-$2/data	
+			sudo rm -rf /var/lib/motech/motech-$2/webapps/*
+			sudo cp -r /var/lib/motech/motech-default/webapps/ROOT.war /var/lib/motech/motech-$2/webapps
+			sudo cp -r /var/lib/motech/motech-default/data/bundles /var/lib/motech/motech-$2/data	
 			echo "Motech-$2 package updated"	
 		fi
 	else
@@ -172,7 +182,7 @@ elif [ "$#" -eq 1 -a "$1" = users ]; then
 	for motech_user in `cut -d: -f1 < /etc/passwd | grep motech`
 	do
 		cd /var/lib/motech/${motech_user}/webapps/
-  		echo ${motech_user} $(cat /usr/share/motech/${motech_user}/conf/server.xml | grep -m 1 "Connector port" | awk '{ print $2 }') $(sudo unzip -p ROOT.war META-INF/MANIFEST.MF | grep Implementation-Version) 
+  		sudo echo ${motech_user} $(cat /usr/share/motech/${motech_user}/conf/server.xml | grep -m 1 "Connector port" | awk '{ print $2 }') $(sudo unzip -p ROOT.war META-INF/MANIFEST.MF | grep Implementation-Version) 
 		
 	done
 

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 function purge_motech() {
-    $CHROOT yum purge motech-base -y
+    $CHROOT yum remove motech-base -y
     $CHROOT rm -rf /var/log/motech/motech-default
     $CHROOT rm -rf /var/cache/motech/motech-default
     $CHROOT rm -rf /usr/share/motech/motech-default
@@ -66,7 +66,7 @@ $CHROOT yum install /tmp/$BASE_PACKAGE -y
 $CHROOT sed -i "s/8080/$PORT/i" /usr/share/motech/motech-default/conf/server.xml
 $CHROOT sed -i "s/8005/8095/i" /usr/share/motech/motech-default/conf/server.xml
 
-$CHROOT service motech-default start
+$CHROOT service motech start
 
 # Make sure files/directories exist with correct permissions
 
