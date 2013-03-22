@@ -64,7 +64,8 @@ public final class TaskValidator extends GeneralValidator {
                         DateTime now = DateTime.now();
                         DateTimeFormat.forPattern(matcher.group(2)).print(now);
                     } catch (IllegalArgumentException e) {
-                        result.addError(new CustomTaskError(matcher.group(1), entry.getKey(), "validation.error.dateFormat"));
+                        String[] objectFields = matcher.group(1).split("\\.");
+                        result.addError(new CustomTaskError(String.format("%s.%s", objectFields[objectFields.length-2], objectFields[objectFields.length-1]), entry.getKey(), "validation.error.dateFormat"));
                     }
                 }
             }
