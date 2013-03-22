@@ -30,8 +30,9 @@ public final class TaskValidator extends GeneralValidator {
         result.addErrors(validateAction(task.getAction()));
 
         result.addError(checkNullValue(TASK, "actionInputFields", task.getActionInputFields()));
-
-        result.addErrors(validateDateFormat(task.getActionInputFields()));
+        if (task.getActionInputFields() != null) {
+            result.addErrors(validateDateFormat(task.getActionInputFields()));
+        }
 
         if (task.getFilters() != null) {
             for (int i = 0; i < task.getFilters().size(); ++i) {

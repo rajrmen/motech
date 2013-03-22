@@ -190,7 +190,6 @@ public class TaskTriggerHandler {
 
     private boolean callActionServiceMethod(ActionEvent action, MethodHandler methodHandler) throws TaskActionException {
         ServiceReference reference = bundleContext.getServiceReference(action.getServiceInterface());
-        String serviceInterface = action.getServiceInterface();
         boolean serviceAvailable = reference != null;
 
         if (serviceAvailable) {
@@ -323,7 +322,7 @@ public class TaskTriggerHandler {
 
         try {
             value = getFieldValue(found, key.getEventKey());
-        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+        } catch (NoSuchMethodException | InvocationTargetException | NullPointerException | IllegalAccessException e) {
             if (ad.isFail()) {
                 throw new TaskTriggerException("error.objectNotContainsField", e, key.getEventKey());
             } else {
