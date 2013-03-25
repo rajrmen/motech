@@ -15,15 +15,15 @@
             <div class="span4">
                 <fieldset class="inside"><legend>{{msg('resource.name')}}</legend>
                     <div class="control-group form-inline">
-                        <input type="text" class="input-large search-query" placeholder="{{msg('resource.search')}}">
+                        <input type="text" class="input-large search-query" placeholder="{{msg('resource.search')}}" data-event-type="keydown" data-search-field="name" jqgrid-search="resourceTable">
                     </div>
                 </fieldset>
             </div>
             <div class="span4">
                 <fieldset class="inside"><legend>{{msg('resource.type')}}</legend>
                     <div data-toggle="buttons-checkbox" class="btn-group control-group">
-                        <button class="btn btn-primary setHideActive" type="button"><i class="icon-white icon-ok"></i> {{msg('resource.type.string')}}</button>
-                        <button class="btn btn-primary setHidePaused" type="button"><i class="icon-white icon-ok"></i> {{msg('resource.type.stream')}}</button>
+                        <button class="btn btn-primary" type="button" data-field-type="boolean" data-search-field="string" jqgrid-search="resourceTable"><i class="icon-white icon-ok"></i> {{msg('resource.type.string')}}</button>
+                        <button class="btn btn-primary" type="button" data-field-type="boolean" data-search-field="stream" jqgrid-search="resourceTable"><i class="icon-white icon-ok"></i> {{msg('resource.type.stream')}}</button>
                     </div>
                 </fieldset>
             </div>

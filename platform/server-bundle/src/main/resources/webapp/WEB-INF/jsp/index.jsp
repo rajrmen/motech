@@ -58,6 +58,8 @@
 
     <script src="resources/lib/moment/moment-1.7.2.js "></script>
 
+    <script src="resources/lib/parseuri/parseui.js"></script>
+
     <script src="resources/js/util.js" type="text/javascript"></script>
     <script src="resources/js/common.js" type="text/javascript"></script>
     <script src="resources/js/localization.js"></script>

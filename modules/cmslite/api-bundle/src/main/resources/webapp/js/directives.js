@@ -32,6 +32,76 @@
         };
     });
 
+    widgetModule.directive('jqgridSearch', function () {
+        return {
+            restrict: 'A',
+            link: function (scope, element, attrs) {
+                var elem = angular.element(element),
+                    table = angular.element('#' + attrs.jqgridSearch),
+                    eventType = elem.data('event-type'),
+                    filter = function (time) {
+                        var field = elem.data('search-field'),
+                            type = elem.data('field-type') || 'string',
+                            url = parseUri(table.jqGrid('getGridParam', 'url')),
+                            query = {},
+                            params = '?',
+                            prop;
+
+                        // copy existing url parameters
+                        for (prop in url.queryKey) {
+                            if (prop !== field) {
+                                query[prop] = url.queryKey[prop];
+                            }
+                        }
+
+                        // set parameter for given element
+                        switch (type) {
+                        case 'boolean':
+                            query[field] = url.queryKey[field].toLowerCase() !== 'true';
+
+                            if (query[field]) {
+                                elem.find('i').removeClass('icon-ban-circle').addClass('icon-ok');
+                            } else {
+                                elem.find('i').removeClass('icon-ok').addClass('icon-ban-circle');
+                            }
+                            break;
+                        default:
+                            query[field] = elem.val();
+                        }
+
+                        // create raw parameters
+                        for (prop in query) {
+                            params += prop + '=' + query[prop] + '&';
+                        }
+
+                        // remove last '&'
+                        params = params.slice(0, params.length - 1);
+
+                        if (timeoutHnd) {
+                            clearTimeout(timeoutHnd);
+                        }
+
+                        timeoutHnd = setTimeout(function () {
+                            jQuery('#' + attrs.jqgridSearch).jqGrid('setGridParam', {
+                                url: '../cmsliteapi/resource' + params
+                            }).trigger('reloadGrid');
+                        }, time || 0);
+                    },
+                    timeoutHnd;
+
+                switch (eventType) {
+                case 'keydown':
+                    elem.keydown(function () {
+                        filter(500);
+                    });
+                    break;
+                default:
+                    elem.click(filter);
+                }
+            }
+        };
+    });
+
     widgetModule.directive('resourcesGrid', function ($compile) {
         return {
             restrict: 'A',
@@ -40,7 +110,7 @@
 
                 elem.jqGrid({
                     caption: 'CMS Resources',
-                    url: '../cmsliteapi/resource',
+                    url: '../cmsliteapi/resource?name=&string=true&stream=true',
                     datatype: 'json',
                     jsonReader:{
                         repeatitems:false
@@ -83,9 +153,9 @@
                     width: '100%',
                     height: 'auto',
                     sortname: 'name',
-                    sortorder: "asc",
+                    sortorder: 'asc',
                     viewrecords: true,
-                    toolbar: [true,"top"],
+                    toolbar: [true,'top'],
                     gridComplete: function () {
                         angular.forEach(elem.find('ul'), function(value) {
                             $compile(value)(scope);
@@ -96,7 +166,7 @@
                         });
 
                         $('#outsideResourceTable').children('div').width('100%');
-                        $('.ui-jqgrid-htable').addClass("table-lightblue");
+                        $('.ui-jqgrid-htable').addClass('table-lightblue');
                         $('.ui-jqgrid-bdiv').width('100%');
                         $('.ui-jqgrid-hdiv').width('100%');
                         $('.ui-jqgrid-hbox').width('100%');
@@ -104,14 +174,15 @@
                         $('#t_resourceTable').width('auto');
                         $('.ui-jqgrid-pager').width('100%');
                         $('#outsideResourceTable').children('div').each(function() {
-                            $("table", this).width('100%');
+                            $('table', this).width('100%');
                             $(this).find('#resourceTable').width('100%');
                             $(this).find('table').width('100%');
                        });
                     }
                 });
-                $("#t_resourceTable").append($compile($("#operations-resource"))(scope));
-                $("#t_resourceTable").append($compile($("#collapse-resource"))(scope));
+
+                $('#t_resourceTable').append($compile($('#operations-resource'))(scope));
+                $('#t_resourceTable').append($compile($('#collapse-resource'))(scope));
             }
         };
     });

@@ -38,7 +38,9 @@ import java.util.Set;
 
 import static java.util.Locale.getAvailableLocales;
 import static org.apache.commons.codec.digest.DigestUtils.md5Hex;
+import static org.apache.commons.lang.StringUtils.equalsIgnoreCase;
 import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.apache.commons.lang.StringUtils.startsWithIgnoreCase;
 
 @Controller
@@ -82,7 +84,10 @@ public class ResourceController {
     public Resources getContents(final @RequestParam Integer rows,
                                  final @RequestParam Integer page,
                                  final @RequestParam(value = "sidx") String sortColumn,
-                                 final @RequestParam(value = "sord") String sortDirection) {
+                                 final @RequestParam(value = "sord") String sortDirection,
+                                 final @RequestParam(required = false) String name,
+                                 final @RequestParam(required = false) boolean string,
+                                 final @RequestParam(required = false) boolean stream) {
         List<Content> contents = cmsLiteService.getAllContents();
         List<ResourceDto> resourceDtos = new ArrayList<>();
 
@@ -100,6 +105,8 @@ public class ResourceController {
                 dto.addLanguage(content.getLanguage());
             }
         }
+
+        CollectionUtils.filter(resourceDtos, new ResourceFilter(name, string, stream));
 
         return new Resources(rows, page, sortColumn, sortDirection, resourceDtos);
     }

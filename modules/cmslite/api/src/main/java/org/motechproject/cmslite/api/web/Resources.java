@@ -14,8 +14,8 @@ public class Resources implements Serializable {
 
     public Resources(Integer rows, Integer page, String sortColumn, String sortDirection, List<ResourceDto> list) {
         this.page = page;
-        this.records = list.size();
-        this.total = (records / rows) + 1;
+        records = list.size();
+        total = records <= rows ? 1 : (records / rows) + 1;
 
         Integer start = rows * (page > total ? total : page) - rows;
         Integer count = start + rows;
