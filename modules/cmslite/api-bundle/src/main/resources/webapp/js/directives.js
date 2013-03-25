@@ -39,13 +39,15 @@
                 var elem = angular.element(element);
 
                 elem.jqGrid({
-                    caption: 'Resources',
+                    caption: 'CMS Resources',
                     url: '../cmsliteapi/resource',
                     datatype: 'json',
                     jsonReader:{
                         repeatitems:false
                     },
                     shrinkToFit: true,
+                    autowidth: true,
+                    rownumbers: true,
                     rowNum: 5,
                     rowList: [5, 20, 30],
                     colModel: [{
@@ -71,6 +73,8 @@
                     }, {
                         name: 'type',
                         index: 'type',
+                        width: '25',
+                        align: 'center',
                         formatter: function (value) {
                             return scope.msg('resource.type.' + value);
                         }
@@ -78,7 +82,10 @@
                     pager: '#' + attrs.resourcesGrid,
                     width: '100%',
                     height: 'auto',
+                    sortname: 'name',
+                    sortorder: "asc",
                     viewrecords: true,
+                    toolbar: [true,"top"],
                     gridComplete: function () {
                         angular.forEach(elem.find('ul'), function(value) {
                             $compile(value)(scope);
@@ -87,8 +94,24 @@
                         angular.forEach(['name', 'languages', 'type'], function (value) {
                             elem.jqGrid('setLabel', value, scope.msg('resource.' + value));
                         });
+
+                        $('#outsideResourceTable').children('div').width('100%');
+                        $('.ui-jqgrid-htable').addClass("table-lightblue");
+                        $('.ui-jqgrid-bdiv').width('100%');
+                        $('.ui-jqgrid-hdiv').width('100%');
+                        $('.ui-jqgrid-hbox').width('100%');
+                        $('.ui-jqgrid-view').width('100%');
+                        $('#t_resourceTable').width('auto');
+                        $('.ui-jqgrid-pager').width('100%');
+                        $('#outsideResourceTable').children('div').each(function() {
+                            $("table", this).width('100%');
+                            $(this).find('#resourceTable').width('100%');
+                            $(this).find('table').width('100%');
+                       });
                     }
                 });
+                $("#t_resourceTable").append($compile($("#operations-resource"))(scope));
+                $("#t_resourceTable").append($compile($("#collapse-resource"))(scope));
             }
         };
     });

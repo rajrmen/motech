@@ -1,21 +1,21 @@
 <div id="newResourceModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="newResourceLabel" aria-hidden="true" clear-form="newResourceForm">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        <h3 id="newResourceLabel">{{msg('header.addNewResource')}}</h3>
+        <h4 id="newResourceLabel">{{msg('header.addNewResource')}}</h4>
     </div>
     <div class="modal-body">
         <form id="newResourceForm" name="newResourceForm" class="form-horizontal" action="../cmsliteapi/resource" enctype="multipart/form-data" method="POST">
             <div class="control-group">
                 <label class="control-label" for="name">{{msg('resource.name')}}</label>
                 <div class="controls">
-                    <input type="text" id="name" name="name" auto-complete="name"/>
+                    <input type="text" id="name" name="name" auto-complete="name" class="input-xlarge"/>
                     <span class="form-hint" style="display: none;">{{msg('error.required.name')}}</span>
                 </div>
             </div>
             <div class="control-group">
                 <label class="control-label" for="language">{{msg('resource.language')}}</label>
                 <div class="controls">
-                    <input type="text" id="language" name="language" auto-complete="language"/>
+                    <input type="text" id="language" name="language" auto-complete="language" class="input-xlarge"/>
                     <span class="form-hint" style="display: none;">{{msg('error.required.language')}}</span>
                 </div>
             </div>
@@ -35,13 +35,14 @@
             </div>
             <div class="control-group" ui-if="resourceType == 'string'">
                 <div class="controls">
-                    <textarea rows="3" id="value" name="value"></textarea>
+                    <textarea rows="4" id="value" name="value" class="input-xlarge"></textarea>
                     <span class="form-hint" style="display: none;">{{msg('error.required.string')}}</span>
                 </div>
             </div>
             <div class="control-group" ui-if="resourceType == 'stream'">
+                <label class="control-label">{{msg('info.fileChosen')}}</label>
                 <div class="controls">
-                    {{msg('info.fileChosen')}} <input type="file" id="contentFile" name="contentFile">
+                    <input type="file" id="contentFile" name="contentFile">
                     <span class="form-hint" style="display: none;">{{msg('error.required.stream')}}</span>
                 </div>
             </div>

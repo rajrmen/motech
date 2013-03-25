@@ -6,7 +6,7 @@
 
     var widgetModule = angular.module('motech-cmslite');
 
-    widgetModule.controller('ResourceCtrl', function ($scope, Resources) {
+    widgetModule.controller('ResourceCtrl', function ($scope, $compile, Resources) {
         $scope.select = {};
         $scope.mode = 'read';
         $scope.resourceType = 'string';

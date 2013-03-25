@@ -1,18 +1,18 @@
 <div id="streamResourceModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="streamResourceLabel" aria-hidden="true" clear-form="streamResourceForm">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        <h3 id="streamResourceLabel">{{msg('header.resource')}}: {{select.name}}, {{select.language}}</h3>
+        <h4 id="streamResourceLabel">{{msg('header.resource')}}: {{select.name}}, {{select.language}}</h4>
     </div>
     <div class="modal-body">
         <form id="streamResourceForm" name="streamResourceForm" class="form-horizontal" action="../cmsliteapi/resource/stream/{{select.language}}/{{select.name}}" enctype="multipart/form-data" method="POST">
             <div class="control-group">
                 <!-- read mode -->
-                <div class="controls" ui-if="mode == 'read'">
+                <div class="" ui-if="mode == 'read'">
                     <a href="../cmsliteapi/stream/{{select.language}}/{{select.name}}">{{msg('button.openRawFile')}}</a>
                 </div>
 
                 <!-- write mode -->
-                <div class="controls" ui-if="mode == 'write'">
+                <div class="" ui-if="mode == 'write'">
                     {{msg('info.fileChosen')}} <input type="file" id="contentFile" name="contentFile">
                     <span class="form-hint" style="display: none;">{{msg('error.required.stream')}}</span>
                 </div>
@@ -22,7 +22,7 @@
     <div class="modal-footer">
         <!-- read mode -->
         <button ui-if="mode == 'read'" class="btn btn-primary" ng-click="changeMode('write')"><i class="icon-ok icon-white"></i> {{msg('button.replace')}}</button>
-        <button ui-if="mode == 'read'" class="btn btn-danger" ng-click="removeResource('stream', select)"><i class="icon-remove"></i> {{msg('button.delete')}}</button>
+        <button ui-if="mode == 'read'" class="btn btn-danger" ng-click="removeResource('stream', select)"><i class="icon-remove icon-white"></i> {{msg('button.delete')}}</button>
         <button ui-if="mode == 'read'" class="btn" data-dismiss="modal" aria-hidden="true">{{msg('button.close')}}</button>
 
         <!-- write mode -->
