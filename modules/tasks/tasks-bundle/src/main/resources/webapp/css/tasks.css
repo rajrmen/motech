@@ -484,16 +484,21 @@ font-weight: bold;
     vertical-align: middle;
 }
 
-.table-recent-activity-task tbody td {
-    vertical-align: middle;
-}
-
 .table-recent-activity-task tbody td:first-child {
-    width: 35px;
+    min-width: 35px;
+    text-align: center;
 }
 
 .table-recent-activity-task tbody td:last-child {
-    width: 250px;
+    min-width: 180px;
+}
+
+.table-recent-activity-task tbody td.message-history {
+    width: 80%;
+}
+
+.table-recent-activity-task tbody td.message-history p {
+    margin-top: 3px;
 }
 
 .section-input {
