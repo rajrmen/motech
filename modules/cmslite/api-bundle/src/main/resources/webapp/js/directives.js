@@ -90,8 +90,8 @@
                     timeoutHnd;
 
                 switch (eventType) {
-                case 'keydown':
-                    elem.keydown(function () {
+                case 'keyup':
+                    elem.keyup(function () {
                         filter(500);
                     });
                     break;
