@@ -37,5 +37,5 @@ function SmsController($scope, $http) {
 }
 
 function SmsLoggingController($scope, $http, SmsRecords) {
-    $scope.smsRecords = SmsRecords.query();
+
 }
