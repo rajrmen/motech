@@ -14,7 +14,7 @@
         $scope.languages = ['Niemiecki', 'Polski', 'Czeski', 'Angielski'];
         $scope.filterLanguage = [];
         $scope.filterActive = false;
-        $scope.availableLanguages = Resources.allLanguages();
+        $scope.usedLanguages = Resources.allLanguages();
 
         $scope.changeResourceType = function (type) {
             $scope.resourceType = type;
