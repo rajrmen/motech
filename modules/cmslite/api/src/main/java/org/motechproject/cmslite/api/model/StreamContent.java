@@ -5,6 +5,7 @@ import org.codehaus.jackson.annotate.JsonProperty;
 import org.ektorp.support.TypeDiscriminator;
 
 import java.io.InputStream;
+import java.util.Objects;
 
 /**
  * \ingroup cmslite
@@ -21,6 +22,7 @@ public class StreamContent extends Content {
     private String contentType;
 
     public StreamContent() {
+        this(null, null, null, null, null);
     }
 
     public StreamContent(String language, String name, InputStream inputStream, String checksum, String contentType) {
@@ -53,5 +55,31 @@ public class StreamContent extends Content {
 
     public void setContentType(String contentType) {
         this.contentType = contentType;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(inputStream, checksum, contentType);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+
+        if (!super.equals(obj)) {
+            return false;
+        }
+
+        final StreamContent other = (StreamContent) obj;
+
+        return Objects.equals(this.inputStream, other.inputStream) &&
+                Objects.equals(this.checksum, other.checksum) &&
+                Objects.equals(this.contentType, other.contentType);
     }
 }

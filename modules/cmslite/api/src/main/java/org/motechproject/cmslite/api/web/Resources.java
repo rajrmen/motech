@@ -11,15 +11,14 @@ public class Resources implements Serializable {
     private final Integer records;
     private final List<ResourceDto> rows;
 
-    public Resources(Integer page, Integer rows, List<ResourceDto> list) {
-        this.page = page;
+    public Resources(GridSettings settings, List<ResourceDto> list) {
+        this.page = settings.getPage();
         records = list.size();
-        total = records <= rows ? 1 : (records / rows) + 1;
+        total = records <= settings.getRows() ? 1 : (records / settings.getRows()) + 1;
 
-        Integer start = rows * (page > total ? total : page) - rows;
-        Integer count = start + rows;
+        Integer start = settings.getRows() * (page > total ? total : page) - settings.getRows();
+        Integer count = start + settings.getRows();
         Integer end = count > records ? records : count;
-
 
         this.rows = list.subList(start, end);
     }

@@ -77,20 +77,13 @@ public class ResourceController {
 
     @RequestMapping(value = "/resource", method = RequestMethod.GET)
     @ResponseBody
-    public Resources getContents(final @RequestParam Integer rows,
-                                 final @RequestParam Integer page,
-                                 final @RequestParam(value = "sidx") String sortColumn,
-                                 final @RequestParam(value = "sord") String sortDirection,
-                                 final @RequestParam(required = false) String name,
-                                 final @RequestParam(required = false) boolean string,
-                                 final @RequestParam(required = false) boolean stream,
-                                 final @RequestParam(required = false) String languages) {
+    public Resources getContents(GridSettings settings) {
         List<Content> contents = cmsLiteService.getAllContents();
-        List<ResourceDto> resourceDtos = ResourceFilter.filter(name, string, stream, languages, contents);
+        List<ResourceDto> resourceDtos = ResourceFilter.filter(settings, contents);
 
-        Collections.sort(resourceDtos, new ResourceComparator(sortColumn, sortDirection));
+        Collections.sort(resourceDtos, new ResourceComparator(settings));
 
-        return new Resources(page, rows, resourceDtos);
+        return new Resources(settings, resourceDtos);
     }
 
     @RequestMapping(value = "/resource/all/languages", method = RequestMethod.GET)
@@ -109,7 +102,7 @@ public class ResourceController {
     @RequestMapping(value = "/resource/{type}/{language}/{name}", method = RequestMethod.GET)
     @ResponseBody
     public Content getContent(@PathVariable String type, @PathVariable String language, @PathVariable String name) throws ContentNotFoundException {
-        Content content;
+        Content content = null;
 
         switch (type) {
             case "stream":
@@ -119,7 +112,6 @@ public class ResourceController {
                 content = cmsLiteService.getStringContent(language, name);
                 break;
             default:
-                content = null;
         }
 
         return content;

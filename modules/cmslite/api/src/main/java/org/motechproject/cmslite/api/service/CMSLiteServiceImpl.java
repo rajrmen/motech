@@ -58,17 +58,9 @@ public class CMSLiteServiceImpl implements CMSLiteService {
 
     @Override
     public List<Content> getAllContents() {
-        List<StreamContent> streamContents = allStreamContents.getAll();
-        List<StringContent> stringContents = allStringContents.getAll();
         List<Content> contents = new ArrayList<>();
-
-        if (streamContents != null) {
-            contents.addAll(streamContents);
-        }
-
-        if (stringContents != null) {
-            contents.addAll(stringContents);
-        }
+        contents.addAll(allStreamContents.getAll());
+        contents.addAll(allStringContents.getAll());
 
         return contents;
     }
