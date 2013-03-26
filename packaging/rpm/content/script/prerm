@@ -13,16 +13,11 @@ if [ -d $FRAGMENT_DIR ] && [ ! "$(ls -A $FRAGMENT_DIR)" ]; then
     rm -rf $FRAGMENT_DIR
 fi
 
-# Delete the motech user, if he exists
-if [ ! `grep -c motech-default: /etc/passwd` -eq 0 ]; then
-    skill -KILL -u motech-default
-    userdel motech-default
+#if this is not update
+if [ "$1" = 0 ]; then
+    # Delete the motech user, if he exists
+    if [ ! `grep -c motech-default: /etc/passwd` -eq 0 ]; then
+        skill -KILL -u motech-default
+        userdel motech-default
+    fi
 fi
-
-#Remove symlinks
-rm -f /usr/share/motech/motech-default/logs
-rm -f /usr/share/motech/motech-default/temp
-rm -f /usr/share/motech/motech-default/work
-rm -f /usr/share/motech/motech-default/webapps
-rm -f /usr/share/motech/motech-default/.motech
-rm -f /usr/share/motech/motech-default/felix-cache

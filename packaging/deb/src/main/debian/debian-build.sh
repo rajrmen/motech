@@ -76,6 +76,10 @@ mkdir -p motech-base/var/lib/motech/motech-default/webapps
 mkdir -p motech-base/var/lib/motech/motech-default/data/bundles
 mkdir -p motech-base/var/lib/motech/motech-default/data/rules
 mkdir -p motech-base/var/log/motech/motech-default
+mkdir -p motech-base/usr/share/motech/motech-default/
+
+# copy manage-tenant script
+cp $MOTECH_BASE/packaging/manage_tenants.sh motech-base/usr/share/motech/motech-default/
 
 # copy motech-base
 cp -r $CONTENT_DIR/motech-base .

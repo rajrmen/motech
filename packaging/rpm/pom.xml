@@ -269,6 +269,9 @@
                                         <source>
                                             <location>content/motech-base/usr/share/motech</location>
                                         </source>
+                                        <source>
+                                            <location>${project.parent.relativePath}/packaging/manage_tenants.sh</location>
+                                        </source>
                                     </sources>
                                 </mapping>
                                 <mapping>

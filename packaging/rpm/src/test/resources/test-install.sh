@@ -101,4 +101,35 @@ if [ $RET -ne 0 ]; then
     exit $RET
 fi
 
+# Tenant test
+#
+
+# Remove previous installation if any
+$CHROOT sh /usr/share/motech/motech-default/manage_tenants.sh remove lauren
+
+# Install new tenant
+$CHROOT sh /usr/share/motech/motech-default/manage_tenants.sh add lauren 9999 9890
+
+# Change the ports
+$CHROOT perl -p -i -e "s/8099/9999/g" /usr/share/motech/motech-lauren/conf/server.xml
+$CHROOT	perl -p -i -e "s/8095/9890/g" /usr/share/motech/motech-lauren/conf/server.xml
+
+$CHROOT service motech-lauren start
+
+# Give motech some time
+sleep 5
+
+# Check the homepage
+curl -L "localhost:9999" --retry 5 --connect-timeout 30 | grep -i motech
+RET=$? # Success?
+if [ $RET -ne 0 ]; then
+    echo "Failed getting motech-tenant page" > $ERROR_LOG
+    cat $CHROOT_DIR/var/log/motech/motech-lauren/catalina.out >> $ERROR_LOG
+    $CHROOT sh /usr/share/motech/motech-default/manage_tenants.sh remove lauren
+    exit $RET
+fi
+
+# Remove tenant
+$CHROOT sh /usr/share/motech/motech-default/manage_tenants.sh remove lauren
+
 exit 0 # Victory
