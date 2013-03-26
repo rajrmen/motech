@@ -13,7 +13,10 @@ import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.apache.commons.lang.StringUtils.startsWithIgnoreCase;
 
-public class ResourceFilter {
+public final class ResourceFilter {
+
+    private ResourceFilter() {
+    }
 
     public static List<ResourceDto> filter(final String name, final boolean string, final boolean stream,
                                            final String languages, final List<Content> contents) {
@@ -25,20 +28,12 @@ public class ResourceFilter {
         }
 
         for (final Content content : contents) {
-            final String contentName = content.getName();
-            final String contentType = getContentType(content);
-
-            boolean equalLanguage = languagesList.isEmpty() || languagesList.contains(content.getLanguage());
-            boolean equalName = isBlank(name) || startsWithIgnoreCase(content.getName(), name);
-            boolean equalString = string && equalsIgnoreCase(contentType, "string");
-            boolean equalStream = stream && equalsIgnoreCase(contentType, "stream");
-
-            if (equalLanguage && equalName && (equalString || equalStream)) {
+            if (isCorrect(content, name, string, stream, languagesList)) {
                 ResourceDto dto = (ResourceDto) CollectionUtils.find(resourceDtos, new Predicate() {
                     @Override
                     public boolean evaluate(Object object) {
                         return object instanceof ResourceDto &&
-                                equalsContent((ResourceDto) object, contentName, contentType);
+                                equalsContent((ResourceDto) object, content.getName(), getContentType(content));
                     }
                 });
 
@@ -51,6 +46,17 @@ public class ResourceFilter {
         }
 
         return resourceDtos;
+    }
+
+    private static boolean isCorrect(Content content, String name, boolean string, boolean stream, List<String> languages) {
+        final String contentType = getContentType(content);
+
+        boolean equalLanguage = languages.isEmpty() || languages.contains(content.getLanguage());
+        boolean equalName = isBlank(name) || startsWithIgnoreCase(content.getName(), name);
+        boolean equalString = string && equalsIgnoreCase(contentType, "string");
+        boolean equalStream = stream && equalsIgnoreCase(contentType, "stream");
+
+        return equalLanguage && equalName && (equalString || equalStream);
     }
 
     private static String getContentType(Content content) {
