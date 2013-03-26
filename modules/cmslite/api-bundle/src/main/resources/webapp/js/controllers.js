@@ -6,11 +6,15 @@
 
     var widgetModule = angular.module('motech-cmslite');
 
-    widgetModule.controller('ResourceCtrl', function ($scope, Resources) {
+    widgetModule.controller('ResourceCtrl', function ($scope, $http, Resources) {
         $scope.select = {};
         $scope.mode = 'read';
         $scope.resourceType = 'string';
-        $scope.usedLanguages = Resources.allLanguages();
+        $scope.usedLanguages = [];
+
+        $http.get('../cmsliteapi/resource/all/languages').success(function (data) {
+            $scope.usedLanguages = data;
+        });
 
         $scope.changeResourceType = function (type) {
             $scope.resourceType = type;

@@ -4,9 +4,9 @@ import org.motechproject.cmslite.api.model.Content;
 
 import java.io.Serializable;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
-import static org.apache.commons.lang.StringUtils.equalsIgnoreCase;
 import static org.apache.commons.lang.StringUtils.startsWithIgnoreCase;
 
 public class ResourceDto implements Serializable {
@@ -45,18 +45,26 @@ public class ResourceDto implements Serializable {
         return type;
     }
 
-    public boolean equalsContent(Content content) {
-        String contentType;
+    @Override
+    public int hashCode() {
+        return Objects.hash(languages, name, type);
+    }
 
-        if (startsWithIgnoreCase(content.getType(), "string")) {
-            contentType = "string";
-        } else if (startsWithIgnoreCase(content.getType(), "stream")) {
-            contentType = "stream";
-        } else {
-            contentType = null;
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
         }
 
-        return equalsIgnoreCase(type, contentType) && equalsIgnoreCase(name, content.getName());
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+
+        final ResourceDto other = (ResourceDto) obj;
+
+        return Objects.equals(this.languages, other.languages) &&
+                Objects.equals(this.name, other.name) &&
+                Objects.equals(this.type, other.type);
     }
 
     @Override

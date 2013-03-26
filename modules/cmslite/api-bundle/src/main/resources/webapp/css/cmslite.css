@@ -168,3 +168,17 @@ legend + .control-group {
 .pointer {
     cursor: pointer;
 }
+
+.radio.inline,
+.checkbox.inline {
+  display: inline-block;
+  padding-top: 5px;
+  margin-bottom: 0;
+  margin-right: 10px;
+  vertical-align: middle;
+}
+
+.radio.inline + .radio.inline,
+.checkbox.inline + .checkbox.inline {
+  margin-left: 0px;
+}

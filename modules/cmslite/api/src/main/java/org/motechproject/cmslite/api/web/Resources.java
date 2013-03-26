@@ -1,7 +1,6 @@
 package org.motechproject.cmslite.api.web;
 
 import java.io.Serializable;
-import java.util.Collections;
 import java.util.List;
 
 public class Resources implements Serializable {

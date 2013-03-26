@@ -45,6 +45,7 @@
                             url = parseUri(table.jqGrid('getGridParam', 'url')),
                             query = {},
                             params = '?',
+                            array = [],
                             prop;
 
                         // copy existing url parameters
@@ -64,6 +65,19 @@
                             } else {
                                 elem.find('i').removeClass('icon-ok').addClass('icon-ban-circle');
                             }
+                            break;
+                        case 'array':
+                            angular.forEach(url.queryKey[field].split(','), function (value) {
+                                if (elem.not(':checked') && elem.val() !== value && value !== '') {
+                                    array.push(value);
+                                }
+                            });
+
+                            if (elem.is(':checked')) {
+                                array.push(elem.val());
+                            }
+
+                            query[field] = array.join(',');
                             break;
                         default:
                             query[field] = elem.val();
@@ -110,7 +124,7 @@
 
                 elem.jqGrid({
                     caption: 'CMS Resources',
-                    url: '../cmsliteapi/resource?name=&string=true&stream=true',
+                    url: '../cmsliteapi/resource?name=&string=true&stream=true&languages=',
                     datatype: 'json',
                     jsonReader:{
                         repeatitems:false

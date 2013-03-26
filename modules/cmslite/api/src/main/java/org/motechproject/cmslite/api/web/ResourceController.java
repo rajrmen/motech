@@ -1,7 +1,5 @@
 package org.motechproject.cmslite.api.web;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
 import org.apache.commons.io.IOUtils;
 import org.ektorp.AttachmentInputStream;
 import org.motechproject.cmslite.api.model.CMSLiteException;
@@ -29,7 +27,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -86,26 +83,11 @@ public class ResourceController {
                                  final @RequestParam(value = "sord") String sortDirection,
                                  final @RequestParam(required = false) String name,
                                  final @RequestParam(required = false) boolean string,
-                                 final @RequestParam(required = false) boolean stream) {
+                                 final @RequestParam(required = false) boolean stream,
+                                 final @RequestParam(required = false) String languages) {
         List<Content> contents = cmsLiteService.getAllContents();
-        List<ResourceDto> resourceDtos = new ArrayList<>();
+        List<ResourceDto> resourceDtos = ResourceFilter.filter(name, string, stream, languages, contents);
 
-        for (final Content content : contents) {
-            ResourceDto dto = (ResourceDto) CollectionUtils.find(resourceDtos, new Predicate() {
-                @Override
-                public boolean evaluate(Object object) {
-                    return object instanceof ResourceDto && ((ResourceDto) object).equalsContent(content);
-                }
-            });
-
-            if (dto == null) {
-                resourceDtos.add(new ResourceDto(content));
-            } else {
-                dto.addLanguage(content.getLanguage());
-            }
-        }
-
-        CollectionUtils.filter(resourceDtos, new ResourceFilter(name, string, stream));
         Collections.sort(resourceDtos, new ResourceComparator(sortColumn, sortDirection));
 
         return new Resources(page, rows, resourceDtos);
