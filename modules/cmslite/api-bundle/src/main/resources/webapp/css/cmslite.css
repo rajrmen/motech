@@ -1,0 +1,121 @@
+.ui-widget-header {
+    background: #224477 url("../../../server/resources/img/navbar.jpg") repeat-x 0 0;
+}
+
+.count-characters {
+    border-top: 1px solid #eeeeee;
+    padding: 5px 20px 5px 0;
+    font-size:0.9em;
+}
+
+.ui-jqgrid .ui-jqgrid-htable.table-lightblue th {
+    border-color: #c5dbec;
+    color: #224477;
+    background: #deefff;
+    background: -moz-linear-gradient(top,  #deefff 0%, #98bede 100%);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#deefff), color-stop(100%,#98bede));
+    background: -webkit-linear-gradient(top,  #deefff 0%,#98bede 100%);
+    background: -o-linear-gradient(top,  #deefff 0%,#98bede 100%);
+    background: -ms-linear-gradient(top,  #deefff 0%,#98bede 100%);
+    background: linear-gradient(to bottom,  #deefff 0%,#98bede 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#deefff', endColorstr='#98bede', GradientType=0 );
+    -webkit-box-shadow: 0 0 2px #bec9de;
+       -moz-box-shadow: 0 0 2px #bec9de;
+            box-shadow: 0 0 2px #bec9de;
+}
+
+.ui-th-column {
+}
+
+.ui-jqgrid input.ui-pg-input {
+    width: auto;
+    height: 14px;
+    line-height: 15px;
+    padding: 1px 3px;
+}
+
+.ui-jqgrid select.ui-pg-selbox {
+    width: auto;
+    height: 18px;
+    line-height: 15px;
+    padding: 1px 3px;
+}
+
+.ui-jqgrid .ui-jqgrid-view {
+    font-size: 13px;
+}
+
+.ui-jqgrid .ui-jqgrid-titlebar {
+    padding: .3em .2em .2em .5em;
+    font-size: 15px;
+    color: #C2EAFE;
+}
+
+.ui-jqgrid .ui-jqgrid-htable th div {
+    height: 30px;
+    line-height: 30px;
+}
+
+.s-ico {
+    float: right;
+    margin-right: 2px;
+    display: block;
+    width: 20px;
+    height: 20px;
+    padding: 8px 2px;
+}
+
+#t_resourceTable {
+    min-height: 25px;
+    height: auto;
+    padding: 5px;
+}
+
+#t_resourceTable .control-group {
+    margin-bottom: 2px;
+}
+
+.cms-lite.tab-content {
+    padding-left: 0;
+}
+
+.cms-lite.nav.nav-tabs {
+    border-bottom: none;
+    margin-left: 0;
+    margin-right: 10px;
+    margin-bottom: 0;
+}
+
+.cms-lite .accordion-group {
+    border: 1px solid #B2D8F8;
+    background: #DEEEFF;
+}
+
+.cms-lite .accordion-inner {
+    border-top: 1px solid #B2D8F8;
+}
+
+fieldset {
+    border: 1px solid #B2D8F8;
+    border-radius: 6px;
+}
+
+legend  {
+    border: none;
+    color: #165384;
+    display: block;
+    font-size: 14px;
+    font-weight: normal;
+    line-height: 20px;
+    margin: 0 20px;
+    padding: 5px;
+    width: auto;
+}
+
+legend + .control-group {
+    margin-top: 2px;
+}
+
+#parentDiv {
+    display: block;
+}

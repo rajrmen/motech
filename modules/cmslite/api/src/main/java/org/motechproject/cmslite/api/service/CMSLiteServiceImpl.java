@@ -10,7 +10,12 @@ import org.motechproject.cmslite.api.repository.AllStreamContents;
 import org.motechproject.cmslite.api.repository.AllStringContents;
 import org.motechproject.cmslite.api.repository.BaseContentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+
+@Service("cmsLiteService")
 public class CMSLiteServiceImpl implements CMSLiteService {
     private AllStreamContents allStreamContents;
     private AllStringContents allStringContents;
@@ -32,6 +37,16 @@ public class CMSLiteServiceImpl implements CMSLiteService {
     }
 
     @Override
+    public void removeStreamContent(String language, String name) throws ContentNotFoundException {
+        allStreamContents.remove(getStreamContent(language, name));
+    }
+
+    @Override
+    public void removeStringContent(String language, String name) throws ContentNotFoundException {
+        allStringContents.remove(getStringContent(language, name));
+    }
+
+    @Override
     public boolean isStreamContentAvailable(String language, String name) {
         return allStreamContents.isContentAvailable(language, name);
     }
@@ -41,13 +56,32 @@ public class CMSLiteServiceImpl implements CMSLiteService {
         return allStringContents.isContentAvailable(language, name);
     }
 
+    @Override
+    public List<Content> getAllContents() {
+        List<StreamContent> streamContents = allStreamContents.getAll();
+        List<StringContent> stringContents = allStringContents.getAll();
+        List<Content> contents = new ArrayList<>();
+
+        if (streamContents != null) {
+            contents.addAll(streamContents);
+        }
+
+        if (stringContents != null) {
+            contents.addAll(stringContents);
+        }
+
+        return contents;
+    }
+
     private Content getContent(String language, String name, BaseContentRepository contentRepository) throws ContentNotFoundException {
         if (language == null || name == null) {
             throw new IllegalArgumentException("Language and Name should not be null");
         }
 
         Content content = contentRepository.getContent(language, name);
-        if (content != null) { return content; }
+        if (content != null) {
+            return content;
+        }
 
         throw new ContentNotFoundException();
     }

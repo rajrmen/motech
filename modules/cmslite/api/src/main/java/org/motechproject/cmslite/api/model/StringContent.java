@@ -11,6 +11,8 @@ import java.util.Map;
  */
 @TypeDiscriminator("doc.type === 'StringContent'")
 public class StringContent extends Content {
+    private static final long serialVersionUID = -8406650651634017618L;
+
     @JsonProperty
     private String value;
 
@@ -21,7 +23,7 @@ public class StringContent extends Content {
         super(language, name);
         this.value = value;
     }
-    
+
     public StringContent(String language, String name, String value, Map<String, String> metadata) {
         super(language, name, metadata);
         this.value = value;
