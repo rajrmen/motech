@@ -12,7 +12,7 @@ public class Resources implements Serializable {
     private final Integer records;
     private final List<ResourceDto> rows;
 
-    public Resources(Integer rows, Integer page, String sortColumn, String sortDirection, List<ResourceDto> list) {
+    public Resources(Integer page, Integer rows, List<ResourceDto> list) {
         this.page = page;
         records = list.size();
         total = records <= rows ? 1 : (records / rows) + 1;
@@ -21,7 +21,7 @@ public class Resources implements Serializable {
         Integer count = start + rows;
         Integer end = count > records ? records : count;
 
-        Collections.sort(list, new ResourceComparator(sortColumn, sortDirection));
+
         this.rows = list.subList(start, end);
     }
 

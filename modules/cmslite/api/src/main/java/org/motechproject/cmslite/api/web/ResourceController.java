@@ -31,6 +31,7 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -105,8 +106,9 @@ public class ResourceController {
         }
 
         CollectionUtils.filter(resourceDtos, new ResourceFilter(name, string, stream));
+        Collections.sort(resourceDtos, new ResourceComparator(sortColumn, sortDirection));
 
-        return new Resources(rows, page, sortColumn, sortDirection, resourceDtos);
+        return new Resources(page, rows, resourceDtos);
     }
 
     @RequestMapping(value = "/resource/all/languages", method = RequestMethod.GET)
