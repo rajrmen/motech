@@ -10,6 +10,7 @@
         $scope.select = {};
         $scope.mode = 'read';
         $scope.resourceType = 'string';
+        $scope.availableLanguages = Resources.allLanguages();
 
         $scope.changeResourceType = function (type) {
             $scope.resourceType = type;

@@ -38,9 +38,7 @@ import java.util.Set;
 
 import static java.util.Locale.getAvailableLocales;
 import static org.apache.commons.codec.digest.DigestUtils.md5Hex;
-import static org.apache.commons.lang.StringUtils.equalsIgnoreCase;
 import static org.apache.commons.lang.StringUtils.isBlank;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.apache.commons.lang.StringUtils.startsWithIgnoreCase;
 
 @Controller
@@ -109,6 +107,19 @@ public class ResourceController {
         CollectionUtils.filter(resourceDtos, new ResourceFilter(name, string, stream));
 
         return new Resources(rows, page, sortColumn, sortDirection, resourceDtos);
+    }
+
+    @RequestMapping(value = "/resource/all/languages", method = RequestMethod.GET)
+    @ResponseBody
+    public Set<String> getAllLanguages() throws ContentNotFoundException {
+        List<Content> contents = cmsLiteService.getAllContents();
+        Set<String> strings = new HashSet<>(contents.size());
+
+        for (Content content : contents) {
+            strings.add(content.getLanguage());
+        }
+
+        return strings;
     }
 
     @RequestMapping(value = "/resource/{type}/{language}/{name}", method = RequestMethod.GET)
