@@ -2,8 +2,8 @@
 <div class="row-fluid" xmlns="http://www.w3.org/1999/html">
     <div class="margin-after history">
         <div class="box-header">{{msg('header.taskHistory')}} <a href="#/task/" type="button" class="btn btn-primary btn-in-header pull-right"><i class="icon-remove icon-white"></i></a></div>
-        <div class="box-content well3 tasks-list">
-            <div class="inbox-header margin-before" ng-class="{true:'', false:'paused'}[enabled]">
+        <div class="box-content tasks-list">
+            <div class="inbox-header" ng-class="{true:'', false:'paused'}[enabled]">
                 <div class="task-bar">
                     <ul class="task-nav">
                         <li class="task-element"><img ng-src="../tasks/api/channel/icon?moduleName={{trigger.module}}&moduleVersion={{trigger.version}}" class="task-list-img" /></li>
@@ -68,7 +68,7 @@
                                         {{msg('button.showStackTrace')}}
                                     </span>
                                 </p>
-                                <pre id="stackHistory{{$index}}" class="collapse scrollable-x" ng-show="activity.stackTraceElement.length &gt; 1">{{activity.stackTraceElement}}</pre>
+                                <pre id="stackHistory{{$index}}" class="collapse" ng-show="activity.stackTraceElement.length &gt; 1">{{activity.stackTraceElement}}</pre>
                             </td>
                             <td>{{ activity.date | fromNow }}</td>
                         </tr>
@@ -94,7 +94,7 @@
                     {{msg('info.notFoundActivities')}}
                 </div>
             </div>
-            <a href="#/task/" class="btn btn-primary"> {{msg('button.back')}}</a>
+            <div class="inside"><a href="#/task/" class="btn btn-primary"> {{msg('button.back')}}</a></div>
         </div>
     </div>
 </div>

@@ -785,7 +785,10 @@ input.input-popover {
     font-size: 16px;
 }
 
-.scrollable-x {
-    overflow-x:scroll;
+pre {
+    border: none;
+    margin: 10px 0 0 0;
+    padding: 0;
+    font-size: 12px;
 }
 
