@@ -24,25 +24,33 @@
             box-shadow: 0 0 2px #bec9de;
 }
 
-.ui-th-column {
-}
-
 .ui-jqgrid input.ui-pg-input {
     width: auto;
     height: 14px;
-    line-height: 15px;
+    line-height: 18px;
     padding: 1px 3px;
 }
 
 .ui-jqgrid select.ui-pg-selbox {
     width: auto;
     height: 18px;
-    line-height: 15px;
+    line-height: 18px;
     padding: 1px 3px;
 }
 
 .ui-jqgrid .ui-jqgrid-view {
-    font-size: 13px;
+    font-size: 14px;
+}
+
+.ui-jqgrid .ui-state-highlight,
+.ui-jqgrid .ui-widget-content .ui-state-highlight,
+.ui-jqgrid .ui-widget-header .ui-state-highlight {
+    border-color: #D4E1F9;
+    background: #EDF5F9;
+}
+
+.ui-widget-content {
+    background: #E4F1F9;
 }
 
 .ui-jqgrid .ui-jqgrid-titlebar {
@@ -75,6 +83,30 @@
     margin-bottom: 2px;
 }
 
+.ui-jqgrid-btable .ui-widget-content ul {
+    margin: 0 0 0 10px;
+    color: #0088CC;
+}
+
+.ui-jqgrid-btable .ui-widget-content li {
+    line-height: 18px;
+    float: left;
+    margin: 0 15px;
+}
+
+.ui-jqgrid-btable .ui-widget-content li a {
+    text-decoration: underline;
+    color: #0088CC;
+}
+
+.ui-jqgrid-btable .ui-widget-content li a:hover {
+    text-decoration: none;
+}
+
+.ui-jqgrid tr.jqgrow td {
+    padding: 4px 6px;
+}
+
 .cms-lite.tab-content {
     padding-left: 0;
 }
@@ -96,8 +128,8 @@
 }
 
 fieldset {
-    border: 1px solid #B2D8F8;
-    border-radius: 6px;
+    border-top: 1px solid #B2D8F8;
+    border-radius: 0;
 }
 
 legend  {
@@ -118,4 +150,21 @@ legend + .control-group {
 
 #parentDiv {
     display: block;
+}
+
+#outsideResourceTable .popover-title:empty {
+    display: none;
+}
+
+#collapse-resource.viewPopover {
+    position: inherit;
+    overflow: visible;
+}
+
+.content-languages ul {
+    list-style: none;
+}
+
+.pointer {
+    cursor: pointer;
 }

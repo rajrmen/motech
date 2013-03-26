@@ -102,6 +102,23 @@
         };
     });
 
+    widgetModule.directive('resourcePopover', function($compile) {
+        return {
+            restrict: 'A',
+            link: function (scope, element, attrs) {
+                var elem = angular.element(element);
+                elem.popover({
+                    placement: 'left',
+                    trigger: 'click',
+                    html: true,
+                    content: function() {
+                        return $(element).find('.content-languages').html();
+                    }
+                });
+            }
+        };
+    });
+
     widgetModule.directive('resourcesGrid', function ($compile) {
         return {
             restrict: 'A',
@@ -166,6 +183,8 @@
                         });
 
                         $('#outsideResourceTable').children('div').width('100%');
+                        $('.ui-jqgrid-htable').addClass("table-lightblue");
+                        $('.ui-jqgrid-btable').addClass("table-lightblue");
                         $('.ui-jqgrid-htable').addClass('table-lightblue');
                         $('.ui-jqgrid-bdiv').width('100%');
                         $('.ui-jqgrid-hdiv').width('100%');
