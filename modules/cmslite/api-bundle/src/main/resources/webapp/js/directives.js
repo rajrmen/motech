@@ -102,23 +102,6 @@
         };
     });
 
-    widgetModule.directive('resourcePopover', function($compile) {
-        return {
-            restrict: 'A',
-            link: function (scope, element, attrs) {
-                var elem = angular.element(element);
-                elem.popover({
-                    placement: 'left',
-                    trigger: 'click',
-                    html: true,
-                    content: function() {
-                        return $(element).find('.content-languages').html();
-                    }
-                });
-            }
-        };
-    });
-
     widgetModule.directive('resourcesGrid', function ($compile) {
         return {
             restrict: 'A',

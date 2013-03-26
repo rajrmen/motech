@@ -16,8 +16,6 @@
                         <input type="text" class="input-large search-query" placeholder="{{msg('resource.searchByName')}}" data-event-type="keyup" data-search-field="name" jqgrid-search="resourceTable">
                     </div>
                 </fieldset>
-            </div>
-            <div class="span4">
                 <fieldset class="inside"><legend>{{msg('resource.type')}}</legend>
                     <div data-toggle="buttons-checkbox" class="btn-group control-group">
                         <button class="btn btn-primary active" type="button" data-field-type="boolean" data-search-field="string" jqgrid-search="resourceTable"><i class="icon-white icon-ok"></i> {{msg('resource.type.string')}}</button>
@@ -25,19 +23,12 @@
                     </div>
                 </fieldset>
             </div>
-            <div class="span4">
-                <fieldset class="inside"><legend>{{msg('resource.languages')}}</legend>
-
-                    <div resource-popover ng-click="clickFilterLanguages()" rel="popover">
-                        <a class="btn">{{msg('resource.languages')}} <span class="caret"></span></a>
-                        <div class="content-languages" style="display:none;">
-                            <ul>
-                                <li ng-repeat="language in languages">
-                                    <a class="pointer" ng-click="selectLanguages(language)"> {{language}}</a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
+            <div class="span8">
+                <fieldset class="inside">
+                    <legend>{{msg('resource.languages')}}</legend>
+                    <label class="checkbox inline" ng-repeat="lang in usedLanguages">
+                        <input type="checkbox" id="languages" value="{{lang}}"> {{lang}}
+                    </label>
                 </fieldset>
             </div>
         </div>

@@ -10,10 +10,6 @@
         $scope.select = {};
         $scope.mode = 'read';
         $scope.resourceType = 'string';
-        $scope.language;
-        $scope.languages = ['Niemiecki', 'Polski', 'Czeski', 'Angielski'];
-        $scope.filterLanguage = [];
-        $scope.filterActive = false;
         $scope.usedLanguages = Resources.allLanguages();
 
         $scope.changeResourceType = function (type) {
@@ -137,32 +133,6 @@
             return validate;
         };
 
-        $scope.clickFilterLanguages = function () {
-            if ($scope.filterActive !== true) {
-                $('#collapse-resource').addClass('viewPopover');
-                $('#collapse-resource').removeClass('collapse');
-
-            } else {
-                $('#collapse-resource').addClass('collapse');
-                $('#collapse-resource').removeClass('viewPopover');
-            }
-            $scope.filterActive = !($scope.filterActive);
-        };
-
-        $scope.removeLanguage = function (selectedLanguage) {
-            var indexArray = $scope.filterLanguage.indexOf(selectedLanguage);
-            if (indexArray !== -1) {
-                $scope.filterLanguage.splice(indexArray,1);
-            };
-        };
-
-        $scope.selectLanguages = function (selectedLanguage) {
-            if ($scope.filterLanguage.indexOf(selectedLanguage) !== -1) {
-                $scope.filterLanguage.forEach($scope.removeLanguage(selectedLanguage))
-            } else {
-                $scope.filterLanguage.push(selectedLanguage);
-            }
-        };
     });
 
 }());
