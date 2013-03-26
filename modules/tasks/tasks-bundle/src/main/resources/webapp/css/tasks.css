@@ -464,10 +464,6 @@ font-weight: bold;
 
 /*----- Tasks - history -----*/
 
-.history {
-    max-width: 999px;
-}
-
 .history .task-element .icon-chevron-right {
     height: 18px;
     line-height: 18px;
@@ -787,5 +783,9 @@ input.input-popover {
 #helpModal.modal .header {
     color: #224477;
     font-size: 16px;
+}
+
+.scrollable-x {
+    overflow-x:scroll;
 }
 
