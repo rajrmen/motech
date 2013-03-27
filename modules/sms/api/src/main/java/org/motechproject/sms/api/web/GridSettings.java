@@ -1,5 +1,15 @@
 package org.motechproject.sms.api.web;
 
+import org.apache.commons.lang.StringUtils;
+import org.joda.time.DateTime;
+import org.motechproject.commons.api.Range;
+import org.motechproject.sms.api.DeliveryStatus;
+import org.motechproject.sms.api.SMSType;
+import org.motechproject.sms.api.service.SmsRecordSearchCriteria;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class GridSettings {
 
     private Integer rows;
@@ -136,5 +146,73 @@ public class GridSettings {
 
     public void setOutBound(Boolean outBound) {
         this.outBound = outBound;
+    }
+
+    public SmsRecordSearchCriteria toSmsRecordSearchCriteria() {
+        List<SMSType> types = getSmsTypeFromSettings();
+        List<DeliveryStatus> deliveryStatusList = getDeliveryStatusFromSettings();
+        Range<DateTime> range = createRangeFromSettings();
+        SmsRecordSearchCriteria criteria = new SmsRecordSearchCriteria();
+        if (!types.isEmpty()) {
+            criteria.withSmsTypes(types);
+        }
+        if (!deliveryStatusList.isEmpty()) {
+            criteria.withDeliveryStatuses(deliveryStatusList);
+        }
+        if (StringUtils.isNotBlank(phoneNumber)) {
+            criteria.withPhoneNumber(phoneNumber+"*");
+        }
+        if (StringUtils.isNotBlank(message)) {
+            criteria.withMessageContent(message + "*");
+        }
+        criteria.withMessageTimeRange(range);
+        return criteria;
+    }
+
+    private List<SMSType> getSmsTypeFromSettings() {
+        List<SMSType> types = new ArrayList<>();
+        if (inBound) {
+            types.add(SMSType.INBOUND);
+        }
+        if (outBound) {
+            types.add(SMSType.OUTBOUND);
+        }
+        return types;
+    }
+
+    private List<DeliveryStatus> getDeliveryStatusFromSettings() {
+        List<DeliveryStatus> statusList = new ArrayList<>();
+        if (inProgress) {
+            statusList.add(DeliveryStatus.INPROGRESS);
+        }
+        if (delivered) {
+            statusList.add(DeliveryStatus.DELIVERED);
+        }
+        if (keepTrying) {
+            statusList.add(DeliveryStatus.KEEPTRYING);
+        }
+        if (aborted) {
+            statusList.add(DeliveryStatus.ABORTED);
+        }
+        if (unknown) {
+            statusList.add(DeliveryStatus.UNKNOWN);
+        }
+        return statusList;
+    }
+
+    private Range<DateTime> createRangeFromSettings() {
+        DateTime from;
+        DateTime to;
+        if (StringUtils.isNotBlank(timeFrom)) {
+             from = DateTime.parse(timeFrom);
+        } else {
+            from = new DateTime(0);
+        }
+        if (StringUtils.isNotBlank(timeTo)) {
+            to = DateTime.parse(timeTo);
+        } else {
+            to = DateTime.now();
+        }
+        return new Range<DateTime>(from, to);
     }
 }

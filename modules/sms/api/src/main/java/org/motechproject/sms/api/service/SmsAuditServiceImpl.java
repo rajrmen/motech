@@ -35,4 +35,9 @@ public class SmsAuditServiceImpl implements SmsAuditService {
     public List<SmsRecord> findAllSmsRecords(SmsRecordSearchCriteria criteria) {
         return allSmsRecords.findAllBy(criteria);
     }
+
+    @Override
+    public List<SmsRecord> findAllSmsRecordsByCriteria(SmsRecordSearchCriteria criteria) {
+        return allSmsRecords.findAllByCriteria(criteria);
+    }
 }

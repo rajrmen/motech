@@ -13,4 +13,6 @@ public interface SmsAuditService {
     List<SmsRecord> findAllSmsRecords();
 
     List<SmsRecord> findAllSmsRecords(SmsRecordSearchCriteria criteria);
+
+    List<SmsRecord> findAllSmsRecordsByCriteria(SmsRecordSearchCriteria criteria);
 }

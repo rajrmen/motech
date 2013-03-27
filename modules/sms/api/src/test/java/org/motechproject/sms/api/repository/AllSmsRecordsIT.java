@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static junit.framework.Assert.assertEquals;
@@ -83,10 +84,13 @@ public class AllSmsRecordsIT {
 
         SmsRecord smsRecord = new SmsRecord(smsType, recipient, messageContent, messageTime, deliveryStatus, refNo);
         allSmsRecords.addOrReplace(smsRecord);
+        for (int i =1 ; i<200; i++) {
+            allSmsRecords.addOrReplace(new SmsRecord(smsType, Integer.toString(i), Integer.toString(i), messageTime, deliveryStatus, Integer.toString(i)));
+        }
         SmsRecord duplicateMessage = new SmsRecord(smsType, recipient, messageContent, messageTime, deliveryStatus, refNo);
         allSmsRecords.addOrReplace(duplicateMessage);
 
-        List<SmsRecord> allMessages = allSmsRecords.findAllBy(new SmsRecordSearchCriteria().withReferenceNumber(refNo).withPhoneNumber(recipient));
+        List<SmsRecord> allMessages = allSmsRecords.findAllByCriteria(new SmsRecordSearchCriteria().withDeliveryStatuses(Arrays.asList(DeliveryStatus.INPROGRESS)));
         assertThat(allMessages.size(), is(1));
     }
 

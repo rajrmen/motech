@@ -128,4 +128,23 @@ public class AllSmsRecords extends CouchDbRepositorySupportWithLucene<SmsRecord>
         super(SmsRecord.class, new LuceneAwareCouchDbConnector(db.getDatabaseName(), new StdCouchDbInstance(db.getConnection())));
         initStandardDesignDocument();
     }
+
+    public List<SmsRecord> findAllByCriteria(SmsRecordSearchCriteria criteria) {
+        StringBuilder queryString = new CouchDbLuceneQuery()
+                .withAny("smsType", criteria.getSmsTypes())
+                .with("phoneNumber", criteria.getPhoneNumber())
+                .with("messageContent", criteria.getMessageContent())
+                .withDateRange("messageTime", criteria.getMessageTimeRange())
+                .withAny("deliveryStatus", criteria.getDeliveryStatuses())
+                .with("referenceNumber", criteria.getReferenceNumber())
+                .build();
+        LuceneQuery query = new LuceneQuery("SmsRecord", "search");
+        query.setQuery(queryString.toString());
+        query.setStaleOk(false);
+        query.setIncludeDocs(true);
+        TypeReference<CustomLuceneResult<SmsRecord>> typeRef
+                = new TypeReference<CustomLuceneResult<SmsRecord>>() {
+        };
+        return convertToSmsRecords(db.queryLucene(query, typeRef));
+    }
 }
