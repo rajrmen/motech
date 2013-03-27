@@ -129,6 +129,10 @@
                     jsonReader:{
                         repeatitems:false
                     },
+                    prmNames: {
+                        sort: 'sortColumn',
+                        order: 'sortDirection'
+                    },
                     shrinkToFit: true,
                     autowidth: true,
                     rownumbers: true,
