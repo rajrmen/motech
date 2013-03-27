@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -17,12 +16,9 @@ public class SMSLoggingController {
     private SmsAuditService smsAuditService;
 
     @RequestMapping(value = "/smslogging", method = RequestMethod.GET)
-    public List<SmsRecord> getSmsRecords(final @RequestParam Integer rows,
-                                         final @RequestParam Integer page,
-                                         final @RequestParam(value = "sidx") String sortColumn,
-                                         final @RequestParam(value = "sord") String sortDirection) {
+    public SmsLoggingRecords getSmsRecords(GridSettings param) {
         List<SmsRecord> records = smsAuditService.findAllSmsRecords();
-        return smsAuditService.findAllSmsRecords();
+        return null;
     }
 
 }

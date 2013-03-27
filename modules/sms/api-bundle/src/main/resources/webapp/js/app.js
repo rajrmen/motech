@@ -6,6 +6,6 @@ angular.module('motech-sms', ['motech-dashboard', 'ngCookies', 'bootstrap', 'sms
     function ($routeProvider) {
         $routeProvider.
             when('/smstest', {templateUrl: '../sms/resource/partials/smstest.html', controller: SmsController}).
-            when('/smslogging', {templateUrl: '../sms/resource/partials/smslogging.html', controller: SmsLoggingController}).
+            when('/smslogging', {templateUrl: '../sms/resource/partials/smslogging.html'}).
             otherwise({redirectTo: '/smstest'});
 }]);

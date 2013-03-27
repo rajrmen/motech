@@ -56,7 +56,7 @@
 
                            timeoutHnd = setTimeout(function () {
                                jQuery('#' + attrs.jqgridSearch).jqGrid('setGridParam', {
-                                   url: '../cmsliteapi/resource' + params
+                                   url: '../smsapi/smslogging' + params
                                }).trigger('reloadGrid');
                            }, time || 0);
                        },
@@ -83,7 +83,7 @@
 
                 elem.jqGrid({
                     caption: 'SMS Logging',
-                    url: '../smsapi/smslogging',
+                    url: '../smsapi/smslogging?phoneNumber=&message=&timeFrom=&timeTo=&inProgress=true&delivered=true&keepTrying=true&aborted=true&unknown=true&inbound=true&outbound=true',
                     datatype: 'json',
                     jsonReader:{
                         repeatitems:false

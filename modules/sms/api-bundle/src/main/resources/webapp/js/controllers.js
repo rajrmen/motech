@@ -35,7 +35,3 @@ function SmsController($scope, $http) {
     resetDeliveryStatus();
 
 }
-
-function SmsLoggingController($scope, $http, SmsRecords) {
-
-}
