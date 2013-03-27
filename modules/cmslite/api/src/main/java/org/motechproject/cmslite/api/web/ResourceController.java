@@ -1,7 +1,5 @@
 package org.motechproject.cmslite.api.web;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
 import org.apache.commons.io.IOUtils;
 import org.ektorp.AttachmentInputStream;
 import org.motechproject.cmslite.api.model.CMSLiteException;
@@ -29,8 +27,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -38,9 +36,7 @@ import java.util.Set;
 
 import static java.util.Locale.getAvailableLocales;
 import static org.apache.commons.codec.digest.DigestUtils.md5Hex;
-import static org.apache.commons.lang.StringUtils.equalsIgnoreCase;
 import static org.apache.commons.lang.StringUtils.isBlank;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.apache.commons.lang.StringUtils.startsWithIgnoreCase;
 
 @Controller
@@ -87,28 +83,27 @@ public class ResourceController {
                                  final @RequestParam(value = "sord") String sortDirection,
                                  final @RequestParam(required = false) String name,
                                  final @RequestParam(required = false) boolean string,
-                                 final @RequestParam(required = false) boolean stream) {
+                                 final @RequestParam(required = false) boolean stream,
+                                 final @RequestParam(required = false) String languages) {
         List<Content> contents = cmsLiteService.getAllContents();
-        List<ResourceDto> resourceDtos = new ArrayList<>();
+        List<ResourceDto> resourceDtos = ResourceFilter.filter(name, string, stream, languages, contents);
 
-        for (final Content content : contents) {
-            ResourceDto dto = (ResourceDto) CollectionUtils.find(resourceDtos, new Predicate() {
-                @Override
-                public boolean evaluate(Object object) {
-                    return object instanceof ResourceDto && ((ResourceDto) object).equalsContent(content);
-                }
-            });
+        Collections.sort(resourceDtos, new ResourceComparator(sortColumn, sortDirection));
 
-            if (dto == null) {
-                resourceDtos.add(new ResourceDto(content));
-            } else {
-                dto.addLanguage(content.getLanguage());
-            }
+        return new Resources(page, rows, resourceDtos);
+    }
+
+    @RequestMapping(value = "/resource/all/languages", method = RequestMethod.GET)
+    @ResponseBody
+    public Set<String> getAllLanguages() throws ContentNotFoundException {
+        List<Content> contents = cmsLiteService.getAllContents();
+        Set<String> strings = new HashSet<>(contents.size());
+
+        for (Content content : contents) {
+            strings.add(content.getLanguage());
         }
 
-        CollectionUtils.filter(resourceDtos, new ResourceFilter(name, string, stream));
-
-        return new Resources(rows, page, sortColumn, sortDirection, resourceDtos);
+        return strings;
     }
 
     @RequestMapping(value = "/resource/{type}/{language}/{name}", method = RequestMethod.GET)
