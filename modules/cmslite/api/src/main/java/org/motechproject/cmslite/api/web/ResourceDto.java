@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+import static java.util.Collections.addAll;
 import static org.apache.commons.lang.StringUtils.startsWithIgnoreCase;
 
 public class ResourceDto implements Serializable {
@@ -27,6 +28,12 @@ public class ResourceDto implements Serializable {
         } else {
             type = null;
         }
+    }
+
+    public ResourceDto(String name, String type, String... languages) {
+        this.name = name;
+        this.type = type;
+        addAll(this.languages, languages);
     }
 
     public void addLanguage(String language) {

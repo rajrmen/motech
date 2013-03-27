@@ -1,28 +1,29 @@
 package org.motechproject.cmslite.api.web;
 
+import java.io.Serializable;
 import java.util.Comparator;
 
-import static org.apache.commons.lang.StringUtils.equalsIgnoreCase;
+public class ResourceComparator implements Comparator<ResourceDto>, Serializable {
+    private static final long serialVersionUID = -3442591167945003657L;
 
-public class ResourceComparator implements Comparator<ResourceDto> {
     private final String field;
     private final boolean descending;
 
-    public ResourceComparator(String field, String sortDirection) {
-        this.field = field;
-        this.descending = equalsIgnoreCase(sortDirection, "desc");
+    public ResourceComparator(GridSettings settings) {
+        this.field = settings.getSortColumn();
+        this.descending = settings.isDescending();
     }
 
     @Override
-    public int compare(ResourceDto o1, ResourceDto o2) {
+    public int compare(ResourceDto first, ResourceDto second) {
         int compare;
 
         switch (field) {
             case "name":
-                compare = o1.getName().compareToIgnoreCase(o2.getName());
+                compare = first.getName().compareToIgnoreCase(second.getName());
                 break;
             case "type":
-                compare = o1.getType().compareToIgnoreCase(o2.getType());
+                compare = first.getType().compareToIgnoreCase(second.getType());
                 break;
             default:
                 compare = 0;
