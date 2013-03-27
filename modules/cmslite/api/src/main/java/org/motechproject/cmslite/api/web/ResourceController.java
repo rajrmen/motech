@@ -37,6 +37,7 @@ import java.util.Set;
 import static java.util.Locale.getAvailableLocales;
 import static org.apache.commons.codec.digest.DigestUtils.md5Hex;
 import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.apache.commons.lang.StringUtils.startsWith;
 import static org.apache.commons.lang.StringUtils.startsWithIgnoreCase;
 
 @Controller
@@ -57,7 +58,7 @@ public class ResourceController {
         switch (field) {
             case "name":
                 for (Content content : cmsLiteService.getAllContents()) {
-                    if (startsWithIgnoreCase(content.getName(), term)) {
+                    if (startsWith(content.getName(), term)) {
                         strings.add(content.getName());
                     }
                 }

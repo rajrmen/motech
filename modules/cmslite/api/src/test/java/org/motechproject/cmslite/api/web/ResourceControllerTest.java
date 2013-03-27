@@ -1,9 +1,7 @@
 package org.motechproject.cmslite.api.web;
 
 import org.codehaus.jackson.map.ObjectMapper;
-import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
@@ -14,7 +12,6 @@ import org.motechproject.cmslite.api.model.StringContent;
 import org.motechproject.cmslite.api.service.CMSLiteService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.server.MockMvc;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -26,7 +23,6 @@ import java.util.List;
 
 import static org.apache.commons.codec.digest.DigestUtils.md5Hex;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -222,7 +218,7 @@ public class ResourceControllerTest {
 
         controller.perform(
                 post("/resource/string/{language}/{name}", STRING_LANGUAGE, STRING_NAME)
-                .param("value", "new value")
+                        .param("value", "new value")
         ).andExpect(
                 status().is(HttpStatus.OK.value())
         );

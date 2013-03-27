@@ -54,6 +54,6 @@ public final class ResourceFilter {
     }
 
     public static boolean equalsContent(ResourceDto dto, String contentName, String contentType) {
-        return equalsIgnoreCase(dto.getName(), contentName) && equalsIgnoreCase(dto.getType(), contentType);
+        return dto.getName().equals(contentName) && equalsIgnoreCase(dto.getType(), contentType);
     }
 }
