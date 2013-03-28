@@ -13,6 +13,7 @@ import org.motechproject.commons.couchdb.lucene.query.CouchDbLuceneQuery;
 import org.motechproject.sms.api.DeliveryStatus;
 import org.motechproject.sms.api.domain.SmsRecord;
 import org.motechproject.sms.api.service.SmsRecordSearchCriteria;
+import org.motechproject.sms.api.web.SmsRecords;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
@@ -39,22 +40,22 @@ public class AllSmsRecords extends CouchDbRepositorySupportWithLucene<SmsRecord>
     }
 
     SmsRecord findLatestBy(String recipient, String referenceNumber) {
-        List<SmsRecord> smsRecords = findAllBy(new SmsRecordSearchCriteria()
+        SmsRecords smsRecords = findAllBy(new SmsRecordSearchCriteria()
                 .withPhoneNumber(recipient)
-                .withReferenceNumber(referenceNumber));
-        return CollectionUtils.isEmpty(smsRecords) ? null : (SmsRecord) sort(smsRecords, on(SmsRecord.class).getMessageTime(), reverseOrder()).get(0);
+                .withReferenceNumber(referenceNumber), 0, 100, null, false);
+        return CollectionUtils.isEmpty(smsRecords.getRecords()) ? null : (SmsRecord) sort(smsRecords.getRecords(), on(SmsRecord.class).getMessageTime(), reverseOrder()).get(0);
     }
 
     public void addOrReplace(SmsRecord smsRecord) {
-        List<SmsRecord> smsRecordsInDb = findAllBy(new SmsRecordSearchCriteria()
+        SmsRecords smsRecordsInDb = findAllBy(new SmsRecordSearchCriteria()
                 .withPhoneNumber(smsRecord.getPhoneNumber())
                 .withMessageTime(smsRecord.getMessageTime())
-                .withReferenceNumber(smsRecord.getReferenceNumber()));
+                .withReferenceNumber(smsRecord.getReferenceNumber()), 0, 100, null, false);
 
-        if (CollectionUtils.isEmpty(smsRecordsInDb)) {
+        if (CollectionUtils.isEmpty(smsRecordsInDb.getRecords())) {
             add(smsRecord);
         } else {
-            SmsRecord smsRecordInDb = smsRecordsInDb.get(0);
+            SmsRecord smsRecordInDb = smsRecordsInDb.getRecords().get(0);
             smsRecord.setId(smsRecordInDb.getId());
             smsRecord.setRevision(smsRecordInDb.getRevision());
             update(smsRecord);
@@ -74,7 +75,7 @@ public class AllSmsRecords extends CouchDbRepositorySupportWithLucene<SmsRecord>
                     "return result " +
                     "}"
     )})
-    public List<SmsRecord> findAllBy(SmsRecordSearchCriteria criteria) {
+    public SmsRecords findAllBy(SmsRecordSearchCriteria criteria, int page, int pageSize, String sortBy, boolean reverse) {
         StringBuilder query = new CouchDbLuceneQuery()
                 .withAny("smsType", criteria.getSmsTypes())
                 .with("phoneNumber", criteria.getPhoneNumber())
@@ -86,7 +87,7 @@ public class AllSmsRecords extends CouchDbRepositorySupportWithLucene<SmsRecord>
         return runQuery(query, 0, 100, null, false);
     }
 
-    private List<SmsRecord> runQuery(StringBuilder queryString, int page, int pageSize, String sortBy, boolean reverse) {
+    private SmsRecords runQuery(StringBuilder queryString, int page, int pageSize, String sortBy, boolean reverse) {
         LuceneQuery query = new LuceneQuery("SmsRecord", "search");
         query.setQuery(queryString.toString());
         query.setStaleOk(false);
@@ -105,15 +106,17 @@ public class AllSmsRecords extends CouchDbRepositorySupportWithLucene<SmsRecord>
         return convertToSmsRecords(db.queryLucene(query, typeRef));
     }
 
-    private List<SmsRecord> convertToSmsRecords(CustomLuceneResult<SmsRecord> result) {
+    private SmsRecords convertToSmsRecords(CustomLuceneResult<SmsRecord> result) {
         List<SmsRecord> smsRecords = new ArrayList<>();
+        int count = 0;
         if (result != null) {
             List<CustomLuceneResult.Row<SmsRecord>> rows = result.getRows();
             for (CustomLuceneResult.Row<SmsRecord> row : rows) {
                 smsRecords.add(row.getDoc());
             }
+            count = result.getTotalRows();
         }
-        return smsRecords;
+        return new SmsRecords(count, smsRecords);
     }
 
     //TODO: Create Base class and move it to there.
@@ -127,24 +130,5 @@ public class AllSmsRecords extends CouchDbRepositorySupportWithLucene<SmsRecord>
     protected AllSmsRecords(@Qualifier("smsDBConnector") CouchDbConnector db) throws IOException {
         super(SmsRecord.class, new LuceneAwareCouchDbConnector(db.getDatabaseName(), new StdCouchDbInstance(db.getConnection())));
         initStandardDesignDocument();
-    }
-
-    public List<SmsRecord> findAllByCriteria(SmsRecordSearchCriteria criteria) {
-        StringBuilder queryString = new CouchDbLuceneQuery()
-                .withAny("smsType", criteria.getSmsTypes())
-                .with("phoneNumber", criteria.getPhoneNumber())
-                .with("messageContent", criteria.getMessageContent())
-                .withDateRange("messageTime", criteria.getMessageTimeRange())
-                .withAny("deliveryStatus", criteria.getDeliveryStatuses())
-                .with("referenceNumber", criteria.getReferenceNumber())
-                .build();
-        LuceneQuery query = new LuceneQuery("SmsRecord", "search");
-        query.setQuery(queryString.toString());
-        query.setStaleOk(false);
-        query.setIncludeDocs(true);
-        TypeReference<CustomLuceneResult<SmsRecord>> typeRef
-                = new TypeReference<CustomLuceneResult<SmsRecord>>() {
-        };
-        return convertToSmsRecords(db.queryLucene(query, typeRef));
     }
 }

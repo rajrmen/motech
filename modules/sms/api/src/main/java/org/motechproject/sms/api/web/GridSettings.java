@@ -20,13 +20,8 @@ public class GridSettings {
     private String message;
     private String timeFrom;
     private String timeTo;
-    private Boolean inProgress;
-    private Boolean delivered;
-    private Boolean keepTrying;
-    private Boolean aborted;
-    private Boolean unknown;
-    private Boolean inBound;
-    private Boolean outBound;
+    private String deliveryStatues;
+    private String directions;
 
     public Integer getRows() {
         return rows;
@@ -92,60 +87,20 @@ public class GridSettings {
         this.timeTo = timeTo;
     }
 
-    public Boolean getInProgress() {
-        return inProgress;
+    public String getDeliveryStatues() {
+        return deliveryStatues;
     }
 
-    public void setInProgress(Boolean inProgress) {
-        this.inProgress = inProgress;
+    public void setDeliveryStatues(String deliveryStatues) {
+        this.deliveryStatues = deliveryStatues;
     }
 
-    public Boolean getDelivered() {
-        return delivered;
+    public String getDirections() {
+        return directions;
     }
 
-    public void setDelivered(Boolean delivered) {
-        this.delivered = delivered;
-    }
-
-    public Boolean getKeepTrying() {
-        return keepTrying;
-    }
-
-    public void setKeepTrying(Boolean keepTrying) {
-        this.keepTrying = keepTrying;
-    }
-
-    public Boolean getAborted() {
-        return aborted;
-    }
-
-    public void setAborted(Boolean aborted) {
-        this.aborted = aborted;
-    }
-
-    public Boolean getUnknown() {
-        return unknown;
-    }
-
-    public void setUnknown(Boolean unknown) {
-        this.unknown = unknown;
-    }
-
-    public Boolean getInBound() {
-        return inBound;
-    }
-
-    public void setInBound(Boolean inBound) {
-        this.inBound = inBound;
-    }
-
-    public Boolean getOutBound() {
-        return outBound;
-    }
-
-    public void setOutBound(Boolean outBound) {
-        this.outBound = outBound;
+    public void setDirections(String directions) {
+        this.directions = directions;
     }
 
     public SmsRecordSearchCriteria toSmsRecordSearchCriteria() {
@@ -171,32 +126,11 @@ public class GridSettings {
 
     private List<SMSType> getSmsTypeFromSettings() {
         List<SMSType> types = new ArrayList<>();
-        if (inBound) {
-            types.add(SMSType.INBOUND);
-        }
-        if (outBound) {
-            types.add(SMSType.OUTBOUND);
-        }
         return types;
     }
 
     private List<DeliveryStatus> getDeliveryStatusFromSettings() {
         List<DeliveryStatus> statusList = new ArrayList<>();
-        if (inProgress) {
-            statusList.add(DeliveryStatus.INPROGRESS);
-        }
-        if (delivered) {
-            statusList.add(DeliveryStatus.DELIVERED);
-        }
-        if (keepTrying) {
-            statusList.add(DeliveryStatus.KEEPTRYING);
-        }
-        if (aborted) {
-            statusList.add(DeliveryStatus.ABORTED);
-        }
-        if (unknown) {
-            statusList.add(DeliveryStatus.UNKNOWN);
-        }
         return statusList;
     }
 

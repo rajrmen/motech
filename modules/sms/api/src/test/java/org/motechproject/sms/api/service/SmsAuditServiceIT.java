@@ -8,6 +8,7 @@ import org.motechproject.sms.api.DeliveryStatus;
 import org.motechproject.sms.api.SMSType;
 import org.motechproject.sms.api.domain.SmsRecord;
 import org.motechproject.sms.api.repository.AllSmsRecords;
+import org.motechproject.sms.api.web.SmsRecords;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -46,9 +47,9 @@ public class SmsAuditServiceIT {
         smsAuditService.log(createSmsRecord(SMSType.OUTBOUND));
 
         SmsRecordSearchCriteria criteria = new SmsRecordSearchCriteria().withSmsTypes(Arrays.asList(SMSType.INBOUND, SMSType.OUTBOUND));
-        List<SmsRecord> smsRecords = smsAuditService.findAllSmsRecords(criteria);
-        assertNotNull(smsRecords);
-        assertThat(smsRecords.size(), is(2));
+        SmsRecords smsRecords = smsAuditService.findAllSmsRecords(criteria, 0, 100, null, false);
+        assertNotNull(smsRecords.getRecords());
+        assertThat(smsRecords.getRecords().size(), is(2));
     }
 
     private SmsRecord createSmsRecord(SMSType smsType) {

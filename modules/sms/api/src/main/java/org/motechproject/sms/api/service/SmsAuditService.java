@@ -1,6 +1,7 @@
 package org.motechproject.sms.api.service;
 
 import org.motechproject.sms.api.domain.SmsRecord;
+import org.motechproject.sms.api.web.SmsRecords;
 
 import java.util.List;
 
@@ -12,7 +13,5 @@ public interface SmsAuditService {
 
     List<SmsRecord> findAllSmsRecords();
 
-    List<SmsRecord> findAllSmsRecords(SmsRecordSearchCriteria criteria);
-
-    List<SmsRecord> findAllSmsRecordsByCriteria(SmsRecordSearchCriteria criteria);
+    SmsRecords findAllSmsRecords(SmsRecordSearchCriteria criteria, int page, int pageSize, String sortBy, boolean reverse);
 }

@@ -3,6 +3,7 @@ package org.motechproject.sms.api.web;
 import org.motechproject.sms.api.domain.SmsRecord;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 public class SmsLoggingRecords implements Serializable {
@@ -12,19 +13,19 @@ public class SmsLoggingRecords implements Serializable {
     private final Integer page;
     private final Integer total;
     private final Integer records;
-    private final List<SmsRecord> rows;
+    private final List<SmsLoggingDto> rows;
 
-    public SmsLoggingRecords(Integer page, Integer rows, List<SmsRecord> list) {
+    public SmsLoggingRecords(Integer page, Integer rows, SmsRecords smsRecords) {
         this.page = page;
-        records = list.size();
+        records = smsRecords.getCount();
         total = records <= rows ? 1 : (records / rows) + 1;
 
-        Integer start = rows * (page > total ? total : page) - rows;
-        Integer count = start + rows;
-        Integer end = count > records ? records : count;
+        List<SmsLoggingDto> smsLoggingDtos = new ArrayList<>();
+        for (SmsRecord smsRecord : smsRecords.getRecords()) {
+            smsLoggingDtos.add(new SmsLoggingDto(smsRecord));
+        }
 
-
-        this.rows = list.subList(start, end);
+        this.rows = smsLoggingDtos;
     }
 
     public Integer getPage() {
@@ -39,7 +40,7 @@ public class SmsLoggingRecords implements Serializable {
         return records;
     }
 
-    public List<SmsRecord> getRows() {
+    public List<SmsLoggingDto> getRows() {
         return rows;
     }
 
