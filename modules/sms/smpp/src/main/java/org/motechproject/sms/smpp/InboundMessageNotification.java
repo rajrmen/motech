@@ -57,6 +57,7 @@ public class InboundMessageNotification implements IInboundMessageNotification {
             data.put(STATUS_MESSAGE, statusMessage);
             data.put(TIMESTAMP, new DateTime(msg.getDate()));
             relayEvent(data, EventSubjects.SMS_DELIVERY_REPORT);
+            //TODO: Check status exists in DeliverStatus enum
             smsAuditService.updateDeliveryStatus(statusMessage.getRecipient(), statusMessage.getRefNo(), statusMessage.getStatus().name());
         }
     }

@@ -63,6 +63,7 @@
                             org.motechproject.commons.couchdb.model;version=${project.version},
                             org.motechproject.commons.couchdb.dao;version=${project.version},
                             org.motechproject.commons.couchdb.service;version=${project.version},
+                            org.motechproject.commons.couchdb.query;version=${project.version},
                             org.motechproject.commons.couchdb.lucene.query;version=${project.version}
                         </Export-Package>
                     </instructions>

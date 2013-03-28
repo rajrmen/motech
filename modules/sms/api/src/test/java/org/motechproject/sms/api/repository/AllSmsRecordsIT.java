@@ -15,6 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.List;
+
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static org.hamcrest.Matchers.is;
@@ -82,13 +84,11 @@ public class AllSmsRecordsIT {
 
         SmsRecord smsRecord = new SmsRecord(smsType, recipient, messageContent, messageTime, deliveryStatus, refNo);
         allSmsRecords.addOrReplace(smsRecord);
-        for (int i =1 ; i<200; i++) {
-            allSmsRecords.addOrReplace(new SmsRecord(smsType, Integer.toString(i), Integer.toString(i), messageTime, deliveryStatus, Integer.toString(i)));
-        }
+
         SmsRecord duplicateMessage = new SmsRecord(smsType, recipient, messageContent, messageTime, deliveryStatus, refNo);
         allSmsRecords.addOrReplace(duplicateMessage);
 
-        SmsRecords allMessages = allSmsRecords.findAllBy(new SmsRecordSearchCriteria().withReferenceNumber(refNo).withPhoneNumber(recipient), 0, 100, null, false);
+        SmsRecords allMessages = allSmsRecords.findAllBy(new SmsRecordSearchCriteria().withReferenceNumber(refNo).withPhoneNumber(recipient));
         assertThat(allMessages.getRecords().size(), is(1));
     }
 

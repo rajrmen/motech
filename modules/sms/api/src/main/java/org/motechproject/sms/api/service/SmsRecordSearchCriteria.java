@@ -2,24 +2,24 @@ package org.motechproject.sms.api.service;
 
 import org.joda.time.DateTime;
 import org.motechproject.commons.api.Range;
+import org.motechproject.commons.couchdb.query.QueryParam;
 import org.motechproject.sms.api.DeliveryStatus;
 import org.motechproject.sms.api.SMSType;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
-//TODO: Builder?
 public class SmsRecordSearchCriteria {
 
-    private List<SMSType> smsTypes = new ArrayList<>();
+    private Set<SMSType> smsTypes = new HashSet<>();
     private String phoneNumber;
     private String messageContent;
     private Range<DateTime> messageTimeRange;
-    private List<DeliveryStatus> deliveryStatuses = new ArrayList<>();
+    private Set<DeliveryStatus> deliveryStatuses = new HashSet<>();
     private String referenceNumber;
+    private QueryParam queryParam = new QueryParam();
 
-    public SmsRecordSearchCriteria withSmsTypes(List<SMSType> smsTypes) {
-        //TODO: Use java.util.set
+    public SmsRecordSearchCriteria withSmsTypes(Set<SMSType> smsTypes) {
         this.smsTypes.addAll(smsTypes);
         return this;
     }
@@ -44,8 +44,7 @@ public class SmsRecordSearchCriteria {
         return this;
     }
 
-    public SmsRecordSearchCriteria withDeliveryStatuses(List<DeliveryStatus> deliveryStatuses) {
-        //TODO: Use java.util.set
+    public SmsRecordSearchCriteria withDeliveryStatuses(Set<DeliveryStatus> deliveryStatuses) {
         this.deliveryStatuses.addAll(deliveryStatuses);
         return this;
     }
@@ -55,8 +54,19 @@ public class SmsRecordSearchCriteria {
         return this;
     }
 
-    public List<String> getDeliveryStatuses() {
-        return toStringList(deliveryStatuses);
+    public SmsRecordSearchCriteria withQueryParam(QueryParam queryParam) {
+        this.queryParam = queryParam;
+        return this;
+    }
+
+    // Getters
+
+    public Set<String> getSmsTypes() {
+        return toStringSet(smsTypes);
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
     }
 
     public String getMessageContent() {
@@ -67,23 +77,23 @@ public class SmsRecordSearchCriteria {
         return messageTimeRange;
     }
 
-    public String getPhoneNumber() {
-        return phoneNumber;
+    public Set<String> getDeliveryStatuses() {
+        return toStringSet(deliveryStatuses);
     }
 
     public String getReferenceNumber() {
         return referenceNumber;
     }
 
-    public List<String> getSmsTypes() {
-        return toStringList(smsTypes);
+    public QueryParam getQueryParam() {
+        return queryParam;
     }
 
-    private List<String> toStringList(List<? extends Enum> items) {
-        List<String> itemStringList = new ArrayList<>();
+    private Set<String> toStringSet(Set<? extends Enum> items) {
+        Set<String> itemStringSet = new HashSet<>();
         for (Enum item : items) {
-            itemStringList.add(item.name());
+            itemStringSet.add(item.name());
         }
-        return itemStringList;
+        return itemStringSet;
     }
 }

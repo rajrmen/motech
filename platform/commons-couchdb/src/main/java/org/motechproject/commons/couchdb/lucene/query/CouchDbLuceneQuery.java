@@ -5,7 +5,7 @@ import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
 import org.motechproject.commons.api.Range;
 
-import java.util.List;
+import java.util.Set;
 
 import static java.lang.String.format;
 
@@ -42,14 +42,16 @@ public class CouchDbLuceneQuery {
         return this;
     }
 
-    public CouchDbLuceneQuery withAny(String field, List<String> values) {
+    public CouchDbLuceneQuery withAny(String field, Set<String> values) {
         if (isValid(field) && !CollectionUtils.isEmpty(values)) {
             StringBuilder orCondition = new StringBuilder("(");
-            for (int i = 0; i < values.size(); i++) {
+            int i = 0;
+            for (String value : values) {
                 if (i > 0) {
                     orCondition.append(OR);
                 }
-                orCondition.append(format("%s:", field)).append(values.get(i));
+                orCondition.append(format("%s:", field)).append(value);
+                i++;
             }
             orCondition.append(")");
             appendToQuery(orCondition.toString());

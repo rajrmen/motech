@@ -14,6 +14,10 @@ import org.motechproject.sms.api.DeliveryStatus;
 import org.motechproject.sms.api.domain.SmsRecord;
 import org.motechproject.sms.api.service.SmsRecordSearchCriteria;
 import org.motechproject.sms.api.web.SmsRecords;
+import org.motechproject.commons.couchdb.query.QueryParam;
+import org.motechproject.sms.api.DeliveryStatus;
+import org.motechproject.sms.api.domain.SmsRecord;
+import org.motechproject.sms.api.service.SmsRecordSearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
@@ -42,7 +46,7 @@ public class AllSmsRecords extends CouchDbRepositorySupportWithLucene<SmsRecord>
     SmsRecord findLatestBy(String recipient, String referenceNumber) {
         SmsRecords smsRecords = findAllBy(new SmsRecordSearchCriteria()
                 .withPhoneNumber(recipient)
-                .withReferenceNumber(referenceNumber), 0, 100, null, false);
+                .withReferenceNumber(referenceNumber));
         return CollectionUtils.isEmpty(smsRecords.getRecords()) ? null : (SmsRecord) sort(smsRecords.getRecords(), on(SmsRecord.class).getMessageTime(), reverseOrder()).get(0);
     }
 
@@ -50,13 +54,12 @@ public class AllSmsRecords extends CouchDbRepositorySupportWithLucene<SmsRecord>
         SmsRecords smsRecordsInDb = findAllBy(new SmsRecordSearchCriteria()
                 .withPhoneNumber(smsRecord.getPhoneNumber())
                 .withMessageTime(smsRecord.getMessageTime())
-                .withReferenceNumber(smsRecord.getReferenceNumber()), 0, 100, null, false);
+                .withReferenceNumber(smsRecord.getReferenceNumber()));
 
         if (CollectionUtils.isEmpty(smsRecordsInDb.getRecords())) {
             add(smsRecord);
         } else {
             SmsRecord smsRecordInDb = smsRecordsInDb.getRecords().get(0);
-            smsRecord.setId(smsRecordInDb.getId());
             smsRecord.setRevision(smsRecordInDb.getRevision());
             update(smsRecord);
         }
@@ -75,7 +78,8 @@ public class AllSmsRecords extends CouchDbRepositorySupportWithLucene<SmsRecord>
                     "return result " +
                     "}"
     )})
-    public SmsRecords findAllBy(SmsRecordSearchCriteria criteria, int page, int pageSize, String sortBy, boolean reverse) {
+
+    public SmsRecords findAllBy(SmsRecordSearchCriteria criteria) {
         StringBuilder query = new CouchDbLuceneQuery()
                 .withAny("smsType", criteria.getSmsTypes())
                 .with("phoneNumber", criteria.getPhoneNumber())
@@ -84,20 +88,22 @@ public class AllSmsRecords extends CouchDbRepositorySupportWithLucene<SmsRecord>
                 .withAny("deliveryStatus", criteria.getDeliveryStatuses())
                 .with("referenceNumber", criteria.getReferenceNumber())
                 .build();
-        return runQuery(query, page, pageSize, sortBy, reverse);
+        return runQuery(query, criteria.getQueryParam());
     }
 
-    private SmsRecords runQuery(StringBuilder queryString, int page, int pageSize, String sortBy, boolean reverse) {
+    private SmsRecords runQuery(StringBuilder queryString, QueryParam queryParam) {
         LuceneQuery query = new LuceneQuery("SmsRecord", "search");
         query.setQuery(queryString.toString());
         query.setStaleOk(false);
         query.setIncludeDocs(true);
-        if (pageSize > 0) {
-            query.setLimit(pageSize);
-            query.setSkip(page * pageSize);
+        int recordsPerPage = queryParam.getRecordsPerPage();
+        if (recordsPerPage > 0) {
+            query.setLimit(recordsPerPage);
+            query.setSkip(queryParam.getPageNumber() * recordsPerPage);
         }
+        String sortBy = queryParam.getSortBy();
         if (isNotBlank(sortBy)) {
-            String sortString = reverse ? "\\" + sortBy : "/" + sortBy;
+            String sortString = queryParam.isReverse() ? "\\" + sortBy : sortBy;
             query.setSort(sortString);
         }
         TypeReference<CustomLuceneResult<SmsRecord>> typeRef

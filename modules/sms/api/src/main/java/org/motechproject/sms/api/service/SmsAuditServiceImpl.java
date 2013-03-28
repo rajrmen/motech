@@ -33,7 +33,7 @@ public class SmsAuditServiceImpl implements SmsAuditService {
     }
 
     @Override
-    public SmsRecords findAllSmsRecords(SmsRecordSearchCriteria criteria, int page, int pageSize, String sortBy, boolean reverse) {
-        return allSmsRecords.findAllBy(criteria, page, pageSize, sortBy, reverse);
+    public SmsRecords findAllSmsRecords(SmsRecordSearchCriteria criteria) {
+        return allSmsRecords.findAllBy(criteria);
     }
 }

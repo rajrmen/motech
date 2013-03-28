@@ -8,6 +8,7 @@ import org.motechproject.sms.api.DeliveryStatus;
 import org.motechproject.sms.api.SMSType;
 import org.motechproject.sms.api.domain.SmsRecord;
 import org.motechproject.sms.api.repository.AllSmsRecords;
+
 import org.motechproject.sms.api.web.SmsRecords;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -15,6 +16,9 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
@@ -46,8 +50,11 @@ public class SmsAuditServiceIT {
         smsAuditService.log(createSmsRecord(SMSType.INBOUND));
         smsAuditService.log(createSmsRecord(SMSType.OUTBOUND));
 
-        SmsRecordSearchCriteria criteria = new SmsRecordSearchCriteria().withSmsTypes(Arrays.asList(SMSType.INBOUND, SMSType.OUTBOUND));
-        SmsRecords smsRecords = smsAuditService.findAllSmsRecords(criteria, 0, 100, null, false);
+        Set<SMSType> smsTypes = new HashSet<>();
+        smsTypes.add(SMSType.INBOUND);
+        smsTypes.add(SMSType.OUTBOUND);
+        SmsRecordSearchCriteria criteria = new SmsRecordSearchCriteria().withSmsTypes(smsTypes);
+        SmsRecords smsRecords = smsAuditService.findAllSmsRecords(criteria);
         assertNotNull(smsRecords.getRecords());
         assertThat(smsRecords.getRecords().size(), is(2));
     }
