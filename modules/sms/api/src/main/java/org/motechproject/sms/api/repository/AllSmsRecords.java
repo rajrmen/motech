@@ -84,7 +84,7 @@ public class AllSmsRecords extends CouchDbRepositorySupportWithLucene<SmsRecord>
                 .withAny("deliveryStatus", criteria.getDeliveryStatuses())
                 .with("referenceNumber", criteria.getReferenceNumber())
                 .build();
-        return runQuery(query, 0, 100, null, false);
+        return runQuery(query, page, pageSize, sortBy, reverse);
     }
 
     private SmsRecords runQuery(StringBuilder queryString, int page, int pageSize, String sortBy, boolean reverse) {
@@ -97,7 +97,7 @@ public class AllSmsRecords extends CouchDbRepositorySupportWithLucene<SmsRecord>
             query.setSkip(page * pageSize);
         }
         if (isNotBlank(sortBy)) {
-            String sortString = reverse ? "\\" + sortBy : sortBy;
+            String sortString = reverse ? "\\" + sortBy : "/" + sortBy;
             query.setSort(sortString);
         }
         TypeReference<CustomLuceneResult<SmsRecord>> typeRef

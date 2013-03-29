@@ -14,6 +14,7 @@
                        eventType = elem.data('event-type'),
                        filter = function (time) {
                            var field = elem.data('search-field'),
+                               value = elem.data('search-value'),
                                type = elem.data('field-type') || 'string',
                                url = parseUri(table.jqGrid('getGridParam', 'url')),
                                query = {},
@@ -40,15 +41,18 @@
                                }
                                break;
                            case 'array':
-                               angular.forEach(url.queryKey[field].split(','), function (value) {
-                                   if (elem.not(':checked') && elem.val() !== value && value !== '') {
-                                       array.push(value);
+                               angular.forEach(url.queryKey[field].split(','), function (val) {
+                                   if (value === val) {
+                                       if (elem.children().hasClass("icon-ok")) {
+                                           elem.children().removeClass("icon-ok").addClass("icon-ban-circle");
+                                       } else {
+                                           elem.children().removeClass("icon-ban-circle").addClass("icon-ok");
+                                       }
+                                   }
+                                   if (angular.element('#' + val).children().hasClass("icon-ok")) {
+                                       array.push(val);
                                    }
                                });
-
-                               if (elem.is(':checked')) {
-                                   array.push(elem.val());
-                               }
 
                                query[field] = array.join(',');
                                break;
@@ -97,10 +101,14 @@
 
                 elem.jqGrid({
                     caption: 'SMS Logging',
-                    url: '../smsapi/smslogging?phoneNumber=&message=&timeFrom=&timeTo=&inProgress=true&delivered=true&keepTrying=true&aborted=true&unknown=true&inBound=true&outBound=true',
+                    url: '../smsapi/smslogging?phoneNumber=&messageContent=&timeFrom=&timeTo=&deliveryStatus=INPROGRESS,DELIVERED,KEEPTRYING,ABORTED,UNKNOWN&smsType=INBOUND,OUTBOUND',
                     datatype: 'json',
                     jsonReader:{
                         repeatitems:false
+                    },
+                    prmNames: {
+                        sort: 'sortColumn',
+                        order: 'sortDirection'
                     },
                     shrinkToFit: true,
                     autowidth: true,
@@ -111,17 +119,17 @@
                         name: 'phoneNumber',
                         index: 'phoneNumber'
                     }, {
-                        name: 'Direction',
-                        index: 'Direction'
+                        name: 'deliveryStatus',
+                        index: 'deliveryStatus'
                     }, {
-                        name: 'MessageTime',
-                        index: 'MessageTime'
+                        name: 'messageTime',
+                        index: 'messageTime'
                     }, {
-                        name: 'DeliveryStatus',
-                        index: 'DeliveryStatus'
+                        name: 'smsType',
+                        index: 'smsType'
                     }, {
-                        name: 'Message',
-                        index: 'Message',
+                        name: 'messageContent',
+                        index: 'messageContent',
                         sortable: false
                     }],
                     pager: '#' + attrs.loggingGrid,

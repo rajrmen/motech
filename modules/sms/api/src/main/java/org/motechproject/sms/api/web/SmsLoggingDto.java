@@ -1,22 +1,22 @@
 package org.motechproject.sms.api.web;
 
-import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
 import org.motechproject.sms.api.domain.SmsRecord;
 
 public class SmsLoggingDto {
 
     private String phoneNumber;
-    private String direction;
-    private DateTime messageTime;
-    private String status;
-    private String message;
+    private String smsType;
+    private String messageTime;
+    private String deliveryStatus;
+    private String messageContent;
 
     public SmsLoggingDto(SmsRecord record) {
         this.phoneNumber = record.getPhoneNumber();
-        this.direction = record.getSmsType().toString();
-        this.messageTime = record.getMessageTime();
-        this.status = record.getDeliveryStatus().toString();
-        this.message = record.getMessageContent();
+        this.smsType = record.getSmsType().toString();
+        this.messageTime = DateTimeFormat.forPattern("Y-MM-d h:m:s").print(record.getMessageTime());
+        this.deliveryStatus = record.getDeliveryStatus().toString();
+        this.messageContent = record.getMessageContent();
     }
 
     public String getPhoneNumber() {
@@ -27,35 +27,35 @@ public class SmsLoggingDto {
         this.phoneNumber = phoneNumber;
     }
 
-    public String getDirection() {
-        return direction;
+    public String getSmsType() {
+        return smsType;
     }
 
-    public void setDirection(String direction) {
-        this.direction = direction;
+    public void setSmsType(String smsType) {
+        this.smsType = smsType;
     }
 
-    public DateTime getMessageTime() {
+    public String getMessageTime() {
         return messageTime;
     }
 
-    public void setMessageTime(DateTime messageTime) {
+    public void setMessageTime(String messageTime) {
         this.messageTime = messageTime;
     }
 
-    public String getStatus() {
-        return status;
+    public String getDeliveryStatus() {
+        return deliveryStatus;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setDeliveryStatus(String deliveryStatus) {
+        this.deliveryStatus = deliveryStatus;
     }
 
-    public String getMessage() {
-        return message;
+    public String getMessageContent() {
+        return messageContent;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public void setMessageContent(String messageContent) {
+        this.messageContent = messageContent;
     }
 }

@@ -17,11 +17,11 @@ public class GridSettings {
     private String sortColumn;
     private String sortDirection;
     private String phoneNumber;
-    private String message;
+    private String messageContent;
     private String timeFrom;
     private String timeTo;
-    private String deliveryStatues;
-    private String directions;
+    private String deliveryStatus;
+    private String smsType;
 
     public Integer getRows() {
         return rows;
@@ -63,12 +63,12 @@ public class GridSettings {
         this.phoneNumber = phoneNumber;
     }
 
-    public String getMessage() {
-        return message;
+    public String getMessageContent() {
+        return messageContent;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public void setMessageContent(String messageContent) {
+        this.messageContent = messageContent;
     }
 
     public String getTimeFrom() {
@@ -87,20 +87,20 @@ public class GridSettings {
         this.timeTo = timeTo;
     }
 
-    public String getDeliveryStatues() {
-        return deliveryStatues;
+    public String getDeliveryStatus() {
+        return deliveryStatus;
     }
 
-    public void setDeliveryStatues(String deliveryStatues) {
-        this.deliveryStatues = deliveryStatues;
+    public void setDeliveryStatus(String deliveryStatus) {
+        this.deliveryStatus = deliveryStatus;
     }
 
-    public String getDirections() {
-        return directions;
+    public String getSmsType() {
+        return smsType;
     }
 
-    public void setDirections(String directions) {
-        this.directions = directions;
+    public void setSmsType(String directions) {
+        this.smsType = directions;
     }
 
     public SmsRecordSearchCriteria toSmsRecordSearchCriteria() {
@@ -117,20 +117,28 @@ public class GridSettings {
         if (StringUtils.isNotBlank(phoneNumber)) {
             criteria.withPhoneNumber(phoneNumber+"*");
         }
-        if (StringUtils.isNotBlank(message)) {
-            criteria.withMessageContent(message + "*");
+        if (StringUtils.isNotBlank(messageContent)) {
+            criteria.withMessageContent(messageContent + "*");
         }
         criteria.withMessageTimeRange(range);
         return criteria;
     }
 
     private List<SMSType> getSmsTypeFromSettings() {
-        List<SMSType> types = new ArrayList<>();
-        return types;
+        List<SMSType> smsTypes = new ArrayList<>();
+        String[] smsTypeList = this.smsType.split(",");
+        for (String smsType : smsTypeList) {
+            smsTypes.add(SMSType.valueOf(smsType));
+        }
+        return smsTypes;
     }
 
     private List<DeliveryStatus> getDeliveryStatusFromSettings() {
         List<DeliveryStatus> statusList = new ArrayList<>();
+        String[] statuses = this.deliveryStatus.split(",");
+        for (String status : statuses) {
+            statusList.add(DeliveryStatus.valueOf(status));
+        }
         return statusList;
     }
 
