@@ -66,4 +66,9 @@ public abstract class Content extends MotechBaseDataObject {
                 Objects.equals(this.name, other.name) &&
                 Objects.equals(this.metadata, other.metadata);
     }
+
+    @Override
+    public String toString() {
+        return String.format("Content{language='%s', name='%s', metadata=%s}", language, name, metadata);
+    }
 }

@@ -3,9 +3,15 @@ package org.motechproject.cmslite.api.web;
 import org.motechproject.cmslite.api.model.Content;
 
 import java.io.Serializable;
+<<<<<<< HEAD
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+=======
+import java.util.Objects;
+import java.util.Set;
+import java.util.TreeSet;
+>>>>>>> master
 
 import static java.util.Collections.addAll;
 import static org.apache.commons.lang.StringUtils.startsWithIgnoreCase;
@@ -13,7 +19,11 @@ import static org.apache.commons.lang.StringUtils.startsWithIgnoreCase;
 public class ResourceDto implements Serializable {
     private static final long serialVersionUID = 6728665456455509425L;
 
+<<<<<<< HEAD
     private final Set<String> languages = new HashSet<>();
+=======
+    private final Set<String> languages = new TreeSet<>();
+>>>>>>> master
     private final String name;
     private final String type;
 

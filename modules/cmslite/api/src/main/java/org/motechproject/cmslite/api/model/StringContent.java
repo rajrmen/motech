@@ -61,4 +61,12 @@ public class StringContent extends Content {
 
         return Objects.equals(this.value, other.value);
     }
+<<<<<<< HEAD
+=======
+
+    @Override
+    public String toString() {
+        return String.format("StringContent{value='%s'} %s", value, super.toString());
+    }
+>>>>>>> master
 }

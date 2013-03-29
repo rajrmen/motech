@@ -129,11 +129,15 @@
                     jsonReader:{
                         repeatitems:false
                     },
+                    prmNames: {
+                        sort: 'sortColumn',
+                        order: 'sortDirection'
+                    },
                     shrinkToFit: true,
                     autowidth: true,
                     rownumbers: true,
-                    rowNum: 5,
-                    rowList: [5, 20, 30],
+                    rowNum: 10,
+                    rowList: [10, 20, 50],
                     colModel: [{
                         name: 'name',
                         index: 'name'

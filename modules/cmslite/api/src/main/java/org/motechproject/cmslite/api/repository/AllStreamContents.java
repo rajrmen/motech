@@ -4,7 +4,6 @@ import org.apache.commons.io.IOUtils;
 import org.ektorp.AttachmentInputStream;
 import org.ektorp.ComplexKey;
 import org.ektorp.CouchDbConnector;
-import org.ektorp.ViewQuery;
 import org.ektorp.support.View;
 import org.motechproject.cmslite.api.model.CMSLiteException;
 import org.motechproject.cmslite.api.model.StreamContent;
@@ -16,17 +15,16 @@ import java.io.BufferedInputStream;
 import java.util.List;
 
 @Repository
+@View(name = "by_language_and_name", map = "function(doc) { if (doc.type === 'StreamContent') emit([doc.language, doc.name], doc); }")
 public class AllStreamContents extends BaseContentRepository<StreamContent> {
     @Autowired
     protected AllStreamContents(@Qualifier("cmsLiteDatabase") CouchDbConnector db) {
         super(StreamContent.class, db);
     }
 
-    @View(name = "by_language_and_name", map = "function(doc) { if (doc.type==='StreamContent') { emit([doc.language, doc.name], doc); } }")
     @Override
     public StreamContent getContent(String language, String name) {
-        ViewQuery query = createQuery("by_language_and_name").key(ComplexKey.of(language, name));
-        List<StreamContent> result = db.queryView(query, StreamContent.class);
+        List<StreamContent> result = queryView("by_language_and_name", ComplexKey.of(language, name));
 
         if (result == null || result.isEmpty()) {
             return null;
@@ -41,8 +39,7 @@ public class AllStreamContents extends BaseContentRepository<StreamContent> {
 
     @Override
     public boolean isContentAvailable(String language, String name) {
-        ViewQuery query = createQuery("by_language_and_name").key(ComplexKey.of(language, name));
-        return db.queryView(query).getSize() > 0;
+        return !queryView("by_language_and_name", ComplexKey.of(language, name)).isEmpty();
     }
 
     @Override
@@ -78,19 +75,21 @@ public class AllStreamContents extends BaseContentRepository<StreamContent> {
     private void createOrUpdateContent(StreamContent streamContent, StreamContent streamContentFromDB, boolean resourceDoesNotExist) {
         if (resourceDoesNotExist) {
             db.create(streamContent);
-            createAttachment(streamContent);
+
+            createAttachment(streamContent.getId(), streamContent.getRevision(), streamContent);
         } else {
             streamContentFromDB.setChecksum(streamContent.getChecksum());
             streamContentFromDB.setContentType(streamContent.getContentType());
             db.update(streamContentFromDB);
-            createAttachment(streamContentFromDB);
+
+            createAttachment(streamContentFromDB.getId(), streamContentFromDB.getRevision(), streamContent);
         }
     }
 
-    private void createAttachment(StreamContent streamContent) {
-        BufferedInputStream bufferedInputStream = new BufferedInputStream(streamContent.getInputStream());
+    private void createAttachment(String contentId, String contentRevision, StreamContent content) {
+        BufferedInputStream bufferedInputStream = new BufferedInputStream(content.getInputStream());
 
-        AttachmentInputStream attachmentInputStream = new AttachmentInputStream(streamContent.getId(), bufferedInputStream, streamContent.getContentType());
-        db.createAttachment(streamContent.getId(), streamContent.getRevision(), attachmentInputStream);
+        AttachmentInputStream attachmentInputStream = new AttachmentInputStream(contentId, bufferedInputStream, content.getContentType());
+        db.createAttachment(contentId, contentRevision, attachmentInputStream);
     }
 }

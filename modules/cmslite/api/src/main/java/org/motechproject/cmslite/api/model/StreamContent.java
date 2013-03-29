@@ -82,4 +82,13 @@ public class StreamContent extends Content {
                 Objects.equals(this.checksum, other.checksum) &&
                 Objects.equals(this.contentType, other.contentType);
     }
+<<<<<<< HEAD
+=======
+
+    @Override
+    public String toString() {
+        return String.format("StreamContent{inputStream=%s, checksum='%s', contentType='%s'} %s",
+                inputStream, checksum, contentType, super.toString());
+    }
+>>>>>>> master
 }

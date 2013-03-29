@@ -12,9 +12,11 @@
         $scope.resourceType = 'string';
         $scope.usedLanguages = [];
 
-        $http.get('../cmsliteapi/resource/all/languages').success(function (data) {
-            $scope.usedLanguages = data;
-        });
+        $scope.getLanguages = function () {
+            $http.get('../cmsliteapi/resource/all/languages').success(function (data) {
+                $scope.usedLanguages = data;
+            });
+        };
 
         $scope.changeResourceType = function (type) {
             $scope.resourceType = type;
@@ -67,7 +69,8 @@
         };
 
         $scope.editStreamResource = function() {
-            if ($scope.validateField('streamResourceForm', 'contentFile')) {
+
+            if ($scope.validateFileField('streamResourceForm', 'contentFile')) {
                 blockUI();
 
                 $('#streamResourceForm').ajaxSubmit({
@@ -104,6 +107,9 @@
                     success: function () {
                         $('#resourceTable').trigger('reloadGrid');
                         $('#newResourceModal').modal('hide');
+
+                        $scope.getLanguages();
+
                         unblockUI();
                     },
                     error: function (response) {
@@ -118,14 +124,16 @@
             var name = $scope.validateField(formId, 'name'),
                 language = $scope.validateField(formId, 'language'),
                 value = $scope.validateField(formId, 'value'),
-                contentFile = $scope.validateField(formId, 'contentFile');
+
+                contentFile = $scope.validateFileField(formId, 'contentFile');
 
             return name && language && ($scope.resourceType === 'string' ? value : contentFile);
         };
 
         $scope.validateField = function (formId, key) {
             var field = $('#' + formId + ' #' + key),
-                hint = $('#' + formId + ' #' + key).next('span'),
+
+                hint = field.siblings('span.form-hint'),
                 validate = field.val() !== undefined && field.val() !== '';
 
             if (validate) {
@@ -136,6 +144,22 @@
 
             return validate;
         };
+
+        $scope.validateFileField = function (formId, key) {
+            var field = $('#' + formId + ' #' + key),
+                hint = field.parent().siblings('span.form-hint'),
+                validate = field.val() !== undefined && field.val() !== '';
+
+            if (validate) {
+                hint.hide();
+            } else {
+                hint.show();
+            }
+
+            return validate;
+        };
+
+        $scope.getLanguages();
 
     });
 
