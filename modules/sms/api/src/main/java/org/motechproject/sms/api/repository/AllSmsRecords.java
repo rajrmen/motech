@@ -9,21 +9,20 @@ import com.github.ldriscoll.ektorplucene.designdocument.annotation.Index;
 import org.codehaus.jackson.type.TypeReference;
 import org.ektorp.CouchDbConnector;
 import org.ektorp.impl.StdCouchDbInstance;
+import org.joda.time.DateTime;
 import org.motechproject.commons.couchdb.lucene.query.CouchDbLuceneQuery;
-import org.motechproject.sms.api.DeliveryStatus;
-import org.motechproject.sms.api.domain.SmsRecord;
-import org.motechproject.sms.api.service.SmsRecordSearchCriteria;
-import org.motechproject.sms.api.web.SmsRecords;
 import org.motechproject.commons.couchdb.query.QueryParam;
 import org.motechproject.sms.api.DeliveryStatus;
 import org.motechproject.sms.api.domain.SmsRecord;
 import org.motechproject.sms.api.service.SmsRecordSearchCriteria;
+import org.motechproject.sms.api.web.SmsRecords;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -103,6 +102,16 @@ public class AllSmsRecords extends CouchDbRepositorySupportWithLucene<SmsRecord>
         }
         String sortBy = queryParam.getSortBy();
         if (isNotBlank(sortBy)) {
+            Class clazz = SmsRecord.class;
+            try {
+                Field f = clazz.getDeclaredField(sortBy);
+                if(f.getType().equals(DateTime.class)) {
+                    sortBy = sortBy + "<date>";
+                }
+            } catch (NoSuchFieldException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            }
+
             String sortString = queryParam.isReverse() ? "\\" + sortBy : sortBy;
             query.setSort(sortString);
         }

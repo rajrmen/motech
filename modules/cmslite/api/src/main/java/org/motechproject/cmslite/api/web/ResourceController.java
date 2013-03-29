@@ -29,25 +29,17 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.Collections;
-<<<<<<< HEAD
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
-=======
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.TreeSet;
->>>>>>> master
 
 import static java.util.Locale.getAvailableLocales;
 import static org.apache.commons.codec.digest.DigestUtils.md5Hex;
 import static org.apache.commons.lang.StringUtils.isBlank;
-<<<<<<< HEAD
-=======
+
 import static org.apache.commons.lang.StringUtils.startsWith;
->>>>>>> master
+
 import static org.apache.commons.lang.StringUtils.startsWithIgnoreCase;
 
 @Controller
@@ -63,20 +55,12 @@ public class ResourceController {
     @RequestMapping(value = "/resource/available/{field}", method = RequestMethod.GET)
     @ResponseBody
     public Set<String> availableField(@PathVariable String field, @RequestParam String term) {
-<<<<<<< HEAD
-        Set<String> strings = new HashSet<>();
-=======
         Set<String> strings = new TreeSet<>();
->>>>>>> master
 
         switch (field) {
             case "name":
                 for (Content content : cmsLiteService.getAllContents()) {
-<<<<<<< HEAD
-                    if (startsWithIgnoreCase(content.getName(), term)) {
-=======
                     if (startsWith(content.getName(), term)) {
->>>>>>> master
                         strings.add(content.getName());
                     }
                 }
@@ -109,11 +93,7 @@ public class ResourceController {
     @ResponseBody
     public Set<String> getAllLanguages() throws ContentNotFoundException {
         List<Content> contents = cmsLiteService.getAllContents();
-<<<<<<< HEAD
-        Set<String> strings = new HashSet<>(contents.size());
-=======
         Set<String> strings = new TreeSet<>();
->>>>>>> master
 
         for (Content content : contents) {
             strings.add(content.getLanguage());

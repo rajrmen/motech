@@ -19,8 +19,7 @@ public class SMSLoggingController {
     @ResponseBody
     public SmsLoggingRecords getSmsRecords(GridSettings settings) {
         SmsRecordSearchCriteria criteria = settings.toSmsRecordSearchCriteria();
-        boolean reverse = "desc".equalsIgnoreCase(settings.getSortDirection());
-        SmsRecords smsRecords = smsAuditService.findAllSmsRecords(criteria, settings.getPage()-1, settings.getRows(), settings.getSortColumn(), reverse);
+        SmsRecords smsRecords = smsAuditService.findAllSmsRecords(criteria);
 
         return new SmsLoggingRecords(settings.getPage(), settings.getRows(), smsRecords);
     }

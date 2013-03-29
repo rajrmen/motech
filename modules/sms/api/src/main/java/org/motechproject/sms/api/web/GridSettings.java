@@ -3,12 +3,13 @@ package org.motechproject.sms.api.web;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
 import org.motechproject.commons.api.Range;
+import org.motechproject.commons.couchdb.query.QueryParam;
 import org.motechproject.sms.api.DeliveryStatus;
 import org.motechproject.sms.api.SMSType;
 import org.motechproject.sms.api.service.SmsRecordSearchCriteria;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 public class GridSettings {
 
@@ -104,8 +105,10 @@ public class GridSettings {
     }
 
     public SmsRecordSearchCriteria toSmsRecordSearchCriteria() {
-        List<SMSType> types = getSmsTypeFromSettings();
-        List<DeliveryStatus> deliveryStatusList = getDeliveryStatusFromSettings();
+        boolean reverse = "desc".equalsIgnoreCase(sortDirection);
+        QueryParam queryParam = new QueryParam(page-1, rows, sortColumn, reverse);
+        Set<SMSType> types = getSmsTypeFromSettings();
+        Set<DeliveryStatus> deliveryStatusList = getDeliveryStatusFromSettings();
         Range<DateTime> range = createRangeFromSettings();
         SmsRecordSearchCriteria criteria = new SmsRecordSearchCriteria();
         if (!types.isEmpty()) {
@@ -121,11 +124,12 @@ public class GridSettings {
             criteria.withMessageContent(messageContent + "*");
         }
         criteria.withMessageTimeRange(range);
+        criteria.withQueryParam(queryParam);
         return criteria;
     }
 
-    private List<SMSType> getSmsTypeFromSettings() {
-        List<SMSType> smsTypes = new ArrayList<>();
+    private Set<SMSType> getSmsTypeFromSettings() {
+        Set<SMSType> smsTypes = new HashSet<>();
         String[] smsTypeList = this.smsType.split(",");
         for (String smsType : smsTypeList) {
             smsTypes.add(SMSType.valueOf(smsType));
@@ -133,8 +137,8 @@ public class GridSettings {
         return smsTypes;
     }
 
-    private List<DeliveryStatus> getDeliveryStatusFromSettings() {
-        List<DeliveryStatus> statusList = new ArrayList<>();
+    private Set<DeliveryStatus> getDeliveryStatusFromSettings() {
+        Set<DeliveryStatus> statusList = new HashSet<>();
         String[] statuses = this.deliveryStatus.split(",");
         for (String status : statuses) {
             statusList.add(DeliveryStatus.valueOf(status));
