@@ -1,16 +1,8 @@
 package org.motechproject.cmslite.api.web;
 
 import org.codehaus.jackson.map.ObjectMapper;
-<<<<<<< HEAD
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-=======
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.internal.matchers.IsCollectionContaining;
->>>>>>> master
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -20,10 +12,6 @@ import org.motechproject.cmslite.api.model.StringContent;
 import org.motechproject.cmslite.api.service.CMSLiteService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-<<<<<<< HEAD
-import org.springframework.mock.web.MockMultipartFile;
-=======
->>>>>>> master
 import org.springframework.test.web.server.MockMvc;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -32,19 +20,12 @@ import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.List;
-<<<<<<< HEAD
-
-import static org.apache.commons.codec.digest.DigestUtils.md5Hex;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-=======
 import java.util.Set;
 
 import static org.apache.commons.codec.digest.DigestUtils.md5Hex;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.internal.matchers.IsCollectionContaining.hasItems;
->>>>>>> master
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -151,29 +132,11 @@ public class ResourceControllerTest {
     public void shouldReturnAllResourcesLanguages() throws Exception {
         StringContent stringContent = new StringContent(STRING_LANGUAGE, STRING_NAME, STRING_VALUE);
         StreamContent streamContent = new StreamContent(STREAM_LANGUAGE, STREAM_NAME, null, STREAM_CHECKSUM, STREAM_CONTENT_TYPE);
-<<<<<<< HEAD
-        String expectedResponse = createResponse(Arrays.asList(STREAM_LANGUAGE, STRING_LANGUAGE));
-
-        when(cmsLiteService.getAllContents()).thenReturn(Arrays.asList(stringContent, streamContent));
-
-        controller.perform(
-                get("/resource/all/languages")
-        ).andExpect(
-                status().is(HttpStatus.OK.value())
-        ).andExpect(
-                content().type(APPLICATION_JSON_UTF8)
-        ).andExpect(
-                content().string(jsonMatcher(expectedResponse))
-        );
-
-        verify(cmsLiteService).getAllContents();
-=======
 
         when(cmsLiteService.getAllContents()).thenReturn(Arrays.asList(stringContent, streamContent));
 
         Set<String> actual = resourceController.getAllLanguages();
         assertThat(actual, hasItems(STREAM_LANGUAGE, STRING_LANGUAGE));
->>>>>>> master
     }
 
     @Test
@@ -248,11 +211,7 @@ public class ResourceControllerTest {
 
         controller.perform(
                 post("/resource/string/{language}/{name}", STRING_LANGUAGE, STRING_NAME)
-<<<<<<< HEAD
-                .param("value", "new value")
-=======
                         .param("value", "new value")
->>>>>>> master
         ).andExpect(
                 status().is(HttpStatus.OK.value())
         );

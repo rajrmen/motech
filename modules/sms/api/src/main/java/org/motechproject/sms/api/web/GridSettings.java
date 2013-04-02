@@ -132,7 +132,9 @@ public class GridSettings {
         Set<SMSType> smsTypes = new HashSet<>();
         String[] smsTypeList = this.smsType.split(",");
         for (String smsType : smsTypeList) {
-            smsTypes.add(SMSType.valueOf(smsType));
+            if (!smsType.isEmpty()) {
+                smsTypes.add(SMSType.valueOf(smsType));
+            }
         }
         return smsTypes;
     }
@@ -141,7 +143,9 @@ public class GridSettings {
         Set<DeliveryStatus> statusList = new HashSet<>();
         String[] statuses = this.deliveryStatus.split(",");
         for (String status : statuses) {
-            statusList.add(DeliveryStatus.valueOf(status));
+            if (!status.isEmpty()) {
+                statusList.add(DeliveryStatus.valueOf(status));
+            }
         }
         return statusList;
     }

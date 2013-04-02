@@ -41,14 +41,13 @@
                                }
                                break;
                            case 'array':
+                               if (elem.children().hasClass("icon-ok")) {
+                                   elem.children().removeClass("icon-ok").addClass("icon-ban-circle");
+                               } else if (elem.children().hasClass("icon-ban-circle")) {
+                                   elem.children().removeClass("icon-ban-circle").addClass("icon-ok");
+                                   array.push(value);
+                               }
                                angular.forEach(url.queryKey[field].split(','), function (val) {
-                                   if (value === val) {
-                                       if (elem.children().hasClass("icon-ok")) {
-                                           elem.children().removeClass("icon-ok").addClass("icon-ban-circle");
-                                       } else {
-                                           elem.children().removeClass("icon-ban-circle").addClass("icon-ok");
-                                       }
-                                   }
                                    if (angular.element('#' + val).children().hasClass("icon-ok")) {
                                        array.push(val);
                                    }
@@ -93,11 +92,19 @@
            };
        });
 
-    widgetModule.directive('loggingGrid', function ($compile) {
+    widgetModule.directive('loggingGrid', function ($compile, $http, $templateCache) {
         return {
             restrict: 'A',
             link: function (scope, element, attrs) {
                 var elem = angular.element(element);
+                var filters,
+                loader;
+
+                loader = $http.get('../sms/resource/partials/smsloggingfilters.html', {cache: $templateCache})
+                    .success(function (html) {
+                        filters = html;
+                        $('#t_resourceTable').append($compile(filters)(scope));
+                });
 
                 elem.jqGrid({
                     caption: 'SMS Logging',
@@ -140,6 +147,10 @@
                     viewrecords: true,
                     toolbar: [true,'top'],
                     gridComplete: function () {
+                        angular.forEach(['phoneNumber', 'deliveryStatus', 'messageTime', 'smsType', 'messageContent'], function (value) {
+                            elem.jqGrid('setLabel', value, scope.msg('sms.logging.' + value));
+                        });
+
                         $('#outsideResourceTable').children('div').width('100%');
                         $('.ui-jqgrid-htable').addClass('table-lightblue');
                         $('.ui-jqgrid-bdiv').width('100%');
@@ -156,9 +167,6 @@
                        });
                     }
                 });
-
-                $('#t_resourceTable').append($compile($('#operations-resource'))(scope));
-                $('#t_resourceTable').append($compile($('#collapse-resource'))(scope));
             }
         };
     });

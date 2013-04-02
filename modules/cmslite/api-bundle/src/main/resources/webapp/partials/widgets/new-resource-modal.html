@@ -27,13 +27,8 @@
                             {{msg('resource.type.' + resourceType)}} <span class="caret"></span>
                         </button>
                         <ul class="dropdown-menu">
-<<<<<<< HEAD
-                            <li><a ng-click="changeResourceType('string')">{{msg('resource.type.string')}}</a></li>
-                            <li><a ng-click="changeResourceType('stream')">{{msg('resource.type.stream')}}</a></li>
-=======
                             <li><a class="pointer" ng-click="changeResourceType('string')">{{msg('resource.type.string')}}</a></li>
                             <li><a class="pointer" ng-click="changeResourceType('stream')">{{msg('resource.type.stream')}}</a></li>
->>>>>>> master
                         </ul>
                     </div>
                 </div>
@@ -44,13 +39,6 @@
                     <span class="form-hint" style="display: none;">{{msg('error.required.string')}}</span>
                 </div>
             </div>
-<<<<<<< HEAD
-            <div class="control-group" ui-if="resourceType == 'stream'">
-                <label class="control-label">{{msg('info.fileChosen')}}</label>
-                <div class="controls">
-                    <input type="file" id="contentFile" name="contentFile">
-                    <span class="form-hint" style="display: none;">{{msg('error.required.stream')}}</span>
-=======
             <div class="control-group fileupload fileupload-new" ui-if="resourceType == 'stream'" data-provides="fileupload">
                 <label class="control-label">{{msg('info.fileChosen')}}</label>
                 <div class="controls">
@@ -62,7 +50,6 @@
                     </span>
                     <span class="form-hint stream" style="display: none;">{{msg('error.required.stream')}}</span>
                     <a href="#" class="btn btn-danger fileupload-exists" data-dismiss="fileupload"><i class="icon-trash icon-white"></i>&nbsp;{{msg('button.remove')}}</a>
->>>>>>> master
                 </div>
             </div>
             <input type="hidden" id="type" name="type" value="{{resourceType}}">
@@ -72,8 +59,4 @@
         <button class="btn btn-primary" ng-click="saveNewResource()"><i class="icon-ok icon-white"></i> {{msg('button.save')}}</button>
         <button class="btn" data-dismiss="modal" aria-hidden="true"><i class="icon-remove"></i> {{msg('button.close')}}</button>
     </div>
-<<<<<<< HEAD
 </div>
-=======
-</div>
->>>>>>> master

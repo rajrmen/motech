@@ -12,11 +12,6 @@
                 </div>
 
                 <!-- write mode -->
-<<<<<<< HEAD
-                <div class="" ui-if="mode == 'write'">
-                    {{msg('info.fileChosen')}} <input type="file" id="contentFile" name="contentFile">
-                    <span class="form-hint" style="display: none;">{{msg('error.required.stream')}}</span>
-=======
                 <div class="fileupload fileupload-new" ui-if="mode == 'write'" data-provides="fileupload">
                     {{msg('info.fileChosen')}}
                     <div class="uneditable-input input-large fileupload-exists"><i class="icon-file"></i><span class="fileupload-preview"></span></div>
@@ -27,28 +22,18 @@
                     </span>
                     <span class="form-hint stream" style="display: none;">{{msg('error.required.stream')}}</span>
                     <a href="#" class="btn btn-danger fileupload-exists" data-dismiss="fileupload"><i class="icon-trash icon-white"></i>&nbsp;{{msg('button.remove')}}</a>
->>>>>>> master
                 </div>
             </div>
         </form>
     </div>
     <div class="modal-footer">
         <!-- read mode -->
-<<<<<<< HEAD
-        <button ui-if="mode == 'read'" class="btn btn-primary" ng-click="changeMode('write')"><i class="icon-ok icon-white"></i> {{msg('button.replace')}}</button>
-        <button ui-if="mode == 'read'" class="btn btn-danger" ng-click="removeResource('stream', select)"><i class="icon-remove icon-white"></i> {{msg('button.delete')}}</button>
-=======
         <button ui-if="mode == 'read'" class="btn btn-primary" ng-click="changeMode('write')"><i class="icon-edit icon-white"></i> {{msg('button.replace')}}</button>
         <button ui-if="mode == 'read'" class="btn btn-danger" ng-click="removeResource('stream', select)"><i class="icon-trash icon-white"></i> {{msg('button.delete')}}</button>
->>>>>>> master
         <button ui-if="mode == 'read'" class="btn" data-dismiss="modal" aria-hidden="true">{{msg('button.close')}}</button>
 
         <!-- write mode -->
         <button ui-if="mode == 'write'" class="btn btn-primary" ng-click="editStreamResource()"><i class="icon-ok icon-white"></i> {{msg('button.replace')}}</button>
         <button ui-if="mode == 'write'" class="btn" ng-click="changeMode('read')">{{msg('button.cancel')}}</button>
     </div>
-<<<<<<< HEAD
 </div>
-=======
-</div>
->>>>>>> master
