@@ -8,7 +8,6 @@ import org.motechproject.sms.api.DeliveryStatus;
 import org.motechproject.sms.api.SMSType;
 import org.motechproject.sms.api.domain.SmsRecord;
 import org.motechproject.sms.api.repository.AllSmsRecords;
-
 import org.motechproject.sms.api.web.SmsRecords;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;

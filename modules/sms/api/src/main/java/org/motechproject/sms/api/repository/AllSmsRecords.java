@@ -16,6 +16,7 @@ import org.motechproject.sms.api.DeliveryStatus;
 import org.motechproject.sms.api.domain.SmsRecord;
 import org.motechproject.sms.api.service.SmsRecordSearchCriteria;
 import org.motechproject.sms.api.web.SmsRecords;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
@@ -54,7 +55,6 @@ public class AllSmsRecords extends CouchDbRepositorySupportWithLucene<SmsRecord>
                 .withPhoneNumber(smsRecord.getPhoneNumber())
                 .withMessageTime(smsRecord.getMessageTime())
                 .withReferenceNumber(smsRecord.getReferenceNumber()));
-
         if (CollectionUtils.isEmpty(smsRecordsInDb.getRecords())) {
             add(smsRecord);
         } else {
@@ -111,7 +111,6 @@ public class AllSmsRecords extends CouchDbRepositorySupportWithLucene<SmsRecord>
             } catch (NoSuchFieldException e) {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             }
-
             String sortString = queryParam.isReverse() ? "\\" + sortBy : sortBy;
             query.setSort(sortString);
         }
