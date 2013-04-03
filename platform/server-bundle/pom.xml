@@ -61,6 +61,13 @@
             <artifactId>motech-platform-web-security-bundle</artifactId>
             <version>${project.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>org.springframework.security.taglibs</artifactId>
+        </dependency>
+
+
         <dependency>
             <groupId>javax.validation</groupId>
             <artifactId>com.springsource.javax.validation</artifactId>

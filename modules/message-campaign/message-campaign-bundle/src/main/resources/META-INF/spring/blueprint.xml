@@ -10,6 +10,7 @@
     <bean id="moduleRegistrationData" class="org.motechproject.osgi.web.ModuleRegistrationData">
         <constructor-arg name="moduleName" value="messageCampaign"/>
         <constructor-arg name="url" value="../messagecampaign/resources/index.html"/>
+        <property name="roleForAccess" value="manageCampaigns"/>
         <constructor-arg name="angularModules">
             <list>
                 <value>messageCampaign</value>
