@@ -10,13 +10,11 @@ import org.motechproject.sms.api.DeliveryStatus;
 import org.motechproject.sms.api.SMSType;
 import org.motechproject.sms.api.domain.SmsRecord;
 import org.motechproject.sms.api.service.SmsRecordSearchCriteria;
-import org.motechproject.sms.api.web.SmsRecords;
+import org.motechproject.sms.api.domain.SmsRecords;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import java.util.List;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;

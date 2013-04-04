@@ -1,6 +1,7 @@
 package org.motechproject.sms.api.web;
 
 import org.motechproject.sms.api.domain.SmsRecord;
+import org.motechproject.sms.api.domain.SmsRecords;
 
 import java.io.Serializable;
 import java.util.ArrayList;

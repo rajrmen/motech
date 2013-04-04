@@ -15,8 +15,10 @@ import org.motechproject.commons.couchdb.query.QueryParam;
 import org.motechproject.sms.api.DeliveryStatus;
 import org.motechproject.sms.api.domain.SmsRecord;
 import org.motechproject.sms.api.service.SmsRecordSearchCriteria;
-import org.motechproject.sms.api.web.SmsRecords;
+import org.motechproject.sms.api.domain.SmsRecords;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
@@ -34,6 +36,8 @@ import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 @Repository
 public class AllSmsRecords extends CouchDbRepositorySupportWithLucene<SmsRecord> {
+
+    private final Logger logger = LoggerFactory.getLogger(AllSmsRecords.class);
 
     public void updateDeliveryStatus(String recipient, String referenceNumber, String deliveryStatus) {
         SmsRecord smsRecord = findLatestBy(recipient, referenceNumber);
@@ -59,6 +63,7 @@ public class AllSmsRecords extends CouchDbRepositorySupportWithLucene<SmsRecord>
             add(smsRecord);
         } else {
             SmsRecord smsRecordInDb = smsRecordsInDb.getRecords().get(0);
+            smsRecord.setId(smsRecordInDb.getId());
             smsRecord.setRevision(smsRecordInDb.getRevision());
             update(smsRecord);
         }
@@ -105,11 +110,11 @@ public class AllSmsRecords extends CouchDbRepositorySupportWithLucene<SmsRecord>
             Class clazz = SmsRecord.class;
             try {
                 Field f = clazz.getDeclaredField(sortBy);
-                if(f.getType().equals(DateTime.class)) {
+                if (f.getType().equals(DateTime.class)) {
                     sortBy = sortBy + "<date>";
                 }
             } catch (NoSuchFieldException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                logger.error(String.format("No found field %s", sortBy), e);
             }
             String sortString = queryParam.isReverse() ? "\\" + sortBy : sortBy;
             query.setSort(sortString);

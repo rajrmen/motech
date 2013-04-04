@@ -1,6 +1,4 @@
-package org.motechproject.sms.api.web;
-
-import org.motechproject.sms.api.domain.SmsRecord;
+package org.motechproject.sms.api.domain;
 
 import java.util.ArrayList;
 import java.util.List;

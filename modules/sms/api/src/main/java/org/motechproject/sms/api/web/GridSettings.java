@@ -102,13 +102,13 @@ public class GridSettings {
         return smsType;
     }
 
-    public void setSmsType(String directions) {
-        this.smsType = directions;
+    public void setSmsType(String smsType) {
+        this.smsType = smsType;
     }
 
     public SmsRecordSearchCriteria toSmsRecordSearchCriteria() {
         boolean reverse = "desc".equalsIgnoreCase(sortDirection);
-        QueryParam queryParam = new QueryParam(page-1, rows, sortColumn, reverse);
+        QueryParam queryParam = new QueryParam(page - 1, rows, sortColumn, reverse);
         Set<SMSType> types = getSmsTypeFromSettings();
         Set<DeliveryStatus> deliveryStatusList = getDeliveryStatusFromSettings();
         Range<DateTime> range = createRangeFromSettings();
@@ -120,7 +120,7 @@ public class GridSettings {
             criteria.withDeliveryStatuses(deliveryStatusList);
         }
         if (StringUtils.isNotBlank(phoneNumber)) {
-            criteria.withPhoneNumber(phoneNumber+"*");
+            criteria.withPhoneNumber(phoneNumber + "*");
         }
         if (StringUtils.isNotBlank(messageContent)) {
             criteria.withMessageContent(messageContent + "*");
@@ -132,10 +132,10 @@ public class GridSettings {
 
     private Set<SMSType> getSmsTypeFromSettings() {
         Set<SMSType> smsTypes = new HashSet<>();
-        String[] smsTypeList = this.smsType.split(",");
-        for (String smsType : smsTypeList) {
-            if (!smsType.isEmpty()) {
-                smsTypes.add(SMSType.valueOf(smsType));
+        String[] smsTypeList = smsType.split(",");
+        for (String type : smsTypeList) {
+            if (!type.isEmpty()) {
+                smsTypes.add(SMSType.valueOf(type));
             }
         }
         return smsTypes;
@@ -143,7 +143,7 @@ public class GridSettings {
 
     private Set<DeliveryStatus> getDeliveryStatusFromSettings() {
         Set<DeliveryStatus> statusList = new HashSet<>();
-        String[] statuses = this.deliveryStatus.split(",");
+        String[] statuses = deliveryStatus.split(",");
         for (String status : statuses) {
             if (!status.isEmpty()) {
                 statusList.add(DeliveryStatus.valueOf(status));

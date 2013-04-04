@@ -1,7 +1,7 @@
 package org.motechproject.sms.api.service;
 
 import org.motechproject.sms.api.domain.SmsRecord;
-import org.motechproject.sms.api.web.SmsRecords;
+import org.motechproject.sms.api.domain.SmsRecords;
 
 import java.util.List;
 

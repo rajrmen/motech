@@ -8,15 +8,13 @@ import org.motechproject.sms.api.DeliveryStatus;
 import org.motechproject.sms.api.SMSType;
 import org.motechproject.sms.api.domain.SmsRecord;
 import org.motechproject.sms.api.repository.AllSmsRecords;
-import org.motechproject.sms.api.web.SmsRecords;
+import org.motechproject.sms.api.domain.SmsRecords;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import static junit.framework.Assert.assertEquals;
