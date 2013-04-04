@@ -26,8 +26,8 @@
         <div class="span6">
             <fieldset class="inside"><legend>{{msg('sms.logging.messageTime')}}</legend>
                 <div class="control-group form-inline">
-                    <input type="datetime" class="input-large search-query" placeholder="{{msg('sms.logging.from')}}" data-event-type="keyup" data-search-field="timeFrom" jqgrid-search="resourceTable">
-                    <input type="datetime" class="input-large search-query" placeholder="{{msg('sms.logging.to')}}" data-event-type="keyup" data-search-field="timeTo" jqgrid-search="resourceTable">
+                    <input id="dateTimeFrom" type="datetime" class="input-large search-query" placeholder="{{msg('sms.logging.from')}}" data-event-type="change" data-search-field="timeFrom" jqgrid-search="resourceTable">
+                    <input id="dateTimeTo" type="datetime" class="input-large search-query" placeholder="{{msg('sms.logging.to')}}" data-event-type="change" data-search-field="timeTo" jqgrid-search="resourceTable">
                 </div>
             </fieldset>
         </div>

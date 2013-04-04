@@ -2,12 +2,18 @@ package org.motechproject.sms.api.web;
 
 import org.motechproject.sms.api.domain.SmsRecord;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class SmsRecords {
 
     private int count;
     private List<SmsRecord> records;
+
+    public SmsRecords() {
+        this.count = 0;
+        this.records = new ArrayList<>();
+    }
 
     public SmsRecords(int count, List<SmsRecord> records) {
         this.count = count;
@@ -22,4 +28,11 @@ public class SmsRecords {
         return records;
     }
 
+    public void setCount(int count) {
+        this.count = count;
+    }
+
+    public void setRecords(List<SmsRecord> records) {
+        this.records = records;
+    }
 }

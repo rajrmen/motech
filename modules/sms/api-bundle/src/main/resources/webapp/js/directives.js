@@ -5,92 +5,95 @@
 
     var widgetModule = angular.module('motech-sms');
 
-   widgetModule.directive('jqgridSearch', function () {
-           return {
-               restrict: 'A',
-               link: function (scope, element, attrs) {
-                   var elem = angular.element(element),
-                       table = angular.element('#' + attrs.jqgridSearch),
-                       eventType = elem.data('event-type'),
-                       filter = function (time) {
-                           var field = elem.data('search-field'),
-                               value = elem.data('search-value'),
-                               type = elem.data('field-type') || 'string',
-                               url = parseUri(table.jqGrid('getGridParam', 'url')),
-                               query = {},
-                               params = '?',
-                               array = [],
-                               prop;
+    widgetModule.directive('jqgridSearch', function () {
+        return {
+            restrict: 'A',
+            link: function (scope, element, attrs) {
+                var elem = angular.element(element),
+                    table = angular.element('#' + attrs.jqgridSearch),
+                    eventType = elem.data('event-type'),
+                    filter = function (time) {
+                        var field = elem.data('search-field'),
+                            value = elem.data('search-value'),
+                            type = elem.data('field-type') || 'string',
+                            url = parseUri(table.jqGrid('getGridParam', 'url')),
+                            query = {},
+                            params = '?',
+                            array = [],
+                            prop;
 
-                           // copy existing url parameters
-                           for (prop in url.queryKey) {
-                               if (prop !== field) {
-                                   query[prop] = url.queryKey[prop];
-                               }
-                           }
+                        // copy existing url parameters
+                        for (prop in url.queryKey) {
+                            if (prop !== field) {
+                                query[prop] = url.queryKey[prop];
+                            }
+                        }
 
-                           // set parameter for given element
-                           switch (type) {
-                           case 'boolean':
-                               query[field] = url.queryKey[field].toLowerCase() !== 'true';
+                        // set parameter for given element
+                        switch (type) {
+                        case 'boolean':
+                            query[field] = url.queryKey[field].toLowerCase() !== 'true';
 
-                               if (query[field]) {
-                                   elem.find('i').removeClass('icon-ban-circle').addClass('icon-ok');
-                               } else {
-                                   elem.find('i').removeClass('icon-ok').addClass('icon-ban-circle');
-                               }
-                               break;
-                           case 'array':
-                               if (elem.children().hasClass("icon-ok")) {
-                                   elem.children().removeClass("icon-ok").addClass("icon-ban-circle");
-                               } else if (elem.children().hasClass("icon-ban-circle")) {
-                                   elem.children().removeClass("icon-ban-circle").addClass("icon-ok");
-                                   array.push(value);
-                               }
-                               angular.forEach(url.queryKey[field].split(','), function (val) {
-                                   if (angular.element('#' + val).children().hasClass("icon-ok")) {
-                                       array.push(val);
-                                   }
-                               });
+                            if (query[field]) {
+                                elem.find('i').removeClass('icon-ban-circle').addClass('icon-ok');
+                            } else {
+                                elem.find('i').removeClass('icon-ok').addClass('icon-ban-circle');
+                            }
+                            break;
+                        case 'array':
+                            if (elem.children().hasClass("icon-ok")) {
+                                elem.children().removeClass("icon-ok").addClass("icon-ban-circle");
+                            } else if (elem.children().hasClass("icon-ban-circle")) {
+                                elem.children().removeClass("icon-ban-circle").addClass("icon-ok");
+                                array.push(value);
+                            }
+                            angular.forEach(url.queryKey[field].split(','), function (val) {
+                                if (angular.element('#' + val).children().hasClass("icon-ok")) {
+                                    array.push(val);
+                                }
+                            });
 
-                               query[field] = array.join(',');
-                               break;
-                           default:
-                               query[field] = elem.val();
-                           }
+                            query[field] = array.join(',');
+                            break;
+                        default:
+                            query[field] = elem.val();
+                        }
 
-                           // create raw parameters
-                           for (prop in query) {
-                               params += prop + '=' + query[prop] + '&';
-                           }
+                        // create raw parameters
+                        for (prop in query) {
+                            params += prop + '=' + query[prop] + '&';
+                        }
 
-                           // remove last '&'
-                           params = params.slice(0, params.length - 1);
+                        // remove last '&'
+                        params = params.slice(0, params.length - 1);
 
-                           if (timeoutHnd) {
-                               clearTimeout(timeoutHnd);
-                           }
+                        if (timeoutHnd) {
+                            clearTimeout(timeoutHnd);
+                        }
 
-                           timeoutHnd = setTimeout(function () {
-                               jQuery('#' + attrs.jqgridSearch).jqGrid('setGridParam', {
-                                   url: '../smsapi/smslogging' + params
-                               }).trigger('reloadGrid');
-                           }, time || 0);
-                       },
-                       timeoutHnd;
+                        timeoutHnd = setTimeout(function () {
+                            jQuery('#' + attrs.jqgridSearch).jqGrid('setGridParam', {
+                                url: '../smsapi/smslogging' + params
+                            }).trigger('reloadGrid');
+                        }, time || 0);
+                    },
+                    timeoutHnd;
 
-                   switch (eventType) {
-                   case 'keyup':
-                       elem.keyup(function () {
-                           filter(500);
-                       });
-                       break;
-                   default:
-                       elem.click(filter);
-                   }
-               }
-           };
-       });
+                switch (eventType) {
+                case 'keyup':
+                    elem.keyup(function () {
+                        filter(500);
+                    });
+                    break;
+                case 'change':
+                    elem.change(filter);
+                    break;
+                default:
+                    elem.click(filter);
+                }
+            }
+        };
+    });
 
     widgetModule.directive('loggingGrid', function ($compile, $http, $templateCache) {
         return {
@@ -164,6 +167,25 @@
                             $('table', this).width('100%');
                             $(this).find('#resourceTable').width('100%');
                             $(this).find('table').width('100%');
+                       });
+
+                       var startDateTextBox = angular.element('#dateTimeFrom');
+                       var endDateTextBox = angular.element('#dateTimeTo');
+
+                       startDateTextBox.datetimepicker({
+                           dateFormat: "yy-mm-dd",
+                           timeFormat: "hh:mm:ss",
+                           onSelect: function (selectedDateTime){
+                               endDateTextBox.datetimepicker('option', 'minDate', startDateTextBox.datetimepicker('getDate') );
+                           }
+                       });
+
+                       endDateTextBox.datetimepicker({
+                           dateFormat: "yy-mm-dd",
+                           timeFormat: "hh:mm:ss",
+                           onSelect: function (selectedDateTime){
+                               startDateTextBox.datetimepicker('option', 'maxDate', endDateTextBox.datetimepicker('getDate') );
+                           }
                        });
                     }
                 });

@@ -18,9 +18,11 @@ public class SMSLoggingController {
     @RequestMapping(value = "/smslogging", method = RequestMethod.GET)
     @ResponseBody
     public SmsLoggingRecords getSmsRecords(GridSettings settings) {
+        SmsRecords smsRecords = new SmsRecords();
         SmsRecordSearchCriteria criteria = settings.toSmsRecordSearchCriteria();
-        SmsRecords smsRecords = smsAuditService.findAllSmsRecords(criteria);
-
+        if (!criteria.getSmsTypes().isEmpty() && !criteria.getDeliveryStatuses().isEmpty()) {
+            smsRecords = smsAuditService.findAllSmsRecords(criteria);
+        }
         return new SmsLoggingRecords(settings.getPage(), settings.getRows(), smsRecords);
     }
 

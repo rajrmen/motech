@@ -2,6 +2,8 @@ package org.motechproject.sms.api.web;
 
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.motechproject.commons.api.Range;
 import org.motechproject.commons.couchdb.query.QueryParam;
 import org.motechproject.sms.api.DeliveryStatus;
@@ -153,13 +155,14 @@ public class GridSettings {
     private Range<DateTime> createRangeFromSettings() {
         DateTime from;
         DateTime to;
+        DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
         if (StringUtils.isNotBlank(timeFrom)) {
-             from = DateTime.parse(timeFrom);
+             from = formatter.parseDateTime(timeFrom);
         } else {
             from = new DateTime(0);
         }
         if (StringUtils.isNotBlank(timeTo)) {
-            to = DateTime.parse(timeTo);
+            to = formatter.parseDateTime(timeTo);
         } else {
             to = DateTime.now();
         }
