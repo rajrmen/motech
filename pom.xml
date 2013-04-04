@@ -1182,8 +1182,6 @@
         <!-- OSGI modules -->
         <module>platform/server-bundle</module>
         <module>modules/admin/admin-bundle</module>
-        <module>modules/alerts/api-bundle</module>
-        <module>modules/appointments/api-bundle</module>
         <module>modules/cmslite/api-bundle</module>
         <module>modules/commcare/api-bundle</module>
         <module>modules/demo/demo-bundle</module>
@@ -1197,16 +1195,13 @@
         <module>modules/message-campaign/message-campaign-bundle</module>
         <module>modules/mobileforms/api-bundle</module>
         <module>modules/mrs/api-bundle</module>
-        <module>modules/couchmrs/mrs-couchdb-bundle</module>
         <module>modules/openmrs/api-bundle</module>
         <module>modules/openmrs/atomfeed-bundle</module>
         <module>modules/openmrs/ws-bundle</module>
         <module>modules/openmrs/domain-bundle</module>
         <module>modules/outbox/outbox-bundle</module>
-        <module>modules/pillreminder/api-bundle</module>
         <module>modules/rules/api-bundle</module>
         <module>modules/scheduler/scheduler-bundle</module>
-        <module>modules/scheduletracking/api-bundle</module>
         <module>modules/sms/api-bundle</module>
         <module>modules/sms/http-bundle</module>
         <module>modules/sms/smpp-bundle</module>
@@ -1222,6 +1217,24 @@
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>properties-maven-plugin</artifactId>
+                <version>1.0-alpha-2</version>
+                <executions>
+                    <execution>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>read-project-properties</goal>
+                        </goals>
+                        <configuration>
+                            <files>
+                                <file>${modules.root.dir}/maven.properties</file>
+                            </files>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
@@ -1408,6 +1421,7 @@
                                         <exclude>**/**/*BundleIT.java</exclude>
                                     </excludes>
                                     <summaryFile>target/failsafe-reports/failsafe-summary-it.xml</summaryFile>
+                                    <systemPropertiesFile>${modules.root.dir}/maven.properties</systemPropertiesFile>
                                 </configuration>
                             </execution>
                             <execution>
@@ -1422,6 +1436,7 @@
                                     </includes>
                                     <summaryFile>target/failsafe-reports/failsafe-summary-it-osgi.xml</summaryFile>
                                     <forkMode>always</forkMode>
+                                    <systemPropertiesFile>${modules.root.dir}/maven.properties</systemPropertiesFile>
                                 </configuration>
                             </execution>
                             <execution>

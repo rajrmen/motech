@@ -97,16 +97,16 @@ function BundleListCtrl($scope, Bundle, i18nService, $routeParams, $http) {
     $scope.modules = {
         'org.motechproject:motech-demo-bundle:[0,)':'Demo',
         'org.motechproject:motech-message-campaign-bundle:[0,)':'Message campaign',
-        'org.motechproject:motech-scheduletracking-api-bundle:[0,)':'Schedule Tracking',
-        'org.motechproject:motech-alerts-api-bundle:[0,)':'Alerts',
-        'org.motechproject:motech-appointments-api-bundle:[0,)':'Appointments',
+        'org.motechproject:motech-scheduletracking-api:[0,)':'Schedule Tracking',
+        'org.motechproject:motech-alerts-api:[0,)':'Alerts',
+        'org.motechproject:motech-appointments-api:[0,)':'Appointments',
         'org.motechproject:motech-cmslite-api-bundle:[0,)':'CMS Lite',
         'org.motechproject:motech-commcare-api-bundle:[0,)':'Commcare',
         'org.motechproject:motech-callflow:[0,)':'Call Flow',
         'org.motechproject:motech-event-aggregation-bundle:[0,)':'Event aggregation',
         'org.motechproject:motech-event-logging-bundle:[0,)':'Event logging',
         'org.motechproject:motech-tasks-bundle:[0,)':'Tasks',
-        'org.motechproject:motech-pillreminder-api-bundle:[0,)':'Pill reminder',
+        'org.motechproject:motech-pillreminder-api:[0,)':'Pill reminder',
         'org.motechproject:motech-outbox-bundle:[0,)':'Outbox'
     };
 
