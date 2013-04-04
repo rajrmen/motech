@@ -141,6 +141,10 @@
                         name: 'messageContent',
                         index: 'messageContent',
                         sortable: false
+                    }, {
+                        name: 'eventData',
+                        index: 'eventData',
+                        hidden: true
                     }],
                     pager: '#' + attrs.loggingGrid,
                     width: '100%',
@@ -149,6 +153,22 @@
                     sortorder: 'asc',
                     viewrecords: true,
                     toolbar: [true,'top'],
+                    subGrid: true,
+                    subGridRowExpanded: function(subgrid_id, row_id) {
+                            var rowData = $(this).getRowData(row_id).eventData.split(",")
+                            var subgrid_table_id, pager_id; subgrid_table_id = subgrid_id+"_t";
+                            pager_id = "p_"+subgrid_table_id;
+                            var eventData = $('<ul></ul>');
+                            for (var i = 0; i < rowData.length; i++) {
+                                if (rowData[i].length !== 0) {
+                                    eventData.append("<li>" + rowData[i] + "</li>");
+                                } else {
+                                    eventData.append("<li>" + scope.msg("sms.logging.event")+ "</li>")
+                                }
+                            }
+                            $("#"+subgrid_id).html(eventData.html());
+
+                        },
                     gridComplete: function () {
                         angular.forEach(['phoneNumber', 'deliveryStatus', 'messageTime', 'smsType', 'messageContent'], function (value) {
                             elem.jqGrid('setLabel', value, scope.msg('sms.logging.' + value));
