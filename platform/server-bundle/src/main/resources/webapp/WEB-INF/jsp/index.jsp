@@ -2,7 +2,6 @@
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <fmt:setLocale value="${pageLang}" />
 <fmt:setBundle basename="org.motechproject.resources.messages" var="bundle"/>
@@ -178,9 +177,7 @@
                     <c:if test="${not empty links}">
                         <li class="nav-header"><fmt:message key="modules" bundle="${bundle}"/></li>
                         <c:forEach var="module" items="${links}">
-                            <sec:authorize access="hasRole('manageCampaigns')">
-                                <li <c:if test="${module.moduleName == currentModule.moduleName}">class='active'</c:if>><a href="?moduleName=${module.moduleName}"><fmt:message key="${module.moduleName}" bundle="${bundle}"/></a></li>
-                            </sec:authorize>
+                            <li <c:if test="${module.moduleName == currentModule.moduleName}">class='active'</c:if>><a href="?moduleName=${module.moduleName}"><fmt:message key="${module.moduleName}" bundle="${bundle}"/></a></li>
                         </c:forEach>
                     </c:if>
                 </ul>

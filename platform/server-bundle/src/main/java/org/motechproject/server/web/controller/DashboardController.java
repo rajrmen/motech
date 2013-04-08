@@ -8,11 +8,12 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.PeriodFormatter;
 import org.joda.time.format.PeriodFormatterBuilder;
+import org.motechproject.osgi.web.ModuleRegistrationData;
+import org.motechproject.osgi.web.UIFrameworkService;
+import org.motechproject.security.service.MotechUserService;
 import org.motechproject.server.startup.MotechPlatformState;
 import org.motechproject.server.startup.StartupManager;
 import org.motechproject.server.ui.LocaleSettings;
-import org.motechproject.osgi.web.ModuleRegistrationData;
-import org.motechproject.osgi.web.UIFrameworkService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
@@ -25,7 +26,9 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -46,8 +49,11 @@ public class DashboardController {
     @Autowired
     private MessageSource messageSource;
 
+    @Autowired
+    private MotechUserService userService;
 
-    @RequestMapping({"/index", "/", "/home" })
+
+    @RequestMapping({"/index", "/", "/home"})
     public ModelAndView index(@RequestParam(required = false) String moduleName, final HttpServletRequest request) {
 
         ModelAndView mav = null;
@@ -72,8 +78,13 @@ public class DashboardController {
             mav.addObject("uptime", getUptime(request));
 
             Map<String, Collection<ModuleRegistrationData>> modules = uiFrameworkService.getRegisteredModules();
+
             mav.addObject(MODULES_WITH_SUBMENU, modules.get(MODULES_WITH_SUBMENU));
-            mav.addObject(MODULES_WITHOUT_SUBMENU, modules.get(MODULES_WITHOUT_SUBMENU));
+
+
+            List<ModuleRegistrationData> allowedModules = filterPermittedModules(request, modules);
+
+            mav.addObject(MODULES_WITHOUT_SUBMENU, allowedModules);
 
             if (moduleName != null) {
                 ModuleRegistrationData currentModule = uiFrameworkService.getModuleData(moduleName);
@@ -86,6 +97,18 @@ public class DashboardController {
         }
 
         return mav;
+    }
+
+    private List<ModuleRegistrationData> filterPermittedModules(HttpServletRequest request, Map<String, Collection<ModuleRegistrationData>> modules) {
+        Collection<ModuleRegistrationData> modulesWithoutSubmenu = modules.get(MODULES_WITHOUT_SUBMENU);
+        List<ModuleRegistrationData> allowedModules = new ArrayList<>();
+
+        for (ModuleRegistrationData registrationData : modulesWithoutSubmenu) {
+            if (userService.getUser(request.getUserPrincipal().getName()).getRoles().contains(registrationData.getRoleForAccess())) {
+                allowedModules.add(registrationData);
+            }
+        }
+        return allowedModules;
     }
 
     @RequestMapping(value = "/gettime", method = RequestMethod.POST)
@@ -104,7 +127,7 @@ public class DashboardController {
         PeriodFormatter formatter = new PeriodFormatterBuilder()
                 .appendDays()
                 .appendSuffix(" " + messageSource.getMessage("day", null, locale), " " + messageSource.getMessage("days", null, locale))
-                .appendSeparator(" " + messageSource.getMessage("and", null, locale)+" ")
+                .appendSeparator(" " + messageSource.getMessage("and", null, locale) + " ")
                 .appendHours()
                 .appendSuffix(" " + messageSource.getMessage("hour", null, locale), " " + messageSource.getMessage("hours", null, locale))
                 .appendSeparator(" " + messageSource.getMessage("and", null, locale) + " ")
