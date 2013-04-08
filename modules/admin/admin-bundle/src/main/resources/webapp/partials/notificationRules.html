@@ -1,0 +1,37 @@
+<div class="well2">
+    {{notificationRuleDto.notificationRules}}
+    <div class="box-header">{{msg('messages.notifications.title')}}
+        <a href="#/messages" class="btn btn-primary btn-in-header pull-right">
+            {{msg('back')}}
+        </a>
+    </div>
+    <div class="box-content inside">
+        <ng-form id="notificationRulesForm" name="rulesForm" class="form-horizontal" novalidate>
+            <div class="form-inline" ng-repeat="rule in notificationRuleDto.notificationRules">
+                <label>{{msg('messages.notifications.actionType')}}</label>
+
+                <div class="btn-group">
+                    <a class="btn dropdown-toggle spn1" data-toggle="dropdown" href="#">
+                        {{msg('messages.notifications.' + rule.actionType)}}
+                        <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li ng-repeat="available in ['SMS', 'EMAIL']">
+                            <a ui-if="rule.actionType == available"><i class="icon-ok-sign"></i>{{msg('messages.notifications.' + available)}}</a>
+                            <a ui-if="rule.actionType != available" ng-click="changeRuleActionType(rule, available)"><i></i>{{msg('messages.notifications.' + available)}}</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="control-group inline" ng-class="{error: !rule.recipient}">
+                    <label>{{msg('messages.notifications.recipient')}}</label>
+                    <input ng-model="rule.recipient" type="text" value="" />
+                </div>
+
+                <a ng-click="removeRule(rule)" class="btn btn-small btn-danger"><i class="icon-remove icon-white"></i></a>
+            </div>
+            <button class="btn btn-primary" type="button" ng-click="save()">{{msg('save')}}</button>
+            <button class="btn btn-success" ng-click="newRule()"><i class="icon-plus icon-white"></i>{{msg('messages.notifications.newRule')}}</button>
+        </ng-form>
+    </div>
+</div>

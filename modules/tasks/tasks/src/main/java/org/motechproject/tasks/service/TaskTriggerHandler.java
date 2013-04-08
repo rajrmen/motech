@@ -358,6 +358,8 @@ public class TaskTriggerHandler {
             taskService.save(task);
             activityService.addWarning(task);
         }
+
+        publishTaskDisabledMessage();
     }
 
     private String manipulateValue(String value, List<String> manipulations, Task task) throws TaskTriggerException {
@@ -431,6 +433,17 @@ public class TaskTriggerHandler {
         param.put(EventKeys.TASK_FAIL_TASK_ID, task.getId());
         param.put(EventKeys.TASK_FAIL_TASK_NAME, task.getName());
         return param;
+    }
+
+    private void publishTaskDisabledMessage() {
+        Map<String, Object> params = new HashMap<>();
+        params.put("message", "TEST MESSAGE");
+        params.put("level", "CRITICAL");
+        params.put("moduleName", "tasks");
+
+        MotechEvent motechEvent = new MotechEvent("org.motechproject.message", params);
+
+        eventRelay.sendEventMessage(motechEvent);
     }
 
     @Autowired(required = false)

@@ -66,6 +66,26 @@ public class UIFrameworkServiceTest {
 
     }
 
+    @Test
+    public void shouldSetAndUnsetAttentionNeededFlag() {
+        UIFrameworkServiceImpl uiFrameworkService = new UIFrameworkServiceImpl();
+        ModuleRegistrationData testModule = new ModuleRegistrationData("test-module", "http://goo.gl");
+        uiFrameworkService.registerModule(testModule);
+
+        uiFrameworkService.moduleNeedsAttention("test-module");
+        Assert.assertTrue(uiFrameworkService.getModuleData("test-module").isNeedsAttention());
+
+        uiFrameworkService.moduleBackToNormal("test-module");
+        Assert.assertFalse(uiFrameworkService.getModuleData("test-module").isNeedsAttention());
+    }
+
+    @Test
+    public void shouldIgnoreNonExistentModules() {
+        UIFrameworkServiceImpl uiFrameworkService = new UIFrameworkServiceImpl();
+        uiFrameworkService.moduleNeedsAttention("nonexistent");
+        uiFrameworkService.moduleBackToNormal("nonexistent");
+    }
+
     private ModuleRegistrationData moduleRegistration() {
         ModuleRegistrationData registration = new ModuleRegistrationData();
         registration.setModuleName("demo");

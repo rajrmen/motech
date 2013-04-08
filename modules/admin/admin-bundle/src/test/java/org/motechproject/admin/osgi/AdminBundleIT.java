@@ -41,6 +41,7 @@ public class AdminBundleIT extends BaseOsgiIT {
     private static final String ERROR_MSG = "test-error";
     private static final String DEBUG_MSG = "test-debug";
     private static final String WARNING_MSG = "test-warn";
+    private static final String MODULE_NAME = "test-module";
     private static final DateTime TIMEOUT = DateTime.now().plusHours(1);
 
     private HttpClient httpClient = new DefaultHttpClient();
@@ -55,9 +56,9 @@ public class AdminBundleIT extends BaseOsgiIT {
     public void testStatusMessageService() {
         StatusMessageService service = (StatusMessageService) assertServicePresent(StatusMessageService.class);
 
-        service.error(ERROR_MSG, TIMEOUT);
-        service.warn(WARNING_MSG, TIMEOUT);
-        service.debug(DEBUG_MSG, TIMEOUT);
+        service.error(ERROR_MSG, MODULE_NAME, TIMEOUT);
+        service.warn(WARNING_MSG, MODULE_NAME, TIMEOUT);
+        service.debug(DEBUG_MSG, MODULE_NAME, TIMEOUT);
 
         List<StatusMessage> messages = service.getActiveMessages();
         messages = Lambda.filter(having(on(StatusMessage.class).getTimeout(), equalTo(TIMEOUT)), messages);
@@ -92,7 +93,7 @@ public class AdminBundleIT extends BaseOsgiIT {
 
     public void testMessageController() throws IOException {
         StatusMessageService service = (StatusMessageService) assertServicePresent(StatusMessageService.class);
-        service.error(ERROR_MSG, TIMEOUT);
+        service.error(ERROR_MSG, MODULE_NAME, TIMEOUT);
 
         final String response = apiGet("messages");
 

@@ -79,6 +79,7 @@ public class DashboardController {
                 ModuleRegistrationData currentModule = uiFrameworkService.getModuleData(moduleName);
                 if (currentModule != null) {
                     mav.addObject("currentModule", currentModule);
+                    uiFrameworkService.moduleBackToNormal(moduleName);
                 }
             }
 

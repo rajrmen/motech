@@ -17,4 +17,12 @@ public interface UIFrameworkService {
     ModuleRegistrationData getModuleData(String moduleName);
 
     boolean isModuleRegistered(String moduleName);
+
+    void moduleNeedsAttention(String moduleName);
+
+    void moduleBackToNormal(String moduleName);
+
+    void moduleNeedsAttention(String moduleName, String submenu);
+
+    void moduleBackToNormal(String moduleName, String submenu);
 }

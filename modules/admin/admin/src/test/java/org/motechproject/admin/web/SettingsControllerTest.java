@@ -4,6 +4,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.motechproject.admin.domain.NotificationRule;
+import org.motechproject.admin.messages.ActionType;
+import org.motechproject.admin.repository.AllNotificationRules;
 import org.motechproject.admin.service.SettingsService;
 import org.motechproject.admin.service.StatusMessageService;
 import org.motechproject.admin.settings.Settings;
@@ -15,10 +18,10 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.AbstractMap;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Mockito.verify;
@@ -48,6 +51,9 @@ public class SettingsControllerTest {
 
     @Mock
     Settings platformSettings;
+
+    @Mock
+    AllNotificationRules allNotificationRules;
 
     @InjectMocks
     SettingsController controller = new SettingsController();
@@ -94,7 +100,7 @@ public class SettingsControllerTest {
         pSettingsList.add(platformSettings);
 
         when(settingsService.getSettings()).thenReturn(pSettingsList);
-        when(platformSettings.getSettings()).thenReturn(Arrays.asList(option));
+        when(platformSettings.getSettings()).thenReturn(asList(option));
 
         List<Settings> result = controller.getPlatformSettings();
 
@@ -103,5 +109,19 @@ public class SettingsControllerTest {
         assertEquals(option.getType(), result.get(0).getSettings().get(0).getType());
 
         verify(settingsService).getSettings();
+    }
+
+    @Test
+    public void shouldReturnAllNotificationRules() {
+        NotificationRule notificationRule = new NotificationRule();
+        notificationRule.setRecipient("recipient1");
+        notificationRule.setActionType(ActionType.EMAIL);
+
+        NotificationRule notificationRule2 = new NotificationRule();
+        notificationRule2.setRecipient("recipient2");
+        notificationRule2.setActionType(ActionType.SMS);
+
+        when(allNotificationRules.getAll()).thenReturn(asList(notificationRule, notificationRule2));
+
     }
 }

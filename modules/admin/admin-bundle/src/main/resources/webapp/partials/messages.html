@@ -1,8 +1,9 @@
 <div class="well2">
     <div class="box-header">
         {{msg('messages.title')}}
-        <a ng-click="refresh()"><img src="../admin/img/refresh.png" title="{{msg('refresh')}}" alt="{{msg('refresh')}}"/></a>
+        <a htef="#" ng-click="refresh()"><img src="../admin/img/refresh.png" title="{{msg('refresh')}}" alt="{{msg('refresh')}}"/></a>
     </div>
+    <a href="#/notificationRules">{{msg('messages.notifications.title')}}</a>
     <div class="box-content inside">
         <span ng-show="messages.length < 1"><p>{{msg('messages.empty')}}</p></span>
 
@@ -10,8 +11,9 @@
                 <div class="status-message">
                     <a ng-click="remove(message)"><img alt="{{msg('delete')}}" title="{{msg('remove')}}"
                                                        src="../admin/img/delete.png"/></a>
-                    <span class="msg-date">{{printDate(message.date) | date:'medium'}}</span> <span
-                        class="msg-level">[{{message.level}}]</span>: {{printText(message.text)}}
+                    <span class="msg-date">{{printDate(message.date) | date:'medium'}}</span>
+                    <span class="msg-level">[{{message.moduleName}}]</span>
+                    <span class="msg-level">[{{message.level}}]</span>: {{printText(message.text)}}
                 </div>
             </div>
         </div>

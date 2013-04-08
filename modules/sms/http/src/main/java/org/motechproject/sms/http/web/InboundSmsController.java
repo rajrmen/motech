@@ -7,8 +7,10 @@ import org.motechproject.sms.api.constants.EventSubjects;
 import org.motechproject.sms.http.TemplateReader;
 import org.motechproject.sms.http.template.SmsHttpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
@@ -27,6 +29,7 @@ public class InboundSmsController {
     }
 
     @RequestMapping(value = "inbound")
+    @ResponseStatus(HttpStatus.OK)
     public void handle(HttpServletRequest request) {
         HashMap<String, Object> payload = new HashMap<String, Object>();
         payload.put(EventDataKeys.SENDER, request.getParameter(template.getIncoming().getSenderKey()));

@@ -869,3 +869,7 @@ select {
     margin: 0;
     padding: 0;
 }
+
+.control-group.inline {
+    display: inline-block;
+}

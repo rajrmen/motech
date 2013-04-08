@@ -10,9 +10,10 @@ public class ModuleRegistrationData {
     private String moduleName;
     private String url;
     private String header;
+    private boolean needsAttention;
 
     private List<String> angularModules = new ArrayList<>();
-    private Map<String, String> subMenu = new HashMap<>();
+    private Map<String, SubmenuInfo> subMenu = new HashMap<>();
     private Map<String, String> i18n = new HashMap<>();
 
     public ModuleRegistrationData() {
@@ -46,7 +47,7 @@ public class ModuleRegistrationData {
     }
 
     public void addSubMenu(String url, String label) {
-        subMenu.put(label, url);
+        subMenu.put(label, new SubmenuInfo(url));
     }
 
     public void addI18N(String fileName, String fileLocation) {
@@ -73,11 +74,11 @@ public class ModuleRegistrationData {
         return angularModules;
     }
 
-    public Map<String, String> getSubMenu() {
+    public Map<String, SubmenuInfo> getSubMenu() {
         return subMenu;
     }
 
-    public void setSubMenu(Map<String, String> subMenu) {
+    public void setSubMenu(Map<String, SubmenuInfo> subMenu) {
         this.subMenu = subMenu;
     }
 
@@ -91,6 +92,14 @@ public class ModuleRegistrationData {
 
     public void setHeader(String header) {
         this.header = header;
+    }
+
+    public boolean isNeedsAttention() {
+        return needsAttention;
+    }
+
+    public void setNeedsAttention(boolean needsAttention) {
+        this.needsAttention = needsAttention;
     }
 
     public String getAngularModulesStr() {
@@ -107,6 +116,20 @@ public class ModuleRegistrationData {
         sb.append("]");
 
         return sb.toString();
+    }
+
+    public void subMenuNeedsAttention(String submenu) {
+        SubmenuInfo submenuInfo = subMenu.get(submenu);
+        if (submenuInfo != null) {
+            submenuInfo.setNeedsAttention(true);
+        }
+    }
+
+    public void submenuBackToNormal(String submenu) {
+        SubmenuInfo submenuInfo = subMenu.get(submenu);
+        if (submenuInfo != null) {
+            submenuInfo.setNeedsAttention(false);
+        }
     }
 
     @Override
