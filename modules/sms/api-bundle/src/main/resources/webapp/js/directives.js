@@ -100,17 +100,9 @@
             restrict: 'A',
             link: function (scope, element, attrs) {
                 var elem = angular.element(element);
-                var filters,
-                loader;
-
-                loader = $http.get('../sms/resource/partials/smsloggingfilters.html', {cache: $templateCache})
-                    .success(function (html) {
-                        filters = html;
-                        $('#t_resourceTable').append($compile(filters)(scope));
-                });
+                var filters;
 
                 elem.jqGrid({
-                    caption: 'SMS Logging',
                     url: '../smsapi/smslogging?phoneNumber=&messageContent=&timeFrom=&timeTo=&deliveryStatus=INPROGRESS,DELIVERED,KEEPTRYING,ABORTED,UNKNOWN&smsType=INBOUND,OUTBOUND',
                     datatype: 'json',
                     jsonReader:{
@@ -123,8 +115,8 @@
                     shrinkToFit: true,
                     autowidth: true,
                     rownumbers: true,
-                    rowNum: 5,
-                    rowList: [5, 20, 30],
+                    rowNum: 10,
+                    rowList: [10, 20, 50],
                     colModel: [{
                         name: 'phoneNumber',
                         index: 'phoneNumber'
@@ -152,7 +144,6 @@
                     sortname: 'phoneNumber',
                     sortorder: 'asc',
                     viewrecords: true,
-                    toolbar: [true,'top'],
                     subGrid: true,
                     subGridRowExpanded: function(subgrid_id, row_id) {
                             var rowData = $(this).getRowData(row_id).eventData.split(",")
@@ -176,6 +167,8 @@
 
                         $('#outsideResourceTable').children('div').width('100%');
                         $('.ui-jqgrid-htable').addClass('table-lightblue');
+                        $('.ui-jqgrid-btable').addClass("table-lightblue");
+                        $('.ui-jqgrid-htable').addClass('table-lightblue');
                         $('.ui-jqgrid-bdiv').width('100%');
                         $('.ui-jqgrid-hdiv').width('100%');
                         $('.ui-jqgrid-hbox').width('100%');
@@ -194,6 +187,9 @@
 
                        startDateTextBox.datetimepicker({
                            dateFormat: "yy-mm-dd",
+                           changeMonth: true,
+                           changeYear: true,
+                           maxDate: +0,
                            timeFormat: "hh:mm:ss",
                            onSelect: function (selectedDateTime){
                                endDateTextBox.datetimepicker('option', 'minDate', startDateTextBox.datetimepicker('getDate') );
@@ -202,6 +198,9 @@
 
                        endDateTextBox.datetimepicker({
                            dateFormat: "yy-mm-dd",
+                           changeMonth: true,
+                           changeYear: true,
+                           maxDate: +0,
                            timeFormat: "hh:mm:ss",
                            onSelect: function (selectedDateTime){
                                startDateTextBox.datetimepicker('option', 'maxDate', endDateTextBox.datetimepicker('getDate') );

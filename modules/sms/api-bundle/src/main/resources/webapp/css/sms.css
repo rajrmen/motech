@@ -1,3 +1,18 @@
+.sms.tab-content {
+    padding-left: 0;
+}
+
+.sms.nav.nav-tabs {
+    border-bottom: none;
+    margin-left: 0;
+    margin-right: 10px;
+    margin-bottom: 0;
+}
+
+#operations-resource {
+    margin: 10px;
+}
+
 .css-form input.ng-invalid.ng-dirty {
     background-color: #FA787E;
 }
@@ -6,14 +21,108 @@
     background-color: #78FA89;
 }
 
+.sms .btn-group > .btn.active {
+    z-index: 1;
+}
+
+.sms .s-ico {
+    float: right;
+    margin-right: 2px;
+    display: block;
+    width: 20px;
+    height: 20px;
+    padding: 8px 2px;
+}
+
+.sms.tab-content {
+    padding-left: 0;
+}
+
+.sms.nav.nav-tabs {
+    border-bottom: none;
+    margin-left: 0;
+    margin-right: 10px;
+    margin-bottom: 0;
+}
+
+.sms fieldset {
+    border-top: 1px solid #B2D8F8;
+    border-radius: 0;
+}
+
+.sms legend  {
+    border: none;
+    color: #165384;
+    display: block;
+    font-size: 14px;
+    font-weight: normal;
+    line-height: 20px;
+    margin: 0 20px;
+    padding: 5px;
+    width: auto;
+}
+
+.sms legend + .control-group {
+    margin-top: 2px;
+}
+
+.sms .pointer {
+    cursor: pointer;
+}
+
+.sms .checkbox.inline {
+    display: inline-block;
+    padding-top: 5px;
+    margin-bottom: 0;
+    margin-right: 20px;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+.sms .checkbox.inline + .checkbox.inline {
+    margin-left: 0px;
+}
+
+#t_resourceTable {
+    min-height: 25px;
+    height: auto;
+    padding: 5px;
+}
+
+#t_resourceTable .control-group {
+    margin-bottom: 2px;
+}
+
+.ui-datepicker.ui-widget {
+    font-size: 0.9em;
+}
+
+.input-xlarge-fluid {
+    max-width: 470px;
+    min-width: 270px;
+    width: 66%;
+}
+
+/* -- override Jquery Grid -- */
+
 .ui-widget-header {
     background: #224477 url("../../../server/resources/img/navbar.jpg") repeat-x 0 0;
 }
 
-.count-characters {
-    border-top: 1px solid #eeeeee;
-    padding: 5px 20px 5px 0;
-    font-size:0.9em;
+.ui-jqgrid.ui-widget-content {
+    border-left: none;
+    border-right: none;
+    border-bottom: none;
+    border-radius: 0 0 4px 4px;
+    border-top: 1px solid #D4E1F9;
+}
+
+.ui-jqgrid .table-lightblue .ui-widget-content {
+    background: #E4F1F9;
+}
+
+.table-lightblue .ui-widget-content {
+    border: 1px solid #D4E1F9;
 }
 
 .ui-jqgrid .ui-jqgrid-htable.table-lightblue th {
@@ -32,25 +141,33 @@
             box-shadow: 0 0 2px #bec9de;
 }
 
-.ui-th-column {
-}
-
 .ui-jqgrid input.ui-pg-input {
     width: auto;
     height: 14px;
-    line-height: 15px;
+    line-height: 18px;
     padding: 1px 3px;
 }
 
 .ui-jqgrid select.ui-pg-selbox {
     width: auto;
     height: 18px;
-    line-height: 15px;
+    line-height: 18px;
     padding: 1px 3px;
 }
 
 .ui-jqgrid .ui-jqgrid-view {
-    font-size: 13px;
+    font-size: 1em;
+}
+
+.ui-jqgrid .ui-state-highlight,
+.ui-jqgrid .ui-widget-content .ui-state-highlight,
+.ui-jqgrid .ui-widget-header .ui-state-highlight {
+    border-color: #D4E1F9;
+    background: #EDF5F9;
+}
+
+.ui-jqgrid.ui-widget-content {
+    background: #E4F1F9;
 }
 
 .ui-jqgrid .ui-jqgrid-titlebar {
@@ -64,66 +181,30 @@
     line-height: 30px;
 }
 
-.s-ico {
-    float: right;
-    margin-right: 2px;
-    display: block;
-    width: 20px;
-    height: 20px;
-    padding: 8px 2px;
+.ui-jqgrid-btable .ui-widget-content ul {
+    margin: 0 0 0 10px;
+    color: #0088CC;
 }
 
-#t_resourceTable {
-    min-height: 25px;
-    height: auto;
-    padding: 5px;
+.ui-jqgrid-btable .ui-widget-content li {
+    line-height: 18px;
+    float: left;
+    margin: 0 15px;
 }
 
-#t_resourceTable .control-group {
-    margin-bottom: 2px;
+.ui-jqgrid-btable .ui-widget-content li a {
+    text-decoration: underline;
+    color: #0088CC;
 }
 
-.cms-lite.tab-content {
-    padding-left: 0;
+.ui-jqgrid-btable .ui-widget-content li a:hover {
+    text-decoration: none;
 }
 
-.cms-lite.nav.nav-tabs {
-    border-bottom: none;
-    margin-left: 0;
-    margin-right: 10px;
-    margin-bottom: 0;
+.ui-jqgrid tr.jqgrow td {
+    padding: 4px 6px;
 }
 
-.cms-lite .accordion-group {
-    border: 1px solid #B2D8F8;
-    background: #DEEEFF;
-}
-
-.cms-lite .accordion-inner {
-    border-top: 1px solid #B2D8F8;
-}
-
-fieldset {
-    border: 1px solid #B2D8F8;
-    border-radius: 6px;
-}
-
-legend  {
-    border: none;
-    color: #165384;
-    display: block;
-    font-size: 14px;
-    font-weight: normal;
-    line-height: 20px;
-    margin: 0 20px;
-    padding: 5px;
-    width: auto;
-}
-
-legend + .control-group {
-    margin-top: 2px;
-}
-
-#parentDiv {
-    display: block;
+.ui-jqgrid-labels > th {
+    border-right: 0 none;
 }
