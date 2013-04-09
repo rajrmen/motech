@@ -10,6 +10,7 @@ import org.joda.time.format.PeriodFormatter;
 import org.joda.time.format.PeriodFormatterBuilder;
 import org.motechproject.osgi.web.ModuleRegistrationData;
 import org.motechproject.osgi.web.UIFrameworkService;
+import org.motechproject.security.service.MotechRoleService;
 import org.motechproject.security.service.MotechUserService;
 import org.motechproject.server.startup.MotechPlatformState;
 import org.motechproject.server.startup.StartupManager;
@@ -52,6 +53,9 @@ public class DashboardController {
     @Autowired
     private MotechUserService userService;
 
+    @Autowired
+    private MotechRoleService roleService;
+
 
     @RequestMapping({"/index", "/", "/home"})
     public ModelAndView index(@RequestParam(required = false) String moduleName, final HttpServletRequest request) {
@@ -83,7 +87,6 @@ public class DashboardController {
 
 
             List<ModuleRegistrationData> allowedModules = filterPermittedModules(request, modules);
-
             mav.addObject(MODULES_WITHOUT_SUBMENU, allowedModules);
 
             if (moduleName != null) {
@@ -104,9 +107,23 @@ public class DashboardController {
         List<ModuleRegistrationData> allowedModules = new ArrayList<>();
 
         for (ModuleRegistrationData registrationData : modulesWithoutSubmenu) {
-            if (userService.getUser(request.getUserPrincipal().getName()).getRoles().contains(registrationData.getRoleForAccess())) {
+
+            List<String> userRoles = userService.getUser(request.getUserPrincipal().getName()).getRoles();
+            String requiredPermissionForAccess = registrationData.getRoleForAccess();
+
+            if (requiredPermissionForAccess == null) {
                 allowedModules.add(registrationData);
+            } else {
+
+                for (String userRole : userRoles) {
+                    boolean userHasPermission = roleService.getRole(userRole).getPermissionNames().contains(requiredPermissionForAccess);
+                    if (userHasPermission) {
+                        allowedModules.add(registrationData);
+                        break;
+                    }
+                }
             }
+
         }
         return allowedModules;
     }
