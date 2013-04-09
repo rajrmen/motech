@@ -42,15 +42,19 @@
         <constructor-arg name="header" ref="header"/>
     </bean>
 
-    <osgi:list id="patientAdapterList" interface="org.motechproject.mrs.services.PatientAdapter" cardinality="0..N">
+
+    <osgi:service id="mrsDataProviderOSGi" auto-export="interfaces" ref="mrsDataProvider"
+                  interface="org.motechproject.commons.api.DataProvider"/>
+
+    <osgi:list id="patientAdapterList" interface="org.motechproject.mrs.services.MRSPatientAdapter" cardinality="0..N">
         <osgi:reference-listener ref="mrsImplementationManager"/>
     </osgi:list>
 
-    <osgi:list id="personAdapterList" interface="org.motechproject.mrs.services.PersonAdapter" cardinality="0..N">
+    <osgi:list id="personAdapterList" interface="org.motechproject.mrs.services.MRSPersonAdapter" cardinality="0..N">
         <osgi:reference-listener ref="mrsImplementationManager"/>
     </osgi:list>
 
-    <osgi:list id="facilityAdapterList" interface="org.motechproject.mrs.services.FacilityAdapter" cardinality="0..N">
+    <osgi:list id="facilityAdapterList" interface="org.motechproject.mrs.services.MRSFacilityAdapter" cardinality="0..N">
         <osgi:reference-listener ref="mrsImplementationManager"/>
     </osgi:list>
 

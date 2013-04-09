@@ -1,6 +1,5 @@
 package org.motechproject.scheduler.osgi;
 
-import org.eclipse.gemini.blueprint.test.platform.Platforms;
 import org.motechproject.event.MotechEvent;
 import org.motechproject.event.listener.EventListener;
 import org.motechproject.event.listener.EventListenerRegistryService;

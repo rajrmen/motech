@@ -3,9 +3,9 @@ package org.motechproject.mrs.osgi;
 import org.motechproject.commons.api.DataProvider;
 import org.motechproject.event.listener.EventListenerRegistryService;
 import org.motechproject.mrs.MRSDataProvider;
-import org.motechproject.mrs.domain.Facility;
-import org.motechproject.mrs.domain.Patient;
-import org.motechproject.mrs.domain.Person;
+import org.motechproject.mrs.domain.MRSFacility;
+import org.motechproject.mrs.domain.MRSPatient;
+import org.motechproject.mrs.domain.MRSPerson;
 import org.motechproject.testing.osgi.BaseOsgiIT;
 import org.osgi.framework.ServiceReference;
 
@@ -23,7 +23,7 @@ public class MRSBundleIT extends BaseOsgiIT {
         MRSDataProvider providerLookup = (MRSDataProvider) bundleContext.getService(serviceReference);
         assertNotNull(providerLookup);
 
-        List<Class<?>> classes = Arrays.asList(Person.class, Patient.class, Facility.class);
+        List<Class<?>> classes = Arrays.asList(MRSPerson.class, MRSPatient.class, MRSFacility.class);
 
         for (Class<?> cls : classes) {
             assertTrue(providerLookup.supports(cls.getSimpleName()));
