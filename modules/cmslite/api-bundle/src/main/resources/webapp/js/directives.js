@@ -199,8 +199,6 @@
                     }
                 });
 
-             //   $('#t_resourceTable').append($compile($('#operations-resource'))(scope));
-             //   $('#t_resourceTable').append($compile($('#collapse-resource'))(scope));
             }
         };
     });
