@@ -165,7 +165,7 @@
                             elem.jqGrid('setLabel', value, scope.msg('sms.logging.' + value));
                         });
 
-                        $('#outsideResourceTable').children('div').width('100%');
+                        $('#outsideSmsLoggingTable').children('div').width('100%');
                         $('.ui-jqgrid-htable').addClass('table-lightblue');
                         $('.ui-jqgrid-btable').addClass("table-lightblue");
                         $('.ui-jqgrid-htable').addClass('table-lightblue');
@@ -175,8 +175,7 @@
                         $('.ui-jqgrid-view').width('100%');
                         $('#t_resourceTable').width('auto');
                         $('.ui-jqgrid-pager').width('100%');
-                        $('.ui-jqgrid-pager').height('auto');
-                        $('#outsideResourceTable').children('div').each(function() {
+                        $('#outsideSmsLoggingTable').children('div').each(function() {
                             $('table', this).width('100%');
                             $(this).find('#resourceTable').width('100%');
                             $(this).find('table').width('100%');
