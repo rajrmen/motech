@@ -26,7 +26,7 @@ public class ConfigServiceRegistrationListener implements OsgiServiceRegistratio
     public void registered(Object service, Map serviceProperties) {
         if (service instanceof ConfigService && tracker == null) {
             LOG.info("ConfigService registered. Starting ConfigStartupManager");
-            tracker = new ConfigStartupManager(bundleContext, (ConfigService) service);
+            tracker = new ConfigStartupManager(bundleContext, (ConfigService) service, new BundlePropertiesReader());
             tracker.open(true);
         }
     }
