@@ -29,6 +29,12 @@
             <artifactId>motech-platform-osgi-web-util</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.motechproject</groupId>
+            <artifactId>motech-platform-osgi-extender-fragment</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -51,6 +57,7 @@
                                 dummyHandler, handleResponse, jConfirm, alertHandler, window,
                                 blockUI, unblockUI, motechAlert, motechConfirm, jAlert
                             </predefinedVars>
+                            <failOnIssues>${jslint.enable}</failOnIssues>
                             <excludes>
                                 <exclude>rangy-core.js</exclude>
                             </excludes>
@@ -141,7 +148,7 @@
             <dependencies>
                 <dependency>
                     <groupId>${project.groupId}</groupId>
-                    <artifactId>motech-mrs-api-bundle</artifactId>
+                    <artifactId>motech-mrs-api</artifactId>
                     <version>${project.version}</version>
                     <scope>test</scope>
                 </dependency>
@@ -162,7 +169,7 @@
                                             <arg value="-S" />
                                             <arg value="-X" />
                                             <arg value="DELETE" />
-                                            <arg value="http://${db.server}:${db.port}/motech-tasks" />
+                                            <arg value="http://${db.server}:${db.port}/${db.prefix}motech-tasks" />
                                         </exec>
                                     </target>
                                 </configuration>

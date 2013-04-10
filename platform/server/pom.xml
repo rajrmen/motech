@@ -150,6 +150,11 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>org.motechproject</groupId>
+            <artifactId>motech-platform-osgi-extender-fragment</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <!-- Different versions of same dependency are not copied. -->
             <groupId>org.objectweb.asm</groupId>
             <artifactId>com.springsource.org.objectweb.asm</artifactId>
@@ -281,13 +286,13 @@
                 </dependency>
                 <dependency>
                     <groupId>${project.groupId}</groupId>
-                    <artifactId>motech-cmslite-api-bundle</artifactId>
+                    <artifactId>motech-cmslite-api</artifactId>
                     <version>${project.version}</version>
                     <scope>provided</scope>
                 </dependency>
                 <dependency>
                     <groupId>${project.groupId}</groupId>
-                    <artifactId>motech-commcare-api-bundle</artifactId>
+                    <artifactId>motech-commcare-api</artifactId>
                     <version>${project.version}</version>
                     <scope>provided</scope>
                 </dependency>
@@ -323,7 +328,7 @@
                 </dependency>
                 <dependency>
                     <groupId>${project.groupId}</groupId>
-                    <artifactId>motech-message-campaign-bundle</artifactId>
+                    <artifactId>motech-message-campaign</artifactId>
                     <version>${project.version}</version>
                     <scope>provided</scope>
                 </dependency>
@@ -335,7 +340,7 @@
                 </dependency>
                 <dependency>
                     <groupId>${project.groupId}</groupId>
-                    <artifactId>motech-mrs-api-bundle</artifactId>
+                    <artifactId>motech-mrs-api</artifactId>
                     <version>${project.version}</version>
                     <scope>provided</scope>
                 </dependency>
@@ -395,7 +400,7 @@
                 </dependency>
                 <dependency>
                     <groupId>${project.groupId}</groupId>
-                    <artifactId>motech-event-logging-bundle</artifactId>
+                    <artifactId>motech-event-logging</artifactId>
                     <version>${project.version}</version>
                     <scope>provided</scope>
                 </dependency>
