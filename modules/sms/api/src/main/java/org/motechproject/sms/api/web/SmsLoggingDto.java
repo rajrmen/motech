@@ -18,7 +18,7 @@ public class SmsLoggingDto {
     public SmsLoggingDto(SmsRecord record) {
         this.phoneNumber = record.getPhoneNumber();
         this.smsType = record.getSmsType().toString();
-        this.messageTime = DateTimeFormat.forPattern("Y-MM-d h:m:s").print(record.getMessageTime());
+        this.messageTime = DateTimeFormat.forPattern("Y-MM-dd hh:MM:ss").print(record.getMessageTime());
         this.deliveryStatus = record.getDeliveryStatus().toString();
         this.messageContent = record.getMessageContent();
         this.eventData = new ArrayList<>(); //TODO set sms event

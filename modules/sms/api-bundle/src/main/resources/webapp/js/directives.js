@@ -22,14 +22,12 @@
                             array = [],
                             prop;
 
-                        // copy existing url parameters
                         for (prop in url.queryKey) {
                             if (prop !== field) {
                                 query[prop] = url.queryKey[prop];
                             }
                         }
 
-                        // set parameter for given element
                         switch (type) {
                         case 'boolean':
                             query[field] = url.queryKey[field].toLowerCase() !== 'true';
@@ -59,12 +57,10 @@
                             query[field] = elem.val();
                         }
 
-                        // create raw parameters
                         for (prop in query) {
                             params += prop + '=' + query[prop] + '&';
                         }
 
-                        // remove last '&'
                         params = params.slice(0, params.length - 1);
 
                         if (timeoutHnd) {
@@ -189,18 +185,18 @@
                            changeMonth: true,
                            changeYear: true,
                            maxDate: +0,
-                           timeFormat: "hh:mm:ss",
+                           timeFormat: "HH:mm:ss",
                            onSelect: function (selectedDateTime){
                                endDateTextBox.datetimepicker('option', 'minDate', startDateTextBox.datetimepicker('getDate') );
                            }
                        });
 
                        endDateTextBox.datetimepicker({
-                           dateFormat: "yy-mm-dd",
+                           dateFormat: "yy-MM-dd",
                            changeMonth: true,
                            changeYear: true,
                            maxDate: +0,
-                           timeFormat: "hh:mm:ss",
+                           timeFormat: "HH:mm:ss",
                            onSelect: function (selectedDateTime){
                                startDateTextBox.datetimepicker('option', 'maxDate', endDateTextBox.datetimepicker('getDate') );
                            }
