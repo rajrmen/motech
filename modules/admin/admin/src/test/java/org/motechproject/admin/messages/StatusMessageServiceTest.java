@@ -8,10 +8,14 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.motechproject.admin.domain.NotificationRule;
 import org.motechproject.admin.domain.StatusMessage;
+import org.motechproject.admin.email.EmailSender;
 import org.motechproject.admin.repository.AllNotificationRules;
 import org.motechproject.admin.repository.AllStatusMessages;
 import org.motechproject.admin.service.StatusMessageService;
 import org.motechproject.admin.service.impl.StatusMessageServiceImpl;
+import org.motechproject.event.MotechEvent;
+import org.motechproject.event.listener.EventRelay;
+import org.motechproject.osgi.web.UIFrameworkService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +45,15 @@ public class StatusMessageServiceTest {
 
     @Mock
     private StatusMessage mockMsg;
+
+    @Mock
+    private EmailSender emailSender;
+
+    @Mock
+    private EventRelay eventRelay;
+
+    @Mock
+    private UIFrameworkService uiFrameworkService;
 
     StatusMessage activeMessage = new StatusMessage("active", MODULE_NAME, Level.INFO, DateTime.now().plusHours(1));
     StatusMessage inactiveMessage = new StatusMessage("inactive", MODULE_NAME, Level.INFO, DateTime.now().minusHours(1));
@@ -183,5 +196,35 @@ public class StatusMessageServiceTest {
         assertEquals("id", captor.getValue().getId());
         assertEquals("rec", captor.getValue().getRecipient());
         assertEquals(ActionType.SMS, captor.getValue().getActionType());
+    }
+
+    @Test
+    public void shouldSendNotifications() {
+        NotificationRule notificationRuleEmail1 = new NotificationRule("e@ma.il", ActionType.EMAIL);
+        NotificationRule notificationRuleEmail2 = new NotificationRule("e2@ma.il", ActionType.EMAIL);
+        NotificationRule notificationRuleSms1 = new NotificationRule("1111", ActionType.SMS);
+        NotificationRule notificationRuleSms2 = new NotificationRule("2222", ActionType.SMS);
+
+        when(allNotificationRules.getAll()).thenReturn(asList(notificationRuleEmail1, notificationRuleSms1, notificationRuleSms2,
+                notificationRuleEmail2));
+
+        StatusMessage statusMessage = new StatusMessage("text", "module", Level.CRITICAL);
+
+        statusMessageService.postMessage(statusMessage);
+
+        verify(allStatusMessages).add(statusMessage);
+        verify(allNotificationRules).getAll();
+
+        verify(emailSender).sendCriticalNotificationEmail("e@ma.il", statusMessage);
+        verify(emailSender).sendCriticalNotificationEmail("e2@ma.il", statusMessage);
+
+        ArgumentCaptor<MotechEvent> captor = ArgumentCaptor.forClass(MotechEvent.class);
+        verify(eventRelay).sendEventMessage(captor.capture());
+
+        assertEquals("SendSMS", captor.getValue().getSubject());
+        assertEquals(asList("1111", "2222"), captor.getValue().getParameters().get("number"));
+        assertEquals("Motech Critical: [module] text", captor.getValue().getParameters().get("message"));
+
+        verify(uiFrameworkService).moduleNeedsAttention("admin", "messages");
     }
 }

@@ -1,15 +1,13 @@
 <html>
 <body>
+    <strong>A critical notification was raised in Motech</strong>
 
-<strong>A critical notification was raised in Motech</strong>
+    <p>Module: $module</p>
 
+    <p>Date: $dateTime</p>
 
+    <p>$msg</p>
 
-    <p>Someone has opened a password recovery request for your account. If it was you, click the following link in order to
-    reset your password:</p>
-
-    <p><a href="$link">$link</a><p>
-
-    <p> If you did not request password recovery please ignore this message.</p>
+    <p>To go to the messages list: $msgLink<p>
 </body>
 </html>
