@@ -3,34 +3,7 @@
 
     /* Directives */
 
-    var widgetModule = angular.module('motech-cmslite');
-
-    widgetModule.directive('clearForm', function () {
-        return {
-            restrict: 'A',
-            link: function (scope, element, attrs) {
-                $(element).on('hidden', function () {
-                    $('#' + attrs.clearForm).clearForm();
-                });
-            }
-        };
-    });
-
-    widgetModule.directive('autoComplete', function () {
-        return {
-            restrict: 'A',
-            link: function (scope, element, attrs) {
-                angular.element(element).autocomplete({
-                    minLength: 2,
-                    source: function (request, response) {
-                        $.getJSON('../cmsliteapi/resource/available/' + attrs.autoComplete, request, function (data) {
-                            response(data);
-                        });
-                    }
-                });
-            }
-        };
-    });
+    var widgetModule = angular.module('motech-sms');
 
     widgetModule.directive('jqgridSearch', function () {
         return {
@@ -39,9 +12,9 @@
                 var elem = angular.element(element),
                     table = angular.element('#' + attrs.jqgridSearch),
                     eventType = elem.data('event-type'),
-                    timeoutHnd,
                     filter = function (time) {
                         var field = elem.data('search-field'),
+                            value = elem.data('search-value'),
                             type = elem.data('field-type') || 'string',
                             url = parseUri(table.jqGrid('getGridParam', 'url')),
                             query = {},
@@ -49,14 +22,12 @@
                             array = [],
                             prop;
 
-                        // copy existing url parameters
                         for (prop in url.queryKey) {
                             if (prop !== field) {
                                 query[prop] = url.queryKey[prop];
                             }
                         }
 
-                        // set parameter for given element
                         switch (type) {
                         case 'boolean':
                             query[field] = url.queryKey[field].toLowerCase() !== 'true';
@@ -68,15 +39,17 @@
                             }
                             break;
                         case 'array':
-                            angular.forEach(url.queryKey[field].split(','), function (value) {
-                                if (elem.not(':checked') && elem.val() !== value && value !== '') {
-                                    array.push(value);
+                            if (elem.children().hasClass("icon-ok")) {
+                                elem.children().removeClass("icon-ok").addClass("icon-ban-circle");
+                            } else if (elem.children().hasClass("icon-ban-circle")) {
+                                elem.children().removeClass("icon-ban-circle").addClass("icon-ok");
+                                array.push(value);
+                            }
+                            angular.forEach(url.queryKey[field].split(','), function (val) {
+                                if (angular.element('#' + val).children().hasClass("icon-ok")) {
+                                    array.push(val);
                                 }
                             });
-
-                            if (elem.is(':checked')) {
-                                array.push(elem.val());
-                            }
 
                             query[field] = array.join(',');
                             break;
@@ -84,12 +57,10 @@
                             query[field] = elem.val();
                         }
 
-                        // create raw parameters
                         for (prop in query) {
                             params += prop + '=' + query[prop] + '&';
                         }
 
-                        // remove last '&'
                         params = params.slice(0, params.length - 1);
 
                         if (timeoutHnd) {
@@ -98,16 +69,20 @@
 
                         timeoutHnd = setTimeout(function () {
                             jQuery('#' + attrs.jqgridSearch).jqGrid('setGridParam', {
-                                url: '../cmsliteapi/resource' + params
+                                url: '../smsapi/smslogging' + params
                             }).trigger('reloadGrid');
                         }, time || 0);
-                    };
+                    },
+                    timeoutHnd;
 
                 switch (eventType) {
                 case 'keyup':
                     elem.keyup(function () {
                         filter(500);
                     });
+                    break;
+                case 'change':
+                    elem.change(filter);
                     break;
                 default:
                     elem.click(filter);
@@ -116,14 +91,15 @@
         };
     });
 
-    widgetModule.directive('resourcesGrid', function ($compile) {
+    widgetModule.directive('loggingGrid', function ($compile, $http, $templateCache) {
         return {
             restrict: 'A',
             link: function (scope, element, attrs) {
                 var elem = angular.element(element);
+                var filters;
 
                 elem.jqGrid({
-                    url: '../cmsliteapi/resource?name=&string=true&stream=true&languages=',
+                    url: '../smsapi/smslogging?phoneNumber=&messageContent=&timeFrom=&timeTo=&deliveryStatus=INPROGRESS,DELIVERED,KEEPTRYING,ABORTED,UNKNOWN&smsType=INBOUND,OUTBOUND',
                     datatype: 'json',
                     jsonReader:{
                         repeatitems:false
@@ -138,51 +114,35 @@
                     rowNum: 10,
                     rowList: [10, 20, 50],
                     colModel: [{
-                        name: 'name',
-                        index: 'name'
+                        name: 'phoneNumber',
+                        index: 'phoneNumber'
                     }, {
-                        name: 'languages',
-                        index: 'languages',
-                        sortable: false,
-                        formatter: function (array, options, data) {
-                            var ul = $('<ul>');
-
-                            angular.forEach(array, function (value) {
-                                ul.append($('<li>').append($('<a>')
-                                    .append(value)
-                                    .attr('ng-click', 'showResource("{0}", "{1}", "{2}")'.format(data.type, value, data.name))
-                                    .css('cursor', 'pointer')
-                                ));
-                            });
-
-                            return '<ul>' + ul.html() + '</ul>';
-                        }
+                        name: 'deliveryStatus',
+                        index: 'deliveryStatus'
                     }, {
-                        name: 'type',
-                        index: 'type',
-                        width: '25',
-                        align: 'center',
-                        formatter: function (value) {
-                            return scope.msg('resource.type.' + value);
-                        }
+                        name: 'messageTime',
+                        index: 'messageTime'
+                    }, {
+                        name: 'smsType',
+                        index: 'smsType'
+                    }, {
+                        name: 'messageContent',
+                        index: 'messageContent',
+                        sortable: false
                     }],
-                    pager: '#' + attrs.resourcesGrid,
+                    pager: '#' + attrs.loggingGrid,
                     width: '100%',
                     height: 'auto',
-                    sortname: 'name',
+                    sortname: 'phoneNumber',
                     sortorder: 'asc',
                     viewrecords: true,
                     gridComplete: function () {
-                        angular.forEach(elem.find('ul'), function(value) {
-                            $compile(value)(scope);
+                        angular.forEach(['phoneNumber', 'deliveryStatus', 'messageTime', 'smsType', 'messageContent'], function (value) {
+                            elem.jqGrid('setLabel', value, scope.msg('sms.logging.' + value));
                         });
 
-                        angular.forEach(['name', 'languages', 'type'], function (value) {
-                            elem.jqGrid('setLabel', value, scope.msg('resource.' + value));
-                        });
-
-                        $('#outsideResourceTable').children('div').width('100%');
-                        $('.ui-jqgrid-htable').addClass("table-lightblue");
+                        $('#outsideSmsLoggingTable').children('div').width('100%');
+                        $('.ui-jqgrid-htable').addClass('table-lightblue');
                         $('.ui-jqgrid-btable').addClass("table-lightblue");
                         $('.ui-jqgrid-htable').addClass('table-lightblue');
                         $('.ui-jqgrid-bdiv').width('100%');
@@ -191,14 +151,38 @@
                         $('.ui-jqgrid-view').width('100%');
                         $('#t_resourceTable').width('auto');
                         $('.ui-jqgrid-pager').width('100%');
-                        $('#outsideResourceTable').children('div').each(function() {
+                        $('#outsideSmsLoggingTable').children('div').each(function() {
                             $('table', this).width('100%');
                             $(this).find('#resourceTable').width('100%');
                             $(this).find('table').width('100%');
                        });
+
+                       var startDateTextBox = angular.element('#dateTimeFrom');
+                       var endDateTextBox = angular.element('#dateTimeTo');
+
+                       startDateTextBox.datetimepicker({
+                           dateFormat: "yy-mm-dd",
+                           changeMonth: true,
+                           changeYear: true,
+                           maxDate: +0,
+                           timeFormat: "HH:mm:ss",
+                           onSelect: function (selectedDateTime){
+                               endDateTextBox.datetimepicker('option', 'minDate', startDateTextBox.datetimepicker('getDate') );
+                           }
+                       });
+
+                       endDateTextBox.datetimepicker({
+                           dateFormat: "yy-mm-dd",
+                           changeMonth: true,
+                           changeYear: true,
+                           maxDate: +0,
+                           timeFormat: "HH:mm:ss",
+                           onSelect: function (selectedDateTime){
+                               startDateTextBox.datetimepicker('option', 'maxDate', endDateTextBox.datetimepicker('getDate') );
+                           }
+                       });
                     }
                 });
-
             }
         };
     });
