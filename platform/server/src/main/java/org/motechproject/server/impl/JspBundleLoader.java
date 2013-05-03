@@ -43,6 +43,7 @@ public class JspBundleLoader implements BundleLoader, ServletContextAware {
     public void loadBundle(Bundle bundle) throws BundleLoadingException {
         //we want to build and unpack jar files in application temporary directory
         //if we found jsp file then we will copy it to destination directory
+
         File tempRoot = (File) servletContext.getAttribute("javax.servlet.context.tempdir");
         File destRoot = new File(servletContext.getRealPath("/"));
         try {
@@ -82,7 +83,7 @@ public class JspBundleLoader implements BundleLoader, ServletContextAware {
 
                         File destFile = new File(destDir, jspUrl.getFile());
 
-                        FileUtils.copyURLToFile(jspUrl, destFile);
+                            FileUtils.copyURLToFile(jspUrl, destFile);
                         logger.debug("Loaded " + jspUrl.getFile() + " from [" + bundle.getLocation() + "]");
                     }
                 }
