@@ -21,16 +21,16 @@
                         <li ng-show="description && !enabled" class="task-element" bs-popover data-trigger="hover" data-content="{{description}}" data-placement="left"><img src="../tasks/img/task-info-paused.png"  class="task-list-img" /></li>
                         <li ng-show="description" class="divider-vertical"></li>
                         <li ng-hide="enabled" class="task-element task-paused">
-                            <span class="task-list-button-activity">
-                                <span class="task-list-text-activity">{{msg('task.paused')}}</span>
-                                <img class="task-list-img-activity" src="../tasks/img/task-paused.png" />
-                            </span>
+                            <div class="task-list-button-activity">
+                                <div class="task-list-text-activity">{{msg('task.paused')}}</div>
+                                <div class="task-list-div-activity"><img class="task-list-img-activity" src="../tasks/img/task-paused.png" /></div>
+                            </div>
                         </li>
                         <li ng-show="enabled" class="task-element task-active">
-                            <span class="task-list-button-activity">
-                                <img class="task-list-img-activity" src="../tasks/img/task-active.png" />
-                                <span class="task-list-text-activity">{{msg('task.active')}}</span>
-                            </span>
+                            <div class="task-list-button-activity">
+                                <div class="task-list-div-activity"><img class="task-list-img-activity" src="../tasks/img/task-active.png" /></div>
+                                <div class="task-list-text-activity">{{msg('task.active')}}</div>
+                            </div>
                         </li>
                     </ul>
                     <div class="clearfix"></div>
@@ -57,9 +57,9 @@
                         <tbody>
                         <tr ng-repeat="activity in pagedItems[currentPage]">
                             <td>
-                                <img ng-show="activity.activityType == 'SUCCESS'" src="../tasks/img/icon-ok.png" class="recent-activity-arrow"/>
-                                <img ng-show="activity.activityType == 'ERROR'" src="../tasks/img/icon-exclamation.png" class="recent-activity-arrow"/>
-                                <img ng-show="activity.activityType == 'WARNING'" src="../tasks/img/icon-question.png" class="recent-activity-arrow"/>
+                                <img ng-show="activity.activityType == 'SUCCESS'" src="../tasks/img/icon-ok.png" class="recent-activity-task-img"/>
+                                <img ng-show="activity.activityType == 'ERROR'" src="../tasks/img/icon-exclamation.png" class="recent-activity-task-img"/>
+                                <img ng-show="activity.activityType == 'WARNING'" src="../tasks/img/icon-question.png" class="recent-activity-task-img"/>
                             </td>
                             <td class="message-history">
                                 <p class="wrap-paragraph" ng-hide="activity.stackTraceElement.length &gt; 1">{{msg(activity.message, activity.fields)}}</p>

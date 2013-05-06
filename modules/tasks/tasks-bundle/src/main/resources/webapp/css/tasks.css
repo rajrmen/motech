@@ -99,7 +99,7 @@ editable-content .actionField.input-block-level span.badge {
     box-shadow: none;
 }
 
-#accordion1.accordion {
+#accordion1.accordion, #accordion2.accordion {
     margin-bottom: 0;
 }
 
@@ -307,7 +307,8 @@ editable-content .actionField.input-block-level span.badge {
 #accordion1 .accordion-group,
 #accordion2 .task-filter-group,
 #accordion2 .task-description-group,
-#accordion3 .task-list-group {
+#accordion3 .task-list-group,
+.task-group {
     border: 1px solid #B2D8F8;
     border-radius: 4px 4px 4px 4px;
     margin-bottom: 2px;
@@ -494,8 +495,8 @@ editable-content .actionField.input-block-level span.badge {
 }
 
 .recent-activity-task-img {
-    height: 54px;
-    width: 54px;
+    height: 26px;
+    width: 26px;
 }
 
 .table-recent-activity-task {
@@ -518,6 +519,7 @@ editable-content .actionField.input-block-level span.badge {
 
 .table-recent-activity-task tbody td.message-history p {
     margin-top: 3px;
+    margin-bottom: 3px;
 }
 
 .section-input {
@@ -743,6 +745,11 @@ h3.popover-title {
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#3b679e', endColorstr='#7db9e8',GradientType=0 );
 }
 
+.task-panel.active {
+    border: 1px solid #DC0000;
+    box-shadow: 0 0 7px #DC0000;
+}
+
 .task-element.task-name {
     text-align: left;
 }
@@ -825,7 +832,7 @@ input.input-popover {
 
 pre {
     border: none;
-    margin: 10px 0 0 0;
+    margin: 0;
     padding: 0;
     font-size: 12px;
 }
@@ -925,4 +932,33 @@ a, li a {
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
+}
+
+/* ----- Tasks enhancements -----*/
+
+.task.form-horizontal .control-label.task-label {
+    float: left;
+    font-size: 1.1em;
+    font-weight: bold;
+}
+
+.btn-btn-in-header {
+    margin: 0;
+}
+
+.control-group.error .control-label.tip .popover {
+    color: #595959;
+    text-align: left;
+}
+
+.task .collapse.in {
+    overflow:  ;
+}
+
+.fixed {
+    background: #eee;
+    width: 100%;
+    height: 30px;
+    padding: 4px;
+    position: fixed;
 }

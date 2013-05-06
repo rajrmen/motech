@@ -1,0 +1,687 @@
+From 1709cf7fad349d5c9bd7be52d14d4c09f11b6092 Mon Sep 17 00:00:00 2001
+From: Waldemar Strzelczyk <wstrzelczyk@soldevelo.com>
+Date: Mon, 6 May 2013 13:01:17 +0200
+Subject: [PATCH] W.Strzelczyk | #749 | UI changes - part1
+
+Change-Id: I05ae1ed96713c1419121aff077457c9a6e4f099e
+---
+ .../resources/webapp/bundles/messages.properties   |    8 +-
+ .../src/main/resources/webapp/css/tasks.css        |   46 +-
+ .../src/main/resources/webapp/js/app.js            |    1 +
+ .../src/main/resources/webapp/partials/form2.html  |  459 ++++++++++++++++++++
+ .../main/resources/webapp/partials/history.html    |   22 +-
+ .../src/main/resources/webapp/partials/tasks.html  |    3 +
+ 6 files changed, 520 insertions(+), 19 deletions(-)
+ create mode 100644 modules/tasks/tasks-bundle/src/main/resources/webapp/partials/form2.html
+
+diff --git a/modules/tasks/tasks-bundle/src/main/resources/webapp/bundles/messages.properties b/modules/tasks/tasks-bundle/src/main/resources/webapp/bundles/messages.properties
+index f2f5152..d56474f 100644
+--- a/modules/tasks/tasks-bundle/src/main/resources/webapp/bundles/messages.properties
++++ b/modules/tasks/tasks-bundle/src/main/resources/webapp/bundles/messages.properties
+@@ -1,7 +1,6 @@
+ tasks=Tasks
+ task.new=New task
+-task.name=Name
+-task.data.name=Task Data
++task.name=Task Name
+ task.active=Active
+ task.paused=Paused
+ 
+@@ -32,6 +31,8 @@ header.filterActivity=Filter Activity
+ header.activitiesPerPage=Activities Per Page
+ header.listHelp=List help
+ header.mapHelp=Map help
++header.trigger=Trigger:
++header.action=Action:
+ 
+ section.buildAction=Build your new task
+ section.editAction=Edit your task
+@@ -97,6 +98,7 @@ button.first=First
+ button.last=Last
+ button.close=Close
+ button.showStackTrace=Show Stack Trace
++button.addAction=Add Action
+ 
+ tooltip.availableActions=Available actions
+ tooltip.availableTriggers=Available triggers
+@@ -226,4 +228,4 @@ validation.error.version={0} field of {1} is incorrect bundle version
+ validation.error.taskAction=Task action information must contain event subject and/or OSGi service interface and method
+ validation.error.channel=Channel must contain triggers or/and actions
+ validation.error.channelAction=Channel action must contain event subject and/or OSGi service interface and method
+-validation.error.dateFormat={0}: field of {1} has bad date format
+\ No newline at end of file
++validation.error.dateFormat={0}: field of {1} has bad date format
+diff --git a/modules/tasks/tasks-bundle/src/main/resources/webapp/css/tasks.css b/modules/tasks/tasks-bundle/src/main/resources/webapp/css/tasks.css
+index aab7151..d912416 100644
+--- a/modules/tasks/tasks-bundle/src/main/resources/webapp/css/tasks.css
++++ b/modules/tasks/tasks-bundle/src/main/resources/webapp/css/tasks.css
+@@ -99,7 +99,7 @@ editable-content .actionField.input-block-level span.badge {
+     box-shadow: none;
+ }
+ 
+-#accordion1.accordion {
++#accordion1.accordion, #accordion2.accordion {
+     margin-bottom: 0;
+ }
+ 
+@@ -307,7 +307,8 @@ editable-content .actionField.input-block-level span.badge {
+ #accordion1 .accordion-group,
+ #accordion2 .task-filter-group,
+ #accordion2 .task-description-group,
+-#accordion3 .task-list-group {
++#accordion3 .task-list-group,
++.task-group {
+     border: 1px solid #B2D8F8;
+     border-radius: 4px 4px 4px 4px;
+     margin-bottom: 2px;
+@@ -494,8 +495,8 @@ editable-content .actionField.input-block-level span.badge {
+ }
+ 
+ .recent-activity-task-img {
+-    height: 54px;
+-    width: 54px;
++    height: 26px;
++    width: 26px;
+ }
+ 
+ .table-recent-activity-task {
+@@ -518,6 +519,7 @@ editable-content .actionField.input-block-level span.badge {
+ 
+ .table-recent-activity-task tbody td.message-history p {
+     margin-top: 3px;
++    margin-bottom: 3px;
+ }
+ 
+ .section-input {
+@@ -743,6 +745,11 @@ h3.popover-title {
+     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#3b679e', endColorstr='#7db9e8',GradientType=0 );
+ }
+ 
++.task-panel.active {
++    border: 1px solid #DC0000;
++    box-shadow: 0 0 7px #DC0000;
++}
++
+ .task-element.task-name {
+     text-align: left;
+ }
+@@ -825,7 +832,7 @@ input.input-popover {
+ 
+ pre {
+     border: none;
+-    margin: 10px 0 0 0;
++    margin: 0;
+     padding: 0;
+     font-size: 12px;
+ }
+@@ -925,4 +932,33 @@ a, li a {
+     -moz-user-select: none;
+     -ms-user-select: none;
+     user-select: none;
++}
++
++/* ----- Tasks enhancements -----*/
++
++.task.form-horizontal .control-label.task-label {
++    float: left;
++    font-size: 1.1em;
++    font-weight: bold;
++}
++
++.btn-btn-in-header {
++    margin: 0;
++}
++
++.control-group.error .control-label.tip .popover {
++    color: #595959;
++    text-align: left;
++}
++
++.task .collapse.in {
++    overflow:  ;
++}
++
++.fixed {
++    background: #eee;
++    width: 100%;
++    height: 30px;
++    padding: 4px;
++    position: fixed;
+ }
+\ No newline at end of file
+diff --git a/modules/tasks/tasks-bundle/src/main/resources/webapp/js/app.js b/modules/tasks/tasks-bundle/src/main/resources/webapp/js/app.js
+index 5fd0f06..82cc36e 100644
+--- a/modules/tasks/tasks-bundle/src/main/resources/webapp/js/app.js
++++ b/modules/tasks/tasks-bundle/src/main/resources/webapp/js/app.js
+@@ -9,6 +9,7 @@
+             $routeProvider.
+                 when('/dashboard', {templateUrl: '../tasks/partials/tasks.html', controller: 'DashboardCtrl'}).
+                 when('/task/new', {templateUrl: '../tasks/partials/form.html', controller: 'ManageTaskCtrl'}).
++                when('/task/new2', {templateUrl: '../tasks/partials/form2.html', controller: 'ManageTaskCtrl'}).
+                 when('/task/:taskId/edit', {templateUrl: '../tasks/partials/form.html', controller: 'ManageTaskCtrl'}).
+                 when('/task/:taskId/log', {templateUrl: '../tasks/partials/history.html', controller: 'LogCtrl'}).
+                 otherwise({redirectTo: '/dashboard'});
+diff --git a/modules/tasks/tasks-bundle/src/main/resources/webapp/partials/form2.html b/modules/tasks/tasks-bundle/src/main/resources/webapp/partials/form2.html
+new file mode 100644
+index 0000000..aaa3ae2
+--- /dev/null
++++ b/modules/tasks/tasks-bundle/src/main/resources/webapp/partials/form2.html
+@@ -0,0 +1,459 @@
++<!------------------------  Create Task  ------------------------>
++<div ng-hide="task._id" class="box-header" xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">{{msg('section.newTask')}} <a href="#/task/" type="button" class="btn btn-danger btn-in-header pull-right"><i class="icon-remove icon-white"></i></a></div>
++<div ng-show="task._id" class="box-header">{{msg('section.editTask')}} <a href="#/task/" type="button" class="btn btn-danger btn-in-header pull-right"><i class="icon-remove icon-white"></i></a></div>
++<div class="box-content">
++    <h3 class="centered" ng-hide="task.trigger && task.action">{{msg('section.selectEvents')}}</h3>
++    <div class="bg-section-input stripes-bg" ng-hide="task.trigger && task.action">
++        <div class="section-input">
++            <div class="panel-input" ui-jq="tooltip" ui-options="{placement:'bottom'}" data-original-title="{{getTooltipMsg(selectedTrigger)}}">
++                <ul class="trigger droppable" droppable>
++                    <li class="task-panel dragged" ng-show="draggedTrigger" draggable double-click>
++                        <div><img ng-src="../tasks/api/channel/icon?moduleName={{draggedTrigger.module}}&moduleVersion={{draggedTrigger.version}}" class="panel-img"/></div>
++                        <span>{{msg(draggedTrigger.display)}}</span>
++                        <div class="popover left" ng-hide="selectedTrigger">
++                            <div class="arrow"></div>
++                            <h3 class="popover-title" style="display: block;">{{msg('tooltip.selectTrigger')}}</h3>
++                            <div class="content-task popover-content">
++                                <ul>
++                                    <li ng-repeat="t in draggedTrigger.triggers">
++                                        <a ng-click="selectTaskEvent('trigger', t)">{{msg(t.displayName)}}</a>
++                                    </li>
++                                </ul>
++                            </div>
++                        </div>
++                    </li>
++                </ul>
++                <span class="instructions" ng-hide="draggedTrigger">{{msg('info.dragTrigger')}}</span>
++            </div>
++            <div class="to imgArrow"><img src="../tasks/img/arrow.png"/></div>
++
++            <div class="panel-input" ui-jq="tooltip" ui-options="{placement:'bottom'}" data-original-title="{{getTooltipMsg(selectedAction)}}">
++                <ul class="action droppable" droppable>
++                    <li class="task-panel dragged" ng-show="draggedAction" draggable double-click>
++                        <div><img ng-src="../tasks/api/channel/icon?moduleName={{draggedAction.module}}&moduleVersion={{draggedAction.version}}" class="panel-img"/></div>
++                        <span>{{msg(draggedAction.display)}}</span>
++                        <div class="popover right" ng-hide="selectedAction">
++                            <div class="arrow"></div>
++                            <h3 class="popover-title" style="display: block;">{{msg('tooltip.selectAction')}}</h3>
++                            <div class="content-task popover-content">
++                                <ul>
++                                    <li ng-repeat="a in draggedAction.actions">
++                                        <a ng-click="selectTaskEvent('action', a)">{{msg(a.displayName)}}</a>
++                                    </li>
++                                </ul>
++                            </div>
++                        </div>
++                    </li>
++                </ul>
++                <span class="instructions" ng-hide="draggedAction">{{msg('info.dragAction')}}</span>
++
++            </div>
++            <div class="clearfix"></div>
++        </div>
++    </div>
++    <div class="clearfix"></div><div class="margin-before1"></div>
++    <div class="section-source" ng-hide="task.trigger && task.action">
++        <h3 class="centered"><img class="arrow-drop1" src="../tasks/img/arrow-drop1.png" width="76" height="70">{{msg('help.dragChannelFromListBelow')}}</h3>
++        <div data-left-arrow="true" class="left-arrow">
++            <img src="../tasks/img/larrow.png" ng-click="currentPage.channels = currentPage.channels - 1" ng-hide="currentPage.channels == 0"/>
++        </div>
++        <ul class="task-selector droppable" style="position: relative;" droppable>
++            <li class="task-panel draggable" ng-repeat="channel in channels | filterPagination:currentPage.channels*pageSize.channels | limitTo:pageSize.channels" draggable data-channel-name="{{channel.displayName}}" data-module-name="{{channel.moduleName}}" data-module-version="{{channel.moduleVersion}}">
++                <div task-popover rel="popover">
++                    <div><img ng-src="../tasks/api/channel/icon?moduleName={{channel.moduleName}}&moduleVersion={{channel.moduleVersion}}" class="panel-img" /></div>
++                    <span>{{msg(channel.displayName)}}</span>
++                    <div class="content-task" style="display:none;">
++                        <div class="popover-titles">{{msg('tooltip.availableTriggers')}}</div>
++                        <ul>
++                            <li ng-repeat="trigger in channel.triggerTaskEvents">{{msg(trigger.displayName)}}</li>
++                        </ul>
++                        <div class="popover-titles">{{msg('tooltip.availableActions')}}</div>
++                        <ul>
++                            <li ng-repeat="action in channel.actionTaskEvents">{{msg(action.displayName)}}</li>
++                        </ul>
++                    </div>
++                </div>
++            </li>
++        </ul>
++        <div data-right-arrow="true" class="right-arrow">
++            <img src="../tasks/img/rarrow.png" ng-click="currentPage.channels = currentPage.channels + 1" ng-hide="currentPage.channels &gt;= channels.length/pageSize.channels - 1"/>
++        </div>
++        <div class="clearfix"></div>
++    </div>
++
++    <!------------------------  Build Task  ------------------------>
++        <div ng-show="task.trigger != undefined && task.action != undefined">
++            <div class="row-fluid margin-before">
++                <form class="inside task form-horizontal">
++                    <div ng-class="actionNameCssClass(task)">
++                        <label class="control-label task-label">{{msg('task.name')}}</label>
++                        <div class="controls"><input class="span7" type='text' ng-model='task.name' id="task.name" maxlength="30" required /></div>
++                    </div>
++
++                    <div class="accordion" id="accordion2">
++                        <div class="task-filter-group">
++                            <div class="accordion-heading">
++                                <div class="pull-right">
++                                    <button type="button" class="btn btn-info btn-btn-in-header" data-toggle="collapse" data-target="#collapse-trigger">
++                                        <i class="icon-plus-sign icon-white"></i>
++                                    </button>
++                                </div>
++                                <a class="accordion-toggle inbox-header" expandaccordion data-toggle="collapse" data-parent="#accordion2" href="#collapse-trigger">{{msg('header.trigger')}}&nbsp;
++                                    <i ng-class="{true:'icon-chevron-down', false:'icon-chevron-right'}[task.description.length != null && task.description.length > 0]"></i>&nbsp;{{msg(selectedTrigger.displayName)}}
++                                </a>
++                            </div>
++                            <div id="collapse-trigger" class="accordion-body stripes-bg" ng-class="{true:'collapse in', false:'collapse'}[false]">
++                                <div class="accordion-inner">
++                                    <div class="">
++                                        <div class="section-source" ng-show="task.trigger && task.action">
++                                            <h3 class="centered">Click to select trigger</h3>
++                                            <div data-left-arrow="true" class="left-arrow">
++                                                <img src="../tasks/img/larrow.png" ng-click="currentPage.channels = currentPage.channels - 1" ng-hide="currentPage.channels == 0"/>
++                                            </div>
++                                            <ul class="task-selector droppable" style="position: relative;" droppable>
++                                                <li class="task-panel draggable" ng-repeat="channel in channels | filterPagination:currentPage.channels*pageSize.channels | limitTo:pageSize.channels" draggable data-channel-name="{{channel.displayName}}" data-module-name="{{channel.moduleName}}" data-module-version="{{channel.moduleVersion}}">
++                                                    <div task-popover rel="popover">
++                                                        <div><img ng-src="../tasks/api/channel/icon?moduleName={{channel.moduleName}}&moduleVersion={{channel.moduleVersion}}" class="panel-img" /></div>
++                                                        <span>{{msg(channel.displayName)}}</span>
++                                                        <div class="content-task" style="display:none;">
++                                                            <div class="popover-titles">{{msg('tooltip.availableTriggers')}}</div>
++                                                            <ul>
++                                                                <li ng-repeat="trigger in channel.triggerTaskEvents">{{msg(trigger.displayName)}}</li>
++                                                            </ul>
++                                                            <div class="popover-titles hide">{{msg('tooltip.availableActions')}}</div>
++                                                            <ul class="hide">
++                                                                <li ng-repeat="action in channel.actionTaskEvents">{{msg(action.displayName)}}</li>
++                                                            </ul>
++                                                        </div>
++                                                    </div>
++                                                </li>
++                                            </ul>
++                                            <div data-right-arrow="true" class="right-arrow">
++                                                <img src="../tasks/img/rarrow.png" ng-click="currentPage.channels = currentPage.channels + 1" ng-hide="currentPage.channels &gt;= channels.length/pageSize.channels - 1"/>
++                                            </div>
++                                            <div class="clearfix"></div>
++                                        </div>
++                                    </div>
++                                </div>
++                            </div>
++                        </div>
++                    </div>
++
++                    <div class="accordion" id="accordion2" ui-if="filters.length!=0">
++                        <!------------------------  Filter  ------------------------>
++                        <div class="task-filter-group">
++                            <div class="accordion-heading">
++                                <a class="accordion-toggle inbox-header" expandaccordion data-toggle="collapse" data-parent="#accordion2" href="#collapse21">
++                                    <i ng-class="{true:'icon-chevron-down', false:'icon-chevron-right'}[filters.length!=0]"></i>&nbsp;{{msg('section.filters')}}
++                                </a>
++                            </div>
++                            <div id="collapse21" ng-class="{true:'collapse in', false:'collapse'}[filters.length!=0]" class="accordion-body stripes-bg">
++                                <div class="accordion-inner">
++                                    <ng-form id="filtersForm" name="filterForm" class="form-horizontal" novalidate>
++                                        <div class="margin-center">
++                                            <p class="">{{msg('info.filter.title', [msg(selectedTrigger.displayName), msg(selectedAction.displayName)])}}</p>
++                                            <p class=""><strong>{{msg('info.filter.run')}}</strong></p>
++
++                                            <div ng-repeat="filter in filters">
++                                                <div class="form-inline">
++                                                    <div class="control-group">
++                                                        <span ng-class="cssClass(filter.eventParameter)" class="">
++                                                            <label><i class="icon icon-plus"></i> {{msg('info.if')}} {{msg(selectedTrigger.displayName)}}</label>
++                                                            <select ng-model="filter.eventParameter" class="input-medium" ng-options="msg(c.displayName) for c in selectedTrigger.eventParameters">
++                                                                <option value="">{{msg('info.filter.select')}}</option>
++                                                            </select>
++                                                        </span>
++                                                        <span ng-class="cssClass(filter.negationOperator)" class="">
++                                                            <select ng-disabled="!filter.eventParameter" ng-model="filter.negationOperator" ng-options="msg(c.key) for c in negationOperators" class="input-medium">
++                                                                <option value="">{{msg('info.filter.select')}}</option>
++                                                            </select>
++                                                        </span>
++                                                        <span ng-class="cssClass(filter.operator)" class="">
++                                                            <select ng-disabled="!filter.negationOperator" ng-model="filter.operator" class="input-medium" ng-options="msg(c) for c in operators(filter.eventParameter)" >
++                                                                <option value="">{{msg('info.filter.select')}}</option>
++                                                            </select>
++                                                        </span>
++                                                        <span ng-class="cssClass(filter.expression)">
++                                                            <input ng-disabled="!filter.operator" ng-model="filter.expression" class="input-medium" ng-show="filter.operator!='exist'" type="text" value=""/>
++                                                        </span>
++                                                        <a ng-click="removeNode(filter)" class="btn btn-small btn-danger"><i class="icon-trash icon-white"></i></a>
++                                                    </div>
++                                                </div>
++                                            </div>
++                                        </div>
++                                        <div class="control-group">
++                                            <button ui-if="filters.length==0" class="btn btn-success" ng-click="addFilter()"><i class="icon-plus icon-white"></i> {{msg('button.addFilter')}}</button>
++                                            <button ui-if="filters.length!=0" class="btn btn-success" ng-click="addFilter()"><i class="icon-plus icon-white"></i> {{msg('button.addAnotherFilter')}}</button>
++                                        </div>
++                                    </ng-form>
++                                </div>
++                            </div>
++                        </div>
++                    </div>
++
++                    <div class="accordion" id="accordion1">
++                        <div class="task-group">
++                            <div class="accordion-heading">
++                                <div class="pull-right dragged" ng-show="draggedTrigger" draggable double-click>
++                                    <button class="btn btn-primary btn-btn-in-header" data-toggle="collapse"  href="#collapse5"><i class="icon-plus-sign icon-white"></i></button>
++                                </div>
++                                <a class="accordion-toggle inbox-header" overflow-change expandaccordion data-toggle="collapse" data-parent="#accordion" href="#collapse5">
++                                    {{msg(selectedTrigger.displayName)}}
++                                </a>
++                            </div>
++                            <div id="collapse5" class="accordion-body collapse stripes-bg">
++                                <div class="accordion-inner">
++                                    <div ng-show="selectedAction.description">{{msg(selectedTrigger.description)}}</div>
++                                    <h5>{{msg('info.dragFieldBuildAction')}}</h5>
++                                    <div class="control-group move-element">
++                                        <span contenteditable="false" ng-repeat="i in selectedTrigger.eventParameters" class="badge badge-info triggerField" draggable data-prefix="trigger" data-index="{{$index}}" data-type="{{i.type}}">{{msg(i.displayName)}}</span>​
++                                    </div>
++                                </div>
++                            </div>
++                        </div>
++                    </div>
++
++                    <!------------------  Include Additional Data  ------------------------>
++                    <div class="accordion" id="accordion1" ng-hide="allDataSources == undefined || allDataSources.length == 0">
++                        <div class="task-group">
++                            <div class="accordion-heading">
++                                <div class="pull-right" ng-show="draggedTrigger">
++                                    <button class="btn btn-danger btn-btn-in-header" data-toggle="collapse" href="#collapse1"><i class="icon-remove icon-white"></i></button>
++                                </div>
++                                <a class="accordion-toggle inbox-header" overflow-change expandaccordion data-toggle="collapse" data-parent="#accordion1" href="#collapse1">
++                                    <i class="icon-chevron-right"></i> {{msg('subsection.IncludeAdditionalData')}}
++                                </a>
++                            </div>
++                            <div id="collapse1" class="accordion-body collapse stripes-bg">
++                                <div class="accordion-inner">
++                                    <div ng-repeat="dataSource in selectedDataSources">
++                                        <div class="control-group control-section">
++                                            <label class="control-label">{{msg('subsubsection.source')}} </label>
++                                            <div class="controls">
++                                                <div class="btn-group">
++                                                    <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
++                                                        {{msg(dataSource.name)}}
++                                                        <span class="caret"></span>
++                                                    </a>
++                                                    <ul class="dropdown-menu">
++                                                        <li ng-repeat="available in allDataSources">
++                                                            <a ui-if="dataSource.name == available.name"><i class="icon-ok-sign"></i> {{msg(available.name)}}</a>
++                                                            <a ui-if="dataSource.name != available.name && findDataSourceByName(selectedDataSources, available.name) != undefined"><i class="icon-ok-sign"></i> {{msg(available.name)}}</a>
++                                                            <a ui-if="dataSource.name != available.name && findDataSourceByName(selectedDataSources, available.name) == undefined" ng-click="changeDataSource(dataSource, available)"><i></i> {{msg(available.name)}}</a>
++                                                        </li>
++                                                    </ul>
++                                                </div>
++                                            </div>
++                                        </div>
++                                        <div class="section" ng-hide="dataSource.name == undefined" ng-repeat="object in dataSource.objects">
++                                            <div class="control-group control-section">
++                                                <label class="control-label">{{msg('subsubsection.object')}} <span class="index-label"> #{{object.id}}</span></label>
++                                                <div class="controls">
++                                                    <div class="btn-group">
++                                                        <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
++                                                            {{msg(object.displayName)}}
++                                                            <span class="caret"></span>
++                                                        </a>
++                                                        <ul class="dropdown-menu">
++                                                            <li ng-repeat="obj in dataSource.available">
++                                                                <a ui-if="object.type == obj.type"><i class="icon-ok-sign"></i> {{msg(obj.displayName)}}</a>
++                                                                <a ui-if="object.type != obj.type" ng-click="selectObject(dataSource.name, object, obj)"><i></i> {{msg(obj.displayName)}}</a>
++                                                            </li>
++                                                        </ul>
++                                                    </div>
++                                                </div>
++                                            </div>
++                                            <div class="control-group control-section" ng-hide="object.displayName == undefined">
++                                                <label class="control-label">{{msg('subsubsection.lookup')}} </label>
++                                                <div class="controls">
++                                                    <div class="btn-group">
++                                                        <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
++                                                            {{msg(object.lookup.field)}}
++                                                            <span class="caret"></span>
++                                                        </a>
++                                                        <ul class="dropdown-menu">
++                                                            <li ng-repeat="i in object.lookupFields">
++                                                                <a ui-if="object.lookup.field == i"><i class="icon-ok-sign"></i> {{msg(i)}}</a>
++                                                                <a ui-if="object.lookup.field != i" ng-click="object.lookup.field = i"><i></i> {{msg(i)}}</a>
++                                                            </li>
++                                                        </ul>
++                                                    </div>
++                                                    <span> {{msg('equals') | lowercase}} </span>
++                                                    <div class="btn-group">
++                                                        <a class="btn" ng-click="showLookupValueModal(dataSource, object)">
++                                                            {{object.lookup.displayName}}
++                                                            <span class="caret"></span>
++                                                        </a>
++                                                    </div>
++                                                </div>
++                                            </div>
++                                            <div class="control-group control-section">
++                                                <label class="control-label">{{msg('subsubsection.failIfDataNotFound')}}</label>
++                                                <div class="controls">
++                                                    <div class="btn-group">
++                                                        <input type="checkbox" ng-model="object.failIfDataNotFound"/>
++                                                    </div>
++                                                </div>
++                                            </div>
++                                            <div class="control-group move-element margin-before2" ng-hide="object.displayName == undefined">
++                                                <p><strong>{{msg('subsubsection.objectFields')}}</strong></p>
++                                                <span contenteditable="false" ng-repeat="i in object.fields" class="badge badge-warning triggerField" draggable
++                                                data-prefix="ad" data-source="{{dataSource.name}}" data-object="{{object.displayName}}" data-object-type="{{object.type}}"
++                                                data-field="{{i.fieldKey}}" data-index="{{$index}}" data-object-id="{{object.id}}" data-type="{{i.type}}">{{msg(i.displayName)}}</span>​
++                                            </div>
++                                        </div>
++
++                                        <div class="margin-before control-group section2">
++                                            <button class="btn btn-primary" ng-click="addObject(dataSource)"><i class="icon-white icon-plus"></i> {{msg('button.addObject', msg(dataSource.name))}}</button>
++                                            <div id="addObjectNotification" class="notifications center" style="z-index: 9999;"></div>
++                                        </div>
++                                    </div>
++
++                                    <div class="control-group section2" ng-hide="availableDataSources.length == 0">
++                                        <button class="btn btn-warning" ng-click="addDataSource()"><i class="icon-white icon-plus"></i> {{msg('button.addDataSource')}}</button>
++                                    </div>
++                                </div>
++                            </div>
++                        </div>
++                    </div>
++                </form>
++            </div>
++
++
++            <div class="row-fluid margin-before">
++                <form name="form" class="form-horizontal inside">
++                    <div class="accordion" id="accordion2">
++                    <!------------------------  action  ------------------------->
++                        <div class="task-description-group">
++                            <div class="accordion-heading">
++                                <div class="pull-right" ng-show="draggedTrigger">
++                                    <button class="btn btn-danger btn-btn-in-header" data-toggle="collapse" href="#collapse23"><i class="icon-remove icon-white"></i></button>
++                                </div>
++                                <a class="accordion-toggle inbox-header" expandaccordion data-toggle="collapse" data-parent="#accordion2" href="#collapse23">
++                                    <i ng-class="{true:'icon-chevron-down', false:'icon-chevron-right'}[false]"></i>&nbsp;{{msg('header.action')}}
++                                </a>
++                            </div>
++                            <div id="collapse23" class="accordion-body stripes-bg" ng-class="{true:'collapse in', false:'collapse'}[false]">
++                                <div class="accordion-inner inside">
++
++                                    <div class="control-group">
++                                        <h4>{{msg(selectedAction.displayName)}}</h4>
++                                    </div>
++                                    <div class="control-group" ng-show="selectedAction.description">
++                                        <label class="control-label">{{msg(selectedAction.description)}}</label>
++                                    </div>
++                                    <div ng-class="actionCssClass(i)" ng-repeat="i in selectedAction.actionParameters" class="control-group form-inline clearfix">
++                                        <label class="control-label tip">{{msg(i.displayName)}}
++                                            <!------------------------ Tooltips ------------------------>
++                                            <span class="help-inline" ui-if="i.type == 'LIST'" help-popover="list" data-title="{{msg('header.listHelp')}}"><i class="icon-question-sign"></i></span>
++                                            <span class="help-inline" ui-if="i.type == 'MAP'" help-popover="map" data-title="{{msg('header.mapHelp')}}"><i class="icon-question-sign"></i></span>
++                                        </label>
++
++                                        <!------------------------ Chrome & IE ------------------------>
++                                        <div ui-if="BrowserDetect.browser=='Chrome' || BrowserDetect.browser=='Explorer'" class="controls">
++                                            <editable-content ui-if="i.type == 'UNICODE'" data="i" index="$index" type="UNICODE"></editable-content>
++                                            <editable-content ui-if="i.type == 'TEXTAREA' || i.type == 'MAP' || i.type == 'LIST'" data="i" index="$index" type="TEXTAREA"></editable-content>
++                                            <editable-content ui-if="i.type == 'INTEGER' || i.type == 'LONG'" data="i" index="$index" type="INTEGER"></editable-content>
++                                            <editable-content ui-if="i.type == 'DOUBLE'" data="i" index="$index" type="DOUBLE"></editable-content>
++                                            <editable-content ui-if="i.type == 'TIME'" data="i" index="$index" type="TIME"></editable-content>
++                                            <editable-content ui-if="i.type == 'DATE'" data="i" index="$index" type="DATE"></editable-content>
++                                            <div ui-if="i.type == 'BOOLEAN'">
++                                                <label class="control-label radio inline span2 no-margin-top">
++                                                    <input type="radio" class="input-block-level" ng-checked="checkedBoolean($index, 'true')" ng-click="setBooleanValue($index, true)"/> {{msg('yes')}}
++                                                </label>
++                                                <label class="control-label radio inline span2 no-margin-top">
++                                                    <input type="radio" class="input-block-level" ng-checked="checkedBoolean($index, 'false')" ng-click="setBooleanValue($index, false)"/> {{msg('no')}}
++                                                </label>
++                                                <label class="control-label inline span8 no-margin-bottom">
++                                                    <editable-content data="i" index="$index" type="BOOLEAN"></editable-content>
++                                                </label>
++                                            </div>
++                                        </div>
++
++                                        <!------------------------ Other browsers  ------------------------>
++                                        <div ui-if="BrowserDetect.browser!='Chrome' && BrowserDetect.browser!='Explorer'" class="controls">
++                                            <textarea ui-if="i.type == 'TEXTAREA' || i.type == 'MAP' || i.type == 'LIST'" rows="5" ng-model="i.value" droppable class="actionField span8" data-index="{{$index}}" data-type="{{i.type}}"></textarea>
++                                            <input ui-if="i.type == 'INTEGER' || i.type == 'LONG'" type="text" ng-model="i.value" droppable class="actionField span8" data-index="{{$index}}" data-type="{{i.type}}" integer placeholder="{{msg('placeholder.numberOnly')}}"/>
++                                            <input ui-if="i.type == 'DOUBLE'" type="text" ng-model="i.value" droppable class="actionField span8" data-index="{{$index}}" data-type="{{i.type}}" integer placeholder="{{msg('placeholder.numberOnly')}}"/>
++                                            <input ui-if="i.type == 'UNICODE'" type="text" ng-model="i.value" droppable class="actionField span8" data-index="{{$index}}" data-type="{{i.type}}"/>
++                                            <input ui-if="i.type == 'DATE'" type="text" ng-model="i.value" droppable class="actionField span8" data-index="{{$index}}" data-type="{{i.type}}" datetime-picker-input placeholder="{{msg('placeholder.dateOnly')}}" readonly="readonly" style="background:white;"/>
++                                            <input ui-if="i.type == 'TIME'" type="text" ng-model="i.value" droppable class="actionField span8" data-index="{{$index}}" data-type="{{i.type}}" time-picker-input placeholder="{{msg('placeholder.timeOnly')}}" readonly="readonly" style="background:white;"/>
++                                            <div ui-if="i.type == 'BOOLEAN'">
++                                                <label class="radio help-inline">
++                                                    <input type="radio" ng-model="i.value" class="input-block-level" value="true"/> {{msg('yes')}}
++                                                </label>
++                                                <label class="radio help-inline">
++                                                    <input type="radio" ng-model="i.value" class="input-block-level" value="false"/> {{msg('no')}}
++                                                </label>
++                                                <label class="help-inline input-xlarge-fluid">
++                                                    <input type="text" value="{{getBooleanValue(i.value)}}" droppable class="actionField" data-index="{{$index}}" data-type="{{i.type}}" placeholder="{{msg('placeholder.booleanOnly')}}" readonly="readonly" style="background:white;"/>
++                                                </label>
++                                            </div>
++                                        </div>
++                                    </div>
++
++                                    <!------------------------ Help button  ------------------------>
++                                    <a ui-if="BrowserDetect.browser!='Chrome' && BrowserDetect.browser!='Explorer'" href="#helpModalDate" role="button" class="btn btn-primary" data-toggle="modal">{{msg('help')}}</a>
++
++                                    <!------------------------ Help Manipulation  ------------------------>
++                                    <div class="control-group" ng-include="'../tasks/partials/help/manipulation.html'"></div>
++                                </div>
++                            </div>
++                        </div>
++                    </div>
++                </form>
++            </div>
++            <div class="clearfix"></div>
++
++            <div class="row-fluid inside">
++                <div class="control-group centered">
++                    <button ui-if="filters.length==0" class="btn btn-success" ng-click="addFilter()"><i class="icon-plus icon-white"></i> {{msg('button.addFilter')}}</button>
++                    <button class="btn btn-warning" ng-click="addDataSource()"><i class="icon-white icon-plus"></i> {{msg('button.addDataSource')}}</button>
++                    <button class="btn btn-warning" ng-click="addAction()"><i class="icon-white icon-plus"></i> {{msg('button.addAction')}}</button>
++                </div>
++            </div>
++
++
++
++            <div class="accordion inside" id="accordion2">
++                <!------------------------  Description  ------------------------->
++                <div class="task-description-group">
++                    <div class="accordion-heading">
++                        <a class="accordion-toggle inbox-header" expandaccordion data-toggle="collapse" data-parent="#accordion2" href="#collapse22">
++                            <i ng-class="{true:'icon-chevron-down', false:'icon-chevron-right'}[task.description.length != null && task.description.length > 0]"></i>&nbsp;{{msg('section.taskDescription')}}
++                        </a>
++                    </div>
++                    <div id="collapse22" class="accordion-body stripes-bg" ng-class="{true:'collapse in', false:'collapse'}[task.description != null && task.description.length > 0]">
++                        <div class="accordion-inner">
++                            <div class="centered">
++                                <p class="centered spn9 margin-center">{{msg('info.taskDescription')}}</p>
++                                <div class="control-group">
++                                    <textarea class="span5" cols="3" ng-model="task.description"></textarea>
++                                </div>
++                            </div>
++                        </div>
++                    </div>
++                </div>
++            </div>
++            <!------------------------  Save  ------------------------>
++            <div class="control-group inside">
++                <h4 class="margin-center centered spn9">{{msg('section.save')}}</h4>
++                <div ng-hide="task._id">
++                    <p class="centered spn9 margin-center">{{msg('info.addSave')}}</p>
++                    <div class="control-group centered inside">
++                        <input type="button" ng-disabled="!validateForm()" ng-click="save(true)" class="btn btn-primary" value="{{msg('button.saveAndEnable')}}"/>
++                        <input type="button" ng-disabled="!validateForm()" ng-click="save(false)" class="btn btn-success" value="{{msg('button.save')}}"/>
++                        <a href="#/task/" class="btn"> {{msg('button.cancel')}}</a>
++                    </div>
++                </div>
++                <div ng-show="task._id">
++                    <p class="margin-center centered spn9">{{msg('info.editSave')}}</p>
++                    <div class="control-group centered inside">
++                        <input type="button" ng-disabled="!validateForm()" ng-click="save(task.enabled)" class="btn btn-success" value="{{msg('button.save')}}"/>
++                        <a href="#/task/" class="btn"> {{msg('button.cancel')}}</a>
++                    </div>
++                </div>
++            </div>
++        </div>
++    </div>
++</div>
+diff --git a/modules/tasks/tasks-bundle/src/main/resources/webapp/partials/history.html b/modules/tasks/tasks-bundle/src/main/resources/webapp/partials/history.html
+index a29c748..06926a8 100644
+--- a/modules/tasks/tasks-bundle/src/main/resources/webapp/partials/history.html
++++ b/modules/tasks/tasks-bundle/src/main/resources/webapp/partials/history.html
+@@ -21,16 +21,16 @@
+                         <li ng-show="description && !enabled" class="task-element" bs-popover data-trigger="hover" data-content="{{description}}" data-placement="left"><img src="../tasks/img/task-info-paused.png"  class="task-list-img" /></li>
+                         <li ng-show="description" class="divider-vertical"></li>
+                         <li ng-hide="enabled" class="task-element task-paused">
+-                            <span class="task-list-button-activity">
+-                                <span class="task-list-text-activity">{{msg('task.paused')}}</span>
+-                                <img class="task-list-img-activity" src="../tasks/img/task-paused.png" />
+-                            </span>
++                            <div class="task-list-button-activity">
++                                <div class="task-list-text-activity">{{msg('task.paused')}}</div>
++                                <div class="task-list-div-activity"><img class="task-list-img-activity" src="../tasks/img/task-paused.png" /></div>
++                            </div>
+                         </li>
+                         <li ng-show="enabled" class="task-element task-active">
+-                            <span class="task-list-button-activity">
+-                                <img class="task-list-img-activity" src="../tasks/img/task-active.png" />
+-                                <span class="task-list-text-activity">{{msg('task.active')}}</span>
+-                            </span>
++                            <div class="task-list-button-activity">
++                                <div class="task-list-div-activity"><img class="task-list-img-activity" src="../tasks/img/task-active.png" /></div>
++                                <div class="task-list-text-activity">{{msg('task.active')}}</div>
++                            </div>
+                         </li>
+                     </ul>
+                     <div class="clearfix"></div>
+@@ -57,9 +57,9 @@
+                         <tbody>
+                         <tr ng-repeat="activity in pagedItems[currentPage]">
+                             <td>
+-                                <img ng-show="activity.activityType == 'SUCCESS'" src="../tasks/img/icon-ok.png" class="recent-activity-arrow"/>
+-                                <img ng-show="activity.activityType == 'ERROR'" src="../tasks/img/icon-exclamation.png" class="recent-activity-arrow"/>
+-                                <img ng-show="activity.activityType == 'WARNING'" src="../tasks/img/icon-question.png" class="recent-activity-arrow"/>
++                                <img ng-show="activity.activityType == 'SUCCESS'" src="../tasks/img/icon-ok.png" class="recent-activity-task-img"/>
++                                <img ng-show="activity.activityType == 'ERROR'" src="../tasks/img/icon-exclamation.png" class="recent-activity-task-img"/>
++                                <img ng-show="activity.activityType == 'WARNING'" src="../tasks/img/icon-question.png" class="recent-activity-task-img"/>
+                             </td>
+                             <td class="message-history">
+                                 <p class="wrap-paragraph" ng-hide="activity.stackTraceElement.length &gt; 1">{{msg(activity.message, activity.fields)}}</p>
+diff --git a/modules/tasks/tasks-bundle/src/main/resources/webapp/partials/tasks.html b/modules/tasks/tasks-bundle/src/main/resources/webapp/partials/tasks.html
+index 8693402..b0c9e2a 100644
+--- a/modules/tasks/tasks-bundle/src/main/resources/webapp/partials/tasks.html
++++ b/modules/tasks/tasks-bundle/src/main/resources/webapp/partials/tasks.html
+@@ -8,6 +8,9 @@
+             <div class="inside">
+                 <a href="#/task/new" type="button" class="btn btn-success"><i class="icon-plus icon-white"></i> {{msg('task.new')}}</a>
+             </div>
++            <div class="inside">
++                <a href="#/task/new2" type="button" class="btn btn-success"><i class="icon-plus icon-white"></i> 2{{msg('task.new')}}</a>
++            </div>
+             <div class="inside form-inline">
+                 <label >{{msg('header.searchTasks')}}</label>
+                 <input type="text" ng-model="query" ng-change="search()" class="input-large search-query" placeholder="{{msg('header.searchByNameOrDescription')}}">
+-- 
+1.7.10.4
+
