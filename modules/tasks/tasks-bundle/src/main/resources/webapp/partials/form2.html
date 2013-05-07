@@ -2,6 +2,11 @@
 <div ng-hide="task._id" class="box-header" xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">{{msg('section.newTask')}} <a href="#/task/" type="button" class="btn btn-danger btn-in-header pull-right"><i class="icon-remove icon-white"></i></a></div>
 <div ng-show="task._id" class="box-header">{{msg('section.editTask')}} <a href="#/task/" type="button" class="btn btn-danger btn-in-header pull-right"><i class="icon-remove icon-white"></i></a></div>
 <div class="box-content">
+    <div class="inside">
+        <div ng-show="true || errors.length > 0" class="span12 alert alert-block alert-error">
+            <div><strong>Error:</strong>&nbsp;Error Field &nbsp;Error Message</div>
+        </div>
+    </div>
     <h3 class="centered" ng-hide="task.trigger && task.action">{{msg('section.selectEvents')}}</h3>
     <div class="bg-section-input stripes-bg" ng-hide="task.trigger && task.action">
         <div class="section-input">
@@ -91,10 +96,10 @@
                     </div>
 
                     <div class="accordion" id="accordion2">
-                        <div class="task-filter-group">
+                        <div class="task-group">
                             <div class="accordion-heading">
                                 <div class="pull-right">
-                                    <button type="button" class="btn btn-info btn-btn-in-header" data-toggle="collapse" data-target="#collapse-trigger">
+                                    <button type="button" class="btn btn-info btn-in-heading" data-toggle="collapse" data-target="#collapse-trigger">
                                         <i class="icon-plus-sign icon-white"></i>
                                     </button>
                                 </div>
@@ -111,9 +116,9 @@
                                                 <img src="../tasks/img/larrow.png" ng-click="currentPage.channels = currentPage.channels - 1" ng-hide="currentPage.channels == 0"/>
                                             </div>
                                             <ul class="task-selector droppable" style="position: relative;" droppable>
-                                                <li class="task-panel draggable" ng-repeat="channel in channels | filterPagination:currentPage.channels*pageSize.channels | limitTo:pageSize.channels" draggable data-channel-name="{{channel.displayName}}" data-module-name="{{channel.moduleName}}" data-module-version="{{channel.moduleVersion}}">
+                                                <li class="task-panel active draggable" ng-repeat="channel in channels | filterPagination:currentPage.channels*pageSize.channels | limitTo:pageSize.channels" draggable data-channel-name="{{channel.displayName}}" data-module-name="{{channel.moduleName}}" data-module-version="{{channel.moduleVersion}}">
                                                     <div task-popover rel="popover">
-                                                        <div><img ng-src="../tasks/api/channel/icon?moduleName={{channel.moduleName}}&moduleVersion={{channel.moduleVersion}}" class="panel-img" /></div>
+                                                        <div><i class="icon-remove icon-white close-channel"></i><img ng-src="../tasks/api/channel/icon?moduleName={{channel.moduleName}}&moduleVersion={{channel.moduleVersion}}" class="panel-img" /></div>
                                                         <span>{{msg(channel.displayName)}}</span>
                                                         <div class="content-task" style="display:none;">
                                                             <div class="popover-titles">{{msg('tooltip.availableTriggers')}}</div>
@@ -195,7 +200,7 @@
                         <div class="task-group">
                             <div class="accordion-heading">
                                 <div class="pull-right dragged" ng-show="draggedTrigger" draggable double-click>
-                                    <button class="btn btn-primary btn-btn-in-header" data-toggle="collapse"  href="#collapse5"><i class="icon-plus-sign icon-white"></i></button>
+                                    <button class="btn btn-heading btn-in-heading" data-toggle="collapse" href="#collapse5"><i class="icon-plus-sign icon-white"></i></button>
                                 </div>
                                 <a class="accordion-toggle inbox-header" overflow-change expandaccordion data-toggle="collapse" data-parent="#accordion" href="#collapse5">
                                     {{msg(selectedTrigger.displayName)}}
@@ -203,11 +208,8 @@
                             </div>
                             <div id="collapse5" class="accordion-body collapse stripes-bg">
                                 <div class="accordion-inner">
-                                    <div ng-show="selectedAction.description">{{msg(selectedTrigger.description)}}</div>
-                                    <h5>{{msg('info.dragFieldBuildAction')}}</h5>
-                                    <div class="control-group move-element">
-                                        <span contenteditable="false" ng-repeat="i in selectedTrigger.eventParameters" class="badge badge-info triggerField" draggable data-prefix="trigger" data-index="{{$index}}" data-type="{{i.type}}">{{msg(i.displayName)}}</span>​
-                                    </div>
+                                    {{msg(selectedTrigger.displayName)}}
+
                                 </div>
                             </div>
                         </div>
@@ -218,7 +220,7 @@
                         <div class="task-group">
                             <div class="accordion-heading">
                                 <div class="pull-right" ng-show="draggedTrigger">
-                                    <button class="btn btn-danger btn-btn-in-header" data-toggle="collapse" href="#collapse1"><i class="icon-remove icon-white"></i></button>
+                                    <button class="btn btn-danger btn-in-heading" data-toggle="collapse" href="#collapse1"><i class="icon-remove icon-white"></i></button>
                                 </div>
                                 <a class="accordion-toggle inbox-header" overflow-change expandaccordion data-toggle="collapse" data-parent="#accordion1" href="#collapse1">
                                     <i class="icon-chevron-right"></i> {{msg('subsection.IncludeAdditionalData')}}
@@ -324,17 +326,23 @@
                 <form name="form" class="form-horizontal inside">
                     <div class="accordion" id="accordion2">
                     <!------------------------  action  ------------------------->
-                        <div class="task-description-group">
+                        <div class="task-group">
                             <div class="accordion-heading">
                                 <div class="pull-right" ng-show="draggedTrigger">
-                                    <button class="btn btn-danger btn-btn-in-header" data-toggle="collapse" href="#collapse23"><i class="icon-remove icon-white"></i></button>
+                                    <button class="btn btn-danger btn-in-heading" data-toggle="collapse" href="#collapse23"><i class="icon-remove icon-white"></i></button>
                                 </div>
                                 <a class="accordion-toggle inbox-header" expandaccordion data-toggle="collapse" data-parent="#accordion2" href="#collapse23">
-                                    <i ng-class="{true:'icon-chevron-down', false:'icon-chevron-right'}[false]"></i>&nbsp;{{msg('header.action')}}
+                                    {{msg('header.action')}} <i ng-class="{true:'icon-chevron-down', false:'icon-chevron-right'}[false]"></i>&nbsp; {{msg(selectedTrigger.displayName)}}
                                 </a>
                             </div>
                             <div id="collapse23" class="accordion-body stripes-bg" ng-class="{true:'collapse in', false:'collapse'}[false]">
                                 <div class="accordion-inner inside">
+
+                                    <div ng-show="selectedAction.description">{{msg(selectedTrigger.description)}}</div>
+                                    <h4>{{msg('info.dragFieldBuildAction')}}</h4>
+                                    <div class="control-group move-element">
+                                        <span contenteditable="false" ng-repeat="i in selectedTrigger.eventParameters" class="badge badge-info triggerField" draggable data-prefix="trigger" data-index="{{$index}}" data-type="{{i.type}}">{{msg(i.displayName)}}</span>​
+                                    </div>
 
                                     <div class="control-group">
                                         <h4>{{msg(selectedAction.displayName)}}</h4>
@@ -417,7 +425,7 @@
 
             <div class="accordion inside" id="accordion2">
                 <!------------------------  Description  ------------------------->
-                <div class="task-description-group">
+                <div class="task-group">
                     <div class="accordion-heading">
                         <a class="accordion-toggle inbox-header" expandaccordion data-toggle="collapse" data-parent="#accordion2" href="#collapse22">
                             <i ng-class="{true:'icon-chevron-down', false:'icon-chevron-right'}[task.description.length != null && task.description.length > 0]"></i>&nbsp;{{msg('section.taskDescription')}}
