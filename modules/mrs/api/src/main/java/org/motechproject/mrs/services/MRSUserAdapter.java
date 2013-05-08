@@ -51,7 +51,7 @@ public interface MRSUserAdapter {
      *
      * @return List of all Users
      */
-    List<MRSUser> getAllUsers();
+    List<? extends MRSUser> getAllUsers();
 
     /**
      * Finds user by UserName

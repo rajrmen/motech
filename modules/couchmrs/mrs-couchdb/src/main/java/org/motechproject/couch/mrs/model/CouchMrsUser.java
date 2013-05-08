@@ -16,6 +16,9 @@ public class CouchMrsUser extends MotechBaseDataObject implements MRSUser {
     private String userName;
     private CouchPerson person;
 
+    private CouchMrsUser() {
+    }
+
     public CouchMrsUser(String userId, String systemId, String securityRole, String userName, CouchPerson person) {
         this.userId = userId;
         this.systemId = systemId;

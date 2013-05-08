@@ -53,7 +53,7 @@ public class MRSUserAdapterImpl implements MRSUserAdapter {
     }
 
     @Override
-    public List<MRSUser> getAllUsers() {
+    public List<? extends MRSUser> getAllUsers() {
         UserListResult result = null;
         try {
             result = userResource.getAllUsers();

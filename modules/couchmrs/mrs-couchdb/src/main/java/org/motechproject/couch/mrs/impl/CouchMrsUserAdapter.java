@@ -29,12 +29,11 @@ public class CouchMrsUserAdapter implements MRSUserAdapter {
 
     @Override
     public Map<String, Object> saveUser(MRSUser mrsUser) throws UserAlreadyExistsException {
-        CouchMrsUser couchMrsUser = CouchMRSConverterUtil.convertUserToCouchUser(mrsUser);
-        allCouchMrsUsers.saveUser(couchMrsUser);
-        Map<String, Object> values = new HashMap<String, Object>();
-        values.put(USER_KEY, mrsUser);
-        values.put(PASSWORD_KEY, new Password(PASSWORD_LENGTH).create());
-        return values;
+        if (getUserByUserName(mrsUser.getUserName()) != null) {
+            throw new UserAlreadyExistsException();
+        } else {
+            return updateUser(mrsUser);
+        }
     }
 
     @Override
@@ -43,8 +42,8 @@ public class CouchMrsUserAdapter implements MRSUserAdapter {
     }
 
     @Override
-    public List<MRSUser> getAllUsers() {
-        return null;
+    public List<? extends MRSUser> getAllUsers() {
+        return allCouchMrsUsers.getAllUsers();
     }
 
     @Override
@@ -54,6 +53,11 @@ public class CouchMrsUserAdapter implements MRSUserAdapter {
 
     @Override
     public Map<String, Object> updateUser(MRSUser mrsUser) {
-        return null;
+        CouchMrsUser couchMrsUser = CouchMRSConverterUtil.convertUserToCouchUser(mrsUser);
+        allCouchMrsUsers.updateUser(couchMrsUser);
+        Map<String, Object> values = new HashMap<>();
+        values.put(USER_KEY, mrsUser);
+        values.put(PASSWORD_KEY, new Password(PASSWORD_LENGTH).create());
+        return values;
     }
 }

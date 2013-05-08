@@ -11,6 +11,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.UUID;
 
+import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNull;
 
@@ -30,6 +31,30 @@ public class CouchMrsUserAdapterIT {
         couchMrsUserAdapter.saveUser(new CouchMrsUser("id", "sysid", "admin", userName, new CouchPerson()));
 
         assertNotNull(couchMrsUserAdapter.getUserByUserName(userName));
+    }
+
+    @Test(expected = UserAlreadyExistsException.class)
+    public void shouldThrowExceptionIfUserAlreadyExists() throws UserAlreadyExistsException {
+        String userName = unique("foo");
+
+        couchMrsUserAdapter.saveUser(new CouchMrsUser("id", "sysid", "admin", userName, new CouchPerson()));
+
+        couchMrsUserAdapter.saveUser(new CouchMrsUser("id2", "sysid2", "user", userName, new CouchPerson()));
+    }
+
+    @Test
+    public void shouldRetrieveAllUsers() throws UserAlreadyExistsException {
+        String userName1 = unique("foo1");
+        String userName2 = unique("foo2");
+        String userName3 = unique("foo3");
+
+        int initialSize = couchMrsUserAdapter.getAllUsers().size();
+
+        couchMrsUserAdapter.saveUser(new CouchMrsUser("id", "sysid", "admin", userName1, new CouchPerson()));
+        couchMrsUserAdapter.saveUser(new CouchMrsUser("id", "sysid", "admin", userName2, new CouchPerson()));
+        couchMrsUserAdapter.saveUser(new CouchMrsUser("id", "sysid", "admin", userName3, new CouchPerson()));
+
+        assertEquals(3, couchMrsUserAdapter.getAllUsers().size() - initialSize);
     }
 
     private String unique(String key) {
