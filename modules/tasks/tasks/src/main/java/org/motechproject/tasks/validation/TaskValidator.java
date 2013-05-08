@@ -13,6 +13,9 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static org.motechproject.tasks.domain.OperatorType.EXIST;
+import static org.motechproject.tasks.domain.OperatorType.fromString;
+
 public final class TaskValidator extends GeneralValidator {
     public static final String TASK = "task";
 
@@ -125,7 +128,10 @@ public final class TaskValidator extends GeneralValidator {
             String objectName = "task." + field;
 
             result.addError(checkBlankValue(objectName, "operator", filter.getOperator()));
-            result.addError(checkBlankValue(objectName, "expression", filter.getExpression()));
+
+            if (fromString(filter.getOperator()) != EXIST) {
+                result.addError(checkBlankValue(objectName, "expression", filter.getExpression()));
+            }
 
             result.addErrors(validateEventParameter(objectName, "eventParameter", filter.getEventParameter()));
         }

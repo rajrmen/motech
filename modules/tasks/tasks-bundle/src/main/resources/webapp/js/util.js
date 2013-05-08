@@ -3,7 +3,7 @@
 
     /* Services */
 
-    angular.module('channelUtils', ['ngResource']).factory('ChannelUtils', function () {
+    angular.module('manageTaskCtrlUtils', ['ngResource']).factory('ManageTaskCtrlUtils', function () {
         return {
             selectTrigger: function (scope, channel, trigger) {
                 scope.task.trigger = {

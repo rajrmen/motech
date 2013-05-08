@@ -75,58 +75,7 @@
                 </div>
 
                 <div ng-hide="!task.trigger.subject">
-                    <!------------------------ FILTER ------------------------>
-                    <!--<div class="accordion" id="filter" ui-if="task.filters">
-                        <div class="task-filter-group">
-                            <div class="accordion-heading">
-                                <div class="pull-right">
-                                    <button ng-click="removeFilterSet()" class="btn btn-danger btn-in-heading" data-toggle="collapse">
-                                        <i class="icon-remove icon-white"></i>
-                                    </button>
-                                </div>
-                                <a class="accordion-toggle inbox-header" overflow-change="collapse-action" data-toggle="collapse" data-parent="#filter" href="#collapse-filter">
-                                    {{msg('section.filters')}}
-                                </a>
-                            </div>
-                            <div id="collapse-filter collapse in" class="accordion-body stripes-bg">
-                                <div class="accordion-inner">
-                                    <form id="filtersForm" name="filterForm" class="form-horizontal">
-                                        <div class="margin-center">
-                                            <div ng-repeat="filter in task.filters">
-                                                <div class="form-inline">
-                                                    <div class="control-group">
-                                                        <span class="validation-area" ng-class="{error: !filter.eventParameter}">
-                                                            <select ng-model="filter.eventParameter" class="input-medium" ng-options="msg(c.displayName) for c in selectedTrigger.eventParameters">
-                                                                <option value="">{{msg('info.filter.select')}}</option>
-                                                            </select>
-                                                        </span>
-                                                        <span class="validation-area" ng-class="{error: !filter.negationOperator}">
-                                                            <select ng-disabled="!filter.eventParameter" ng-model="filter.negationOperator" ng-options="c.value as msg(c.key) for c in negationOperators" class="input-medium">
-                                                                <option value="">{{msg('info.filter.select')}}</option>
-                                                            </select>
-                                                        </span>
-                                                        <span class="validation-area" ng-class="{error: !filter.operator}">
-                                                            <select ng-disabled="!filter.negationOperator" ng-model="filter.operator" class="input-medium" ng-options="msg(c) for c in operators(filter.eventParameter)" >
-                                                                <option value="">{{msg('info.filter.select')}}</option>
-                                                            </select>
-                                                        </span>
-                                                        <span class="validation-area" ng-class="{error: !filter.expression}">
-                                                            <input ng-disabled="!filter.operator" ng-model="filter.expression" class="input-medium" ng-show="filter.operator!='exist'" type="text" value=""/>
-                                                        </span>
-                                                        <a ng-click="removeFilter(filter)" class="btn btn-small btn-danger"><i class="icon-trash icon-white"></i></a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="control-group">
-                                            <button ui-if="task.filters.length == 0" class="btn btn-success" ng-click="addFilter()"><i class="icon-plus icon-white"></i> {{msg('button.addFilter')}}</button>
-                                            <button ui-if="task.filters.length != 0" class="btn btn-success" ng-click="addFilter()"><i class="icon-plus icon-white"></i> {{msg('button.addAnotherFilter')}}</button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    </div>-->
+                    <div id="build-area"></div>
 
                     <!------------------ ADDITIONAL DATA ------------------------>
                     <!--<div class="accordion" id="accordion1" ng-hide="allDataSources == undefined || allDataSources.length == 0">
@@ -236,7 +185,7 @@
                     <div class="row-fluid inside">
                         <div class="control-group centered">
                             <div class="btn-group">
-                                <!--<button ui-if="!task.filters" class="btn btn-warning" ng-click="addFilterSet()"><i class="icon-plus icon-white"></i> {{msg('button.addFilter')}}</button>-->
+                                <button ui-if="!task.filters" class="btn btn-warning" ng-click="addFilterSet()"><i class="icon-plus icon-white"></i> {{msg('button.addFilter')}}</button>
                                 <!--<button class="btn btn-warning" ng-click="addDataSource()"><i class="icon-white icon-plus"></i> {{msg('button.addDataSource')}}</button>-->
                                 <button ui-if="!task.action" class="btn btn-warning" ng-click="addAction()"><i class="icon-white icon-plus"></i> {{msg('button.addAction')}}</button>
                             </div>
@@ -373,4 +322,3 @@
         </div>
     </div>
 </div>
-<pre>{{ task | json }}</pre>

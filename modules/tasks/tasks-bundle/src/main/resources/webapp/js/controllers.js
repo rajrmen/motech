@@ -158,12 +158,7 @@
 
     });
 
-    widgetModule.controller('ManageTaskCtrl', function ($scope, Channels, ChannelUtils, DataSources, $routeParams, $http) {
-        $scope.negationOperators = [
-            { key: 'info.filter.is', value: 'true' },
-            { key: 'info.filter.isNot', value: 'false' }
-        ];
-
+    widgetModule.controller('ManageTaskCtrl', function ($scope, ManageTaskCtrlUtils, Channels, DataSources, $routeParams, $http, $compile) {
         $scope.channels = Channels.query();
         $scope.task = {};
         $scope.selectedDataSources = [];
@@ -199,12 +194,12 @@
         };
 
         $scope.selectTrigger = function (channel, trigger) {
-            ChannelUtils.safeSelectTrigger($scope, channel, trigger);
+            ManageTaskCtrlUtils.safeSelectTrigger($scope, channel, trigger);
         };
 
         $scope.removeTrigger = function ($event) {
             $event.stopPropagation();
-            ChannelUtils.safeRemoveTrigger($scope);
+            ManageTaskCtrlUtils.safeRemoveTrigger($scope);
         }
 
         $scope.addAction = function () {
@@ -241,20 +236,26 @@
             if ($scope.selectedAction) {
                 motechConfirm('task.confirm.action', "header.confirm", function (val) {
                     if (val) {
-                        ChannelUtils.selectAction($scope, action);
+                        ManageTaskCtrlUtils.selectAction($scope, action);
                     }
                 });
             } else {
-                ChannelUtils.selectAction($scope, action);
+                ManageTaskCtrlUtils.selectAction($scope, action);
             }
         };
 
         $scope.addFilterSet = function () {
             $scope.task.filters = [];
+
+            $http.get('../tasks/partials/widgets/filter-set.html').success(function (html) {
+                angular.element("#build-area").append($compile(html)($scope));
+            });
         };
 
         $scope.removeFilterSet = function () {
             delete $scope.task.filters;
+
+            angular.element("#build-area").children('#filter-set').remove();
         };
 
         $scope.addFilter = function () {
@@ -312,7 +313,7 @@
 
             if ($scope.task.filters) {
                 for (i = 0; i < $scope.task.filters.length; i += 1) {
-                    if (!$scope.task.filters[i].eventParameter || !$scope.task.filters[i].negationOperator || !$scope.task.filters[i].operator) {
+                    if (!$scope.task.filters[i].eventParameter || $scope.task.filters[i].negationOperator === undefined || !$scope.task.filters[i].operator) {
                         isPass = false;
                     }
 

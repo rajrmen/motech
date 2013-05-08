@@ -362,17 +362,7 @@
     });
 
     widgetModule.directive('editableContent', function ($compile, $timeout, $http, $templateCache) {
-        var templateLoader,
-            baseURL = '../tasks/partials/widgets/',
-            typeTemplateMapping = {
-                TEXTAREA : 'content-editable-textarea.html',
-                INTEGER: 'content-editable-integer.html',
-                DOUBLE: 'content-editable-double.html',
-                UNICODE : 'content-editable-unicode.html',
-                DATE : 'content-editable-date.html',
-                TIME : 'content-editable-time.html',
-                BOOLEAN : 'content-editable-boolean.html'
-            };
+        var templateLoader;
 
         return {
             restrict: 'E',
@@ -383,8 +373,9 @@
                 index: '='
             },
             compile: function (tElement, tAttrs, scope) {
-                var tplURL = baseURL + typeTemplateMapping[tAttrs.type];
-                templateLoader = $http.get(tplURL, {cache: $templateCache})
+                var url = '../tasks/partials/widgets/content-editable-' + tAttrs.type.toLowerCase() + '.html',
+
+                templateLoader = $http.get(url, {cache: $templateCache})
                     .success(function (html) {
                         tElement.html(html);
                     });
