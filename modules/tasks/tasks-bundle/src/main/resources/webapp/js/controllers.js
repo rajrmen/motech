@@ -158,7 +158,469 @@
 
     });
 
-    widgetModule.controller('ManageTaskCtrl', function ($scope, Channels, Tasks, DataSources, $routeParams, $http) {
+    widgetModule.controller('ManageTaskCtrl', function ($scope, Channels, DataSources, $routeParams, $http) {
+        $scope.negationOperators = [
+            { key: 'info.filter.is', value: 'true' },
+            { key: 'info.filter.isNot', value: 'false' }
+        ];
+
+        $scope.channels = Channels.query();
+        $scope.task = {};
+        $scope.selectedDataSources = [];
+        $scope.availableDataSources = [];
+        $scope.allDataSources = [];
+
+        $scope.allDataSources = DataSources.query(function () {
+            $.merge($scope.availableDataSources, $scope.allDataSources);
+        });
+
+
+        $scope.getChannelsWithTriggers = function () {
+            var array = [];
+
+            angular.forEach($scope.channels, function (channel) {
+                if (channel.triggerTaskEvents.length) {
+                    array.push(channel);
+                }
+            });
+
+            return array;
+        };
+
+        $scope.getChannelsWithActions = function () {
+            var array = [];
+
+            angular.forEach($scope.channels, function (channel) {
+                if (channel.actionTaskEvents.length) {
+                    array.push(channel);
+                }
+            });
+
+            return array;
+        };
+
+        $scope.selectTrigger = function (channel, trigger) {
+            $scope.task.trigger = {
+                displayName: trigger.displayName,
+                channelName: channel.displayName,
+                moduleName: channel.moduleName,
+                moduleVersion: channel.moduleVersion,
+                subject: trigger.subject
+            };
+
+            angular.element("#collapse-trigger").collapse('hide');
+
+            $scope.selectedTrigger = trigger;
+        };
+
+        $scope.addAction = function () {
+            $scope.task.action = {};
+        };
+
+        $scope.removeAction = function () {
+            delete $scope.task.action;
+        };
+
+        $scope.selectActionChannel = function (channel) {
+            $scope.selectedActionChannel = channel;
+        };
+
+        $scope.getActions = function () {
+            return ($scope.selectedActionChannel && $scope.selectedActionChannel.actionTaskEvents) || [];
+        };
+
+        $scope.selectAction = function (action) {
+            $scope.task.action = {
+                displayName: action.displayName,
+                channelName: $scope.selectedActionChannel.displayName,
+                moduleName: $scope.selectedActionChannel.moduleName,
+                moduleVersion: $scope.selectedActionChannel.moduleVersion,
+            };
+
+            if (action.subject !== undefined) {
+                $scope.task.action.subject = action.subject;
+            }
+
+            if (action.serviceInterface !== undefined && action.serviceMethod !== undefined) {
+                $scope.task.action.serviceInterface = action.serviceInterface;
+                $scope.task.action.serviceMethod = action.serviceMethod;
+            }
+
+            $scope.selectedAction = action;
+        };
+
+        $scope.addFilterSet = function () {
+            $scope.task.filters = [];
+        };
+
+        $scope.removeFilterSet = function () {
+            delete $scope.task.filters;
+        };
+
+        $scope.addFilter = function () {
+            $scope.task.filters.push({});
+        };
+
+        $scope.operators = function (event) {
+            var operator = ['exist'];
+
+            if (event && (event.type === 'UNICODE' || event.type === 'TEXTAREA')) {
+                operator.push("equals");
+                operator.push("contains");
+                operator.push("startsWith");
+                operator.push("endsWith");
+            } else if (event && (event.type === 'INTEGER' || event.type === 'LONG' || event.type === 'DOUBLE')) {
+                operator.push("gt");
+                operator.push("lt");
+                operator.push("equal");
+            }
+
+            return operator;
+        };
+
+        $scope.removeFilter = function (filter) {
+            $scope.task.filters.removeObject(filter);
+        };
+
+        $scope.validateForm = function () {
+            var i, param;
+
+            if ($scope.selectedAction !== undefined && $scope.selectedTrigger !== undefined) {
+                for (i = 0; i < $scope.selectedAction.actionParameters.length; i += 1) {
+                    if ($scope.BrowserDetect.browser !== 'Chrome' && $scope.BrowserDetect.browser !== 'Explorer') {
+                        param = $scope.selectedAction.actionParameters[i].value;
+                    } else {
+                        param = $scope.refactorDivEditable($scope.selectedAction.actionParameters[i].value || '');
+                    }
+                    if (param === null || param === undefined || param === "\n" || !param.trim().length) {
+                        return false;
+                    }
+                }
+            } else {
+                return false;
+            }
+
+            if ($scope.task.name === undefined) {
+                return false;
+            }
+
+            return $scope.validateFilterForm();
+        };
+
+        $scope.validateFilterForm = function () {
+            var isPass = true, i;
+
+            if ($scope.task.filters) {
+                for (i = 0; i < $scope.task.filters.length; i += 1) {
+                    if (!$scope.task.filters[i].eventParameter || !$scope.task.filters[i].negationOperator || !$scope.task.filters[i].operator) {
+                        isPass = false;
+                    }
+
+                    if ($scope.task.filters[i].operator && $scope.task.filters[i].operator !== 'exist' && !$scope.task.filters[i].expression) {
+                        isPass = false;
+                    }
+                }
+            }
+
+            return isPass;
+        };
+
+        $scope.refactorDivEditable = function (value) {
+            var result = $('<div>' + value + '</div>');
+
+            result.find('span[data-prefix]').replaceWith(function () {
+                var eventKey = '', source = $(this).data('source'),
+                    type = $(this).data('object-type'), prefix = $(this).data('prefix'), field = $(this).data('field'),
+                    id = $(this).data('object-id'), val, i, manipulation, man;
+
+                if (prefix === 'trigger') {
+                    for (i = 0; i < $scope.selectedTrigger.eventParameters.length; i += 1) {
+                        if ($scope.msg($scope.selectedTrigger.eventParameters[i].displayName) === $(this).text()) {
+                            eventKey = $scope.selectedTrigger.eventParameters[i].eventKey;
+                        }
+                    }
+                } else if (prefix === 'ad') {
+                    eventKey = field;
+                } else {
+                    eventKey = $(this).data('value').toString();
+                }
+
+                manipulation = this.attributes.getNamedItem('manipulate') !== null ? this.attributes.getNamedItem('manipulate').value : '';
+
+                if (manipulation && manipulation !== "") {
+                    if (this.attributes.getNamedItem('data-type').value === 'UNICODE' || this.attributes.getNamedItem('data-type').value === 'TEXTAREA') {
+                        man = manipulation.split(" ");
+
+                        for (i = 0; i < man.length; i += 1) {
+                            eventKey = eventKey + "?" + man[i];
+                        }
+                    } else if (this.attributes.getNamedItem('data-type').value === 'DATE') {
+                        eventKey = eventKey + "?" + manipulation;
+                    }
+                }
+
+                eventKey = eventKey.replace(/\?+(?=\?)/g, '');
+
+                if (prefix === 'trigger') {
+                    val = '{{' + prefix + '.' + eventKey + '}}';
+                } else if (prefix === 'ad') {
+                    val = '{{' + prefix + '.' + $scope.msg(source) + '.' + type + '#' + id + '.' + eventKey + '}}';
+                } else {
+                    val = eventKey;
+                }
+
+                return val;
+            });
+
+            result.find('em').remove();
+
+            if ($scope.BrowserDetect.browser === 'Chrome' && $scope.BrowserDetect.browser !== 'Explorer') {
+                result.find("div").replaceWith(function () {
+                    return "\n" + this.innerHTML;
+                });
+            }
+
+            if ($scope.BrowserDetect.browser === 'Explorer') {
+                result.find("p").replaceWith(function () {
+                    return this.innerHTML + "<br>";
+                });
+                result.find("br").last().remove();
+            }
+
+            if ($scope.BrowserDetect.browser === 'Chrome' || $scope.BrowserDetect.browser === 'Explorer') {
+                if (result[0].childNodes[result[0].childNodes.length - 1] === '<br>') {
+                    result[0].childNodes[result[0].childNodes.length - 1].remove();
+                }
+
+                result.find("br").replaceWith("\n");
+            }
+
+            return result.text();
+        };
+
+        $scope.save = function (enabled) {
+            var action = $scope.selectedAction, regex = new RegExp('\\{\\{ad\\.(.+?)(\\..*?)\\}\\}', "g"), key, value, found, replaced = [], i, j;
+
+            $scope.task.actionInputFields = {};
+            $scope.task.enabled = enabled;
+
+            angular.forEach(action.actionParameters, function (actionParameters) {
+                if ($scope.BrowserDetect.browser !== 'Chrome' && $scope.BrowserDetect.browser !== 'Explorer') {
+                    var regex = new RegExp("\\{\\{ad\\..*?\\}\\}", "g"), spans = [], r;
+
+                    while ((r = regex.exec(actionParameters.value)) !== null) {
+                        $.merge(spans, r);
+                    }
+
+                    angular.forEach(spans, function (span) {
+                        var cuts = {}, source, type, id, ds, exists = false, object, i;
+
+                        cuts.first = span.indexOf('.');
+                        cuts.second = span.indexOf('.', cuts.first + 1);
+                        cuts.third = span.indexOf('.', cuts.second + 1);
+
+                        source = span.substring(cuts.first + 1, cuts.second);
+                        type = span.substring(cuts.second + 1, cuts.third);
+                        id = +type.substring(type.lastIndexOf('#') + 1);
+                        type = type.substring(0, type.lastIndexOf('#'));
+
+                        ds = $scope.findDataSourceByName($scope.selectedDataSources, source);
+
+                        if ($scope.task.additionalData === undefined) {
+                            $scope.task.additionalData = {};
+                        }
+
+                        if ($scope.task.additionalData[ds._id] === undefined) {
+                            $scope.task.additionalData[ds._id] = [];
+                        }
+
+                        for (i = 0; i < $scope.task.additionalData[ds._id].length; i += 1) {
+                            if ($scope.task.additionalData[ds._id][i].id === id) {
+                                exists = true;
+                                object = $scope.findObject(ds, type, id);
+                                if ($scope.task.additionalData[ds._id][i].failIfDataNotFound !== object.failIfDataNotFound) {
+                                    $scope.task.additionalData[ds._id][i].failIfDataNotFound = object.failIfDataNotFound;
+                                }
+                                break;
+                            }
+                        }
+
+                        if (!exists) {
+                            object = $scope.findObject(ds, type, id);
+
+                            $scope.task.additionalData[ds._id].push({
+                                id: object.id,
+                                type: object.type,
+                                lookupField: object.lookup.field,
+                                lookupValue: object.lookup.by,
+                                failIfDataNotFound: object.failIfDataNotFound
+                            });
+                        }
+
+                    });
+                } else {
+                    $('<div>' + actionParameters.value + "</div>").find('span[data-prefix="ad"]').each(function (index, value) {
+                        var span = $(value), source = span.data('source'),
+                            objectType = span.data('object-type'), objectId = span.data('object-id'),
+                            dataSource, exists = false, object, i;
+
+                        dataSource = $scope.findDataSourceByName($scope.selectedDataSources, source);
+
+                        if ($scope.task.additionalData === undefined) {
+                            $scope.task.additionalData = {};
+                        }
+
+                        if ($scope.task.additionalData[dataSource._id] === undefined) {
+                            $scope.task.additionalData[dataSource._id] = [];
+                        }
+
+                        for (i = 0; i < $scope.task.additionalData[dataSource._id].length; i += 1) {
+                            if ($scope.task.additionalData[dataSource._id][i].id === objectId) {
+                                exists = true;
+                                object = $scope.findObject(dataSource, objectType, objectId);
+                                if ($scope.task.additionalData[dataSource._id][i].failIfDataNotFound !== object.failIfDataNotFound) {
+                                    $scope.task.additionalData[dataSource._id][i].failIfDataNotFound = object.failIfDataNotFound;
+                                }
+                                break;
+                            }
+                        }
+
+                        if (!exists) {
+                            object = $scope.findObject(dataSource, objectType, objectId);
+
+                            $scope.task.additionalData[dataSource._id].push({
+                                id: object.id,
+                                type: object.type,
+                                lookupField: object.lookup.field,
+                                lookupValue: object.lookup.by,
+                                failIfDataNotFound: object.failIfDataNotFound
+                            });
+                        }
+                    });
+                }
+            });
+
+            angular.forEach($scope.selectedDataSources, function (dataSource) {
+                angular.forEach(dataSource.objects, function (object) {
+                    var regex = new RegExp('ad\\.(.+?)\\.(.+?)\\#(.+?)\\.(.+)', "g"), exists = false, exec, ds, obj, i;
+
+                    if (object.lookup.by.indexOf('ad') === 0) {
+                        exec = regex.exec(object.lookup.by);
+                        ds = $scope.findDataSourceById($scope.selectedDataSources, exec[1]);
+                        obj = $scope.findObject(ds, exec[2], +exec[3]);
+
+                        if ($scope.task.additionalData === undefined) {
+                            $scope.task.additionalData = {};
+                        }
+
+                        if ($scope.task.additionalData[ds._id] === undefined) {
+                            $scope.task.additionalData[ds._id] = [];
+                        }
+
+                        for (i = 0; i < $scope.task.additionalData[ds._id].length; i += 1) {
+                            if ($scope.task.additionalData[ds._id][i].id === obj.id) {
+                                exists = true;
+                                break;
+                            }
+                        }
+
+                        if (!exists) {
+                            $scope.task.additionalData[ds._id].push({
+                                id: obj.id,
+                                type: obj.type,
+                                lookupField: obj.lookup.field,
+                                lookupValue: obj.lookup.by,
+                                failIfDataNotFound : obj.failIfDataNotFound
+                            });
+                        }
+                    }
+                });
+            });
+
+            for (i = 0; i < action.actionParameters.length; i += 1) {
+                key = action.actionParameters[i].key;
+
+                if ($scope.BrowserDetect.browser !== 'Chrome' && $scope.BrowserDetect.browser !== 'Explorer') {
+                    value = action.actionParameters[i].value || '';
+                } else {
+                    value = $scope.refactorDivEditable(action.actionParameters[i].value  || '');
+                }
+
+                while ((found = regex.exec(value)) !== null) {
+                    replaced.push({
+                        find: '{{ad.' + found[1] + found[2] + '}}',
+                        value: '{{ad.' + $scope.findDataSourceByName($scope.selectedDataSources, found[1])._id + found[2] + '}}'
+                    });
+                }
+
+                for (j = 0; j < replaced.length; j += 1) {
+                    value = value.replace(replaced[j].find, replaced[j].value);
+                }
+
+                $scope.task.actionInputFields[key] = value;
+            }
+
+            blockUI();
+
+            if ($routeParams.taskId === undefined) {
+                $http.post('../tasks/api/task/save', $scope.task).
+                    success(function () {
+                        var msg = enabled ? 'task.success.savedAndEnabled' : 'task.success.saved', loc, indexOf;
+
+                        unblockUI();
+
+                        motechAlert(msg, 'header.saved', function () {
+                            loc = window.location.toString();
+                            indexOf = loc.indexOf('#');
+
+                            window.location = loc.substring(0, indexOf) + "#/dashboard";
+                        });
+                    }).error(function (response) {
+                        unblockUI();
+                        var msg = $scope.msg('task.error.saved') + '\n', i;
+
+                        for (i = 0; i < response.length; i += 1) {
+                            msg += ' - ' + $scope.msg(response[i].message, [response[i].field, response[i].objectName]) + '\n';
+                        }
+
+                        delete $scope.task.actionInputFields;
+                        delete $scope.task.enabled;
+                        delete $scope.task.additionalData;
+
+
+
+                        jAlert(msg, jQuery.i18n.prop('header.error'));
+                    });
+            } else {
+                $scope.task.$save(function () {
+                    var loc, indexOf;
+
+                    unblockUI();
+
+                    motechAlert('task.success.saved', 'header.saved', function () {
+                        loc = window.location.toString();
+                        indexOf = loc.indexOf('#');
+
+                        window.location = loc.substring(0, indexOf) + "#/dashboard";
+                    });
+                }, function (response) {
+                    var msg = $scope.msg('task.error.saved') + '\n', i;
+                    unblockUI();
+                    for (i = 0; i < response.data.length; i += 1) {
+                        msg += ' - ' + $scope.msg(response.data[i].message, [response.data[i].field, response.data[i].objectName]) + '\n';
+                    }
+
+                    delete $scope.task.actionInputFields;
+                    delete $scope.task.enabled;
+                    delete $scope.task.additionalData;
+
+                    jAlert(msg, jQuery.i18n.prop('header.error'));
+                });
+            }
+        };
+    });
+
+    widgetModule.controller('OldManageTaskCtrl', function ($scope, Channels, Tasks, DataSources, $routeParams, $http) {
         $scope.currentPage = {
             channels: 0,
             dataSource: 0,

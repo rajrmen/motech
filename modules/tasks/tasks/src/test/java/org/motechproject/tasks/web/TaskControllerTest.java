@@ -52,8 +52,8 @@ public class TaskControllerTest {
 
     @Test
     public void shouldGetAllTasks() {
-        TaskActionInformation action = new TaskActionInformation("action1", "action", "0.15", "receive");
-        TaskEventInformation trigger = new TaskEventInformation("trigger1", "trigger", "0.16", "send");
+        TaskActionInformation action = new TaskActionInformation("receive", "action1", "action", "0.15", "receive");
+        TaskEventInformation trigger = new TaskEventInformation("send", "trigger1", "trigger", "0.16", "send");
 
         List<Task> expected = new ArrayList<>();
         expected.add(new Task(trigger, action, new HashMap<String, String>(), "name"));
@@ -115,8 +115,8 @@ public class TaskControllerTest {
     @Test
     public void shouldSaveTaskAndRegisterHandlerForNewTrigger() {
         String subject = "trigger1";
-        TaskActionInformation action = new TaskActionInformation("action1", "action", "0.15", "send");
-        TaskEventInformation trigger = new TaskEventInformation("trigger1", "trigger", "0.16", subject);
+        TaskActionInformation action = new TaskActionInformation("send", "action1", "action", "0.15", "send");
+        TaskEventInformation trigger = new TaskEventInformation("trigger", "trigger1", "trigger", "0.16", subject);
         Task expected = new Task(trigger, action, new HashMap<String, String>(), "name");
 
         when(eventListenerRegistryService.getListeners(subject)).thenReturn(new HashSet<EventListener>());

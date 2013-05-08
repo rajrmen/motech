@@ -31,8 +31,8 @@ import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 public class TaskServiceImplTest {
-    private static final TaskEventInformation trigger = new TaskEventInformation("test", "test", "0.15", "SEND");
-    private static final TaskActionInformation action = new TaskActionInformation("test", "test", "0.14", "RECEIVE");
+    private static final TaskEventInformation trigger = new TaskEventInformation("send", "test", "test", "0.15", "SEND");
+    private static final TaskActionInformation action = new TaskActionInformation("receive", "test", "test", "0.14", "RECEIVE");
 
     @Mock
     AllTasks allTasks;

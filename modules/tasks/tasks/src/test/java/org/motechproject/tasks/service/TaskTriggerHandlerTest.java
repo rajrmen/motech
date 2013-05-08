@@ -1075,8 +1075,8 @@ public class TaskTriggerHandlerTest {
     }
 
     private void initTask() throws Exception {
-        TaskEventInformation trigger = new TaskEventInformation("Appointments", "appointments-bundle", "0.15", TRIGGER_SUBJECT);
-        TaskActionInformation action = new TaskActionInformation("SMS", "sms-bundle", "0.15", ACTION_SUBJECT);
+        TaskEventInformation trigger = new TaskEventInformation("trigger", "Appointments", "appointments-bundle", "0.15", TRIGGER_SUBJECT);
+        TaskActionInformation action = new TaskActionInformation("action", "SMS", "sms-bundle", "0.15", ACTION_SUBJECT);
 
         Map<String, String> actionInputFields = new HashMap<>();
         actionInputFields.put("phone", "123456");

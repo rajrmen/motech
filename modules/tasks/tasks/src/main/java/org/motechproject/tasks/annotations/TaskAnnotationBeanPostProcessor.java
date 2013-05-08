@@ -103,8 +103,8 @@ public class TaskAnnotationBeanPostProcessor implements BeanPostProcessor {
     }
 
     private ActionEvent getAction(Channel channel, String serviceInterface, Method method) {
-        TaskActionInformation info = new TaskActionInformation(channel.getDisplayName(), channel.getModuleName(),
-                channel.getModuleVersion(), serviceInterface, method.getName());
+        TaskActionInformation info = new TaskActionInformation(channel.getDisplayName(), channel.getDisplayName(),
+                channel.getModuleName(), channel.getModuleVersion(), serviceInterface, method.getName());
         ActionEvent actionEvent = null;
 
         if (channel.getActionTaskEvents() != null) {

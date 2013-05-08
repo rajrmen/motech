@@ -8,7 +8,7 @@
         function ($routeProvider) {
             $routeProvider.
                 when('/dashboard', {templateUrl: '../tasks/partials/tasks.html', controller: 'DashboardCtrl'}).
-                when('/task/new', {templateUrl: '../tasks/partials/form.html', controller: 'ManageTaskCtrl'}).
+                when('/task/new', {templateUrl: '../tasks/partials/form.html', controller: 'OldManageTaskCtrl'}).
                 when('/task/new2', {templateUrl: '../tasks/partials/form2.html', controller: 'ManageTaskCtrl'}).
                 when('/task/:taskId/edit', {templateUrl: '../tasks/partials/form.html', controller: 'ManageTaskCtrl'}).
                 when('/task/:taskId/log', {templateUrl: '../tasks/partials/history.html', controller: 'LogCtrl'}).

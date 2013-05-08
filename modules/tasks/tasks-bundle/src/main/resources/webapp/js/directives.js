@@ -34,7 +34,7 @@
         return {
             restrict: 'A',
             link: function (scope, element, attrs) {
-                $('#collapse1').on({
+                $('#' + attrs.overflowChange).on({
                     shown: function () {
                         $(this).css('overflow', 'visible');
                     },
@@ -761,6 +761,28 @@
                     manipulateElement.attr("manipulate", elementManipulation);
                 });
             }
+        };
+    });
+
+    widgetModule.directive('selectEvent', function() {
+        return function(scope, element, attrs) {
+            $(element).click(function () {
+                var li = $(element).parent('li'),
+                    content = $(element).find('.content-task'),
+                    visible = content.is(":visible"),
+                    other = $('[select-event=' + attrs.selectEvent + ']').not('#' + $(this).attr('id'));
+
+                    other.parent('li').removeClass('active');
+                    other.find('.content-task').hide();
+
+                    if (visible) {
+                        li.removeClass('active');
+                        content.hide();
+                    } else {
+                        li.addClass('active');
+                        content.show();
+                    }
+            });
         };
     });
 
