@@ -23,6 +23,22 @@
                   scope.$apply();
                 }
             },
+            safeSelectTrigger: function (scope, channel, trigger) {
+                var that = this;
+
+                if (scope.task.trigger) {
+                    motechConfirm('task.confirm.trigger', "header.confirm", function (val) {
+                        var li;
+
+                        if (val) {
+                            that.removeTrigger(scope);
+                            that.selectTrigger(scope, channel, trigger);
+                        }
+                    });
+                } else {
+                    that.selectTrigger(scope, channel, trigger);
+                }
+            },
             removeTrigger: function (scope) {
                 var li = angular.element("#trigger-" + scope.task.trigger.moduleName).parent('li');
 
@@ -35,6 +51,15 @@
                   scope.$apply();
                 }
             },
+            safeRemoveTrigger: function (scope) {
+                var that = this;
+
+                motechConfirm('task.confirm.trigger', "header.confirm", function (val) {
+                    if (val) {
+                        that.removeTrigger(scope);
+                    }
+                });
+            },
             selectAction: function (scope, action) {
                 scope.task.action = {
                     displayName: action.displayName,
@@ -43,11 +68,11 @@
                     moduleVersion: scope.selectedActionChannel.moduleVersion,
                 };
 
-                if (action.subject !== undefined) {
+                if (action.subject) {
                     scope.task.action.subject = action.subject;
                 }
 
-                if (action.serviceInterface !== undefined && action.serviceMethod !== undefined) {
+                if (action.serviceInterface && action.serviceMethod) {
                     scope.task.action.serviceInterface = action.serviceInterface;
                     scope.task.action.serviceMethod = action.serviceMethod;
                 }

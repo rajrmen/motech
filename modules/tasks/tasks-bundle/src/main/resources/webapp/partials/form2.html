@@ -76,7 +76,7 @@
 
                 <div ng-hide="!task.trigger.subject">
                     <!------------------------ FILTER ------------------------>
-                    <div class="accordion" id="filter" ui-if="task.filters">
+                    <!--<div class="accordion" id="filter" ui-if="task.filters">
                         <div class="task-filter-group">
                             <div class="accordion-heading">
                                 <div class="pull-right">
@@ -126,7 +126,7 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div>-->
 
                     <!------------------ ADDITIONAL DATA ------------------------>
                     <!--<div class="accordion" id="accordion1" ng-hide="allDataSources == undefined || allDataSources.length == 0">
@@ -236,7 +236,7 @@
                     <div class="row-fluid inside">
                         <div class="control-group centered">
                             <div class="btn-group">
-                                <button ui-if="!task.filters" class="btn btn-warning" ng-click="addFilterSet()"><i class="icon-plus icon-white"></i> {{msg('button.addFilter')}}</button>
+                                <!--<button ui-if="!task.filters" class="btn btn-warning" ng-click="addFilterSet()"><i class="icon-plus icon-white"></i> {{msg('button.addFilter')}}</button>-->
                                 <!--<button class="btn btn-warning" ng-click="addDataSource()"><i class="icon-white icon-plus"></i> {{msg('button.addDataSource')}}</button>-->
                                 <button ui-if="!task.action" class="btn btn-warning" ng-click="addAction()"><i class="icon-white icon-plus"></i> {{msg('button.addAction')}}</button>
                             </div>
@@ -295,7 +295,7 @@
                                         <label class="control-label">{{msg(selectedAction.description)}}</label>
                                     </div>
                                     <div ui-if="selectedAction">
-                                        <div class="control-group" ng-class="{error: !i.value}" ng-repeat="i in selectedAction.actionParameters" class="control-group form-inline clearfix">
+                                        <div ng-class="actionCssClass(i)" ng-repeat="i in selectedAction.actionParameters" class="control-group form-inline clearfix">
                                             <label class="control-label tip">
                                                 {{msg(i.displayName)}}
                                                 <!------------------------ Tooltips ------------------------>
@@ -373,3 +373,4 @@
         </div>
     </div>
 </div>
+<pre>{{ task | json }}</pre>

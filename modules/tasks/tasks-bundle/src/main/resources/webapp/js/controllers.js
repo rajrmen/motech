@@ -199,30 +199,12 @@
         };
 
         $scope.selectTrigger = function (channel, trigger) {
-            if ($scope.task.trigger) {
-                jConfirm(jQuery.i18n.prop('task.confirm.trigger'), jQuery.i18n.prop("header.confirm"), function (val) {
-                    var li;
-
-                    if (val) {
-                        ChannelUtils.removeTrigger($scope);
-                        ChannelUtils.selectTrigger($scope, channel, trigger);
-                    }
-                });
-            } else {
-                ChannelUtils.selectTrigger($scope, channel, trigger);
-            }
+            ChannelUtils.safeSelectTrigger($scope, channel, trigger);
         };
 
         $scope.removeTrigger = function ($event) {
             $event.stopPropagation();
-
-            jConfirm(jQuery.i18n.prop('task.confirm.trigger'), jQuery.i18n.prop("header.confirm"), function (val) {
-                var li;
-
-                if (val) {
-                    ChannelUtils.removeTrigger($scope);
-                }
-            });
+            ChannelUtils.safeRemoveTrigger($scope);
         }
 
         $scope.addAction = function () {
@@ -234,7 +216,21 @@
         };
 
         $scope.selectActionChannel = function (channel) {
-            $scope.selectedActionChannel = channel;
+            if ($scope.selectedActionChannel && $scope.selectedAction) {
+                motechConfirm('task.confirm.action', "header.confirm", function (val) {
+                    if (val) {
+                        $scope.task.action = {};
+                        $scope.selectedActionChannel = channel;
+                        delete $scope.selectedAction;
+
+                        if(!$scope.$$phase) {
+                          $scope.$apply();
+                        }
+                    }
+                });
+            } else {
+                $scope.selectedActionChannel = channel;
+            }
         };
 
         $scope.getActions = function () {
@@ -242,7 +238,15 @@
         };
 
         $scope.selectAction = function (action) {
-            ChannelUtils.selectAction($scope, action);
+            if ($scope.selectedAction) {
+                motechConfirm('task.confirm.action', "header.confirm", function (val) {
+                    if (val) {
+                        ChannelUtils.selectAction($scope, action);
+                    }
+                });
+            } else {
+                ChannelUtils.selectAction($scope, action);
+            }
         };
 
         $scope.addFilterSet = function () {
@@ -613,6 +617,39 @@
                     jAlert(msg, jQuery.i18n.prop('header.error'));
                 });
             }
+        };
+
+        $scope.actionCssClass = function (prop) {
+            var msg = "control-group", value;
+
+            if ($scope.selectedTrigger !== undefined) {
+                value = $scope.refactorDivEditable(prop.value === undefined ? '' : prop.value);
+
+                if (value.length === 0 || value === "\n") {
+                    msg = msg.concat(' error');
+                }
+            }
+
+            return msg;
+        };
+
+        $scope.getBooleanValue = function (value) {
+            return (value === 'true' || value === 'false') ? null : value;
+        };
+
+        $scope.setBooleanValue = function (index, value) {
+            var badgeType = (value ? 'success' : 'important'),
+                msg = (value ? $scope.msg('yes') : $scope.msg('no')),
+                span = '<span contenteditable="false" class="badge badge-' + badgeType + '" data-value="' + value + '" data-prefix="other">' + msg + '</span>';
+
+            $scope.selectedAction.actionParameters[index].value = span;
+        };
+
+        $scope.checkedBoolean = function (index, val) {
+             var prop = $scope.selectedAction.actionParameters[index],
+                 value = $scope.refactorDivEditable(prop.value === undefined ? '' : prop.value);
+
+             return value === val;
         };
     });
 

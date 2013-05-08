@@ -812,7 +812,7 @@
 
             $http.get('../tasks/partials/help/' + attrs.helpPopover + '.html').success(function (html) {
                 $(element).popover({
-                    placement: 'left',
+                    placement: 'top',
                     trigger: 'hover',
                     html: true,
                     content: function() {
