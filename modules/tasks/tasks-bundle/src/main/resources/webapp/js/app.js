@@ -4,6 +4,7 @@
     /* App Module */
 
     angular.module('motech-tasks', ['motech-dashboard', 'channelServices', 'taskServices', 'activityServices',
+                                    'channelUtils',
                                     'dataSourceServices', 'ngCookies', 'bootstrap', 'motech-widgets']).config(['$routeProvider',
         function ($routeProvider) {
             $routeProvider.

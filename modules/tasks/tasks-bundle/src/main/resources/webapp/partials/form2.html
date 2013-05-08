@@ -47,7 +47,12 @@
                                     <ul class="task-selector" style="position: relative;">
                                         <li class="task-panel" style="cursor: pointer;" ng-repeat="channel in getChannelsWithTriggers()">
                                             <div id="trigger-{{channel.moduleName}}" select-event="trigger">
-                                                <img ng-src="../tasks/api/channel/icon?moduleName={{channel.moduleName}}&moduleVersion={{channel.moduleVersion}}" class="panel-img" />
+                                                <div>
+                                                    <a ng-click="removeTrigger($event)" ui-if="task.trigger && task.trigger.moduleName == channel.moduleName">
+                                                        <i class="icon-remove icon-white close-channel"></i>
+                                                    </a>
+                                                    <img ng-src="../tasks/api/channel/icon?moduleName={{channel.moduleName}}&moduleVersion={{channel.moduleVersion}}" class="panel-img" />
+                                                </div>
                                                 <span>{{msg(channel.displayName)}}</span>
                                                 <div class="content-task popover right" style="display:none; margin-left:125px;">
                                                     <h3 class="popover-title" style="display: block;">{{msg('tooltip.availableTriggers')}}</h3>

@@ -766,17 +766,20 @@
 
     widgetModule.directive('selectEvent', function() {
         return function(scope, element, attrs) {
-            $(element).click(function () {
+            $(element).click(function (event) {
                 var li = $(element).parent('li'),
                     content = $(element).find('.content-task'),
                     visible = content.is(":visible"),
                     other = $('[select-event=' + attrs.selectEvent + ']').not('#' + $(this).attr('id'));
 
-                    other.parent('li').removeClass('active');
+                    other.parent('li').not('.selectedTrigger').removeClass('active');
                     other.find('.content-task').hide();
 
                     if (visible) {
-                        li.removeClass('active');
+                        if (!li.hasClass('selectedTrigger')) {
+                            li.removeClass('active');
+                        }
+
                         content.hide();
                     } else {
                         li.addClass('active');

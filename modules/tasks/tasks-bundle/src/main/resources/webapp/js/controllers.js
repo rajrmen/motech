@@ -158,7 +158,7 @@
 
     });
 
-    widgetModule.controller('ManageTaskCtrl', function ($scope, Channels, DataSources, $routeParams, $http) {
+    widgetModule.controller('ManageTaskCtrl', function ($scope, Channels, ChannelUtils, DataSources, $routeParams, $http) {
         $scope.negationOperators = [
             { key: 'info.filter.is', value: 'true' },
             { key: 'info.filter.isNot', value: 'false' }
@@ -173,7 +173,6 @@
         $scope.allDataSources = DataSources.query(function () {
             $.merge($scope.availableDataSources, $scope.allDataSources);
         });
-
 
         $scope.getChannelsWithTriggers = function () {
             var array = [];
@@ -200,18 +199,31 @@
         };
 
         $scope.selectTrigger = function (channel, trigger) {
-            $scope.task.trigger = {
-                displayName: trigger.displayName,
-                channelName: channel.displayName,
-                moduleName: channel.moduleName,
-                moduleVersion: channel.moduleVersion,
-                subject: trigger.subject
-            };
+            if ($scope.task.trigger) {
+                jConfirm(jQuery.i18n.prop('task.confirm.trigger'), jQuery.i18n.prop("header.confirm"), function (val) {
+                    var li;
 
-            angular.element("#collapse-trigger").collapse('hide');
-
-            $scope.selectedTrigger = trigger;
+                    if (val) {
+                        ChannelUtils.removeTrigger($scope);
+                        ChannelUtils.selectTrigger($scope, channel, trigger);
+                    }
+                });
+            } else {
+                ChannelUtils.selectTrigger($scope, channel, trigger);
+            }
         };
+
+        $scope.removeTrigger = function ($event) {
+            $event.stopPropagation();
+
+            jConfirm(jQuery.i18n.prop('task.confirm.trigger'), jQuery.i18n.prop("header.confirm"), function (val) {
+                var li;
+
+                if (val) {
+                    ChannelUtils.removeTrigger($scope);
+                }
+            });
+        }
 
         $scope.addAction = function () {
             $scope.task.action = {};
@@ -230,23 +242,7 @@
         };
 
         $scope.selectAction = function (action) {
-            $scope.task.action = {
-                displayName: action.displayName,
-                channelName: $scope.selectedActionChannel.displayName,
-                moduleName: $scope.selectedActionChannel.moduleName,
-                moduleVersion: $scope.selectedActionChannel.moduleVersion,
-            };
-
-            if (action.subject !== undefined) {
-                $scope.task.action.subject = action.subject;
-            }
-
-            if (action.serviceInterface !== undefined && action.serviceMethod !== undefined) {
-                $scope.task.action.serviceInterface = action.serviceInterface;
-                $scope.task.action.serviceMethod = action.serviceMethod;
-            }
-
-            $scope.selectedAction = action;
+            ChannelUtils.selectAction($scope, action);
         };
 
         $scope.addFilterSet = function () {
