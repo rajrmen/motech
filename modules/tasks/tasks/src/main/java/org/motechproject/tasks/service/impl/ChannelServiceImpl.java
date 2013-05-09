@@ -15,10 +15,10 @@ import org.motechproject.tasks.validation.ChannelValidator;
 import org.motechproject.tasks.validation.ValidationResult;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.Version;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -37,10 +37,13 @@ import static org.motechproject.server.api.BundleIcon.ICON_LOCATIONS;
 public class ChannelServiceImpl implements ChannelService {
     private static final Logger LOG = LoggerFactory.getLogger(ChannelServiceImpl.class);
 
+    private static final String DEFAULT_ICON = "/webapp/img/iconTaskChannel.png";
+
     private static Map<Type, Object> typeAdapters = new HashMap<>();
 
     private AllChannels allChannels;
     private MotechJsonReader motechJsonReader;
+    private ResourceLoader resourceLoader;
 
     private BundleContext bundleContext;
 
@@ -49,8 +52,10 @@ public class ChannelServiceImpl implements ChannelService {
     }
 
     @Autowired
-    public ChannelServiceImpl(final AllChannels allChannels) {
+    public ChannelServiceImpl(AllChannels allChannels, ResourceLoader resourceLoader) {
         this.allChannels = allChannels;
+        this.resourceLoader = resourceLoader;
+
         this.motechJsonReader = new MotechJsonReader();
     }
 
@@ -87,22 +92,30 @@ public class ChannelServiceImpl implements ChannelService {
     }
 
     @Override
-    public Channel getChannel(final String displayName, final String moduleName, final String moduleVersion) {
-        return allChannels.byChannelInfo(displayName, moduleName, moduleVersion);
+    public Channel getChannel(final String moduleName) {
+        return allChannels.byModuleName(moduleName);
     }
 
     @Override
-    public BundleIcon getChannelIcon(String moduleName, String version) {
+    public BundleIcon getChannelIcon(String moduleName) throws IOException {
+        Bundle bundle = getModule(moduleName);
         BundleIcon bundleIcon = null;
-        Bundle bundle = getModule(moduleName, version);
+        URL iconURL;
 
-        for (String iconLocation : ICON_LOCATIONS) {
-            URL iconURL = bundle.getResource(iconLocation);
+        if (bundle != null) {
+            for (String iconLocation : ICON_LOCATIONS) {
+                iconURL = bundle.getResource(iconLocation);
 
-            if (iconURL != null) {
-                bundleIcon = loadBundleIcon(iconURL);
-                break;
+                if (iconURL != null) {
+                    bundleIcon = loadBundleIcon(iconURL);
+                    break;
+                }
             }
+        }
+
+        if (bundleIcon == null) {
+            iconURL = resourceLoader.getResource(DEFAULT_ICON).getURL();
+            bundleIcon = loadBundleIcon(iconURL);
         }
 
         return bundleIcon;
@@ -113,7 +126,7 @@ public class ChannelServiceImpl implements ChannelService {
         this.bundleContext = bundleContext;
     }
 
-    private Bundle getModule(String moduleName, String version) {
+    private Bundle getModule(String moduleName) {
         if (bundleContext == null) {
             throw new IllegalArgumentException("Bundle context not set");
         }
@@ -121,14 +134,14 @@ public class ChannelServiceImpl implements ChannelService {
         Bundle bundle = null;
 
         for (Bundle b : bundleContext.getBundles()) {
-            if (b.getSymbolicName().equalsIgnoreCase(String.format("org.motechproject.%s", moduleName)) && b.getVersion().equals(Version.parseVersion(version))) {
+            if (b.getSymbolicName().equalsIgnoreCase(String.format("org.motechproject.%s", moduleName))) {
                 bundle = b;
                 break;
             }
         }
 
         if (bundle == null) {
-            throw new IllegalArgumentException(String.format("Module with moduleName [%s] and version [%s] not found", moduleName, version));
+            LOG.warn(String.format("Module with moduleName: %s not found", moduleName));
         }
 
         return bundle;
