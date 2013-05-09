@@ -34,13 +34,15 @@
         return {
             restrict: 'A',
             link: function (scope, element, attrs) {
-                $('#' + attrs.overflowChange).on({
-                    shown: function () {
-                        $(this).css('overflow', 'visible');
-                    },
-                    hide: function () {
-                        $(this).css('overflow', 'hidden');
-                    }
+                $(element).find('.overflowChange').livequery(function () {
+                    $(this).on({
+                        shown: function () {
+                            $(this).css('overflow', 'visible');
+                        },
+                        hide: function () {
+                            $(this).css('overflow', 'hidden');
+                        }
+                    });
                 });
             }
         };
@@ -187,10 +189,6 @@
                                 dragElement.addClass('nonEditable');
                                 dragElement.removeAttr("ng-repeat");
                                 dragElement.removeAttr("draggable");
-
-                                if (dragElement.data('prefix') === 'ad') {
-                                    dragElement.text(parent.msg(dragElement.data('source')) + '.' + parent.msg(dragElement.data('object')) + "#" + dragElement.data('object-id') + '.' + dragElement.text());
-                                }
 
                                 position(dropElement, dragElement);
                             }

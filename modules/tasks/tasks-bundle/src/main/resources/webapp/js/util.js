@@ -5,6 +5,28 @@
 
     angular.module('manageTaskCtrlUtils', ['ngResource']).factory('ManageTaskCtrlUtils', function () {
         return {
+            getChannelsWithTriggers: function (channels) {
+                var array = [];
+
+                angular.forEach(channels, function (channel) {
+                    if (channel.triggerTaskEvents.length) {
+                        array.push(channel);
+                    }
+                });
+
+                return array;
+            },
+            getChannelsWithActions: function (channels) {
+                var array = [];
+
+                angular.forEach(channels, function (channel) {
+                    if (channel.actionTaskEvents.length) {
+                        array.push(channel);
+                    }
+                });
+
+                return array;
+            },
             selectTrigger: function (scope, channel, trigger) {
                 scope.task.trigger = {
                     displayName: trigger.displayName,

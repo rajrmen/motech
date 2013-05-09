@@ -160,37 +160,16 @@
 
     widgetModule.controller('ManageTaskCtrl', function ($scope, ManageTaskCtrlUtils, Channels, DataSources, $routeParams, $http, $compile) {
         $scope.channels = Channels.query();
-        $scope.task = {};
+        $scope.dataSources = DataSources.query();
         $scope.selectedDataSources = [];
-        $scope.availableDataSources = [];
-        $scope.allDataSources = [];
-
-        $scope.allDataSources = DataSources.query(function () {
-            $.merge($scope.availableDataSources, $scope.allDataSources);
-        });
+        $scope.task = {};
 
         $scope.getChannelsWithTriggers = function () {
-            var array = [];
-
-            angular.forEach($scope.channels, function (channel) {
-                if (channel.triggerTaskEvents.length) {
-                    array.push(channel);
-                }
-            });
-
-            return array;
+            return ManageTaskCtrlUtils.getChannelsWithTriggers($scope.channels);
         };
 
         $scope.getChannelsWithActions = function () {
-            var array = [];
-
-            angular.forEach($scope.channels, function (channel) {
-                if (channel.actionTaskEvents.length) {
-                    array.push(channel);
-                }
-            });
-
-            return array;
+            return ManageTaskCtrlUtils.getChannelsWithActions($scope.channels);
         };
 
         $scope.selectTrigger = function (channel, trigger) {
@@ -282,6 +261,69 @@
         $scope.removeFilter = function (filter) {
             $scope.task.filters.removeObject(filter);
         };
+
+        $scope.addDataSource = function () {
+            var childScope = $scope.$new(),
+                length = $scope.selectedDataSources.length,
+                lastData = $scope.selectedDataSources[length - 1];
+
+            childScope.data = { id: (lastData && lastData.id + 1) || 0 };
+
+            $scope.selectedDataSources.push(childScope.data);
+
+            $http.get('../tasks/partials/widgets/data-source.html').success(function (html) {
+                angular.element("#build-area").append($compile(html)(childScope));
+            });
+        };
+
+        $scope.removeData = function (data) {
+            angular.element("#build-area").children('#data-source-' + data.id).remove();
+            $scope.selectedDataSources.removeObject(data);
+        }
+
+        $scope.findDataSourceById = function (dataSources, dataSourceId) {
+            var found;
+
+            angular.forEach(dataSources, function (ds) {
+                if (ds._id === dataSourceId) {
+                    found = ds;
+                }
+            });
+
+            return found;
+        };
+
+        $scope.findObject = function (dataSourceId, type) {
+            var dataSource = $scope.findDataSourceById($scope.dataSources, dataSourceId), found;
+
+            if (dataSource) {
+                angular.forEach(dataSource.objects, function (obj) {
+                    if (obj.type === type) {
+                        found = obj;
+                    }
+                });
+            }
+
+            return found;
+        }
+
+        $scope.selectDataSource = function (data, selected) {
+            data.dataSourceName = selected.name;
+            data.dataSourceId = selected._id;
+
+            delete data.displayName;
+            delete data.type;
+        }
+
+        $scope.selectObject = function (data, selected) {
+            data.displayName = selected.displayName;
+            data.type = selected.type;
+        };
+
+        $scope.selectLookup = function(data, lookup) {
+            data.lookup = {};
+            data.lookup.field = lookup;
+        }
 
         $scope.validateForm = function () {
             var i, param;

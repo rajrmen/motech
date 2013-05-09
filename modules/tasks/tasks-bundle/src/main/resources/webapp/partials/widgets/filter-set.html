@@ -1,4 +1,4 @@
-<div class="accordion" id="filter-set">
+<div class="accordion" id="filter-set" overflow-change>
     <div class="task-filter-group">
         <div class="accordion-heading">
             <div class="pull-right">
@@ -6,11 +6,11 @@
                     <i class="icon-remove icon-white"></i>
                 </button>
             </div>
-            <a class="accordion-toggle inbox-header" overflow-change="collapse-action" data-toggle="collapse" data-parent="#filter-set" href="#collapse-filter">
+            <a class="accordion-toggle inbox-header" data-toggle="collapse" data-parent="#filter-set" href="#collapse-filter">
                 {{msg('section.filters')}}
             </a>
         </div>
-        <div id="collapse-filter" class="accordion-body stripes-bg collapse in">
+        <div id="collapse-filter" class="accordion-body stripes-bg collapse in overflowChange" style="overflow: visible;">
             <div class="accordion-inner">
                 <form id="filtersForm" name="filterForm" class="form-horizontal">
                     <div class="margin-center">
