@@ -1,13 +1,9 @@
 package org.motechproject.couch.mrs.util;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
 import org.motechproject.couch.mrs.model.CouchAttribute;
 import org.motechproject.couch.mrs.model.CouchEncounterImpl;
 import org.motechproject.couch.mrs.model.CouchFacility;
+import org.motechproject.couch.mrs.model.CouchMrsUser;
 import org.motechproject.couch.mrs.model.CouchPatientImpl;
 import org.motechproject.couch.mrs.model.CouchPerson;
 import org.motechproject.couch.mrs.model.CouchProvider;
@@ -19,6 +15,12 @@ import org.motechproject.mrs.domain.MRSPatient;
 import org.motechproject.mrs.domain.MRSPerson;
 import org.motechproject.mrs.domain.MRSProvider;
 import org.motechproject.mrs.domain.MRSUser;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 public final class CouchMRSConverterUtil {
 
@@ -131,4 +133,7 @@ public final class CouchMRSConverterUtil {
         return  attributeList;
     }
 
+    public static CouchMrsUser convertUserToCouchUser(MRSUser mrsUser) {
+        return new CouchMrsUser(mrsUser.getUserId(), mrsUser.getSystemId(), mrsUser.getSecurityRole(), mrsUser.getUserName(), convertPersonToCouchPerson(mrsUser.getPerson()));
+    }
 }

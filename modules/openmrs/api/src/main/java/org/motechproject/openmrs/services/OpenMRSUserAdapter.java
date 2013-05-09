@@ -129,7 +129,7 @@ public class OpenMRSUserAdapter implements MRSUserAdapter {
      * @return List of all Users if users exist, else empty list
      */
     @Override
-    public List<MRSUser> getAllUsers() {
+    public List<? extends MRSUser> getAllUsers() {
         List<MRSUser> mrsUsers = new ArrayList<>();
         List<org.openmrs.User> openMRSUsers = userService.getAllUsers();
         for (org.openmrs.User openMRSUser : openMRSUsers) {
