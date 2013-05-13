@@ -14,8 +14,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
-import static org.apache.commons.lang.StringUtils.isNotEmpty;
-
 @Controller
 public class ChannelController {
     private ChannelService channelService;

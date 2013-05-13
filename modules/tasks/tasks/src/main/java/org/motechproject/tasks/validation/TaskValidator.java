@@ -57,7 +57,7 @@ public final class TaskValidator extends GeneralValidator {
         return errors;
     }
 
-    public static Set<TaskError> validateByTrigger(Task task, Channel channel) {
+    public static Set<TaskError> validateTrigger(Task task, Channel channel) {
         Set<TaskError> errors = new HashSet<>();
         TaskEventInformation triggerInformation = task.getTrigger();
         boolean exists = channel.containsTrigger(triggerInformation);
@@ -67,7 +67,7 @@ public final class TaskValidator extends GeneralValidator {
 
             errors.addAll(validateActionInputFields(task, triggerEvent));
             errors.addAll(validateFilters(task, triggerEvent));
-            errors.addAll(validateAdditionalDatas(task, triggerEvent));
+            errors.addAll(validateAdditionalData(task, triggerEvent));
         } else {
             errors.add(new TaskError("validation.error.triggerNotExist", triggerInformation.getDisplayName(), channel.getDisplayName()));
         }
@@ -75,7 +75,7 @@ public final class TaskValidator extends GeneralValidator {
         return errors;
     }
 
-    public static Set<TaskError> validateByAction(Task task, Channel channel) {
+    public static Set<TaskError> validateAction(Task task, Channel channel) {
         Set<TaskError> errors = new HashSet<>();
         TaskActionInformation actionInformation = task.getAction();
         boolean exists = channel.containsAction(actionInformation);
@@ -93,7 +93,7 @@ public final class TaskValidator extends GeneralValidator {
 
     public static Set<TaskError> validateByProvider(Task task, TaskDataProvider provider) {
         Set<TaskError> errors = new HashSet<>();
-        errors.addAll(validateAdditionalDatas(task, provider));
+        errors.addAll(validateAdditionalData(task, provider));
         errors.addAll(validateActionInputFields(task, provider));
 
         return errors;
@@ -231,7 +231,7 @@ public final class TaskValidator extends GeneralValidator {
         return errors;
     }
 
-    private static Set<TaskError> validateAdditionalDatas(Task task, TriggerEvent triggerEvent) {
+    private static Set<TaskError> validateAdditionalData(Task task, TriggerEvent triggerEvent) {
         Set<TaskError> errors = new HashSet<>();
 
         for (List<TaskAdditionalData> list : task.getAdditionalData().values()) {
@@ -247,7 +247,7 @@ public final class TaskValidator extends GeneralValidator {
         return errors;
     }
 
-    private static Set<TaskError> validateAdditionalDatas(Task task, TaskDataProvider provider) {
+    private static Set<TaskError> validateAdditionalData(Task task, TaskDataProvider provider) {
         Set<TaskError> errors = new HashSet<>();
 
         for (TaskAdditionalData object : task.getAdditionalData(provider.getId())) {
@@ -255,14 +255,16 @@ public final class TaskValidator extends GeneralValidator {
 
             if (!contains) {
                 errors.add(new TaskError("validation.error.providerObjectNotExist", object.getType(), provider.getName()));
-            }
-
-            if (contains && !provider.containsProviderObjectLookup(object.getType(), object.getLookupField())) {
+            } else if (!provider.containsProviderObjectLookup(object.getType(), object.getLookupField())) {
                 errors.add(new TaskError("validation.error.providerObjectLookupNotExist", object.getLookupField(), object.getType(), provider.getName()));
             }
 
-            KeyInformation key = KeyInformation.parse(object.getLookupValue());
-            errors.addAll(validateKeyInformation(provider, key));
+            String lookupValue = object.getLookupValue();
+
+            if (lookupValue != null) {
+                KeyInformation key = KeyInformation.parse(lookupValue);
+                errors.addAll(validateKeyInformation(provider, key));
+            }
         }
 
         return errors;
