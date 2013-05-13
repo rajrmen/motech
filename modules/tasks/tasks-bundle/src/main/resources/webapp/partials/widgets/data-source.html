@@ -71,7 +71,7 @@
                     </div>
                 </div>
                 <div ui-if="data.lookup.field">
-                    <div ng-class="actionCssClass(data.lookup)" class="control-group form-inline clearfix">
+                    <div class="control-group" ng-class="{error: actionCssClass(data.lookup)}" class="control-group form-inline clearfix">
                         <label>{{msg(data.lookup.field)}}</label>
 
                         <!------------------------ Chrome & IE ------------------------>

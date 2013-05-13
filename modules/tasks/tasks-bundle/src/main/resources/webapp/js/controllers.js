@@ -158,27 +158,27 @@
 
     });
 
-    widgetModule.controller('ManageTaskCtrl', function ($scope, ManageTaskCtrlUtils, Channels, DataSources, $routeParams, $http, $compile) {
+    widgetModule.controller('ManageTaskCtrl', function ($scope, ManageTaskUtils, Channels, DataSources, $routeParams, $http, $compile) {
         $scope.channels = Channels.query();
         $scope.dataSources = DataSources.query();
         $scope.selectedDataSources = [];
         $scope.task = {};
 
         $scope.getChannelsWithTriggers = function () {
-            return ManageTaskCtrlUtils.getChannelsWithTriggers($scope.channels);
+            return ManageTaskUtils.getChannelsWithTriggers($scope.channels);
         };
 
         $scope.getChannelsWithActions = function () {
-            return ManageTaskCtrlUtils.getChannelsWithActions($scope.channels);
+            return ManageTaskUtils.getChannelsWithActions($scope.channels);
         };
 
         $scope.selectTrigger = function (channel, trigger) {
-            ManageTaskCtrlUtils.safeSelectTrigger($scope, channel, trigger);
+            ManageTaskUtils.safeSelectTrigger($scope, channel, trigger);
         };
 
         $scope.removeTrigger = function ($event) {
             $event.stopPropagation();
-            ManageTaskCtrlUtils.safeRemoveTrigger($scope);
+            ManageTaskUtils.safeRemoveTrigger($scope);
         }
 
         $scope.addAction = function () {
@@ -190,21 +190,7 @@
         };
 
         $scope.selectActionChannel = function (channel) {
-            if ($scope.selectedActionChannel && $scope.selectedAction) {
-                motechConfirm('task.confirm.action', "header.confirm", function (val) {
-                    if (val) {
-                        $scope.task.action = {};
-                        $scope.selectedActionChannel = channel;
-                        delete $scope.selectedAction;
-
-                        if(!$scope.$$phase) {
-                          $scope.$apply();
-                        }
-                    }
-                });
-            } else {
-                $scope.selectedActionChannel = channel;
-            }
+            ManageTaskUtils.safeSelectActionChannel($scope, channel);
         };
 
         $scope.getActions = function () {
@@ -212,29 +198,21 @@
         };
 
         $scope.selectAction = function (action) {
-            if ($scope.selectedAction) {
-                motechConfirm('task.confirm.action', "header.confirm", function (val) {
-                    if (val) {
-                        ManageTaskCtrlUtils.selectAction($scope, action);
-                    }
-                });
-            } else {
-                ManageTaskCtrlUtils.selectAction($scope, action);
-            }
+            ManageTaskUtils.safeSelectAction($scope, action);
         };
 
         $scope.addFilterSet = function () {
             $scope.task.filters = [];
 
-            $http.get('../tasks/partials/widgets/filter-set.html').success(function (html) {
-                angular.element("#build-area").append($compile(html)($scope));
+            $http.get(ManageTaskUtils.FILTER_SET_PATH).success(function (html) {
+                angular.element(ManageTaskUtils.BUILD_AREA_ID).append($compile(html)($scope));
             });
         };
 
         $scope.removeFilterSet = function () {
             delete $scope.task.filters;
 
-            angular.element("#build-area").children('#filter-set').remove();
+            angular.element(ManageTaskUtils.BUILD_AREA_ID).children(ManageTaskUtils.FILTER_SET_ID).remove();
         };
 
         $scope.addFilter = function () {
@@ -242,20 +220,15 @@
         };
 
         $scope.operators = function (event) {
-            var operator = ['exist'];
+            var array = ['exist'];
 
-            if (event && (event.type === 'UNICODE' || event.type === 'TEXTAREA')) {
-                operator.push("equals");
-                operator.push("contains");
-                operator.push("startsWith");
-                operator.push("endsWith");
-            } else if (event && (event.type === 'INTEGER' || event.type === 'LONG' || event.type === 'DOUBLE')) {
-                operator.push("gt");
-                operator.push("lt");
-                operator.push("equal");
+            if (ManageTaskUtils.isText(event.type)) {
+                $.merge(array, ["equals", "contains", "startsWith", "endsWith"]);
+            } else if (ManageTaskUtils.isNumber(event.type)) {
+                $.merge(array, ["gt", "lt", "equal"]);
             }
 
-            return operator;
+            return array;
         };
 
         $scope.removeFilter = function (filter) {
@@ -271,13 +244,13 @@
 
             $scope.selectedDataSources.push(childScope.data);
 
-            $http.get('../tasks/partials/widgets/data-source.html').success(function (html) {
-                angular.element("#build-area").append($compile(html)(childScope));
+            $http.get(ManageTaskUtils.DATA_SOURCE_PATH).success(function (html) {
+                angular.element(ManageTaskUtils.BUILD_AREA_ID).append($compile(html)(childScope));
             });
         };
 
         $scope.removeData = function (data) {
-            angular.element("#build-area").children('#data-source-' + data.id).remove();
+            angular.element(ManageTaskUtils.BUILD_AREA_ID).children(ManageTaskUtils.DATA_SOURCE_PREFIX_ID + data.id).remove();
             $scope.selectedDataSources.removeObject(data);
         }
 
@@ -293,31 +266,44 @@
             return found;
         };
 
-        $scope.findObject = function (dataSourceId, type) {
+        $scope.findDataSourceByName = function (dataSources, name) {
+            var found;
+
+            angular.forEach(dataSources, function (ds) {
+                if (ds.name === name || $scope.msg(ds.name) === name) {
+                    found = ds;
+                }
+            });
+
+            return found;
+        };
+
+        $scope.findObject = function (dataSourceId, type, id) {
             var dataSource = $scope.findDataSourceById($scope.dataSources, dataSourceId), found;
 
             if (dataSource) {
                 angular.forEach(dataSource.objects, function (obj) {
-                    if (obj.type === type) {
+                    var expression = obj.type === type;
+
+                    if (expression && id !== undefined) {
+                        expression = expression && obj.id === id;
+                    }
+
+                    if (expression) {
                         found = obj;
                     }
                 });
             }
 
             return found;
-        }
+        };
 
         $scope.selectDataSource = function (data, selected) {
-            data.dataSourceName = selected.name;
-            data.dataSourceId = selected._id;
-
-            delete data.displayName;
-            delete data.type;
+            ManageTaskUtils.safeSelectDataSource($scope, data, selected);
         }
 
         $scope.selectObject = function (data, selected) {
-            data.displayName = selected.displayName;
-            data.type = selected.type;
+            ManageTaskUtils.safeSelectDataSourceObject($scope, data, selected);
         };
 
         $scope.selectLookup = function(data, lookup) {
@@ -325,112 +311,75 @@
             data.lookup.field = lookup;
         }
 
-        $scope.validateForm = function () {
-            var i, param;
-
-            if ($scope.selectedAction !== undefined && $scope.selectedTrigger !== undefined) {
-                for (i = 0; i < $scope.selectedAction.actionParameters.length; i += 1) {
-                    if ($scope.BrowserDetect.browser !== 'Chrome' && $scope.BrowserDetect.browser !== 'Explorer') {
-                        param = $scope.selectedAction.actionParameters[i].value;
-                    } else {
-                        param = $scope.refactorDivEditable($scope.selectedAction.actionParameters[i].value || '');
-                    }
-                    if (param === null || param === undefined || param === "\n" || !param.trim().length) {
-                        return false;
-                    }
-                }
-            } else {
-                return false;
-            }
-
-            if ($scope.task.name === undefined) {
-                return false;
-            }
-
-            return $scope.validateFilterForm();
-        };
-
-        $scope.validateFilterForm = function () {
-            var isPass = true, i;
-
-            if ($scope.task.filters) {
-                for (i = 0; i < $scope.task.filters.length; i += 1) {
-                    if (!$scope.task.filters[i].eventParameter || $scope.task.filters[i].negationOperator === undefined || !$scope.task.filters[i].operator) {
-                        isPass = false;
-                    }
-
-                    if ($scope.task.filters[i].operator && $scope.task.filters[i].operator !== 'exist' && !$scope.task.filters[i].expression) {
-                        isPass = false;
-                    }
-                }
-            }
-
-            return isPass;
-        };
-
         $scope.refactorDivEditable = function (value) {
-            var result = $('<div>' + value + '</div>');
+            var result = $('<div/>').append(value).remove('em'),
+                isChrome = ManageTaskUtils.isChrome($scope),
+                isIE = ManageTaskUtils.isIE($scope);
 
             result.find('span[data-prefix]').replaceWith(function () {
-                var eventKey = '', source = $(this).data('source'),
-                    type = $(this).data('object-type'), prefix = $(this).data('prefix'), field = $(this).data('field'),
-                    id = $(this).data('object-id'), val, i, manipulation, man;
+                var span = $(this), prefix = span.data('prefix'),
+                    manipulations = span.attr('manipulate') || '',
+                    type = span.data('type'),
+                    object = {}, idx, key, source, array, val;
 
-                if (prefix === 'trigger') {
-                    for (i = 0; i < $scope.selectedTrigger.eventParameters.length; i += 1) {
-                        if ($scope.msg($scope.selectedTrigger.eventParameters[i].displayName) === $(this).text()) {
-                            eventKey = $scope.selectedTrigger.eventParameters[i].eventKey;
-                        }
-                    }
-                } else if (prefix === 'ad') {
-                    eventKey = field;
-                } else {
-                    eventKey = $(this).data('value').toString();
+                switch(prefix) {
+                case ManageTaskUtils.TRIGGER_PREFIX:
+                    idx = span.data('index');
+                    key = $scope.selectedTrigger.eventParameters[idx].eventKey;
+                    break;
+                case ManageTaskUtils.DATA_SOURCE_PREFIX:
+                    source = span.data('source');
+                    object.type = span.data('object-type');
+                    object.id = span.data('object-id');
+                    key = span.data('field');
+                    break;
+                default:
+                    key = span.data('value').toString();
                 }
 
-                manipulation = this.attributes.getNamedItem('manipulate') !== null ? this.attributes.getNamedItem('manipulate').value : '';
+                if (manipulations !== "") {
+                    if (ManageTaskUtils.isText(type)) {
+                        array = manipulations.split(" ");
 
-                if (manipulation && manipulation !== "") {
-                    if (this.attributes.getNamedItem('data-type').value === 'UNICODE' || this.attributes.getNamedItem('data-type').value === 'TEXTAREA') {
-                        man = manipulation.split(" ");
-
-                        for (i = 0; i < man.length; i += 1) {
-                            eventKey = eventKey + "?" + man[i];
+                        for (i = 0; i < array.length; i += 1) {
+                            key = key.concat("?" + array[i]);
                         }
-                    } else if (this.attributes.getNamedItem('data-type').value === 'DATE') {
-                        eventKey = eventKey + "?" + manipulation;
+                    } else if (ManageTaskUtils.isDate(type)) {
+                        key = key.concat("?" + manipulation);
                     }
                 }
 
-                eventKey = eventKey.replace(/\?+(?=\?)/g, '');
+                key = key.replace(/\?+(?=\?)/g, '');
 
-                if (prefix === 'trigger') {
-                    val = '{{' + prefix + '.' + eventKey + '}}';
-                } else if (prefix === 'ad') {
-                    val = '{{' + prefix + '.' + $scope.msg(source) + '.' + type + '#' + id + '.' + eventKey + '}}';
-                } else {
-                    val = eventKey;
+                switch(prefix) {
+                case ManageTaskUtils.TRIGGER_PREFIX:
+                    val = '{{' + prefix + '.' + key + '}}';
+                    break;
+                case ManageTaskUtils.DATA_SOURCE_PREFIX:
+                    val = '{{' + prefix + '.' + $scope.msg(source) + '.' + object.type + '#' + object.id + '.' + key + '}}';
+                    break;
+                default:
+                    val = key;
                 }
 
                 return val;
             });
 
-            result.find('em').remove();
-
-            if ($scope.BrowserDetect.browser === 'Chrome' && $scope.BrowserDetect.browser !== 'Explorer') {
+            if (isChrome) {
                 result.find("div").replaceWith(function () {
                     return "\n" + this.innerHTML;
                 });
             }
 
-            if ($scope.BrowserDetect.browser === 'Explorer') {
+            if (isIE) {
                 result.find("p").replaceWith(function () {
                     return this.innerHTML + "<br>";
                 });
+
                 result.find("br").last().remove();
             }
 
-            if ($scope.BrowserDetect.browser === 'Chrome' || $scope.BrowserDetect.browser === 'Explorer') {
+            if (isChrome || isIE) {
                 if (result[0].childNodes[result[0].childNodes.length - 1] === '<br>') {
                     result[0].childNodes[result[0].childNodes.length - 1].remove();
                 }
@@ -442,13 +391,87 @@
         };
 
         $scope.save = function (enabled) {
-            var action = $scope.selectedAction, regex = new RegExp('\\{\\{ad\\.(.+?)(\\..*?)\\}\\}', "g"), key, value, found, replaced = [], i, j;
+            var action = $scope.selectedAction;
 
             $scope.task.actionInputFields = {};
             $scope.task.enabled = enabled;
+            $scope.task.additionalData = {};
+
+            if (action) {
+                angular.forEach(action.actionParameters, function (parameter, index) {
+                    var key = parameter.key, value = parameter.value || '',
+                        regex = new RegExp('\\{\\{ad\\.(.+?)(\\..*?)\\}\\}', "g"),
+                        replaced = [];
+
+                    if (ManageTaskUtils.canHandleModernDragAndDrop($scope)) {
+                        value = $scope.refactorDivEditable(value);
+                    }
+
+                    while ((found = regex.exec(value)) !== null) {
+                        replaced.push({
+                            find: '{{ad.' + found[1] + found[2] + '}}',
+                            value: '{{ad.' + $scope.findDataSourceByName($scope.selectedDataSources, found[1])._id + found[2] + '}}'
+                        });
+                    }
+
+                    angular.forEach(replaced, function (item) {
+                        value = value.replace(item.find, item.value);
+                    });
+
+                    $scope.task.actionInputFields[key] = value;
+                });
+            }
+
+            blockUI();
+
+            if (!$routeParams.taskId) {
+                $http.post('../tasks/api/task/save', $scope.task)
+                    .success(function () {
+                        var msg = enabled ? 'task.success.savedAndEnabled' : 'task.success.saved', loc, indexOf;
+
+                        motechAlert(msg, 'header.saved', function () {
+                            loc = window.location.toString();
+                            indexOf = loc.indexOf('#');
+
+                            window.location = loc.substring(0, indexOf) + "#/dashboard";
+                        });
+                    })
+                    .error(function (response) {
+                        delete $scope.task.actionInputFields;
+                        delete $scope.task.enabled;
+                        delete $scope.task.additionalData;
+
+                        alertHandler(ManageTaskUtils.createErrorMessage($scope, response), 'header.error');
+                    });
+            } else {
+                $scope.task.$save(function() {
+                    var msg = enabled ? 'task.success.savedAndEnabled' : 'task.success.saved', loc, indexOf;
+
+                    motechAlert('task.success.saved', 'header.saved', function () {
+                        loc = window.location.toString();
+                        indexOf = loc.indexOf('#');
+
+                        window.location = loc.substring(0, indexOf) + "#/dashboard";
+                    });
+                }, function (response) {
+                   delete $scope.task.actionInputFields;
+                   delete $scope.task.enabled;
+                   delete $scope.task.additionalData;
+
+                    alertHandler(ManageTaskUtils.createErrorMessage($scope, response.data), 'header.error');
+                });
+            }
+        };
+
+
+
+
+
+
+
 
             angular.forEach(action.actionParameters, function (actionParameters) {
-                if ($scope.BrowserDetect.browser !== 'Chrome' && $scope.BrowserDetect.browser !== 'Explorer') {
+                if (ManageTaskUtils.canHandleModernDragAndDrop($scope)) {
                     var regex = new RegExp("\\{\\{ad\\..*?\\}\\}", "g"), spans = [], r;
 
                     while ((r = regex.exec(actionParameters.value)) !== null) {
@@ -580,100 +603,15 @@
                 });
             });
 
-            for (i = 0; i < action.actionParameters.length; i += 1) {
-                key = action.actionParameters[i].key;
-
-                if ($scope.BrowserDetect.browser !== 'Chrome' && $scope.BrowserDetect.browser !== 'Explorer') {
-                    value = action.actionParameters[i].value || '';
-                } else {
-                    value = $scope.refactorDivEditable(action.actionParameters[i].value  || '');
-                }
-
-                while ((found = regex.exec(value)) !== null) {
-                    replaced.push({
-                        find: '{{ad.' + found[1] + found[2] + '}}',
-                        value: '{{ad.' + $scope.findDataSourceByName($scope.selectedDataSources, found[1])._id + found[2] + '}}'
-                    });
-                }
-
-                for (j = 0; j < replaced.length; j += 1) {
-                    value = value.replace(replaced[j].find, replaced[j].value);
-                }
-
-                $scope.task.actionInputFields[key] = value;
-            }
-
-            blockUI();
-
-            if ($routeParams.taskId === undefined) {
-                $http.post('../tasks/api/task/save', $scope.task).
-                    success(function () {
-                        var msg = enabled ? 'task.success.savedAndEnabled' : 'task.success.saved', loc, indexOf;
-
-                        unblockUI();
-
-                        motechAlert(msg, 'header.saved', function () {
-                            loc = window.location.toString();
-                            indexOf = loc.indexOf('#');
-
-                            window.location = loc.substring(0, indexOf) + "#/dashboard";
-                        });
-                    }).error(function (response) {
-                        unblockUI();
-                        var msg = $scope.msg('task.error.saved') + '\n', i;
-
-                        for (i = 0; i < response.length; i += 1) {
-                            msg += ' - ' + $scope.msg(response[i].message, [response[i].field, response[i].objectName]) + '\n';
-                        }
-
-                        delete $scope.task.actionInputFields;
-                        delete $scope.task.enabled;
-                        delete $scope.task.additionalData;
-
-
-
-                        jAlert(msg, jQuery.i18n.prop('header.error'));
-                    });
-            } else {
-                $scope.task.$save(function () {
-                    var loc, indexOf;
-
-                    unblockUI();
-
-                    motechAlert('task.success.saved', 'header.saved', function () {
-                        loc = window.location.toString();
-                        indexOf = loc.indexOf('#');
-
-                        window.location = loc.substring(0, indexOf) + "#/dashboard";
-                    });
-                }, function (response) {
-                    var msg = $scope.msg('task.error.saved') + '\n', i;
-                    unblockUI();
-                    for (i = 0; i < response.data.length; i += 1) {
-                        msg += ' - ' + $scope.msg(response.data[i].message, [response.data[i].field, response.data[i].objectName]) + '\n';
-                    }
-
-                    delete $scope.task.actionInputFields;
-                    delete $scope.task.enabled;
-                    delete $scope.task.additionalData;
-
-                    jAlert(msg, jQuery.i18n.prop('header.error'));
-                });
-            }
-        };
-
         $scope.actionCssClass = function (prop) {
-            var msg = "control-group", value;
+            var value, expression = false;
 
             if ($scope.selectedTrigger !== undefined) {
                 value = $scope.refactorDivEditable(prop.value === undefined ? '' : prop.value);
-
-                if (value.length === 0 || value === "\n") {
-                    msg = msg.concat(' error');
-                }
+                expression = value.length === 0 || value === "\n";
             }
 
-            return msg;
+            return expression;
         };
 
         $scope.getBooleanValue = function (value) {
@@ -681,11 +619,7 @@
         };
 
         $scope.setBooleanValue = function (index, value) {
-            var badgeType = (value ? 'success' : 'important'),
-                msg = (value ? $scope.msg('yes') : $scope.msg('no')),
-                span = '<span contenteditable="false" class="badge badge-' + badgeType + '" data-value="' + value + '" data-prefix="other">' + msg + '</span>';
-
-            $scope.selectedAction.actionParameters[index].value = span;
+            $scope.selectedAction.actionParameters[index].value = ManageTaskUtils.createBooleanSpan($scope, value);
         };
 
         $scope.checkedBoolean = function (index, val) {

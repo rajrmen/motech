@@ -147,7 +147,7 @@
                                         <label class="control-label">{{msg(selectedAction.description)}}</label>
                                     </div>
                                     <div ui-if="selectedAction">
-                                        <div ng-class="actionCssClass(i)" ng-repeat="i in selectedAction.actionParameters" class="control-group form-inline clearfix">
+                                        <div class="control-group" ng-class="{error: actionCssClass(i)}" ng-repeat="i in selectedAction.actionParameters" class="control-group form-inline clearfix">
                                             <label class="control-label tip">
                                                 {{msg(i.displayName)}}
                                                 <!------------------------ Tooltips ------------------------>
@@ -215,8 +215,8 @@
                         <h4 class="margin-center centered spn9">{{msg('section.save')}}</h4>
                         <p class="centered spn9 margin-center">{{msg('info.addSave')}}</p>
                         <div class="control-group centered inside">
-                            <input ng-disabled="!validateForm()" type="button" ng-click="save(true)" class="btn btn-primary" value="{{msg('button.saveAndEnable')}}"/>
-                            <input ng-disabled="!validateForm()" type="button" ng-click="save(false)" class="btn btn-success" value="{{msg('button.save')}}"/>
+                            <button ng-disabled="!task.name" ng-click="save(true)" class="btn btn-primary">{{msg('button.saveAndEnable')}}</button>
+                            <button ng-disabled="!task.name" ng-click="save(false)" class="btn btn-success">{{msg('button.save')}}</button>
                             <a href="#/task/" class="btn"> {{msg('button.cancel')}}</a>
                         </div>
                     </div>
