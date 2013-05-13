@@ -179,7 +179,7 @@
         $scope.removeTrigger = function ($event) {
             $event.stopPropagation();
             ManageTaskUtils.safeRemoveTrigger($scope);
-        }
+        };
 
         $scope.addAction = function () {
             $scope.task.action = {};
@@ -252,7 +252,7 @@
         $scope.removeData = function (data) {
             angular.element(ManageTaskUtils.BUILD_AREA_ID).children(ManageTaskUtils.DATA_SOURCE_PREFIX_ID + data.id).remove();
             $scope.selectedDataSources.removeObject(data);
-        }
+        };
 
         $scope.findDataSourceById = function (dataSources, dataSourceId) {
             var found;
@@ -300,7 +300,7 @@
 
         $scope.selectDataSource = function (data, selected) {
             ManageTaskUtils.safeSelectDataSource($scope, data, selected);
-        }
+        };
 
         $scope.selectObject = function (data, selected) {
             ManageTaskUtils.safeSelectDataSourceObject($scope, data, selected);
@@ -309,7 +309,7 @@
         $scope.selectLookup = function(data, lookup) {
             data.lookup = {};
             data.lookup.field = lookup;
-        }
+        };
 
         $scope.refactorDivEditable = function (value) {
             var result = $('<div/>').append(value).remove('em'),
@@ -320,7 +320,7 @@
                 var span = $(this), prefix = span.data('prefix'),
                     manipulations = span.attr('manipulate') || '',
                     type = span.data('type'),
-                    object = {}, idx, key, source, array, val;
+                    object = {}, idx, key, source, array, val, i;
 
                 switch(prefix) {
                 case ManageTaskUtils.TRIGGER_PREFIX:
@@ -345,7 +345,7 @@
                             key = key.concat("?" + array[i]);
                         }
                     } else if (ManageTaskUtils.isDate(type)) {
-                        key = key.concat("?" + manipulation);
+                        key = key.concat("?" + manipulations);
                     }
                 }
 
@@ -401,7 +401,7 @@
                 angular.forEach(action.actionParameters, function (parameter, index) {
                     var key = parameter.key, value = parameter.value || '',
                         regex = new RegExp('\\{\\{ad\\.(.+?)(\\..*?)\\}\\}', "g"),
-                        replaced = [];
+                        replaced = [], found;
 
                     if (ManageTaskUtils.canHandleModernDragAndDrop($scope)) {
                         value = $scope.refactorDivEditable(value);

@@ -115,7 +115,7 @@
                     displayName: action.displayName,
                     channelName: scope.selectedActionChannel.displayName,
                     moduleName: scope.selectedActionChannel.moduleName,
-                    moduleVersion: scope.selectedActionChannel.moduleVersion,
+                    moduleVersion: scope.selectedActionChannel.moduleVersion
                 };
 
                 if (action.subject) {

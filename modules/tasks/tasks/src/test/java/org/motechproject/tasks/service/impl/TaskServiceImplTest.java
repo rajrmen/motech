@@ -51,8 +51,8 @@ import static org.motechproject.tasks.events.constants.EventSubjects.CHANNEL_UPD
 import static org.motechproject.tasks.events.constants.EventSubjects.DATA_PROVIDER_UPDATE_SUBJECT;
 
 public class TaskServiceImplTest {
-    private static final TaskEventInformation trigger = new TaskEventInformation("send", "test", "test", "0.15", "SEND");
-    private static final TaskActionInformation action = new TaskActionInformation("receive", "test", "test", "0.14", "RECEIVE");
+    private static final TaskEventInformation trigger = new TaskEventInformation("send", "test", "test-trigger", "0.15", "SEND");
+    private static final TaskActionInformation action = new TaskActionInformation("receive", "test", "test-action", "0.14", "RECEIVE");
 
     @Mock
     AllTasks allTasks;

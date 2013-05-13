@@ -22,8 +22,6 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.motechproject.tasks.domain.OperatorType.EXIST;
-import static org.motechproject.tasks.domain.OperatorType.fromString;
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
 import static org.apache.commons.lang.StringUtils.equalsIgnoreCase;
 
