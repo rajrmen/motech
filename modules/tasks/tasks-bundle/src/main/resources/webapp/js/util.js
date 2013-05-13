@@ -12,183 +12,147 @@
             BUILD_AREA_ID: "#build-area",
             TRIGGER_PREFIX: 'trigger',
             DATA_SOURCE_PREFIX: 'ad',
-            getChannelsWithTriggers: function (channels) {
-                var array = [];
+            channels: {
+                withTriggers: function (channels) {
+                    var array = [];
 
-                angular.forEach(channels, function (channel) {
-                    if (channel.triggerTaskEvents.length) {
-                        array.push(channel);
-                    }
-                });
-
-                return array;
-            },
-            getChannelsWithActions: function (channels) {
-                var array = [];
-
-                angular.forEach(channels, function (channel) {
-                    if (channel.actionTaskEvents.length) {
-                        array.push(channel);
-                    }
-                });
-
-                return array;
-            },
-            selectTrigger: function (scope, channel, trigger) {
-                scope.task.trigger = {
-                    displayName: trigger.displayName,
-                    channelName: channel.displayName,
-                    moduleName: channel.moduleName,
-                    moduleVersion: channel.moduleVersion,
-                    subject: trigger.subject
-                };
-
-                angular.element("#trigger-" + channel.moduleName).parent('li').addClass('selectedTrigger').addClass('active');
-                angular.element("#collapse-trigger").collapse('hide');
-
-                scope.selectedTrigger = trigger;
-
-                if(!scope.$$phase) {
-                  scope.$apply();
-                }
-            },
-            safeSelectTrigger: function (scope, channel, trigger) {
-                var that = this;
-
-                if (scope.task.trigger) {
-                    motechConfirm('task.confirm.trigger', "header.confirm", function (val) {
-                        var li;
-
-                        if (val) {
-                            that.removeTrigger(scope);
-                            that.selectTrigger(scope, channel, trigger);
+                    angular.forEach(channels, function (channel) {
+                        if (channel.triggerTaskEvents.length) {
+                            array.push(channel);
                         }
                     });
-                } else {
-                    that.selectTrigger(scope, channel, trigger);
+
+                    return array;
+                },
+                withActions: function (channels) {
+                    var array = [];
+
+                    angular.forEach(channels, function (channel) {
+                        if (channel.actionTaskEvents.length) {
+                            array.push(channel);
+                        }
+                    });
+
+                    return array;
                 }
             },
-            removeTrigger: function (scope) {
-                var li = angular.element("#trigger-" + scope.task.trigger.moduleName).parent('li');
+            trigger: {
+                select: function (scope, channel, trigger) {
+                    scope.task.trigger = {
+                        displayName: trigger.displayName,
+                        channelName: channel.displayName,
+                        moduleName: channel.moduleName,
+                        moduleVersion: channel.moduleVersion,
+                        subject: trigger.subject
+                    };
 
-                li.removeClass('selectedTrigger');
-                li.removeClass("active");
+                    angular.element("#trigger-" + channel.moduleName).parent('li').addClass('selectedTrigger').addClass('active');
+                    angular.element("#collapse-trigger").collapse('hide');
 
-                delete scope.task.trigger;
+                    scope.selectedTrigger = trigger;
 
-                if(!scope.$$phase) {
-                  scope.$apply();
-                }
-            },
-            safeRemoveTrigger: function (scope) {
-                var that = this;
-
-                motechConfirm('task.confirm.trigger', "header.confirm", function (val) {
-                    if (val) {
-                        that.removeTrigger(scope);
+                    if (!scope.$$phase) {
+                        scope.$apply();
                     }
-                });
-            },
-            safeSelectActionChannel: function (scope, channel) {
-                if (scope.selectedActionChannel && scope.selectedAction) {
-                    motechConfirm('task.confirm.action', "header.confirm", function (val) {
-                        if (val) {
-                            scope.task.action = {};
-                            scope.selectedActionChannel = channel;
-                            delete scope.selectedAction;
+                },
+                remove: function (scope) {
+                    var li = angular.element("#trigger-" + scope.task.trigger.moduleName).parent('li');
 
-                            if(!scope.$$phase) {
-                              scope.$apply();
+                    li.removeClass('selectedTrigger');
+                    li.removeClass("active");
+
+                    delete scope.task.trigger;
+
+                    if (!scope.$$phase) {
+                        scope.$apply();
+                    }
+                }
+            },
+            action: {
+                select: function (scope, action) {
+                    scope.task.action = {
+                        displayName: action.displayName,
+                        channelName: scope.selectedActionChannel.displayName,
+                        moduleName: scope.selectedActionChannel.moduleName,
+                        moduleVersion: scope.selectedActionChannel.moduleVersion
+                    };
+
+                    if (action.subject) {
+                        scope.task.action.subject = action.subject;
+                    }
+
+                    if (action.serviceInterface && action.serviceMethod) {
+                        scope.task.action.serviceInterface = action.serviceInterface;
+                        scope.task.action.serviceMethod = action.serviceMethod;
+                    }
+
+                    scope.selectedAction = action;
+
+                    if (!scope.$$phase) {
+                        scope.$apply();
+                    }
+                }
+            },
+            dataSource: {
+                find: {
+                    byId: function (dataSources, id) {
+                        var found;
+
+                        angular.forEach(dataSources, function (ds) {
+                            if (ds._id === id) {
+                                found = ds;
                             }
-                        }
-                    });
-                } else {
-                    scope.selectedActionChannel = channel;
+                        });
 
-                    if(!scope.$$phase) {
-                      scope.$apply();
+                        return found;
+                    },
+                    byName: function (dataSources, name, msg) {
+                        var found;
+
+                        angular.forEach(dataSources, function (ds) {
+                            if (ds.dataSourceName === name || msg(ds.dataSourceName) === name) {
+                                found = ds;
+                            }
+                        });
+
+                        return found;
+                    },
+                    object: function (objects, type, id) {
+                        var found;
+
+                        angular.forEach(objects, function (obj) {
+                            var expression = obj.type === type;
+
+                            if (expression && id !== undefined) {
+                                expression = expression && obj.id === id;
+                            }
+
+                            if (expression) {
+                                found = obj;
+                            }
+                        });
+
+                        return found;
                     }
-                }
-            },
-            selectAction: function (scope, action) {
-                scope.task.action = {
-                    displayName: action.displayName,
-                    channelName: scope.selectedActionChannel.displayName,
-                    moduleName: scope.selectedActionChannel.moduleName,
-                    moduleVersion: scope.selectedActionChannel.moduleVersion
-                };
+                },
+                select: function (scope, data, selected) {
+                    data.dataSourceName = selected.name;
+                    data.dataSourceId = selected._id;
 
-                if (action.subject) {
-                    scope.task.action.subject = action.subject;
-                }
+                    delete data.displayName;
+                    delete data.type;
 
-                if (action.serviceInterface && action.serviceMethod) {
-                    scope.task.action.serviceInterface = action.serviceInterface;
-                    scope.task.action.serviceMethod = action.serviceMethod;
-                }
+                    if (!scope.$$phase) {
+                        scope.$apply(data);
+                    }
+                },
+                selectObject: function (scope, data, selected) {
+                    data.displayName = selected.displayName;
+                    data.type = selected.type;
 
-                scope.selectedAction = action;
-
-                if(!scope.$$phase) {
-                  scope.$apply();
-                }
-            },
-            safeSelectAction: function (scope, action) {
-                var that = this;
-
-                if (scope.selectedAction) {
-                    motechConfirm('task.confirm.action', "header.confirm", function (val) {
-                        if (val) {
-                            that.selectAction(scope, action);
-                        }
-                    });
-                } else {
-                    that.selectAction(scope, action);
-                }
-            },
-            selectDataSource: function (scope, data, selected) {
-                data.dataSourceName = selected.name;
-                data.dataSourceId = selected._id;
-
-                delete data.displayName;
-                delete data.type;
-
-                if(!scope.$$phase) {
-                  scope.$apply(data);
-                }
-            },
-            safeSelectDataSource: function (scope, data, selected) {
-                var that = this;
-
-                if (data.dataSourceId) {
-                    motechConfirm('task.confirm.changeDataSource', 'header.confirm', function (val) {
-                        if (val) {
-                            that.selectDataSource(scope, data, selected);
-                        }
-                    });
-                } else {
-                    that.selectDataSource(scope, data, selected);
-                }
-            },
-            selectDataSourceObject: function (scope, data, selected) {
-                data.displayName = selected.displayName;
-                data.type = selected.type;
-
-                if(!scope.$$phase) {
-                  scope.$apply(data);
-                }
-            },
-            safeSelectDataSourceObject: function (scope, data, selected) {
-                var that = this;
-
-                if (data.type) {
-                    motechConfirm('task.confirm.changeObject', 'header.confirm', function (val) {
-                        if (val) {
-                            that.selectDataSourceObject(scope, data, selected);
-                        }
-                    });
-                } else {
-                    that.selectDataSourceObject(scope, data, selected);
+                    if (!scope.$$phase) {
+                        scope.$apply(data);
+                    }
                 }
             },
             isText: function (value) {
@@ -223,7 +187,7 @@
                 return $('<div/>').append(span).html();
             },
             createErrorMessage: function (scope, response) {
-                var msg = scope.msg('task.error.saved') + '\n', i;
+                var msg = scope.msg('task.error.saved') + '\n';
 
                 angular.forEach(response, function (r) {
                     msg += ' - ' + scope.msg(r.message, r.args) + '\n';

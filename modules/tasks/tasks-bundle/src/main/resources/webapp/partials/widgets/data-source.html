@@ -42,7 +42,7 @@
                             <span class="caret"></span>
                         </button>
                         <ul class="dropdown-menu">
-                            <li ng-repeat="object in findDataSourceById(dataSources, data.dataSourceId).objects">
+                            <li ng-repeat="object in util.dataSource.find.byId(dataSources, data.dataSourceId).objects">
                                 <a ng-click="selectObject(data, object)">{{msg(object.displayName)}}</a>
                             </li>
                         </ul>

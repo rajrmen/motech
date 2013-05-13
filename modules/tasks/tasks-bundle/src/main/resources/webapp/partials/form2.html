@@ -50,7 +50,7 @@
                             <div class="accordion-inner">
                                 <div class="section-source">
                                     <ul class="task-selector" style="position: relative;">
-                                        <li class="task-panel" style="cursor: pointer;" ng-repeat="channel in getChannelsWithTriggers()">
+                                        <li class="task-panel" style="cursor: pointer;" ng-repeat="channel in util.channels.withTriggers(channels)">
                                             <div id="trigger-{{channel.moduleName}}" select-event="trigger">
                                                 <div>
                                                     <a ng-click="removeTrigger($event)" ui-if="task.trigger && task.trigger.moduleName == channel.moduleName">
@@ -130,7 +130,7 @@
                                                 <span class="caret"></span>
                                             </button>
                                             <ul class="dropdown-menu">
-                                                <li ng-repeat="channel in getChannelsWithActions()">
+                                                <li ng-repeat="channel in util.channels.withActions(channels)">
                                                     <a ng-click="selectActionChannel(channel)">{{msg(channel.displayName)}}</a>
                                                 </li>
                                             </ul>

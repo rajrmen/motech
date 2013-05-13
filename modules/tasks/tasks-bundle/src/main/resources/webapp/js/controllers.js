@@ -159,26 +159,33 @@
     });
 
     widgetModule.controller('ManageTaskCtrl', function ($scope, ManageTaskUtils, Channels, DataSources, $routeParams, $http, $compile) {
+        $scope.util = ManageTaskUtils;
         $scope.channels = Channels.query();
         $scope.dataSources = DataSources.query();
         $scope.selectedDataSources = [];
         $scope.task = {};
 
-        $scope.getChannelsWithTriggers = function () {
-            return ManageTaskUtils.getChannelsWithTriggers($scope.channels);
-        };
-
-        $scope.getChannelsWithActions = function () {
-            return ManageTaskUtils.getChannelsWithActions($scope.channels);
-        };
-
         $scope.selectTrigger = function (channel, trigger) {
-            ManageTaskUtils.safeSelectTrigger($scope, channel, trigger);
+            if ($scope.task.trigger) {
+                motechConfirm('task.confirm.trigger', "header.confirm", function (val) {
+                    if (val) {
+                        $scope.util.trigger.remove($scope);
+                        $scope.util.trigger.select($scope, channel, trigger);
+                    }
+                });
+            } else {
+                $scope.util.trigger.select($scope, channel, trigger);
+            }
         };
 
         $scope.removeTrigger = function ($event) {
             $event.stopPropagation();
-            ManageTaskUtils.safeRemoveTrigger($scope);
+
+            motechConfirm('task.confirm.trigger', "header.confirm", function (val) {
+                if (val) {
+                    $scope.util.trigger.remove($scope);
+                }
+            });
         };
 
         $scope.addAction = function () {
@@ -186,11 +193,33 @@
         };
 
         $scope.removeAction = function () {
-            delete $scope.task.action;
+            motechConfirm('task.confirm.action', "header.confirm", function (val) {
+                if (val) {
+                    delete $scope.task.action;
+
+                    if (!$scope.$$phase) {
+                        $scope.$apply($scope.task);
+                    }
+                }
+            });
         };
 
         $scope.selectActionChannel = function (channel) {
-            ManageTaskUtils.safeSelectActionChannel($scope, channel);
+            if ($scope.selectedActionChannel && $scope.selectedAction) {
+                motechConfirm('task.confirm.action', "header.confirm", function (val) {
+                    if (val) {
+                        $scope.task.action = {};
+                        $scope.selectedActionChannel = channel;
+                        delete $scope.selectedAction;
+
+                        if (!$scope.$$phase) {
+                            $scope.$apply($scope.task);
+                        }
+                    }
+                });
+            } else {
+                $scope.selectedActionChannel = channel;
+            }
         };
 
         $scope.getActions = function () {
@@ -198,41 +227,58 @@
         };
 
         $scope.selectAction = function (action) {
-            ManageTaskUtils.safeSelectAction($scope, action);
+            if ($scope.selectedAction) {
+                motechConfirm('task.confirm.action', "header.confirm", function (val) {
+                    if (val) {
+                        $scope.util.action.select($scope, action);
+                    }
+                });
+            } else {
+                $scope.util.action.select($scope, action);
+            }
         };
 
         $scope.addFilterSet = function () {
             $scope.task.filters = [];
 
-            $http.get(ManageTaskUtils.FILTER_SET_PATH).success(function (html) {
-                angular.element(ManageTaskUtils.BUILD_AREA_ID).append($compile(html)($scope));
+            $http.get($scope.util.FILTER_SET_PATH).success(function (html) {
+                angular.element($scope.util.BUILD_AREA_ID).append($compile(html)($scope));
             });
         };
 
         $scope.removeFilterSet = function () {
-            delete $scope.task.filters;
+            motechConfirm('task.confirm.filterSet', "header.confirm", function (val) {
+                if (val) {
+                    delete $scope.task.filters;
+                    angular.element($scope.util.BUILD_AREA_ID).children($scope.util.FILTER_SET_ID).remove();
 
-            angular.element(ManageTaskUtils.BUILD_AREA_ID).children(ManageTaskUtils.FILTER_SET_ID).remove();
+                    if (!$scope.$$phase) {
+                        $scope.$apply($scope.task);
+                    }
+                }
+            });
         };
 
         $scope.addFilter = function () {
             $scope.task.filters.push({});
         };
 
-        $scope.operators = function (event) {
+        $scope.removeFilter = function (filter) {
+            $scope.task.filters.removeObject(filter);
+        };
+
+        $scope.operators = function (param) {
             var array = ['exist'];
 
-            if (ManageTaskUtils.isText(event.type)) {
-                $.merge(array, ["equals", "contains", "startsWith", "endsWith"]);
-            } else if (ManageTaskUtils.isNumber(event.type)) {
-                $.merge(array, ["gt", "lt", "equal"]);
+            if (param) {
+                if ($scope.util.isText(param.type)) {
+                    $.merge(array, ["equals", "contains", "startsWith", "endsWith"]);
+                } else if ($scope.util.isNumber(param.type)) {
+                    $.merge(array, ["gt", "lt", "equal"]);
+                }
             }
 
             return array;
-        };
-
-        $scope.removeFilter = function (filter) {
-            $scope.task.filters.removeObject(filter);
         };
 
         $scope.addDataSource = function () {
@@ -244,66 +290,57 @@
 
             $scope.selectedDataSources.push(childScope.data);
 
-            $http.get(ManageTaskUtils.DATA_SOURCE_PATH).success(function (html) {
-                angular.element(ManageTaskUtils.BUILD_AREA_ID).append($compile(html)(childScope));
+            $http.get($scope.util.DATA_SOURCE_PATH).success(function (html) {
+                angular.element($scope.util.BUILD_AREA_ID).append($compile(html)(childScope));
             });
         };
 
         $scope.removeData = function (data) {
-            angular.element(ManageTaskUtils.BUILD_AREA_ID).children(ManageTaskUtils.DATA_SOURCE_PREFIX_ID + data.id).remove();
-            $scope.selectedDataSources.removeObject(data);
-        };
+            motechConfirm('task.confirm.dataSource', "header.confirm", function (val) {
+                if (val) {
+                    $scope.selectedDataSources.removeObject(data);
+                    angular.element($scope.util.BUILD_AREA_ID).children($scope.util.DATA_SOURCE_PREFIX_ID + data.id).remove();
 
-        $scope.findDataSourceById = function (dataSources, dataSourceId) {
-            var found;
-
-            angular.forEach(dataSources, function (ds) {
-                if (ds._id === dataSourceId) {
-                    found = ds;
+                    if (!$scope.$$phase) {
+                        $scope.$apply($scope.selectedDataSources);
+                    }
                 }
             });
-
-            return found;
-        };
-
-        $scope.findDataSourceByName = function (dataSources, name) {
-            var found;
-
-            angular.forEach(dataSources, function (ds) {
-                if (ds.name === name || $scope.msg(ds.name) === name) {
-                    found = ds;
-                }
-            });
-
-            return found;
         };
 
         $scope.findObject = function (dataSourceId, type, id) {
-            var dataSource = $scope.findDataSourceById($scope.dataSources, dataSourceId), found;
+            var dataSource = $scope.util.dataSource.find.byId($scope.dataSources, dataSourceId),
+                found;
 
             if (dataSource) {
-                angular.forEach(dataSource.objects, function (obj) {
-                    var expression = obj.type === type;
-
-                    if (expression && id !== undefined) {
-                        expression = expression && obj.id === id;
-                    }
-
-                    if (expression) {
-                        found = obj;
-                    }
-                });
+                found = $scope.util.dataSource.find.object(dataSource.objects, type, id);
             }
 
             return found;
         };
 
         $scope.selectDataSource = function (data, selected) {
-            ManageTaskUtils.safeSelectDataSource($scope, data, selected);
+            if (data.dataSourceId) {
+                motechConfirm('task.confirm.changeDataSource', 'header.confirm', function (val) {
+                    if (val) {
+                        $scope.util.dataSource.select($scope, data, selected);
+                    }
+                });
+            } else {
+                $scope.util.dataSource.select($scope, data, selected);
+            }
         };
 
         $scope.selectObject = function (data, selected) {
-            ManageTaskUtils.safeSelectDataSourceObject($scope, data, selected);
+            if (data.type) {
+                motechConfirm('task.confirm.changeObject', 'header.confirm', function (val) {
+                    if (val) {
+                        $scope.util.dataSource.selectObject($scope, data, selected);
+                    }
+                });
+            } else {
+                $scope.util.dataSource.selectObject($scope, data, selected);
+            }
         };
 
         $scope.selectLookup = function(data, lookup) {
@@ -313,8 +350,8 @@
 
         $scope.refactorDivEditable = function (value) {
             var result = $('<div/>').append(value).remove('em'),
-                isChrome = ManageTaskUtils.isChrome($scope),
-                isIE = ManageTaskUtils.isIE($scope);
+                isChrome = $scope.util.isChrome($scope),
+                isIE = $scope.util.isIE($scope);
 
             result.find('span[data-prefix]').replaceWith(function () {
                 var span = $(this), prefix = span.data('prefix'),
@@ -323,11 +360,11 @@
                     object = {}, idx, key, source, array, val, i;
 
                 switch (prefix) {
-                case ManageTaskUtils.TRIGGER_PREFIX:
+                case $scope.util.TRIGGER_PREFIX:
                     idx = span.data('index');
                     key = $scope.selectedTrigger.eventParameters[idx].eventKey;
                     break;
-                case ManageTaskUtils.DATA_SOURCE_PREFIX:
+                case $scope.util.DATA_SOURCE_PREFIX:
                     source = span.data('source');
                     object.type = span.data('object-type');
                     object.id = span.data('object-id');
@@ -338,13 +375,13 @@
                 }
 
                 if (manipulations !== "") {
-                    if (ManageTaskUtils.isText(type)) {
+                    if ($scope.util.isText(type)) {
                         array = manipulations.split(" ");
 
                         for (i = 0; i < array.length; i += 1) {
                             key = key.concat("?" + array[i]);
                         }
-                    } else if (ManageTaskUtils.isDate(type)) {
+                    } else if ($scope.util.isDate(type)) {
                         key = key.concat("?" + manipulations);
                     }
                 }
@@ -352,11 +389,11 @@
                 key = key.replace(/\?+(?=\?)/g, '');
 
                 switch (prefix) {
-                case ManageTaskUtils.TRIGGER_PREFIX:
-                    val = '{{' + prefix + '.' + key + '}}';
+                case $scope.util.TRIGGER_PREFIX:
+                    val = '{{{0}.{1}}}'.format(prefix, key);
                     break;
-                case ManageTaskUtils.DATA_SOURCE_PREFIX:
-                    val = '{{' + prefix + '.' + $scope.msg(source) + '.' + object.type + '#' + object.id + '.' + key + '}}';
+                case $scope.util.DATA_SOURCE_PREFIX:
+                    val = '{{{0}.{1}.{2}#{3}.{4}'.format(prefix, $scope.msg(source), object.type, object.id, key);
                     break;
                 default:
                     val = key;
@@ -367,13 +404,13 @@
 
             if (isChrome) {
                 result.find("div").replaceWith(function () {
-                    return "\n" + this.innerHTML;
+                    return "\n{0}".format(this.innerHTML);
                 });
             }
 
             if (isIE) {
                 result.find("p").replaceWith(function () {
-                    return this.innerHTML + "<br>";
+                    return "{0}<br>".format(this.innerHTML);
                 });
 
                 result.find("br").last().remove();
@@ -401,8 +438,9 @@
                 var exists = false, lookupValue = (data.lookup && data.lookup.value) || '',
                     additionalData, object, i;
 
-                if (ManageTaskUtils.canHandleModernDragAndDrop($scope)) {
+                if ($scope.util.canHandleModernDragAndDrop($scope)) {
                     lookupValue = $scope.refactorDivEditable(lookupValue);
+                    lookupValue = lookupValue.substring(2, lookupValue.length - 2);
                 }
 
                 if ($scope.task.additionalData[data.dataSourceId] === undefined) {
@@ -442,16 +480,19 @@
                         value = parameter.value || '',
                         regex = new RegExp('\\{\\{ad\\.(.+?)(\\..*?)\\}\\}', "g"),
                         replaced = [],
-                        found;
+                        found,
+                        dataSource;
 
-                    if (ManageTaskUtils.canHandleModernDragAndDrop($scope)) {
+                    if ($scope.util.canHandleModernDragAndDrop($scope)) {
                         value = $scope.refactorDivEditable(value);
                     }
 
                     while ((found = regex.exec(value)) !== null) {
+                        dataSource = $scope.util.dataSource.find.byName($scope.selectedDataSources, found[1], $scope.msg);
+
                         replaced.push({
-                            find: '{{ad.' + found[1] + found[2] + '}}',
-                            value: '{{ad.' + $scope.findDataSourceByName($scope.selectedDataSources, found[1])._id + found[2] + '}}'
+                            find: '{{ad.{1}{2}}}'.format(found[1], found[2]),
+                            value: '{{ad.{1}{2}}}'.format(dataSource._id, found[2])
                         });
                     }
 
@@ -475,7 +516,7 @@
                             loc = window.location.toString();
                             indexOf = loc.indexOf('#');
 
-                            window.location = loc.substring(0, indexOf) + "#/dashboard";
+                            window.location = "{0}#/dashboard".format(loc.substring(0, indexOf));
                         });
                     })
                     .error(function (response) {
@@ -484,7 +525,7 @@
                         delete $scope.task.additionalData;
 
                         unblockUI();
-                        jAlert(ManageTaskUtils.createErrorMessage($scope, response), 'header.error');
+                        jAlert($scope.util.createErrorMessage($scope, response), 'header.error');
                     });
             } else {
                 $scope.task.$save(function() {
@@ -495,7 +536,7 @@
                         loc = window.location.toString();
                         indexOf = loc.indexOf('#');
 
-                        window.location = loc.substring(0, indexOf) + "#/dashboard";
+                        window.location = "{0}#/dashboard".format(loc.substring(0, indexOf));
                     });
                 }, function (response) {
                     delete $scope.task.actionInputFields;
@@ -503,10 +544,11 @@
                     delete $scope.task.additionalData;
 
                     unblockUI();
-                    jAlert(ManageTaskUtils.createErrorMessage($scope, response.data), 'header.error');
+                    jAlert($scope.util.createErrorMessage($scope, response.data), 'header.error');
                 });
             }
         };
+
         $scope.actionCssClass = function (prop) {
             var value, expression = false;
 
@@ -523,7 +565,7 @@
         };
 
         $scope.setBooleanValue = function (index, value) {
-            $scope.selectedAction.actionParameters[index].value = ManageTaskUtils.createBooleanSpan($scope, value);
+            $scope.selectedAction.actionParameters[index].value = $scope.util.createBooleanSpan($scope, value);
         };
 
         $scope.checkedBoolean = function (index, val) {
