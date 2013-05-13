@@ -225,9 +225,9 @@
             createErrorMessage: function (scope, response) {
                 var msg = scope.msg('task.error.saved') + '\n', i;
 
-                for (i = 0; i < response.length; i += 1) {
-                    msg += ' - ' + scope.msg(response.message, [response.field, response.objectName]) + '\n';
-                }
+                angular.forEach(response, function (r) {
+                    msg += ' - ' + scope.msg(r.message, r.args) + '\n';
+                });
 
                 return msg;
             }

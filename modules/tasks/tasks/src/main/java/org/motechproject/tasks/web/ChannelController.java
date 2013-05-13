@@ -33,14 +33,12 @@ public class ChannelController {
 
     @RequestMapping(value = "channel/icon", method = RequestMethod.GET)
     public void getChannelIcon(@RequestParam String moduleName, HttpServletResponse response) throws IOException {
-        if (isNotEmpty(moduleName)) {
-            BundleIcon bundleIcon = channelService.getChannelIcon(moduleName);
+        BundleIcon bundleIcon = channelService.getChannelIcon(moduleName);
 
-            response.setStatus(HttpServletResponse.SC_OK);
-            response.setContentLength(bundleIcon.getContentLength());
-            response.setContentType(bundleIcon.getMime());
+        response.setStatus(HttpServletResponse.SC_OK);
+        response.setContentLength(bundleIcon.getContentLength());
+        response.setContentType(bundleIcon.getMime());
 
-            response.getOutputStream().write(bundleIcon.getIcon());
-        }
+        response.getOutputStream().write(bundleIcon.getIcon());
     }
 }

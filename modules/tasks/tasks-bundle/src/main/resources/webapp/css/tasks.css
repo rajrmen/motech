@@ -764,7 +764,6 @@ h3.popover-title {
 }
 
 .task-element.task-name .name-second {
-    white-space: pre;
     margin: -9px 0 0 22px;
     font-weight: normal;
     font-size: 12px;

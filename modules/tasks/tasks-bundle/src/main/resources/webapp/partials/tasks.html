@@ -22,14 +22,21 @@
                         <div class="task-bar" expandaccordion>
                             <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion3" href="#collapse3{{$index}}">
                                 <ul class="task-nav">
-                                    <li class="task-element"><img ng-src="../tasks/api/channel/icon?moduleName={{item.task.trigger.moduleName}}&moduleVersion={{item.task.trigger.moduleVersion}}" class="task-list-img" /></li>
+                                    <li class="task-element"><img ng-src="../tasks/api/channel/icon?moduleName={{item.task.trigger.moduleName}}" class="task-list-img" /></li>
                                     <li class="task-element"><img src="../tasks/img/arrow.png" class="task-list-img-arrow"/></li>
-                                    <li class="task-element"><img ng-src="../tasks/api/channel/icon?moduleName={{item.task.action.moduleName}}&moduleVersion={{item.task.action.moduleVersion}}" class="task-list-img"/></li>
+                                    <li class="task-element"><img ng-src="../tasks/api/channel/icon?moduleName={{item.task.action.moduleName}}" class="task-list-img"/></li>
                                     <li class="divider-vertical"></li>
                                     <li class="task-element task-name">
                                         <i class="icon-chevron-right i-name"></i>
                                         <span class="name-first">&nbsp;{{item.task.name}}</span>
-                                        <span class="name-second">{{msg(item.task.trigger.channelName)}} - {{msg(item.task.action.channelName)}}</span>
+                                        <span class="name-second">
+                                            <span ng-show="item.task.trigger">
+                                                {{msg(item.task.trigger.channelName)}}
+                                            </span>
+                                            <span ng-show="item.task.action">
+                                                - {{msg(item.task.action.channelName)}}
+                                            </span>
+                                        </span>
                                     </li>
                                 </ul>
                             </a>

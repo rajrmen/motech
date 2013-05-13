@@ -322,7 +322,7 @@
                     type = span.data('type'),
                     object = {}, idx, key, source, array, val, i;
 
-                switch(prefix) {
+                switch (prefix) {
                 case ManageTaskUtils.TRIGGER_PREFIX:
                     idx = span.data('index');
                     key = $scope.selectedTrigger.eventParameters[idx].eventKey;
@@ -351,7 +351,7 @@
 
                 key = key.replace(/\?+(?=\?)/g, '');
 
-                switch(prefix) {
+                switch (prefix) {
                 case ManageTaskUtils.TRIGGER_PREFIX:
                     val = '{{' + prefix + '.' + key + '}}';
                     break;
@@ -397,11 +397,52 @@
             $scope.task.enabled = enabled;
             $scope.task.additionalData = {};
 
+            angular.forEach($scope.selectedDataSources, function (data) {
+                var exists = false, lookupValue = (data.lookup && data.lookup.value) || '',
+                    additionalData, object, i;
+
+                if (ManageTaskUtils.canHandleModernDragAndDrop($scope)) {
+                    lookupValue = $scope.refactorDivEditable(lookupValue);
+                }
+
+                if ($scope.task.additionalData[data.dataSourceId] === undefined) {
+                    $scope.task.additionalData[data.dataSourceId] = [];
+                }
+
+                additionalData = $scope.task.additionalData[data.dataSourceId];
+
+                for (i = 0; i < additionalData.length; i += 1) {
+                    object = additionalData[i];
+
+                    if (object.id === data.id) {
+                        object.type = data.type;
+                        object.lookupField = data.lookup.field;
+                        object.lookupValue = lookupValue;
+                        object.failIfDataNotFound = data.failIfDataNotFound;
+
+                        exists = true;
+                        break;
+                    }
+                }
+
+                if (!exists) {
+                    additionalData.push({
+                        id: data.id,
+                        type: data.type,
+                        lookupField: (data.lookup && data.lookup.field),
+                        lookupValue: lookupValue,
+                        failIfDataNotFound: data.failIfDataNotFound
+                    });
+                }
+            });
+
             if (action) {
-                angular.forEach(action.actionParameters, function (parameter, index) {
-                    var key = parameter.key, value = parameter.value || '',
+                angular.forEach(action.actionParameters, function (parameter) {
+                    var key = parameter.key,
+                        value = parameter.value || '',
                         regex = new RegExp('\\{\\{ad\\.(.+?)(\\..*?)\\}\\}', "g"),
-                        replaced = [], found;
+                        replaced = [],
+                        found;
 
                     if (ManageTaskUtils.canHandleModernDragAndDrop($scope)) {
                         value = $scope.refactorDivEditable(value);
@@ -430,6 +471,7 @@
                         var msg = enabled ? 'task.success.savedAndEnabled' : 'task.success.saved', loc, indexOf;
 
                         motechAlert(msg, 'header.saved', function () {
+                            unblockUI();
                             loc = window.location.toString();
                             indexOf = loc.indexOf('#');
 
@@ -441,168 +483,30 @@
                         delete $scope.task.enabled;
                         delete $scope.task.additionalData;
 
-                        alertHandler(ManageTaskUtils.createErrorMessage($scope, response), 'header.error');
+                        unblockUI();
+                        jAlert(ManageTaskUtils.createErrorMessage($scope, response), 'header.error');
                     });
             } else {
                 $scope.task.$save(function() {
-                    var msg = enabled ? 'task.success.savedAndEnabled' : 'task.success.saved', loc, indexOf;
+                    var loc, indexOf;
 
                     motechAlert('task.success.saved', 'header.saved', function () {
+                        unblockUI();
                         loc = window.location.toString();
                         indexOf = loc.indexOf('#');
 
                         window.location = loc.substring(0, indexOf) + "#/dashboard";
                     });
                 }, function (response) {
-                   delete $scope.task.actionInputFields;
-                   delete $scope.task.enabled;
-                   delete $scope.task.additionalData;
+                    delete $scope.task.actionInputFields;
+                    delete $scope.task.enabled;
+                    delete $scope.task.additionalData;
 
-                    alertHandler(ManageTaskUtils.createErrorMessage($scope, response.data), 'header.error');
+                    unblockUI();
+                    jAlert(ManageTaskUtils.createErrorMessage($scope, response.data), 'header.error');
                 });
             }
         };
-
-
-
-
-
-
-
-
-            angular.forEach(action.actionParameters, function (actionParameters) {
-                if (ManageTaskUtils.canHandleModernDragAndDrop($scope)) {
-                    var regex = new RegExp("\\{\\{ad\\..*?\\}\\}", "g"), spans = [], r;
-
-                    while ((r = regex.exec(actionParameters.value)) !== null) {
-                        $.merge(spans, r);
-                    }
-
-                    angular.forEach(spans, function (span) {
-                        var cuts = {}, source, type, id, ds, exists = false, object, i;
-
-                        cuts.first = span.indexOf('.');
-                        cuts.second = span.indexOf('.', cuts.first + 1);
-                        cuts.third = span.indexOf('.', cuts.second + 1);
-
-                        source = span.substring(cuts.first + 1, cuts.second);
-                        type = span.substring(cuts.second + 1, cuts.third);
-                        id = +type.substring(type.lastIndexOf('#') + 1);
-                        type = type.substring(0, type.lastIndexOf('#'));
-
-                        ds = $scope.findDataSourceByName($scope.selectedDataSources, source);
-
-                        if ($scope.task.additionalData === undefined) {
-                            $scope.task.additionalData = {};
-                        }
-
-                        if ($scope.task.additionalData[ds._id] === undefined) {
-                            $scope.task.additionalData[ds._id] = [];
-                        }
-
-                        for (i = 0; i < $scope.task.additionalData[ds._id].length; i += 1) {
-                            if ($scope.task.additionalData[ds._id][i].id === id) {
-                                exists = true;
-                                object = $scope.findObject(ds, type, id);
-                                if ($scope.task.additionalData[ds._id][i].failIfDataNotFound !== object.failIfDataNotFound) {
-                                    $scope.task.additionalData[ds._id][i].failIfDataNotFound = object.failIfDataNotFound;
-                                }
-                                break;
-                            }
-                        }
-
-                        if (!exists) {
-                            object = $scope.findObject(ds, type, id);
-
-                            $scope.task.additionalData[ds._id].push({
-                                id: object.id,
-                                type: object.type,
-                                lookupField: object.lookup.field,
-                                lookupValue: object.lookup.by,
-                                failIfDataNotFound: object.failIfDataNotFound
-                            });
-                        }
-
-                    });
-                } else {
-                    $('<div>' + actionParameters.value + "</div>").find('span[data-prefix="ad"]').each(function (index, value) {
-                        var span = $(value), source = span.data('source'),
-                            objectType = span.data('object-type'), objectId = span.data('object-id'),
-                            dataSource, exists = false, object, i;
-
-                        dataSource = $scope.findDataSourceByName($scope.selectedDataSources, source);
-
-                        if ($scope.task.additionalData === undefined) {
-                            $scope.task.additionalData = {};
-                        }
-
-                        if ($scope.task.additionalData[dataSource._id] === undefined) {
-                            $scope.task.additionalData[dataSource._id] = [];
-                        }
-
-                        for (i = 0; i < $scope.task.additionalData[dataSource._id].length; i += 1) {
-                            if ($scope.task.additionalData[dataSource._id][i].id === objectId) {
-                                exists = true;
-                                object = $scope.findObject(dataSource, objectType, objectId);
-                                if ($scope.task.additionalData[dataSource._id][i].failIfDataNotFound !== object.failIfDataNotFound) {
-                                    $scope.task.additionalData[dataSource._id][i].failIfDataNotFound = object.failIfDataNotFound;
-                                }
-                                break;
-                            }
-                        }
-
-                        if (!exists) {
-                            object = $scope.findObject(dataSource, objectType, objectId);
-
-                            $scope.task.additionalData[dataSource._id].push({
-                                id: object.id,
-                                type: object.type,
-                                lookupField: object.lookup.field,
-                                lookupValue: object.lookup.by,
-                                failIfDataNotFound: object.failIfDataNotFound
-                            });
-                        }
-                    });
-                }
-            });
-
-            angular.forEach($scope.selectedDataSources, function (dataSource) {
-                angular.forEach(dataSource.objects, function (object) {
-                    var regex = new RegExp('ad\\.(.+?)\\.(.+?)\\#(.+?)\\.(.+)', "g"), exists = false, exec, ds, obj, i;
-
-                    if (object.lookup.by.indexOf('ad') === 0) {
-                        exec = regex.exec(object.lookup.by);
-                        ds = $scope.findDataSourceById($scope.selectedDataSources, exec[1]);
-                        obj = $scope.findObject(ds, exec[2], +exec[3]);
-
-                        if ($scope.task.additionalData === undefined) {
-                            $scope.task.additionalData = {};
-                        }
-
-                        if ($scope.task.additionalData[ds._id] === undefined) {
-                            $scope.task.additionalData[ds._id] = [];
-                        }
-
-                        for (i = 0; i < $scope.task.additionalData[ds._id].length; i += 1) {
-                            if ($scope.task.additionalData[ds._id][i].id === obj.id) {
-                                exists = true;
-                                break;
-                            }
-                        }
-
-                        if (!exists) {
-                            $scope.task.additionalData[ds._id].push({
-                                id: obj.id,
-                                type: obj.type,
-                                lookupField: obj.lookup.field,
-                                lookupValue: obj.lookup.by,
-                                failIfDataNotFound : obj.failIfDataNotFound
-                            });
-                        }
-                    }
-                });
-            });
-
         $scope.actionCssClass = function (prop) {
             var value, expression = false;
 
@@ -623,10 +527,20 @@
         };
 
         $scope.checkedBoolean = function (index, val) {
-             var prop = $scope.selectedAction.actionParameters[index],
-                 value = $scope.refactorDivEditable(prop.value === undefined ? '' : prop.value);
+            var prop = $scope.selectedAction.actionParameters[index],
+                value = $scope.refactorDivEditable(prop.value === undefined ? '' : prop.value);
 
-             return value === val;
+            return value === val;
+        };
+
+        $scope.getTaskValidationError = function (error) {
+            var array = [], i;
+
+            for (i = 0; i < error.args.length; i += 1) {
+                array.push($scope.msg(error.args[i]));
+            }
+
+            return $scope.msg(error.message, array);
         };
     });
 

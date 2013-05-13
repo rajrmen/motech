@@ -59,15 +59,20 @@ public class TaskServiceImpl implements TaskService {
     public void save(final Task task) {
         Set<TaskError> errors = TaskValidator.validate(task);
 
-        if (!isEmpty(errors)) {
+        if (task.isEnabled() && !isEmpty(errors)) {
             throw new ValidationException(TaskValidator.TASK, errors);
         }
 
         TaskEventInformation trigger = task.getTrigger();
         TaskActionInformation action = task.getAction();
 
-        errors.addAll(validateTaskByTriggerChannel(task, channelService.getChannel(trigger.getModuleName())));
-        errors.addAll(validateTaskByActionChannel(task, channelService.getChannel(action.getModuleName())));
+        if (task.getTrigger() != null) {
+            errors.addAll(validateTaskByTriggerChannel(task, channelService.getChannel(trigger.getModuleName())));
+        }
+
+        if (task.getAction() != null) {
+            errors.addAll(validateTaskByActionChannel(task, channelService.getChannel(action.getModuleName())));
+        }
 
         for (String providerId : task.getAdditionalData().keySet()) {
             errors.addAll(TaskValidator.validateByProvider(task, providerService.getProviderById(providerId)));
@@ -173,19 +178,25 @@ public class TaskServiceImpl implements TaskService {
         Channel channel = channelService.getChannel(moduleName);
 
         for (Task task : getAllTasks()) {
-            Set<TaskError> errors = validateTaskByTriggerChannel(task, channel);
+            Set<TaskError> errors = null;
 
-            if (errors != null) {
-                setTaskValidationErrors(task, errors,
-                        "validation.error.triggerNotExist",
-                        "validation.error.triggerFieldNotExist"
-                );
+            if (task.getTrigger() != null) {
+                errors = validateTaskByTriggerChannel(task, channel);
+
+                if (errors != null) {
+                    setTaskValidationErrors(task, errors,
+                            "validation.error.triggerNotExist",
+                            "validation.error.triggerFieldNotExist"
+                    );
+                }
             }
 
-            errors = validateTaskByActionChannel(task, channel);
+            if (task.getAction() != null) {
+                errors = validateTaskByActionChannel(task, channel);
 
-            if (errors != null) {
-                setTaskValidationErrors(task, errors, "validation.error.actionNotExist");
+                if (errors != null) {
+                    setTaskValidationErrors(task, errors, "validation.error.actionNotExist");
+                }
             }
         }
     }

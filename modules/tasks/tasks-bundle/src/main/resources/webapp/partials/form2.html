@@ -2,8 +2,13 @@
 <div ng-show="task._id" class="box-header">{{msg('section.editTask')}} <a href="#/task/" type="button" class="btn btn-danger btn-in-header pull-right"><i class="icon-share icon-white"></i></a></div>
 <div class="box-content">
     <div class="inside">
-        <div ng-show="true || errors.length > 0" class="span12 alert alert-block alert-error">
-            <div><strong>Error:</strong>&nbsp;Error Field &nbsp;Error Message</div>
+        <div ng-show="task.validationErrors.length" class="alert alert-block alert-error">
+            <strong>{{msg('header.taskErrors')}}:</strong>
+            <ul>
+                <li ng-repeat="error in task.validationErrors">
+                    {{getTaskValidationError(error)}}
+                </li>
+            </ul>
         </div>
     </div>
     <div>
