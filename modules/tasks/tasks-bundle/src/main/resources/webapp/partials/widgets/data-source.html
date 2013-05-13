@@ -21,6 +21,13 @@
                 <h4>{{msg('info.availableFields')}}:</h4>
                 <div class="control-group move-element">
                     <span contenteditable="false" ng-repeat="i in selectedTrigger.eventParameters" class="badge badge-info triggerField" draggable data-prefix="trigger" data-index="{{$index}}" data-type="{{i.type}}">{{msg(i.displayName)}}</span>​
+                    <span ng-repeat="ds in selectedDataSources | idLessThan:data.id">
+                        <span contenteditable="false" ng-repeat="i in findObject(ds.dataSourceId, ds.type).fields" class="badge badge-warning triggerField" draggable
+                              data-prefix="ad" data-source="{{ds.dataSourceName}}" data-object="{{ds.displayName}}" data-object-type="{{ds.type}}"
+                              data-field="{{i.fieldKey}}" data-index="{{$index}}" data-object-id="{{ds.id}}" data-type="{{i.type}}">
+                            {{msg(ds.dataSourceName)}}.{{msg(ds.displayName)}}#{{ds.id}}.{{msg(i.displayName)}}
+                        </span>
+                    </span>
                 </div>
                 <div class="control-group">
                     <span>{{msg('subsubsection.source')}}:</span>
@@ -89,7 +96,6 @@
                     <p><strong>{{msg('subsubsection.objectFields')}}</strong></p>
                     <span ng-repeat="field in findObject(data.dataSourceId, data.type).fields" class="badge badge-warning">{{msg(field.displayName)}}</span>​
                 </div>
-                <a class="btn btn-success" data-toggle="collapse" data-target="#collapse-data-source-{{data.id}}">{{msg('done')}}</a>
             </div>
         </div>
     </div>

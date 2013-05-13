@@ -40,4 +40,18 @@
         };
     });
 
+    widgetModule.filter('idLessThan', function () {
+            return function (dataSources, id) {
+                var array = [];
+
+                angular.forEach(dataSources, function (source) {
+                    if (source.id < id) {
+                        array.push(source);
+                    }
+                });
+
+                return array;
+            };
+        });
+
 }());

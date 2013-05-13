@@ -262,8 +262,9 @@ public final class TaskValidator extends GeneralValidator {
             String lookupValue = object.getLookupValue();
 
             if (lookupValue != null) {
-                KeyInformation key = KeyInformation.parse(lookupValue);
-                errors.addAll(validateKeyInformation(provider, key));
+                for (KeyInformation key : KeyInformation.parseAll(lookupValue)) {
+                    errors.addAll(validateKeyInformation(provider, key));
+                }
             }
         }
 

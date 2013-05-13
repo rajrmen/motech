@@ -349,9 +349,11 @@
         };
 
         $scope.refactorDivEditable = function (value) {
-            var result = $('<div/>').append(value).remove('em'),
+            var result = $('<div/>').append(value),
                 isChrome = $scope.util.isChrome($scope),
                 isIE = $scope.util.isIE($scope);
+
+            result.find('em').remove();
 
             result.find('span[data-prefix]').replaceWith(function () {
                 var span = $(this), prefix = span.data('prefix'),
@@ -440,7 +442,6 @@
 
                 if ($scope.util.canHandleModernDragAndDrop($scope)) {
                     lookupValue = $scope.refactorDivEditable(lookupValue);
-                    lookupValue = lookupValue.substring(2, lookupValue.length - 2);
                 }
 
                 if ($scope.task.additionalData[data.dataSourceId] === undefined) {
@@ -553,7 +554,12 @@
             var value, expression = false;
 
             if ($scope.selectedTrigger !== undefined) {
-                value = $scope.refactorDivEditable(prop.value === undefined ? '' : prop.value);
+                value = prop.value === undefined ? '' : prop.value;
+
+                if ($scope.util.canHandleModernDragAndDrop($scope)) {
+                    value = $scope.refactorDivEditable(value);
+                }
+
                 expression = value.length === 0 || value === "\n";
             }
 
