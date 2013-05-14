@@ -6,6 +6,7 @@ import org.motechproject.tasks.domain.ActionEvent;
 import org.motechproject.tasks.domain.Channel;
 import org.motechproject.tasks.domain.Filter;
 import org.motechproject.tasks.domain.KeyInformation;
+import org.motechproject.tasks.domain.OperatorType;
 import org.motechproject.tasks.domain.Task;
 import org.motechproject.tasks.domain.TaskActionInformation;
 import org.motechproject.tasks.domain.TaskAdditionalData;
@@ -223,7 +224,10 @@ public final class TaskValidator extends GeneralValidator {
             String objectName = "task." + field;
 
             checkBlankValue(errors, objectName, "operator", filter.getOperator());
-            checkBlankValue(errors, objectName, "expression", filter.getExpression());
+
+            if (OperatorType.fromString(filter.getOperator()) != OperatorType.EXIST) {
+                checkBlankValue(errors, objectName, "expression", filter.getExpression());
+            }
 
             errors.addAll(validateEventParameter(objectName, "eventParameter", filter.getEventParameter()));
         }
@@ -236,10 +240,12 @@ public final class TaskValidator extends GeneralValidator {
 
         for (List<TaskAdditionalData> list : task.getAdditionalData().values()) {
             for (TaskAdditionalData tad : list) {
-                KeyInformation key = KeyInformation.parse(tad.getLookupValue());
+                String lookupValue = tad.getLookupValue();
 
-                if (key.fromTrigger() && !triggerEvent.containsParameter(key.getKey())) {
-                    errors.add(new TaskError("validation.error.triggerFieldNotExist", key.getKey(), triggerEvent.getDisplayName()));
+                for (KeyInformation key : KeyInformation.parseAll(lookupValue)) {
+                    if (key.fromTrigger() && !triggerEvent.containsParameter(key.getKey())) {
+                        errors.add(new TaskError("validation.error.triggerFieldNotExist", key.getKey(), triggerEvent.getDisplayName()));
+                    }
                 }
             }
         }

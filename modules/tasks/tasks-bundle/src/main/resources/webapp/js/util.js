@@ -12,6 +12,31 @@
             BUILD_AREA_ID: "#build-area",
             TRIGGER_PREFIX: 'trigger',
             DATA_SOURCE_PREFIX: 'ad',
+            find: function (data) {
+                var found;
+
+                angular.forEach(data.where, function (item) {
+                    var isTrue = true;
+
+                    if (!found) {
+                        if (data.by.isArray) {
+                            angular.forEach(data.by, function (b) {
+                                isTrue = isTrue && item[b.what] === b.equalTo;
+                            });
+                        } else if (data.by !== undefined && data.by.what !== undefined) {
+                            isTrue = item[data.by.what] === data.by.equalTo;
+                        } else {
+                            isTrue = false;
+                        }
+
+                        if (isTrue) {
+                            found = item;
+                        }
+                    }
+                });
+
+                return found;
+            },
             channels: {
                 withTriggers: function (channels) {
                     var array = [];
@@ -94,47 +119,6 @@
                 }
             },
             dataSource: {
-                find: {
-                    byId: function (dataSources, id) {
-                        var found;
-
-                        angular.forEach(dataSources, function (ds) {
-                            if (ds._id === id) {
-                                found = ds;
-                            }
-                        });
-
-                        return found;
-                    },
-                    byName: function (dataSources, name, msg) {
-                        var found;
-
-                        angular.forEach(dataSources, function (ds) {
-                            if (ds.dataSourceName === name || msg(ds.dataSourceName) === name) {
-                                found = ds;
-                            }
-                        });
-
-                        return found;
-                    },
-                    object: function (objects, type, id) {
-                        var found;
-
-                        angular.forEach(objects, function (obj) {
-                            var expression = obj.type === type;
-
-                            if (expression && id !== undefined) {
-                                expression = expression && obj.id === id;
-                            }
-
-                            if (expression) {
-                                found = obj;
-                            }
-                        });
-
-                        return found;
-                    }
-                },
                 select: function (scope, data, selected) {
                     data.dataSourceName = selected.name;
                     data.dataSourceId = selected._id;
@@ -164,11 +148,14 @@
             isDate: function (value) {
                 return value && $.inArray(value, ['DATE']) !== -1;
             },
+            isBoolean: function (value) {
+                return value && $.inArray(value, ['BOOLEAN']) !== -1;
+            },
             isChrome: function (scope) {
-                return scope.BrowserDetect.browser === 'Chrome';
+                return $.inArray(scope.BrowserDetect.browser, ['Chrome']) !== -1;
             },
             isIE: function (scope) {
-                return scope.BrowserDetect.browser !== 'Explorer';
+                return $.inArray(scope.BrowserDetect.browser, ['Explorer']) !== -1;
             },
             canHandleModernDragAndDrop: function (scope) {
                 return this.isChrome(scope) || this.isIE(scope);
@@ -181,8 +168,70 @@
                 span.attr('contenteditable', 'false');
                 span.attr('data-value', value);
                 span.attr('data-prefix', 'other');
-                span.addClass('badge').addClass('badge-' + badgeType);
+                span.addClass('badge badge-' + badgeType);
                 span.text(msg);
+
+                return $('<div/>').append(span).html();
+            },
+            createDraggableSpan: function (data) {
+                var span = $('<span/>');
+
+                span.attr('unselectable', 'on');
+                span.attr('contenteditable', 'false');
+
+                span.css('position', 'relative');
+
+                span.addClass('popoverEvent nonEditable triggerField pointer badge');
+
+                if (data.param.type === 'UNKNOWN') {
+                    span.addClass('badge-important')
+                } else {
+                    switch (data.prefix) {
+                    case this.TRIGGER_PREFIX:
+                        span.addClass('badge-info');
+                        break;
+                    case this.DATA_SOURCE_PREFIX:
+                        span.addClass('badge-warning');
+                        break;
+                    }
+                }
+
+                if (this.isText(data.param.type) || this.isDate(data.param.type)) {
+                    span.attr('manipulationpopover', '');
+                }
+
+                if (data.manipulations && data.manipulations.length > 0) {
+                    span.attr('manipulate', data.manipulations.join(" "));
+                }
+
+                span.attr('data-prefix', data.prefix);
+                span.attr('data-index', 1);
+                span.attr('data-type', data.param.type);
+                span.attr('data-object', data.param.displayName);
+
+                if (data.dataSourceName) {
+                    span.attr('data-source', data.dataSourceName);
+                }
+
+                if (data.object) {
+                    span.attr('data-object-id', data.object.id);
+                    span.attr('data-object-type', data.object.type);
+                    span.attr('data-field', data.object.field);
+                }
+
+                switch (data.prefix) {
+                case this.TRIGGER_PREFIX:
+                    span.text(data.msg(data.param.displayName));
+                    break;
+                case this.DATA_SOURCE_PREFIX:
+                    span.text("{0}.{1}#{2}.{3}".format(
+                        data.msg(data.dataSourceName),
+                        data.msg(data.object.displayName),
+                        data.object.id,
+                        data.msg(data.param.displayName)
+                    ));
+                    break;
+                }
 
                 return $('<div/>').append(span).html();
             },

@@ -158,12 +158,167 @@
 
     });
 
-    widgetModule.controller('ManageTaskCtrl', function ($scope, ManageTaskUtils, Channels, DataSources, $routeParams, $http, $compile) {
+    widgetModule.controller('ManageTaskCtrl', function ($scope, ManageTaskUtils, Channels, DataSources, Tasks, $routeParams, $http, $compile) {
         $scope.util = ManageTaskUtils;
-        $scope.channels = Channels.query();
         $scope.dataSources = DataSources.query();
         $scope.selectedDataSources = [];
         $scope.task = {};
+
+        $scope.channels = Channels.query(function () {
+            if ($routeParams.taskId !== undefined) {
+                $scope.task = Tasks.get({ taskId: $routeParams.taskId }, function () {
+                    var triggerChannel, trigger, action, actionBy = [],
+                        dataSource, dataSourceId;
+
+                    if ($scope.task.trigger) {
+                        triggerChannel = $scope.util.find({
+                            where: $scope.channels,
+                            by: {
+                                what: 'moduleName',
+                                equalTo: $scope.task.trigger.moduleName
+                            }
+                        });
+
+                        trigger = triggerChannel && $scope.util.find({
+                            where: triggerChannel.triggerTaskEvents,
+                            by: {
+                                what: 'subject',
+                                equalTo: $scope.task.trigger.subject
+                            }
+                        });
+
+                        if (trigger) {
+                            $scope.util.trigger.select($scope, triggerChannel, trigger);
+                        }
+                    }
+
+                    if ($scope.task.filters) {
+                        $http.get($scope.util.FILTER_SET_PATH).success(function (html) {
+                            angular.element($scope.util.BUILD_AREA_ID).append($compile(html)($scope));
+                            angular.element($scope.util.BUILD_AREA_ID + ' #filter-set #collapse-filter').collapse();
+                        });
+                    }
+
+                    for (dataSourceId in $scope.task.additionalData) {
+                        if ($scope.task.additionalData.hasOwnProperty(dataSourceId)) {
+                            dataSource = $scope.util.find({
+                                where: $scope.dataSources,
+                                by: {
+                                    what: '_id',
+                                    equalTo: dataSourceId
+                                }
+                            });
+
+                            angular.forEach($scope.task.additionalData[dataSourceId], function (object) {
+                                var obj = $scope.util.find({
+                                    where: dataSource.objects,
+                                    by: {
+                                        what: 'type',
+                                        equalTo: object.type
+                                    }
+                                });
+
+                                $scope.selectedDataSources.push({
+                                    id: object.id,
+                                    dataSourceId: dataSource._id,
+                                    dataSourceName: dataSource.name,
+                                    displayName: obj.displayName,
+                                    type: object.type,
+                                    failIfDataNotFound: object.failIfDataNotFound,
+                                    lookup: {
+                                        field: object.lookupField,
+                                        value: object.lookupValue
+                                    }
+                                });
+                            });
+                        }
+                    }
+
+                    $scope.selectedDataSources.sort(function (one, two) {
+                        return one.id - two.id;
+                    });
+
+                    angular.forEach($scope.selectedDataSources, function (data) {
+                        var childScope = $scope.$new();
+
+                        childScope.data = data;
+
+                        $http.get($scope.util.DATA_SOURCE_PATH).success(function (html) {
+                            angular.element($scope.util.BUILD_AREA_ID).append($compile(html)(childScope));
+                            angular.element($scope.util.BUILD_AREA_ID + " .accordion-body").collapse();
+                        });
+                    });
+
+                    if ($scope.task.action) {
+                        $scope.selectedActionChannel = $scope.util.find({
+                            where: $scope.channels,
+                            by: {
+                                what: 'moduleName',
+                                equalTo: $scope.task.action.moduleName
+                            }
+                        });
+
+                        if ($scope.selectedActionChannel) {
+                            if ($scope.task.action.subject) {
+                                actionBy.push({ what: 'subject', equalTo: $scope.task.action.subject });
+                            }
+
+                            if ($scope.task.action.serviceInterface && $scope.task.action.serviceMethod) {
+                                actionBy.push({ what: 'serviceInterface', equalTo: $scope.task.action.serviceInterface });
+                                actionBy.push({ what: 'serviceMethod', equalTo: $scope.task.action.serviceMethod });
+                            }
+
+                            action = $scope.util.find({
+                                where: $scope.selectedActionChannel.actionTaskEvents,
+                                by: actionBy
+                            });
+
+                            if (action) {
+                                $scope.util.action.select($scope, action);
+
+                                angular.forEach($scope.selectedAction.actionParameters, function (param) {
+                                    var regex = new RegExp('\\{\\{ad\\.(.+?)(\\..*?)\\}\\}', "g"),
+                                        replaced = [],
+                                        found,
+                                        ds;
+
+                                    param.value = $scope.task.actionInputFields[param.key];
+
+                                    if ($scope.util.canHandleModernDragAndDrop($scope)) {
+                                        if ($scope.util.isBoolean(param.type) && (param.value === 'true' || param.value === 'false')) {
+                                            param.value = $scope.util.createBooleanSpan($scope, param.value);
+                                        }
+
+                                        param.value = $scope.createDraggableElement(param.value);
+                                    } else {
+                                        while ((found = regex.exec(param.value)) !== null) {
+                                            ds = $scope.util.find({
+                                                where: $scope.selectedDataSources,
+                                                by: {
+                                                    what: 'dataSourceId',
+                                                    equalTo: found[1]
+                                                }
+                                            });
+
+                                            replaced.push({
+                                                find: '{{ad.' + found[1] + found[2] + '}}',
+                                                value: '{{ad.' + $scope.msg(ds.dataSourceName) + found[2] + '}}'
+                                            });
+                                        }
+
+                                        angular.forEach(replaced, function (r) {
+                                            param.value = param.value.replace(r.find, r.value);
+                                        });
+                                    }
+                                });
+                            }
+                        }
+                    }
+
+                    unblockUI();
+                });
+            }
+        });
 
         $scope.selectTrigger = function (channel, trigger) {
             if ($scope.task.trigger) {
@@ -309,11 +464,31 @@
         };
 
         $scope.findObject = function (dataSourceId, type, id) {
-            var dataSource = $scope.util.dataSource.find.byId($scope.dataSources, dataSourceId),
-                found;
+            var dataSource, by, found;
+
+            dataSource = $scope.util.find({
+                where: $scope.dataSources,
+                by: {
+                    what: '_id',
+                    equalTo: dataSourceId
+                }
+            });
 
             if (dataSource) {
-                found = $scope.util.dataSource.find.object(dataSource.objects, type, id);
+                by = [];
+
+                if (type) {
+                    by.push({ what: 'type', equalTo: type });
+                }
+
+                if (id) {
+                    by.push({ what: 'id', equalTo: id});
+                }
+
+                found = $scope.util.find({
+                    where: dataSource.objects,
+                    by: by
+                });
             }
 
             return found;
@@ -363,8 +538,12 @@
 
                 switch (prefix) {
                 case $scope.util.TRIGGER_PREFIX:
-                    idx = span.data('index');
-                    key = $scope.selectedTrigger.eventParameters[idx].eventKey;
+                    for (i = 0; i < $scope.selectedTrigger.eventParameters.length; i += 1) {
+                        if ($scope.msg($scope.selectedTrigger.eventParameters[i].displayName) === $(this).text()) {
+                            key = $scope.selectedTrigger.eventParameters[i].eventKey;
+                            break;
+                        }
+                    }
                     break;
                 case $scope.util.DATA_SOURCE_PREFIX:
                     source = span.data('source');
@@ -395,7 +574,7 @@
                     val = '{{{0}.{1}}}'.format(prefix, key);
                     break;
                 case $scope.util.DATA_SOURCE_PREFIX:
-                    val = '{{{0}.{1}.{2}#{3}.{4}'.format(prefix, $scope.msg(source), object.type, object.id, key);
+                    val = '{{{0}.{1}.{2}#{3}.{4}}}'.format(prefix, $scope.msg(source), object.type, object.id, key);
                     break;
                 default:
                     val = key;
@@ -427,6 +606,107 @@
             }
 
             return result.text();
+        };
+
+        $scope.createDraggableElement = function (value) {
+            var regex = new RegExp("\\{\\{.*?\\}\\}", "g"), element;
+
+            element = value.replace(regex, function (data) {
+                var indexOf = data.indexOf('.'),
+                    prefix = data.slice(2, indexOf),
+                    dataArray = data.slice(indexOf + 1, -2).split("?"),
+                    key = dataArray[0],
+                    manipulations = dataArray.slice(1),
+                    span, cuts, param, type, field, dataSource, dataSourceId, object, id;
+
+                switch (prefix) {
+                case $scope.util.TRIGGER_PREFIX:
+                    param = $scope.util.find({
+                        where: $scope.selectedTrigger.eventParameters,
+                        by: {
+                            what: 'eventKey',
+                            equalTo: key
+                        }
+                    });
+
+                    if (!param) {
+                        param = {
+                            type: 'UNKNOWN',
+                            displayName: key
+                        }
+                    }
+
+                    span = $scope.util.createDraggableSpan({
+                        msg: $scope.msg,
+                        param: param,
+                        prefix: prefix,
+                        manipulations: manipulations
+                    });
+                    break;
+                case $scope.util.DATA_SOURCE_PREFIX:
+                    cuts = key.split('.');
+
+                    dataSourceId = cuts[0];
+                    type = cuts[1].split('#');
+                    id = type.last();
+
+                    cuts.remove(0, 1);
+                    type.removeObject(id);
+
+                    field = cuts.join('.');
+                    type = type.join('#');
+
+                    dataSource = $scope.util.find({
+                        where: $scope.selectedDataSources,
+                        by: [{
+                            what: 'dataSourceId',
+                            equalTo: dataSourceId,
+                        }, {
+                            what: 'type',
+                            equalTo: type
+                        }, {
+                            what: 'id',
+                            equalTo: +id
+                        }]
+                    });
+
+                    object = dataSource && $scope.findObject(dataSource.dataSourceId, dataSource.type);
+
+                    param = object && $scope.util.find({
+                        where: object.fields,
+                        by: {
+                            what: 'fieldKey',
+                            equalTo: field
+                        }
+                    });
+
+                    if (!param) {
+                        param = {
+                            type: 'UNKNOWN',
+                            displayName: field
+                        }
+                    }
+
+                    span = $scope.util.createDraggableSpan({
+                        msg: $scope.msg,
+                        param: param,
+                        prefix: prefix,
+                        manipulations: manipulations,
+                        dataSourceName: dataSource.dataSourceName,
+                        object: {
+                            id: id,
+                            type: type,
+                            field: field,
+                            displayName: object.displayName
+                        }
+                    });
+                    break;
+                }
+
+                return span || '';
+            });
+
+            return element.replace(/\n/g, "<br>");
         };
 
         $scope.save = function (enabled) {
@@ -489,7 +769,13 @@
                     }
 
                     while ((found = regex.exec(value)) !== null) {
-                        dataSource = $scope.util.dataSource.find.byName($scope.selectedDataSources, found[1], $scope.msg);
+                        dataSource = $scope.util.find({
+                            where: $scope.selectedDataSources,
+                            by: {
+                                what: 'dataSourceName',
+                                equalTo: found[1]
+                            }
+                        });
 
                         replaced.push({
                             find: '{{ad.{1}{2}}}'.format(found[1], found[2]),
@@ -929,7 +1215,7 @@
                     });
                 } else {
                     $('<div>' + actionParameters.value + "</div>").find('span[data-prefix="ad"]').each(function (index, value) {
-                        var span = $(value), source = span.data('source'),
+                        var span = $(value), source = span.attr('data-source'),
                             objectType = span.data('object-type'), objectId = span.data('object-id'),
                             dataSource, exists = false, object, i;
 
