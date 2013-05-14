@@ -31,20 +31,15 @@
                 </div>
 
                 <!------------------ SELECT TRIGGER ------------------>
-                <div class="accordion" id="select-trigger" overflow-change>
+                <div class="accordion" id="select-trigger" overflow-change expand-accordion>
                     <div class="task-group">
                         <div class="accordion-heading">
-                            <div class="pull-right">
-                                <button type="button" class="btn btn-info btn-in-heading" data-toggle="collapse" data-target="#collapse-trigger">
-                                    <i class="icon-plus-sign icon-white"></i>
-                                </button>
-                            </div>
-                            <a class="accordion-toggle inbox-header" data-toggle="collapse" data-parent="#select-trigger" href="#collapse-trigger">
-                                {{msg('header.trigger')}}
+                            <div class="accordion-toggle inbox-header" style="cursor: auto;">
+                                <i class="icon-chevron-down" data-toggle="collapse" data-parent="#select-trigger" href="#collapse-trigger" style="cursor: pointer;"></i> {{msg('header.trigger')}}
                                 <span ng-hide="!task.trigger.displayName">
                                     &raquo; {{msg(task.trigger.channelName)}} : {{msg(task.trigger.displayName)}}
                                 </span>
-                            </a>
+                            </div>
                         </div>
                         <div id="collapse-trigger" class="accordion-body stripes-bg collapse in overflowChange" style="overflow: visible;">
                             <div class="accordion-inner">
@@ -94,16 +89,16 @@
                     </div>
 
                     <!------------------------  ACTION  ------------------------->
-                    <div class="accordion" id="action" ng-show="task.action" overflow-change>
+                    <div class="accordion" id="select-action" ng-show="task.action" overflow-change expand-accordion>
                         <div class="task-group">
                             <div class="accordion-heading">
                                 <div class="pull-right">
-                                    <button ng-click="removeAction()" class="btn btn-danger btn-in-heading" data-toggle="collapse">
+                                    <button ng-click="removeAction()" class="btn btn-danger btn-in-heading">
                                         <i class="icon-remove icon-white"></i>
                                     </button>
                                 </div>
-                                <a class="accordion-toggle inbox-header" data-toggle="collapse" data-parent="#action" href="#collapse-action">
-                                    {{msg('header.action')}}
+                                <a class="accordion-toggle inbox-header" style="cursor: auto;">
+                                    <i class="icon-chevron-down" data-toggle="collapse" data-parent="#select-action" href="#collapse-action" style="cursor: pointer;"></i> {{msg('header.action')}}
                                     <span ng-hide="!task.action.displayName">
                                         &raquo; {{msg(task.action.channelName)}} : {{msg(task.action.displayName)}}
                                     </span>

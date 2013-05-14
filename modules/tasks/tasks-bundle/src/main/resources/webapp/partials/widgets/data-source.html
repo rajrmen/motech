@@ -1,13 +1,13 @@
-<div class="accordion" id="data-source-{{data.id}}" overflow-change>
+<div class="accordion" id="data-source-{{data.id}}" overflow-change expand-accordion>
     <div class="task-group">
         <div class="accordion-heading">
             <div class="pull-right">
-                <button ng-click="removeData(data)" class="btn btn-danger btn-in-heading" data-toggle="collapse">
+                <button ng-click="removeData(data)" class="btn btn-danger btn-in-heading">
                     <i class="icon-remove icon-white"></i>
                 </button>
             </div>
-            <a class="accordion-toggle inbox-header" data-toggle="collapse" data-parent="#data-source-{{data.id}}" href="#collapse-data-source-{{data.id}}">
-                {{msg('subsection.data')}}
+            <a class="accordion-toggle inbox-header" style="cursor: auto;">
+                <i class="icon-chevron-down" data-toggle="collapse" data-parent="#data-source-{{data.id}}" href="#collapse-data-source-{{data.id}}" style="cursor: pointer;"></i> {{msg('subsection.data')}}
                 <span ng-hide="!data.displayName">
                     &raquo; {{msg(data.dataSourceName)}} : {{msg(data.displayName)}}
                 </span>

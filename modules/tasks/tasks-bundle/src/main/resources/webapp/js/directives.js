@@ -48,6 +48,22 @@
         };
     });
 
+    widgetModule.directive('expandAccordion', function () {
+        return {
+            restrict: 'A',
+            link: function (scope, element, attrs) {
+                angular.element(element).on({
+                    show: function () {
+                        $(this).find('.accordion-toggle i').removeClass('icon-chevron-right').addClass('icon-chevron-down');
+                    },
+                    hide: function () {
+                        $(this).find('.accordion-toggle i').removeClass('icon-chevron-down').addClass('icon-chevron-right');
+                    }
+                });
+            }
+        };
+    });
+
     widgetModule.directive('expandaccordion', function () {
         return {
             restrict: 'A',

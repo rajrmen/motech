@@ -1,13 +1,13 @@
-<div class="accordion" id="filter-set" overflow-change>
+<div class="accordion" id="filter-set" overflow-change expand-accordion>
     <div class="task-filter-group">
         <div class="accordion-heading">
             <div class="pull-right">
-                <button ng-click="removeFilterSet()" class="btn btn-danger btn-in-heading" data-toggle="collapse">
+                <button ng-click="removeFilterSet()" class="btn btn-danger btn-in-heading">
                     <i class="icon-remove icon-white"></i>
                 </button>
             </div>
-            <a class="accordion-toggle inbox-header" data-toggle="collapse" data-parent="#filter-set" href="#collapse-filter">
-                {{msg('section.filters')}}
+            <a class="accordion-toggle inbox-header" style="cursor: auto;">
+                <i class="icon-chevron-down" data-toggle="collapse" data-parent="#filter-set" href="#collapse-filter" style="cursor: pointer;"></i> {{msg('section.filters')}}
             </a>
         </div>
         <div id="collapse-filter" class="accordion-body stripes-bg collapse in overflowChange" style="overflow: visible;">
