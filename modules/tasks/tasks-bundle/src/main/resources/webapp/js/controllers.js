@@ -200,7 +200,7 @@
                     if ($scope.task.filters) {
                         $http.get($scope.util.FILTER_SET_PATH).success(function (html) {
                             angular.element($scope.util.BUILD_AREA_ID).append($compile(html)($scope));
-                            angular.element($scope.util.BUILD_AREA_ID + ' #filter-set #collapse-filter').collapse();
+                            angular.element($scope.util.BUILD_AREA_ID + ' #filter-set #collapse-filter').collapse('hide');
                         });
                     }
 
@@ -245,16 +245,17 @@
                         return one.id - two.id;
                     });
 
-                    angular.forEach($scope.selectedDataSources, function (data) {
-                        var childScope = $scope.$new();
+                    $http.get($scope.util.DATA_SOURCE_PATH).success(function (html) {
+                        angular.forEach($scope.selectedDataSources, function (data) {
+                            var childScope = $scope.$new();
 
-                        data.lookup.value = $scope.util.convertToView($scope, 'UNICODE', data.lookup.value);
-                        childScope.data = data;
+                            data.lookup.value = $scope.util.convertToView($scope, 'UNICODE', data.lookup.value);
+                            childScope.data = data;
 
-                        $http.get($scope.util.DATA_SOURCE_PATH).success(function (html) {
                             angular.element($scope.util.BUILD_AREA_ID).append($compile(html)(childScope));
-                            angular.element($scope.util.BUILD_AREA_ID + " .accordion-body").collapse();
                         });
+
+                        angular.element($scope.util.BUILD_AREA_ID + " .accordion-body").collapse('hide');
                     });
 
                     if ($scope.task.action) {
@@ -284,7 +285,7 @@
                             if (action) {
                                 $timeout(function () {
                                     $scope.util.action.select($scope, action);
-                                    angular.element('#collapse-action').collapse();
+                                    angular.element('#collapse-action').collapse('hide');
 
                                     angular.forEach($scope.selectedAction.actionParameters, function (param) {
                                         param.value = $scope.task.actionInputFields[param.key];

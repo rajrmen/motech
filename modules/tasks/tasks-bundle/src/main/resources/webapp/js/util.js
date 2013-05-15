@@ -276,8 +276,8 @@
                         });
 
                         replaced.push({
-                            find: '{{ad.' + found[1] + found[2] + '}}',
-                            value: '{{ad.' + scope.msg(ds.dataSourceName) + found[2] + '}}'
+                            find: '{{ad.{0}{1}}}'.format(found[1], found[2]),
+                            value: '{{ad.{0}{1}}}'.format(scope.msg(ds.dataSourceName), found[2])
                         });
                     }
 
