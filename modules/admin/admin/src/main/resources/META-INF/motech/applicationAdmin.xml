@@ -35,9 +35,14 @@
         <constructor-arg value="motech-admin"/>
     </bean>
 
-    <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
-        <property name="host" value="localhost"/>
-        <property name="port" value="25"/>
+    <!--<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">-->
+        <!--<property name="host" value="localhost"/>-->
+        <!--<property name="port" value="25"/>-->
+    <!--</bean>-->
+
+
+    <bean class="org.motechproject.security.annotations.SecurityAnnotationBeanPostProcessor">
+        <property name="moduleName" value="admin"/>
     </bean>
 
     <bean id="velocityEngine" class="org.springframework.ui.velocity.VelocityEngineFactoryBean">
@@ -49,7 +54,6 @@
         </property>
     </bean>
 
-    <mvc:annotation-driven/>
 
     <bean id="jmxSettings" class="org.motechproject.server.config.SettingsFacade" autowire="byType">
         <property name="configFiles">

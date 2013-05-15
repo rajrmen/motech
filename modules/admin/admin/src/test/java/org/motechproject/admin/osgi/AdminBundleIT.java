@@ -174,7 +174,8 @@ public class AdminBundleIT extends BaseOsgiIT {
         return Arrays.asList("org.motechproject.osgi.web",
                 "org.motechproject.admin.service",
                 "org.motechproject.admin.messages",
-                "org.motechproject.admin.domain");
+                "org.motechproject.admin.domain"
+        );
     }
 }
 

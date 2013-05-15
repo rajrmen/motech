@@ -1,54 +1,41 @@
-package org.motechproject.admin.email;
+package org.motechproject.admin.notification;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.velocity.app.VelocityEngine;
 import org.joda.time.format.DateTimeFormat;
 import org.motechproject.admin.domain.StatusMessage;
+import org.motechproject.email.model.Mail;
+import org.motechproject.email.service.EmailSenderService;
 import org.motechproject.server.config.service.PlatformSettingsService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.velocity.VelocityEngineUtils;
 
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
 import java.util.HashMap;
 import java.util.Map;
 
 @Component
-public class EmailSenderImpl implements EmailSender {
-
-    private static final String CRITICAL_NOTIFICATION_TEMPLATE = "/mail/criticalNotification.vm";
+public class EmailNotifier {
 
     @Autowired
-    private JavaMailSender mailSender;
+    private PlatformSettingsService settingsService;
 
     @Autowired
     private VelocityEngine velocityEngine;
 
     @Autowired
-    private PlatformSettingsService settingsService;
+    private EmailSenderService emailSender;
 
-    @Override
-    public void sendCriticalNotificationEmail(final String address, final StatusMessage statusMessage) {
-        MimeMessagePreparator preparator = new MimeMessagePreparator() {
-            @Override
-            public void prepare(MimeMessage mimeMessage) throws MessagingException {
-                MimeMessageHelper message = new MimeMessageHelper(mimeMessage);
-                message.setTo(address);
-                message.setFrom(senderAddress());
-                message.setSubject("Critical notification raised in Motech");
+    private static final String CRITICAL_NOTIFICATION_TEMPLATE = "/mail/criticalNotification.vm";
 
-                Map<String, Object> model = templateParams(statusMessage);
-                String text = VelocityEngineUtils.mergeTemplateIntoString(velocityEngine, CRITICAL_NOTIFICATION_TEMPLATE, model);
+    public void send(StatusMessage statusMessage, String recipients) {
+        Map<String, Object> model = templateParams(statusMessage);
+        String text = mergeTemplateIntoString(model);
+        emailSender.send(new Mail(senderAddress(), recipients, "Critical notification raised in Motech", text));
+    }
 
-                message.setText(text, true);
-            }
-        };
-
-        mailSender.send(preparator);
+    String mergeTemplateIntoString(Map<String, Object> model) {
+        return VelocityEngineUtils.mergeTemplateIntoString(velocityEngine, CRITICAL_NOTIFICATION_TEMPLATE, model);
     }
 
     private String senderAddress() {
@@ -63,6 +50,7 @@ public class EmailSenderImpl implements EmailSender {
         return address;
     }
 
+
     private Map<String, Object> templateParams(StatusMessage statusMessage) {
         Map<String, Object> params = new HashMap<>();
 
@@ -76,11 +64,11 @@ public class EmailSenderImpl implements EmailSender {
         return params;
     }
 
-    private String messagesUrl() {
+    String messagesUrl() {
         String serverUrl = settingsService.getPlatformSettings().getServerUrl();
 
         if (StringUtils.isNotBlank(serverUrl)) {
-            if (!serverUrl.matches("^\\w+://")) {
+            if (!serverUrl.matches("^\\w+://.*")) {
                 serverUrl = "http://" + serverUrl;
             }
         } else {
