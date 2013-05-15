@@ -8,7 +8,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.motechproject.admin.domain.NotificationRule;
 import org.motechproject.admin.domain.StatusMessage;
-import org.motechproject.admin.notification.Notifier;
+import org.motechproject.admin.notification.EmailNotifier;
 import org.motechproject.admin.repository.AllNotificationRules;
 import org.motechproject.admin.repository.AllStatusMessages;
 import org.motechproject.admin.service.StatusMessageService;
@@ -57,7 +57,7 @@ public class StatusMessageServiceTest {
     private UIFrameworkService uiFrameworkService;
 
     @Mock
-    private Notifier notifier;
+    private EmailNotifier emailNotifier;
 
     StatusMessage activeMessage = new StatusMessage("active", MODULE_NAME, Level.INFO, DateTime.now().plusHours(1));
 
@@ -218,8 +218,8 @@ public class StatusMessageServiceTest {
         verify(allStatusMessages).add(statusMessage);
         verify(allNotificationRules).getAll();
 
-        verify(notifier).send(statusMessage,"e@ma.il");
-        verify(notifier).send(statusMessage,"e2@ma.il");
+        verify(emailNotifier).send(statusMessage,"e@ma.il");
+        verify(emailNotifier).send(statusMessage,"e2@ma.il");
 
         ArgumentCaptor<MotechEvent> captor = ArgumentCaptor.forClass(MotechEvent.class);
         verify(eventRelay).sendEventMessage(captor.capture());
