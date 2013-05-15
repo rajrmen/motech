@@ -158,14 +158,19 @@
 
     });
 
-    widgetModule.controller('ManageTaskCtrl', function ($scope, ManageTaskUtils, Channels, DataSources, Tasks, $routeParams, $http, $compile) {
+    widgetModule.controller('ManageTaskCtrl', function ($scope, ManageTaskUtils, Channels, DataSources, Tasks, $q, $timeout, $routeParams, $http, $compile) {
         $scope.util = ManageTaskUtils;
-        $scope.dataSources = DataSources.query();
         $scope.selectedDataSources = [];
-        $scope.task = {};
 
-        $scope.channels = Channels.query(function () {
-            if ($routeParams.taskId !== undefined) {
+        $q.all([$scope.util.doQuery($q, Channels), $scope.util.doQuery($q, DataSources)]).then(function(data) {
+            blockUI();
+
+            $scope.channels = data[0];
+            $scope.dataSources = data[1];
+
+            if ($routeParams.taskId === undefined) {
+                $scope.task = {};
+            } else {
                 $scope.task = Tasks.get({ taskId: $routeParams.taskId }, function () {
                     var triggerChannel, trigger, action, actionBy = [],
                         dataSource, dataSourceId;
@@ -241,6 +246,7 @@
                     angular.forEach($scope.selectedDataSources, function (data) {
                         var childScope = $scope.$new();
 
+                        data.lookup.value = $scope.util.convertToView($scope, 'UNICODE', data.lookup.value);
                         childScope.data = data;
 
                         $http.get($scope.util.DATA_SOURCE_PATH).success(function (html) {
@@ -274,50 +280,22 @@
                             });
 
                             if (action) {
-                                $scope.util.action.select($scope, action);
+                                $timeout(function () {
+                                    $scope.util.action.select($scope, action);
+                                    angular.element('#collapse-action').collapse();
 
-                                angular.forEach($scope.selectedAction.actionParameters, function (param) {
-                                    var regex = new RegExp('\\{\\{ad\\.(.+?)(\\..*?)\\}\\}', "g"),
-                                        replaced = [],
-                                        found,
-                                        ds;
-
-                                    param.value = $scope.task.actionInputFields[param.key];
-
-                                    if ($scope.util.canHandleModernDragAndDrop($scope)) {
-                                        if ($scope.util.isBoolean(param.type) && (param.value === 'true' || param.value === 'false')) {
-                                            param.value = $scope.util.createBooleanSpan($scope, param.value);
-                                        }
-
-                                        param.value = $scope.createDraggableElement(param.value);
-                                    } else {
-                                        while ((found = regex.exec(param.value)) !== null) {
-                                            ds = $scope.util.find({
-                                                where: $scope.selectedDataSources,
-                                                by: {
-                                                    what: 'dataSourceId',
-                                                    equalTo: found[1]
-                                                }
-                                            });
-
-                                            replaced.push({
-                                                find: '{{ad.' + found[1] + found[2] + '}}',
-                                                value: '{{ad.' + $scope.msg(ds.dataSourceName) + found[2] + '}}'
-                                            });
-                                        }
-
-                                        angular.forEach(replaced, function (r) {
-                                            param.value = param.value.replace(r.find, r.value);
-                                        });
-                                    }
+                                    angular.forEach($scope.selectedAction.actionParameters, function (param) {
+                                        param.value = $scope.task.actionInputFields[param.key];
+                                        param.value = $scope.util.convertToView($scope, param.type, param.value);
+                                    });
                                 });
                             }
                         }
                     }
-
-                    unblockUI();
                 });
             }
+
+            unblockUI();
         });
 
         $scope.selectTrigger = function (channel, trigger) {
@@ -720,9 +698,7 @@
                 var exists = false, lookupValue = (data.lookup && data.lookup.value) || '',
                     additionalData, object, i;
 
-                if ($scope.util.canHandleModernDragAndDrop($scope)) {
-                    lookupValue = $scope.refactorDivEditable(lookupValue);
-                }
+                lookupValue = $scope.util.convertToServer($scope, 'UNICODE', lookupValue);
 
                 if ($scope.task.additionalData[data.dataSourceId] === undefined) {
                     $scope.task.additionalData[data.dataSourceId] = [];
@@ -756,38 +732,8 @@
             });
 
             if (action) {
-                angular.forEach(action.actionParameters, function (parameter) {
-                    var key = parameter.key,
-                        value = parameter.value || '',
-                        regex = new RegExp('\\{\\{ad\\.(.+?)(\\..*?)\\}\\}', "g"),
-                        replaced = [],
-                        found,
-                        dataSource;
-
-                    if ($scope.util.canHandleModernDragAndDrop($scope)) {
-                        value = $scope.refactorDivEditable(value);
-                    }
-
-                    while ((found = regex.exec(value)) !== null) {
-                        dataSource = $scope.util.find({
-                            where: $scope.selectedDataSources,
-                            by: {
-                                what: 'dataSourceName',
-                                equalTo: found[1]
-                            }
-                        });
-
-                        replaced.push({
-                            find: '{{ad.{1}{2}}}'.format(found[1], found[2]),
-                            value: '{{ad.{1}{2}}}'.format(dataSource._id, found[2])
-                        });
-                    }
-
-                    angular.forEach(replaced, function (item) {
-                        value = value.replace(item.find, item.value);
-                    });
-
-                    $scope.task.actionInputFields[key] = value;
+                angular.forEach(action.actionParameters, function (param) {
+                    $scope.task.actionInputFields[param.key] = $scope.util.convertToServer($scope, param.type, param.value);
                 });
             }
 
