@@ -17,21 +17,23 @@
             </a>
         </div>
         <div id="collapse-data-source-{{data.id}}" class="accordion-body stripes-bg collapse in overflowChange" style="overflow: visible;">
-            <div class="accordion-inner">
-                <h4>{{msg('info.availableFields')}}:</h4>
-                <div class="control-group move-element">
-                    <span contenteditable="false" ng-repeat="i in selectedTrigger.eventParameters" class="badge badge-info triggerField" draggable data-prefix="trigger" data-index="{{$index}}" data-type="{{i.type}}">{{msg(i.displayName)}}</span>​
-                    <span ng-repeat="ds in selectedDataSources | idLessThan:data.id">
-                        <span contenteditable="false" ng-repeat="i in findObject(ds.dataSourceId, ds.type).fields" class="badge badge-warning triggerField" draggable
-                              data-prefix="ad" data-source="{{ds.dataSourceName}}" data-object="{{ds.displayName}}" data-object-type="{{ds.type}}"
-                              data-field="{{i.fieldKey}}" data-index="{{$index}}" data-object-id="{{ds.id}}" data-type="{{i.type}}">
-                            {{msg(ds.dataSourceName)}}.{{msg(ds.displayName)}}#{{ds.id}}.{{msg(i.displayName)}}
+            <div class="accordion-inner inside">
+                <div class="control-group control-section">
+                    <label class="control-label task-label">{{msg('info.availableFields')}}:</label>
+                    <div class="controls move-element">
+                        <span contenteditable="false" ng-repeat="i in selectedTrigger.eventParameters" class="badge badge-info triggerField" draggable data-prefix="trigger" data-index="{{$index}}" data-type="{{i.type}}">{{msg(i.displayName)}}</span>​
+                        <span ng-repeat="ds in selectedDataSources | idLessThan:data.id">
+                            <span contenteditable="false" ng-repeat="i in findObject(ds.dataSourceId, ds.type).fields" class="badge badge-warning triggerField" draggable
+                                  data-prefix="ad" data-source="{{ds.dataSourceName}}" data-object="{{ds.displayName}}" data-object-type="{{ds.type}}"
+                                  data-field="{{i.fieldKey}}" data-index="{{$index}}" data-object-id="{{ds.id}}" data-type="{{i.type}}">
+                                {{msg(ds.dataSourceName)}}.{{msg(ds.displayName)}}#{{ds.id}}.{{msg(i.displayName)}}
+                            </span>
                         </span>
-                    </span>
+                    </div>
                 </div>
                 <div class="control-group">
-                    <span>{{msg('subsubsection.source')}}:</span>
-                    <div class="btn-group">
+                    <span class="control-label">{{msg('subsubsection.source')}}:</span>
+                    <div class="btn-group interval">
                         <button class="btn dropdown-toggle" data-toggle="dropdown" href="#">
                             {{msg(data.dataSourceName || 'select')}}
                             <span class="caret"></span>
@@ -42,8 +44,8 @@
                             </li>
                         </ul>
                     </div>
-                    <span>{{msg('subsubsection.object')}}:</span>
-                    <div class="btn-group">
+                    <span class="interval2">{{msg('subsubsection.object')}}:</span>
+                    <div class="btn-group interval">
                         <button class="btn dropdown-toggle" data-toggle="dropdown" href="#">
                             {{msg(data.displayName || 'select')}}
                             <span class="caret"></span>
@@ -56,8 +58,8 @@
                     </div>
                 </div>
                 <div class="control-group" ui-if="data.displayName">
-                    <span>{{msg('subsubsection.lookup')}}:</span>
-                    <div class="btn-group">
+                    <span class="control-label">{{msg('subsubsection.lookup')}}:</span>
+                    <div class="btn-group interval">
                         <button class="btn dropdown-toggle" data-toggle="dropdown" href="#">
                             {{msg(data.lookup.field || 'select')}}
                             <span class="caret"></span>
@@ -70,7 +72,7 @@
                     </div>
                 </div>
                 <div class="control-group" ui-if="data.displayName">
-                    <span>{{msg('subsubsection.failIfDataNotFound')}}</span>
+                    <span class="control-label">{{msg('subsubsection.failIfDataNotFound')}}</span>
                     <div class="controls">
                         <div class="btn-group">
                             <input type="checkbox" ng-model="data.failIfDataNotFound"/>
@@ -79,7 +81,7 @@
                 </div>
                 <div ui-if="data.lookup.field">
                     <div class="control-group" ng-class="{error: actionCssClass(data.lookup)}" class="control-group form-inline clearfix">
-                        <label>{{msg(data.lookup.field)}}</label>
+                        <label class="control-label">{{msg(data.lookup.field)}}</label>
 
                         <!------------------------ Chrome & IE ------------------------>
                         <div ui-if="BrowserDetect.browser=='Chrome' || BrowserDetect.browser=='Explorer'" class="controls">
@@ -92,9 +94,11 @@
                         </div>
                     </div>
                 </div>
-                <div class="control-group move-element margin-before2" ng-hide="data.displayName == undefined">
-                    <p><strong>{{msg('subsubsection.objectFields')}}</strong></p>
-                    <span ng-repeat="field in findObject(data.dataSourceId, data.type).fields" class="badge badge-warning">{{msg(field.displayName)}}</span>​
+                <div class="control-group margin-before3 control-section" ng-hide="data.displayName == undefined">
+                    <label class="control-label task-label">{{msg('subsubsection.objectFields')}}</label>
+                    <div class="controls move-element">
+                        <span ng-repeat="field in findObject(data.dataSourceId, data.type).fields" class="badge badge-warning">{{msg(field.displayName)}}</span>​
+                    </div>
                 </div>
             </div>
         </div>

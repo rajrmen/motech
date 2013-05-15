@@ -1,25 +1,26 @@
 <div class="accordion" id="filter-set" overflow-change expand-accordion>
-    <div class="task-filter-group">
+    <div class="task-group">
         <div class="accordion-heading">
             <div class="pull-right">
                 <button ng-click="removeFilterSet()" class="btn btn-danger btn-in-heading">
                     <i class="icon-remove icon-white"></i>
                 </button>
             </div>
-            <a class="accordion-toggle inbox-header" style="cursor: auto;">
-                <i class="icon-chevron-down" data-toggle="collapse" data-parent="#filter-set" href="#collapse-filter" style="cursor: pointer;"></i> {{msg('section.filters')}}
+            <a class="accordion-toggle inbox-header">
+                <i class="icon-chevron-down" data-toggle="collapse" data-parent="#filter-set" href="#collapse-filter" style="cursor: pointer;"></i>
+                {{msg('section.filters')}}
             </a>
         </div>
         <div id="collapse-filter" class="accordion-body stripes-bg collapse in overflowChange" style="overflow: visible;">
-            <div class="accordion-inner">
+            <div class="accordion-inner centered inside">
                 <form id="filtersForm" name="filterForm" class="form-horizontal">
-                    <div class="margin-center">
+                    <div class="margin-center margin-before">
                         <div ng-repeat="filter in task.filters">
                             <div class="form-inline">
                                 <div class="control-group">
                                     <span class="validation-area">
                                         <div class="btn-group">
-                                            <a class="btn dropdown-toggle" data-toggle="dropdown" href="#" ng-class="{'btn-danger': !filter.eventParameter}">
+                                            <a class="btn dropdown-toggle dropdown-large-fluid" data-toggle="dropdown" href="#" ng-class="{'btn-danger': !filter.eventParameter}">
                                                 {{msg((filter.eventParameter && filter.eventParameter.displayName) || 'info.filter.select')}}
                                                 <span class="caret"></span>
                                             </a>
@@ -32,7 +33,7 @@
                                     </span>
                                     <span class="validation-area">
                                         <div class="btn-group">
-                                            <a class="btn dropdown-toggle" data-toggle="dropdown" href="#" ng-class="{'btn-danger': filter.negationOperator == undefined}" ng-disabled="!filter.eventParameter">
+                                            <a class="btn dropdown-toggle dropdown-small-fluid" data-toggle="dropdown" href="#" ng-class="{'btn-danger': filter.negationOperator == undefined}" ng-disabled="!filter.eventParameter">
                                                 {{msg(((filter.negationOperator == true || filter.negationOperator == false) && 'info.filter.' + filter.negationOperator) || 'info.filter.select')}}
                                                 <span class="caret"></span>
                                             </a>
@@ -46,7 +47,7 @@
                                     </span>
                                     <span class="validation-area">
                                         <div class="btn-group">
-                                            <a class="btn dropdown-toggle" data-toggle="dropdown" href="#" ng-class="{'btn-danger': !filter.operator}" ng-disabled="filter.negationOperator == undefined">
+                                            <a class="btn dropdown-toggle dropdown-medium-fluid" data-toggle="dropdown" href="#" ng-class="{'btn-danger': !filter.operator}" ng-disabled="filter.negationOperator == undefined">
                                                 {{msg(filter.operator || 'info.filter.select')}}
                                                 <span class="caret"></span>
                                             </a>
