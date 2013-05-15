@@ -39,21 +39,19 @@
         <property name="moduleName" value="admin"/>
     </bean>
 
-    <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
-        <property name="host" value="localhost"/>
-        <property name="port" value="25"/>
-    </bean>
+    <!--<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">-->
+        <!--<property name="host" value="localhost"/>-->
+        <!--<property name="port" value="25"/>-->
+    <!--</bean>-->
 
-    <bean id="velocityEngine" class="org.springframework.ui.velocity.VelocityEngineFactoryBean">
-        <property name="velocityProperties">
-            <value>
-                resource.loader=class
-                class.resource.loader.class=org.motechproject.admin.email.BundleResourceLoader
-            </value>
-        </property>
-    </bean>
-
-    <mvc:annotation-driven/>
+    <!--<bean id="velocityEngine" class="org.springframework.ui.velocity.VelocityEngineFactoryBean">-->
+        <!--<property name="velocityProperties">-->
+            <!--<value>-->
+                <!--resource.loader=class-->
+                <!--class.resource.loader.class=org.motechproject.email.BundleResourceLoader-->
+            <!--</value>-->
+        <!--</property>-->
+    <!--</bean>-->
 
     <bean id="jmxSettings" class="org.motechproject.server.config.SettingsFacade" autowire="byType">
         <property name="configFiles">

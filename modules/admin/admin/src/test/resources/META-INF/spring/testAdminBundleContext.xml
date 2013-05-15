@@ -12,4 +12,7 @@
     <osgi:reference id="statusMessageServiceOsgi" interface="org.motechproject.admin.service.StatusMessageService"/>
 
     <osgi:reference id="adminMappingServiceOsgi" interface="org.motechproject.admin.service.AdminMappingService"/>
+
+    <osgi:reference id="mailSender" interface="org.motechproject.email.EmailSender"/>
+
 </beans>

@@ -1,9 +1,9 @@
-package org.motechproject.admin.email;
+package org.motechproject.email;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.velocity.app.VelocityEngine;
 import org.joda.time.format.DateTimeFormat;
-import org.motechproject.admin.domain.StatusMessage;
+import org.motechproject.email.model.MailDetail;
 import org.motechproject.server.config.service.PlatformSettingsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -32,7 +32,7 @@ public class EmailSenderImpl implements EmailSender {
     private PlatformSettingsService settingsService;
 
     @Override
-    public void sendCriticalNotificationEmail(final String address, final StatusMessage statusMessage) {
+    public void sendCriticalNotificationEmail(final String address, final MailDetail mailDetail) {
         MimeMessagePreparator preparator = new MimeMessagePreparator() {
             @Override
             public void prepare(MimeMessage mimeMessage) throws MessagingException {
@@ -41,7 +41,7 @@ public class EmailSenderImpl implements EmailSender {
                 message.setFrom(senderAddress());
                 message.setSubject("Critical notification raised in Motech");
 
-                Map<String, Object> model = templateParams(statusMessage);
+                Map<String, Object> model = templateParams(mailDetail);
                 String text = VelocityEngineUtils.mergeTemplateIntoString(velocityEngine, CRITICAL_NOTIFICATION_TEMPLATE, model);
 
                 message.setText(text, true);
@@ -63,7 +63,7 @@ public class EmailSenderImpl implements EmailSender {
         return address;
     }
 
-    private Map<String, Object> templateParams(StatusMessage statusMessage) {
+    private Map<String, Object> templateParams(MailDetail statusMessage) {
         Map<String, Object> params = new HashMap<>();
 
         String dateTime = DateTimeFormat.shortDateTime().print(statusMessage.getDate());

@@ -8,11 +8,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.motechproject.admin.domain.NotificationRule;
 import org.motechproject.admin.domain.StatusMessage;
-import org.motechproject.admin.email.EmailSender;
+import org.motechproject.email.EmailSender;
 import org.motechproject.admin.repository.AllNotificationRules;
 import org.motechproject.admin.repository.AllStatusMessages;
 import org.motechproject.admin.service.StatusMessageService;
 import org.motechproject.admin.service.impl.StatusMessageServiceImpl;
+import org.motechproject.email.model.MailDetail;
 import org.motechproject.event.MotechEvent;
 import org.motechproject.event.listener.EventRelay;
 import org.motechproject.osgi.web.UIFrameworkService;
@@ -24,6 +25,7 @@ import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -209,14 +211,21 @@ public class StatusMessageServiceTest {
                 notificationRuleEmail2));
 
         StatusMessage statusMessage = new StatusMessage("text", "module", Level.CRITICAL);
+        MailDetail mailDetail = new MailDetail(statusMessage.getText(), statusMessage.getModuleName());
 
         statusMessageService.postMessage(statusMessage);
 
         verify(allStatusMessages).add(statusMessage);
         verify(allNotificationRules).getAll();
 
-        verify(emailSender).sendCriticalNotificationEmail("e@ma.il", statusMessage);
-        verify(emailSender).sendCriticalNotificationEmail("e2@ma.il", statusMessage);
+        ArgumentCaptor<MailDetail> argument = ArgumentCaptor.forClass(MailDetail.class);
+
+        verify(emailSender).sendCriticalNotificationEmail(eq("e@ma.il"), argument.capture());
+        verify(emailSender).sendCriticalNotificationEmail(eq("e2@ma.il"), argument.capture());
+
+        assertEquals("text",argument.getValue().getText());
+        assertEquals("module",argument.getValue().getModuleName());
+
 
         ArgumentCaptor<MotechEvent> captor = ArgumentCaptor.forClass(MotechEvent.class);
         verify(eventRelay).sendEventMessage(captor.capture());

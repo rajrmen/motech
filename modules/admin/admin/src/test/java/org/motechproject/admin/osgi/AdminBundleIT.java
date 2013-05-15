@@ -20,10 +20,11 @@ import org.joda.time.DateTime;
 import org.motechproject.admin.domain.StatusMessage;
 import org.motechproject.admin.messages.Level;
 import org.motechproject.admin.service.StatusMessageService;
+import org.motechproject.email.EmailSenderImpl;
+import org.motechproject.email.model.MailDetail;
 import org.motechproject.event.listener.EventListenerRegistryService;
 import org.motechproject.security.service.MotechPermissionService;
 import org.motechproject.security.service.MotechRoleService;
-import org.motechproject.server.config.ConfigLoader;
 import org.motechproject.server.config.service.PlatformSettingsService;
 import org.motechproject.testing.osgi.BaseOsgiIT;
 import org.motechproject.testing.utils.TestContext;
@@ -40,6 +41,8 @@ import static org.hamcrest.CoreMatchers.equalTo;
 
 public class AdminBundleIT extends BaseOsgiIT {
 
+    private MailDetail mailDetail = new MailDetail("test","test");
+
     private static final String ERROR_MSG = "test-error";
     private static final String DEBUG_MSG = "test-debug";
     private static final String WARNING_MSG = "test-warn";
@@ -53,6 +56,7 @@ public class AdminBundleIT extends BaseOsgiIT {
         assertServicePresent(EventListenerRegistryService.class);
         assertServicePresent(MotechPermissionService.class);
         assertServicePresent(MotechRoleService.class);
+        assertServicePresent(EmailSenderImpl.class);
     }
 
     public void testStatusMessageService() {
@@ -179,7 +183,8 @@ public class AdminBundleIT extends BaseOsgiIT {
         return Arrays.asList("org.motechproject.osgi.web",
                 "org.motechproject.admin.service",
                 "org.motechproject.admin.messages",
-                "org.motechproject.admin.domain");
+                "org.motechproject.admin.domain",
+                "org.motechproject.email.model");
     }
 }
 

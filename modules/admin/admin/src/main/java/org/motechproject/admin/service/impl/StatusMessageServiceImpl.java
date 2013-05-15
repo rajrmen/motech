@@ -3,12 +3,13 @@ package org.motechproject.admin.service.impl;
 import org.joda.time.DateTime;
 import org.motechproject.admin.domain.NotificationRule;
 import org.motechproject.admin.domain.StatusMessage;
-import org.motechproject.admin.email.EmailSender;
+import org.motechproject.email.EmailSender;
 import org.motechproject.admin.messages.ActionType;
 import org.motechproject.admin.messages.Level;
 import org.motechproject.admin.repository.AllNotificationRules;
 import org.motechproject.admin.repository.AllStatusMessages;
 import org.motechproject.admin.service.StatusMessageService;
+import org.motechproject.email.model.MailDetail;
 import org.motechproject.event.MotechEvent;
 import org.motechproject.event.listener.EventRelay;
 import org.motechproject.osgi.web.UIFrameworkService;
@@ -231,7 +232,7 @@ public class StatusMessageServiceImpl implements StatusMessageService {
             if (notificationRule.getActionType() == ActionType.SMS) {
                 smsRecipients.add(notificationRule.getRecipient());
             } else if (notificationRule.getActionType() == ActionType.EMAIL) {
-                emailSender.sendCriticalNotificationEmail(notificationRule.getRecipient(), message);
+                emailSender.sendCriticalNotificationEmail(notificationRule.getRecipient(), new MailDetail(message.getText(),message.getModuleName()));
             }
         }
 
