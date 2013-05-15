@@ -3,7 +3,7 @@
 
     /* Services */
 
-    angular.module('manageTaskUtils', ['ngResource']).factory('ManageTaskUtils', function () {
+    angular.module('manageTaskUtils', []).factory('ManageTaskUtils', function () {
         return {
             FILTER_SET_PATH: '../tasks/partials/widgets/filter-set.html',
             FILTER_SET_ID: '#filter-set',
@@ -13,13 +13,14 @@
             TRIGGER_PREFIX: 'trigger',
             DATA_SOURCE_PREFIX: 'ad',
             find: function (data) {
-                var found;
+                var where = (data && data.where) || [],
+                    found;
 
-                angular.forEach(data.where, function (item) {
+                angular.forEach(where, function (item) {
                     var isTrue = true;
 
                     if (!found) {
-                        if (data.by.isArray) {
+                        if (data.by && data.by.isArray) {
                             angular.forEach(data.by, function (b) {
                                 if (data.msg !== undefined) {
                                     isTrue = isTrue && (item[b.what] === b.equalTo || data.msg(item[b.what]) === b.equalTo);
@@ -28,10 +29,10 @@
                                 }
                             });
                         } else if (data.by !== undefined && data.by.what !== undefined) {
-                            isTrue = item[data.by.what] === data.by.equalTo;
-
                             if (data.msg !== undefined) {
-                                isTrue = data.msg(item[data.by.what]) === data.by.equalTo;
+                                isTrue = item[data.by.what] === data.by.equalTo || data.msg(item[data.by.what]) === data.by.equalTo;
+                            } else {
+                                isTrue = item[data.by.what] === data.by.equalTo;
                             }
                         } else {
                             isTrue = false;
@@ -50,7 +51,7 @@
                     var array = [];
 
                     angular.forEach(channels, function (channel) {
-                        if (channel.triggerTaskEvents.length) {
+                        if (channel.triggerTaskEvents && channel.triggerTaskEvents.length) {
                             array.push(channel);
                         }
                     });
@@ -61,7 +62,7 @@
                     var array = [];
 
                     angular.forEach(channels, function (channel) {
-                        if (channel.actionTaskEvents.length) {
+                        if (channel.actionTaskEvents && channel.actionTaskEvents.length) {
                             array.push(channel);
                         }
                     });
@@ -71,6 +72,10 @@
             },
             trigger: {
                 select: function (scope, channel, trigger) {
+                    if (!scope.task) {
+                        scope.task = {};
+                    }
+
                     scope.task.trigger = {
                         displayName: trigger.displayName,
                         channelName: channel.displayName,
@@ -80,7 +85,10 @@
                     };
 
                     angular.element("#trigger-" + channel.moduleName).parent('li').addClass('selectedTrigger').addClass('active');
-                    angular.element("#collapse-trigger").collapse('hide');
+
+                    if (angular.element("#collapse-trigger").collapse) {
+                        angular.element("#collapse-trigger").collapse('hide');
+                    }
 
                     scope.selectedTrigger = trigger;
 
@@ -103,6 +111,10 @@
             },
             action: {
                 select: function (scope, action) {
+                    if (!scope.task) {
+                        scope.task = {};
+                    }
+
                     scope.task.action = {
                         displayName: action.displayName,
                         channelName: scope.selectedActionChannel.displayName,
