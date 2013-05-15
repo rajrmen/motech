@@ -173,7 +173,7 @@
             } else {
                 $scope.task = Tasks.get({ taskId: $routeParams.taskId }, function () {
                     var triggerChannel, trigger, action, actionBy = [],
-                        dataSource, dataSourceId;
+                        dataSource, dataSourceId, object, obj, i;
 
                     if ($scope.task.trigger) {
                         triggerChannel = $scope.util.find({
@@ -214,8 +214,10 @@
                                 }
                             });
 
-                            angular.forEach($scope.task.additionalData[dataSourceId], function (object) {
-                                var obj = $scope.util.find({
+                            for (i = 0; i < $scope.task.additionalData[dataSourceId].length; i += 1) {
+                                object = $scope.task.additionalData[dataSourceId][i];
+
+                                obj = $scope.util.find({
                                     where: dataSource.objects,
                                     by: {
                                         what: 'type',
@@ -235,7 +237,7 @@
                                         value: object.lookupValue
                                     }
                                 });
-                            });
+                            }
                         }
                     }
 
@@ -512,7 +514,7 @@
                 var span = $(this), prefix = span.data('prefix'),
                     manipulations = span.attr('manipulate') || '',
                     type = span.data('type'),
-                    object = {}, idx, key, source, array, val, i;
+                    object = {}, key, source, array, val, i;
 
                 switch (prefix) {
                 case $scope.util.TRIGGER_PREFIX:
@@ -611,7 +613,7 @@
                         param = {
                             type: 'UNKNOWN',
                             displayName: key
-                        }
+                        };
                     }
 
                     span = $scope.util.createDraggableSpan({
@@ -638,7 +640,7 @@
                         where: $scope.selectedDataSources,
                         by: [{
                             what: 'dataSourceId',
-                            equalTo: dataSourceId,
+                            equalTo: dataSourceId
                         }, {
                             what: 'type',
                             equalTo: type
@@ -662,7 +664,7 @@
                         param = {
                             type: 'UNKNOWN',
                             displayName: field
-                        }
+                        };
                     }
 
                     span = $scope.util.createDraggableSpan({
@@ -698,7 +700,7 @@
                 var exists = false, lookupValue = (data.lookup && data.lookup.value) || '',
                     additionalData, object, i;
 
-                lookupValue = $scope.util.convertToServer($scope, 'UNICODE', lookupValue);
+                lookupValue = $scope.util.convertToServer($scope, lookupValue);
 
                 if ($scope.task.additionalData[data.dataSourceId] === undefined) {
                     $scope.task.additionalData[data.dataSourceId] = [];
@@ -733,7 +735,7 @@
 
             if (action) {
                 angular.forEach(action.actionParameters, function (param) {
-                    $scope.task.actionInputFields[param.key] = $scope.util.convertToServer($scope, param.type, param.value);
+                    $scope.task.actionInputFields[param.key] = $scope.util.convertToServer($scope, param.value);
                 });
             }
 

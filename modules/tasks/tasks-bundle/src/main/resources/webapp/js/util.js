@@ -22,7 +22,7 @@
                         if (data.by.isArray) {
                             angular.forEach(data.by, function (b) {
                                 if (data.msg !== undefined) {
-                                    isTrue = isTrue (item[b.what] === b.equalTo || data.msg(item[b.what]) === b.equalTo);
+                                    isTrue = isTrue && (item[b.what] === b.equalTo || data.msg(item[b.what]) === b.equalTo);
                                 } else {
                                     isTrue = isTrue && item[b.what] === b.equalTo;
                                 }
@@ -192,7 +192,7 @@
                 span.addClass('popoverEvent nonEditable triggerField pointer badge');
 
                 if (data.param.type === 'UNKNOWN') {
-                    span.addClass('badge-important')
+                    span.addClass('badge-important');
                 } else {
                     switch (data.prefix) {
                     case this.TRIGGER_PREFIX:
@@ -261,7 +261,7 @@
 
                 if (this.canHandleModernDragAndDrop(scope)) {
                     if (this.isBoolean(type) && (val === 'true' || val === 'false')) {
-                        val = this.createBooleanSpan($scope, val);
+                        val = this.createBooleanSpan(scope, val);
                     }
 
                     val = scope.createDraggableElement(val);
@@ -288,7 +288,7 @@
 
                 return val;
             },
-            convertToServer: function (scope, type, value) {
+            convertToServer: function (scope, value) {
                 var val = value || '',
                     regex = new RegExp('\\{\\{ad\\.(.+?)(\\..*?)\\}\\}', "g"),
                     replaced = [],
@@ -322,13 +322,13 @@
                 return val;
             },
             doQuery: function (q, resource) {
-               var defer = q.defer();
+                var defer = q.defer(), result;
 
-               var result = resource.query(function() {
+                result = resource.query(function() {
                     defer.resolve(result);
-               });
+                });
 
-               return defer.promise;
+                return defer.promise;
             }
         };
     });
