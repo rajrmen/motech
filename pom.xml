@@ -1113,7 +1113,7 @@
             <dependency>
                 <groupId>org.motechproject</groupId>
                 <artifactId>org.motechproject.osgi.it</artifactId>
-                <version>1.0.2.RELEASE-r013</version>
+                <version>1.0.2.RELEASE-r014</version>
                 <scope>test</scope>
                 <exclusions>
                     <exclusion>
@@ -1142,7 +1142,6 @@
         <!-- Non-OSGI modules -->
         <module>platform/server</module>
         <module>platform/web-security/web-security</module>
-        <module>modules/admin/admin</module>
         <module>modules/ivr/api</module>
         <module>modules/ivr/asterisk</module>
         <module>modules/ivr/kookoo</module>
@@ -1153,7 +1152,6 @@
         <module>modules/openmrs/atomfeed</module>
         <module>modules/openmrs/omod</module>
         <module>modules/openmrs/ws</module>
-        <module>modules/outbox/api</module>
         <module>modules/outbox/outbox</module>
         <module>modules/rules/api</module>
         <module>modules/sms/api</module>
@@ -1176,7 +1174,7 @@
         <module>platform/server-config</module>
         <module>platform/server-startup</module>
         <module>platform/web-security/web-security-bundle</module>
-        <module>modules/admin/admin-bundle</module>
+        <module>modules/admin/admin</module>
         <module>modules/alerts/api</module>
         <module>modules/appointments/api</module>
         <module>modules/callflow/api</module>
