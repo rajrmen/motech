@@ -23,7 +23,6 @@ import org.motechproject.admin.service.StatusMessageService;
 import org.motechproject.event.listener.EventListenerRegistryService;
 import org.motechproject.security.service.MotechPermissionService;
 import org.motechproject.security.service.MotechRoleService;
-import org.motechproject.server.config.ConfigLoader;
 import org.motechproject.server.config.service.PlatformSettingsService;
 import org.motechproject.testing.osgi.BaseOsgiIT;
 import org.motechproject.testing.utils.TestContext;
@@ -179,7 +178,8 @@ public class AdminBundleIT extends BaseOsgiIT {
         return Arrays.asList("org.motechproject.osgi.web",
                 "org.motechproject.admin.service",
                 "org.motechproject.admin.messages",
-                "org.motechproject.admin.domain");
+                "org.motechproject.admin.domain"
+        );
     }
 }
 

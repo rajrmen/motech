@@ -1207,6 +1207,7 @@
         <module>modules/sms/smpp-bundle</module>
         <module>modules/demo/demo</module>
         <module>modules/tasks/tasks-bundle</module>
+        <module>modules/email</module>
         <module>utils/http-agent/http-agent-bundle</module>
 
         <!-- Archetypes modules -->
