@@ -469,7 +469,7 @@ editable-content .actionField.input-block-level span.badge {
 }
 
 .task-list li.success {
-    color: #51a451;
+    color: #0D800B;
 }
 
 /*----- Tasks - recent -----*/
@@ -778,7 +778,7 @@ h3.popover-title {
 }
 
 .task-element.task-name .name-second {
-    margin: -9px 0 0 22px;
+    margin: -8px 0 0 18px;
     font-weight: normal;
     font-size: 12px;
     display: block;
