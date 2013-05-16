@@ -1,9 +1,9 @@
 (function () {
     'use strict';
 
-    /* Manage Task Utils tests */
+    /* ManageTaskUtils tests */
 
-    describe("Manage Task Utils", function() {
+    describe("ManageTaskUtils", function() {
         var scope, utils;
 
         beforeEach(module('manageTaskUtils'));
