@@ -145,6 +145,7 @@
 
                     delete data.displayName;
                     delete data.type;
+                    delete data.lookup;
 
                     if (!scope.$$phase) {
                         scope.$apply(data);
@@ -225,7 +226,6 @@
                 }
 
                 span.attr('data-prefix', data.prefix);
-                span.attr('data-index', 1);
                 span.attr('data-type', data.param.type);
                 span.attr('data-object', data.param.displayName);
 
@@ -251,6 +251,8 @@
                         data.msg(data.param.displayName)
                     ));
                     break;
+                default:
+                    span.text(data.param.displayName);
                 }
 
                 return $('<div/>').append(span).html();
@@ -273,6 +275,7 @@
 
                 if (this.canHandleModernDragAndDrop(scope)) {
                     if (this.isBoolean(type) && (val === 'true' || val === 'false')) {
+                        val = val === 'true';
                         val = this.createBooleanSpan(scope, val);
                     }
 
@@ -312,7 +315,7 @@
                 }
 
                 while ((found = regex.exec(val)) !== null) {
-                    ds = scope.util.find({
+                    ds = this.find({
                         msg: scope.msg,
                         where: scope.selectedDataSources,
                         by: {

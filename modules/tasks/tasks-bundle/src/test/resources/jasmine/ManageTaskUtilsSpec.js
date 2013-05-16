@@ -202,7 +202,11 @@
                     dataSourceName: 'abc',
                     dataSourceId: '123',
                     displayName: 'displayName',
-                    type: 'type'
+                    type: 'type',
+                    lookup: {
+                        field: 'id',
+                        value: 'true'
+                    }
                 },
                 selected = {
                     dataSourceName: 'def',
@@ -216,6 +220,7 @@
 
             expect(data.displayName).toEqual(undefined);
             expect(data.type).toEqual(undefined);
+            expect(data.lookup).toEqual(undefined);
         });
 
         it('Should select data source object', function () {
@@ -287,6 +292,107 @@
 
             expect(utils.createBooleanSpan(scope, true)).toEqual(yes);
             expect(utils.createBooleanSpan(scope, false)).toEqual(no);
+        });
+
+        it('Should create draggable span', function () {
+            var data = {
+                    prefix: 'other',
+                    param: {
+                        type: 'UNKNOWN',
+                        displayName: 'displayName'
+                    }
+                },
+                spanOther = '<span unselectable="on" contenteditable="false" style="position: relative;" class="popoverEvent nonEditable triggerField pointer badge badge-important" data-prefix="other" data-type="UNKNOWN" data-object="displayName">displayName</span>',
+                spanTrigger = '<span unselectable="on" contenteditable="false" style="position: relative;" class="popoverEvent nonEditable triggerField pointer badge badge-info" manipulationpopover="" manipulate="toLower capitalize" data-prefix="trigger" data-type="UNICODE" data-object="displayName">displayname</span>',
+                spanDataSource = '<span unselectable="on" contenteditable="false" style="position: relative;" class="popoverEvent nonEditable triggerField pointer badge badge-warning" manipulationpopover="" manipulate="toLower capitalize" data-prefix="ad" data-type="DATE" data-object="displayName" data-source="DS" data-object-id="0" data-object-type="TestType" data-field="field">ds.object#0.displayname</span>';
+
+            expect(utils.createDraggableSpan(data)).toEqual(spanOther);
+
+            data.prefix = 'trigger';
+            data.param.type = 'UNICODE';
+            data.manipulations = ['toLower', 'capitalize'];
+            data.msg = function (key) { return key.toLowerCase(); };
+
+            expect(utils.createDraggableSpan(data)).toEqual(spanTrigger);
+
+            data.prefix = 'ad';
+            data.param.type = 'DATE';
+            data.dataSourceName = 'DS';
+            data.object = {
+                id: 0,
+                displayName: 'object',
+                type: 'TestType',
+                field: 'field'
+            };
+
+            expect(utils.createDraggableSpan(data)).toEqual(spanDataSource);
+        });
+
+        it('Should create error message', function () {
+            var response = [ { message: '{0}', args: [ 'abc' ] }, { message: '{0}-{1}', args: [ 'def', '1234' ] } ],
+                msg = 'task.error.saved\n - abc\n - def-1234\n';
+
+            scope.msg = function (key, args) {
+                if (args === undefined) {
+                    return key;
+                } else if (args.length === 1) {
+                    return key.format(args[0]);
+                } else if (args.length === 2) {
+                    return key.format(args[0], args[1]);
+                }
+            };
+
+            expect(utils.createErrorMessage(scope, response)).toEqual(msg);
+        });
+
+        it('Should convert value to proper view value', function () {
+            scope.BrowserDetect = { browser: 'Chrome' };
+
+            scope.createDraggableElement = function (val) {
+                return '<div>' + val + '</div>';
+            };
+
+            scope.msg = function (key) {
+                return key.charAt(0).toUpperCase() + key.slice(1);
+            }
+
+            expect(utils.convertToView(scope, 'UNICODE', '{{trigger.value}}')).toEqual('<div>{{trigger.value}}</div>');
+            expect(utils.convertToView(scope, 'BOOLEAN', 'false')).toEqual('<div><span contenteditable="false" data-value="false" data-prefix="other" class="badge badge-important">No</span></div>');
+            expect(utils.convertToView(scope, 'BOOLEAN', '{{trigger.value}}')).toEqual('<div>{{trigger.value}}</div>');
+
+            scope.BrowserDetect.browser = 'FireFox';
+            scope.selectedDataSources = [{
+                dataSourceId: 'a234',
+                dataSourceName: 'abc'
+            }];
+
+            expect(utils.convertToView(scope, 'UNICODE', '{{ad.a234.obj#1.field}} abc')).toEqual('{{ad.Abc.obj#1.field}} abc');
+            expect(utils.convertToView(scope, 'NUMBER', '{{trigger.value}}')).toEqual('{{trigger.value}}');
+        });
+
+        it('Should convert value to proper server value', function () {
+            scope.BrowserDetect = { browser: 'Chrome' };
+
+            scope.refactorDivEditable = function (val) {
+                return $(val).text();
+            };
+
+            scope.msg = function (key) {
+                return key.charAt(0).toUpperCase() + key.slice(1);
+            };
+
+            scope.selectedDataSources = [{
+                dataSourceId: 'a234',
+                dataSourceName: 'abc'
+            }];
+
+            expect(utils.convertToServer(scope, '<div>{{trigger.value}}</div>')).toEqual('{{trigger.value}}');
+            expect(utils.convertToServer(scope, '<div>{{ad.Abc.obj#1.field}} abc</div>')).toEqual('{{ad.a234.obj#1.field}} abc');
+
+            scope.BrowserDetect.browser = 'FireFox';
+
+            expect(utils.convertToServer(scope, '{{ad.Abc.obj#1.field}} abc')).toEqual('{{ad.a234.obj#1.field}} abc');
+            expect(utils.convertToServer(scope, '{{trigger.value}}')).toEqual('{{trigger.value}}');
         });
 
     });

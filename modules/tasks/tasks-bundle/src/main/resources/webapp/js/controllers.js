@@ -444,16 +444,20 @@
             });
         };
 
-        $scope.findObject = function (dataSourceId, type, id) {
-            var dataSource, by, found;
-
-            dataSource = $scope.util.find({
+        $scope.findDataSource = function (dataSourceId) {
+            return $scope.util.find({
                 where: $scope.dataSources,
                 by: {
                     what: '_id',
                     equalTo: dataSourceId
                 }
             });
+        };
+
+        $scope.findObject = function (dataSourceId, type, id) {
+            var dataSource = $scope.findDataSource(dataSourceId),
+                by,
+                found;
 
             if (dataSource) {
                 by = [];
