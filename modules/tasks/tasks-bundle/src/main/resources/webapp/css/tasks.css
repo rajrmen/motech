@@ -348,6 +348,10 @@ editable-content .actionField.input-block-level span.badge {
     border-radius: 4px;
 }
 
+.accordion-heading .accordion-toggle.inbox-header {
+    padding: 5px 10px;
+}
+
 .task-group .accordion-inner {
     border-top: none;
 }
@@ -356,7 +360,7 @@ editable-content .actionField.input-block-level span.badge {
     background: #DEEEFF;
     border-radius: 4px;
     margin: 10px -10px;
-    padding: 2px 0 0 10px;
+    padding: 0 0 0 10px;
 }
 
 .move-element span {
@@ -372,8 +376,9 @@ editable-content .actionField.input-block-level span.badge {
 }
 
 .move-element.controls {
-    min-height: 30px;
-    padding-top: 5px;
+    min-height: 20px;
+    margin-bottom: 5px;
+    padding: 4px 0 0;
 }
 
 .arrow-drop1 {
@@ -515,6 +520,10 @@ editable-content .actionField.input-block-level span.badge {
     height: 18px;
     line-height: 18px;
     vertical-align: middle;
+}
+
+.history .task-bar .task-nav > li.task-element.task-name {
+    cursor: default;
 }
 
 .recent-activity-task-img {
@@ -768,17 +777,18 @@ h3.popover-title {
     text-align: left;
 }
 
-.task-element.task-name i.i-name {
-    margin: 10px 0 0;
+.task-element.task-name .icon-fixed-width.i-name {
+    width: 1em;
 }
 
 .task-bar .task-nav > li.task-element.task-name {
     line-height: 20px;
     text-align: left;
+    cursor: pointer;
 }
 
 .task-element.task-name .name-second {
-    margin: -8px 0 0 18px;
+    margin: -7px 0 0 24px;
     font-weight: normal;
     font-size: 12px;
     display: block;
@@ -957,7 +967,7 @@ a, li a {
 
 .btn-in-heading {
     margin: 0;
-    padding: 7px 12px;
+    padding: 4px 12px;
 }
 
 .btn-heading2 {
@@ -1057,6 +1067,7 @@ i.close-channel {
 
 .task-panel.active i.close-channel {
     opacity: 1;
+    color: #ffffff;
 }
 
 i.close-channel:hover {
@@ -1103,4 +1114,8 @@ i.close-channel.icon-remove {
 .interval2 {
     min-height: 20px;
     padding-left: 40px;
+}
+
+.inside-0 {
+    padding: 0 10px;
 }

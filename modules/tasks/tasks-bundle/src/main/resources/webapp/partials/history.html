@@ -1,7 +1,7 @@
 <!------------------------  History ------------------------------------->
 <div class="row-fluid" xmlns="http://www.w3.org/1999/html">
     <div class="margin-after history">
-        <div class="box-header">{{msg('header.taskHistory')}} <a href="#/task/" type="button" class="btn btn-primary btn-in-header pull-right"><i class="icon-remove icon-white"></i></a></div>
+        <div class="box-header">{{msg('header.taskHistory')}} <a href="#/task/" type="button" class="btn btn-primary btn-in-header pull-right"><i class="icon-mail-reply icon-white"></i></a></div>
         <div class="box-content tasks-list">
             <div class="inbox-header" ng-class="{true:'', false:'paused'}[enabled]">
                 <div class="task-bar">
@@ -12,7 +12,7 @@
                         <li class="divider-vertical"></li>
                         <li class="task-element task-name">
                             <span class="name-first">{{name}}</span>
-                            <span class="name-second-history">{{msg('section.recentActivityForTask')}}&nbsp;<i class="icon-chevron-right"></i>&nbsp;{{msg(trigger.display)}} - {{msg(action.display)}}</span>
+                            <span class="name-second-history">{{msg('section.recentActivityForTask')}}&nbsp;<i class="icon-caret-right"></i>&nbsp;{{msg(trigger.display)}} - {{msg(action.display)}}</span>
                         </li>
                     </ul>
 
@@ -39,10 +39,10 @@
             <div class="clearfix"></div><div class="margin-before2"></div>
 
             <div class="margin-after"  ng-show="activities.length &gt; 0">
-                <div class="control-group">
-                    <label class="help-inline">{{msg('header.filterActivity')}}</label>
+                <div class="control-group form-inline">
+                    <label class="interval">{{msg('header.filterActivity')}}</label>
                     <select ng-model="filterHistory" ng-change="changeFilterHistory()" ng-options="history for history in histories"></select>
-                    <label class="help-inline">{{msg('header.activitiesPerPage')}}</label>
+                    <label class="interval">{{msg('header.activitiesPerPage')}}</label>
                     <select class="span1" ng-model="itemsPerPage" ng-change="changeItemsPerPage()" ng-options="itemsPerPage for itemsPerPage in limitPages"></select>
                     <a href ng-click="clearHistory()" class="btn btn-danger"> {{msg('button.clearHistory')}}</a>
                 </div>

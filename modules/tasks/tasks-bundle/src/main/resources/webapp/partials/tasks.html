@@ -27,7 +27,7 @@
                                     <li class="task-element"><img ng-src="../tasks/api/channel/icon?moduleName={{item.task.action.moduleName}}" class="task-list-img"/></li>
                                     <li class="divider-vertical"></li>
                                     <li class="task-element task-name">
-                                        <i class="icon-chevron-right i-name"></i>
+                                        <i class="icon-caret-right icon-fixed-width icon-large i-name"></i>
                                         <span class="name-first">&nbsp;{{item.task.name}}</span>
                                         <span class="name-second">
                                             <span ng-show="item.task.trigger">
@@ -42,7 +42,7 @@
                             </a>
 
                             <ul class="task-nav pull-right">
-                                <li ng-show="item.task.description && item.task.enabled" class="task-element" bs-popover data-trigger="hover" data-content="{{item.task.description}}"><img src="../tasks/img/task-info.png"  class="task-list-img" /></li>
+                                <li ng-show="item.task.description && item.task.enabled" class="task-element" rel="popover" bs-popover data-trigger="hover" data-content="{{item.task.description}}"><img src="../tasks/img/task-info.png"  class="task-list-img" /></li>
                                 <li ng-show="item.task.description && !item.task.enabled"  class="task-element" bs-popover data-trigger="hover" data-content="{{item.task.description}}"><img src="../tasks/img/task-info-paused.png"  class="task-list-img" /></li>
                                 <li ng-show="item.task.description" class="divider-vertical"></li>
                                 <li ng-hide="item.task.enabled" class="task-element task-paused">

@@ -54,10 +54,10 @@
             link: function (scope, element, attrs) {
                 angular.element(element).on({
                     show: function () {
-                        $(this).find('.accordion-toggle i').removeClass('icon-chevron-right').addClass('icon-chevron-down');
+                        $(this).find('.accordion-toggle i').removeClass('icon-caret-right').addClass('icon-caret-down')
                     },
                     hide: function () {
-                        $(this).find('.accordion-toggle i').removeClass('icon-chevron-down').addClass('icon-chevron-right');
+                        $(this).find('.accordion-toggle i').removeClass('icon-caret-down').addClass('icon-caret-right');
                     }
                 });
             }
@@ -69,19 +69,19 @@
             restrict: 'A',
             link: function (scope, element, attrs) {
                 $('.accordion').on('show', function (e) {
-                    $(e.target).siblings('.accordion-heading').find('.accordion-toggle i').removeClass('icon-chevron-right').addClass('icon-chevron-down');
+                    $(e.target).siblings('.accordion-heading').find('.accordion-toggle i').removeClass('icon-caret-right').addClass('icon-caret-down');
                 });
 
                 $('.tasks-list').on('show', function (e) {
-                    $(e.target).siblings('.accordion-heading').find('.accordion-toggle i').removeClass('icon-chevron-right').addClass('icon-chevron-down');
+                    $(e.target).siblings('.accordion-heading').find('.accordion-toggle i').removeClass('icon-caret-right').addClass('icon-caret-down');
                 });
 
                 $('.accordion').on('hide', function (e) {
-                    $(e.target).siblings('.accordion-heading').find('.accordion-toggle i').removeClass('icon-chevron-down').addClass('icon-chevron-right');
+                    $(e.target).siblings('.accordion-heading').find('.accordion-toggle i').removeClass('icon-caret-down').addClass('icon-caret-right');
                 });
 
                 $('.tasks-list').on('hide', function (e) {
-                    $(e.target).siblings('.accordion-heading').find('.accordion-toggle i').removeClass('icon-chevron-down').addClass('icon-chevron-right');
+                    $(e.target).siblings('.accordion-heading').find('.accordion-toggle i').removeClass('icon-caret-down').addClass('icon-caret-right');
                 });
             }
         };

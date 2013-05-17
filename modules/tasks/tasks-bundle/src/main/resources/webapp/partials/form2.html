@@ -1,5 +1,5 @@
-<div ng-hide="task._id" class="box-header">{{msg('section.newTask')}} <a href="#/task/" type="button" class="btn btn-danger btn-in-header pull-right"><i class="icon-share-alt icon-white"></i></a></div>
-<div ng-show="task._id" class="box-header">{{msg('section.editTask')}} <a href="#/task/" type="button" class="btn btn-danger btn-in-header pull-right"><i class="icon-share-alt icon-white"></i></a></div>
+<div ng-hide="task._id" class="box-header">{{msg('section.newTask')}} <a href="#/task/" type="button" class="btn btn-danger btn-in-header pull-right"><i class="icon-remove icon-white"></i></a></div>
+<div ng-show="task._id" class="box-header">{{msg('section.editTask')}} <a href="#/task/" type="button" class="btn btn-primary btn-in-header pull-right"><i class="icon-mail-reply icon-white"></i></a></div>
 <div class="box-content">
     <div class="inside">
         <div ng-show="task.validationErrors.length" class="alert alert-block alert-error">
@@ -15,7 +15,7 @@
         <div class="row-fluid margin-before">
             <form class="inside task form-horizontal">
                 <!------------------ ENTER TASK NAME ------------------>
-                <div class="inside">
+                <div class="inside-0">
                     <div class="control-group" ng-class="{error: !task.name}">
                         <label class="control-label task-label">{{msg('task.name')}}</label>
                         <div class="controls">
@@ -25,7 +25,7 @@
                 </div>
 
                 <!------------------ ENTER TASK DESCRIPTION ------------------>
-                <div class="inside">
+                <div class="inside-0">
                     <div class="control-group">
                         <label class="control-label task-label">{{msg('section.taskDescription')}}</label>
                         <div class="controls">
@@ -39,7 +39,7 @@
                     <div class="task-group">
                         <div class="accordion-heading">
                             <div class="accordion-toggle inbox-header" style="cursor: auto;">
-                                <i class="icon-chevron-down" data-toggle="collapse" data-parent="#select-trigger" href="#collapse-trigger" style="cursor: pointer;"></i> {{msg('header.trigger')}}
+                                <i class="icon-caret-down icon-fixed-width icon-large" data-toggle="collapse" data-parent="#select-trigger" href="#collapse-trigger" style="cursor: pointer;"></i> {{msg('header.trigger')}}
                                 <span ng-hide="!task.trigger.displayName">
                                     &raquo; {{msg(task.trigger.channelName)}} : {{msg(task.trigger.displayName)}}
                                 </span>
@@ -102,7 +102,7 @@
                                     </button>
                                 </div>
                                 <a class="accordion-toggle inbox-header" style="cursor: auto;">
-                                    <i class="icon-chevron-down" data-toggle="collapse" data-parent="#select-action" href="#collapse-action" style="cursor: pointer;"></i> {{msg('header.action')}}
+                                    <i class="icon-caret-down icon-fixed-width icon-large" data-toggle="collapse" data-parent="#select-action" href="#collapse-action" style="cursor: pointer;"></i> {{msg('header.action')}}
                                     <span ng-hide="!task.action.displayName">
                                         &raquo; {{msg(task.action.channelName)}} : {{msg(task.action.displayName)}}
                                     </span>
@@ -217,8 +217,9 @@
 
                     <!------------------------ SAVE ------------------------>
                     <div class="control-group inside">
-                        <h4 class="margin-center centered spn9">{{msg('section.save')}}</h4>
-                        <p class="centered spn9 margin-center">{{msg('info.addSave')}}</p>
+                        <h4 class="margin-center centered input-large-fluid">{{msg('section.save')}}</h4>
+                        <p class="centered input-xxlarge-fluid margin-center">{{msg('info.addSave')}}</p>
+                        <div class="clearfix"></div>
                         <div class="control-group centered inside">
                             <button ng-disabled="!task.name" ng-click="save(true)" class="btn btn-primary">{{msg('button.saveAndEnable')}}</button>
                             <button ng-disabled="!task.name" ng-click="save(false)" class="btn btn-success">{{msg('button.save')}}</button>
