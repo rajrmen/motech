@@ -661,6 +661,10 @@ editable-content .actionField.input-block-level span.badge {
     display: none;
 }
 
+.section-source .popover {
+    width: 236px;
+}
+
 h3.popover-title {
     font-weight: bold;
 }
