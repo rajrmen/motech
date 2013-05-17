@@ -99,10 +99,6 @@ editable-content .actionField.input-block-level span.badge {
     box-shadow: none;
 }
 
-#accordion1.accordion, #accordion2.accordion {
-    margin-bottom: 0;
-}
-
 #accordion3 .accordion-inner.task-content {
     background: #deefff;
     background: -moz-linear-gradient(top,  #deefff 0%, #98bede 100%);
@@ -304,9 +300,6 @@ editable-content .actionField.input-block-level span.badge {
     color: #0088CC;
 }
 
-#accordion1 .accordion-group,
-#accordion2 .task-filter-group,
-#accordion2 .task-description-group,
 #accordion3 .task-list-group,
 .task-group {
     border: 1px solid #B2D8F8;
@@ -317,35 +310,6 @@ editable-content .actionField.input-block-level span.badge {
 
 #accordion3 > div:last-child {
     margin-bottom: 0;
-}
-
-#accordion1 .accordion-inner, #accordion2 .accordion-inner {
-    border-top: none;
-    padding: 9px 15px 1px;
-}
-
-#accordion1 .accordion-group .control-section {
-    background: #DEEEFF;
-    border-radius: 4px;
-    margin: 8px -10px;
-    padding: 2px 0;
-}
-
-#accordion1 .accordion-group .section {
-    border: 1px dashed #7bb5fc;
-    margin: 5px -10px;
-    padding: 10px 10px 0;
-}
-
-#accordion1 .control-group.section2 {
-    margin-bottom: 10px;
-}
-
-#accordion1 .index-label {
-    background: #ffffff;
-    padding: 3px;
-    border: 1px solid #1A96F9;
-    border-radius: 4px;
 }
 
 .accordion-heading .accordion-toggle.inbox-header {
@@ -554,79 +518,8 @@ editable-content .actionField.input-block-level span.badge {
     margin-bottom: 3px;
 }
 
-.section-input {
-    width: 380px;
-    margin: 10px auto;
-    padding: 15px;
-    background-color: #E4F1F9;
-    border: 1px solid #D4E1F9;
-    border-radius: 4px 4px 4px 4px;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1) inset;
-}
 
-.section-input .panel-input {
-    float: left;
-    position: relative;
-}
-
-.section-input li.task-panel {
-    margin: 0;
-    border: none;
-    border-radius: 2px;
-}
-
-.section-input .trigger, .section-input .action {
-    border: 2px solid #7bb5fc;
-    border-radius: 4px;
-    display: block;
-    margin: 15px;
-    box-shadow: 0 0 7px rgba(0, 0, 0, 0.3);
-    padding: 0;
-    width: 122px;
-    height: 112px;
-    background: #ffffff;
-}
-
-.section-input .instructions {
-    border-top: 2px solid #7bb5fc;
-    color: #7bb5fc;
-    font-size: 12px;
-    font-weight: bold;
-    left: 17px;
-    position: absolute;
-    text-align: center;
-    top: 68%;
-    width: 122px;
-}
-
-.section-input .imgArrow {
-     float: left;
-     padding: 40px 0 0 0;
-     width: 65px;
-}
-
-.bg-section-input {
-    margin: 0;
-    padding: 10px;
-}
-
-.panel-input .task-panel .popover.left {
-    top: 5.5px;
-    left: -235px;
-}
-
-.panel-input .task-panel .popover.right {
-    top: 5.5px;
-    left: 117px;
-}
-
-.panel-input .task-panel .popover {
-    color: #224477;
-    text-align: left;
-    display: block;
-}
-
-.section-input .popover-content ul, .section-source .popover-content ul {
+.section-source .popover-content ul {
     list-style-type: square;
     color: #224477;
     text-align: left;
@@ -651,13 +544,13 @@ editable-content .actionField.input-block-level span.badge {
     border-radius: 5px 5px 0 0;
 }
 
-.section-source .popover .popover-content, .section-input .popover .popover-content {
+.section-source .popover .popover-content {
     color: #224477;
     margin: 0;
     padding: 0 10px 10px 10px;
 }
 
-.section-source .popover-title, .section-input .popover-title {
+.section-source .popover-title {
     display: none;
 }
 
@@ -857,6 +750,12 @@ input.input-popover {
     font-size: 16px;
 }
 
+.control-help {
+    float: left;
+    padding-top: 5px;
+    width: 160px;
+}
+
 pre {
     border: none;
     margin: 0;
@@ -886,71 +785,6 @@ pre {
     user-select: none;
 }
 
-/* ----- special input pagination ----- */
-
-.pagination.lightblue.pagination-input ul {
-    display: inline-block;
-    margin: 5px 0 0 0;
-    margin-left: 0;
-    -webkit-border-radius: 4px;
-    -moz-border-radius: 4px;
-    border-radius: 4px;
-}
-
-.pagination.lightblue ul > li > input[type="button"] {
-    border-color: #fff;
-    color: #224477;
-    background: #deefff;
-    background: -moz-linear-gradient(top,  #deefff 0%, #98bede 100%);
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#deefff), color-stop(100%,#98bede));
-    background: -webkit-linear-gradient(top,  #deefff 0%,#98bede 100%);
-    background: -o-linear-gradient(top,  #deefff 0%,#98bede 100%);
-    background: -ms-linear-gradient(top,  #deefff 0%,#98bede 100%);
-    background: linear-gradient(to bottom,  #deefff 0%,#98bede 100%);
-    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#deefff', endColorstr='#98bede', GradientType=0 );
-    -webkit-box-shadow: 0 0 2px #314262;
-       -moz-box-shadow: 0 0 2px #314262;
-            box-shadow: 0 0 2px #314262;
-}
-
-.pagination.lightblue.pagination-input ul > li > input[type="button"] {
-    border-style: none;
-}
-
-.pagination.lightblue.pagination-input li.active input[type="button"] {
-    color: #000000;
-    background: #deefff;
-}
-
-.pagination.lightblue.pagination-input li.disabled input[type="button"],
-.pagination.lightblue.pagination-input li.disabled input[type="button"]:hover {
-    color: #95A6C1;
-}
-
-.pagination.lightblue.pagination-input li:hover input[type="button"] {
-    color: #0099de;
-}
-
-.pagination-condensed.pagination-input input[type="button"] {
-    float: left;
-    line-height: 20px;
-    padding: 1px 8px;
-    margin: 0;
-    border-left-width: 0;
-    text-decoration: none;
-}
-
-.pagination-condensed.pagination-input ul > li:first-child > input[type="button"] {
-    border-left-width: 1px;
-    border-bottom-left-radius: 4px;
-    border-top-left-radius: 4px;
-}
-
-.pagination-condensed.pagination-input ul > li:last-child > input[type="button"] {
-    border-bottom-right-radius: 4px;
-    border-top-right-radius: 4px;
-}
-
 a, li a {
     cursor: pointer;
     -webkit-touch-callout: none;
@@ -962,6 +796,14 @@ a, li a {
 }
 
 /* ----- Tasks enhancements -----*/
+
+.create-edit-task .accordion {
+    margin-bottom: 10px;
+}
+
+.create-edit-task .section-additives .control-group {
+    margin-bottom: 10px;
+}
 
 .task.form-horizontal .control-label.task-label {
     float: left;

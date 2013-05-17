@@ -1,6 +1,6 @@
 <div ng-hide="task._id" class="box-header">{{msg('section.newTask')}} <a href="#/task/" type="button" class="btn btn-danger btn-in-header pull-right"><i class="icon-remove icon-white"></i></a></div>
 <div ng-show="task._id" class="box-header">{{msg('section.editTask')}} <a href="#/task/" type="button" class="btn btn-primary btn-in-header pull-right"><i class="icon-mail-reply icon-white"></i></a></div>
-<div class="box-content">
+<div class="box-content create-edit-task">
     <div class="inside">
         <div ng-show="task.validationErrors.length" class="alert alert-block alert-error">
             <strong>{{msg('header.taskErrors')}}:</strong>
@@ -82,7 +82,7 @@
                     <div id="build-area"></div>
 
                     <!------------------------ ADDING BUTTONS ------------------------>
-                    <div class="row-fluid inside">
+                    <div class="row-fluid inside section-additives">
                         <div class="control-group centered">
                             <div class="btn-group">
                                 <button ui-if="!task.filters" class="btn btn-warning" ng-click="addFilterSet()"><i class="icon-plus icon-white"></i> {{msg('button.addFilter')}}</button>
@@ -208,7 +208,7 @@
                                         <a ui-if="BrowserDetect.browser!='Chrome' && BrowserDetect.browser!='Explorer'" href="#helpModalDate" role="button" class="btn btn-primary" data-toggle="modal">{{msg('help')}}</a>
 
                                         <!------------------------ Help Manipulation  ------------------------>
-                                        <div class="control-group" ng-include="'../tasks/partials/help/manipulation.html'"></div>
+                                        <div class="interval control-help" ng-include="'../tasks/partials/help/manipulation.html'"></div>
                                     </div>
                                 </div>
                             </div>
