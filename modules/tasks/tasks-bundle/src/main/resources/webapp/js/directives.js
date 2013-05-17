@@ -54,7 +54,7 @@
             link: function (scope, element, attrs) {
                 angular.element(element).on({
                     show: function () {
-                        $(this).find('.accordion-toggle i').removeClass('icon-caret-right').addClass('icon-caret-down')
+                        $(this).find('.accordion-toggle i').removeClass('icon-caret-right').addClass('icon-caret-down');
                     },
                     hide: function () {
                         $(this).find('.accordion-toggle i').removeClass('icon-caret-down').addClass('icon-caret-right');

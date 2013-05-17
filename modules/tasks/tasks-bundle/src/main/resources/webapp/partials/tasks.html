@@ -5,7 +5,7 @@
         <div class="box-header">{{msg('header.tasks')}}</div>
         <div class="box-content clearfix">
             <div class="inside btn-group">
-                <a href="#/task/new2" type="button" class="btn btn-success"><i class="icon-plus icon-white"></i> {{msg('task.new')}}</a>
+                <a href="#/task/new" type="button" class="btn btn-success"><i class="icon-plus icon-white"></i> {{msg('task.new')}}</a>
             </div>
             <div class="inside form-inline">
                 <label >{{msg('header.searchTasks')}}</label>
@@ -57,8 +57,8 @@
                                     </div>
                                 </li>
                                 <li class="divider-vertical"></li>
-                                <li ng-show="item.task.enabled" class="task-element"><a href="#/task/{{item.task._id}}/edit2"><img src="../tasks/img/task-settings.png" class="task-list-img" /></a></li>
-                                <li ng-hide="item.task.enabled" class="task-element"><a href="#/task/{{item.task._id}}/edit2"><img src="../tasks/img/task-settings-paused.png" class="task-list-img" /></a></li>
+                                <li ng-show="item.task.enabled" class="task-element"><a href="#/task/{{item.task._id}}/edit"><img src="../tasks/img/task-settings.png" class="task-list-img" /></a></li>
+                                <li ng-hide="item.task.enabled" class="task-element"><a href="#/task/{{item.task._id}}/edit"><img src="../tasks/img/task-settings-paused.png" class="task-list-img" /></a></li>
                             </ul>
                             <div class="clearfix"></div>
                         </div>
