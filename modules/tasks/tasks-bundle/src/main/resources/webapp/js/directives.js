@@ -5,31 +5,6 @@
 
     var widgetModule = angular.module('motech-tasks');
 
-    widgetModule.directive('doubleClick', function () {
-        return {
-            restrict: 'A',
-            link: function (scope, element, attrs) {
-                element.dblclick(function () {
-                    var parent = element.parent();
-
-                    if (parent.hasClass('trigger')) {
-                        delete scope.selectedTrigger;
-                        delete scope.task.trigger;
-
-                        scope.draggedTrigger.display = scope.draggedTrigger.channel;
-                    } else if (parent.hasClass('action')) {
-                        delete scope.selectedAction;
-                        delete scope.task.action;
-
-                        scope.draggedAction.display = scope.draggedAction.channel;
-                    }
-
-                    scope.$apply();
-                });
-            }
-        };
-    });
-
     widgetModule.directive('overflowChange', function () {
         return {
             restrict: 'A',
@@ -790,19 +765,6 @@
                         li.addClass('active');
                         content.show();
                     }
-            });
-        };
-    });
-
-    widgetModule.directive('taskPopover', function() {
-        return function(scope, element, attrs) {
-            $(element).popover({
-                placement: 'left',
-                trigger: 'hover',
-                html: true,
-                content: function() {
-                    return $(element).find('.content-task').html();
-                }
             });
         };
     });
