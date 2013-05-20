@@ -4,7 +4,7 @@
     /* ManageTaskCtrl tests */
 
     describe('ManageTaskCtrl', function () {
-        var $httpBackend, scope, controller, channels, dataSources;
+        var $httpBackend, scope, channels, dataSources;
 
         beforeEach(module('motech-tasks'));
 
@@ -19,59 +19,62 @@
                 expect(scope.channels).toEqual(undefined);
                 expect(scope.dataSources).toEqual(undefined);
                 $httpBackend.flush();
-            }
+            };
         });
 
         beforeEach(inject(function(_$httpBackend_, $rootScope, $controller) {
             channels = [{
-               actionTaskEvents: [
-                   {
-                       displayName: 'Action 1',
-                       subject: 'Action_1',
-                       actionParameters: [
-                       ]
-                   }
-               ],
-               displayName: 'test-action',
-               moduleName: 'test-action',
-               moduleVersion: '0.20'
+                actionTaskEvents: [
+                    {
+                        displayName: 'Action 1',
+                        subject: 'Action_1',
+                        actionParameters: [
+                        ]
+                    }
+                ],
+                displayName: 'test-action',
+                moduleName: 'test-action',
+                moduleVersion: '0.20'
             }, {
-               triggerTaskEvents: [
-                   {
-                       displayName: 'Trigger 1',
-                       subject: 'TRIGGER_1',
-                       eventParameters: [
-                           {
-                               displayName: 'Key 1',
-                               type: 'UNICODE',
-                               eventKey: 'key_1'
-                           },
-                           {
-                               displayName: 'Key 2',
-                               type: 'UNICODE',
-                               eventKey: 'key_2'
-                           }
-                       ]
-                   }
-               ],
-               displayName: 'test-trigger',
-               moduleName: 'test-trigger',
-               moduleVersion: '0.20'
+                triggerTaskEvents: [
+                    {
+                        displayName: 'Trigger 1',
+                        subject: 'TRIGGER_1',
+                        eventParameters: [
+                            {
+                                displayName: 'Key 1',
+                                type: 'UNICODE',
+                                eventKey: 'key_1'
+                            },
+                            {
+                                displayName: 'Key 2',
+                                type: 'UNICODE',
+                                eventKey: 'key_2'
+                            }
+                        ]
+                    }
+                ],
+                displayName: 'test-trigger',
+                moduleName: 'test-trigger',
+                moduleVersion: '0.20'
             }];
 
             dataSources = [{
                 name: 'ds-1',
+                _id: '123',
                 objects: [{
                     displayName: 'obj.1',
                     type: 'TestType1',
                     lookupFields: [ 'lookup1' ],
                     fields: [{
                         displayName: 'fieldDisplayName1',
-                        fieldKey: 'filedKey1'
+                        fieldKey: 'filedKey1',
+                        type: 'UNICODE'
                     }]
                 }]
             }, {
                 name: 'ds-2',
+                _id: '456',
                 objects: [{
                     displayName: 'obj.2',
                     type: 'TestType2',
@@ -89,7 +92,7 @@
             $httpBackend.expectGET('../tasks/api/datasource').respond(dataSources);
 
             scope = $rootScope.$new();
-            controller = $controller('ManageTaskCtrl', { $scope: scope });
+            $controller('ManageTaskCtrl', { $scope: scope });
 
             this.httpCall();
         }));
@@ -119,6 +122,8 @@
             triggerInfo.moduleName = channel.moduleName;
 
             scope.selectTrigger(channel, trigger);
+
+            expect(angular.element('#popup_message').text()).toEqual('[task.confirm.trigger]');
             angular.element('#popup_ok').click();
 
             expect(scope.task.trigger).toEqual(triggerInfo);
@@ -137,9 +142,11 @@
                     moduleVersion: '0.10.0',
                     subject: 'subject'
                 }
-            }
+            };
 
             scope.removeTrigger(event);
+
+            expect(angular.element('#popup_message').text()).toEqual('[task.confirm.trigger]');
             angular.element('#popup_ok').click();
 
             expect(scope.task.trigger).toEqual(undefined);
@@ -154,6 +161,8 @@
 
         it('Should remove action', function () {
             scope.removeAction();
+
+            expect(angular.element('#popup_message').text()).toEqual('[task.confirm.action]');
             angular.element('#popup_ok').click();
 
             expect(scope.task.action).toEqual(undefined);
@@ -179,6 +188,8 @@
             };
 
             scope.selectActionChannel(channel);
+
+            expect(angular.element('#popup_message').text()).toEqual('[task.confirm.action]');
             angular.element('#popup_ok').click();
 
             expect(scope.selectedActionChannel).toEqual(channel);
@@ -228,19 +239,39 @@
         });
 
         it('Should refactor editable div', function () {
+            var value = '<span unselectable="on" contenteditable="false" style="position: relative;" class="popoverEvent nonEditable triggerField pointer badge badge-info" manipulationpopover="" data-prefix="trigger" data-type="UNICODE" data-object="Key 1">Key 1</span> - <span unselectable="on" contenteditable="false" style="position: relative;" class="popoverEvent nonEditable triggerField pointer badge badge-warning" manipulationpopover="" data-prefix="ad" data-type="UNICODE" data-object="fieldDisplayName1" data-source="ds-1" data-object-id="0" data-object-type="TestType1" data-field="filedKey1">ds-1.obj.1#0.fieldDisplayName1</span>',
+                expected = '{{trigger.key_1}} - {{ad.ds-1.TestType1#0.filedKey1}}';
 
+            scope.BrowserDetect = { browser: 'Explorer' };
+            scope.msg = function (key) { return key; };
+
+            scope.selectedTrigger = channels[1].triggerTaskEvents[0];
+
+            expect(scope.refactorDivEditable(value)).toEqual(expected);
         });
 
         it('Should create draggable element', function () {
+            var value = '{{trigger.key_1}} - {{ad.123.TestType1#0.filedKey1}}',
+                expected = '<span unselectable="on" contenteditable="false" style="position: relative;" class="popoverEvent nonEditable triggerField pointer badge badge-info" manipulationpopover="" data-prefix="trigger" data-type="UNICODE" data-object="Key 1">Key 1</span> - <span unselectable="on" contenteditable="false" style="position: relative;" class="popoverEvent nonEditable triggerField pointer badge badge-warning" manipulationpopover="" data-prefix="ad" data-type="UNICODE" data-object="fieldDisplayName1" data-source="ds-1" data-object-id="0" data-object-type="TestType1" data-field="filedKey1">ds-1.obj.1#0.fieldDisplayName1</span>';
 
-        });
+            scope.BrowserDetect = { browser: 'Explorer' };
+            scope.msg = function (key) { return key; };
 
-        it('Should save new task', function () {
+            scope.selectedTrigger = channels[1].triggerTaskEvents[0];
+            scope.selectedDataSources = [{
+                id: 0,
+                dataSourceName: 'ds-1',
+                dataSourceId: '123',
+                displayName: 'obj.1',
+                type: 'TestType1',
+                lookup: {
+                    field: 'filedKey1',
+                    value: 'def'
+                }
+            }];
 
-        });
 
-        it('Should save existing task', function () {
-
+            expect(scope.createDraggableElement(value)).toEqual(expected);
         });
 
         it('Should return correct boolean value according to property value for action css class', function () {
@@ -269,9 +300,8 @@
         });
 
         it('Should set boolean value', function () {
-            var yes = '<span contenteditable='false' data-value='true' data-prefix='other' class='badge badge-success'>Yes</span>',
-                no = '<span contenteditable='false' data-value='false' data-prefix='other' class='badge badge-important'>No</span>';
-
+            var yes = '<span contenteditable="false" data-value="true" data-prefix="other" class="badge badge-success">Yes</span>',
+                no = '<span contenteditable="false" data-value="false" data-prefix="other" class="badge badge-important">No</span>';
 
             scope.selectedAction = {
                 actionParameters: [ {} ]
@@ -291,8 +321,8 @@
         it('Should check boolean', function () {
             scope.selectedAction = {
                 actionParameters: [
-                    { value: '<span contenteditable='false' data-value='true' data-prefix='other' class='badge badge-success'>Yes</span>' },
-                    { value: '<span contenteditable='false' data-value='false' data-prefix='other' class='badge badge-important'>No</span>' },
+                    { value: '<span contenteditable="false" data-value="true" data-prefix="other" class="badge badge-success">Yes</span>' },
+                    { value: '<span contenteditable="false" data-value="false" data-prefix="other" class="badge badge-important">No</span>' },
                     { }
                 ]
             };

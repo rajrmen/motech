@@ -197,7 +197,7 @@
                         }
                     }
 
-                    if ($scope.task.filters) {
+                    if ($scope.task.filters.length > 0) {
                         $http.get($scope.util.FILTER_SET_PATH).success(function (html) {
                             angular.element($scope.util.BUILD_AREA_ID).append($compile(html)($scope));
                             angular.element($scope.util.BUILD_AREA_ID + ' #filter-set #collapse-filter').collapse('hide');
