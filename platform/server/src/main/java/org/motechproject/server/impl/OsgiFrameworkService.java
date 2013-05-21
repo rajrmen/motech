@@ -241,6 +241,7 @@ public class OsgiFrameworkService implements ApplicationContextAware {
         try (JarInputStream jarStream = new JarInputStream(url.openStream())) {
             mf = jarStream.getManifest();
         }
+        logger.error("Checking Bundle " + url.toString());
         return null != mf.getMainAttributes().getValue(JarInformation.BUNDLE_SYMBOLIC_NAME);
     }
 
@@ -397,9 +398,9 @@ public class OsgiFrameworkService implements ApplicationContextAware {
         String result = null;
         if (StringUtils.isNotBlank(externalBundleFolder)) {
             StringBuilder sb = new StringBuilder(externalBundleFolder);
-                if (!externalBundleFolder.endsWith(File.separator)) {
-                    sb.append(File.separatorChar);
-                }
+            if (!externalBundleFolder.endsWith(File.separator)) {
+                sb.append(File.separatorChar);
+            }
             sb.append(fragmentSubFolder);
             result = sb.toString();
         }
