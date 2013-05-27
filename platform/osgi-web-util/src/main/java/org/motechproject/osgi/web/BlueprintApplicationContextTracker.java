@@ -1,5 +1,6 @@
 package org.motechproject.osgi.web;
 
+import org.eclipse.gemini.blueprint.util.OsgiStringUtils;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
@@ -40,6 +41,7 @@ public class BlueprintApplicationContextTracker extends ServiceTracker {
             return applicationContext;
         }
 
+        LOGGER.error("Adding bundle " + OsgiStringUtils.nullSafeSymbolicName(bundle));
         httpServiceTrackers.addTrackerFor(bundle);
         uiServiceTrackers.addTrackerFor(bundle, applicationContext);
         return applicationContext;
@@ -70,7 +72,9 @@ public class BlueprintApplicationContextTracker extends ServiceTracker {
 
 
     private boolean isBlueprintEnabledBundle(Bundle bundle) {
-        return new BundleHeaders(bundle).isBluePrintEnabled();
+        boolean bluePrintEnabled = new BundleHeaders(bundle).isBluePrintEnabled();
+        LOGGER.error("Blueprint enabled for Bundle " + OsgiStringUtils.nullSafeSymbolicName(bundle) + " " + bluePrintEnabled);
+        return bluePrintEnabled;
     }
 
     private String getServiceName(ServiceReference serviceReference) {

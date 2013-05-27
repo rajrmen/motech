@@ -19,10 +19,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 @Controller
-@RequestMapping(value = "/diagnostics")
 public class DiagnosticsController {
 
-    AllDiagnosticMethods allDiagnosticMethods;
+    private AllDiagnosticMethods allDiagnosticMethods;
     private DiagnosticResponseBuilder diagnosticResponseBuilder;
 
     @Autowired
@@ -31,11 +30,17 @@ public class DiagnosticsController {
         this.diagnosticResponseBuilder = diagnosticResponseBuilder;
     }
 
-    @RequestMapping(method = RequestMethod.GET)
+    @RequestMapping(value = "/all",method = RequestMethod.GET)
     public void getDiagnostics(HttpServletResponse response) throws InvocationTargetException, IllegalAccessException, IOException {
         List<DiagnosticsResponse> diagnosticsResponses = allDiagnosticMethods.runAllDiagnosticMethods();
         String diagnosticsResponse = diagnosticResponseBuilder.createResponseMessage(diagnosticsResponses);
         response.getOutputStream().print(diagnosticsResponse);
+    }
+
+    @RequestMapping(value = "/status",method = RequestMethod.GET)
+    @ResponseBody
+    public String status(){
+        return "OK";
     }
 
     @ExceptionHandler(Exception.class)

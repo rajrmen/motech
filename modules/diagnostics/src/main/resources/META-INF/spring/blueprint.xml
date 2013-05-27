@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd
+       http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd">
+
+    <import resource="classpath:META-INF/motech/applicationContext-Diagnostics-Common.xml"/>
+    <import resource="classpath*:META-INF/motech/applicationContext-Diagnostics-Configuration.xml"/>
+    <import resource="classpath*:META-INF/motech/applicationContext-Diagnostics-Couch.xml"/>
+    <import resource="classpath*:META-INF/motech/applicationContext-Diagnostics-Queues.xml"/>
+
+    <context:annotation-config/>
+    <context:component-scan base-package="org.motechproject.diagnostics"/>
+    <mvc:annotation-driven/>
+
+    <util:map id="configurationFilesMap">
+        <entry key="activemq"><util:properties location="classpath:activemq.properties"/></entry>
+        <entry key="couchdb"><util:properties location="classpath:couchdb.properties"/></entry>
+    </util:map>
+
+    <util:list id="couchDatabasesList">
+        <value>motech-admin</value>
+        <value>motech-alert</value>
+        <value>foo</value>
+    </util:list>
+
+
+</beans>

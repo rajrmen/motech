@@ -1,6 +1,5 @@
 package org.motechproject.diagnostics.model;
 
-import org.hibernate.exception.ExceptionUtils;
 import org.motechproject.diagnostics.annotation.Diagnostic;
 import org.motechproject.diagnostics.diagnostics.DiagnosticLog;
 import org.motechproject.diagnostics.response.DiagnosticsResponse;
@@ -33,7 +32,7 @@ public class DiagnosticMethod {
         try {
             result = (DiagnosticsResult) method.invoke(bean, null);
         } catch (Exception e) {
-            logger.error(ExceptionUtils.getFullStackTrace(e));
+            logger.error(e.getMessage());
             result = exceptionResult(e);
         }
 

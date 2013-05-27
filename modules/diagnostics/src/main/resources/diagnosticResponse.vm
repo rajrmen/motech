@@ -1,0 +1,15 @@
+                    **************SUMMARY**************
+
+            #foreach ($diagnosticsResponse in $diagnosticsResponses )
+                $diagnosticsResponse.name - $diagnosticsResponse.result.status.toString().toUpperCase()
+            #end
+
+                    ***********************************
+
+
+#foreach ($diagnosticsResponse in $diagnosticsResponses )
+!----------------------------------! $diagnosticsResponse.name !----------------------------------!
+
+$diagnosticsResponse.result.message
+
+#end

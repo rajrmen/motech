@@ -1,6 +1,5 @@
 package org.motechproject.diagnostics.diagnostics;
 
-import org.hibernate.exception.ExceptionUtils;
 
 public class DiagnosticLog {
 
@@ -14,7 +13,7 @@ public class DiagnosticLog {
     }
 
     public void addError(Exception e) {
-        log.append("EXCEPTION: " + ExceptionUtils.getFullStackTrace(e)+"\n\n");
+        log.append("EXCEPTION: " + e.getStackTrace() + "\n\n");
     }
 
     @Override

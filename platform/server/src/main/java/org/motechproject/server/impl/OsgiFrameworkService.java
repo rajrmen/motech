@@ -258,7 +258,7 @@ public class OsgiFrameworkService implements ApplicationContextAware {
     }
 
     private void startBundle(Bundle bundle) throws BundleLoadingException, BundleException, ClassNotFoundException {
-        logger.debug("Starting bundle [" + bundle + "]");
+        logger.error("Starting bundle [" + bundle + "]");
 
         storeClassCloader(bundle);
 
