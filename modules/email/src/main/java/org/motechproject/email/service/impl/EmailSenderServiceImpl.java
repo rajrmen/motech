@@ -4,9 +4,9 @@ import org.motechproject.email.model.Mail;
 import org.motechproject.email.service.EmailSenderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Component
+@Service("emailSenderService")
 public class EmailSenderServiceImpl implements EmailSenderService {
 
     @Autowired
