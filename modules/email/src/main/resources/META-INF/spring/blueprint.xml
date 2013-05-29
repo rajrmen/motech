@@ -1,19 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
        xmlns:osgi="http://www.eclipse.org/gemini/blueprint/schema/blueprint"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
        http://www.eclipse.org/gemini/blueprint/schema/blueprint http://www.eclipse.org/gemini/blueprint/schema/blueprint/gemini-blueprint.xsd">
 
+    <context:annotation-config/>
+    <context:component-scan base-package="org.motechproject.email"/>
+
+    <!--<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">-->
+        <!--<property name="host" value="localhost"/>-->
+        <!--<property name="port" value="25"/>-->
+    <!--</bean>-->
+
     <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
-        <property name="host" value="localhost"/>
-        <property name="port" value="25"/>
+        <property name="host" value="smtp.gmail.com"/>
+        <property name="port" value="587"/>
+        <property name="username" value="motech.user@gmail.com"/>
+        <property name="password" value="!abcd1234"/>
+        <!--<property name="username"><value>${mail.username}</value></property>-->
+        <!--<property name="password"><value>${mail.password}</value></property>-->
+        <property name="javaMailProperties">
+            <props>
+                <!-- Use SMTP transport protocol -->
+                <prop key="mail.transport.protocol">smtp</prop>
+                <!-- Use SMTP-AUTH to authenticate to SMTP server -->
+                <prop key="mail.smtp.auth">true</prop>
+                <!-- Use TLS to encrypt communication with SMTP server -->
+                <prop key="mail.smtp.starttls.enable">true</prop>
+                <prop key="mail.debug">true</prop>
+            </props>
+        </property>
     </bean>
 
-
-
-    <bean id="emailSender" class="org.motechproject.email.service.impl.EmailSenderServiceImpl"/>
-
-    <osgi:service ref="emailSender" interface="org.motechproject.email.service.EmailSenderService" />
+    <osgi:service ref="emailSenderService" interface="org.motechproject.email.service.EmailSenderService" auto-export="interfaces" />
 
 </beans>
