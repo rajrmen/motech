@@ -55,6 +55,11 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
+            <groupId>com.mysql.jdbc</groupId>
+            <artifactId>com.springsource.com.mysql.jdbc</artifactId>
+        </dependency>
+        <!-- Test -->
+        <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>motech-testing-utils</artifactId>
             <version>${project.version}</version>
