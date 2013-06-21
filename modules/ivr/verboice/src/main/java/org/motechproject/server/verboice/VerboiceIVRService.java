@@ -32,9 +32,9 @@ import static org.apache.commons.lang.StringUtils.isBlank;
 @Component
 public class VerboiceIVRService implements IVRService {
     private static Logger log = LoggerFactory.getLogger(VerboiceIVRService.class);
-    private static final String CALLBACK_URL = "callback_url";
-    private static final String CALLBACK_STATUS_URL = "status_callback_url";
-    private static final String CALL_FLOW_ID = "call_flow_id";
+    public static final String CALLBACK_URL = "callback_url";
+    public static final String CALLBACK_STATUS_URL = "status_callback_url";
+    public static final String CALL_FLOW_ID = "call_flow_id";
 
     private SettingsFacade settings;
     private HttpClient commonsHttpClient;
