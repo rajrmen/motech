@@ -1,0 +1,41 @@
+project.ext {
+    display_name = 'MOTECH Platform Commons API'
+    description = 'Part of MOTECH Platform. Common Stuff'
+}
+
+dependencies {
+    compile (
+            lib.spring_core,
+            lib.spring_beans,
+            lib.spring_context,
+            lib.spring_context_support,
+            lib.spring_expression,
+            lib.spring_aop,
+            lib.spring_asm,
+            lib.slf4j_api,
+            lib.slf4j_log4j,
+            lib.commons_logging,
+            lib.log4j,
+            lib.osgi_core,
+            lib.osgi_compendium,
+            lib.blueprint_core,
+            lib.blueprint_extender,
+            lib.felix_http_bridge,
+            lib.gson,
+            lib.joda_time,
+            lib.commons_lang,
+            lib.commons_io
+    )
+
+
+    testCompile (
+            lib.spring_test,
+            lib.junit,
+            lib.felix_http_jetty,
+            lib.osgi_it,
+            lib.mockito,
+            lib.hamcrest,
+            lib.hamcrest_core,
+            lib.hamcrest_all
+    )
+}

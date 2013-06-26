@@ -4,7 +4,9 @@
 .classpath
 .project
 .settings/
+.gradle/
 target/
+build/
 .externalToolBuilders/
 maven-eclipse.xml
 .idea/

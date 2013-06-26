@@ -1,0 +1,12 @@
+rootProject.name = 'Motech'
+rootProject.projectDir = settingsDir
+
+def projects = [:]
+
+projects.put(":motech-platform-commons-api", "platform/commons-api")
+projects.put(":motech-message-campaign", "modules/message-campaign/message-campaign")
+
+projects.each { proj ->
+    include proj.key
+    project(proj.key).projectDir = new File(rootDir, proj.value)
+}

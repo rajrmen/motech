@@ -1,0 +1,103 @@
+allprojects {
+    group = 'org.motechproject'
+    version = '0.21.0-SNAPSHOT'
+}
+
+subprojects {
+    apply plugin: 'java'
+
+    repositories {
+        mavenLocal()
+
+        maven {
+            name 'MOTECH Maven Repository'
+            url 'http://nexus.motechproject.org/content/repositories/public'
+        }
+
+        maven {
+            name 'SpringSource Enterprise Bundle Repository - SpringSource Bundle Releases'
+            url 'http://repository.springsource.com/maven/bundles/release'
+        }
+
+        mavenCentral()
+    }
+
+    compileJava {
+        sourceCompatibility = 1.7
+        targetCompatibility = 1.7
+    }
+
+    compileTestJava {
+        sourceCompatibility = 1.7
+        targetCompatibility = 1.7
+    }
+
+    ext.props = [
+            external_dependency_release_tag: 'r017'
+    ]
+
+    ext.lib = [
+            json: dependencies.create(group: 'org.json', name: 'org.motechproject.org.json', version: "20080701-${props.external_dependency_release_tag}"),
+            jackson: dependencies.create(group: 'org.codehaus.jackson', name: 'org.motechproject.org.codehaus.jackson', version: "1.9.7-${props.external_dependency_release_tag}"),
+            javax_servlet: dependencies.create(group: 'javax.servlet', name: 'com.springsource.javax.servlet', version: '250'),
+
+            //Commons
+            commons_lang: dependencies.create(group: 'org.apache.commons', name: 'com.springsource.org.apache.commons.lang', version: '2.6.0'),
+            commons_io: dependencies.create(group: 'org.apache.commons', name: 'com.springsource.org.apache.commons.io', version: '1.4.0'),
+            commons_fileupload: dependencies.create(group: 'org.apache.commons', name: 'com.springsource.org.apache.commons.fileupload', version: '1.2.1'),
+
+            //Spring
+            spring_core: dependencies.create(group: 'org.springframework', name: 'org.springframework.core', version: '3.1.0.RELEASE'),
+            spring_beans: dependencies.create(group: 'org.springframework', name: 'org.springframework.beans', version: '3.1.0.RELEASE'),
+            spring_context: dependencies.create(group: 'org.springframework', name: 'org.springframework.context', version: '3.1.0.RELEASE') {
+                exclude group: 'org.apache.commons', module: 'com.springsource.org.apache.commons.logging'
+            },
+            spring_context_support: dependencies.create(group: 'org.springframework', name: 'org.springframework.context.support', version: '3.1.0.RELEASE'),
+            spring_expression: dependencies.create(group: 'org.springframework', name: 'org.springframework.expression', version: '3.1.0.RELEASE'),
+            spring_aop: dependencies.create(group: 'org.springframework', name: 'org.springframework.aspects', version: '3.1.0.RELEASE'),
+            spring_asm: dependencies.create(group: 'org.springframework', name: 'org.springframework.asm', version: '3.1.0.RELEASE'),
+            spring_servlet: dependencies.create(group: 'org.springframework', name: 'org.springframework.web.servlet', version: '3.1.0.RELEASE'){
+                exclude group: 'org.apache.commons', module: 'com.springsource.org.apache.commons.logging'
+            },
+
+            //Logging
+            slf4j_api: dependencies.create(group: 'org.slf4j', name: 'com.springsource.slf4j.api', version: '1.6.1'),
+            slf4j_log4j: dependencies.create(group: 'org.slf4j', name: 'com.springsource.slf4j.log4j', version: '1.6.1'),
+            commons_logging: dependencies.create(group: 'org.slf4j', name: 'com.springsource.slf4j.org.apache.commons.logging', version: '1.6.1'),
+            log4j: dependencies.create(group: 'org.apache.log4j', name: 'com.springsource.org.apache.log4j', version: '1.2.16'),
+
+            //OSGi
+            osgi_core: dependencies.create(group: 'org.osgi', name: 'org.osgi.core', version: '4.2.0'),
+            osgi_compendium: dependencies.create(group: 'org.osgi', name: 'org.osgi.compendium', version: '4.2.0'),
+            blueprint_core: dependencies.create(group: 'org.eclipse.gemini', name: 'org.eclipse.gemini.blueprint.core', version: '1.0.2.RELEASE') {
+                exclude group: 'org.eclipse.osgi', module: 'org.eclipse.osgi'
+            },
+            blueprint_extender: dependencies.create(group: 'org.eclipse.gemini', name: 'org.eclipse.gemini.blueprint.extender', version: '1.0.2.RELEASE') {
+                exclude group: 'org.springframework', module: 'org.springframework.aop'
+                exclude group: 'org.springframework', module: 'org.springframework.beans'
+                exclude group: 'org.springframework', module: 'org.springframework.context'
+                exclude group: 'org.springframework', module: 'org.springframework.core'
+                exclude group: 'org.springframework', module: 'org.springframework.context.support'
+                exclude group: 'org.eclipse.osgi', module: 'org.eclipse.osgi'
+                exclude group: 'org.eclipse.osgi', module: 'org.eclipse.osgi.services'
+            },
+            felix_http_bridge: dependencies.create(group: 'org.apache.felix', name: 'org.apache.felix.http.bridge', version: '2.2.0'),
+            gson: dependencies.create(group: 'com.google.code.gson', name: 'org.motechproject.com.google.code.gson', version: "1.7.1-${props.external_dependency_release_tag}"),
+            joda_time: dependencies.create(group: 'joda-time', name: 'joda-time', version: '2.0'),
+
+            // Test
+            spring_test: dependencies.create(group: 'org.springframework', name: 'org.springframework.test', version: '3.1.0.RELEASE'),
+            junit: dependencies.create(group: 'org.junit', name: 'org.motechproject.org.junit', version: '4.9-r017'),
+            felix_http_jetty: dependencies.create(group: 'org.apache.felix', name: 'org.apache.felix.http.jetty', version: '2.0.4'),
+            osgi_it: dependencies.create(group: 'org.motechproject', name: 'org.motechproject.osgi.it', version: '1.0.2.RELEASE-r014') {
+                exclude group: 'org.slf4j', module: 'slf4j-api'
+                exclude group: 'org.slf4j', module: 'jcl-over-slf4j'
+                exclude group: 'org.slf4j', module: 'slf4j-log4j12'
+            },
+            mockito: dependencies.create(group: 'org.mockito', name: 'com.springsource.org.mockito', version: '1.8.4'),
+            hamcrest: dependencies.create(group: 'org.hamcrest', name: 'com.springsource.org.hamcrest', version: '1.1.0'),
+            hamcrest_core: dependencies.create(group: 'org.hamcrest', name: 'com.springsource.org.hamcrest.core', version: '1.1.0'),
+            hamcrest_all: dependencies.create(group: 'org.hamcrest', name: 'hamcrest-all', version: '1.1')
+    ]
+
+}
