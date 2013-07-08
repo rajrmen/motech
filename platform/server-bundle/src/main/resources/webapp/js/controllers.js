@@ -305,40 +305,38 @@
                     }
                 };
 
-            if ($scope.currentModule !== module) {
-                angular.element('#splash').show();
-                angular.element('#content-template').hide();
-                $scope.removeCurrentModule();
-                $cookieStore.put("currentModule", module.moduleName);
+            angular.element('#splash').show();
+            angular.element('#content-template').hide();
+            $scope.removeCurrentModule();
+            $cookieStore.put("currentModule", module.moduleName);
 
-                header.each(function (idx, entry) {
-                    var element, elem = $(entry);
+            header.each(function (idx, entry) {
+                var element, elem = $(entry);
 
-                    if (elem.is('link')) {
-                        element = document.createElement('link');
-                        element.setAttribute('rel', 'stylesheet');
-                        element.setAttribute('type', 'text/css');
-                        element.setAttribute('href', elem.attr('href'));
-                    } else if (elem.is('script')) {
-                        element = document.createElement('script');
-                        element.setAttribute('type', 'text/javascript');
-                        element.setAttribute('src', elem.attr('src'));
-                    }
+                if (elem.is('link')) {
+                    element = document.createElement('link');
+                    element.setAttribute('rel', 'stylesheet');
+                    element.setAttribute('type', 'text/css');
+                    element.setAttribute('href', elem.attr('href'));
+                } else if (elem.is('script')) {
+                    element = document.createElement('script');
+                    element.setAttribute('type', 'text/javascript');
+                    element.setAttribute('src', elem.attr('src'));
+                }
 
-                    if (element !== undefined) {
-                        element.onreadystatechange = function () {
-                            if (this.readyState === 'complete') {
-                                onLoad();
-                            }
-                        };
+                if (element !== undefined) {
+                    element.onreadystatechange = function () {
+                        if (this.readyState === 'complete') {
+                            onLoad();
+                        }
+                    };
 
-                        element.onload = onLoad;
-                        document.getElementsByTagName("head")[0].appendChild(element);
-                    }
-                });
+                    element.onload = onLoad;
+                    document.getElementsByTagName("head")[0].appendChild(element);
+                }
+            });
 
-                $scope.currentModule = module;
-            }
+            $scope.currentModule = module;
         };
 
         $scope.printDate = function(milis) {

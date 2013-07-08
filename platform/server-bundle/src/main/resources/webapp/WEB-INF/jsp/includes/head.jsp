@@ -36,6 +36,7 @@
 <script src="resources/lib/angular/angular-cookies.min.js" type="text/javascript"></script>
 <script src="resources/lib/angular/angular-bootstrap.js" type="text/javascript"></script>
 <script src="resources/lib/angular/angular-ui.min.js" type="text/javascript"></script>
+<script src="resources/lib/angular/angular-ui-router.min.js" type="text/javascript"></script>
 
 <script src="resources/lib/bootstrap/bootstrap.min.js" type="text/javascript"></script>
 <script src="resources/lib/bootstrap/bootstrap-fileupload.min.js" type="text/javascript"></script>
