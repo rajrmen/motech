@@ -14,7 +14,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </a>
-            <a id="brand" class="brand" ng-hide="showDashboardLogo.showDashboard" href="#">MOTECH</a>
+            <a id="brand" class="brand" ng-hide="showDashboardLogo.showDashboard" ng-click="removeCurrentModule()" href=".">MOTECH</a>
 
             <div class="nav-collapse">
                 <ul class="nav" role="navigation">
