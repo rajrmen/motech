@@ -62,3 +62,4 @@
 <script src="resources/js/localization.js" type="text/javascript"></script>
 <script src="resources/js/directives.js" type="text/javascript"></script>
 <script src="resources/js/controllers.js" type="text/javascript"></script>
+<script src="resources/js/browser-detect.js" type="text/javascript"></script>

@@ -2,7 +2,7 @@
     'use strict';
 
     /* App Module */
-    var serverModule = angular.module('motech-dashboard', ['localization', 'ngCookies', 'ui', 'ui.state', 'motech-widgets']);
+    var serverModule = angular.module('motech-dashboard', ['localization', 'ngCookies', 'ui', 'ui.state', 'motech-widgets', 'browserDetect']);
 
     serverModule.config(['$httpProvider', function($httpProvider) {
         var interceptor = ['$rootScope','$q', function(scope, $q) {
