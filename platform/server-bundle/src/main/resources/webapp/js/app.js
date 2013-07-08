@@ -2,8 +2,9 @@
     'use strict';
 
     /* App Module */
+    var serverModule = angular.module('motech-dashboard', ['localization', 'ngCookies', 'ui', 'motech-widgets']);
 
-    angular.module('motech-dashboard', ['localization', 'ngCookies', 'ui', 'motech-widgets']).config(['$httpProvider', function($httpProvider) {
+    serverModule.config(['$httpProvider', function($httpProvider) {
         var interceptor = ['$rootScope','$q', function(scope, $q) {
             function success(response) {
                 return response;

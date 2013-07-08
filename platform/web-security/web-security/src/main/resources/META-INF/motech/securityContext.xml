@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:security="http://www.springframework.org/schema/security"
-       xsi:schemaLocation="
-        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
-        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.1.xsd
-       ">
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+       http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.1.xsd">
 
     <security:global-method-security pre-post-annotations="enabled"/>
 
@@ -24,10 +21,14 @@
     <security:http pattern="/**/lang*" security="none"/>
     <security:http pattern="/**/list*" security="none"/>
     <security:http pattern="/**/locate*" security="none"/>
-    <security:http pattern="/**/startup*" security="none"/>
+    <security:http pattern="/**/startup/**" security="none"/>
+    <security:http pattern="/**/getContextPath*" security="none"/>
+    <security:http pattern="/**/getOpenIdProvider" security="none"/>
 
-    <!-- This should be removed once modules can register urls with the web security system for protection
-under different authorization schemes.  i.e. no security, api key, etc. -->
+    <!--
+         This should be removed once modules can register urls with the web security system for protection
+         under different authorization schemes.  i.e. no security, api key, etc.
+    -->
     <security:http pattern="/**/commcare/**" security="none"/>
 
     <!-- kookoo doesn't support urls with basic auth, disabling secuirty for now -->
@@ -51,7 +52,7 @@ under different authorization schemes.  i.e. no security, api key, etc. -->
 
 
     <bean id="basicAuthenticationEntryPoint" class="org.motechproject.security.authentication.MotechBasicAuthenticationEntryPoint">
-        <constructor-arg name="settingsFacade" ref="webSecuritySettings"/>
+        <constructor-arg ref="webSecuritySettings"/>
     </bean>
 
 
