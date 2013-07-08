@@ -3,13 +3,12 @@
 
     /* App Module */
 
-    angular.module('motech-web-security', ['motech-dashboard', 'roleService', 'userService', 'permissionService', 'ngCookies', 'bootstrap']).config(['$routeProvider',
-        function ($routeProvider) {
-            $routeProvider.
-                when('/users', {templateUrl: '../websecurity/partials/user.html', controller: 'UserCtrl'}).
-                when('/roles', {templateUrl: '../websecurity/partials/role.html', controller: 'RoleCtrl'}).
-                when('/profile/:username', {templateUrl: '../websecurity/partials/profile.html', controller: 'ProfileCtrl'}).
-                otherwise({redirectTo: '/welcome'});
+    angular.module('motech-web-security', ['motech-dashboard', 'roleService', 'userService', 'permissionService', 'ngCookies', 'bootstrap']).config(['$stateProvider',
+        function ($stateProvider) {
+            $stateProvider
+                .state('users', {url: '/users', templateUrl: '../websecurity/partials/user.html', controller: 'UserCtrl'})
+                .state('roles', {url: '/roles', templateUrl: '../websecurity/partials/role.html', controller: 'RoleCtrl'})
+                .state('profile', {url: '/profile/:username', templateUrl: '../websecurity/partials/profile.html', controller: 'ProfileCtrl'});
     }]).filter('filterPagination', function() {
         return function(input, start) {
             start= +start;
