@@ -267,21 +267,21 @@
                 scripts = moduleHeader.filter('script');
 
                 angular.element('head').find('link').each(function (idx, entry) {
-                    var i;
+                    var i, elem = $(entry);
 
                     for (i = 0; i < links.length; i += 1) {
-                        if (entry.href === links[i].href) {
-                            entry.remove();
+                        if (elem.href === links[i].href) {
+                            elem.remove();
                         }
                     }
                 });
 
                 angular.element('head').find('script').each(function (idx, entry) {
-                    var i;
+                    var i, elem = $(entry);
 
                     for (i = 0; i < scripts.length; i += 1) {
-                        if (entry.src === scripts[i].src) {
-                            entry.remove();
+                        if (elem.src === scripts[i].src) {
+                            elem.remove();
                         }
                     }
                 });
