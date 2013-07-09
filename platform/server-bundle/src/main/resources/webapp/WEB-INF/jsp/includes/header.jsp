@@ -1,6 +1,6 @@
 <div class="header">
     <div class="container-fluid">
-        <a ng-click="removeCurrentModule()" href="."><div class="dashboard-logo" ng-show="showDashboardLogo.showDashboard"></div></a>
+        <a href="."><div class="dashboard-logo" ng-show="showDashboardLogo.showDashboard"></div></a>
         <div class="header-title" ng-show="showDashboardLogo.showDashboard">{{msg('motechTitle')}}</div>
     </div>
 </div>
@@ -14,12 +14,12 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </a>
-            <a id="brand" class="brand" ng-hide="showDashboardLogo.showDashboard" ng-click="removeCurrentModule()" href=".">MOTECH</a>
+            <a id="brand" class="brand" ng-hide="showDashboardLogo.showDashboard" href=".">MOTECH</a>
 
             <div class="nav-collapse">
                 <ul class="nav" role="navigation">
                     <li class="divider-vertical" ng-hide="showDashboardLogo.showDashboard" ></li>
-                    <li class="current"><a role="menu" ng-click="removeCurrentModule()" href=".">{{msg('home')}}</a></li>
+                    <li class="current"><a role="menu" href=".">{{msg('home')}}</a></li>
                     <li class="divider-vertical divider-vertical-sub"></li>
                     <li><a role="menu">{{msg('motech')}} {{msg('project')}}</a></li>
                     <li class="divider-vertical divider-vertical-sub"></li>

@@ -11,6 +11,7 @@
 
                 angular.element('#splash').hide();
                 angular.element('#content-template').show();
+                angular.element('#content-header').show();
             };
 
         $scope.BrowserDetect = BrowserDetect;
@@ -213,63 +214,6 @@
                 scope.user.anonymous = false;
             })
         ]).then(function () {
-            var modules = [],
-                toLoad = 0,
-                angularModules = [],
-                header = [],
-                onLoad = function () {
-                    toLoad -= 1;
-
-                    if (toLoad <= 0 && angularModules.length > 0) {
-                        angular.bootstrap(document, angularModules);
-                    }
-                };
-
-            if (!$cookieStore.get('loading')) {
-                $cookieStore.put('loading', true);
-
-                modules = $.merge($.merge([], $scope.modulesWithSubMenu), $scope.modulesWithoutSubMenu);
-
-                angular.forEach(modules, function (module) {
-                    $.merge(angularModules, module.angularModules);
-
-                    $.merge(header, angular.element(module.header).filter(function () {
-                        return $(this).is('link') || $(this).is('script');
-                    }));
-                });
-
-                toLoad = header.length;
-
-                angular.forEach(header, function (entry) {
-                    var element, elem = $(entry);
-
-                    if (elem.is('link')) {
-                        element = document.createElement('link');
-                        element.setAttribute('rel', 'stylesheet');
-                        element.setAttribute('type', 'text/css');
-                        element.setAttribute('href', elem.attr('href'));
-                    } else if (elem.is('script')) {
-                        element = document.createElement('script');
-                        element.setAttribute('type', 'text/javascript');
-                        element.setAttribute('src', elem.attr('src'));
-                    }
-
-                    if (element !== undefined) {
-                        element.onreadystatechange = function () {
-                            if (this.readyState === 'complete') {
-                                onLoad();
-                            }
-                        };
-
-                        element.onload = onLoad;
-                        document.getElementsByTagName("head")[0].appendChild(element);
-                    }
-                });
-
-            } else {
-                $cookieStore.remove('loading');
-            }
-
             $scope.userLang = $scope.getLanguage(toLocale($scope.user.lang));
             moment.lang($scope.user.lang);
             $scope.loadI18n($scope.user.lang);

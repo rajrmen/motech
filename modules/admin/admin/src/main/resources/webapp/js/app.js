@@ -15,7 +15,7 @@
               .state('admin.bundleSettings', {url: '/bundleSettings/:bundleId', templateUrl: '../admin/partials/bundleSettings.html', controller: 'BundleSettingsCtrl'})
               .state('admin.modulePanels', {url: '/modulePanels', templateUrl: '../admin/partials/modulePanels.html'})
               .state('admin.operations', {url: '/operations', templateUrl: '../admin/partials/operations.html', controller: 'OperationsCtrl'})
-              .state('admin.log', {url: '/log', templateUrl: '../admin/partials/log.html', controller: 'ServerLogCtrl'})
+              .state('admin.log', {url: '/log', templateUrl: '../admin/partials/log.html', controller: 'ServerLogCtrl', onExit: function () { $('div[id^="jquerySideBar"]').remove(); }})
               .state('admin.queues', {url: '/queues', templateUrl: '../admin/partials/queue_stats.html', controller: 'QueueStatisticsCtrl'})
               .state('admin.queuesBrowse', {url: '/queues/browse', templateUrl: '../admin/partials/queue_message_stats.html', controller: 'MessageStatisticsCtrl'})
               .state('admin.logOptions', {url: '/logOptions', templateUrl: '../admin/partials/logOptions.html', controller: 'ServerLogOptionsCtrl'})
