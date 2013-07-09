@@ -10,7 +10,7 @@
     <bean id="header" class="org.motechproject.osgi.web.Header"></bean>
 
     <bean id="moduleRegistrationData" class="org.motechproject.osgi.web.ModuleRegistrationData">
-        <constructor-arg name="url" value="../event-aggregation/resources/index.html"/>
+        <constructor-arg name="url" value="#/rules"/>
         <constructor-arg name="moduleName" value="event-aggregation"/>
         <constructor-arg name="angularModules">
             <list>

@@ -6,9 +6,10 @@
     angular.module('motech-web-security', ['motech-dashboard', 'roleService', 'userService', 'permissionService', 'ngCookies', 'bootstrap']).config(['$stateProvider',
         function ($stateProvider) {
             $stateProvider
-                .state('users', {url: '/users', templateUrl: '../websecurity/partials/user.html', controller: 'UserCtrl'})
-                .state('roles', {url: '/roles', templateUrl: '../websecurity/partials/role.html', controller: 'RoleCtrl'})
-                .state('profile', {url: '/profile/:username', templateUrl: '../websecurity/partials/profile.html', controller: 'ProfileCtrl'});
+                .state('websecurity', {abstract: true, templateUrl: '../websecurity/index.html'})
+                .state('websecurity.users', {url: '/users', templateUrl: '../websecurity/partials/user.html', controller: 'UserCtrl'})
+                .state('websecurity.roles', {url: '/roles', templateUrl: '../websecurity/partials/role.html', controller: 'RoleCtrl'})
+                .state('websecurity.profile', {url: '/profile/:username', templateUrl: '../websecurity/partials/profile.html', controller: 'ProfileCtrl'});
     }]).filter('filterPagination', function() {
         return function(input, start) {
             start= +start;

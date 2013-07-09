@@ -1,8 +1,8 @@
 <div ng-show="!editMode" class="box-header">{{msg('create.aggregation.page.heading')}}
-    <a href="#/" type="button" class="btn btn-primary btn-in-header pull-right"><i class="icon-remove icon-white"></i></a>
+    <a href="#/rules" type="button" class="btn btn-primary btn-in-header pull-right"><i class="icon-remove icon-white"></i></a>
 </div>
 <div ng-show="editMode" class="box-header">{{msg('edit.aggregation.page.heading')}}
-    <a href="#/" type="button" class="btn btn-primary btn-in-header pull-right"><i class="icon-remove icon-white"></i></a>
+    <a href="#/rules" type="button" class="btn btn-primary btn-in-header pull-right"><i class="icon-remove icon-white"></i></a>
 </div>
 
 <div class="box-content inside clearfix" ng-controller="NewRulesController">
@@ -82,7 +82,7 @@
 
         <div class="form-actions">
             <button class="btn btn-primary" ng-click="update(rule)">{{ msg('new.rule.save.label') }}</button>
-            <a type="button" href="#/" class="btn">{{msg('cancel')}}</a>
+            <a type="button" href="#/rules" class="btn">{{msg('cancel')}}</a>
         </div>
     </form>
 

@@ -3,10 +3,9 @@
 /* put your routes here */
 
 angular.module('${artifactId}', ['motech-dashboard', 'YourModuleServices', 'ngCookies', 'bootstrap'])
-    .config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $urlRouterProvider) {
+    .config(['$stateProvider', function ($stateProvider) {
 
         $stateProvider
-            .state('welcome', {url: '/welcome', templateUrl: '../${artifactId}/resources/partials/welcome.html', controller: YourController });
-
-        $urlRouterProvider.otherwise("/welcome");
+            .state('${artifactId}', {abstract: true, templateUrl: '../${artifactId}/resources/index.html'})
+            .state('${artifactId}.welcome', {url: '/welcome', templateUrl: '../${artifactId}/resources/partials/welcome.html', controller: YourController });
     }]);

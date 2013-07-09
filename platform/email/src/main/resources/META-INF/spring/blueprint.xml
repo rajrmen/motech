@@ -33,7 +33,7 @@
     </bean>
 
     <bean id="moduleRegistrationData" class="org.motechproject.osgi.web.ModuleRegistrationData">
-        <constructor-arg name="url" value="../email/resources/index.html"/>
+        <constructor-arg name="url" value="#/send"/>
         <constructor-arg name="moduleName" value="email"/>
         <constructor-arg name="angularModules">
             <list>

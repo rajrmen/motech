@@ -8,7 +8,7 @@
                     <div ui-if="currentModule.criticalMessage" id="criticalNotification" class="alert alert-error">
                         {{currentModule.criticalMessage}}
                     </div>
-                    <div id="module-content"></div>
+                    <div id="module-content" ui-view></div>
                 </div>
             </div>
 

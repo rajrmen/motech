@@ -130,7 +130,7 @@ public class Activator implements BundleActivator {
     private void serviceAdded(UIFrameworkService service) {
         ModuleRegistrationData regData = new ModuleRegistrationData();
         regData.setModuleName(MODULE_NAME);
-        regData.setUrl("../websecurity/");
+        regData.setUrl("#/users");
         regData.addAngularModule("motech-web-security");
         regData.addSubMenu("#/users", "manageUsers");
         regData.addSubMenu("#/roles", "manageRoles");

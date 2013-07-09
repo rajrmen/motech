@@ -25,44 +25,44 @@
 
         $scope.showDashboardLogo = {
             showDashboard : true,
-            changeClass : function() {
+            changeClass : function () {
                 return this.showDashboard ? "minimize action-minimize-up" : "minimize action-minimize-down";
             },
-            changeTitle : function() {
+            changeTitle : function () {
                 return this.showDashboard ? "minimizeLogo" : "expandLogo";
             },
-            backgroudUpDown : function() {
+            backgroudUpDown : function () {
                 return this.showDashboard ? "body-down" : "body-up";
             }
         };
 
-        $scope.setUserLang = function(lang) {
+        $scope.setUserLang = function (lang) {
             var locale = toLocale(lang);
 
-            $http({ method: "POST", url: "lang", params: locale }).success(function() {
+            $http({ method: "POST", url: "lang", params: locale }).success(function () {
                 $scope.loadI18n(lang);
                 $scope.userLang = $scope.getLanguage(locale);
                 moment.lang(lang);
             });
         };
 
-        $scope.msg = function(key, value) {
+        $scope.msg = function (key, value) {
             return i18nService.getMessage(key, value);
         };
 
-        $scope.getLanguage = function(locale) {
+        $scope.getLanguage = function (locale) {
             return {
                 key: locale.toString() || "en",
                 value: $scope.languages[locale.toString()] || $scope.languages[locale.withoutVariant()] || $scope.languages[locale.language] || "English"
             };
         };
 
-        $scope.minimizeHeader = function() {
+        $scope.minimizeHeader = function () {
             $scope.showDashboardLogo.showDashboard = !$scope.showDashboardLogo.showDashboard;
             $cookieStore.put("showDashboardLogo", $scope.showDashboardLogo.showDashboard);
         };
 
-        $scope.loadI18n = function(lang) {
+        $scope.loadI18n = function (lang) {
             var key, handler, i;
 
             if (!$scope.i18n || $scope.i18n.length <= 0) {
@@ -83,7 +83,7 @@
             }
         };
 
-        $scope.doAJAXHttpRequest = function(method, url, callback) {
+        $scope.doAJAXHttpRequest = function (method, url, callback) {
             var defer = $q.defer();
 
             $http({ method: method, url: url }).
@@ -157,91 +157,7 @@
             return ($scope.currentPage + 4 < number && number > 8) || ($scope.currentPage - 4 > number && number + 9 < $scope.pagedItems.length);
         };
 
-        $scope.removeCurrentModule = function () {
-            var moduleHeader, links, scripts;
-
-            if ($scope.currentModule) {
-                angular.element('#module-content').empty();
-                $cookieStore.remove("currentModule");
-
-                moduleHeader = angular.element($scope.currentModule.header);
-                links = moduleHeader.filter('link');
-                scripts = moduleHeader.filter('script');
-
-                angular.element('head').find('link').each(function (idx, entry) {
-                    var i, elem = $(entry);
-
-                    for (i = 0; i < links.length; i += 1) {
-                        if (elem.href === links[i].href) {
-                            elem.remove();
-                        }
-                    }
-                });
-
-                angular.element('head').find('script').each(function (idx, entry) {
-                    var i, elem = $(entry);
-
-                    for (i = 0; i < scripts.length; i += 1) {
-                        if (elem.src === scripts[i].src) {
-                            elem.remove();
-                        }
-                    }
-                });
-            }
-        };
-
-        $scope.loadModule = function (module) {
-            var header = angular.element(module.header).filter(function () {
-                    return $(this).is('link') || $(this).is('script');
-                }),
-                loaded = header.length,
-                onLoad = function () {
-                    loaded -= 1;
-
-                    if (loaded <= 0) {
-                        angular.element('#module-content').load(module.url, function () {
-                            if (module.angularModules) {
-                                angular.bootstrap(document, module.angularModules);
-                            }
-                        });
-                    }
-                };
-
-            angular.element('#splash').show();
-            angular.element('#content-template').hide();
-            $scope.removeCurrentModule();
-            $cookieStore.put("currentModule", module.moduleName);
-
-            header.each(function (idx, entry) {
-                var element, elem = $(entry);
-
-                if (elem.is('link')) {
-                    element = document.createElement('link');
-                    element.setAttribute('rel', 'stylesheet');
-                    element.setAttribute('type', 'text/css');
-                    element.setAttribute('href', elem.attr('href'));
-                } else if (elem.is('script')) {
-                    element = document.createElement('script');
-                    element.setAttribute('type', 'text/javascript');
-                    element.setAttribute('src', elem.attr('src'));
-                }
-
-                if (element !== undefined) {
-                    element.onreadystatechange = function () {
-                        if (this.readyState === 'complete') {
-                            onLoad();
-                        }
-                    };
-
-                    element.onload = onLoad;
-                    document.getElementsByTagName("head")[0].appendChild(element);
-                }
-            });
-
-            $scope.currentModule = module;
-        };
-
-        $scope.printDate = function(milis) {
+        $scope.printDate = function (milis) {
             var date = "";
             if (milis) {
                 date = new Date(milis);
@@ -297,31 +213,61 @@
                 scope.user.anonymous = false;
             })
         ]).then(function () {
-            var moduleName = $cookieStore.get('currentModule'),
-                found = false,
-                currentModule,
-                i;
+            var modules = [],
+                toLoad = 0,
+                angularModules = [],
+                header = [],
+                onLoad = function () {
+                    toLoad -= 1;
 
-            if (moduleName !== undefined) {
-                for (i = 0; i < $scope.modulesWithSubMenu.length; i += 1) {
-                    if (!found && $scope.modulesWithSubMenu[i].moduleName === moduleName) {
-                        currentModule = $scope.modulesWithSubMenu[i];
-                        found = true;
+                    if (toLoad <= 0 && angularModules.length > 0) {
+                        angular.bootstrap(document, angularModules);
                     }
-                }
+                };
 
-                if (!found) {
-                    for (i = 0; i < $scope.modulesWithoutSubMenu.length; i += 1) {
-                        if (!found && $scope.modulesWithoutSubMenu[i].moduleName === moduleName) {
-                            currentModule = $scope.modulesWithoutSubMenu[i];
-                            found = true;
-                        }
+            if (!$cookieStore.get('loading')) {
+                $cookieStore.put('loading', true);
+
+                modules = $.merge($.merge([], $scope.modulesWithSubMenu), $scope.modulesWithoutSubMenu);
+
+                angular.forEach(modules, function (module) {
+                    $.merge(angularModules, module.angularModules);
+
+                    $.merge(header, angular.element(module.header).filter(function () {
+                        return $(this).is('link') || $(this).is('script');
+                    }));
+                });
+
+                toLoad = header.length;
+
+                angular.forEach(header, function (entry) {
+                    var element, elem = $(entry);
+
+                    if (elem.is('link')) {
+                        element = document.createElement('link');
+                        element.setAttribute('rel', 'stylesheet');
+                        element.setAttribute('type', 'text/css');
+                        element.setAttribute('href', elem.attr('href'));
+                    } else if (elem.is('script')) {
+                        element = document.createElement('script');
+                        element.setAttribute('type', 'text/javascript');
+                        element.setAttribute('src', elem.attr('src'));
                     }
-                }
 
-                if (found) {
-                    angular.element("body").scope().currentModule = currentModule;
-                }
+                    if (element !== undefined) {
+                        element.onreadystatechange = function () {
+                            if (this.readyState === 'complete') {
+                                onLoad();
+                            }
+                        };
+
+                        element.onload = onLoad;
+                        document.getElementsByTagName("head")[0].appendChild(element);
+                    }
+                });
+
+            } else {
+                $cookieStore.remove('loading');
             }
 
             $scope.userLang = $scope.getLanguage(toLocale($scope.user.lang));
