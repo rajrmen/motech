@@ -3,15 +3,15 @@
 
     var eventAggregationModule = angular.module('event-aggregation');
 
-    eventAggregationModule.controller('NewRulesController', function ($scope, AggregationRules, i18nService, $routeParams, $http) {
+    eventAggregationModule.controller('NewRulesController', function ($scope, AggregationRules, i18nService, $stateParams, $http) {
         $scope.scheduleTypeList = ['periodic', 'cron', 'custom'];
 
-        if ($routeParams.ruleName !== undefined) {
+        if ($stateParams.ruleName !== undefined) {
 
             $scope.editMode = true;
 
             $scope.rule = AggregationRules.find({
-                ruleName: $routeParams.ruleName
+                ruleName: $stateParams.ruleName
             }, function success(response) {
                 $scope.scheduleType = $scope.rule.aggregationSchedule.scheduleType.split('_')[0];
                 $scope.scheduleTypePartial = '../event-aggregation/resources/partials/new_' + $scope.scheduleType + '_schedule.html';
@@ -25,8 +25,8 @@
                 $scope.scheduleType = scheduleType;
             };
 
-            if ($routeParams.scheduleType === 'cron' || $routeParams.scheduleType === 'custom') {
-                $scope.scheduleType = $routeParams.scheduleType;
+            if ($stateParams.scheduleType === 'cron' || $stateParams.scheduleType === 'custom') {
+                $scope.scheduleType = $stateParams.scheduleType;
             }
 
             if ($scope.scheduleType === 'periodic') {
@@ -66,22 +66,22 @@
         };
     });
 
-    eventAggregationModule.controller('RulesController', function ($scope, AggregationRules, i18nService, $routeParams, $http) {
+    eventAggregationModule.controller('RulesController', function ($scope, AggregationRules, i18nService, $stateParams, $http) {
 
         $scope.allRules = AggregationRules.query();
     });
 
-    eventAggregationModule.controller('AggregationsController', function ($scope, AggregationRules, Aggregations, i18nService, $routeParams, $http) {
+    eventAggregationModule.controller('AggregationsController', function ($scope, AggregationRules, Aggregations, i18nService, $stateParams, $http) {
 
-        $scope.eventStatus = $routeParams.eventStatus;
+        $scope.eventStatus = $stateParams.eventStatus;
 
         $scope.rule = AggregationRules.find({
-            ruleName: $routeParams.ruleName
+            ruleName: $stateParams.ruleName
         });
 
         $scope.aggregations = Aggregations.find({
-            ruleName: $routeParams.ruleName,
-            eventStatus: $routeParams.eventStatus
+            ruleName: $stateParams.ruleName,
+            eventStatus: $stateParams.eventStatus
         });
     });
 }());

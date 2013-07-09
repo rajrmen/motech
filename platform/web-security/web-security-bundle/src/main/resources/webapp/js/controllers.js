@@ -298,9 +298,9 @@
             };
     });
 
-    webSecurityModule.controller('ProfileCtrl', function ($scope, Users, $http, $routeParams) {
-        if ($routeParams.username !== undefined) {
-            $http.post('../websecurity/api/users/getuser', $routeParams.username).
+    webSecurityModule.controller('ProfileCtrl', function ($scope, Users, $http, $stateParams) {
+        if ($stateParams.username !== undefined) {
+            $http.post('../websecurity/api/users/getuser', $stateParams.username).
                 success(function(data) {
                     $scope.userName = data.userName;
                     $scope.email = data.email;

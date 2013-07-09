@@ -158,7 +158,7 @@
 
     });
 
-    widgetModule.controller('ManageTaskCtrl', function ($scope, ManageTaskUtils, Channels, DataSources, Tasks, $q, $timeout, $routeParams, $http, $compile) {
+    widgetModule.controller('ManageTaskCtrl', function ($scope, ManageTaskUtils, Channels, DataSources, Tasks, $q, $timeout, $stateParams, $http, $compile) {
         $scope.util = ManageTaskUtils;
         $scope.selectedActionChannel = [];
         $scope.selectedAction = [];
@@ -169,14 +169,14 @@
             $scope.channels = data[0];
             $scope.dataSources = data[1];
 
-            if ($routeParams.taskId === undefined) {
+            if ($stateParams.taskId === undefined) {
                 $scope.task = {
                     taskConfig: {
                         steps: []
                     }
                 };
             } else {
-                $scope.task = Tasks.get({ taskId: $routeParams.taskId }, function () {
+                $scope.task = Tasks.get({ taskId: $stateParams.taskId }, function () {
                     var triggerChannel, trigger, dataSource, object;
 
                     if ($scope.task.trigger) {
@@ -754,7 +754,7 @@
 
             blockUI();
 
-            if (!$routeParams.taskId) {
+            if (!$stateParams.taskId) {
                 $http.post('../tasks/api/task/save', $scope.task).success(success).error(error);
             } else {
                 $scope.task.$save(success, error);
@@ -807,7 +807,7 @@
         };
     });
 
-    widgetModule.controller('LogCtrl', function ($scope, Tasks, Activities, $routeParams, $filter) {
+    widgetModule.controller('LogCtrl', function ($scope, Tasks, Activities, $stateParams, $filter) {
         var data, task, searchMatch = function (activity, filterHistory) {
             var result;
 
@@ -827,8 +827,8 @@
         $scope.histories = ['ALL', 'WARNING', 'SUCCESS', 'ERROR'];
         $scope.filterHistory = $scope.histories[0];
 
-        if ($routeParams.taskId !== undefined) {
-            data = { taskId: $routeParams.taskId };
+        if ($stateParams.taskId !== undefined) {
+            data = { taskId: $stateParams.taskId };
 
             task = Tasks.get(data, function () {
                 $scope.activities = Activities.query(data, $scope.search);
@@ -884,7 +884,7 @@
                 if (!r) {
                     return;
                 }
-                Activities.remove({taskId: $routeParams.taskId});
+                Activities.remove({taskId: $stateParams.taskId});
                 $scope.activities = [];
                 $scope.search();
             });

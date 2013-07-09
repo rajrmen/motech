@@ -6,7 +6,7 @@
 
     var adminModule = angular.module('motech-admin');
 
-    adminModule.controller('BundleListCtrl', function($scope, Bundle, i18nService, $routeParams, $http) {
+    adminModule.controller('BundleListCtrl', function($scope, Bundle, i18nService, $stateParams, $http) {
 
         var LOADING_STATE = 'LOADING';
 
@@ -58,8 +58,8 @@
 
         $scope.bundles = Bundle.query();
 
-        if ($routeParams.bundleId !== undefined) {
-            $scope.bundle = Bundle.get({ bundleId:$routeParams.bundleId });
+        if ($stateParams.bundleId !== undefined) {
+            $scope.bundle = Bundle.get({ bundleId:$stateParams.bundleId });
         }
 
         $scope.allBundlesCount = function () {
@@ -371,18 +371,18 @@
         };
     });
 
-    adminModule.controller('ModuleCtrl', function($scope, ModuleSettings, Bundle, i18nService, $routeParams) {
-        $scope.module = Bundle.details({ bundleId:$routeParams.bundleId });
+    adminModule.controller('ModuleCtrl', function($scope, ModuleSettings, Bundle, i18nService, $stateParams) {
+        $scope.module = Bundle.details({ bundleId:$stateParams.bundleId });
     });
 
-    adminModule.controller('BundleSettingsCtrl', function($scope, Bundle, ModuleSettings, $routeParams, $http) {
-        $scope.moduleSettings = ModuleSettings.query({ bundleId:$routeParams.bundleId });
+    adminModule.controller('BundleSettingsCtrl', function($scope, Bundle, ModuleSettings, $stateParams, $http) {
+        $scope.moduleSettings = ModuleSettings.query({ bundleId:$stateParams.bundleId });
 
-        $http.get('../admin/api/settings/' + $routeParams.bundleId + '/raw').success(function (data) {
+        $http.get('../admin/api/settings/' + $stateParams.bundleId + '/raw').success(function (data) {
             $scope.rawFiles = data;
         });
 
-        $scope.module = Bundle.get({ bundleId:$routeParams.bundleId });
+        $scope.module = Bundle.get({ bundleId:$stateParams.bundleId });
 
         $scope.saveSettings = function (mSettings, doRestart) {
             var successHandler;
@@ -604,9 +604,9 @@
 
     });
 
-    adminModule.controller('MessageStatisticsCtrl', function($scope, $http, $routeParams) {
+    adminModule.controller('MessageStatisticsCtrl', function($scope, $http, $stateParams) {
 
-        var queue = $routeParams.queueName;
+        var queue = $stateParams.queueName;
 
         $scope.dataAvailable = true;
 
