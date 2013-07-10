@@ -219,6 +219,16 @@
             $scope.loadI18n($scope.user.lang);
         });
 
+        $scope.$on('module.list.refresh', function () {
+            $scope.doAJAXHttpRequest('POST', 'getModulesWithoutSubMenu', function (data) {
+                $scope.modulesWithoutSubMenu = data;
+            });
+
+            $scope.doAJAXHttpRequest('POST', 'getModulesWithSubMenu', function (data) {
+                $scope.modulesWithSubMenu = data;
+            });
+        });
+
     });
 
     serverModule.controller('LoginCtrl', function ($scope, $q) {

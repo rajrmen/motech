@@ -15,8 +15,8 @@
         $scope.startUpload = false;
         $scope.versionOrder = ["version.major", "version.minor", "version.micro", "version.qualifier"];
 
-        $scope.reloadPage = function () {
-            location.reload();
+        $scope.refreshModuleList = function () {
+            $scope.$emit('module.list.refresh');
         };
 
         $scope.bundlesWithSettings = [];
@@ -124,7 +124,9 @@
 
         $scope.stopBundle = function (bundle) {
             bundle.state = LOADING_STATE;
-            bundle.$stop(dummyHandler, function (response) {
+            bundle.$stop(function () {
+                $scope.refreshModuleList();
+            }, function (response) {
                 bundle.state = 'RESOLVED';
                 handleWithStackTrace('error', 'bundles.error.stop', response);
             });
@@ -132,7 +134,9 @@
 
         $scope.startBundle = function (bundle) {
             bundle.state = LOADING_STATE;
-            bundle.$start(dummyHandler, function (response) {
+            bundle.$start(function () {
+                $scope.refreshModuleList();
+            }, function (response) {
                 bundle.state = 'RESOLVED';
                 handleWithStackTrace('error', 'bundles.error.start', response);
             });
@@ -140,7 +144,9 @@
 
         $scope.restartBundle = function (bundle) {
             bundle.state = LOADING_STATE;
-            bundle.$restart(dummyHandler, function () {
+            bundle.$restart(function () {
+                $scope.refreshModuleList();
+            }, function () {
                 bundle.state = 'RESOLVED';
                 motechAlert('bundles.error.restart', 'error');
             });
@@ -157,9 +163,8 @@
                     bundle.$uninstall(function () {
                             // remove bundle from list
                             $scope.bundles.removeObject(bundle);
-                            $scope.reloadPage();
-                        },
-                        function () {
+                            $scope.refreshModuleList();
+                        }, function () {
                             motechAlert('bundles.error.uninstall', 'error');
                             bundle.state = oldState;
                             unblockUI();
@@ -201,7 +206,7 @@
                         unblockUI();
                     } else {
                         $scope.bundles = Bundle.query();
-                        $scope.reloadPage();
+                        $scope.refreshModuleList();
                     }
     //              unblockUI();
                 },
