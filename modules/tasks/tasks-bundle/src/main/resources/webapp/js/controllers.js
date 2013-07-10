@@ -892,7 +892,7 @@
     });
 
 
-    widgetModule.controller('SettingsCtrl', function ($scope, Settings) {
+    widgetModule.controller('TasksSettingsCtrl', function ($scope, Settings) {
         $scope.settings = Settings.get();
 
         $scope.submit = function() {

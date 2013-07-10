@@ -13,6 +13,6 @@
                 .state('tasks.taskNew', {url: '/tasks/task/new', templateUrl: '../tasks/partials/form.html', controller: 'ManageTaskCtrl'})
                 .state('tasks.taskEdit', {url: '/tasks/task/:taskId/edit', templateUrl: '../tasks/partials/form.html', controller: 'ManageTaskCtrl'})
                 .state('tasks.taskLog', {url: '/tasks/task/:taskId/log', templateUrl: '../tasks/partials/history.html', controller: 'LogCtrl'})
-                .state('tasks.settings', {url: '/tasks/settings', templateUrl: '../tasks/partials/settings.html', controller: 'SettingsCtrl'});
+                .state('tasks.settings', {url: '/tasks/settings', templateUrl: '../tasks/partials/settings.html', controller: 'TasksSettingsCtrl'});
         }]);
 }());
