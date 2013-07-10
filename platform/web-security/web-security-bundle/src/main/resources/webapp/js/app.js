@@ -7,9 +7,9 @@
         function ($stateProvider) {
             $stateProvider
                 .state('websecurity', {abstract: true, templateUrl: '../websecurity/index.html'})
-                .state('websecurity.users', {url: '/users', templateUrl: '../websecurity/partials/user.html', controller: 'UserCtrl'})
-                .state('websecurity.roles', {url: '/roles', templateUrl: '../websecurity/partials/role.html', controller: 'RoleCtrl'})
-                .state('websecurity.profile', {url: '/profile/:username', templateUrl: '../websecurity/partials/profile.html', controller: 'ProfileCtrl'});
+                .state('websecurity.users', {url: '/websecurity/users', templateUrl: '../websecurity/partials/user.html', controller: 'UserCtrl'})
+                .state('websecurity.roles', {url: '/websecurity/roles', templateUrl: '../websecurity/partials/role.html', controller: 'RoleCtrl'})
+                .state('websecurity.profile', {url: '/websecurity/profile/:username', templateUrl: '../websecurity/partials/profile.html', controller: 'ProfileCtrl'});
     }]).filter('filterPagination', function() {
         return function(input, start) {
             start= +start;

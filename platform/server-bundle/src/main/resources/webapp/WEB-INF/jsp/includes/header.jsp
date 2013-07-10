@@ -39,7 +39,7 @@
                         </a>
                         <ul id="localization" class="dropdown-menu" role="menu">
                             <li ui-if="user.securityLaunch">
-                                <a href="#/profile/{{user.userName}}" tabindex="-1">
+                                <a href="#/websecurity/profile/{{user.userName}}" tabindex="-1">
                                     <i class="icon-user"></i> {{msg('profile')}}
                                 </a>
                             </li>
