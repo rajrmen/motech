@@ -14,7 +14,7 @@
     <bean id="header" class="org.motechproject.osgi.web.Header"/>
 
     <bean id="moduleRegistrationData" class="org.motechproject.osgi.web.ModuleRegistrationData">
-        <constructor-arg name="url" value="#/bundles"/>
+        <constructor-arg name="url" value="#/admin/bundles"/>
         <constructor-arg name="moduleName" value="admin"/>
         <constructor-arg name="angularModules">
             <list>
@@ -29,12 +29,12 @@
         <constructor-arg name="header" ref="header"/>
         <property name="subMenu">
             <map>
-                <entry key="manageModules" value="#/bundles"/>
-                <entry key="messages" value="#/messages"/>
-                <entry key="settings" value="#/settings"/>
-                <entry key="operations" value="#/operations"/>
-                <entry key="log" value="#/log"/>
-                <entry key="queues" value="#/queues"/>
+                <entry key="manageModules" value="#/admin/bundles"/>
+                <entry key="messages" value="#/admin/messages"/>
+                <entry key="settings" value="#/admin/settings"/>
+                <entry key="operations" value="#/admin/operations"/>
+                <entry key="log" value="#/admin/log"/>
+                <entry key="queues" value="#/admin/queues"/>
             </map>
         </property>
     </bean>

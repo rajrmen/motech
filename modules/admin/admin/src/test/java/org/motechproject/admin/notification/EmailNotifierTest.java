@@ -68,7 +68,7 @@ public class EmailNotifierTest {
 
         Assert.assertEquals(text, velocityArgumentCaptor.getValue().get("msg"));
 
-        String msgLink = "http://serverurl/module/server/?moduleName=admin#/messages";
+        String msgLink = "http://serverurl/module/server/#/admin/messages";
         Assert.assertEquals(msgLink, velocityArgumentCaptor.getValue().get("msgLink"));
         Assert.assertEquals("12/20/10 10:50 AM", velocityArgumentCaptor.getValue().get("dateTime"));
         Assert.assertEquals(moduleName, velocityArgumentCaptor.getValue().get("module"));
@@ -87,13 +87,13 @@ public class EmailNotifierTest {
     @Test
     public void shouldNotAddSchemeWhenHttpIsPartOfTheUrl() {
         when(motechSettings.getServerUrl()).thenReturn("https://serverurl");
-        assertThat(emailNotifier.messagesUrl(), IsEqual.equalTo("https://serverurl/module/server/?moduleName=admin#/messages"));
+        assertThat(emailNotifier.messagesUrl(), IsEqual.equalTo("https://serverurl/module/server/#/admin/messages"));
     }
 
     @Test
     public void shouldJustReturnUrlPathWhenServerUrlIsNotGiven() {
         when(motechSettings.getServerUrl()).thenReturn(null);
-        assertThat(emailNotifier.messagesUrl(), IsEqual.equalTo("/module/server/?moduleName=admin#/messages"));
+        assertThat(emailNotifier.messagesUrl(), IsEqual.equalTo("/module/server/#/admin/messages"));
     }
 
     private StatusMessage statusMessage(String text, DateTime datetime, String moduleName) {

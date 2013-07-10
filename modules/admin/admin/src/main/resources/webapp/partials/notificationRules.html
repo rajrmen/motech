@@ -1,6 +1,6 @@
 <div class="well2">
     <div class="box-header">{{msg('messages.notifications.title')}}
-        <a href="#/messages" class="btn btn-primary btn-in-header pull-right"><i class="icon-remove icon-white"></i></a>
+        <a href="#/admin/messages" class="btn btn-primary btn-in-header pull-right"><i class="icon-remove icon-white"></i></a>
     </div>
     <div class="box-content inside">
         <ng-form id="notificationRulesForm" name="rulesForm" novalidate>
@@ -31,7 +31,7 @@
             <div class="control-group">
                 <button class="btn btn-success" ng-click="newRule()"><i class="icon-plus icon-white"></i>&nbsp;{{msg('messages.notifications.newRule')}}</button>
                 <button class="btn btn-primary" type="button" ng-click="save()">{{msg('save')}}</button>
-                <a href="#/messages" class="btn">{{msg('cancel')}}</a>
+                <a href="#/admin/messages" class="btn">{{msg('cancel')}}</a>
             </div>
         </ng-form>
     </div>

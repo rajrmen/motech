@@ -461,7 +461,7 @@
         $scope.save = function () {
             $scope.config.$save({}, alertHandlerWithCallback('log.changedLevel', function () {
                 var loc = window.location.toString(), indexOf = loc.indexOf('#');
-                window.location = loc.substring(0, indexOf) + "#/log";
+                window.location = loc.substring(0, indexOf) + "#/admin/log";
             }), function () {
                 motechAlert('log.changedLevelError', 'error');
             });

@@ -69,7 +69,7 @@ public class AdminMappingServiceImpl implements AdminMappingService {
             for (String bundleName : bundlesWithSettings) {
                 Long bundleId = getBundleId(bundleName);
                 if (bundleId != null) {
-                    result.put(bundleName, String.format("#/bundleSettings/%s", bundleId));
+                    result.put(bundleName, String.format("#/admin/bundleSettings/%s", bundleId));
                 }
             }
 
