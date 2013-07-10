@@ -11,7 +11,7 @@
             <div class="status-message">
                 <a ng-click="remove(message)" class="btn btn-danger btn-small"><i class="icon-trash icon-white"></i></a>&nbsp;
                 <span class="msg-date">{{printDate(message.date) | date:'medium'}}</span>
-                <a ng-href="?moduleName={{message.moduleName}}"><span class="msg-level">[{{message.moduleName}}]</span></a>
+                <a ng-href="#/{{message.moduleName}}"><span class="msg-level">[{{message.moduleName}}]</span></a>
                 <span class="msg-level">[{{message.level}}]</span>: {{printText(message.text)}}
             </div>
         </div>
