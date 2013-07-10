@@ -15,7 +15,6 @@ import org.motechproject.server.startup.StartupManager;
 import org.motechproject.server.ui.LocaleSettings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -110,22 +109,6 @@ public class DashboardController {
         );
     }
 
-    @RequestMapping(value = "/getModule", method = RequestMethod.POST)
-    @ResponseBody
-    public ModuleRegistrationData getModule(@RequestBody String moduleName) {
-        ModuleRegistrationData currentModule = null;
-
-        if (StringUtils.isNotBlank(moduleName)) {
-            currentModule = uiFrameworkService.getModuleData(moduleName);
-
-            if (currentModule != null) {
-                uiFrameworkService.moduleBackToNormal(moduleName);
-            }
-        }
-
-        return currentModule;
-    }
-
     @RequestMapping(value = "/gettime", method = RequestMethod.POST)
     @ResponseBody
     public String getTime(HttpServletRequest request) {
@@ -171,11 +154,11 @@ public class DashboardController {
         return contextPath;
     }
 
-    private List<ModuleRegistrationData> filterPermittedModules(String userName, Collection<ModuleRegistrationData> modulesWithoutSubmenu) {
+    private List<ModuleRegistrationData> filterPermittedModules(String userName, Collection<ModuleRegistrationData> modules) {
         List<ModuleRegistrationData> allowedModules = new ArrayList<>();
 
-        if (modulesWithoutSubmenu != null) {
-            for (ModuleRegistrationData registrationData : modulesWithoutSubmenu) {
+        if (modules != null) {
+            for (ModuleRegistrationData registrationData : modules) {
 
                 String requiredPermissionForAccess = registrationData.getRoleForAccess();
 
@@ -195,10 +178,8 @@ public class DashboardController {
     private boolean checkUserPermission(List<String> roles, String requiredPermission) {
         for (String userRole : roles) {
             RoleDto role = roleService.getRole(userRole);
-            if (role != null) {
-                if (role.getPermissionNames() != null && role.getPermissionNames().contains(requiredPermission)) {
-                    return true;
-                }
+            if (role != null && role.getPermissionNames() != null && role.getPermissionNames().contains(requiredPermission)) {
+                return true;
             }
         }
 

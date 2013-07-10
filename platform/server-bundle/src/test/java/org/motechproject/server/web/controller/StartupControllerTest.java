@@ -6,33 +6,28 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatcher;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.motechproject.security.helper.AuthenticationMode;
 import org.motechproject.security.service.MotechUserService;
 import org.motechproject.server.config.service.PlatformSettingsService;
 import org.motechproject.server.config.settings.ConfigFileSettings;
-import org.motechproject.server.config.settings.MotechSettings;
 import org.motechproject.server.startup.StartupManager;
 import org.motechproject.server.ui.LocaleSettings;
+import org.motechproject.server.web.ex.StartupException;
 import org.motechproject.server.web.form.StartupForm;
 import org.motechproject.server.web.form.StartupSuggestionsForm;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
-import java.util.NavigableMap;
 import java.util.Properties;
-import java.util.TreeMap;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertTrue;
+import static org.hamcrest.Matchers.hasItem;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Matchers.anyString;
@@ -42,6 +37,10 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
+import static org.motechproject.security.helper.AuthenticationMode.OPEN_ID;
+import static org.motechproject.security.helper.AuthenticationMode.REPOSITORY;
+import static org.motechproject.server.config.settings.MotechSettings.AMQ_BROKER_URL;
+import static org.motechproject.server.config.settings.MotechSettings.SCHEDULER_URL;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({StartupManager.class})
@@ -86,8 +85,7 @@ public class StartupControllerTest {
 
     @Test
     public void testSubmitFormStart() {
-        StartupForm startupForm = startupForm();
-        startupForm.setLoginMode(AuthenticationMode.REPOSITORY);
+        StartupForm startupForm = startupForm(REPOSITORY);
         when(startupManager.getLoadedConfig()).thenReturn(motechSettings);
         when(startupManager.canLaunchBundles()).thenReturn(true);
 
@@ -100,8 +98,7 @@ public class StartupControllerTest {
 
     @Test
     public void testSubmitFormOpenId() {
-        StartupForm startupForm = startupForm();
-        startupForm.setLoginMode(AuthenticationMode.OPEN_ID);
+        StartupForm startupForm = startupForm(OPEN_ID);
         when(startupManager.getLoadedConfig()).thenReturn(motechSettings);
         when(startupManager.canLaunchBundles()).thenReturn(true);
 
@@ -112,17 +109,46 @@ public class StartupControllerTest {
         verify(userService, never()).register(anyString(), anyString(), anyString(), anyString(), anyListOf(String.class), any(Locale.class));
     }
 
-    private void assertModelMap(final ModelMap modelMap, String... keys) {
-        assertEquals(keys.length, modelMap.size());
-
-        for (String k : keys) {
-            assertNotNull(modelMap.get(k));
-        }
+    @Test(expected = StartupException.class)
+    public void testSubmitThrowException() {
+        startupController.submitForm(new StartupForm());
     }
 
-    private StartupForm startupForm() {
+    @Test
+    public void testCreateSuggestions() {
+        Properties properties = new Properties();
+        properties.put("host", "localhost");
+        properties.put("port", "12345");
+        properties.put(AMQ_BROKER_URL, "test__amq_url");
+        properties.put(SCHEDULER_URL, "test_scheduler_url");
+
+        when(startupManager.getLoadedConfig()).thenReturn(motechSettings);
+        when(motechSettings.getActivemqProperties()).thenReturn(properties);
+        when(motechSettings.getSchedulerProperties()).thenReturn(properties);
+
+        when(startupManager.findActiveMQInstance(properties.getProperty(AMQ_BROKER_URL))).thenReturn(false);
+        when(startupManager.findSchedulerInstance(properties.getProperty(SCHEDULER_URL))).thenReturn(false);
+
+        StartupSuggestionsForm suggestions = startupController.createSuggestions();
+
+        assertTrue(suggestions.getDatabaseUrls().isEmpty());
+        assertTrue(suggestions.getQueueUrls().isEmpty());
+        assertTrue(suggestions.getSchedulerUrls().isEmpty());
+
+        when(startupManager.findActiveMQInstance(properties.getProperty(AMQ_BROKER_URL))).thenReturn(true);
+        when(startupManager.findSchedulerInstance(properties.getProperty(SCHEDULER_URL))).thenReturn(true);
+
+        suggestions = startupController.createSuggestions();
+
+        assertTrue(suggestions.getDatabaseUrls().isEmpty());
+        assertThat(suggestions.getQueueUrls(), hasItem(properties.getProperty(AMQ_BROKER_URL)));
+        assertThat(suggestions.getSchedulerUrls(), hasItem(properties.getProperty(SCHEDULER_URL)));
+    }
+
+    private StartupForm startupForm(String loginMode) {
         StartupForm startupForm = new StartupForm();
 
+        startupForm.setLoginMode(loginMode);
         startupForm.setLanguage("en");
         startupForm.setQueueUrl("http://localhost/test_queue_url");
         startupForm.setSchedulerUrl("http://localhost/test_scheduler_url");

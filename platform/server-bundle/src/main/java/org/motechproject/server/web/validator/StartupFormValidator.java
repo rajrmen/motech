@@ -4,7 +4,6 @@ import org.apache.commons.validator.EmailValidator;
 import org.apache.commons.validator.UrlValidator;
 import org.motechproject.security.helper.AuthenticationMode;
 import org.motechproject.server.web.form.StartupForm;
-import org.motechproject.server.web.form.StartupSuggestionsForm;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
@@ -26,7 +25,7 @@ public class StartupFormValidator implements Validator {
 
     @Override
     public boolean supports(Class<?> clazz) {
-        return StartupForm.class.equals(clazz) || StartupSuggestionsForm.class.equals(clazz);
+        return StartupForm.class.equals(clazz);
     }
 
     @Override
