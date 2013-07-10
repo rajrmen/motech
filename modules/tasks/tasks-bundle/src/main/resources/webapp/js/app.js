@@ -9,10 +9,10 @@
         function ($stateProvider) {
             $stateProvider
                 .state('tasks', {abstract: true, templateUrl: '../tasks/index.html'})
-                .state('tasks.dashboard', {url: '/dashboard', templateUrl: '../tasks/partials/tasks.html', controller: 'DashboardCtrl'})
-                .state('tasks.taskNew', {url: '/task/new', templateUrl: '../tasks/partials/form.html', controller: 'ManageTaskCtrl'})
-                .state('tasks.taskEdit', {url: '/task/:taskId/edit', templateUrl: '../tasks/partials/form.html', controller: 'ManageTaskCtrl'})
-                .state('tasks.taskLog', {url: '/task/:taskId/log', templateUrl: '../tasks/partials/history.html', controller: 'LogCtrl'})
-                .state('tasks.settings', {url: '/settings', templateUrl: '../tasks/partials/settings.html', controller: 'SettingsCtrl'});
+                .state('tasks.dashboard', {url: '/tasks/dashboard', templateUrl: '../tasks/partials/tasks.html', controller: 'DashboardCtrl'})
+                .state('tasks.taskNew', {url: '/tasks/task/new', templateUrl: '../tasks/partials/form.html', controller: 'ManageTaskCtrl'})
+                .state('tasks.taskEdit', {url: '/tasks/task/:taskId/edit', templateUrl: '../tasks/partials/form.html', controller: 'ManageTaskCtrl'})
+                .state('tasks.taskLog', {url: '/tasks/task/:taskId/log', templateUrl: '../tasks/partials/history.html', controller: 'LogCtrl'})
+                .state('tasks.settings', {url: '/tasks/settings', templateUrl: '../tasks/partials/settings.html', controller: 'SettingsCtrl'});
         }]);
 }());

@@ -708,7 +708,7 @@
                         loc = window.location.toString();
                         indexOf = loc.indexOf('#');
 
-                        window.location = "{0}#/dashboard".format(loc.substring(0, indexOf));
+                        window.location = "{0}#/tasks/dashboard".format(loc.substring(0, indexOf));
                     });
                 },
                 error = function (response) {
