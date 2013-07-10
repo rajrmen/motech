@@ -58,7 +58,7 @@
                 function success(response) {
                     $scope.isSuccess = true;
                     $scope.errors = [];
-                    window.location = "#/";
+                    window.location = "#/event-aggregation/rules";
                 },
                 function error(response) {
                     $scope.errors = response.data;
