@@ -49,7 +49,7 @@
                 $.post('gettime', function(time) {
                      $(element).text(time);
                 });
-            }
+            };
 
             getTime();
             window.setInterval(getTime, 60000);
@@ -62,7 +62,7 @@
                 $.post('getUptime', function(time) {
                      $(element).text(moment(time).fromNow());
                 });
-            }
+            };
 
             getUptime();
             window.setInterval(getUptime, 60000);

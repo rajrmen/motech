@@ -14,7 +14,6 @@ import org.motechproject.server.startup.MotechPlatformState;
 import org.motechproject.server.startup.StartupManager;
 import org.motechproject.server.ui.LocaleSettings;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -54,9 +53,6 @@ public class DashboardController {
     private LocaleSettings localeSettings;
 
     @Autowired
-    private MessageSource messageSource;
-
-    @Autowired
     private MotechUserService userService;
 
     @Autowired
@@ -66,7 +62,7 @@ public class DashboardController {
     private PlatformSettingsService settingsService;
 
 
-    @RequestMapping(value = {"/index", "/", "/home", "/login", "/accessdenied"}, method = RequestMethod.GET)
+    @RequestMapping(value = { "/index", "/", "/home", "/login", "/accessdenied" }, method = RequestMethod.GET)
     public ModelAndView index(HttpServletRequest request) {
         ModelAndView view = new ModelAndView("index");
         String page = "home";

@@ -85,88 +85,31 @@ public class StartupControllerTest {
     }
 
     @Test
-    public void testStartup() {
-        Properties properties = new Properties();
-        properties.put("host", "localhost");
-        properties.put("port", "12345");
-        properties.put(MotechSettings.AMQ_BROKER_URL, "test_url");
-        properties.put(MotechSettings.SCHEDULER_URL, "test_url");
-
-        NavigableMap<String, String> map = new TreeMap<>();
-
-        when(startupManager.canLaunchBundles()).thenReturn(false);
-        when(startupManager.findCouchDBInstance(anyString())).thenReturn(false);
-        when(startupManager.findActiveMQInstance(anyString())).thenReturn(false);
-        when(startupManager.findSchedulerInstance(anyString())).thenReturn(false);
-        when(startupManager.getLoadedConfig()).thenReturn(motechSettings);
-
-        when(motechSettings.getActivemqProperties()).thenReturn(properties);
-        when(motechSettings.getSchedulerProperties()).thenReturn(properties);
-
-        when(localeSettings.getUserLocale(httpServletRequest)).thenReturn(new Locale("en"));
-        when(localeSettings.getAvailableLanguages()).thenReturn(map);
-
-        ModelAndView result = startupController.startup(httpServletRequest);
-
-        verify(startupManager).canLaunchBundles();
-        verify(localeSettings).getAvailableLanguages();
-        verify(localeSettings).getUserLocale(httpServletRequest);
-
-        assertEquals("startup", result.getViewName());
-        assertModelMap(result.getModelMap(), SUGGESTIONS_KEY, STARTUP_SETTINGS_KEY, LANGUAGES_KEY, PAGE_LANG_KEY);
-
-        StartupSuggestionsForm startupSuggestionsForm = (StartupSuggestionsForm) result.getModelMap().get(SUGGESTIONS_KEY);
-
-        assertTrue(startupSuggestionsForm.getDatabaseUrls().isEmpty());
-        assertTrue(startupSuggestionsForm.getQueueUrls().isEmpty());
-        assertTrue(startupSuggestionsForm.getSchedulerUrls().isEmpty());
-
-        StartupForm startupSettings = (StartupForm) result.getModelMap().get(STARTUP_SETTINGS_KEY);
-
-        assertEquals("en", startupSettings.getLanguage());
-    }
-
-    @Test
-    public void testStartupRedirectToHome() {
-        when(startupManager.canLaunchBundles()).thenReturn(true);
-        ModelAndView result = startupController.startup(httpServletRequest);
-
-        assertEquals("redirect:home", result.getViewName());
-    }
-
-
-    @Test
     public void testSubmitFormStart() {
         StartupForm startupForm = startupForm();
         startupForm.setLoginMode(AuthenticationMode.REPOSITORY);
-        when(bindingResult.hasErrors()).thenReturn(false);
         when(startupManager.getLoadedConfig()).thenReturn(motechSettings);
         when(startupManager.canLaunchBundles()).thenReturn(true);
 
-        ModelAndView result = startupController.submitForm(startupForm, bindingResult);
+        startupController.submitForm(startupForm);
 
         verify(platformSettingsService).savePlatformSettings(any(Properties.class));
         verify(startupManager).startup();
         verifyUserRegistration();
-
-        assertEquals("redirect:home", result.getViewName());
     }
 
     @Test
     public void testSubmitFormOpenId() {
         StartupForm startupForm = startupForm();
         startupForm.setLoginMode(AuthenticationMode.OPEN_ID);
-        when(bindingResult.hasErrors()).thenReturn(false);
         when(startupManager.getLoadedConfig()).thenReturn(motechSettings);
         when(startupManager.canLaunchBundles()).thenReturn(true);
 
-        ModelAndView result = startupController.submitForm(startupForm, bindingResult);
+        startupController.submitForm(startupForm);
 
         verify(platformSettingsService).savePlatformSettings(any(Properties.class));
         verify(startupManager).startup();
         verify(userService, never()).register(anyString(), anyString(), anyString(), anyString(), anyListOf(String.class), any(Locale.class));
-
-        assertEquals("redirect:home", result.getViewName());
     }
 
     private void assertModelMap(final ModelMap modelMap, String... keys) {
@@ -181,14 +124,14 @@ public class StartupControllerTest {
         StartupForm startupForm = new StartupForm();
 
         startupForm.setLanguage("en");
-        startupForm.setQueueUrl("test_queue_url");
-        startupForm.setSchedulerUrl("test_scheduler_url");
+        startupForm.setQueueUrl("http://localhost/test_queue_url");
+        startupForm.setSchedulerUrl("http://localhost/test_scheduler_url");
         startupForm.setAdminLogin("motech");
         startupForm.setAdminEmail("motech@motech.com");
         startupForm.setAdminPassword("motech");
         startupForm.setAdminConfirmPassword("motech");
         startupForm.setProviderName("Provider");
-        startupForm.setProviderUrl("test_provider_url");
+        startupForm.setProviderUrl("http://127.0.0.1/test_provider_url");
 
         return startupForm;
     }

@@ -5,7 +5,6 @@ import org.motechproject.server.config.service.PlatformSettingsService;
 import org.motechproject.server.config.settings.ConfigFileSettings;
 import org.motechproject.server.config.settings.MotechSettings;
 import org.motechproject.server.startup.StartupManager;
-import org.motechproject.server.ui.LocaleSettings;
 import org.motechproject.server.web.ex.StartupException;
 import org.motechproject.server.web.form.StartupForm;
 import org.motechproject.server.web.form.StartupSuggestionsForm;
@@ -42,9 +41,6 @@ public class StartupController {
 
     @Autowired
     private PlatformSettingsService platformSettingsService;
-
-    @Autowired
-    private LocaleSettings localeSettings;
 
     @Autowired
     private MotechUserService userService;

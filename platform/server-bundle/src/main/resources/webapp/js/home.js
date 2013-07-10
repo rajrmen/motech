@@ -1,4 +1,6 @@
 angular.element(document).ready(function () {
+    'use strict';
+
     $.when(
         $.post('getModulesWithoutSubMenu'),
         $.post('getModulesWithSubMenu')
@@ -12,11 +14,7 @@ angular.element(document).ready(function () {
                 loaded += 1;
 
                 if (toLoad === loaded && angularModules.length > 0) {
-                    try {
-                        angular.bootstrap(document, angularModules);
-                    } catch (err) {
-                        alert(err.message);
-                    }
+                    angular.bootstrap(document, angularModules);
                 }
             };
 
