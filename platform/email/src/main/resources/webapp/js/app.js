@@ -7,7 +7,7 @@
         function ($stateProvider) {
             $stateProvider
                 .state('email', {abstract: true, templateUrl: '../email/resources/index.html'})
-                .state('email.send', {url: '/send', templateUrl: '../email/resources/partials/sendEmail.html', controller: 'SendEmailController'})
-                .state('email.settings', {url: '/settings', templateUrl: '../email/resources/partials/settings.html', controller: 'SettingsController'});
+                .state('email.send', {url: '/email/send', templateUrl: '../email/resources/partials/sendEmail.html', controller: 'SendEmailController'})
+                .state('email.settings', {url: '/email/settings', templateUrl: '../email/resources/partials/settings.html', controller: 'SettingsController'});
     }]);
 }());
