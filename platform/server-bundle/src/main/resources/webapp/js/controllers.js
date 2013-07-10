@@ -189,6 +189,20 @@
             moment.lang($scope.user.lang);
             $scope.loadI18n($scope.user.lang);
         });
+
+        $scope.$on('lang.refresh', function () {
+            $q.all([
+                $scope.doAJAXHttpRequest('GET', 'lang/locate', function (data) {
+                    $scope.i18n = data;
+                }), $scope.doAJAXHttpRequest('GET', 'lang/list', function (data) {
+                    $scope.languages = data;
+                })
+            ]).then(function () {
+                $scope.userLang = $scope.getLanguage(toLocale($scope.user.lang));
+                moment.lang($scope.user.lang);
+                $scope.loadI18n($scope.user.lang);
+            });
+        });
     });
 
     serverModule.controller('MasterCtrl', function ($scope, $cookieStore, $q) {

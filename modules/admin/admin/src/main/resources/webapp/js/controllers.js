@@ -6,7 +6,7 @@
 
     var adminModule = angular.module('motech-admin');
 
-    adminModule.controller('BundleListCtrl', function($scope, Bundle, i18nService, $stateParams, $http) {
+    adminModule.controller('BundleListCtrl', function($scope, Bundle, i18nService, $stateParams, $http, $timeout) {
 
         var LOADING_STATE = 'LOADING';
 
@@ -133,9 +133,22 @@
         };
 
         $scope.startBundle = function (bundle) {
+            var previousState = bundle.state;
+
             bundle.state = LOADING_STATE;
             bundle.$start(function () {
-                $scope.refreshModuleList();
+                blockUI();
+
+                $timeout(function () {
+                    if (previousState === 'INSTALLED') {
+                        location.reload();
+                    } else {
+                        $scope.$emit('lang.refresh');
+                        $scope.refreshModuleList();
+                    }
+
+                    unblockUI();
+                }, 2.5 * 1000);
             }, function (response) {
                 bundle.state = 'RESOLVED';
                 handleWithStackTrace('error', 'bundles.error.start', response);
@@ -200,17 +213,22 @@
         $scope.submitBundle = function () {
             blockUI();
             $('#bundleUploadForm').ajaxSubmit({
-                success:function (data, textStatus, jqXHR) {
+                success: function (data, textStatus, jqXHR) {
                     if (jqXHR.status === 0 && data) {
                         handleWithStackTrace('error', 'bundles.error.start', data);
                         unblockUI();
                     } else {
-                        $scope.bundles = Bundle.query();
-                        $scope.refreshModuleList();
+                        if ($('#bundleUploadForm #startBundle').is(':checked')) {
+                            $timeout(function () {
+                                location.reload();
+                            }, 2.5 * 1000);
+                        } else {
+                            $scope.bundles = Bundle.query();
+                            unblockUI();
+                        }
                     }
-    //              unblockUI();
                 },
-                error:function (response) {
+                error: function (response) {
                     handleWithStackTrace('error', 'bundles.error.start', response);
                     unblockUI();
                 }

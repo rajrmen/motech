@@ -5,12 +5,13 @@ angular.element(document).ready(function () {
     ).done(function (data1, data2) {
         var modules = $.merge($.merge([], data1[0]), data2[0]),
             toLoad = 0,
+            loaded = 0,
             angularModules = ['motech-dashboard'],
             header = [],
             onLoad = function () {
-                toLoad -= 1;
+                loaded += 1;
 
-                if (toLoad <= 0 && angularModules.length > 0) {
+                if (toLoad === loaded && angularModules.length > 0) {
                     try {
                         angular.bootstrap(document, angularModules);
                     } catch (err) {
