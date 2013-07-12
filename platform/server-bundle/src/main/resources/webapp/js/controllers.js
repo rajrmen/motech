@@ -262,16 +262,14 @@
         });
     });
 
-    serverModule.controller('StartupCtrl', function ($scope, $http) {
+    serverModule.controller('StartupCtrl', function ($scope, $http, $q) {
         $scope.suggestions = {};
-        $scope.settings = {
-            language: $scope.user.lang
-        };
+        $scope.settings = {};
 
         $scope.saveSettings = function () {
             $http({ method: 'POST', url: 'startup', data: $scope.settings })
                 .success(function () {
-                    angular.element("body").scope().pageToLoad = 'login.html';
+                    location.reload();
                 })
                 .error(function (response) {
                     var data = (response && response.data) || response,
@@ -285,9 +283,14 @@
                 });
         };
 
-        $scope.doAJAXHttpRequest('GET', 'startup/suggestions', function (data) {
-            $scope.suggestions = data;
-        });
+        $q.all([
+            $scope.doAJAXHttpRequest('GET', 'startup/suggestions', function (data) {
+                $scope.suggestions = data;
+            }),
+            $scope.doAJAXHttpRequest('GET', 'lang', function (data) {
+                $scope.settings.language = data;
+            })
+        ]);
 
     });
 
