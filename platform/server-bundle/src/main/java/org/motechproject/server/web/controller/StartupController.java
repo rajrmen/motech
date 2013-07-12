@@ -71,7 +71,7 @@ public class StartupController {
             if (REPOSITORY.equals(form.getLoginMode())) {
                 userService.register(
                         form.getAdminLogin(), form.getAdminPassword(), form.getAdminEmail(),
-                        null, asList("Admin User", "Admin Bundle"), new Locale(form.getLanguage())
+                        null, asList("User Admin", "Admin Bundle"), new Locale(form.getLanguage())
                 );
             }
 
