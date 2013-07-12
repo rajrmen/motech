@@ -5,14 +5,12 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <%@include file="includes/head.jsp" %>
+    <%@include file="head.jsp" %>
 </head>
 
 <body ng-class="showDashboardLogo.backgroudUpDown()" ng-controller="RootCtrl">
 <div id="app-content">
-    <div id="content-header" style="display: none;">
-        <%@include file="includes/header.jsp" %>
-    </div>
+    <div id="content-header" style="display: none;" ng-include="'../server/resources/partials/header.html'"></div>
 
     <div id="splash" class="splash">
         <div class="splash-logo"></div>
@@ -24,16 +22,16 @@
     <div id="content-template" style="display: none;">
         <c:choose>
             <c:when test="${pageToLoad == 'startup'}">
-                <%@include file="includes/startup.jsp" %>
+                <div ng-include="'../server/resources/partials/startup.html'"></div>
             </c:when>
             <c:when test="${pageToLoad == 'login'}">
-                <%@include file="includes/login.jsp" %>
+                <div ng-include="'../server/resources/partials/login.html'"></div>
             </c:when>
             <c:when test="${pageToLoad == 'home'}">
-                <%@include file="includes/home.jsp" %>
+                <div ng-include="'../server/resources/partials/home.html'"></div>
             </c:when>
             <c:when test="${pageToLoad == 'accessdenied'}">
-                <%@include file="includes/accessdenied.jsp" %>
+                <div ng-include="'../server/resources/partials/accessdenied.html'"></div>
             </c:when>
         </c:choose>
 
