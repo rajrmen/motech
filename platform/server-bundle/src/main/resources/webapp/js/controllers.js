@@ -225,6 +225,10 @@
 
                 scope.user = data;
                 scope.user.anonymous = false;
+
+                if (!$scope.$$phase) {
+                    $scope.$apply(scope.user);
+                }
             })
         ]).then(function () {
             $scope.userLang = $scope.getLanguage(toLocale($scope.user.lang));
