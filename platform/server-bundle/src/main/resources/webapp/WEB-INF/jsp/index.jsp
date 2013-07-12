@@ -58,8 +58,8 @@
     <script src="resources/lib/jquery-cron/jquery-gentleSelect.js" type="text/javascript"></script>
     <script src="resources/lib/jquery-cron/jquery-cron.js " type="text/javascript"></script>
 
-    <script src="resources/lib/moment/moment.min.js" type="text/javascript"></script>
-    <script src="resources/lib/moment/langs.js " type="text/javascript"></script>
+    <script src="resources/lib/moment/moment.js" type="text/javascript"></script>
+    <script src="resources/lib/moment/langs.js" type="text/javascript"></script>
 
     <script src="resources/lib/parseuri/parseuri.js" type="text/javascript"></script>
 
