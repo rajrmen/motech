@@ -20,7 +20,6 @@
         $scope.languages = [];
         $scope.contextPath = '';
         $scope.userLang = {};
-        $scope.pageToLoad = '';
         $scope.pagedItems = [];
         $scope.currentPage = 0;
 
