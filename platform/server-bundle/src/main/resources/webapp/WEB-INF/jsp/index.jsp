@@ -63,6 +63,8 @@
 
     <script src="resources/lib/parseuri/parseuri.js" type="text/javascript"></script>
 
+    <script src="resources/lib/head/head.min.js" type="text/javascript"></script>
+
     <script src="resources/js/app.js" type="text/javascript"></script>
     <script src="resources/js/util.js" type="text/javascript"></script>
     <script src="resources/js/common.js" type="text/javascript"></script>
