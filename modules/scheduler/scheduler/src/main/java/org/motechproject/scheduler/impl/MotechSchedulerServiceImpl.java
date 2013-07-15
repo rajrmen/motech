@@ -12,10 +12,12 @@ import org.motechproject.scheduler.domain.CronJobId;
 import org.motechproject.scheduler.domain.CronSchedulableJob;
 import org.motechproject.scheduler.domain.DayOfWeekSchedulableJob;
 import org.motechproject.scheduler.domain.JobId;
-import org.motechproject.scheduler.domain.RepeatingJobId;
 import org.motechproject.scheduler.domain.RepeatingSchedulableJob;
-import org.motechproject.scheduler.domain.RunOnceJobId;
 import org.motechproject.scheduler.domain.RunOnceSchedulableJob;
+import org.motechproject.scheduler.domain.JobBasicInfo;
+import org.motechproject.scheduler.domain.JobDetailedInfo;
+import org.motechproject.scheduler.domain.RepeatingJobId;
+import org.motechproject.scheduler.domain.RunOnceJobId;
 import org.motechproject.scheduler.exception.MotechSchedulerException;
 import org.motechproject.scheduler.factory.MotechSchedulerFactoryBean;
 import org.motechproject.server.config.SettingsFacade;
@@ -32,6 +34,8 @@ import org.quartz.SimpleTrigger;
 import org.quartz.Trigger;
 import org.quartz.TriggerKey;
 import org.quartz.TriggerUtils;
+import org.quartz.JobKey;
+import org.quartz.JobExecutionContext;
 import org.quartz.impl.calendar.BaseCalendar;
 import org.quartz.impl.matchers.GroupMatcher;
 import org.quartz.impl.triggers.CronTriggerImpl;
@@ -685,6 +689,64 @@ public class MotechSchedulerServiceImpl implements MotechSchedulerService {
     }
 
     @Override
+    public List<JobBasicInfo> getScheduledJobsBasicInfo() {
+        List<JobBasicInfo> result = new ArrayList<>();
+
+        try {
+            List<JobExecutionContext> runningJobs = scheduler.getCurrentlyExecutingJobs();
+
+            for (String groupName : scheduler.getJobGroupNames()) {
+                for (JobKey jobKey : scheduler.getJobKeys(GroupMatcher.jobGroupEquals(groupName))) {
+                    List<Trigger> triggers = (List<Trigger>) scheduler.getTriggersOfJob(jobKey);
+                    String activity = "UNKNOWN";
+                    String jobName = jobKey.getName();
+                    Date startDate = triggers.get(0).getStartTime();
+
+                    if (isJobCurrentlyRunning(jobKey, runningJobs)) {
+                        activity = "NOW";
+                    } else if (triggers.get(0).getNextFireTime() == null) {
+                        activity = "FINISHED";
+                    } else if (triggers.get(0).getNextFireTime().after(new Date())) {
+                        activity = "LATER";
+                    }
+
+                    result.add(
+                            new JobBasicInfo(activity, "", jobName, startDate, "")
+                    );
+                }
+            }
+        } catch(Exception e) {
+            logger.error(e.getMessage());
+        }
+
+        return result;
+    }
+
+    @Override
+    public JobDetailedInfo getScheduledJobDetailedInfo(JobBasicInfo jobBasicInfo) {
+        JobDetailedInfo jobDetailedInfo = new JobDetailedInfo(jobBasicInfo);
+        Map<String, Object> parameters = null;
+
+        try {
+            for (String groupName : scheduler.getJobGroupNames()) {
+                for (JobKey jobKey : scheduler.getJobKeys(GroupMatcher.jobGroupEquals(groupName))) {
+                    if (jobKey.getName().equals(jobBasicInfo.getName())) {
+                        parameters = scheduler.getJobDetail(jobKey).getJobDataMap().getWrappedMap();
+
+                        jobDetailedInfo.setSubject(parameters.get(MotechEvent.EVENT_TYPE_KEY_NAME).toString());
+                        parameters.remove(MotechEvent.EVENT_TYPE_KEY_NAME);
+                    }
+                }
+            }
+        } catch(Exception e) {
+            logger.error(e.getMessage());
+        }
+
+        jobDetailedInfo.setParameters(parameters);
+        return jobDetailedInfo;
+    }
+
+    @Override
     public void unscheduleAllJobs(String jobIdPrefix) {
         try {
             if (logger.isDebugEnabled()) {
@@ -724,6 +786,16 @@ public class MotechSchedulerServiceImpl implements MotechSchedulerService {
             names.add(key.getName());
         }
         return names;
+    }
+
+    private boolean isJobCurrentlyRunning(JobKey jobKey, List<JobExecutionContext> jobs) {
+        for (JobExecutionContext jobExecutionContext : jobs) {
+            if (jobExecutionContext.getTrigger().getJobKey().equals(jobKey)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     protected void assertArgumentNotNull(String objectName, Object object) {
