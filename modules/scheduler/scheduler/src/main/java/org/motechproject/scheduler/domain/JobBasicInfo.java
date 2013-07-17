@@ -4,6 +4,7 @@ import java.util.Date;
 
 public class JobBasicInfo {
     private String activity;
+    private String status;
     private String name;
     private Date startDate;
     private Date nextFireDate;
@@ -14,13 +15,22 @@ public class JobBasicInfo {
 
     }
 
-    public JobBasicInfo(String activity, String name, Date startDate, Date nextFireDate, Date endDate, String info) {
+    public JobBasicInfo(String activity, String status, String name, Date startDate, Date nextFireDate, Date endDate, String info) {
         this.activity = activity;
+        this.status = status;
         this.name = name;
         this.startDate = startDate;
         this.nextFireDate = nextFireDate;
         this.endDate = endDate;
         this.info = info;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public String getActivity() {

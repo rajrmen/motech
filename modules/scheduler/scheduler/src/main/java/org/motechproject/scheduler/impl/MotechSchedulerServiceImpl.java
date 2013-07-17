@@ -702,11 +702,22 @@ public class MotechSchedulerServiceImpl implements MotechSchedulerService {
                     String activity;
                     String jobName;
                     String info;
+                    String status;
                     Date startDate = triggers.get(0).getStartTime();
                     Date nextFireDate = triggers.get(0).getNextFireTime();
                     Date endDate = triggers.get(0).getEndTime();
 
                     jobName = jobKey.getName();
+
+                    if (scheduler.getTriggerState(triggers.get(0).getKey()) == Trigger.TriggerState.ERROR) {
+                        status = "ERROR";
+                    } else if (scheduler.getTriggerState(triggers.get(0).getKey()) == Trigger.TriggerState.BLOCKED) {
+                        status = "BLOCKED";
+                    } else if (scheduler.getTriggerState(triggers.get(0).getKey()) == Trigger.TriggerState.PAUSED) {
+                        status = "PAUSED";
+                    } else {
+                        status = "OK";
+                    }
 
                     if (isJobCurrentlyRunning(jobKey, runningJobs)) {
                         activity = "NOW";
@@ -733,7 +744,7 @@ public class MotechSchedulerServiceImpl implements MotechSchedulerService {
                     }
 
                     result.add(
-                            new JobBasicInfo(activity, jobName, startDate, nextFireDate, endDate, info)
+                            new JobBasicInfo(activity, status, jobName, startDate, nextFireDate, endDate, info)
                     );
                 }
             }
@@ -759,6 +770,8 @@ public class MotechSchedulerServiceImpl implements MotechSchedulerService {
                             jobDetailedInfo.setEventName(parameters.get(MotechEvent.EVENT_TYPE_KEY_NAME).toString());
                             parameters.remove(MotechEvent.EVENT_TYPE_KEY_NAME);
                         }
+
+                        parameters.put("JOB_CLASS", scheduler.getJobDetail(jobKey).getJobClass().getName());
 
                         jobDetailedInfo.setSubject(jobKey.getName().substring(0, jobKey.getName().indexOf('-')));
                     }
