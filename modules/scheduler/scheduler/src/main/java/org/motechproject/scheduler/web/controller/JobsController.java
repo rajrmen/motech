@@ -3,8 +3,6 @@ package org.motechproject.scheduler.web.controller;
 import org.motechproject.scheduler.MotechSchedulerService;
 import org.motechproject.scheduler.domain.JobBasicInfo;
 import org.motechproject.scheduler.domain.JobDetailedInfo;
-import org.motechproject.scheduler.domain.JobBasicInfo;
-import org.motechproject.scheduler.domain.JobDetailedInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;

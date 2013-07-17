@@ -163,7 +163,6 @@ public class MotechSchedulerServiceImpl implements MotechSchedulerService {
                 .withSchedule(cronSchedule)
                 .startAt(newStartTime)
                 .endAt(cronSchedulableJob.getEndTime())
-                .withDescription(cronSchedulableJob.getCronExpression())
                 .build();
         }
 
@@ -699,14 +698,9 @@ public class MotechSchedulerServiceImpl implements MotechSchedulerService {
             for (String groupName : scheduler.getJobGroupNames()) {
                 for (JobKey jobKey : scheduler.getJobKeys(GroupMatcher.jobGroupEquals(groupName))) {
                     List<Trigger> triggers = (List<Trigger>) scheduler.getTriggersOfJob(jobKey);
-                    String activity;
-                    String jobName;
-                    String info;
+                    String activity = "UNKNOWN";
+                    String jobName = jobKey.getName();
                     Date startDate = triggers.get(0).getStartTime();
-                    Date nextFireDate = triggers.get(0).getNextFireTime();
-                    Date endDate = triggers.get(0).getEndTime();
-
-                    jobName = jobKey.getName();
 
                     if (isJobCurrentlyRunning(jobKey, runningJobs)) {
                         activity = "NOW";
@@ -714,26 +708,10 @@ public class MotechSchedulerServiceImpl implements MotechSchedulerService {
                         activity = "FINISHED";
                     } else if (triggers.get(0).getNextFireTime().after(new Date())) {
                         activity = "LATER";
-                    } else {
-                        activity = "UNKNOWN";
-                    }
-
-                    if (jobName.endsWith(RunOnceJobId.SUFFIX_RUNONCEJOBID)) {
-                        jobName = jobName.substring(
-                                0, jobName.length() - RunOnceJobId.SUFFIX_RUNONCEJOBID.length()
-                        );
-                        info = "RUNONCE";
-                    } else if (jobName.endsWith(RepeatingJobId.SUFFIX_REPEATJOBID)) {
-                        jobName = jobName.substring(
-                                0, jobName.length() - RepeatingJobId.SUFFIX_REPEATJOBID.length()
-                        );
-                        info = "REPEAT";
-                    } else {
-                        info = triggers.get(0).getDescription();
                     }
 
                     result.add(
-                            new JobBasicInfo(activity, jobName, startDate, nextFireDate, endDate, info)
+                            new JobBasicInfo(activity, "", jobName, startDate, "")
                     );
                 }
             }
@@ -752,15 +730,11 @@ public class MotechSchedulerServiceImpl implements MotechSchedulerService {
         try {
             for (String groupName : scheduler.getJobGroupNames()) {
                 for (JobKey jobKey : scheduler.getJobKeys(GroupMatcher.jobGroupEquals(groupName))) {
-                    if (jobKey.getName().contains(jobBasicInfo.getName())) {
+                    if (jobKey.getName().equals(jobBasicInfo.getName())) {
                         parameters = scheduler.getJobDetail(jobKey).getJobDataMap().getWrappedMap();
 
-                        if (parameters.containsKey(MotechEvent.EVENT_TYPE_KEY_NAME)) {
-                            jobDetailedInfo.setEventName(parameters.get(MotechEvent.EVENT_TYPE_KEY_NAME).toString());
-                            parameters.remove(MotechEvent.EVENT_TYPE_KEY_NAME);
-                        }
-
-                        jobDetailedInfo.setSubject(jobKey.getName().substring(0, jobKey.getName().indexOf('-')));
+                        jobDetailedInfo.setSubject(parameters.get(MotechEvent.EVENT_TYPE_KEY_NAME).toString());
+                        parameters.remove(MotechEvent.EVENT_TYPE_KEY_NAME);
                     }
                 }
             }
