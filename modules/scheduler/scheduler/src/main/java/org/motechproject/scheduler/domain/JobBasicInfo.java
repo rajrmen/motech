@@ -4,20 +4,22 @@ import java.util.Date;
 
 public class JobBasicInfo {
     private String activity;
-    private String status;
     private String name;
     private Date startDate;
+    private Date nextFireDate;
+    private Date endDate;
     private String info;
 
     public JobBasicInfo() {
 
     }
 
-    public JobBasicInfo(String activity, String status, String name, Date startDate, String info) {
+    public JobBasicInfo(String activity, String name, Date startDate, Date nextFireDate, Date endDate, String info) {
         this.activity = activity;
-        this.status = status;
         this.name = name;
         this.startDate = startDate;
+        this.nextFireDate = nextFireDate;
+        this.endDate = endDate;
         this.info = info;
     }
 
@@ -27,14 +29,6 @@ public class JobBasicInfo {
 
     public void setActivity(String activity) {
         this.activity = activity;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
     }
 
     public String getName() {
@@ -51,6 +45,22 @@ public class JobBasicInfo {
 
     public void setStartDate(Date startDate) {
         this.startDate = startDate;
+    }
+
+    public Date getNextFireDate() {
+        return nextFireDate;
+    }
+
+    public void setNextFireDate(Date nextFireDate) {
+        this.nextFireDate = nextFireDate;
+    }
+
+    public Date getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
     }
 
     public String getInfo() {
