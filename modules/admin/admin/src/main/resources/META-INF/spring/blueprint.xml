@@ -39,7 +39,6 @@
         </property>
     </bean>
 
-
     <osgi:service id="statusMessageServiceOsgi" auto-export="interfaces"
                   ref="statusMessageService" interface="org.motechproject.admin.service.StatusMessageService" />
 
@@ -63,5 +62,7 @@
                     availability="optional"/>
 
     <osgi:reference id="mailSender" interface="org.motechproject.email.service.EmailSenderService"/>
+
+    <osgi:reference id="motechSchedulerService" interface="org.motechproject.scheduler.MotechSchedulerService" />
 
 </beans>

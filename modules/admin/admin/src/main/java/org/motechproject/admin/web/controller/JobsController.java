@@ -1,8 +1,9 @@
-package org.motechproject.scheduler.web.controller;
+package org.motechproject.admin.web.controller;
 
 import org.motechproject.scheduler.MotechSchedulerService;
 import org.motechproject.scheduler.domain.JobBasicInfo;
 import org.motechproject.scheduler.domain.JobDetailedInfo;
+import org.motechproject.server.config.service.PlatformSettingsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
@@ -15,7 +16,6 @@ import java.util.List;
 @Controller
 public class JobsController {
     @Autowired
-    @Qualifier("schedulerService")
     private MotechSchedulerService motechSchedulerService;
 
     @RequestMapping({ "/jobs" })
