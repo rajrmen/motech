@@ -8,37 +8,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>MOTECH - Mobile Technology for Community Health</title>
-    <link rel="stylesheet" type="text/css" href="../server/resources/css/bootstrap.css">
-    <link rel="stylesheet" type="text/css" href="../server/resources/css/bootstrap-responsive.css">
-    <link rel="stylesheet" type="text/css" href="../server/resources/css/index.css" />
-
-    <script src="../server/resources/lib/jquery/jquery-1.8.2.min.js" type="text/javascript"></script>
-    <script src="../server/resources/lib/jquery/jquery.form.js" type="text/javascript"></script>
-    <script src="../server/resources/lib/jquery/jquery-ui.min.js" type="text/javascript"></script>
-    <script src="../server/resources/lib/jquery/jquery.alerts.js" type="text/javascript"></script>
-    <script src="../server/resources/lib/jquery/jquery.i18n.properties-min-1.0.9.js" type="text/javascript"></script>
-    <script src="../server/resources/lib/jquery/jquery.tools.min.js" type="text/javascript"></script>
-    <script src="../server/resources/lib/jquery/jquery.blockUI.js" type="text/javascript"></script>
-
-    <script src="../server/resources/lib/angular/angular.min.js" type="text/javascript"></script>
-    <script src="../server/resources/lib/angular/angular-resource.min.js" type="text/javascript"></script>
-    <script src="../server/resources/lib/angular/angular-cookies.min.js" type="text/javascript"></script>
-    <script src="../server/resources/lib/angular/angular-bootstrap.js" type="text/javascript"></script>
-    <script src="../server/resources/lib/angular/angular-ui.min.js" type="text/javascript"></script>
-
-    <script src="../server/resources/lib/bootstrap/bootstrap.min.js" type="text/javascript"></script>
-
-    <script src="../server/resources/js/app.js" type="text/javascript"></script>
-    <script src="../server/resources/js/util.js" type="text/javascript"></script>
-    <script src="../server/resources/js/common.js" type="text/javascript"></script>
-    <script src="../server/resources/js/localization.js" type="text/javascript"></script>
-    <script src="../server/resources/js/directives.js" type="text/javascript"></script>
-    <script src="../server/resources/js/controllers.js" type="text/javascript"></script>
-
+    <%@include file="head.jsp" %>
     <script src="../server/resources/js/startup.js" type="text/javascript"></script>
-    <script src="../server/resources/js/dashboard.js" type="text/javascript"></script>
 
     <script type="text/javascript">
         $(window).load(function() {
@@ -66,7 +37,7 @@
                         <label class="control-label"><fmt:message key="select.language" bundle="${bundle}"/></label>
                         <div class="controls">
                             <c:forEach var="lang" items="${languages}">
-                                <input ng-click="setUserLang('${lang}')" type="radio" value="${lang}" name="language" <c:if test="${startupSettings.language == lang}">checked</c:if> /><i class="flag flag-${lang} label-flag-radio"></i>
+                                <input ng-click="setUserLang('${lang}', true)" type="radio" value="${lang}" name="language" <c:if test="${startupSettings.language == lang}">checked</c:if> /><i class="flag flag-${lang} label-flag-radio"></i>
                             </c:forEach>
                         </div>
                     </div>
@@ -78,7 +49,7 @@
                                 <div id="queue.urls" class="queue-urls">
                                 <c:forEach var="url" items="${suggestions.queueUrls}" varStatus="status">
                                     <div id="queue.url.${status.count}">
-                                        <span><fmt:message key="suggestion" bundle="${bundle}"/> #${status.count}: &nbsp;${url}</span>
+                                        <span><fmt:message key="suggestion" bundle="${bundle}"/> #${status.count}: ${url}</span>
                                         <button type="button" class="btn btn-mini"><fmt:message key="use" bundle="${bundle}"/></button>
                                     </div>
                                 </c:forEach>
@@ -104,9 +75,9 @@
                     </div>
                     <div class="control-group">
                          <label class="control-label"><fmt:message key="select.loginMode" bundle="${bundle}"/></label>
-                         <div class="controls" ng-init="loginMode('${loginMode}')">
-                                 <input type="radio" value="repository" name="loginMode" ng-click="loginMode('repository')" <c:if test="${loginMode == 'repository'}">checked</c:if>/><span class="label-radio"><fmt:message key="repository" bundle="${bundle}"/></span>
-                                 <input type="radio" value="openid" name="loginMode" ng-click="loginMode('openid')" <c:if test="${loginMode == 'openid'}">checked</c:if> /><span class="label-radio"><fmt:message key="openId" bundle="${bundle}"/></span>
+                         <div class="controls">
+                             <input type="radio" value="repository" name="loginMode" ng-click="securityMode = 'repository'" ng-checked="securityMode == 'repository'"><span>{{msg('repository')}}</span>
+                             <input type="radio" value="openid" name="loginMode" ng-click="securityMode = 'openid'" ng-checked="securityMode == 'openid'"/><span>{{msg('openId')}}</span>
                          </div>
                      </div>
                     <div ng-show="securityMode=='repository'" class="control-group">

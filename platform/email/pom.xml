@@ -16,7 +16,7 @@
         <modules.root.dir>${basedir}/../..</modules.root.dir>
     </properties>
 
-    <artifactId>motech-email</artifactId>
+    <artifactId>motech-platform-email</artifactId>
     <name>MOTECH Email</name>
     <dependencies>
         <dependency>
@@ -97,6 +97,31 @@
             </testResource>
         </testResources>
         <plugins>
+            <plugin>
+                <artifactId>maven-clean-plugin</artifactId>
+                <version>2.5</version>
+                <executions>
+                    <execution>
+                        <id>clean-config</id>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                        <phase>clean</phase>
+                        <configuration>
+                            <excludeDefaultDirectories>true</excludeDefaultDirectories>
+                            <filesets>
+                                <fileset>
+                                    <directory>${user.home}/.motech/config/org.motechproject.motech-platform-email-bundle</directory>
+                                    <includes>
+                                        <include>**/*</include>
+                                    </includes>
+                                    <followSymlinks>false</followSymlinks>
+                                </fileset>
+                            </filesets>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>

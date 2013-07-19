@@ -6,17 +6,17 @@
 
     var adminModule = angular.module('motech-admin');
 
-    adminModule.controller('BundleListCtrl', function($scope, Bundle, i18nService, $routeParams, $http) {
+    adminModule.controller('BundleListCtrl', function($scope, Bundle, i18nService, $routeParams, $http, $timeout) {
 
-        var LOADING_STATE = 'LOADING';
+        var LOADING_STATE = 'LOADING', MODULE_LIST_REFRESH_TIMEOUT = 5 * 1000;
 
         $scope.orderProp = 'name';
         $scope.invert = false;
         $scope.startUpload = false;
         $scope.versionOrder = ["version.major", "version.minor", "version.micro", "version.qualifier"];
 
-        $scope.reloadPage = function () {
-            location.reload();
+        $scope.refreshModuleList = function () {
+            $scope.$emit('module.list.refresh');
         };
 
         $scope.bundlesWithSettings = [];
@@ -124,17 +124,31 @@
 
         $scope.stopBundle = function (bundle) {
             bundle.state = LOADING_STATE;
-            bundle.$stop(dummyHandler, function (response) {
+            bundle.$stop($scope.refreshModuleList, function (response) {
                 bundle.state = 'RESOLVED';
-                handleWithStackTrace('error', 'bundles.error.stop', response);
+                handleWithStackTrace('admin.error', 'admin.bundles.error.stop', response);
             });
         };
 
         $scope.startBundle = function (bundle) {
+            var previousState = bundle.state;
+
             bundle.state = LOADING_STATE;
-            bundle.$start(dummyHandler, function (response) {
+            bundle.$start(function () {
+                blockUI();
+
+                $timeout(function () {
+                    if (previousState === 'INSTALLED') {
+                        $scope.$emit('lang.refresh');
+                    }
+
+                    $scope.refreshModuleList();
+
+                    unblockUI();
+                }, MODULE_LIST_REFRESH_TIMEOUT);
+            }, function (response) {
                 bundle.state = 'RESOLVED';
-                handleWithStackTrace('error', 'bundles.error.start', response);
+                handleWithStackTrace('admin.error', 'admin.bundles.error.start', response);
             });
         };
 
@@ -142,12 +156,15 @@
             bundle.state = LOADING_STATE;
             bundle.$restart(dummyHandler, function () {
                 bundle.state = 'RESOLVED';
-                motechAlert('bundles.error.restart', 'error');
+                $scope.$emit('lang.refresh');
+                $scope.refreshModuleList();
+
+                motechAlert('admin.bundles.error.restart', 'admin.error');
             });
         };
 
         $scope.uninstallBundle = function (bundle) {
-            jConfirm(jQuery.i18n.prop('bundles.uninstall.confirm'), jQuery.i18n.prop("confirm"), function (val) {
+            jConfirm(jQuery.i18n.prop('admin.bundles.uninstall.confirm'), jQuery.i18n.prop("admin.confirm"), function (val) {
                 if (val) {
                     var oldState = bundle.state;
                     bundle.state = LOADING_STATE;
@@ -157,10 +174,10 @@
                     bundle.$uninstall(function () {
                             // remove bundle from list
                             $scope.bundles.removeObject(bundle);
-                            $scope.reloadPage();
-                        },
-                        function () {
-                            motechAlert('bundles.error.uninstall', 'error');
+                            $scope.refreshModuleList();
+                            unblockUI();
+                        }, function () {
+                            motechAlert('admin.bundles.error.uninstall', 'admin.error');
                             bundle.state = oldState;
                             unblockUI();
                         });
@@ -195,18 +212,26 @@
         $scope.submitBundle = function () {
             blockUI();
             $('#bundleUploadForm').ajaxSubmit({
-                success:function (data, textStatus, jqXHR) {
+                success: function (data, textStatus, jqXHR) {
                     if (jqXHR.status === 0 && data) {
-                        handleWithStackTrace('error', 'bundles.error.start', data);
+                        handleWithStackTrace('admin.error', 'admin.bundles.error.start', data);
                         unblockUI();
                     } else {
-                        $scope.bundles = Bundle.query();
-                        $scope.reloadPage();
+                        $scope.bundles = Bundle.query(function () {
+                            if ($scope.startUpload) {
+                                $timeout(function () {
+                                    $scope.$emit('lang.refresh');
+                                    $scope.refreshModuleList();
+                                    unblockUI();
+                                }, MODULE_LIST_REFRESH_TIMEOUT);
+                            } else {
+                                unblockUI();
+                            }
+                        });
                     }
-    //              unblockUI();
                 },
                 error:function (response) {
-                    handleWithStackTrace('error', 'bundles.error.start', response);
+                    handleWithStackTrace('admin.error', 'admin.bundles.error.start', response);
                     unblockUI();
                 }
             });
@@ -319,12 +344,12 @@
         $scope.platformSettings = PlatformSettings.query();
 
         $scope.label = function (key) {
-            return i18nService.getMessage('settings.' + key);
+            return i18nService.getMessage('admin.settings.' + key);
         };
 
         $scope.saveSettings = function (settings) {
             blockUI();
-            settings.$save(alertHandlerWithCallback('settings.saved', function () {
+            settings.$save(alertHandlerWithCallback('admin.settings.saved', function () {
                 $scope.platformSettings = PlatformSettings.query();
             }), jFormErrorHandler);
         };
@@ -332,7 +357,7 @@
         $scope.saveNewSettings = function () {
             blockUI();
             $('#noSettingsForm').ajaxSubmit({
-                success:alertHandlerWithCallback('settings.saved', function () {
+                success:alertHandlerWithCallback('admin.settings.saved', function () {
                     $scope.platformSettings = PlatformSettings.query();
                 }),
                 error:jFormErrorHandler
@@ -341,7 +366,7 @@
 
         $scope.uploadSettings = function () {
             $("#settingsFileForm").ajaxSubmit({
-                success:alertHandlerWithCallback('settings.saved', function () {
+                success:alertHandlerWithCallback('admin.settings.saved', function () {
                     $scope.platformSettings = PlatformSettings.query();
                 }),
                 error:jFormErrorHandler
@@ -350,7 +375,7 @@
 
         $scope.uploadActiveMqFile = function () {
             $("#activemqFileForm").ajaxSubmit({
-                success:alertHandlerWithCallback('settings.saved', function () {
+                success:alertHandlerWithCallback('admin.settings.saved', function () {
                     $scope.platformSettings = PlatformSettings.query();
                 }),
                 error:jFormErrorHandler
@@ -359,15 +384,15 @@
 
         $scope.uploadFileLocation = function () {
             $http({method:'POST', url:'../admin/api/settings/platform/location', params:{location:this.location}}).
-                success(alertHandler('settings.saved', 'success')).
-                error(alertHandler('settings.error.location'));
+                success(alertHandler('admin.settings.saved', 'admin.success')).
+                error(alertHandler('admin.settings.error.location'));
         };
 
         $scope.saveAll = function () {
             blockUI();
             $http.post('../admin/api/settings/platform/list', $scope.platformSettings).
-                success(alertHandler('settings.saved', 'success')).
-                error(alertHandler('settings.error.location'));
+                success(alertHandler('admin.settings.saved', 'admin.success')).
+                error(alertHandler('admin.settings.error.location'));
         };
     });
 
@@ -389,11 +414,11 @@
             if (doRestart === true) {
                 successHandler = restartBundleHandler;
             } else {
-                successHandler = alertHandler('settings.saved', 'success');
+                successHandler = alertHandler('admin.settings.saved', 'admin.success');
             }
 
             blockUI();
-            mSettings.$save({bundleId:$scope.module.bundleId}, successHandler, angularHandler('error', 'settings.error'));
+            mSettings.$save({bundleId:$scope.module.bundleId}, successHandler, angularHandler('admin.error', 'admin.settings.error'));
         };
 
         $scope.uploadRaw = function (filename, doRestart) {
@@ -403,7 +428,7 @@
             if (doRestart === true) {
                 successHandler = restartBundleHandler;
             } else {
-                successHandler = alertHandler('settings.saved', 'success');
+                successHandler = alertHandler('admin.settings.saved', 'admin.success');
             }
 
             blockUI();
@@ -417,8 +442,8 @@
         var restartBundleHandler = function () {
             $scope.module.$restart(function () {
                 unblockUI();
-                motechAlert('settings.saved', 'success');
-            }, alertHandler('bundles.error.restart', 'error'));
+                motechAlert('admin.settings.saved', 'admin.success');
+            }, alertHandler('admin.bundles.error.restart', 'admin.error'));
         };
     });
 
@@ -464,11 +489,11 @@
         $scope.config = LogService.get();
 
         $scope.save = function () {
-            $scope.config.$save({}, alertHandlerWithCallback('log.changedLevel', function () {
+            $scope.config.$save({}, alertHandlerWithCallback('admin.log.changedLevel', function () {
                 var loc = window.location.toString(), indexOf = loc.indexOf('#');
                 window.location = loc.substring(0, indexOf) + "#/log";
             }), function () {
-                motechAlert('log.changedLevelError', 'error');
+                motechAlert('admin.log.changedLevelError', 'admin.error');
             });
         };
 
@@ -591,9 +616,9 @@
 
         $scope.save = function () {
             $scope.notificationRuleDto.$save(function () {
-                motechAlert('messages.notifications.saved', 'success');
-                $location.path('messages');
-            }, angularHandler('error', 'messages.notifications.errorSave'));
+                motechAlert('admin.messages.notifications.saved', 'admin.success');
+                $location.path('admin.messages');
+            }, angularHandler('admin.error', 'admin.messages.notifications.errorSave'));
         };
     });
 
