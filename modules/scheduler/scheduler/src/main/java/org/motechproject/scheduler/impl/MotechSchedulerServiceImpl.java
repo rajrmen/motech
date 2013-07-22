@@ -18,6 +18,7 @@ import org.motechproject.scheduler.domain.JobBasicInfo;
 import org.motechproject.scheduler.domain.JobDetailedInfo;
 import org.motechproject.scheduler.domain.RepeatingJobId;
 import org.motechproject.scheduler.domain.RunOnceJobId;
+import org.motechproject.scheduler.domain.EventInfo;
 import org.motechproject.scheduler.exception.MotechSchedulerException;
 import org.motechproject.scheduler.factory.MotechSchedulerFactoryBean;
 import org.motechproject.server.config.SettingsFacade;
@@ -730,14 +731,8 @@ public class MotechSchedulerServiceImpl implements MotechSchedulerService {
                     }
 
                     if (jobName.endsWith(RunOnceJobId.SUFFIX_RUNONCEJOBID)) {
-                        jobName = jobName.substring(
-                                0, jobName.length() - RunOnceJobId.SUFFIX_RUNONCEJOBID.length()
-                        );
                         info = "RUNONCE";
                     } else if (jobName.endsWith(RepeatingJobId.SUFFIX_REPEATJOBID)) {
-                        jobName = jobName.substring(
-                                0, jobName.length() - RepeatingJobId.SUFFIX_REPEATJOBID.length()
-                        );
                         info = "REPEAT";
                     } else {
                         info = triggers.get(0).getDescription();
@@ -757,31 +752,37 @@ public class MotechSchedulerServiceImpl implements MotechSchedulerService {
 
     @Override
     public JobDetailedInfo getScheduledJobDetailedInfo(JobBasicInfo jobBasicInfo) {
-        JobDetailedInfo jobDetailedInfo = new JobDetailedInfo(jobBasicInfo);
-        Map<String, Object> parameters = null;
+        JobDetailedInfo jobDetailedInfo = new JobDetailedInfo();
+        List<EventInfo> eventInfos = new ArrayList<>();
 
         try {
             for (String groupName : scheduler.getJobGroupNames()) {
                 for (JobKey jobKey : scheduler.getJobKeys(GroupMatcher.jobGroupEquals(groupName))) {
-                    if (jobKey.getName().contains(jobBasicInfo.getName())) {
-                        parameters = scheduler.getJobDetail(jobKey).getJobDataMap().getWrappedMap();
+                    if (jobKey.getName().equals(jobBasicInfo.getName())) {
+                        EventInfo eventInfo = new EventInfo();
 
-                        if (parameters.containsKey(MotechEvent.EVENT_TYPE_KEY_NAME)) {
-                            jobDetailedInfo.setEventName(parameters.get(MotechEvent.EVENT_TYPE_KEY_NAME).toString());
-                            parameters.remove(MotechEvent.EVENT_TYPE_KEY_NAME);
-                        }
+                        eventInfo.setParameters(
+                                scheduler.getJobDetail(jobKey).getJobDataMap().getWrappedMap()
+                        );
 
-                        parameters.put("JOB_CLASS", scheduler.getJobDetail(jobKey).getJobClass().getName());
+                        eventInfo.setEventName(
+                                eventInfo.getParameters().get(MotechEvent.EVENT_TYPE_KEY_NAME).toString()
+                        );
+                        eventInfo.getParameters().remove(MotechEvent.EVENT_TYPE_KEY_NAME);
 
-                        jobDetailedInfo.setSubject(jobKey.getName().substring(0, jobKey.getName().indexOf('-')));
+                        eventInfo.setSubject(
+                                jobKey.getName().substring(0, jobKey.getName().indexOf('-'))
+                        );
+
+                        eventInfos.add(eventInfo);
                     }
                 }
             }
-        } catch(Exception e) {
+        } catch (Exception e) {
             logger.error(e.getMessage());
         }
 
-        jobDetailedInfo.setParameters(parameters);
+        jobDetailedInfo.setEventInfoList(eventInfos);
         return jobDetailedInfo;
     }
 

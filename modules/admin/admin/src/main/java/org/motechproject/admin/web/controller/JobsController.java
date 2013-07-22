@@ -27,6 +27,8 @@ public class JobsController {
     @RequestMapping({ "/jobs/{jobid}" })
     @ResponseBody
     public JobDetailedInfo handleJob(@PathVariable int jobid) {
-        return motechSchedulerService.getScheduledJobDetailedInfo(motechSchedulerService.getScheduledJobsBasicInfo().get(jobid));
+        return motechSchedulerService.getScheduledJobDetailedInfo(
+                motechSchedulerService.getScheduledJobsBasicInfo().get(jobid)
+        );
     }
 }
