@@ -648,5 +648,11 @@
 
 
     });
+
+    adminModule.controller('SchedulerCtrl', function($scope, $http, $routeParams, MotechScheduler) {
+    $scope.jobs = MotechScheduler.query();
+
+    });
+
 }());
 

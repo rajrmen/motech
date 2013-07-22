@@ -36,4 +36,8 @@
     angular.module('logService', ['ngResource']).factory('LogService', function($resource) {
         return $resource('../admin/api/log/level');
     });
+
+    angular.module('motechSchedulerService', ['ngResource']).factory('MotechScheduler', function($resource) {
+        return $resource('../admin/api/jobs');
+    });
 }());

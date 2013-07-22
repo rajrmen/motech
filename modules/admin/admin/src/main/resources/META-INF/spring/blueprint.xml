@@ -35,6 +35,7 @@
                 <entry key="admin.operations" value="#/operations"/>
                 <entry key="admin.log" value="#/log"/>
                 <entry key="admin.queues" value="#/queues"/>
+                <entry key="scheduler" value="#/scheduler"/>
             </map>
         </property>
     </bean>
