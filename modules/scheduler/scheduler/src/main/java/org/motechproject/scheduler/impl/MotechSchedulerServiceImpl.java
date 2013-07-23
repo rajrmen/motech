@@ -704,9 +704,9 @@ public class MotechSchedulerServiceImpl implements MotechSchedulerService {
                     String jobName;
                     String info;
                     String status;
-                    Date startDate = triggers.get(0).getStartTime();
-                    Date nextFireDate = triggers.get(0).getNextFireTime();
-                    Date endDate = triggers.get(0).getEndTime();
+                    DateTime startDate = new DateTime(triggers.get(0).getStartTime());
+                    DateTime nextFireDate = new DateTime(triggers.get(0).getNextFireTime());
+                    DateTime endDate = new DateTime(triggers.get(0).getEndTime());
 
                     jobName = jobKey.getName();
 
@@ -751,14 +751,14 @@ public class MotechSchedulerServiceImpl implements MotechSchedulerService {
     }
 
     @Override
-    public JobDetailedInfo getScheduledJobDetailedInfo(JobBasicInfo jobBasicInfo) {
+    public JobDetailedInfo getScheduledJobDetailedInfo(String jobname) {
         JobDetailedInfo jobDetailedInfo = new JobDetailedInfo();
         List<EventInfo> eventInfos = new ArrayList<>();
 
         try {
             for (String groupName : scheduler.getJobGroupNames()) {
                 for (JobKey jobKey : scheduler.getJobKeys(GroupMatcher.jobGroupEquals(groupName))) {
-                    if (jobKey.getName().equals(jobBasicInfo.getName())) {
+                    if (jobKey.getName().equals(jobname)) {
                         EventInfo eventInfo = new EventInfo();
 
                         eventInfo.setParameters(

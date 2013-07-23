@@ -1,21 +1,21 @@
 package org.motechproject.scheduler.domain;
 
-import java.util.Date;
+import org.joda.time.DateTime;
 
 public class JobBasicInfo {
     private String activity;
     private String status;
     private String name;
-    private Date startDate;
-    private Date nextFireDate;
-    private Date endDate;
+    private DateTime startDate;
+    private DateTime nextFireDate;
+    private DateTime endDate;
     private String info;
 
     public JobBasicInfo() {
 
     }
 
-    public JobBasicInfo(String activity, String status, String name, Date startDate, Date nextFireDate, Date endDate, String info) {
+    public JobBasicInfo(String activity, String status, String name, DateTime startDate, DateTime nextFireDate, DateTime endDate, String info) {
         this.activity = activity;
         this.status = status;
         this.name = name;
@@ -49,27 +49,27 @@ public class JobBasicInfo {
         this.name = name;
     }
 
-    public Date getStartDate() {
+    public DateTime getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(Date startDate) {
+    public void setStartDate(DateTime startDate) {
         this.startDate = startDate;
     }
 
-    public Date getNextFireDate() {
+    public DateTime getNextFireDate() {
         return nextFireDate;
     }
 
-    public void setNextFireDate(Date nextFireDate) {
+    public void setNextFireDate(DateTime nextFireDate) {
         this.nextFireDate = nextFireDate;
     }
 
-    public Date getEndDate() {
+    public DateTime getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(Date endDate) {
+    public void setEndDate(DateTime endDate) {
         this.endDate = endDate;
     }
 
