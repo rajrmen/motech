@@ -49,6 +49,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.joda.time.format.DateTimeFormat;
 
 import static java.lang.String.format;
 import static org.motechproject.commons.date.util.DateUtil.newDateTime;
@@ -704,9 +705,9 @@ public class MotechSchedulerServiceImpl implements MotechSchedulerService {
                     String jobName;
                     String info;
                     String status;
-                    DateTime startDate = new DateTime(triggers.get(0).getStartTime());
-                    DateTime nextFireDate = new DateTime(triggers.get(0).getNextFireTime());
-                    DateTime endDate = new DateTime(triggers.get(0).getEndTime());
+                    DateTime startDateTime = new DateTime(triggers.get(0).getStartTime());
+                    DateTime nextFireDateTime = new DateTime(triggers.get(0).getNextFireTime());
+                    DateTime endDateTime = new DateTime(triggers.get(0).getEndTime());
 
                     jobName = jobKey.getName();
 
@@ -739,7 +740,11 @@ public class MotechSchedulerServiceImpl implements MotechSchedulerService {
                     }
 
                     result.add(
-                            new JobBasicInfo(activity, status, jobName, startDate, nextFireDate, endDate, info)
+                            new JobBasicInfo(activity, status, jobName,
+                                    DateTimeFormat.forPattern("Y-MM-dd hh:mm:ss").print(startDateTime),
+                                    DateTimeFormat.forPattern("Y-MM-dd hh:mm:ss").print(nextFireDateTime),
+                                    DateTimeFormat.forPattern("Y-MM-dd hh:mm:ss").print(endDateTime),
+                                    info)
                     );
                 }
             }

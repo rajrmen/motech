@@ -1,7 +1,5 @@
 package org.motechproject.scheduler.domain;
 
-import org.motechproject.scheduler.domain.JobBasicInfo;
-
 import java.util.Comparator;
 
 public class JobBasicInfoComparator implements Comparator<JobBasicInfo> {
