@@ -18,7 +18,6 @@ import org.motechproject.scheduler.domain.JobBasicInfo;
 import org.motechproject.scheduler.domain.JobDetailedInfo;
 import org.motechproject.scheduler.domain.RepeatingJobId;
 import org.motechproject.scheduler.domain.RunOnceJobId;
-import org.motechproject.scheduler.domain.EventInfo;
 import org.motechproject.scheduler.exception.MotechSchedulerException;
 import org.motechproject.scheduler.factory.MotechSchedulerFactoryBean;
 import org.motechproject.server.config.SettingsFacade;
@@ -758,25 +757,17 @@ public class MotechSchedulerServiceImpl implements MotechSchedulerService {
     @Override
     public JobDetailedInfo getScheduledJobDetailedInfo(String jobname) {
         JobDetailedInfo jobDetailedInfo = new JobDetailedInfo();
-        List<EventInfo> eventInfos = new ArrayList<>();
+        List<Map<String, Object> > eventInfos = new ArrayList<>();
 
         try {
             for (String groupName : scheduler.getJobGroupNames()) {
                 for (JobKey jobKey : scheduler.getJobKeys(GroupMatcher.jobGroupEquals(groupName))) {
                     if (jobKey.getName().equals(jobname)) {
-                        EventInfo eventInfo = new EventInfo();
+                        Map<String, Object> eventInfo = new HashMap<>();
 
-                        eventInfo.setParameters(
+                        eventInfo.put("subject", jobKey.getName().substring(0, jobKey.getName().indexOf('-')));
+                        eventInfo.putAll(
                                 scheduler.getJobDetail(jobKey).getJobDataMap().getWrappedMap()
-                        );
-
-                        eventInfo.setEventName(
-                                eventInfo.getParameters().get(MotechEvent.EVENT_TYPE_KEY_NAME).toString()
-                        );
-                        eventInfo.getParameters().remove(MotechEvent.EVENT_TYPE_KEY_NAME);
-
-                        eventInfo.setSubject(
-                                jobKey.getName().substring(0, jobKey.getName().indexOf('-'))
                         );
 
                         eventInfos.add(eventInfo);

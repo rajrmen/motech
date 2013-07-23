@@ -2,12 +2,23 @@ package org.motechproject.admin.web.controller;
 
 
 public class JobsGridSettings {
+    private String name;
     private Integer rows;
     private Integer page;
     private String sortColumn;
     private String sortDirection;
     private String activity;
     private String status;
+    private String dateFrom;
+    private String dateTo;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public Integer getRows() {
         return rows;
@@ -57,4 +68,19 @@ public class JobsGridSettings {
         this.status = status;
     }
 
+    public String getDateFrom() {
+        return dateFrom;
+    }
+
+    public void setDateFrom(String dateFrom) {
+        this.dateFrom = dateFrom;
+    }
+
+    public String getDateTo() {
+        return dateTo;
+    }
+
+    public void setDateTo(String dateTo) {
+        this.dateTo = dateTo;
+    }
 }
