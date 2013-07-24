@@ -64,21 +64,43 @@
                         $("#"+subgrid_id).html("<table id='"+subgrid_table_id+"' class='scroll'></table>");
 
                         jQuery("#"+subgrid_table_id).jqGrid({
-                        url:'../admin/resource?'+row_id,
+                        url:'../admin/api/jobs/'+row_id,
                         datatype:"json",
-                        colNames: ['Event name','Subject','Key', 'Value'],
+                        jsonReader:{
+                            repeatitems: false,
+                            root: 'eventInfoList',
+                            records: function (obj) { return obj.length; }
+                        },
+                        colNames: ['Subject', 'Key', 'Value'],
                         colModel: [
-                            {name:"name",index:"name", align:"center"},
                             {name:"subject",index:"subject", align:"center"},
-                            {name:"pkey",index:"pkey", align:"center"},
-                            {name:"pvalue",index:"pvalue", align:"center"}
+                            {name:"parameters",index:"parameters", width:80, align:"center",
+                            formatter: function (array, options, data) {
+                                var div = $('<div>');
+                                $.each(array, function (i, value) {
+                                    div.append($('<div>').append(i)
+                                    .addClass('parameters')
+                                    );
+                                });
+                            return '<div>' + div.html() + '</div>';
+                            }},
+                            {name:"parameters",index:"parameters", width:80, align:"center",
+                            formatter: function (array, options, data) {
+                                var div2 = $('<div>');
+                                $.each(array, function (i, value) {
+                                    div2.append($('<div>').append($('<span>').append(value))
+                                    .addClass('parameters')
+                                    );
+                                })
+                                return '<div>' + div2.html() + '</div>';
+                            }}
                             ],
-                        rowNum:20, pager: pager_id, sortname: 'num', sortorder: "asc", height: '100%' });
+                        rowNum:99, pager: pager_id, sortname: 'num', sortorder: "asc", height: '100%' });
                         jQuery("#"+subgrid_table_id).jqGrid('navGrid',"#"+pager_id,{edit:false,add:false,del:false});
                         jQuery("#"+subgrid_table_id).jqGrid('setGroupHeaders', {
                             useColSpanStyle: true,
                             groupHeaders:[
-                                {startColumnName: 'pkey', numberOfColumns: 2, titleText: 'Parameters'}
+                                {startColumnName: 'Key', numberOfColumns: 2, titleText: 'Parameters'}
                             ]
                         });
 

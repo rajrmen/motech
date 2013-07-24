@@ -91,9 +91,11 @@ public class JobsController {
         );
     }
 
-    @RequestMapping({ "/jobs/{jobname}" })
+    @RequestMapping({ "/jobs/{jobid}" })
     @ResponseBody
-    public JobDetailedInfo handleJob(@PathVariable String jobname) {
-        return motechSchedulerService.getScheduledJobDetailedInfo(jobname);
+    public JobDetailedInfo handleJob(@PathVariable int jobid) {
+        return motechSchedulerService.getScheduledJobDetailedInfo(
+                motechSchedulerService.getScheduledJobsBasicInfo().get(jobid)
+        );
     }
 }

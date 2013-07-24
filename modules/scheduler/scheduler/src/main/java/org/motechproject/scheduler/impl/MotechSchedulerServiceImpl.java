@@ -4,38 +4,16 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
+import org.joda.time.format.DateTimeFormat;
 import org.motechproject.commons.date.model.Time;
 import org.motechproject.commons.date.util.DateUtil;
 import org.motechproject.event.MotechEvent;
 import org.motechproject.scheduler.MotechSchedulerService;
-import org.motechproject.scheduler.domain.CronJobId;
-import org.motechproject.scheduler.domain.CronSchedulableJob;
-import org.motechproject.scheduler.domain.DayOfWeekSchedulableJob;
-import org.motechproject.scheduler.domain.JobId;
-import org.motechproject.scheduler.domain.RepeatingSchedulableJob;
-import org.motechproject.scheduler.domain.RunOnceSchedulableJob;
-import org.motechproject.scheduler.domain.JobBasicInfo;
-import org.motechproject.scheduler.domain.JobDetailedInfo;
-import org.motechproject.scheduler.domain.RepeatingJobId;
-import org.motechproject.scheduler.domain.RunOnceJobId;
+import org.motechproject.scheduler.domain.*;
 import org.motechproject.scheduler.exception.MotechSchedulerException;
 import org.motechproject.scheduler.factory.MotechSchedulerFactoryBean;
 import org.motechproject.server.config.SettingsFacade;
-import org.quartz.CalendarIntervalScheduleBuilder;
-import org.quartz.CronScheduleBuilder;
-import org.quartz.CronTrigger;
-import org.quartz.JobDataMap;
-import org.quartz.JobDetail;
-import org.quartz.ScheduleBuilder;
-import org.quartz.Scheduler;
-import org.quartz.SchedulerException;
-import org.quartz.SimpleScheduleBuilder;
-import org.quartz.SimpleTrigger;
-import org.quartz.Trigger;
-import org.quartz.TriggerKey;
-import org.quartz.TriggerUtils;
-import org.quartz.JobKey;
-import org.quartz.JobExecutionContext;
+import org.quartz.*;
 import org.quartz.impl.calendar.BaseCalendar;
 import org.quartz.impl.matchers.GroupMatcher;
 import org.quartz.impl.triggers.CronTriggerImpl;
@@ -43,12 +21,7 @@ import org.quartz.spi.OperableTrigger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import org.joda.time.format.DateTimeFormat;
+import java.util.*;
 
 import static java.lang.String.format;
 import static org.motechproject.commons.date.util.DateUtil.newDateTime;
@@ -755,19 +728,27 @@ public class MotechSchedulerServiceImpl implements MotechSchedulerService {
     }
 
     @Override
-    public JobDetailedInfo getScheduledJobDetailedInfo(String jobname) {
+    public JobDetailedInfo getScheduledJobDetailedInfo(JobBasicInfo jobBasicInfo) {
         JobDetailedInfo jobDetailedInfo = new JobDetailedInfo();
-        List<Map<String, Object> > eventInfos = new ArrayList<>();
+        List<EventInfo> eventInfos = new ArrayList<>();
 
         try {
             for (String groupName : scheduler.getJobGroupNames()) {
                 for (JobKey jobKey : scheduler.getJobKeys(GroupMatcher.jobGroupEquals(groupName))) {
-                    if (jobKey.getName().equals(jobname)) {
-                        Map<String, Object> eventInfo = new HashMap<>();
+                    if (jobKey.getName().equals(jobBasicInfo.getName())) {
+                        EventInfo eventInfo = new EventInfo();
 
-                        eventInfo.put("subject", jobKey.getName().substring(0, jobKey.getName().indexOf('-')));
-                        eventInfo.putAll(
+                        eventInfo.setParameters(
                                 scheduler.getJobDetail(jobKey).getJobDataMap().getWrappedMap()
+                        );
+
+                        eventInfo.setEventName(
+                                eventInfo.getParameters().get(MotechEvent.EVENT_TYPE_KEY_NAME).toString()
+                        );
+                        eventInfo.getParameters().remove(MotechEvent.EVENT_TYPE_KEY_NAME);
+
+                        eventInfo.setSubject(
+                                jobKey.getName().substring(0, jobKey.getName().indexOf('-'))
                         );
 
                         eventInfos.add(eventInfo);

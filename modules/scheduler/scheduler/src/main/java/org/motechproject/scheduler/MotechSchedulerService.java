@@ -160,5 +160,5 @@ public interface MotechSchedulerService {
 
     List<JobBasicInfo> getScheduledJobsBasicInfo();
 
-    JobDetailedInfo getScheduledJobDetailedInfo(String jobName);
+    JobDetailedInfo getScheduledJobDetailedInfo(JobBasicInfo jobBasicInfo);
 }

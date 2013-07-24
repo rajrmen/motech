@@ -436,8 +436,18 @@ p#settingsMsg:empty {
     font-weight: bold;
 }
 
-.icon.icon-gold {
-    color: #aea884;
+.ui-jqgrid tr.jqgrow .parameters {
+    border-bottom: 1px solid #D4DDEE;
+    margin: 0 -6px;
+    padding: 4px 6px;
+}
+
+.ui-jqgrid tr.jqgrow .parameters:first-child {
+    margin: -4px -6px 0;
+}
+
+.ui-jqgrid tr.jqgrow .parameters:last-child {
+    margin: 0 -6px -4px;
 }
 
 .overrideJqgridTable .table-lightblue .ui-widget-content {
