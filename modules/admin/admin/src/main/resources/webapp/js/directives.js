@@ -24,12 +24,14 @@
                 var elem = angular.element(element), filters, i, j, k, rows, activity, status;
 
                 elem.jqGrid({
-                    url:"../admin/api/jobs",
+                    url:"../admin/api/jobs?name=&activity=NOW,FINISHED,LATER&status=ERROR,BLOCKED,PAUSED,OK&dateFrom=&dateTo=",
                     datatype:"json",
                     jsonReader:{
-                        repeatitems: false,
-                        root: function (obj) { return obj; },
-                        records: function (obj) { return obj.length; }
+                        repeatitems: false
+                    },
+                    prmNames: {
+                        sort: 'sortColumn',
+                        order: 'sortDirection'
                     },
                     shrinkToFit: true,
                     autowidth: true,
@@ -91,7 +93,7 @@
                                     div2.append($('<div>').append($('<span>').append(value))
                                     .addClass('parameters')
                                     );
-                                })
+                                });
                                 return '<div>' + div2.html() + '</div>';
                             }}
                             ],

@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Collections;
 
 
@@ -22,6 +22,8 @@ import java.util.Collections;
 public class JobsController {
     @Autowired
     private MotechSchedulerService motechSchedulerService;
+
+    private JobsRecords previusJobsRecords;
 
     @RequestMapping({ "/jobs" })
     @ResponseBody
@@ -86,16 +88,20 @@ public class JobsController {
             );
         }
 
-        return new JobsRecords(
-                jobsGridSettings.getPage(), jobsGridSettings.getRows(), filteredJobsBasicInfos
+        previusJobsRecords = new JobsRecords(
+            jobsGridSettings.getPage(), jobsGridSettings.getRows(), filteredJobsBasicInfos
         );
+
+        return previusJobsRecords;
     }
 
     @RequestMapping({ "/jobs/{jobid}" })
     @ResponseBody
     public JobDetailedInfo handleJob(@PathVariable int jobid) {
-        return motechSchedulerService.getScheduledJobDetailedInfo(
-                motechSchedulerService.getScheduledJobsBasicInfo().get(jobid)
-        );
+        if (previusJobsRecords != null) {
+            return motechSchedulerService.getScheduledJobDetailedInfo(previusJobsRecords.getRows().get(jobid-1));
+        } else {
+            return null;
+        }
     }
 }
