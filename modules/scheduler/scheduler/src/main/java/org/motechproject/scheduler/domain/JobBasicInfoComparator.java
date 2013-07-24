@@ -1,5 +1,8 @@
 package org.motechproject.scheduler.domain;
 
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.DateTime;
+
 import java.util.Comparator;
 
 public class JobBasicInfoComparator implements Comparator<JobBasicInfo> {
@@ -13,6 +16,8 @@ public class JobBasicInfoComparator implements Comparator<JobBasicInfo> {
 
     @Override
     public int compare(JobBasicInfo o1, JobBasicInfo o2) {
+        DateTime o1Time;
+        DateTime o2Time;
         int ret = 0;
 
         switch (compareField) {
@@ -23,13 +28,28 @@ public class JobBasicInfoComparator implements Comparator<JobBasicInfo> {
                 ret =  o1.getName().compareTo(o2.getName());
                 break;
             case "startdate":
-                ret =  o1.getStartDate().compareTo(o2.getStartDate());
+                o1Time = DateTimeFormat.forPattern("Y-MM-dd hh:mm:ss")
+                        .parseDateTime(o1.getStartDate());
+                o2Time = DateTimeFormat.forPattern("Y-MM-dd hh:mm:ss")
+                        .parseDateTime(o2.getStartDate());
+
+                ret = o1Time.compareTo(o2Time);
                 break;
             case "nextfiredate":
-                ret =  o1.getNextFireDate().compareTo(o2.getNextFireDate());
+                o1Time = DateTimeFormat.forPattern("Y-MM-dd hh:mm:ss")
+                        .parseDateTime(o1.getNextFireDate());
+                o2Time = DateTimeFormat.forPattern("Y-MM-dd hh:mm:ss")
+                        .parseDateTime(o2.getNextFireDate());
+
+                ret = o1Time.compareTo(o2Time);
                 break;
             case "enddate":
-                ret =  o1.getEndDate().compareTo(o2.getEndDate());
+                o1Time = DateTimeFormat.forPattern("Y-MM-dd hh:mm:ss")
+                        .parseDateTime(o1.getEndDate());
+                o2Time = DateTimeFormat.forPattern("Y-MM-dd hh:mm:ss")
+                        .parseDateTime(o2.getEndDate());
+
+                ret = o1Time.compareTo(o2Time);
                 break;
             case "activity":
             default:
