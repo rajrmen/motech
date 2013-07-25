@@ -191,7 +191,7 @@
                         var subgrid_table_id, pager_id;
                         subgrid_table_id = subgrid_id+"_t";
                         pager_id = "p_"+subgrid_table_id;
-                        $("#"+subgrid_id).html("<table id='"+subgrid_table_id+"' class='scroll'></table>");
+                        $("#"+subgrid_id).html("<table id='"+subgrid_table_id+"' class=''></table>");
 
                         jQuery("#"+subgrid_table_id).jqGrid({
                         url:'../admin/api/jobs/'+row_id,
@@ -297,14 +297,14 @@
                                             $("#schedulerTable").jqGrid('setCell',rows[k],'status','<i class="icon-ok-sign icon-large icon icon-green"></i>','ok',{ },'');
                                         }
                                         break;
-                                    case 'waiting':
-                                        $("#schedulerTable").jqGrid('setCell',rows[k],'status','<i class="icon-time icon-large icon icon-gold"></i>','waiting',{ },'');
+                                    case 'paused':
+                                        $("#schedulerTable").jqGrid('setCell',rows[k],'status','<i class="icon-pause icon-large icon icon-gold"></i>','waiting',{ },'');
+                                        break;
+                                    case 'blocked':
+                                        $("#schedulerTable").jqGrid('setCell',rows[k],'status','<i class="icon-minus-sign icon-large icon icon-red"></i>','waiting',{ },'');
                                         break;
                                     case 'error':
                                         $("#schedulerTable").jqGrid('setCell',rows[k],'status','<i class="icon-exclamation-sign icon-large icon icon-red"></i>','error',{ },'');
-                                        break;
-                                    case 'idle':
-                                        $("#schedulerTable").jqGrid('setCell',rows[k],'status','<i class="icon-spinner icon-spin icon-large icon icon-green"></i>','idle',{ },'');
                                         break;
                                     default:
                                         break;
