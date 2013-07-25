@@ -7,6 +7,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.motechproject.email.model.Mail;
+import org.motechproject.email.service.EmailAuditService;
 import org.motechproject.email.service.EmailSenderService;
 import org.motechproject.event.MotechEvent;
 import org.motechproject.event.listener.annotations.MotechListener;
@@ -27,11 +28,14 @@ import static org.motechproject.email.constants.SendEmailConstants.TO_ADDRESS;
 
 public class SendEmailEventHandlerImplTest {
 
-    @InjectMocks
-    SendEmailEventHandlerImpl emailEventHandler = new SendEmailEventHandlerImpl();
-
     @Mock
     EmailSenderService emailSenderService;
+
+    @Mock
+    EmailAuditService emailAuditService;
+
+    @InjectMocks
+    SendEmailEventHandlerImpl emailEventHandler = new SendEmailEventHandlerImpl(emailSenderService, emailAuditService);
 
     @Before
     public void setUp() {
