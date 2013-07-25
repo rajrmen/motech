@@ -125,7 +125,7 @@
                         scope.task.actions[idx].serviceMethod = action.serviceMethod;
                     }
 
-                    scope.selectedAction[idx] = cloneObj(action);
+                    scope.selectedAction[idx] = action;
 
                     if (!scope.$$phase) {
                         scope.$apply();

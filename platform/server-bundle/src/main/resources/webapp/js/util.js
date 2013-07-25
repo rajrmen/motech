@@ -106,5 +106,15 @@ function toLocale(lang) {
 
 function cloneObj(obj) {
     'use strict';
-    return jQuery.extend(true, {}, obj);
+    var clone = {}, i;
+
+    for (i in obj) {
+        if (typeof obj[i] === 'object') {
+            clone[i] = cloneObj(obj[i]);
+        } else {
+            clone[i] = obj[i];
+        }
+    }
+
+    return clone;
 }

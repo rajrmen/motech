@@ -562,9 +562,9 @@ select {
 }
 
 .startup {
-    max-width: 700px;
+    width: 700px;
     min-height: 200px;
-    margin: auto;
+    margin: 50px auto;
     z-index: 9999;
     background: #ffffff url("../img/lightblue-bg.jpg") repeat-x 0 40px;
     border:1px #7bb5fc solid;
@@ -582,13 +582,13 @@ select {
     height:70px;
     display:block;
     margin: auto;
-    padding: 10px 0 0 8px;
+    padding: 5px 0 0 8px;
     text-align: center;
 }
 
 .startup-title {
     width: 100%;
-    height: auto;
+    height: 28px;
     display: block;
     float: left;
     margin: 10px auto;
@@ -625,17 +625,21 @@ select {
 
 .startup-form {
     min-height: 50px;
-    margin: 20px auto;
+    margin: 10px auto;
     color: #224477;
 }
 
 .startup-form .diver {
-    max-width: 600px;
+    width: 600px;
     margin: auto;
 }
 
-.startup-form .diver form {
-    margin: 0 10px 20px;
+.startup-form .form-horizontal .control-label {
+    width: 200px;
+}
+
+.startup-form .form-horizontal .controls {
+    margin-left: 220px;
 }
 
 .form-panel {
@@ -799,9 +803,9 @@ select {
 .flag {
   display: inline-block;
   width: 22px;
-  height: 17px;
+  height: 14px;
   *margin-right: .3em;
-  line-height: 20px;
+  line-height: 14px;
   vertical-align: middle;
   margin-left:0;
   background-position: 0 0;
