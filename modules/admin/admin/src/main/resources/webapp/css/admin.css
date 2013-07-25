@@ -384,6 +384,10 @@ p#settingsMsg:empty {
     margin: 10px;
 }
 
+.scheduler .btn-group > .btn.active {
+   z-index: 1;
+}
+
 #t_schedulerTable {
     min-height: 25px;
     height: auto;
@@ -452,4 +456,8 @@ p#settingsMsg:empty {
 
 .overrideJqgridTable .table-lightblue .ui-widget-content {
     border: 0 solid #D4E1F9;
+}
+
+.ui-datepicker.ui-widget {
+    font-size: 0.9em;
 }

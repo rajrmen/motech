@@ -5,37 +5,53 @@
     <div class="box-content">
 
 
-        <h4 class="frame-title">{{msg('admin.scheduler.jobs')}}&nbsp;&#40;{{jobs.length}}&#41;</h4>
-        <div id="operations-scheduler" class="control-group inside hidden">
+        <h4 class="frame-title">{{msg('admin.scheduler.jobs')}}</h4>
+        <div id="operations-scheduler" class="control-group inside">
             <button type="button" class="btn btn-info" data-toggle="collapse" data-target="#collapse-scheduler">
                 <i class="icon-eject icon-white"></i>&nbsp;{{msg('admin.scheduler.filters')}}
             </button>
         </div>
 
         <div class="collapse" id="collapse-scheduler">
-            <div class="row-fluid span12 margin-before inside">
-                <div class="span4">
-                    <fieldset class="inside"><legend>{{msg('admin.scheduler.name')}}</legend>
-                        <div class="control-group form-inline">
-                            <input type="text" class="input-medium search-query" placeholder="{{msg('scheduler.search')}}" data-event-type="keyup" data-search-field="phoneNumber" jqgrid-search="resourceTable">
-                        </div>
-                    </fieldset>
+            <div class="inside">
+                <div class="row-fluid">
+                    <div class="span5">
+                        <fieldset class="inside"><legend>{{msg('admin.scheduler.name')}}</legend>
+                            <div class="control-group form-inline">
+                                <input type="text" class="input-xlarge search-query" placeholder="{{msg('admin.scheduler.search')}}" data-event-type="keyup" data-search-field="name" jqgrid-search="schedulerTable">
+                            </div>
+                        </fieldset>
+                    </div>
+                    <div class="span7">
+                        <fieldset class="inside">
+                            <legend>{{msg('admin.scheduler.running')}}</legend>
+                            <div class="control-group form-inline">
+                                <input id="dateTimeFrom" grid-date-picker-from="" type="datetime" class="span4 search-query" placeholder="{{msg('admin.scheduler.from')}}" data-event-type="change" data-search-field="timeFrom" jqgrid-search="schedulerTable">
+                                <span class="offset1"></span><input id="dateTimeTo" grid-date-picker-to="" type="datetime" class="span4 search-query" placeholder="{{msg('admin.scheduler.to')}}" data-event-type="change" data-search-field="timeTo" jqgrid-search="schedulerTable">
+                            </div>
+                        </fieldset>
+                    </div>
                 </div>
-                <div class="span4">
-                    <fieldset class="inside"><legend>{{msg('admin.scheduler.status')}}</legend>
-                        <div class="btn-group control-group">
-
-                        </div>
-                    </fieldset>
-                </div>
-                <div class="span4">
-                    <fieldset class="inside">
-                        <legend>{{msg('admin.scheduler.running')}}</legend>
-                        <div class="btn-group control-group">
-                            <input id="dateTimeFrom" grid-date-picker-from="" type="datetime" class="span6 search-query" placeholder="{{msg('admin.scheduler.from')}}" data-event-type="change" data-search-field="timeFrom" jqgrid-search="resourceTable">
-                            <input id="dateTimeTo" grid-date-picker-to="" type="datetime" class="span6 search-query" placeholder="{{msg('admin.scheduler.to')}}" data-event-type="change" data-search-field="timeTo" jqgrid-search="resourceTable">
-                        </div>
-                    </fieldset>
+                <div class="row-fluid margin-before">
+                    <div class="span6">
+                        <fieldset class="inside"><legend>{{msg('admin.scheduler.activity')}}</legend>
+                            <div class="btn-group control-group">
+                                <button id="NOW" class="btn btn-info active" type="button" data-field-type="array" data-search-field="activity" data-search-value="NOW" jqgrid-search="schedulerTable"><i class="icon-white icon-ok"></i> {{msg('admin.scheduler.now')}}</button>
+                                <button id="FINISHED" class="btn btn-info active" type="button" data-field-type="array" data-search-field="activity" data-search-value="FINISHED" jqgrid-search="schedulerTable"><i class="icon-white icon-ok"></i> {{msg('admin.scheduler.finished')}}</button>
+                                <button id="LATER" class="btn btn-info active" type="button" data-field-type="array" data-search-field="activity" data-search-value="LATER" jqgrid-search="schedulerTable"><i class="icon-white icon-ok"></i> {{msg('admin.scheduler.later')}}</button>
+                            </div>
+                        </fieldset>
+                    </div>
+                    <div class="span6">
+                        <fieldset class="inside"><legend>{{msg('admin.scheduler.status')}}</legend>
+                            <div class="btn-group control-group">
+                                <button id="OK" class="btn btn-info active" type="button" data-field-type="array" data-search-field="status" data-search-value="OK" jqgrid-search="schedulerTable"><i class="icon-white icon-ok"></i> {{msg('admin.scheduler.ok')}}</button>
+                                <button id="PAUSED" class="btn btn-info active" type="button" data-field-type="array" data-search-field="status" data-search-value="PAUSED" jqgrid-search="schedulerTable"><i class="icon-white icon-ok"></i> {{msg('admin.scheduler.paused')}}</button>
+                                <button id="BLOCKED" class="btn btn-info active" type="button" data-field-type="array" data-search-field="status" data-search-value="BLOCKED" jqgrid-search="schedulerTable"><i class="icon-white icon-ok"></i> {{msg('admin.scheduler.blocked')}}</button>
+                                <button id="ERROR" class="btn btn-info active" type="button" data-field-type="array" data-search-field="status" data-search-value="ERROR" jqgrid-search="schedulerTable"><i class="icon-white icon-ok"></i> {{msg('admin.scheduler.error')}}</button>
+                            </div>
+                        </fieldset>
+                    </div>
                 </div>
             </div>
         </div>
