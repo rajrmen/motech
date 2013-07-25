@@ -7,7 +7,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.motechproject.email.model.Mail;
-import org.motechproject.email.service.EmailAuditService;
 import org.motechproject.email.service.EmailSenderService;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.server.MockMvc;
@@ -25,12 +24,8 @@ import static org.springframework.test.web.server.result.MockMvcResultMatchers.c
 import static org.springframework.test.web.server.result.MockMvcResultMatchers.status;
 
 public class SendEmailControllerTest {
-
     @Mock
     private EmailSenderService senderService;
-
-    @Mock
-    private EmailAuditService auditService;
 
     private SendEmailController sendEmailController;
 
@@ -42,7 +37,7 @@ public class SendEmailControllerTest {
     public void setUp() throws Exception {
         initMocks(this);
 
-        sendEmailController = new SendEmailController(senderService, auditService);
+        sendEmailController = new SendEmailController(senderService);
         controller = MockMvcBuilders.standaloneSetup(sendEmailController).build();
     }
 
