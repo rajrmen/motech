@@ -49,7 +49,6 @@
                     dateFormat: "yy-mm-dd",
                     changeMonth: true,
                     changeYear: true,
-                    maxDate: +0,
                     timeFormat: "HH:mm:ss",
                     onSelect: function (selectedDateTime){
                         startDateTextBox.datetimepicker('option', 'maxDate', elem.datetimepicker('getDate') );
@@ -207,8 +206,8 @@
                             {name:"parameters",index:"parameters", width:80, align:"center",
                             formatter: function (array, options, data) {
                                 var div = $('<div>');
-                                $.each(array, function (i, value) {
-                                    div.append($('<div>').append(i)
+                                $.each(array, function (key, value) {
+                                    div.append($('<div>').append(key)
                                     .addClass('parameters')
                                     );
                                 });
@@ -217,7 +216,7 @@
                             {name:"parameters",index:"parameters", width:80, align:"center",
                             formatter: function (array, options, data) {
                                 var div2 = $('<div>');
-                                $.each(array, function (i, value) {
+                                $.each(array, function (key, value) {
                                     div2.append($('<div>').append($('<span>').append(value))
                                     .addClass('parameters')
                                     );
@@ -225,7 +224,7 @@
                                 return '<div>' + div2.html() + '</div>';
                             }}
                             ],
-                        rowNum:99, pager: pager_id, sortname: 'num', sortorder: "asc", height: '100%' });
+                        rowNum:99, pager: pager_id, sortname: 'parameters', sortorder: "asc", height: '100%' });
                         jQuery("#"+subgrid_table_id).jqGrid('navGrid',"#"+pager_id,{edit:false,add:false,del:false});
                         jQuery("#"+subgrid_table_id).jqGrid('setGroupHeaders', {
                             useColSpanStyle: true,

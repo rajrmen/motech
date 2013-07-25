@@ -203,7 +203,7 @@
                             <predefinedVars>
                                 $, jQuery, angular, angularHandler, jFormErrorHandler,
                                 dummyHandler, jConfirm, alertHandler, window, alertHandlerWithCallback, module,
-                                blockUI, unblockUI, motechAlert, handleWithStackTrace, restartBundleHandler
+                                blockUI, unblockUI, motechAlert, handleWithStackTrace, restartBundleHandler, parseUri
                             </predefinedVars>
                             <failOnIssues>${jslint.enable}</failOnIssues>
                         </configuration>
