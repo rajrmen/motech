@@ -27,7 +27,7 @@ public class JobBasicInfoComparator implements Comparator<JobBasicInfo> {
             case "name":
                 ret =  o1.getName().compareTo(o2.getName());
                 break;
-            case "startdate":
+            case "startDate":
                 o1Time = DateTimeFormat.forPattern("Y-MM-dd hh:mm:ss")
                         .parseDateTime(o1.getStartDate());
                 o2Time = DateTimeFormat.forPattern("Y-MM-dd hh:mm:ss")
@@ -35,7 +35,7 @@ public class JobBasicInfoComparator implements Comparator<JobBasicInfo> {
 
                 ret = o1Time.compareTo(o2Time);
                 break;
-            case "nextfiredate":
+            case "nextFireDate":
                 o1Time = DateTimeFormat.forPattern("Y-MM-dd hh:mm:ss")
                         .parseDateTime(o1.getNextFireDate());
                 o2Time = DateTimeFormat.forPattern("Y-MM-dd hh:mm:ss")
@@ -43,7 +43,7 @@ public class JobBasicInfoComparator implements Comparator<JobBasicInfo> {
 
                 ret = o1Time.compareTo(o2Time);
                 break;
-            case "enddate":
+            case "endDate":
                 o1Time = DateTimeFormat.forPattern("Y-MM-dd hh:mm:ss")
                         .parseDateTime(o1.getEndDate());
                 o2Time = DateTimeFormat.forPattern("Y-MM-dd hh:mm:ss")
