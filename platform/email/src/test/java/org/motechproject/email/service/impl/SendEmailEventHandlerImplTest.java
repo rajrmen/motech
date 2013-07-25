@@ -6,7 +6,9 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.motechproject.email.domain.EmailRecord;
 import org.motechproject.email.model.Mail;
+import org.motechproject.email.service.EmailAuditService;
 import org.motechproject.email.service.EmailSenderService;
 import org.motechproject.event.MotechEvent;
 import org.motechproject.event.listener.annotations.MotechListener;
@@ -18,20 +20,20 @@ import java.util.Map;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
 import static org.junit.Assert.assertArrayEquals;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.verify;
-import static org.motechproject.email.constants.SendEmailConstants.FROM_ADDRESS;
-import static org.motechproject.email.constants.SendEmailConstants.MESSAGE;
-import static org.motechproject.email.constants.SendEmailConstants.SEND_EMAIL_SUBJECT;
-import static org.motechproject.email.constants.SendEmailConstants.SUBJECT;
-import static org.motechproject.email.constants.SendEmailConstants.TO_ADDRESS;
+import static org.motechproject.email.constants.SendEmailConstants.*;
 
 public class SendEmailEventHandlerImplTest {
 
-    @InjectMocks
-    SendEmailEventHandlerImpl emailEventHandler = new SendEmailEventHandlerImpl();
-
     @Mock
     EmailSenderService emailSenderService;
+
+    @Mock
+    EmailAuditService emailAuditService;
+
+    @InjectMocks
+    SendEmailEventHandlerImpl emailEventHandler = new SendEmailEventHandlerImpl(emailSenderService, emailAuditService);
 
     @Before
     public void setUp() {
@@ -44,6 +46,23 @@ public class SendEmailEventHandlerImplTest {
         assertTrue("MotechListener annotation missing", handleMethod.isAnnotationPresent(MotechListener.class));
         MotechListener annotation = handleMethod.getAnnotation(MotechListener.class);
         assertArrayEquals(new String[]{SEND_EMAIL_SUBJECT}, annotation.subjects());
+    }
+
+    @Test
+    public void testIfEmailAuditServiceIsCalled() {
+        String from = "testfromaddress";
+        String to = "testtoaddress";
+        String message = "test message";
+        String subject = "test subject";
+
+        Map<String, Object> values = new HashMap<>();
+        values.put(FROM_ADDRESS, from);
+        values.put(TO_ADDRESS, to);
+        values.put(MESSAGE, message);
+        values.put(SUBJECT, subject);
+
+        emailEventHandler.handle(new MotechEvent(SEND_EMAIL_SUBJECT, values));
+        verify(emailAuditService).log(any(EmailRecord.class));
     }
 
     @Test
