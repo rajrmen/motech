@@ -2,6 +2,7 @@ package org.motechproject.scheduler.domain;
 
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormatter;
 
 import java.util.Comparator;
 
@@ -18,6 +19,7 @@ public class JobBasicInfoComparator implements Comparator<JobBasicInfo> {
     public int compare(JobBasicInfo o1, JobBasicInfo o2) {
         DateTime o1Time;
         DateTime o2Time;
+        DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("Y-MM-dd HH:mm:ss");
         int ret = 0;
 
         switch (compareField) {
@@ -28,26 +30,20 @@ public class JobBasicInfoComparator implements Comparator<JobBasicInfo> {
                 ret =  o1.getName().compareTo(o2.getName());
                 break;
             case "startDate":
-                o1Time = DateTimeFormat.forPattern("Y-MM-dd hh:mm:ss")
-                        .parseDateTime(o1.getStartDate());
-                o2Time = DateTimeFormat.forPattern("Y-MM-dd hh:mm:ss")
-                        .parseDateTime(o2.getStartDate());
+                o1Time = dateTimeFormatter.parseDateTime(o1.getStartDate());
+                o2Time = dateTimeFormatter.parseDateTime(o2.getStartDate());
 
                 ret = o1Time.compareTo(o2Time);
                 break;
             case "nextFireDate":
-                o1Time = DateTimeFormat.forPattern("Y-MM-dd hh:mm:ss")
-                        .parseDateTime(o1.getNextFireDate());
-                o2Time = DateTimeFormat.forPattern("Y-MM-dd hh:mm:ss")
-                        .parseDateTime(o2.getNextFireDate());
+                o1Time = dateTimeFormatter.parseDateTime(o1.getNextFireDate());
+                o2Time = dateTimeFormatter.parseDateTime(o2.getNextFireDate());
 
                 ret = o1Time.compareTo(o2Time);
                 break;
             case "endDate":
-                o1Time = DateTimeFormat.forPattern("Y-MM-dd hh:mm:ss")
-                        .parseDateTime(o1.getEndDate());
-                o2Time = DateTimeFormat.forPattern("Y-MM-dd hh:mm:ss")
-                        .parseDateTime(o2.getEndDate());
+                o1Time = dateTimeFormatter.parseDateTime(o1.getEndDate());
+                o2Time = dateTimeFormatter.parseDateTime(o2.getEndDate());
 
                 ret = o1Time.compareTo(o2Time);
                 break;

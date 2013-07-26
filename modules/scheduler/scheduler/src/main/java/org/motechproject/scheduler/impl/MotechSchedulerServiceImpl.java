@@ -9,11 +9,35 @@ import org.motechproject.commons.date.model.Time;
 import org.motechproject.commons.date.util.DateUtil;
 import org.motechproject.event.MotechEvent;
 import org.motechproject.scheduler.MotechSchedulerService;
-import org.motechproject.scheduler.domain.*;
+import org.motechproject.scheduler.domain.CronSchedulableJob;
+import org.motechproject.scheduler.domain.CronJobId;
+import org.motechproject.scheduler.domain.DayOfWeekSchedulableJob;
+import org.motechproject.scheduler.domain.EventInfo;
+import org.motechproject.scheduler.domain.JobBasicInfo;
+import org.motechproject.scheduler.domain.JobDetailedInfo;
+import org.motechproject.scheduler.domain.JobId;
+import org.motechproject.scheduler.domain.RepeatingJobId;
+import org.motechproject.scheduler.domain.RepeatingSchedulableJob;
+import org.motechproject.scheduler.domain.RunOnceJobId;
+import org.motechproject.scheduler.domain.RunOnceSchedulableJob;
 import org.motechproject.scheduler.exception.MotechSchedulerException;
 import org.motechproject.scheduler.factory.MotechSchedulerFactoryBean;
 import org.motechproject.server.config.SettingsFacade;
-import org.quartz.*;
+import org.quartz.SchedulerException;
+import org.quartz.Scheduler;
+import org.quartz.CronScheduleBuilder;
+import org.quartz.CronTrigger;
+import org.quartz.SimpleTrigger;
+import org.quartz.JobDetail;
+import org.quartz.JobDataMap;
+import org.quartz.Trigger;
+import org.quartz.ScheduleBuilder;
+import org.quartz.SimpleScheduleBuilder;
+import org.quartz.CalendarIntervalScheduleBuilder;
+import org.quartz.TriggerUtils;
+import org.quartz.TriggerKey;
+import org.quartz.JobKey;
+import org.quartz.JobExecutionContext;
 import org.quartz.impl.calendar.BaseCalendar;
 import org.quartz.impl.matchers.GroupMatcher;
 import org.quartz.impl.triggers.CronTriggerImpl;
@@ -21,7 +45,11 @@ import org.quartz.spi.OperableTrigger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.Map;
+import java.util.List;
+import java.util.Date;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 import static java.lang.String.format;
 import static org.motechproject.commons.date.util.DateUtil.newDateTime;
@@ -418,7 +446,7 @@ public class MotechSchedulerServiceImpl implements MotechSchedulerService {
             logger.debug(schedulableJob);
         }
         assertArgumentNotNull("RunOnceSchedulableJob", schedulableJob);
-        MotechEvent motechEvent =schedulableJob.getMotechEvent();
+        MotechEvent motechEvent = schedulableJob.getMotechEvent();
 
         Date jobStartDate = schedulableJob.getStartDate();
         assertArgumentNotNull("Job start date", jobStartDate);
@@ -495,7 +523,7 @@ public class MotechSchedulerServiceImpl implements MotechSchedulerService {
     @Override
     public void unscheduleRepeatingJob(String subject, String externalId) {
         if (logger.isDebugEnabled()) {
-            logger.debug(format("unscheduling repeating job: " + LOG_SUBJECT_EXTERNALID, subject, externalId ));
+            logger.debug(format("unscheduling repeating job: " + LOG_SUBJECT_EXTERNALID, subject, externalId));
         }
         JobId jobId = new RepeatingJobId(subject, externalId);
         if (logger.isDebugEnabled()) {
@@ -507,7 +535,7 @@ public class MotechSchedulerServiceImpl implements MotechSchedulerService {
     @Override
     public void safeUnscheduleRepeatingJob(String subject, String externalId) {
         if (logger.isDebugEnabled()) {
-            logger.debug(format("safe unscheduling repeating job: " + LOG_SUBJECT_EXTERNALID, subject, externalId ));
+            logger.debug(format("safe unscheduling repeating job: " + LOG_SUBJECT_EXTERNALID, subject, externalId));
         }
         try {
             unscheduleRepeatingJob(subject, externalId);
@@ -519,7 +547,7 @@ public class MotechSchedulerServiceImpl implements MotechSchedulerService {
     @Override
     public void unscheduleRunOnceJob(String subject, String externalId) {
         if (logger.isDebugEnabled()) {
-            logger.debug(format("unscheduling run once job: " + LOG_SUBJECT_EXTERNALID, subject, externalId ));
+            logger.debug(format("unscheduling run once job: " + LOG_SUBJECT_EXTERNALID, subject, externalId));
         }
         JobId jobId = new RunOnceJobId(subject, externalId);
         if (logger.isDebugEnabled()) {
@@ -531,7 +559,7 @@ public class MotechSchedulerServiceImpl implements MotechSchedulerService {
     @Override
     public void safeUnscheduleRunOnceJob(String subject, String externalId) {
         if (logger.isDebugEnabled()) {
-            logger.debug(format("safe unscheduling run once job: " + LOG_SUBJECT_EXTERNALID, subject, externalId ));
+            logger.debug(format("safe unscheduling run once job: " + LOG_SUBJECT_EXTERNALID, subject, externalId));
         }
         try {
             unscheduleRunOnceJob(subject, externalId);
@@ -543,7 +571,7 @@ public class MotechSchedulerServiceImpl implements MotechSchedulerService {
     @Override
     public void unscheduleJob(String subject, String externalId) {
         if (logger.isDebugEnabled()) {
-            logger.debug(format("unscheduling cron job: " + LOG_SUBJECT_EXTERNALID, subject, externalId ));
+            logger.debug(format("unscheduling cron job: " + LOG_SUBJECT_EXTERNALID, subject, externalId));
         }
         unscheduleJob(new CronJobId(subject, externalId));
     }
@@ -559,7 +587,7 @@ public class MotechSchedulerServiceImpl implements MotechSchedulerService {
     @Override
     public void safeUnscheduleJob(String subject, String externalId) {
         if (logger.isDebugEnabled()) {
-            logger.debug(format("safe unscheduling cron job: " + LOG_SUBJECT_EXTERNALID, subject, externalId ));
+            logger.debug(format("safe unscheduling cron job: " + LOG_SUBJECT_EXTERNALID, subject, externalId));
         }
         try {
             unscheduleJob(subject, externalId);
@@ -668,8 +696,6 @@ public class MotechSchedulerServiceImpl implements MotechSchedulerService {
         List<JobBasicInfo> result = new ArrayList<>();
 
         try {
-            List<JobExecutionContext> runningJobs = scheduler.getCurrentlyExecutingJobs();
-
             for (String groupName : scheduler.getJobGroupNames()) {
                 for (JobKey jobKey : scheduler.getJobKeys(GroupMatcher.jobGroupEquals(groupName))) {
                     List<Trigger> triggers = (List<Trigger>) scheduler.getTriggersOfJob(jobKey);
@@ -683,44 +709,22 @@ public class MotechSchedulerServiceImpl implements MotechSchedulerService {
 
                     jobName = jobKey.getName();
 
-                    if (scheduler.getTriggerState(triggers.get(0).getKey()) == Trigger.TriggerState.ERROR) {
-                        status = JobBasicInfo.STATUS_ERROR;
-                    } else if (scheduler.getTriggerState(triggers.get(0).getKey()) == Trigger.TriggerState.BLOCKED) {
-                        status = JobBasicInfo.STATUS_BLOCKED;
-                    } else if (scheduler.getTriggerState(triggers.get(0).getKey()) == Trigger.TriggerState.PAUSED) {
-                        status = JobBasicInfo.STATUS_PAUSED;
-                    } else {
-                        status = JobBasicInfo.STATUS_OK;
-                    }
+                    status = getJobStatus(jobKey);
 
-                    if (isJobCurrentlyRunning(jobKey, runningJobs)) {
-                        activity = JobBasicInfo.ACTIVITY_NOW;
-                    } else if (triggers.get(0).getNextFireTime() == null) {
-                        activity = JobBasicInfo.ACTIVITY_FINISHED;
-                    } else if (triggers.get(0).getNextFireTime().after(new Date())) {
-                        activity = JobBasicInfo.ACTIVITY_LATER;
-                    } else {
-                        activity = JobBasicInfo.ACTIVITY_UNKNOWN;
-                    }
+                    activity = getJobActivity(jobKey, nextFireDateTime);
 
-                    if (jobName.endsWith(RunOnceJobId.SUFFIX_RUNONCEJOBID)) {
-                        info = "RUNONCE";
-                    } else if (jobName.endsWith(RepeatingJobId.SUFFIX_REPEATJOBID)) {
-                        info = "REPEAT";
-                    } else {
-                        info = triggers.get(0).getDescription();
-                    }
+                    info = getJobInfo(jobKey);
 
                     result.add(
                             new JobBasicInfo(activity, status, jobName,
-                                    DateTimeFormat.forPattern("Y-MM-dd hh:mm:ss").print(startDateTime),
-                                    DateTimeFormat.forPattern("Y-MM-dd hh:mm:ss").print(nextFireDateTime),
-                                    DateTimeFormat.forPattern("Y-MM-dd hh:mm:ss").print(endDateTime),
+                                    DateTimeFormat.forPattern("Y-MM-dd HH:mm:ss").print(startDateTime),
+                                    DateTimeFormat.forPattern("Y-MM-dd HH:mm:ss").print(nextFireDateTime),
+                                    DateTimeFormat.forPattern("Y-MM-dd HH:mm:ss").print(endDateTime),
                                     info)
                     );
                 }
             }
-        } catch(Exception e) {
+        } catch (Exception e) {
             logger.error(e.getMessage());
         }
 
@@ -805,14 +809,58 @@ public class MotechSchedulerServiceImpl implements MotechSchedulerService {
         return names;
     }
 
-    private boolean isJobCurrentlyRunning(JobKey jobKey, List<JobExecutionContext> jobs) {
-        for (JobExecutionContext jobExecutionContext : jobs) {
-            if (jobExecutionContext.getTrigger().getJobKey().equals(jobKey)) {
+    private boolean isJobCurrentlyRunning(JobKey jobKey) throws SchedulerException {
+        List<JobExecutionContext> runningJobs = scheduler.getCurrentlyExecutingJobs();
+
+        for (JobExecutionContext jobExecutionContext : runningJobs) {
+            if (jobExecutionContext.getJobDetail().getKey().equals(jobKey)) {
                 return true;
             }
         }
 
         return false;
+    }
+
+    private String getJobStatus(JobKey jobKey) throws SchedulerException {
+        List<Trigger> triggers = (List<Trigger>) scheduler.getTriggersOfJob(jobKey);
+        TriggerKey triggerKey = triggers.get(0).getKey();
+
+        if (scheduler.getTriggerState(triggerKey) == Trigger.TriggerState.ERROR) {
+            return JobBasicInfo.STATUS_ERROR;
+        } else if (scheduler.getTriggerState(triggerKey) == Trigger.TriggerState.BLOCKED) {
+            return JobBasicInfo.STATUS_BLOCKED;
+        } else if (scheduler.getTriggerState(triggerKey) == Trigger.TriggerState.PAUSED) {
+            return JobBasicInfo.STATUS_PAUSED;
+        } else {
+            return JobBasicInfo.STATUS_OK;
+        }
+    }
+
+    private String getJobActivity(JobKey jobKey, DateTime nextFireDateTime) throws SchedulerException {
+        List<Trigger> triggers = (List<Trigger>) scheduler.getTriggersOfJob(jobKey);
+        Trigger trigger = triggers.get(0);
+
+        if (isJobCurrentlyRunning(jobKey)) {
+            return JobBasicInfo.ACTIVITY_NOW;
+        } else if (trigger.getNextFireTime() == null || nextFireDateTime.isBefore(DateTime.now())) {
+            return JobBasicInfo.ACTIVITY_FINISHED;
+        } else if (nextFireDateTime.isAfter(DateTime.now())) {
+            return JobBasicInfo.ACTIVITY_LATER;
+        } else {
+            return JobBasicInfo.ACTIVITY_UNKNOWN;
+        }
+    }
+
+    private String getJobInfo(JobKey jobKey) throws SchedulerException {
+        List<Trigger> triggers = (List<Trigger>) scheduler.getTriggersOfJob(jobKey);
+
+        if (jobKey.getName().endsWith(RunOnceJobId.SUFFIX_RUNONCEJOBID)) {
+            return "Run Once Job";
+        } else if (jobKey.getName().endsWith(RepeatingJobId.SUFFIX_REPEATJOBID)) {
+            return "Repeating Job";
+        } else {
+            return triggers.get(0).getDescription();
+        }
     }
 
     protected void assertArgumentNotNull(String objectName, Object object) {

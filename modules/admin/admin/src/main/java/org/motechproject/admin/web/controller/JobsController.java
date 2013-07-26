@@ -29,55 +29,33 @@ public class JobsController {
     @ResponseBody
     public JobsRecords handleJobs(JobsGridSettings jobsGridSettings) {
         List<JobBasicInfo> allJobsBasicInfos = motechSchedulerService.getScheduledJobsBasicInfo();
-        List<JobBasicInfo> filteredJobsBasicInfos = new ArrayList<>();
+        List<JobBasicInfo> filteredJobsBasicInfos = null;
         Boolean sortAscending = (jobsGridSettings.getSortDirection().equals("asc"));
-        DateTime dateFrom = new DateTime();
-        DateTime dateTo = new DateTime();
+        DateTime dateFrom;
+        DateTime dateTo;
+
 
         if (!jobsGridSettings.getTimeFrom().isEmpty()) {
-            dateFrom = DateTimeFormat.forPattern("Y-MM-dd hh:mm:ss")
+            dateFrom = DateTimeFormat.forPattern("Y-MM-dd HH:mm:ss")
                     .parseDateTime(jobsGridSettings.getTimeFrom());
+        } else {
+            dateFrom = getMinDateTime();
         }
 
         if (!jobsGridSettings.getTimeTo().isEmpty()) {
-            dateTo = DateTimeFormat.forPattern("Y-MM-dd hh:mm:ss")
+            dateTo = DateTimeFormat.forPattern("Y-MM-dd HH:mm:ss")
                     .parseDateTime(jobsGridSettings.getTimeTo());
+        } else {
+            dateTo = getMaxDateTime();
         }
 
-        for (JobBasicInfo job : allJobsBasicInfos) {
-            DateTime jobStartTime = DateTimeFormat.forPattern("Y-MM-dd hh:mm:ss")
-                    .parseDateTime(job.getStartDate());
-            DateTime jobEndTime = DateTimeFormat.forPattern("Y-MM-dd hh:mm:ss")
-                    .parseDateTime(job.getEndDate());
-            int ifAddJob = 0;
+        filteredJobsBasicInfos = filterJobsByDates(allJobsBasicInfos, dateFrom, dateTo);
 
-            if (    jobsGridSettings.getActivity().contains(job.getActivity()) &&
-                    jobsGridSettings.getStatus().contains(job.getStatus()) &&
-                    job.getName().toLowerCase().contains(jobsGridSettings.getName().toLowerCase()) )
-            {
-                ifAddJob = 1;
+        filteredJobsBasicInfos = filterJobsByStates(
+                filteredJobsBasicInfos, jobsGridSettings.getActivity(), jobsGridSettings.getStatus()
+        );
 
-                if (!jobsGridSettings.getTimeFrom().isEmpty()) {
-                    if (dateFrom.isBefore(jobStartTime) || dateFrom.isBefore(jobEndTime)) {
-                        ifAddJob += 1;
-                    } else {
-                        ifAddJob -= 1;
-                    }
-                }
-
-                if (!jobsGridSettings.getTimeTo().isEmpty()) {
-                    if (dateTo.isAfter(jobStartTime) || dateFrom.isAfter(jobEndTime)) {
-                        ifAddJob += 1;
-                    } else {
-                        ifAddJob -= 1;
-                    }
-                }
-
-                if (ifAddJob > 0) {
-                    filteredJobsBasicInfos.add(job);
-                }
-            }
-        }
+        filteredJobsBasicInfos = filterJobsByName(filteredJobsBasicInfos, jobsGridSettings.getName());
 
         if (!jobsGridSettings.getSortColumn().isEmpty()) {
             Collections.sort(
@@ -103,5 +81,52 @@ public class JobsController {
         } else {
             return null;
         }
+    }
+
+    private List<JobBasicInfo> filterJobsByDates(List<JobBasicInfo> jobs, DateTime dateFrom, DateTime dateTo) {
+        List<JobBasicInfo> filteredJobs = new ArrayList<>();
+
+        for (JobBasicInfo job : jobs) {
+            DateTime jobStartTime = DateTimeFormat.forPattern("Y-MM-dd HH:mm:ss")
+                    .parseDateTime(job.getStartDate());
+
+            if (jobStartTime.isAfter(dateFrom) && jobStartTime.isBefore(dateTo)) {
+                filteredJobs.add(job);
+            }
+        }
+
+        return filteredJobs;
+    }
+
+    private List<JobBasicInfo> filterJobsByStates(List<JobBasicInfo> jobs, String activityFilter, String statusFilter) {
+        List<JobBasicInfo> filteredJobs = new ArrayList<>();
+
+        for (JobBasicInfo job : jobs) {
+            if (activityFilter.contains(job.getActivity()) && statusFilter.contains(job.getStatus())) {
+                filteredJobs.add(job);
+            }
+        }
+
+        return filteredJobs;
+    }
+
+    private List<JobBasicInfo> filterJobsByName(List<JobBasicInfo> jobs, String namePartial) {
+        List<JobBasicInfo> filteredJobs = new ArrayList<>();
+
+        for (JobBasicInfo job : jobs) {
+            if (job.getName().contains(namePartial)) {
+                filteredJobs.add(job);
+            }
+        }
+
+        return filteredJobs;
+    }
+
+    private DateTime getMinDateTime() {
+        return new DateTime(Long.MIN_VALUE);
+    }
+
+    private DateTime getMaxDateTime() {
+        return new DateTime(Long.MAX_VALUE);
     }
 }
