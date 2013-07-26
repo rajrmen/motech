@@ -151,7 +151,7 @@
                 var elem = angular.element(element), filters, i, j, k, rows, activity, status;
 
                 elem.jqGrid({
-                    url:"../admin/api/jobs?name=&activity=NOW,FINISHED,LATER&status=ERROR,BLOCKED,PAUSED,OK&dateFrom=&dateTo=",
+                    url:"../admin/api/jobs?name=&activity=NOW,FINISHED,LATER&status=ERROR,BLOCKED,PAUSED,OK&timeFrom=&timeTo=",
                     datatype:"json",
                     jsonReader:{
                         repeatitems: false

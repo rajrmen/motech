@@ -1,8 +1,16 @@
 package org.motechproject.scheduler.domain;
 
-//
 
 public class JobBasicInfo {
+    public static final String STATUS_ERROR = "ERROR";
+    public static final String STATUS_BLOCKED = "BLOCKED";
+    public static final String STATUS_PAUSED = "PAUSED";
+    public static final String STATUS_OK = "OK";
+    public static final String ACTIVITY_NOW = "NOW";
+    public static final String ACTIVITY_FINISHED = "FINISHED";
+    public static final String ACTIVITY_LATER = "LATER";
+    public static final String ACTIVITY_UNKNOWN = "UNKNOWN";
+
     private String activity;
     private String status;
     private String name;

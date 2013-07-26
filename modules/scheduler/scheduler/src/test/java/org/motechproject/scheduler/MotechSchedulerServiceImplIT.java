@@ -11,10 +11,7 @@ import org.motechproject.commons.date.model.Time;
 import org.motechproject.event.MotechEvent;
 import org.motechproject.event.listener.EventListener;
 import org.motechproject.event.listener.EventListenerRegistryService;
-import org.motechproject.scheduler.domain.CronSchedulableJob;
-import org.motechproject.scheduler.domain.DayOfWeekSchedulableJob;
-import org.motechproject.scheduler.domain.RepeatingSchedulableJob;
-import org.motechproject.scheduler.domain.RunOnceSchedulableJob;
+import org.motechproject.scheduler.domain.*;
 import org.motechproject.scheduler.exception.MotechSchedulerException;
 import org.motechproject.scheduler.factory.MotechSchedulerFactoryBean;
 import org.quartz.Scheduler;
@@ -31,9 +28,7 @@ import java.util.List;
 import java.util.Map;
 
 import static java.util.Arrays.asList;
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNull;
-import static junit.framework.Assert.assertTrue;
+import static junit.framework.Assert.*;
 import static org.motechproject.commons.date.util.DateUtil.newDate;
 import static org.motechproject.commons.date.util.DateUtil.newDateTime;
 import static org.motechproject.commons.date.util.DateUtil.now;
@@ -513,6 +508,7 @@ public class MotechSchedulerServiceImplIT {
                             "0 0 12 * * ?"
                     ));
 
+
             List<Date> eventTimes = schedulerService.getScheduledJobTimings("test_event", "job_id", newDateTime(2020, 7, 15, 12, 0, 0).toDate(), newDateTime(2020, 7, 17, 12, 0, 0).toDate());
             assertEquals(asList(
                     newDateTime(2020, 7, 15, 12, 0, 0).toDate(),
@@ -523,6 +519,163 @@ public class MotechSchedulerServiceImplIT {
             stopFakingTime();
         }
     }
+
+    @Test
+    public void shouldGetScheduledJobsBasicInfo() {
+        try {
+            fakeNow(newDateTime(2020, 7, 15, 10, 0, 0));
+
+            Map<String, Object> params = new HashMap<>();
+            params.put(MotechSchedulerService.JOB_ID_KEY, "job_id");
+
+            schedulerService.unscheduleAllJobs("test_event");
+
+            schedulerService.scheduleJob(
+                    new CronSchedulableJob(
+                            new MotechEvent("test_event", params),
+                            "0 0 12 * * ?"
+                    )
+            );
+
+            schedulerService.scheduleRunOnceJob(
+                    new RunOnceSchedulableJob(
+                            new MotechEvent("test_event", params),
+                            newDateTime(2020, 7, 15, 12, 0, 0).toDate()
+            ));
+
+            schedulerService.scheduleRepeatingJob(
+                    new RepeatingSchedulableJob(
+                            new MotechEvent("test_event", params),
+                            newDateTime(2020, 7, 15, 12, 0, 0).toDate(),
+                            null,
+                            2,
+                            (long) DateTimeConstants.MILLIS_PER_DAY,
+                            false)
+            );
+
+            List<JobBasicInfo> expectedJobBasicInfos = new ArrayList<>();
+            expectedJobBasicInfos.add(
+                new JobBasicInfo(
+                        "LATER", "OK", "test_event-job_id-runonce", "2020-07-15 12:00:00", "2020-07-15 12:00:00", "", ""
+                )
+            );
+            expectedJobBasicInfos.add(
+                new JobBasicInfo(
+                        "LATER", "OK", "test_event-job_id-repeat", "2020-07-15 12:00:00", "2020-07-15 12:00:00", "", ""
+                )
+            );
+            expectedJobBasicInfos.add(
+                new JobBasicInfo(
+                        "LATER", "OK", "test_event-job_id", "2020-07-15 10:00:00", "2020-07-15 12:00:00", "", ""
+                )
+            );
+
+            List<JobBasicInfo> jobBasicInfos = schedulerService.getScheduledJobsBasicInfo();
+
+            int testJobsCount = 0;
+            for (JobBasicInfo job : jobBasicInfos) {
+                for (JobBasicInfo expectedJob : expectedJobBasicInfos) {
+                    if(job.getName().equals(expectedJob.getName())) {
+                        testJobsCount+=1;
+
+                        assertEquals(expectedJob.getActivity(), job.getActivity());
+                        assertEquals(expectedJob.getStatus(), job.getStatus());
+                        assertEquals(expectedJob.getStartDate(), job.getStartDate());
+                        assertEquals(expectedJob.getNextFireDate(), job.getNextFireDate());
+                    }
+                }
+            }
+            assertEquals(3, testJobsCount);
+        } finally {
+            stopFakingTime();
+        }
+    }
+
+    @Test
+    public void shouldGetScheduledJobDetailedInfo() {
+        try {
+            fakeNow(newDateTime(2020, 7, 15, 10, 0, 0));
+
+            Map<String, Object> params = new HashMap<>();
+            params.put(MotechSchedulerService.JOB_ID_KEY, "job_id");
+            params.put("param1", "value1");
+            params.put("param2", "value2");
+
+            schedulerService.unscheduleAllJobs("test_event");
+
+            schedulerService.scheduleRunOnceJob(
+                    new RunOnceSchedulableJob(
+                            new MotechEvent("test_event", params),
+                            newDateTime(2020, 7, 15, 10, 0, 0).toDate()
+                    )
+            );
+
+            JobDetailedInfo jobDetailedInfo = null;
+
+            for (JobBasicInfo job : schedulerService.getScheduledJobsBasicInfo()) {
+                if (job.getName().equals("test_event-job_id-runonce")) {
+                    jobDetailedInfo = schedulerService.getScheduledJobDetailedInfo(job);
+                }
+            }
+
+            assertNotNull(jobDetailedInfo);
+            assertEquals("test_event", jobDetailedInfo.getEventInfoList().get(0).getSubject());
+            assertEquals(3, jobDetailedInfo.getEventInfoList().get(0).getParameters().size());
+        } finally {
+            stopFakingTime();
+        }
+    }
+
+    @Test
+    public void shouldTellIfJobIsCurrentlyRunning() {
+        try {
+            fakeNow(newDateTime(2020, 7, 15, 10, 0, 0));
+
+            Map<String, Object> params = new HashMap<>();
+            params.put(MotechSchedulerService.JOB_ID_KEY, "job_id");
+
+            schedulerService.unscheduleAllJobs("test_event");
+
+            schedulerService.scheduleRunOnceJob(
+                    new RunOnceSchedulableJob(
+                            new MotechEvent("test_event", params),
+                            newDateTime(2020, 7, 15, 10, 0, 0).toDate()
+                    )
+            );
+
+            JobBasicInfo jobBasicInfo = schedulerService.getScheduledJobsBasicInfo().get(0);
+
+            assertEquals(JobBasicInfo.ACTIVITY_NOW, jobBasicInfo.getActivity());
+        } finally {
+            stopFakingTime();
+        }
+    }
+
+    @Test
+    public void shouldTellIfJobWontFireAgain() throws Exception {
+        try {
+            fakeNow(newDateTime(2020, 7, 15, 10, 0, 0));
+
+            Map<String, Object> params = new HashMap<>();
+            params.put(MotechSchedulerService.JOB_ID_KEY, "job_id");
+
+            schedulerService.unscheduleAllJobs("test_event");
+
+            schedulerService.scheduleRunOnceJob(
+                    new RunOnceSchedulableJob(
+                            new MotechEvent("test_event", params),
+                            newDateTime(2020, 7, 15, 10, 0, 0).toDate()
+                    )
+            );
+
+            JobBasicInfo jobBasicInfo = schedulerService.getScheduledJobsBasicInfo().get(0);
+
+            assertEquals(JobBasicInfo.ACTIVITY_FINISHED, jobBasicInfo.getActivity());
+        } finally {
+            stopFakingTime();
+        }
+    }
+
 
     private List<DateTime> getFireTimes(String triggerKey) throws SchedulerException {
         Trigger trigger = scheduler.getTrigger(triggerKey(triggerKey, "default"));

@@ -9,8 +9,8 @@ public class JobsGridSettings {
     private String sortDirection;
     private String activity;
     private String status;
-    private String dateFrom;
-    private String dateTo;
+    private String timeFrom;
+    private String timeTo;
 
     public String getName() {
         return name;
@@ -68,19 +68,19 @@ public class JobsGridSettings {
         this.status = status;
     }
 
-    public String getDateFrom() {
-        return dateFrom;
+    public String getTimeFrom() {
+        return timeFrom;
     }
 
-    public void setDateFrom(String dateFrom) {
-        this.dateFrom = dateFrom;
+    public void setTimeFrom(String timeFrom) {
+        this.timeFrom = timeFrom;
     }
 
-    public String getDateTo() {
-        return dateTo;
+    public String getTimeTo() {
+        return timeTo;
     }
 
-    public void setDateTo(String dateTo) {
-        this.dateTo = dateTo;
+    public void setTimeTo(String timeTo) {
+        this.timeTo = timeTo;
     }
 }

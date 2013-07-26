@@ -34,14 +34,14 @@ public class JobsController {
         DateTime dateFrom = new DateTime();
         DateTime dateTo = new DateTime();
 
-        if (!jobsGridSettings.getDateFrom().isEmpty()) {
-            dateFrom = DateTimeFormat.forPattern("Y-MM-dd")
-                    .parseDateTime(jobsGridSettings.getDateFrom());
+        if (!jobsGridSettings.getTimeFrom().isEmpty()) {
+            dateFrom = DateTimeFormat.forPattern("Y-MM-dd hh:mm:ss")
+                    .parseDateTime(jobsGridSettings.getTimeFrom());
         }
 
-        if (!jobsGridSettings.getDateTo().isEmpty()) {
-            dateTo = DateTimeFormat.forPattern("Y-MM-dd")
-                    .parseDateTime(jobsGridSettings.getDateTo());
+        if (!jobsGridSettings.getTimeTo().isEmpty()) {
+            dateTo = DateTimeFormat.forPattern("Y-MM-dd hh:mm:ss")
+                    .parseDateTime(jobsGridSettings.getTimeTo());
         }
 
         for (JobBasicInfo job : allJobsBasicInfos) {
@@ -57,7 +57,7 @@ public class JobsController {
             {
                 ifAddJob = 1;
 
-                if (!jobsGridSettings.getDateFrom().isEmpty()) {
+                if (!jobsGridSettings.getTimeFrom().isEmpty()) {
                     if (dateFrom.isBefore(jobStartTime) || dateFrom.isBefore(jobEndTime)) {
                         ifAddJob += 1;
                     } else {
@@ -65,7 +65,7 @@ public class JobsController {
                     }
                 }
 
-                if (!jobsGridSettings.getDateTo().isEmpty()) {
+                if (!jobsGridSettings.getTimeTo().isEmpty()) {
                     if (dateTo.isAfter(jobStartTime) || dateFrom.isAfter(jobEndTime)) {
                         ifAddJob += 1;
                     } else {

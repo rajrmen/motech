@@ -684,23 +684,23 @@ public class MotechSchedulerServiceImpl implements MotechSchedulerService {
                     jobName = jobKey.getName();
 
                     if (scheduler.getTriggerState(triggers.get(0).getKey()) == Trigger.TriggerState.ERROR) {
-                        status = "ERROR";
+                        status = JobBasicInfo.STATUS_ERROR;
                     } else if (scheduler.getTriggerState(triggers.get(0).getKey()) == Trigger.TriggerState.BLOCKED) {
-                        status = "BLOCKED";
+                        status = JobBasicInfo.STATUS_BLOCKED;
                     } else if (scheduler.getTriggerState(triggers.get(0).getKey()) == Trigger.TriggerState.PAUSED) {
-                        status = "PAUSED";
+                        status = JobBasicInfo.STATUS_PAUSED;
                     } else {
-                        status = "OK";
+                        status = JobBasicInfo.STATUS_OK;
                     }
 
                     if (isJobCurrentlyRunning(jobKey, runningJobs)) {
-                        activity = "NOW";
+                        activity = JobBasicInfo.ACTIVITY_NOW;
                     } else if (triggers.get(0).getNextFireTime() == null) {
-                        activity = "FINISHED";
+                        activity = JobBasicInfo.ACTIVITY_FINISHED;
                     } else if (triggers.get(0).getNextFireTime().after(new Date())) {
-                        activity = "LATER";
+                        activity = JobBasicInfo.ACTIVITY_LATER;
                     } else {
-                        activity = "UNKNOWN";
+                        activity = JobBasicInfo.ACTIVITY_UNKNOWN;
                     }
 
                     if (jobName.endsWith(RunOnceJobId.SUFFIX_RUNONCEJOBID)) {
