@@ -1,6 +1,5 @@
 package org.motechproject.server.web.controller;
 
-import org.motechproject.security.helper.AuthenticationMode;
 import org.motechproject.security.service.MotechUserService;
 import org.motechproject.server.config.service.PlatformSettingsService;
 import org.motechproject.server.config.settings.ConfigFileSettings;
@@ -28,8 +27,19 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
+import static org.motechproject.security.helper.AuthenticationMode.REPOSITORY;
+import static org.motechproject.server.config.settings.MotechSettings.AMQ_BROKER_URL;
+import static org.motechproject.server.config.settings.MotechSettings.LANGUAGE;
+import static org.motechproject.server.config.settings.MotechSettings.LOGINMODE;
+import static org.motechproject.server.config.settings.MotechSettings.PROVIDER_NAME;
+import static org.motechproject.server.config.settings.MotechSettings.PROVIDER_URL;
+import static org.motechproject.server.config.settings.MotechSettings.SCHEDULER_URL;
+
 @Controller
 public class StartupController {
+
+    public static final String BUNDLE_ADMIN_ROLE = "Bundle Admin";
+    public static final String USER_ADMIN_ROLE = "User Admin";
 
     private StartupManager startupManager = StartupManager.getInstance();
 
@@ -61,7 +71,7 @@ public class StartupController {
 
             view.addObject("suggestions", createSuggestions());
             view.addObject("startupSettings", startupSettings);
-            view.addObject("languages", localeSettings.getAvailableLanguages().keySet());
+            view.addObject("languages", localeSettings.getAvailableLanguages());
             view.addObject("pageLang", userLocale);
         }
 
@@ -75,24 +85,24 @@ public class StartupController {
 
         if (result.hasErrors()) {
             view.addObject("suggestions", createSuggestions());
-            view.addObject("languages", localeSettings.getAvailableLanguages().keySet());
+            view.addObject("languages", localeSettings.getAvailableLanguages());
             view.addObject("loginMode", form.getLoginMode());
             view.addObject("errors", getErrors(result));
 
             view.setViewName("startup");
         } else {
             ConfigFileSettings settings = startupManager.getLoadedConfig();
-            settings.saveMotechSetting(MotechSettings.LANGUAGE, form.getLanguage());
-            settings.saveMotechSetting(MotechSettings.SCHEDULER_URL, form.getSchedulerUrl());
-            settings.saveMotechSetting(MotechSettings.LOGINMODE, form.getLoginMode());
-            settings.saveActiveMqSetting(MotechSettings.AMQ_BROKER_URL, form.getQueueUrl());
-            settings.saveMotechSetting(MotechSettings.PROVIDER_NAME, form.getProviderName());
-            settings.saveMotechSetting(MotechSettings.PROVIDER_URL, form.getProviderUrl());
+            settings.saveMotechSetting(LANGUAGE, form.getLanguage());
+            settings.saveMotechSetting(SCHEDULER_URL, form.getSchedulerUrl());
+            settings.saveMotechSetting(LOGINMODE, form.getLoginMode());
+            settings.saveActiveMqSetting(AMQ_BROKER_URL, form.getQueueUrl());
+            settings.saveMotechSetting(PROVIDER_NAME, form.getProviderName());
+            settings.saveMotechSetting(PROVIDER_URL, form.getProviderUrl());
 
             platformSettingsService.savePlatformSettings(settings.getMotechSettings());
             platformSettingsService.saveActiveMqSettings(settings.getActivemqProperties());
 
-            if (AuthenticationMode.REPOSITORY.equals(form.getLoginMode())) {
+            if (REPOSITORY.equals(form.getLoginMode())) {
                 registerAdminUser(form);
             }
 
@@ -117,8 +127,8 @@ public class StartupController {
         MotechSettings settings = startupManager.getLoadedConfig();
         StartupSuggestionsForm suggestions = new StartupSuggestionsForm();
 
-        String queueUrl = settings.getActivemqProperties().getProperty(MotechSettings.AMQ_BROKER_URL);
-        String schedulerUrl = settings.getSchedulerProperties().getProperty(MotechSettings.SCHEDULER_URL);
+        String queueUrl = settings.getActivemqProperties().getProperty(AMQ_BROKER_URL);
+        String schedulerUrl = settings.getSchedulerProperties().getProperty(SCHEDULER_URL);
 
         if (startupManager.findActiveMQInstance(queueUrl)) {
             suggestions.addQueueSuggestion(queueUrl);
@@ -137,7 +147,7 @@ public class StartupController {
         String email = form.getAdminEmail();
         Locale locale = new Locale(form.getLanguage());
 
-        List<String> roles = Arrays.asList("User Admin", "Admin Bundle");
+        List<String> roles = Arrays.asList(USER_ADMIN_ROLE, BUNDLE_ADMIN_ROLE);
 
         userService.register(login, password, email, null, roles, locale);
     }
