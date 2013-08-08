@@ -21,6 +21,23 @@
         };
     });
 
+    emailModule.controller('EmailLoggingController', function($scope, EmailAuditService) {
+        $scope.emailList = EmailAuditService.query();
+
+        $scope.setFilterTitle = function(params) {
+            var filters = [], s,
+                statuses = [];
+                filters = params;
+
+            if (filters.length > 0) {
+                s = "<b>Filtered by</b> " + filters;
+            } else {
+                s = "Filter by";
+            }
+            $('#filter-title').html(s);
+        };
+    });
+
     emailModule.controller('SettingsController', function ($scope, SettingsService) {
         $scope.settings = SettingsService.get();
 
