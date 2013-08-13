@@ -213,11 +213,11 @@
                 var elem = angular.element(element), filters, colPos;
 
                 elem.jqGrid({
-                    url: '../email/emails?name=&toAddress=&fromAddress=&deliveryStatus=PENDING,ERROR,RECEIVED,SENT,UNKNOWN',
+                    url: '../email/emails?name=&deliveryStatus=PENDING,ERROR,RECEIVED,SENT,UNKNOWN',
                     datatype: 'json',
                     jsonReader:{
                         repeatitems:false,
-                        root: 'records'
+                        root: 'rows'
                     },
                     prmNames: {
                         sort: 'sortColumn',
@@ -266,9 +266,9 @@
                     gridComplete: function () {
                         angular.forEach(['direction', 'deliveryStatus', 'fromAddress', 'toAddress', 'subject', 'message', 'deliveryTime', 'modifiedDate'], function (value) {
                             elem.jqGrid('setLabel', value, scope.msg('email.logging.' + value));
-                            if(!elem[0].p.records[0].hasOwnProperty(value)) {
+                            /*if(!elem[0].p.rows[0].hasOwnProperty(value)) {
                                 elem.jqGrid('hideCol', value);
-                            }
+                            }*/
                         });
 
                         $('#outsideEmailLoggingTable').children('div').width('100%');
