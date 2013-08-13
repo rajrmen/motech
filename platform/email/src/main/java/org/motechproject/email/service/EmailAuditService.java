@@ -13,4 +13,5 @@ public interface EmailAuditService {
 
     EmailRecords findEmailRecords(EmailRecordSearchCriteria criteria);
 
+    void delete(EmailRecord emailRecord);
 }

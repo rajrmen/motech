@@ -1,5 +1,9 @@
 package org.motechproject.email.domain;
 
 public enum DeliveryStatus {
-    PENDING
+    PENDING,
+    ERROR,
+    SENT,
+    RECEIVED,
+    UNKNOWN
 }

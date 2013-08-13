@@ -110,9 +110,9 @@
                 angular.element(element).autocomplete({
                     minLength: 2,
                     source: function (request, response) {
-                       /* $.getJSON('../email/emails/available/' + attrs.autoComplete, request, function (data) {
+                       $.getJSON('../email/emails/available/?autoComplete=' + attrs.autoComplete, request, function (data) {
                             response(data);
-                        });*/
+                        });
                     }
                 });
             }

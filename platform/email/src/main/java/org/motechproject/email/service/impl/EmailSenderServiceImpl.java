@@ -8,7 +8,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 /**
- * The <class>EmailSenderServiceImpl</class> class provides API for sending e-mails
+ * The <code>EmailSenderServiceImpl</code> class provides API for sending e-mails
  */
 
 @Service("emailSenderService")

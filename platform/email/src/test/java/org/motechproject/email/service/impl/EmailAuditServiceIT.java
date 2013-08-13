@@ -54,12 +54,11 @@ public class EmailAuditServiceIT {
         EmailRecordSearchCriteria criteriaDeliveryStatus = new EmailRecordSearchCriteria().withDeliveryStatuses(deliveryStatuses);
         EmailRecords emailRecordsDeliveryStatus = emailAuditService.findEmailRecords(criteriaDeliveryStatus);
         assertNotNull(emailRecordsDeliveryStatus);
-        assertThat(emailRecordsDeliveryStatus.getRecords().size(), is(2));
-
+        assertThat(emailRecordsDeliveryStatus.getRows().size(), is(2));
         EmailRecordSearchCriteria criteriaToAddress = new EmailRecordSearchCriteria().withToAddress("to@address");
         EmailRecords emailRecordsToAddress = emailAuditService.findEmailRecords(criteriaToAddress);
         assertNotNull(emailRecordsToAddress);
-        assertThat(emailRecordsToAddress.getRecords().size(), is(1));
+        assertThat(emailRecordsToAddress.getRows().size(), is(1));
     }
 
     private EmailRecord createEmailRecord(String toAddress, DeliveryStatus deliveryStatus) {

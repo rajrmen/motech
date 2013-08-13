@@ -60,7 +60,7 @@ public class AllEmailRecordsTest {
         allEmailRecords.addOrReplace(duplicateMessage);
 
         EmailRecords allMessages = allEmailRecords.findAllBy(new EmailRecordSearchCriteria().withToAddress(toAddress));
-        assertThat(allMessages.getRecords().size(), is(2));
+        assertThat(allMessages.getRows().size(), is(2));
     }
 
     @After

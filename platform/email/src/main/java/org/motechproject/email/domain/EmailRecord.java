@@ -1,9 +1,11 @@
 package org.motechproject.email.domain;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.ektorp.support.TypeDiscriminator;
-import org.motechproject.commons.couchdb.model.MotechBaseDataObject;
 import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.motechproject.commons.couchdb.model.MotechBaseDataObject;
 import org.motechproject.commons.date.util.DateUtil;
 
 /**
@@ -25,7 +27,7 @@ public class EmailRecord extends MotechBaseDataObject {
      * Should be in UTC
      */
     @JsonProperty
-    private DateTime deliveryTime;
+    private String deliveryTime;
     @JsonProperty
     private DeliveryStatus deliveryStatus;
 
@@ -38,8 +40,24 @@ public class EmailRecord extends MotechBaseDataObject {
         this.toAddress = toAddress;
         this.subject = subject;
         this.message = message;
-        this.deliveryTime = deliveryTime;
+        this.deliveryTime = DateUtil.setTimeZoneUTC(deliveryTime).toString("Y-MM-dd HH:mm:ss");
         this.deliveryStatus = deliveryStatus;
+    }
+
+    public void setFromAddress(String fromAddress) {
+        this.fromAddress = fromAddress;
+    }
+
+    public void setToAddress(String toAddress) {
+        this.toAddress = toAddress;
+    }
+
+    public void setSubject(String subject) {
+        this.subject = subject;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 
     public String getFromAddress() {
@@ -58,8 +76,13 @@ public class EmailRecord extends MotechBaseDataObject {
         return message;
     }
 
-    public DateTime getDeliveryTime() {
-        return DateUtil.setTimeZoneUTC(deliveryTime);
+    public String getDeliveryTime() {
+        return deliveryTime;
+    }
+
+    @JsonIgnore
+    public DateTime getDeliveryTimeInDateTime() {
+        return DateTime.parse(deliveryTime, DateTimeFormat.forPattern("Y-MM-dd HH:mm:ss"));
     }
 
     public DeliveryStatus getDeliveryStatus() {

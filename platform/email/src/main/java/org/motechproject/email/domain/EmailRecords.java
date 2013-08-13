@@ -9,33 +9,33 @@ import java.util.List;
  */
 
 public class EmailRecords {
-    private int count;
-    private List<EmailRecord> records;
+    private Integer records;
+    private List<EmailRecord> rows;
 
     public EmailRecords() {
-        this.count = 0;
-
-        this.records = new ArrayList<>();
+        this.records = 0;
+        this.rows = new ArrayList<>();
     }
 
-    public EmailRecords(int count, List<EmailRecord> records) {
-        this.count = count;
+    public EmailRecords(int records, List<EmailRecord> rows) {
         this.records = records;
+        this.rows = rows;
     }
 
-    public int getCount() {
-        return count;
-    }
-
-    public List<EmailRecord> getRecords() {
+    public Integer getRecords() {
         return records;
     }
 
-    public void setCount(int count) {
-        this.count = count;
+    public List<EmailRecord> getRows() {
+        return rows;
     }
 
-    public void setRecords(List<EmailRecord> records) {
+    public void setCount(int records) {
         this.records = records;
+    }
+
+    public void setRows(List<EmailRecord> rows) {
+        this.rows = rows;
+        this.records = rows.size();
     }
 }

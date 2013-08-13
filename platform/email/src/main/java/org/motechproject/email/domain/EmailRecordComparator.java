@@ -22,19 +22,19 @@ public class EmailRecordComparator implements Comparator<EmailRecord> {
 
         switch (compareField) {
             case "fromAddress":
-                ret = o1.getFromAddress().compareTo(o2.getToAddress());
+                ret = (o1.getFromAddress().toLowerCase()).compareTo(o2.getToAddress().toLowerCase());
                 break;
             case "toAddress":
-                ret = o1.getToAddress().compareTo(o2.getToAddress());
+                ret = (o1.getToAddress().toLowerCase()).compareTo(o2.getToAddress().toLowerCase());
                 break;
             case "message":
                 ret = o1.getMessage().compareTo(o2.getMessage());
                 break;
-            case "status":
+            case "deliveryStatus":
                 ret = o1.getDeliveryStatus().compareTo(o2.getDeliveryStatus());
                 break;
             case "subject":
-                ret = o1.getSubject().compareTo(o2.getSubject());
+                ret = (o1.getSubject().toLowerCase()).compareTo(o2.getSubject().toLowerCase());
                 break;
             case "deliveryTime":
             default:

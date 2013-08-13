@@ -1,26 +1,32 @@
 package org.motechproject.email.web;
 
 import org.motechproject.email.model.SettingsDto;
+import org.motechproject.event.MotechEvent;
+import org.motechproject.scheduler.MotechSchedulerService;
+import org.motechproject.scheduler.domain.CronSchedulableJob;
 import org.motechproject.server.config.SettingsFacade;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.apache.commons.lang.StringUtils.isNumeric;
-import static org.motechproject.email.model.SettingsDto.EMAIL_PROPERTIES_FILE_NAME;
-import static org.motechproject.email.model.SettingsDto.MAIL_HOST_PROPERTY;
 import static org.motechproject.email.model.SettingsDto.MAIL_PORT_PROPERTY;
+import static org.motechproject.email.model.SettingsDto.MAIL_HOST_PROPERTY;
+import static org.motechproject.email.model.SettingsDto.EMAIL_PROPERTIES_FILE_NAME;
+
 
 @Controller
 public class SettingsController {
@@ -30,6 +36,9 @@ public class SettingsController {
 
     private SettingsFacade settingsFacade;
     private JavaMailSenderImpl mailSender;
+
+    @Autowired
+    private MotechSchedulerService motechSchedulerService;
 
     @Autowired
     public SettingsController(@Qualifier("emailSettings") SettingsFacade settingsFacade,
@@ -72,6 +81,14 @@ public class SettingsController {
         }
 
         settingsFacade.saveConfigProperties(EMAIL_PROPERTIES_FILE_NAME, settings.toProperties());
+
+        motechSchedulerService.unscheduleAllJobs("Purge Mails");
+        Map<String,Object> params = new HashMap<>();
+        params.put("purgeTime", settings.getLogPurgeTime());
+        params.put("purgeMultiplier", settings.getLogPurgeTimeMultiplier());
+        motechSchedulerService.safeScheduleJob(new CronSchedulableJob(
+                new MotechEvent("Purge Mails", params), "0 0 1 * * ?"
+        ));
 
         mailSender.setHost(host);
         mailSender.setPort(Integer.valueOf(port));

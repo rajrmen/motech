@@ -14,8 +14,8 @@ public class GridSettings {
 
     private String name;
     private String deliveryStatus;
-    private String from;
-    private String to;
+    private String timeFrom;
+    private String timeTo;
     private String sortColumn;
     private String sortDirection;
 
@@ -43,28 +43,28 @@ public class GridSettings {
         this.name = name;
     }
 
-    public String getStatus() {
+    public String getDeliveryStatus() {
         return deliveryStatus;
     }
 
-    public void setStatus(String status) {
+    public void setDeliveryStatus(String status) {
         this.deliveryStatus = status;
     }
 
-    public String getFrom() {
-        return from;
+    public String getTimeFrom() {
+        return timeFrom;
     }
 
-    public void setFrom(String from) {
-        this.from = from;
+    public void setTimeFrom(String timeFrom) {
+        this.timeFrom = timeFrom;
     }
 
-    public String getTo() {
-        return to;
+    public String getTimeTo() {
+        return timeTo;
     }
 
-    public void setTo(String to) {
-        this.to = to;
+    public void setTimeTo(String timeTo) {
+        this.timeTo = timeTo;
     }
 
     public Set<DeliveryStatus> getDeliveryStatusFromSettings() {

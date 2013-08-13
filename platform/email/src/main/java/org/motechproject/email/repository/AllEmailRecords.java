@@ -46,10 +46,14 @@ public class AllEmailRecords extends CouchDbRepositorySupportWithLucene<EmailRec
         add(emailRecord);
     }
 
+    public void delete(EmailRecord emailRecord) {
+        remove(emailRecord);
+    }
+
     public EmailRecord findLatestBy(String toAddress) {
         EmailRecords emailRecords = findAllBy(new EmailRecordSearchCriteria()
                 .withToAddress(toAddress));
-        return CollectionUtils.isEmpty(emailRecords.getRecords()) ? null : (EmailRecord) sort(emailRecords.getRecords(), on(EmailRecord.class).getDeliveryTime(), reverseOrder()).get(0);
+        return CollectionUtils.isEmpty(emailRecords.getRows()) ? null : (EmailRecord) sort(emailRecords.getRows(), on(EmailRecord.class).getDeliveryTime(), reverseOrder()).get(0);
     }
 
     @FullText({@Index(

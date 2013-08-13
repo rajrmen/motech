@@ -50,9 +50,9 @@ public class EmailControllerTest {
         EmailRecords recs2 = emailController.getEmails(filter2);
 
         assertNotNull(recs);
-        assertThat(recs.getCount(), is(4));
+        assertThat(recs.getRecords(), is(4));
         assertNotNull(recs2);
-        assertThat(recs2.getCount(), is(3));
+        assertThat(recs2.getRecords(), is(3));
     }
 
     @Test
@@ -60,19 +60,19 @@ public class EmailControllerTest {
         when(auditService.findAllEmailRecords()).thenReturn(getTestEmailRecords());
 
         GridSettings filter = new GridSettings();
-        filter.setFrom("1970-01-01 00:00:00");
-        filter.setTo("1970-01-01 00:00:03");
+        filter.setTimeFrom("1970-01-01 00:00:00");
+        filter.setTimeTo("1970-01-01 00:00:03");
         EmailRecords recs = emailController.getEmails(filter);
 
         GridSettings filter2 = new GridSettings();
-        filter2.setFrom("1970-01-01 00:00:02");
-        filter2.setTo("1970-01-01 00:00:02");
+        filter2.setTimeFrom("1970-01-01 00:00:02");
+        filter2.setTimeTo("1970-01-01 00:00:02");
         EmailRecords recs2 = emailController.getEmails(filter2);
 
         assertNotNull(recs);
-        assertThat(recs.getCount(), is(3));
+        assertThat(recs.getRecords(), is(3));
         assertNotNull(recs2);
-        assertThat(recs2.getCount(), is(1));
+        assertThat(recs2.getRecords(), is(1));
     }
 
     @Test
@@ -85,14 +85,18 @@ public class EmailControllerTest {
         EmailRecords recs = emailController.getEmails(filter);
 
         assertNotNull(recs);
-        assertThat(recs.getRecords().get(0).getDeliveryTime(), is(DateUtil.setTimeZoneUTC(
-                DateTimeFormat.forPattern("Y-MM-dd HH:mm:ss").parseDateTime("1970-01-01 00:00:01"))));
-        assertThat(recs.getRecords().get(1).getDeliveryTime(), is(DateUtil.setTimeZoneUTC(
-                DateTimeFormat.forPattern("Y-MM-dd HH:mm:ss").parseDateTime("1970-01-01 00:00:02"))));
-        assertThat(recs.getRecords().get(2).getDeliveryTime(), is(DateUtil.setTimeZoneUTC(
-                DateTimeFormat.forPattern("Y-MM-dd HH:mm:ss").parseDateTime("1970-01-01 00:00:03"))));
-        assertThat(recs.getRecords().get(3).getDeliveryTime(), is(DateUtil.setTimeZoneUTC(
-                DateTimeFormat.forPattern("Y-MM-dd HH:mm:ss").parseDateTime("1970-01-01 00:00:04"))));
+        assertThat(recs.getRows().get(0).getDeliveryTime(), is(DateUtil.setTimeZoneUTC(
+                DateTimeFormat.forPattern("Y-MM-dd HH:mm:ss").parseDateTime("1970-01-01 00:00:01"))
+                .toString("Y-MM-dd HH:mm:ss")));
+        assertThat(recs.getRows().get(1).getDeliveryTime(), is(DateUtil.setTimeZoneUTC(
+                DateTimeFormat.forPattern("Y-MM-dd HH:mm:ss").parseDateTime("1970-01-01 00:00:02"))
+                .toString("Y-MM-dd HH:mm:ss")));
+        assertThat(recs.getRows().get(2).getDeliveryTime(), is(DateUtil.setTimeZoneUTC(
+                DateTimeFormat.forPattern("Y-MM-dd HH:mm:ss").parseDateTime("1970-01-01 00:00:03"))
+                .toString("Y-MM-dd HH:mm:ss")));
+        assertThat(recs.getRows().get(3).getDeliveryTime(), is(DateUtil.setTimeZoneUTC(
+                DateTimeFormat.forPattern("Y-MM-dd HH:mm:ss").parseDateTime("1970-01-01 00:00:04"))
+                .toString("Y-MM-dd HH:mm:ss")));
     }
 
     @Test
@@ -105,9 +109,9 @@ public class EmailControllerTest {
         EmailRecords recs = emailController.getEmails(filter);
 
         assertNotNull(recs);
-        assertThat(recs.getRecords().get(0).getSubject(), is("Asubject3"));
-        assertThat(recs.getRecords().get(1).getSubject(), is("Bsubject5"));
-        assertThat(recs.getRecords().get(2).getSubject(), is("subject"));
+        assertThat(recs.getRows().get(0).getSubject(), is("Asubject3"));
+        assertThat(recs.getRows().get(1).getSubject(), is("Bsubject5"));
+        assertThat(recs.getRows().get(2).getSubject(), is("subject"));
     }
 
     @Test
@@ -141,7 +145,7 @@ public class EmailControllerTest {
 
         assertNotNull(rec1);
         assertNotNull(rec3);
-        assertThat(emailController.getEmails(filter).getCount(), is(4));
+        assertThat(emailController.getEmails(filter).getRecords(), is(4));
         assertThat(rec1.getMessage(), is("message"));
         assertThat(rec3.getMessage(), is("message3"));
     }
