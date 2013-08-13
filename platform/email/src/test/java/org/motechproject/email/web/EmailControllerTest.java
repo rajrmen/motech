@@ -85,18 +85,14 @@ public class EmailControllerTest {
         EmailRecords recs = emailController.getEmails(filter);
 
         assertNotNull(recs);
-        assertThat(recs.getRows().get(0).getDeliveryTime(), is(DateUtil.setTimeZoneUTC(
-                DateTimeFormat.forPattern("Y-MM-dd HH:mm:ss").parseDateTime("1970-01-01 00:00:01"))
-                .toString("Y-MM-dd HH:mm:ss")));
-        assertThat(recs.getRows().get(1).getDeliveryTime(), is(DateUtil.setTimeZoneUTC(
-                DateTimeFormat.forPattern("Y-MM-dd HH:mm:ss").parseDateTime("1970-01-01 00:00:02"))
-                .toString("Y-MM-dd HH:mm:ss")));
-        assertThat(recs.getRows().get(2).getDeliveryTime(), is(DateUtil.setTimeZoneUTC(
-                DateTimeFormat.forPattern("Y-MM-dd HH:mm:ss").parseDateTime("1970-01-01 00:00:03"))
-                .toString("Y-MM-dd HH:mm:ss")));
-        assertThat(recs.getRows().get(3).getDeliveryTime(), is(DateUtil.setTimeZoneUTC(
-                DateTimeFormat.forPattern("Y-MM-dd HH:mm:ss").parseDateTime("1970-01-01 00:00:04"))
-                .toString("Y-MM-dd HH:mm:ss")));
+        assertThat(recs.getRows().get(0).getDeliveryTimeInDateTime(), is(DateUtil.setTimeZoneUTC(
+                DateTimeFormat.forPattern("Y-MM-dd HH:mm:ss").parseDateTime("1970-01-01 00:00:01"))));
+        assertThat(recs.getRows().get(1).getDeliveryTimeInDateTime(), is(DateUtil.setTimeZoneUTC(
+                DateTimeFormat.forPattern("Y-MM-dd HH:mm:ss").parseDateTime("1970-01-01 00:00:02"))));
+        assertThat(recs.getRows().get(2).getDeliveryTimeInDateTime(), is(DateUtil.setTimeZoneUTC(
+                DateTimeFormat.forPattern("Y-MM-dd HH:mm:ss").parseDateTime("1970-01-01 00:00:03"))));
+        assertThat(recs.getRows().get(3).getDeliveryTimeInDateTime(), is(DateUtil.setTimeZoneUTC(
+                DateTimeFormat.forPattern("Y-MM-dd HH:mm:ss").parseDateTime("1970-01-01 00:00:04"))));
     }
 
     @Test
