@@ -2,6 +2,7 @@ package org.motechproject.server.web.controller;
 
 import org.apache.commons.lang.StringUtils;
 import org.motechproject.server.config.service.PlatformSettingsService;
+import org.motechproject.server.config.settings.MotechSettings;
 import org.motechproject.server.startup.StartupManager;
 import org.motechproject.server.ui.LocaleSettings;
 import org.motechproject.server.web.form.LoginForm;
@@ -39,8 +40,8 @@ public class LoginController {
             view.addObject("contextPath", "");
         }
 
-        view.addObject("openIdProviderName", settingsService.getPlatformSettings().getProviderName());
-        view.addObject("openIdProviderUrl", settingsService.getPlatformSettings().getProviderUrl());
+        view.addObject("openIdProviderName", settingsService.getPlatformSettings().getMotechProperties().getProperty(MotechSettings.PROVIDER_NAME_PROP));
+        view.addObject("openIdProviderUrl", settingsService.getPlatformSettings().getMotechProperties().getProperty(MotechSettings.PROVIDER_URL_PROP));
         view.addObject("error", request.getParameter("error"));
         view.addObject("loginForm", new LoginForm());
         view.addObject("pageLang", localeSettings.getUserLocale(request));

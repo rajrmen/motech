@@ -13,6 +13,7 @@ import org.motechproject.event.MotechEvent;
 import org.motechproject.event.listener.EventRelay;
 import org.motechproject.osgi.web.UIFrameworkService;
 import org.motechproject.server.config.service.PlatformSettingsService;
+import org.motechproject.server.config.settings.MotechSettings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -213,7 +214,7 @@ public class StatusMessageServiceImpl implements StatusMessageService {
 
     private DateTime defaultTimeout() {
         DateTime timeout;
-        String timeoutStr = platformSettingsService.getPlatformSettings().getStatusMsgTimeout();
+        String timeoutStr = platformSettingsService.getPlatformSettings().getMotechProperties().getProperty(MotechSettings.STATUS_MSG_TIMEOUT_PROP);
         try {
             Integer timeoutSecs = Integer.parseInt(timeoutStr);
             timeout = DateTime.now().plusSeconds(timeoutSecs);

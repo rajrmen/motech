@@ -7,6 +7,7 @@ import org.motechproject.admin.domain.StatusMessage;
 import org.motechproject.email.model.Mail;
 import org.motechproject.email.service.EmailSenderService;
 import org.motechproject.server.config.service.PlatformSettingsService;
+import org.motechproject.server.config.settings.MotechSettings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.velocity.VelocityEngineUtils;
@@ -43,7 +44,7 @@ public class EmailNotifier {
     private String senderAddress() {
         String address = "noreply@";
 
-        String serverUrl = settingsService.getPlatformSettings().getServerHost();
+        String serverUrl = settingsService.getPlatformSettings().getMotechProperties().getProperty(MotechSettings.SERVER_URL_PROP);
 
         if (StringUtils.isNotBlank(serverUrl)) {
             address += serverUrl;
@@ -67,7 +68,7 @@ public class EmailNotifier {
     }
 
     String messagesUrl() {
-        String serverUrl = settingsService.getPlatformSettings().getServerUrl();
+        String serverUrl = settingsService.getPlatformSettings().getMotechProperties().getProperty(MotechSettings.SERVER_URL_PROP);
         if (serverUrl == null) {
             serverUrl = "";
         }

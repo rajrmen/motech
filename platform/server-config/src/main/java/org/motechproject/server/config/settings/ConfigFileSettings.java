@@ -28,44 +28,42 @@ public class ConfigFileSettings implements MotechSettings {
     }
 
     @Override
+    public Properties getMotechProperties() {
+        return motechSettings;
+    }
+
     public String getLanguage() {
-        return motechSettings.getProperty(LANGUAGE);
+        return motechSettings.getProperty(MotechSettings.SYSTEM_LANGUAGE_PROP);
     }
 
-    @Override
     public String getStatusMsgTimeout() {
-        return motechSettings.getProperty(STATUS_MSG_TIMEOUT);
+        return motechSettings.getProperty(MotechSettings.STATUS_MSG_TIMEOUT_PROP);
     }
 
-    @Override
     public String getLoginMode() {
-        return motechSettings.getProperty(LOGINMODE);
+        return motechSettings.getProperty(MotechSettings.LOGIN_MODE_PROP);
     }
 
-    @Override
     public String getProviderName() {
-        return motechSettings.getProperty(PROVIDER_NAME);
+        return motechSettings.getProperty(MotechSettings.PROVIDER_NAME_PROP);
     }
 
-    @Override
     public String getProviderUrl() {
-        return motechSettings.getProperty(PROVIDER_URL);
+        return motechSettings.getProperty(MotechSettings.SCHEDULER_URL_PROP);
     }
 
-    @Override
     public String getServerUrl() {
-        return new MotechURL(motechSettings.getProperty(SERVER_URL)).toString();
+        return new MotechURL(motechSettings.getProperty(MotechSettings.SERVER_URL_PROP)).toString();
     }
 
 
-    @Override
     public String getServerHost() {
-        return new MotechURL(motechSettings.getProperty(SERVER_URL)).getHost();
+        return new MotechURL(motechSettings.getProperty(MotechSettings.SERVER_URL_PROP)).getHost();
     }
 
 
     public String getUploadSize() {
-        return motechSettings.getProperty(UPLOAD_SIZE);
+        return motechSettings.getProperty(MotechSettings.UPLOAD_SIZE_PROP);
     }
 
     public byte[] getMd5checkSum() {
@@ -99,20 +97,22 @@ public class ConfigFileSettings implements MotechSettings {
         return activemqProperties;
     }
 
-    @Override
     public Properties getMetricsProperties() {
         Properties metricsProperties = new Properties();
 
-        putPropertyIfNotNull(metricsProperties, GRAPHITE_URL, motechSettings.getProperty(GRAPHITE_URL));
+        putPropertyIfNotNull(
+                metricsProperties, MotechSettings.GRAPHITE_URL_PROP, motechSettings.getProperty(GRAPHITE_URL_PROP)
+        );
 
         return metricsProperties;
     }
 
-    @Override
     public Properties getSchedulerProperties() {
         Properties schedulerProperties = new Properties();
 
-        putPropertyIfNotNull(schedulerProperties, SCHEDULER_URL, motechSettings.getProperty(SCHEDULER_URL));
+        putPropertyIfNotNull(
+                schedulerProperties, MotechSettings.SCHEDULER_URL_PROP, motechSettings.getProperty(SCHEDULER_URL_PROP)
+        );
 
         return schedulerProperties;
     }
@@ -148,10 +148,6 @@ public class ConfigFileSettings implements MotechSettings {
 
     public void saveActiveMqSetting(String key, String value) {
         activemq.put(key, value);
-    }
-
-    public Properties getMotechSettings() {
-        return motechSettings;
     }
 
     public void storeActiveMqSettings() throws IOException {

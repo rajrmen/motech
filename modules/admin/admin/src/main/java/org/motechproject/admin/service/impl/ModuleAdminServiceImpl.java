@@ -23,6 +23,7 @@ import org.motechproject.server.api.BundleInformation;
 import org.motechproject.server.api.JarInformation;
 import org.motechproject.server.config.monitor.ConfigFileMonitor;
 import org.motechproject.server.config.service.PlatformSettingsService;
+import org.motechproject.server.config.settings.MotechSettings;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
@@ -364,7 +365,7 @@ public class ModuleAdminServiceImpl implements ModuleAdminService {
 
     @MotechListener(subjects = ConfigFileMonitor.FILE_CHANGED_EVENT_SUBJECT)
     public void changeMaxUploadSize(MotechEvent event) {
-        String uploadSize = platformSettingsService.getPlatformSettings().getUploadSize();
+        String uploadSize = platformSettingsService.getPlatformSettings().getMotechProperties().getProperty(MotechSettings.UPLOAD_SIZE_PROP);
 
         if (StringUtils.isNotBlank(uploadSize)) {
             commonsMultipartResolver.setMaxUploadSize(Long.valueOf(uploadSize));

@@ -49,7 +49,7 @@ public class UserController {
     @ResponseBody
     public List<MotechUserProfile> getUsers() {
         List<MotechUserProfile> users;
-        String loginMode = settingsService.getPlatformSettings().getLoginMode();
+        String loginMode = settingsService.getPlatformSettings().getMotechProperties().getProperty(MotechSettings.LOGIN_MODE_PROP);
 
         if (StringUtils.equalsIgnoreCase(loginMode, AuthenticationMode.OPEN_ID)) {
             users = motechUserService.getOpenIdUsers();
@@ -82,7 +82,7 @@ public class UserController {
     @ResponseBody
     public String loginMode() {
         MotechSettings settings = settingsService.getPlatformSettings();
-        return settings.getLoginMode().toLowerCase();
+        return settings.getMotechProperties().getProperty(MotechSettings.LOGIN_MODE_PROP).toLowerCase();
     }
 
     @ResponseStatus(HttpStatus.OK)

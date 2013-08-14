@@ -28,12 +28,6 @@ import java.util.List;
 import java.util.Locale;
 
 import static org.motechproject.security.helper.AuthenticationMode.REPOSITORY;
-import static org.motechproject.server.config.settings.MotechSettings.AMQ_BROKER_URL;
-import static org.motechproject.server.config.settings.MotechSettings.LANGUAGE;
-import static org.motechproject.server.config.settings.MotechSettings.LOGINMODE;
-import static org.motechproject.server.config.settings.MotechSettings.PROVIDER_NAME;
-import static org.motechproject.server.config.settings.MotechSettings.PROVIDER_URL;
-import static org.motechproject.server.config.settings.MotechSettings.SCHEDULER_URL;
 
 @Controller
 public class StartupController {
@@ -92,14 +86,14 @@ public class StartupController {
             view.setViewName("startup");
         } else {
             ConfigFileSettings settings = startupManager.getLoadedConfig();
-            settings.saveMotechSetting(LANGUAGE, form.getLanguage());
-            settings.saveMotechSetting(SCHEDULER_URL, form.getSchedulerUrl());
-            settings.saveMotechSetting(LOGINMODE, form.getLoginMode());
-            settings.saveActiveMqSetting(AMQ_BROKER_URL, form.getQueueUrl());
-            settings.saveMotechSetting(PROVIDER_NAME, form.getProviderName());
-            settings.saveMotechSetting(PROVIDER_URL, form.getProviderUrl());
+            settings.saveMotechSetting(MotechSettings.SYSTEM_LANGUAGE_PROP, form.getLanguage());
+            settings.saveMotechSetting(MotechSettings.SCHEDULER_URL_PROP, form.getSchedulerUrl());
+            settings.saveMotechSetting(MotechSettings.LOGIN_MODE_PROP, form.getLoginMode());
+            settings.saveActiveMqSetting(MotechSettings.BROKER_URL_PROP, form.getQueueUrl());
+            settings.saveMotechSetting(MotechSettings.PROVIDER_NAME_PROP, form.getProviderName());
+            settings.saveMotechSetting(MotechSettings.PROVIDER_URL_PROP, form.getProviderUrl());
 
-            platformSettingsService.savePlatformSettings(settings.getMotechSettings());
+            platformSettingsService.savePlatformSettings(settings.getMotechProperties());
             platformSettingsService.saveActiveMqSettings(settings.getActivemqProperties());
 
             if (REPOSITORY.equals(form.getLoginMode())) {
@@ -127,8 +121,8 @@ public class StartupController {
         MotechSettings settings = startupManager.getLoadedConfig();
         StartupSuggestionsForm suggestions = new StartupSuggestionsForm();
 
-        String queueUrl = settings.getActivemqProperties().getProperty(AMQ_BROKER_URL);
-        String schedulerUrl = settings.getSchedulerProperties().getProperty(SCHEDULER_URL);
+        String queueUrl = settings.getActivemqProperties().getProperty(MotechSettings.BROKER_URL_PROP);
+        String schedulerUrl = settings.getMotechProperties().getProperty(MotechSettings.SCHEDULER_URL_PROP);
 
         if (startupManager.findActiveMQInstance(queueUrl)) {
             suggestions.addQueueSuggestion(queueUrl);

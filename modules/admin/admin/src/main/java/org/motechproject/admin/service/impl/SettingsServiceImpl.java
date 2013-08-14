@@ -46,23 +46,25 @@ public class SettingsServiceImpl implements SettingsService {
             Settings activemqSettings = new Settings("activemq", ParamParser.parseProperties(activemqProperties));
             settingsList.add(activemqSettings);
 
-            Properties metricsProperties = motechSettings.getMetricsProperties();
+            Properties metricsProperties = new Properties();
+            metricsProperties.put(MotechSettings.GRAPHITE_URL_PROP, motechSettings.getMotechProperties().getProperty(MotechSettings.GRAPHITE_URL_PROP));
             Settings metricsSettings = new Settings("metrics", ParamParser.parseProperties(metricsProperties));
             settingsList.add(metricsSettings);
 
-            Properties schedulerProperties = motechSettings.getSchedulerProperties();
+            Properties schedulerProperties = new Properties();
+            schedulerProperties.put(MotechSettings.SCHEDULER_URL_PROP, motechSettings.getMotechProperties().getProperty(MotechSettings.SCHEDULER_URL_PROP));
             Settings schedulerSettings = new Settings("scheduler", ParamParser.parseProperties(schedulerProperties));
             settingsList.add(schedulerSettings);
 
             List<SettingsOption> miscOptions = new ArrayList<>();
 
-            SettingsOption languageOption = ParamParser.parseParam(MotechSettings.LANGUAGE, motechSettings.getLanguage());
+            SettingsOption languageOption = ParamParser.parseParam(MotechSettings.SYSTEM_LANGUAGE_PROP, motechSettings.getMotechProperties().getProperty(MotechSettings.SYSTEM_LANGUAGE_PROP));
             miscOptions.add(languageOption);
-            SettingsOption msgOption = ParamParser.parseParam(MotechSettings.STATUS_MSG_TIMEOUT, motechSettings.getStatusMsgTimeout());
+            SettingsOption msgOption = ParamParser.parseParam(MotechSettings.SYSTEM_LANGUAGE_PROP, motechSettings.getMotechProperties().getProperty(MotechSettings.SYSTEM_LANGUAGE_PROP));
             miscOptions.add(msgOption);
-            SettingsOption serverUrlOption = ParamParser.parseParam(MotechSettings.SERVER_URL, motechSettings.getServerUrl());
+            SettingsOption serverUrlOption = ParamParser.parseParam(MotechSettings.SERVER_URL_PROP, motechSettings.getMotechProperties().getProperty(MotechSettings.SERVER_URL_PROP));
             miscOptions.add(serverUrlOption);
-            SettingsOption uploadSizeOption = ParamParser.parseParam(MotechSettings.UPLOAD_SIZE, motechSettings.getUploadSize());
+            SettingsOption uploadSizeOption = ParamParser.parseParam(MotechSettings.UPLOAD_SIZE_PROP, motechSettings.getMotechProperties().getProperty(MotechSettings.UPLOAD_SIZE_PROP));
             miscOptions.add(uploadSizeOption);
 
             Settings miscSettings = new Settings("other", miscOptions);

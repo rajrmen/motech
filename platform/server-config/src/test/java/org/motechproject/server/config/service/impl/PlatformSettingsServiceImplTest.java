@@ -89,12 +89,12 @@ public class
     @Test
     public void testExport() throws IOException {
         ConfigFileSettings configFileSettings = new ConfigFileSettings();
-        configFileSettings.saveMotechSetting(MotechSettings.LANGUAGE, "en");
+        configFileSettings.saveMotechSetting(MotechSettings.SYSTEM_LANGUAGE_PROP, "en");
         when(configFileMonitor.getCurrentSettings()).thenReturn(configFileSettings);
 
         Properties p = platformSettingsService.exportPlatformSettings();
 
-        assertTrue(p.containsKey(MotechSettings.LANGUAGE));
-        assertEquals(configFileSettings.getLanguage(), p.getProperty(MotechSettings.LANGUAGE));
+        assertTrue(p.containsKey(MotechSettings.SYSTEM_LANGUAGE_PROP));
+        assertEquals(configFileSettings.getLanguage(), p.getProperty(MotechSettings.SYSTEM_LANGUAGE_PROP));
     }
 }

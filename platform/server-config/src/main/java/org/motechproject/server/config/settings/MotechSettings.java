@@ -3,47 +3,31 @@ package org.motechproject.server.config.settings;
 import java.util.Properties;
 
 public interface MotechSettings {
+    // these are going to bootstrap.config
+    String GRAPHITE_URL_PROP = "graphite.url";
+    String SCHEDULER_URL_PROP = "scheduler.url";
+    String SYSTEM_LANGUAGE_PROP = "system.language";
+    String STATUS_MSG_TIMEOUT_PROP = "statusmsg.timeout";
+    String PROVIDER_NAME_PROP = "provider.name";
+    String PROVIDER_URL_PROP = "provider.url";
+    String LOGIN_MODE_PROP = "login.mode";
+    // end
 
-    String AMQ_QUEUE_EVENTS = "queue.for.events";
-    String AMQ_QUEUE_SCHEDULER = "queue.for.scheduler";
-    String AMQ_BROKER_URL = "broker.url";
-    String AMQ_MAX_REDELIVERIES = "maximumRedeliveries";
-    String AMQ_REDELIVERY_DELAY_IN_MILLIS = "redeliveryDelayInMillis";
-    String AMQ_CONCURRENT_CONSUMERS = "concurrentConsumers";
-    String AMQ_MAX_CONCURRENT_CONSUMERS = "maxConcurrentConsumers";
+    String SERVER_URL_PROP = "server.url";
+    String UPLOAD_SIZE_PROP = "upload.size";
 
-    String GRAPHITE_URL = "graphite.url";
-
-    String SCHEDULER_URL = "scheduler.url";
-
-    String LANGUAGE = "system.language";
-    String STATUS_MSG_TIMEOUT = "statusmsg.timeout";
-    String SERVER_URL = "server.url";
-    String UPLOAD_SIZE = "upload.size";
-
-    String PROVIDER_NAME = "provider.name";
-    String PROVIDER_URL = "provider.url";
-    String LOGINMODE = "login.mode";
-
-    String getLanguage();
-
-    String getStatusMsgTimeout();
-
-    String getLoginMode();
-
-    String getProviderName();
-
-    String getProviderUrl();
-
-    String getServerUrl();
-
-    String getServerHost();
-
-    String getUploadSize();
+    String QUEUE_FOR_EVENTS_PROP = "queue.for.events";
+    String QUEUE_FOR_SCHEDULER_PROP = "queue.for.scheduler";
+    String BROKER_URL_PROP = "broker.url";
+    String MAXIMUM_REDELIVERIES_PROP = "maximumRedeliveries";
+    String REDELIVERY_DELAY_IN_MILIS_PROP = "redeliveryDelayInMillis";
+    String CONCURRENT_CONSUMERS_PROP = "concurrentConsumers";
+    String JMS_SESSION_CACHE_SIZE_PROP = "jms.session.cache.size";
+    String JMS_CACHE_PRODUCERS_PROP = "jms.cache.producers";
+    String JMS_USERNAME_PROP = "jms.username";
+    String JMS_PASSWORD = "jms.password";
 
     Properties getActivemqProperties();
 
-    Properties getMetricsProperties();
-
-    Properties getSchedulerProperties();
+    Properties getMotechProperties();
 }

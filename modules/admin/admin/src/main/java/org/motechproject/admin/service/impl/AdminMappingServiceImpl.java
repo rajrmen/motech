@@ -85,8 +85,8 @@ public class AdminMappingServiceImpl implements AdminMappingService {
 
     @Override
     public String getGraphiteUrl() {
-        Properties metricsProperties = platformSettingsService.getPlatformSettings().getMetricsProperties();
-        return metricsProperties.getProperty(MotechSettings.GRAPHITE_URL);
+        Properties motechProperties = platformSettingsService.getPlatformSettings().getMotechProperties();
+        return motechProperties.getProperty(MotechSettings.GRAPHITE_URL_PROP);
     }
 
     private AllAdminMappings getAllAdminMappings() {

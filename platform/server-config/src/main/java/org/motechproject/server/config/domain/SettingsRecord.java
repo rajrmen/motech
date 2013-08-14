@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.Properties;
 
 @TypeDiscriminator("doc.type === 'SettingsRecord'")
-@JsonIgnoreProperties(ignoreUnknown = true, value = {"couchDbProperties"})
+@JsonIgnoreProperties(ignoreUnknown = true, value = { "couchDbProperties" })
 public class SettingsRecord extends MotechBaseDataObject implements MotechSettings {
 
     private String language;
@@ -32,21 +32,31 @@ public class SettingsRecord extends MotechBaseDataObject implements MotechSettin
     private Properties schedulerProperties;
 
     @Override
+    public Properties getMotechProperties() {
+        Properties motechProperties = new Properties();
+
+        motechProperties.setProperty(MotechSettings.SYSTEM_LANGUAGE_PROP, language);
+        motechProperties.setProperty(MotechSettings.STATUS_MSG_TIMEOUT_PROP, statusMsgTimeout);
+        motechProperties.setProperty(MotechSettings.LOGIN_MODE_PROP, loginMode);
+        motechProperties.setProperty(MotechSettings.PROVIDER_NAME_PROP, providerName);
+        motechProperties.setProperty(MotechSettings.PROVIDER_URL_PROP, providerUrl);
+        motechProperties.setProperty(MotechSettings.UPLOAD_SIZE_PROP, uploadSize);
+
+        return  motechProperties;
+    }
+
     public String getLanguage() {
         return language;
     }
 
-    @Override
     public String getStatusMsgTimeout() {
         return statusMsgTimeout;
     }
 
-    @Override
     public Properties getActivemqProperties() {
         return activemqProperties;
     }
 
-    @Override
     public Properties getMetricsProperties() {
         return metricsProperties;
     }
@@ -55,22 +65,18 @@ public class SettingsRecord extends MotechBaseDataObject implements MotechSettin
         return loginMode;
     }
 
-    @Override
     public String getProviderName() {
         return providerName;
     }
 
-    @Override
     public String getProviderUrl() {
         return providerUrl;
     }
 
-    @Override
     public String getServerUrl() {
         return new MotechURL(this.serverUrl).toString();
     }
 
-    @Override
     public String getServerHost() {
         return new MotechURL(this.serverUrl).getHost();
     }
@@ -148,16 +154,28 @@ public class SettingsRecord extends MotechBaseDataObject implements MotechSettin
     }
 
     public void updateSettings(final MotechSettings settings) {
-        setLanguage(settings.getLanguage());
-        setStatusMsgTimeout(settings.getStatusMsgTimeout());
+        setLanguage(settings.getMotechProperties().getProperty(MotechSettings.SYSTEM_LANGUAGE_PROP));
+        setStatusMsgTimeout(settings.getMotechProperties().getProperty(MotechSettings.STATUS_MSG_TIMEOUT_PROP));
         setActivemqProperties(settings.getActivemqProperties());
-        setMetricsProperties(settings.getMetricsProperties());
-        setSchedulerProperties(settings.getSchedulerProperties());
-        setLoginMode(settings.getLoginMode());
-        setProviderName(settings.getProviderName());
-        setProviderUrl(settings.getProviderUrl());
-        setServerUrl(settings.getServerUrl());
-        setUploadSize(settings.getUploadSize());
+        setLoginMode(settings.getMotechProperties().getProperty(MotechSettings.LOGIN_MODE_PROP));
+        setProviderName(settings.getMotechProperties().getProperty(MotechSettings.PROVIDER_NAME_PROP));
+        setProviderUrl(settings.getMotechProperties().getProperty(MotechSettings.PROVIDER_URL_PROP));
+        setServerUrl(settings.getMotechProperties().getProperty(MotechSettings.SERVER_URL_PROP));
+        setUploadSize(settings.getMotechProperties().getProperty(MotechSettings.UPLOAD_SIZE_PROP));
+
+        Properties newMetricProperties = new Properties();
+        newMetricProperties.put(
+                MotechSettings.GRAPHITE_URL_PROP,
+                settings.getMotechProperties().getProperty(MotechSettings.GRAPHITE_URL_PROP)
+        );
+        setMetricsProperties(newMetricProperties);
+
+        Properties newSchedulerProperties = new Properties();
+        newSchedulerProperties.put(
+                MotechSettings.SCHEDULER_URL_PROP,
+                settings.getMotechProperties().getProperty(MotechSettings.SCHEDULER_URL_PROP)
+        );
+        setSchedulerProperties(newSchedulerProperties);
     }
 
     public void updateFromProperties(final Properties props) {
@@ -178,25 +196,25 @@ public class SettingsRecord extends MotechBaseDataObject implements MotechSettin
             String value = (String) entry.getValue();
 
             switch (key) {
-                case MotechSettings.LANGUAGE:
+                case MotechSettings.SYSTEM_LANGUAGE_PROP:
                     setLanguage(value);
                     break;
-                case MotechSettings.STATUS_MSG_TIMEOUT:
+                case MotechSettings.STATUS_MSG_TIMEOUT_PROP:
                     setStatusMsgTimeout(value);
                     break;
-                case MotechSettings.LOGINMODE:
+                case MotechSettings.LOGIN_MODE_PROP:
                     setLoginMode(value);
                     break;
-                case MotechSettings.PROVIDER_NAME:
+                case MotechSettings.PROVIDER_NAME_PROP:
                     setProviderName(value);
                     break;
-                case MotechSettings.PROVIDER_URL:
+                case MotechSettings.PROVIDER_URL_PROP:
                     setProviderUrl(value);
                     break;
-                case MotechSettings.SERVER_URL:
+                case MotechSettings.SERVER_URL_PROP:
                     setServerUrl(value);
                     break;
-                case MotechSettings.UPLOAD_SIZE:
+                case MotechSettings.UPLOAD_SIZE_PROP:
                     setUploadSize(value);
                     break;
                 default:
@@ -217,13 +235,13 @@ public class SettingsRecord extends MotechBaseDataObject implements MotechSettin
 
     private Properties emptyMetricsProperties() {
         Properties props = new Properties();
-        props.put(GRAPHITE_URL, "");
+        props.put(MotechSettings.GRAPHITE_URL_PROP, "");
         return props;
     }
 
     private Properties emptySchedulerProperties() {
         Properties props = new Properties();
-        props.put(SCHEDULER_URL, "");
+        props.put(MotechSettings.SCHEDULER_URL_PROP, "");
         return props;
     }
 }

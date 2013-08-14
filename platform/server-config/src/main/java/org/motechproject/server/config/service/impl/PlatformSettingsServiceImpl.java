@@ -168,7 +168,8 @@ public class PlatformSettingsServiceImpl implements PlatformSettingsService {
     public String getPlatformLanguage() {
         MotechSettings motechSettings = getPlatformSettings();
 
-        return (motechSettings == null ? null : motechSettings.getLanguage());
+        return (motechSettings == null ? null :
+                motechSettings.getMotechProperties().getProperty(MotechSettings.SYSTEM_LANGUAGE_PROP));
     }
 
     @Override
@@ -198,7 +199,7 @@ public class PlatformSettingsServiceImpl implements PlatformSettingsService {
 
         if (dbSettings != null) {
             export.putAll(dbSettings.getActivemqProperties());
-            export.put(MotechSettings.LANGUAGE, dbSettings.getLanguage());
+            export.put(MotechSettings.SYSTEM_LANGUAGE_PROP, dbSettings.getLanguage());
         }
 
         return export;
@@ -215,7 +216,7 @@ public class PlatformSettingsServiceImpl implements PlatformSettingsService {
             throws IOException {
         File file = new File(String.format("%s/%s", getConfigDir(bundleSymbolicName), fileName));
         setUpDirsForFile(file);
-        try ( FileOutputStream fileOutputStream = new FileOutputStream(file)) {
+        try (FileOutputStream fileOutputStream = new FileOutputStream(file)) {
             properties.store(fileOutputStream, null);
         }
     }
@@ -370,13 +371,13 @@ public class PlatformSettingsServiceImpl implements PlatformSettingsService {
         SettingsRecord dbSettings = allSettings.getSettings();
 
         if (dbSettings != null) {
-            if (MotechSettings.LANGUAGE.equals(key)) {
+            if (MotechSettings.SYSTEM_LANGUAGE_PROP.equals(key)) {
                 dbSettings.setLanguage(value);
-            } else if (MotechSettings.STATUS_MSG_TIMEOUT.equals(key)) {
+            } else if (MotechSettings.STATUS_MSG_TIMEOUT_PROP.equals(key)) {
                 dbSettings.setStatusMsgTimeout(value);
-            } else if (MotechSettings.SERVER_URL.equals(key)) {
+            } else if (MotechSettings.SERVER_URL_PROP.equals(key)) {
                 dbSettings.setServerUrl(value);
-            } else if (MotechSettings.UPLOAD_SIZE.equals(key)) {
+            } else if (MotechSettings.UPLOAD_SIZE_PROP.equals(key)) {
                 dbSettings.setUploadSize(value);
             } else {
                 for (Properties p : Arrays.asList(dbSettings.getMetricsProperties())) {
