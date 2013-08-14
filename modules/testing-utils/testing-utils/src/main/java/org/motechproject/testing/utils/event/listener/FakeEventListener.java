@@ -2,6 +2,10 @@ package org.motechproject.testing.utils.event.listener;
 
 import org.motechproject.event.listener.annotations.MotechListener;
 
+/** Supplies event listeners to be registered when the bundle is loaded.
+*
+* Listeners and subjects may be used for integration testing.
+*/
 public class FakeEventListener {
     
     public static final String SUBJECT_FOR_ONE_LISTENER_A = "subject-for-one-listener-a";

@@ -23,6 +23,16 @@ import static org.osgi.framework.Bundle.UNINSTALLED;
 import java.util.Arrays;
 import java.util.List;
 
+/** Verify that bundle event listeners are registered and cleared.
+*
+* Checks that event listeners are registered and cleared properly
+* as a bundle transitions through its life cycle (i.e. stopped, started,
+* uninstalled, installed).
+* 
+* Tests rely on the org.motechproject.motech-testing-utils bundle, which
+* supplies listeners in the FakeEventListener class.
+* 
+*/
 public class EventRegistryBundleLifecycleIT extends BaseOsgiIT {
 
     @Ignore
