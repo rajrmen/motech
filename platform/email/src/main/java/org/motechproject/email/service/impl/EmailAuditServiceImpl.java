@@ -1,7 +1,6 @@
 package org.motechproject.email.service.impl;
 
 import org.motechproject.email.domain.EmailRecord;
-import org.motechproject.email.domain.EmailRecords;
 import org.motechproject.email.repository.AllEmailRecords;
 import org.motechproject.email.service.EmailAuditService;
 import org.motechproject.email.service.EmailRecordSearchCriteria;
@@ -64,7 +63,7 @@ public class EmailAuditServiceImpl implements EmailAuditService {
     }
 
     @Override
-    public EmailRecords findEmailRecords(EmailRecordSearchCriteria criteria) {
+    public List<EmailRecord> findEmailRecords(EmailRecordSearchCriteria criteria) {
         return allEmailRecords.findAllBy(criteria);
     }
 }

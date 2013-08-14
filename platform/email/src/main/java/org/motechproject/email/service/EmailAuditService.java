@@ -1,7 +1,6 @@
 package org.motechproject.email.service;
 
 import org.motechproject.email.domain.EmailRecord;
-import org.motechproject.email.domain.EmailRecords;
 
 import java.util.List;
 
@@ -11,7 +10,7 @@ public interface EmailAuditService {
 
     List<EmailRecord> findAllEmailRecords();
 
-    EmailRecords findEmailRecords(EmailRecordSearchCriteria criteria);
+    List<EmailRecord> findEmailRecords(EmailRecordSearchCriteria criteria);
 
     void delete(EmailRecord emailRecord);
 }

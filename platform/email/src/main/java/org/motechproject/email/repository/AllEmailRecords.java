@@ -13,7 +13,6 @@ import org.joda.time.DateTime;
 import org.motechproject.commons.couchdb.lucene.query.CouchDbLuceneQuery;
 import org.motechproject.commons.couchdb.query.QueryParam;
 import org.motechproject.email.domain.EmailRecord;
-import org.motechproject.email.domain.EmailRecords;
 import org.motechproject.email.service.EmailRecordSearchCriteria;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,9 +50,9 @@ public class AllEmailRecords extends CouchDbRepositorySupportWithLucene<EmailRec
     }
 
     public EmailRecord findLatestBy(String toAddress) {
-        EmailRecords emailRecords = findAllBy(new EmailRecordSearchCriteria()
+        List<EmailRecord> emailRecords = findAllBy(new EmailRecordSearchCriteria()
                 .withToAddress(toAddress));
-        return CollectionUtils.isEmpty(emailRecords.getRows()) ? null : (EmailRecord) sort(emailRecords.getRows(), on(EmailRecord.class).getDeliveryTime(), reverseOrder()).get(0);
+        return CollectionUtils.isEmpty(emailRecords) ? null : (EmailRecord) sort(emailRecords, on(EmailRecord.class).getDeliveryTime(), reverseOrder()).get(0);
     }
 
     @FullText({@Index(
@@ -69,7 +68,7 @@ public class AllEmailRecords extends CouchDbRepositorySupportWithLucene<EmailRec
                     "return result " +
                     "}"
     )})
-    public EmailRecords findAllBy(EmailRecordSearchCriteria criteria) {
+    public List<EmailRecord> findAllBy(EmailRecordSearchCriteria criteria) {
         StringBuilder query = new CouchDbLuceneQuery()
                 .with("fromAddress", criteria.getFromAddress())
                 .with("toAddress", criteria.getToAddress())
@@ -81,7 +80,7 @@ public class AllEmailRecords extends CouchDbRepositorySupportWithLucene<EmailRec
         return runQuery(query, criteria.getQueryParam());
     }
 
-    private EmailRecords runQuery(StringBuilder queryString, QueryParam queryParam) {
+    private List <EmailRecord> runQuery(StringBuilder queryString, QueryParam queryParam) {
         LuceneQuery query = new LuceneQuery("EmailRecord", "search");
         query.setQuery(queryString.toString());
         query.setStaleOk(false);
@@ -108,20 +107,18 @@ public class AllEmailRecords extends CouchDbRepositorySupportWithLucene<EmailRec
         TypeReference<CustomLuceneResult<EmailRecord>> typeRef
                 = new TypeReference<CustomLuceneResult<EmailRecord>>() {
         };
-        return convertToEmailRecords(db.queryLucene(query, typeRef));
+        return convertToEmailRecordList(db.queryLucene(query, typeRef));
     }
 
-    private EmailRecords convertToEmailRecords(CustomLuceneResult<EmailRecord> result) {
+    private List<EmailRecord> convertToEmailRecordList(CustomLuceneResult<EmailRecord> result) {
         List<EmailRecord> emailRecords = new ArrayList<>();
-        int count = 0;
         if (result != null) {
             List<CustomLuceneResult.Row<EmailRecord>> rows = result.getRows();
             for (CustomLuceneResult.Row<EmailRecord> row : rows) {
                 emailRecords.add(row.getDoc());
             }
-            count = result.getTotalRows();
         }
-        return new EmailRecords(count, emailRecords);
+        return emailRecords;
     }
 
     public void removeAll() {

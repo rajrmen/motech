@@ -72,7 +72,7 @@ public class EmailController {
             );
         }
 
-        previousEmailRecords = new EmailRecords(filtered.size(), filtered);
+        previousEmailRecords = new EmailRecords(filter.getPage(), filter.getRows(), filtered);
 
         return previousEmailRecords;
     }
