@@ -216,8 +216,7 @@
                     url: '../email/emails?name=&deliveryStatus=PENDING,ERROR,RECEIVED,SENT,UNKNOWN',
                     datatype: 'json',
                     jsonReader:{
-                        repeatitems:false,
-                        root: 'rows'
+                        repeatitems:false
                     },
                     prmNames: {
                         sort: 'sortColumn',
@@ -264,11 +263,12 @@
                     sortorder: 'asc',
                     viewrecords: true,
                     gridComplete: function () {
-                        angular.forEach(['direction', 'deliveryStatus', 'fromAddress', 'toAddress', 'subject', 'message', 'deliveryTime', 'modifiedDate'], function (value) {
+                        angular.forEach(['direction', 'deliveryStatus', 'toAddress', 'fromAddress', 'subject', 'message', 'deliveryTime', 'modifiedDate'], function (value) {
                             elem.jqGrid('setLabel', value, scope.msg('email.logging.' + value));
-                            /*if(!elem[0].p.rows[0].hasOwnProperty(value)) {
+                            var dataUser = elem.jqGrid('getRowData')[0];
+                            if (dataUser !== undefined && !dataUser.hasOwnProperty(value)) {
                                 elem.jqGrid('hideCol', value);
-                            }*/
+                            }
                         });
 
                         $('#outsideEmailLoggingTable').children('div').width('100%');
