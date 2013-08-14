@@ -213,7 +213,7 @@
                 var elem = angular.element(element), filters, colPos;
 
                 elem.jqGrid({
-                    url: '../email/emails?name=&deliveryStatus=PENDING,ERROR,RECEIVED,SENT,UNKNOWN',
+                    url: '../email/emails?deliveryStatus=PENDING,ERROR,RECEIVED,SENT,UNKNOWN',
                     datatype: 'json',
                     jsonReader:{
                         repeatitems:false

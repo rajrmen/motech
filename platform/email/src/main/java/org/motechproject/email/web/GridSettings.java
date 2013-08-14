@@ -12,7 +12,7 @@ import java.util.Set;
 
 public class GridSettings {
 
-    private String name;
+    private String subject;
     private String deliveryStatus;
     private String timeFrom;
     private String timeTo;
@@ -53,12 +53,12 @@ public class GridSettings {
         this.sortColumn = sortColumn;
     }
 
-    public String getName() {
-        return name;
+    public String getSubject() {
+        return subject;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setSubject(String subject) {
+        this.subject = subject;
     }
 
     public String getDeliveryStatus() {

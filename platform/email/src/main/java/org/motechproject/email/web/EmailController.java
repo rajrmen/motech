@@ -62,8 +62,8 @@ public class EmailController {
             filtered = filterByStatus(filtered, filter.getDeliveryStatusFromSettings());
         }
 
-        if (filter.getName()!=null) {
-            filtered = filterByPartialString(filtered, filter.getName());
+        if (filter.getSubject()!=null) {
+            filtered = filterByPartialString(filtered, filter.getSubject());
         }
 
         if (filter.getSortColumn()!=null && (!filtered.isEmpty())) {
@@ -102,11 +102,7 @@ public class EmailController {
 
         List<String> availableAddress = new ArrayList<>();
 
-        if (autoComplete.equals("fromAddress")) {
-            availableAddress = getAllFromAddressContaining(partialAddress);
-        } else if (autoComplete.equals("toAddress")) {
-            availableAddress = getAllToAddressContaining(partialAddress);
-        } else if (autoComplete.equals("fromToAddress")) {
+        if (autoComplete.equals("subject")) {
             availableAddress = getAllFromAddressContaining(partialAddress);
             List<String> availableAddress2 = getAllToAddressContaining(partialAddress);
 
