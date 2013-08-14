@@ -22,7 +22,46 @@
     });
 
     emailModule.controller('EmailLoggingController', function($scope, EmailAuditService) {
-        $scope.emailList = EmailAuditService.query();
+
+        $scope.availableRange = ['all','table', 'month'];
+        $scope.loggingRange = $scope.availableRange[0];
+
+        $scope.change = function(selectedRange) {
+            $scope.loggingRange = selectedRange;
+
+            if($scope.loggingRange === 'month') {
+                $('#exportDate').removeClass('hidden');
+            } else {
+                $('#exportDate').addClass('hidden');
+            }
+        };
+
+        $(".monthPicker").focus(function () {
+            $(".ui-datepicker-calendar").hide();
+            $(".ui-datepicker-current").hide();
+        });
+
+        $scope.exportEmailLog = function () {
+            //blockUI();
+            $('#exportEmailLogModal').modal('hide');
+            //window.open( "data:text/csv;charset=utf-8," + escape($scope.filter))
+            $('#exportEmailLogForm').ajaxSubmit({
+                success: function () {
+
+                    $('#exportEmailLogForm').resetForm();
+                    $('#exportEmailLogModal').modal('hide');
+                    //unblockUI();
+                },
+                error: function (response) {
+                    //handleResponse('email.header.error', 'email.logging.import.error', response);
+                }
+            });
+        };
+
+        $scope.closeExportEmailLogModal = function () {
+            $('#exportEmailLogForm').resetForm();
+            $('#exportEmailLogModal').modal('hide');
+        };
 
         $scope.setFilterTitle = function(params) {
             var filters = [], s,

@@ -119,6 +119,40 @@
         };
     });
 
+    emailModule.directive('exportDatePickerFrom', function() {
+        return {
+            restrict: 'A',
+            link: function(scope, element, attrs) {
+                var elem = angular.element(element),
+                    endDateTextBox = angular.element('#monthPicker');
+
+                elem.datepicker({
+                    dateFormat: "mm-yy",
+                    changeMonth: false,
+                    changeYear: false,
+                    showButtonPanel: true,
+                    maxDate: +0,
+                    onClose: function(dateText, inst) {
+                        var month, year;
+                        month = $(".ui-datepicker-month :selected").val();
+                        year = $(".ui-datepicker-year :selected").val();
+                        $(this).datepicker('setDate', new Date(year, month, 1));
+                    },
+                    beforeShow: function(input, inst) {
+                        var dateString, options;
+                        dateString = $(this).val();
+                        options = {};
+                        if (dateString.length > 0) {
+                            options.defaultDate = $.datepicker.parseDate("dd-" + $(this).datepicker("option", "dateFormat"), "01-" + dateString);
+                        }
+                        inst.dpDiv.addClass("ui-monthpicker");
+                        return options;
+                    }
+                });
+            }
+        };
+    });
+
     emailModule.directive('jqgridSearch', function () {
         return {
             restrict: 'A',

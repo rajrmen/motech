@@ -91,3 +91,11 @@
     line-height: 18px;
     padding: 1px 3px;
 }
+
+#exportEmailLogModal.modal, #exportEmailLogModal .modal-body {
+    overflow: visible;
+}
+
+#exportEmailLogModal .ui-datepicker-calendar {
+    display: none;
+}
