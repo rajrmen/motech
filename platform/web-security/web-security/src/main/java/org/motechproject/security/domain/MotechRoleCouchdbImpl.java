@@ -16,17 +16,21 @@ public class MotechRoleCouchdbImpl extends MotechBaseDataObject implements Motec
 
     @JsonProperty
     private List<String> permissionNames;
+    
+    @JsonProperty
+    private boolean isDeletable;
 
     public MotechRoleCouchdbImpl() {
         super();
         this.setType(DOC_TYPE);
     }
 
-    public MotechRoleCouchdbImpl(String roleName, List<String> permissionNames) {
+    public MotechRoleCouchdbImpl(String roleName, List<String> permissionNames, boolean isDeletable) {
         super();
         this.roleName = roleName;
         this.permissionNames = permissionNames;
         this.setType(DOC_TYPE);
+        this.isDeletable = isDeletable;
     }
 
     public String getRoleName() {
@@ -43,5 +47,13 @@ public class MotechRoleCouchdbImpl extends MotechBaseDataObject implements Motec
 
     public void setPermissionNames(List<String> permissionNames) {
         this.permissionNames = permissionNames;
+    }
+    
+    public boolean isDeletable() {
+        return isDeletable;
+    }
+    
+    public void setDeletable(boolean isDeletable) {
+        this.isDeletable = isDeletable;
     }
 }

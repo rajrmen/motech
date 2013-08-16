@@ -56,12 +56,17 @@ public class MotechRoleServiceImpl implements MotechRoleService {
     @Override
     public void deleteRole(RoleDto role) {
         MotechRole motechRole = allMotechRoles.findByRoleName(role.getRoleName());
-        allMotechRoles.remove(motechRole);
+        if (motechRole.isDeletable()) {
+            List<MotechUser> users = (List<MotechUser>) allMotechUsers.findByRole(role.getRoleName());
+            if (users.isEmpty()) {
+                allMotechRoles.remove(motechRole);
+            }
+        }
     }
 
     @Override
     public void createRole(RoleDto role) {
-        MotechRole motechRole = new MotechRoleCouchdbImpl(role.getRoleName(), role.getPermissionNames());
+        MotechRole motechRole = new MotechRoleCouchdbImpl(role.getRoleName(), role.getPermissionNames(), role.isDeletable());
         allMotechRoles.add(motechRole);
     }
 }

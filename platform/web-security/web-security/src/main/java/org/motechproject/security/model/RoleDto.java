@@ -12,19 +12,22 @@ public class RoleDto {
     private String originalRoleName;
 
     private List<String> permissionNames;
+    
+    private boolean isDeletable;
 
     public RoleDto() {
-        this(null, new ArrayList<String>());
+        this(null, new ArrayList<String>(), false);
     }
 
     public RoleDto(MotechRole motechRole) {
-        this(motechRole.getRoleName(), motechRole.getPermissionNames());
+        this(motechRole.getRoleName(), motechRole.getPermissionNames(), motechRole.isDeletable());
     }
 
-    public RoleDto(String roleName, List<String> permissionNames) {
+    public RoleDto(String roleName, List<String> permissionNames, boolean isDeletable) {
         this.roleName = roleName;
         this.permissionNames = permissionNames;
         this.originalRoleName = roleName;
+        this.isDeletable = isDeletable;
     }
 
     public String getRoleName() {
@@ -49,6 +52,14 @@ public class RoleDto {
 
     public void setOriginalRoleName(String originalRoleName) {
         this.originalRoleName = originalRoleName;
+    }
+    
+    public boolean isDeletable() {
+        return isDeletable;
+    }
+
+    public void setDeletable(boolean isDeletable) {
+        this.isDeletable = isDeletable;
     }
 }
 
