@@ -1,10 +1,10 @@
 [
     {
         "roleName":"Email Admin",
-        "permissionNames": ["viewDetailedLogs","viewBasicLogs"]
+        "permissionNames": ["viewDetailedEmailLogs","viewBasicEmailLogs"]
     },
     {
         "roleName":"Email Junior Admin",
-        "permissionNames": ["viewBasicLogs"]
+        "permissionNames": ["viewBasicEmailLogs"]
     }
 ]

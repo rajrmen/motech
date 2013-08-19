@@ -65,6 +65,10 @@
 
     <osgi:reference id="motechSchedulerService" interface="org.motechproject.scheduler.MotechSchedulerService" />
 
+    <osgi:reference id="userService" interface="org.motechproject.security.service.MotechUserService" />
+
+    <osgi:reference id="roleService" interface="org.motechproject.security.service.MotechRoleService" />
+
     <bean id="emailDBConnector" factory-bean="couchDbManager" factory-method="getConnector">
         <constructor-arg value="motech-email-audit"/>
     </bean>

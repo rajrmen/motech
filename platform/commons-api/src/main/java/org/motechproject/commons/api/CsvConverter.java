@@ -2,6 +2,10 @@ package org.motechproject.commons.api;
 
 import java.util.List;
 
+/**
+ * The <code>CsvConverter</code> class, provides methods responsible for conversion to CSV-formatted strings.
+ */
+
 public class CsvConverter {
     private String csvString = "";
     private static final String SEPARATOR = ",";
