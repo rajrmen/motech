@@ -38,7 +38,7 @@ public class EmailRecordComparator implements Comparator<EmailRecord> {
                 break;
             case "deliveryTime":
             default:
-                ret = o1.getDeliveryTime().compareTo(o2.getDeliveryTime());
+                ret = o1.getDeliveryTimeInDateTime().compareTo(o2.getDeliveryTimeInDateTime());
                 break;
         }
 

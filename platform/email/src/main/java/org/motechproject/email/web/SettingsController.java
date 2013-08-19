@@ -82,13 +82,7 @@ public class SettingsController {
 
         settingsFacade.saveConfigProperties(EMAIL_PROPERTIES_FILE_NAME, settings.toProperties());
 
-        motechSchedulerService.unscheduleAllJobs("Purge Mails");
-        Map<String,Object> params = new HashMap<>();
-        params.put("purgeTime", settings.getLogPurgeTime());
-        params.put("purgeMultiplier", settings.getLogPurgeTimeMultiplier());
-        motechSchedulerService.safeScheduleJob(new CronSchedulableJob(
-                new MotechEvent("Purge Mails", params), "0 0 1 * * ?"
-        ));
+        scheduleMailPurging(settings.getLogPurgeTime(), settings.getLogPurgeTimeMultiplier());
 
         mailSender.setHost(host);
         mailSender.setPort(Integer.valueOf(port));
@@ -99,5 +93,15 @@ public class SettingsController {
     @ResponseBody
     public String handleException(Exception e) throws IOException {
         return e.getMessage();
+    }
+
+    private void scheduleMailPurging(String time, String multiplier) {
+        motechSchedulerService.unscheduleAllJobs("Purge Mails");
+        Map<String,Object> params = new HashMap<>();
+        params.put("purgeTime", time);
+        params.put("purgeMultiplier", multiplier);
+        motechSchedulerService.safeScheduleJob(new CronSchedulableJob(
+                new MotechEvent("Purge Mails", params), "0 0 1 * * ?"
+        ));
     }
 }
