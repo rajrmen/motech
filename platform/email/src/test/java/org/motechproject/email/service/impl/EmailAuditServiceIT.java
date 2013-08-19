@@ -6,7 +6,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.motechproject.email.domain.DeliveryStatus;
 import org.motechproject.email.domain.EmailRecord;
-import org.motechproject.email.domain.EmailRecords;
 import org.motechproject.email.repository.AllEmailRecords;
 import org.motechproject.email.service.EmailAuditService;
 import org.motechproject.email.service.EmailRecordSearchCriteria;
@@ -52,13 +51,13 @@ public class EmailAuditServiceIT {
         deliveryStatuses.add(DeliveryStatus.PENDING);
 
         EmailRecordSearchCriteria criteriaDeliveryStatus = new EmailRecordSearchCriteria().withDeliveryStatuses(deliveryStatuses);
-        EmailRecords emailRecordsDeliveryStatus = emailAuditService.findEmailRecords(criteriaDeliveryStatus);
+        List <EmailRecord> emailRecordsDeliveryStatus = emailAuditService.findEmailRecords(criteriaDeliveryStatus);
         assertNotNull(emailRecordsDeliveryStatus);
-        assertThat(emailRecordsDeliveryStatus.getRows().size(), is(2));
+        assertThat(emailRecordsDeliveryStatus.size(), is(2));
         EmailRecordSearchCriteria criteriaToAddress = new EmailRecordSearchCriteria().withToAddress("to@address");
-        EmailRecords emailRecordsToAddress = emailAuditService.findEmailRecords(criteriaToAddress);
+        List <EmailRecord> emailRecordsToAddress = emailAuditService.findEmailRecords(criteriaToAddress);
         assertNotNull(emailRecordsToAddress);
-        assertThat(emailRecordsToAddress.getRows().size(), is(1));
+        assertThat(emailRecordsToAddress.size(), is(1));
     }
 
     private EmailRecord createEmailRecord(String toAddress, DeliveryStatus deliveryStatus) {

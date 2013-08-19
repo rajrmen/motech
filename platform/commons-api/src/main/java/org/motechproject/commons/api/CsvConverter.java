@@ -15,15 +15,15 @@ public class CsvConverter {
             for (Object o : line) {
                 String csvObject = o.toString();
                 if (csvObject.contains(SEPARATOR) || csvObject.contains("\"") || csvObject.contains(END_OF_LINE)) {
-                    csvObject.replace("\"", "\"\"");
+                    csvObject = csvObject.replace("\"", "\"\"");
                     csvObject = "\""+csvObject+"\"";
                 }
-                csvString.concat(csvObject+SEPARATOR);
+                csvString = csvString.concat(csvObject+SEPARATOR);
             }
 
             //removing last, unnecessary separator
             csvString = csvString.substring(0, csvString.lastIndexOf(SEPARATOR));
-            csvString.concat(END_OF_LINE);
+            csvString = csvString.concat(END_OF_LINE);
         }
 
         return csvString;

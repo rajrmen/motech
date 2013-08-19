@@ -42,11 +42,11 @@ public class EmailControllerTest {
         when(auditService.findAllEmailRecords()).thenReturn(getTestEmailRecords());
 
         GridSettings filter = new GridSettings();
-        filter.setName("gmail.com");
+        filter.setSubject("gmail.com");
         EmailRecords recs = emailController.getEmails(filter);
 
         GridSettings filter2 = new GridSettings();
-        filter2.setName("yahoo.com");
+        filter2.setSubject("yahoo.com");
         EmailRecords recs2 = emailController.getEmails(filter2);
 
         assertNotNull(recs);
@@ -134,7 +134,7 @@ public class EmailControllerTest {
         GridSettings filter = new GridSettings();
         filter.setSortColumn("message");
         filter.setSortDirection("asc");
-        filter.setName("@gmail.com");
+        filter.setSubject("@gmail.com");
         emailController.getEmails(filter);
         EmailRecord rec1 = emailController.getEmail(1);
         EmailRecord rec3 = emailController.getEmail(3);
@@ -167,11 +167,11 @@ public class EmailControllerTest {
     public void shouldReturnProperMailsForAutoComplete() {
         when(auditService.findAllEmailRecords()).thenReturn(getTestEmailRecords());
 
-        List<String> available = emailController.getAvailableMails("fromAddress", "abc");
-        List<String> available2 = emailController.getAvailableMails("fromAddress", "def");
-        List<String> available3 = emailController.getAvailableMails("toAddress", "abc");
-        List<String> available4 = emailController.getAvailableMails("fromToAddress", "abc");
-        List<String> available5 = emailController.getAvailableMails("fromToAddress", "abc@g");
+        List<String> available = emailController.getAvailableMails("subject", "abc");
+        List<String> available2 = emailController.getAvailableMails("subject", "def");
+        List<String> available3 = emailController.getAvailableMails("subject", "abc");
+        List<String> available4 = emailController.getAvailableMails("subject", "abc");
+        List<String> available5 = emailController.getAvailableMails("subject", "abc@g");
 
         assertNotNull(available);
         assertNotNull(available2);
