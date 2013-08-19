@@ -20,6 +20,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import static java.util.Arrays.asList;
+
 /**
  * The <code>EmailController</code> class is used by view layer for getting information
  * about all {@Link EmailRecords} or single {@Link EmailRecord}. It stores the most recent
@@ -116,16 +118,15 @@ public class EmailController {
         return availableAddress;
     }
 
-    @RequestMapping({ "/emails/{mailid}" })
+    @RequestMapping(value = "/emails/{mailid}", method= RequestMethod.GET)
     @ResponseBody
-    public EmailRecord getEmail(@PathVariable int mailid) {
-        EmailRecord record = null;
+    public EmailRecords getEmail(@PathVariable int mailid) {
+        EmailRecords record = null;
         if (previousEmailRecords != null) {
-            record = previousEmailRecords.getRows().get(mailid-1);
+            record = new EmailRecords(1, 1, asList(previousEmailRecords.getRows().get(mailid - 1)));
         }
         return record;
     }
-
 
     private List<EmailRecord> filterByDates(List<EmailRecord> records, DateTime from, DateTime to) {
         List<EmailRecord> filtered = new ArrayList<>();
