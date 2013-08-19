@@ -16,7 +16,7 @@
     margin-bottom: 0;
 }
 
-.email #operations-sms-logging {
+.email #operations-email-logging {
     margin: 10px;
 }
 
@@ -92,10 +92,25 @@
     padding: 1px 3px;
 }
 
+.overrideJqgridTable .table-lightblue .ui-widget-content {
+    border: 0 solid #D4E1F9;
+}
+
+.ui-datepicker-header select {
+    height: 24px;
+    line-height: 20px;
+    padding: 2px 3px;
+}
+
+.ui-datepicker .ui-datepicker-prev, .ui-datepicker .ui-datepicker-next {
+    height: 2.1em;
+    width: 2em;
+}
+
 #exportEmailLogModal.modal, #exportEmailLogModal .modal-body {
     overflow: visible;
 }
 
-#exportEmailLogModal .ui-datepicker-calendar {
+.nodays table {
     display: none;
 }

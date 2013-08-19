@@ -128,8 +128,8 @@
 
                 elem.datepicker({
                     dateFormat: "mm-yy",
-                    changeMonth: false,
-                    changeYear: false,
+                    changeMonth: true,
+                    changeYear: true,
                     showButtonPanel: true,
                     maxDate: +0,
                     onClose: function(dateText, inst) {
@@ -137,6 +137,7 @@
                         month = $(".ui-datepicker-month :selected").val();
                         year = $(".ui-datepicker-year :selected").val();
                         $(this).datepicker('setDate', new Date(year, month, 1));
+                        $('#ui-datepicker-div').removeClass('nodays');
                     },
                     beforeShow: function(input, inst) {
                         var dateString, options;
@@ -145,7 +146,12 @@
                         if (dateString.length > 0) {
                             options.defaultDate = $.datepicker.parseDate("dd-" + $(this).datepicker("option", "dateFormat"), "01-" + dateString);
                         }
-                        inst.dpDiv.addClass("ui-monthpicker");
+                        if ($(input).hasClass('nodays')) {
+                                $('#ui-datepicker-div').addClass('nodays');
+                            } else {
+                                $('#ui-datepicker-div').removeClass('nodays');
+                                $(this).datepicker('option', 'dateFormat', 'yy-mm');
+                            }
                         return options;
                     }
                 });
@@ -217,7 +223,6 @@
                         }
 
                         timeoutHnd = setTimeout(function () {
-                            scope.setFilterTitle(params);
                             jQuery('#' + attrs.jqgridSearch).jqGrid('setGridParam', {
                                 url: '../email/emails' + params
                             }).trigger('reloadGrid');
@@ -279,10 +284,6 @@
                         name: 'subject',
                         index: 'subject'
                     }, {
-                        name: 'message',
-                        index: 'message',
-                        sortable: false
-                    }, {
                         name: 'deliveryTime',
                         index: 'deliveryTime'
                     }, {
@@ -296,8 +297,51 @@
                     sortname: 'deliveryTime',
                     sortorder: 'asc',
                     viewrecords: true,
+                    subGrid: true,
+                    subGridOptions: {
+                        "plusicon" : "ui-icon-triangle-1-e",
+                        "minusicon" : "ui-icon-triangle-1-s",
+                        "openicon" : "ui-icon-arrowreturn-1-e"
+                    },
+                    subGridRowExpanded: function(subgrid_id, row_id) {
+                        var subgrid_table_id, pager_id;
+                        subgrid_table_id = subgrid_id+"_t";
+                        pager_id = "p_"+subgrid_table_id;
+                        $("#"+subgrid_id).html("<table id='"+subgrid_table_id+"' class=''></table>");
+
+                        jQuery("#"+subgrid_table_id).jqGrid({
+                            url:'../email/emails/' +row_id,
+                            datatype:"json",
+                            jsonReader:{
+                                repeatitems: false,
+                                root:  'rows'
+                            },
+                            viewrecords: true,
+                            colNames: ['subject', 'message'],
+                            colModel: [
+                                {name:"subject",index:"subject", width: 80, align:"left"},
+                                {name:"message",index:"message", width: 100, align:"left", sortable: false}
+                            ],
+                            rowNum:1,
+                            pager: pager_id,
+                            sortname: 'message',
+                            sortorder: "asc",
+                            height: '100%'
+                        });
+                        jQuery("#"+subgrid_table_id).jqGrid('navGrid',"#"+pager_id,{edit:false,add:false,del:false});
+
+
+                        $('div.ui-widget-content').width('100%');
+                        $('div.ui-jqgrid-bdiv').width('100%');
+                        $('div.ui-jqgrid-view').width('100%');
+                        $('div.ui-jqgrid-hdiv').width('auto');
+                        $('table.ui-jqgrid-htable').width('100%');
+                        $('table.ui-jqgrid-btable').width('100%');
+                        $('div.ui-jqgrid-hbox').css({'padding-right':'0'});
+
+                    },
                     gridComplete: function () {
-                        angular.forEach(['direction', 'deliveryStatus', 'toAddress', 'fromAddress', 'subject', 'message', 'deliveryTime', 'modifiedDate'], function (value) {
+                        angular.forEach(['direction', 'deliveryStatus', 'toAddress', 'fromAddress', 'subject', 'deliveryTime', 'modifiedDate'], function (value) {
                             elem.jqGrid('setLabel', value, scope.msg('email.logging.' + value));
                             var dataUser = elem.jqGrid('getRowData')[0];
                             if (dataUser !== undefined && !dataUser.hasOwnProperty(value)) {

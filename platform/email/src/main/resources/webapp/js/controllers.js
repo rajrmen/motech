@@ -36,8 +36,7 @@
             }
         };
 
-        $(".monthPicker").focus(function () {
-            $(".ui-datepicker-calendar").hide();
+        $("#monthPicker").focus(function () {
             $(".ui-datepicker-current").hide();
         });
 
@@ -50,6 +49,7 @@
 
                     $('#exportEmailLogForm').resetForm();
                     $('#exportEmailLogModal').modal('hide');
+                    $scope.change('all');
                     //unblockUI();
                 },
                 error: function (response) {
@@ -61,20 +61,9 @@
         $scope.closeExportEmailLogModal = function () {
             $('#exportEmailLogForm').resetForm();
             $('#exportEmailLogModal').modal('hide');
+            $scope.change('all');
         };
 
-        $scope.setFilterTitle = function(params) {
-            var filters = [], s,
-                statuses = [];
-                filters = params;
-
-            if (filters.length > 0) {
-                s = "<b>Filtered by</b> " + filters;
-            } else {
-                s = "Filter by";
-            }
-            $('#filter-title').html(s);
-        };
     });
 
     emailModule.controller('SettingsController', function ($scope, SettingsService) {
