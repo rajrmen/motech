@@ -8,18 +8,18 @@ import java.util.List;
  * stores current item count.
  */
 
-public class EmailRecords {
+public class EmailRecords<T> {
     private Integer records;
     private Integer total;
     private Integer page;
-    private List<EmailRecord> rows;
+    private List<T> rows;
 
     public EmailRecords() {
         this.records = 0;
         this.rows = new ArrayList<>();
     }
 
-    public EmailRecords(Integer page, Integer rows, List<EmailRecord> allRecords) {
+    public EmailRecords(Integer page, Integer rows, List<T> allRecords) {
         this.page = page;
         this.records = allRecords.size();
         this.total = (this.records <= rows) ? 1 : (this.records / rows) + 1;
@@ -39,11 +39,11 @@ public class EmailRecords {
         return records;
     }
 
-    public List<EmailRecord> getRows() {
+    public List<T> getRows() {
         return rows;
     }
 
-    public void setRows(List<EmailRecord> rows) {
+    public void setRows(List<T> rows) {
         this.rows = rows;
         this.records = rows.size();
     }

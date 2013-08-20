@@ -3,11 +3,16 @@ package org.motechproject.email.web;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.motechproject.email.domain.DeliveryStatus;
+import org.motechproject.email.domain.BasicEmailRecord;
 import org.motechproject.email.domain.EmailRecord;
 import org.motechproject.email.domain.EmailRecordComparator;
 import org.motechproject.email.domain.EmailRecords;
 import org.motechproject.email.service.EmailAuditService;
+import org.motechproject.security.service.MotechRoleService;
+import org.motechproject.security.service.MotechUserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,6 +38,12 @@ public class EmailController {
 
     @Autowired
     private EmailAuditService auditService;
+
+    @Autowired
+    private MotechUserService motechUserService;
+
+    @Autowired
+    private MotechRoleService motechRoleService;
 
     private EmailRecords previousEmailRecords;
 
@@ -74,8 +85,7 @@ public class EmailController {
             );
         }
 
-        previousEmailRecords = new EmailRecords(filter.getPage(), filter.getRows(), filtered);
-
+        previousEmailRecords = hideColumns(filtered, filter);
         return previousEmailRecords;
     }
 
@@ -201,4 +211,36 @@ public class EmailController {
     private DateTime getMaxDateTime() {
         return new DateTime(Long.MAX_VALUE);
     }
+
+    private boolean emailCredentials(String permissionType) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        List<String> roles = motechUserService.getRoles(auth == null ? "" : auth.getName());
+
+        for (String role : roles) {
+            List<String> permissions = motechRoleService.getRole(role).getPermissionNames();
+            if (permissions.contains(permissionType)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private EmailRecords hideColumns(List<EmailRecord> records, GridSettings filter) {
+        EmailRecords mailRecords;
+
+        if (emailCredentials("viewDetailedEmailLogs")) {
+            mailRecords = new EmailRecords<EmailRecord>(filter.getPage(), filter.getRows(), records);
+        } else if (emailCredentials("viewBasicEmailLogs")) {
+            List<BasicEmailRecord> basicList = new ArrayList<>();
+            for (EmailRecord rec : records) {
+                basicList.add(new BasicEmailRecord(rec.getDeliveryTime(), rec.getDeliveryStatus()));
+            }
+            mailRecords = new EmailRecords<BasicEmailRecord>(filter.getPage(), filter.getRows(), basicList);
+        } else {
+            mailRecords = new EmailRecords();
+        }
+        return mailRecords;
+    }
+
 }

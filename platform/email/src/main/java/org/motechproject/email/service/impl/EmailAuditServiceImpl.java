@@ -4,16 +4,11 @@ import org.motechproject.email.domain.EmailRecord;
 import org.motechproject.email.repository.AllEmailRecords;
 import org.motechproject.email.service.EmailAuditService;
 import org.motechproject.email.service.EmailRecordSearchCriteria;
-import org.motechproject.security.service.MotechRoleService;
-import org.motechproject.security.service.MotechUserService;
 import org.motechproject.server.config.SettingsFacade;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -32,12 +27,6 @@ public class EmailAuditServiceImpl implements EmailAuditService {
 
     private AllEmailRecords allEmailRecords;
     private SettingsFacade settings;
-
-    @Autowired
-    private MotechUserService motechUserService;
-
-    @Autowired
-    private MotechRoleService motechRoleService;
 
     @Autowired
     public EmailAuditServiceImpl(AllEmailRecords allEmailRecords, @Qualifier("emailSettings") SettingsFacade settings) {
@@ -65,7 +54,7 @@ public class EmailAuditServiceImpl implements EmailAuditService {
 
     @Override
     public List<EmailRecord> findAllEmailRecords() {
-        return hideColumnsIfNoCredentials(allEmailRecords.getAll());
+        return allEmailRecords.getAll();
     }
 
     @Override
@@ -75,40 +64,6 @@ public class EmailAuditServiceImpl implements EmailAuditService {
 
     @Override
     public List<EmailRecord> findEmailRecords(EmailRecordSearchCriteria criteria) {
-        return hideColumnsIfNoCredentials(allEmailRecords.findAllBy(criteria));
-    }
-
-    private List<EmailRecord> hideColumnsIfNoCredentials(List<EmailRecord> records) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        List<String> roles = motechUserService.getRoles(auth.getName());
-
-        boolean viewBasicLogs = false;
-        boolean viewDetailedLogs= false;
-
-        for (String role : roles) {
-            List<String> permissions = motechRoleService.getRole(role).getPermissionNames();
-            if (permissions.contains("viewBasicEmailLogs")) {
-                viewBasicLogs = true;
-            }
-            if (permissions.contains("viewDetailedEmailLogs")) {
-                viewDetailedLogs = true;
-            }
-        }
-
-        if (viewDetailedLogs) {
-            return records;
-        } else if (viewBasicLogs) {
-            List<EmailRecord> basicRecords = new ArrayList<>();
-            for (EmailRecord record : records) {
-                record.setToAddress("");
-                record.setFromAddress("");
-                record.setMessage("");
-                record.setSubject("");
-                basicRecords.add(record);
-            }
-            return basicRecords;
-        } else {
-            return new ArrayList<>();
-        }
+        return allEmailRecords.findAllBy(criteria);
     }
 }

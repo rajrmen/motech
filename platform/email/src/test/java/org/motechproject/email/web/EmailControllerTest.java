@@ -10,13 +10,18 @@ import org.motechproject.email.domain.EmailRecord;
 import org.motechproject.email.domain.EmailRecords;
 import org.motechproject.email.service.EmailAuditService;
 import org.motechproject.email.service.EmailSenderService;
+import org.motechproject.security.model.RoleDto;
+import org.motechproject.security.service.MotechRoleService;
+import org.motechproject.security.service.MotechUserService;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
@@ -27,6 +32,12 @@ public class EmailControllerTest {
     @Mock
     private EmailAuditService auditService;
 
+    @Mock
+    private MotechUserService motechUserService;
+
+    @Mock
+    private MotechRoleService motechRoleService;
+
     @InjectMocks
     private EmailController emailController = new EmailController();
 
@@ -34,23 +45,26 @@ public class EmailControllerTest {
     @Before
     public void setUp() throws Exception {
         initMocks(this);
+
+        when(auditService.findAllEmailRecords()).thenReturn(getTestEmailRecords());
+        when(motechUserService.getRoles(anyString())).thenReturn(asList("Email Admin"));
+        when(motechRoleService.getRole("Email Admin")).thenReturn(new RoleDto("Email Admin",
+                asList("viewBasicEmailLogs", "viewDetailedEmailLogs")));
     }
 
     @Test
     public void shouldReturnRecordsFilteredByAddress() {
-        when(auditService.findAllEmailRecords()).thenReturn(getTestEmailRecords());
-
         GridSettings filter = new GridSettings();
         filter.setSubject("gmail.com");
         filter.setPage(1);
         filter.setRows(10);
-        EmailRecords recs = emailController.getEmails(filter);
+        EmailRecords<EmailRecord> recs = emailController.getEmails(filter);
 
         GridSettings filter2 = new GridSettings();
         filter2.setSubject("yahoo.com");
         filter2.setPage(1);
         filter2.setRows(10);
-        EmailRecords recs2 = emailController.getEmails(filter2);
+        EmailRecords<EmailRecord> recs2 = emailController.getEmails(filter2);
 
         assertNotNull(recs);
         assertThat(recs.getRecords(), is(4));
@@ -60,14 +74,12 @@ public class EmailControllerTest {
 
     @Test
     public void shouldSortByDate() {
-        when(auditService.findAllEmailRecords()).thenReturn(getTestEmailRecords());
-
         GridSettings filter = new GridSettings();
         filter.setSortColumn("deliveryTime");
         filter.setSortDirection("asc");
         filter.setPage(1);
         filter.setRows(10);
-        EmailRecords recs = emailController.getEmails(filter);
+        EmailRecords<EmailRecord> recs = emailController.getEmails(filter);
 
         assertNotNull(recs);
         assertThat(recs.getRows().get(0).getDeliveryTime(), is("1970-01-01 00:00:01"));
@@ -78,14 +90,12 @@ public class EmailControllerTest {
 
     @Test
     public void shouldSortBySubject() {
-        when(auditService.findAllEmailRecords()).thenReturn(getTestEmailRecords());
-
         GridSettings filter = new GridSettings();
         filter.setSortColumn("subject");
         filter.setSortDirection("asc");
         filter.setPage(1);
         filter.setRows(10);
-        EmailRecords recs = emailController.getEmails(filter);
+        EmailRecords<EmailRecord> recs = emailController.getEmails(filter);
 
         assertNotNull(recs);
         assertThat(recs.getRows().get(0).getSubject(), is("Asubject3"));
@@ -95,16 +105,14 @@ public class EmailControllerTest {
 
     @Test
     public void shouldReturnGivenRecord() {
-        when(auditService.findAllEmailRecords()).thenReturn(getTestEmailRecords());
-
         GridSettings filter = new GridSettings();
         filter.setSortColumn("message");
         filter.setSortDirection("asc");
         filter.setPage(1);
         filter.setRows(10);
         emailController.getEmails(filter);
-        EmailRecords rec1 = emailController.getEmail(1);
-        EmailRecords rec4 = emailController.getEmail(4);
+        EmailRecords<EmailRecord> rec1 = emailController.getEmail(1);
+        EmailRecords<EmailRecord> rec4 = emailController.getEmail(4);
 
         assertNotNull(rec1);
         assertNotNull(rec4);
@@ -114,8 +122,6 @@ public class EmailControllerTest {
 
     @Test
     public void shouldReturnGivenRecordAfterFiltering() {
-        when(auditService.findAllEmailRecords()).thenReturn(getTestEmailRecords());
-
         GridSettings filter = new GridSettings();
         filter.setSortColumn("message");
         filter.setPage(1);
@@ -123,8 +129,8 @@ public class EmailControllerTest {
         filter.setSortDirection("asc");
         filter.setSubject("@gmail.com");
         emailController.getEmails(filter);
-        EmailRecords rec1 = emailController.getEmail(1);
-        EmailRecords rec3 = emailController.getEmail(3);
+        EmailRecords<EmailRecord> rec1 = emailController.getEmail(1);
+        EmailRecords<EmailRecord> rec3 = emailController.getEmail(3);
 
         assertNotNull(rec1);
         assertNotNull(rec3);
@@ -135,16 +141,14 @@ public class EmailControllerTest {
 
     @Test
     public void shouldReturnGivenRecordAfterSorting() {
-        when(auditService.findAllEmailRecords()).thenReturn(getTestEmailRecords());
-
         GridSettings filter = new GridSettings();
         filter.setSortColumn("deliveryTime");
         filter.setSortDirection("desc");
         filter.setPage(1);
         filter.setRows(10);
         emailController.getEmails(filter);
-        EmailRecords rec1 = emailController.getEmail(1);
-        EmailRecords rec4 = emailController.getEmail(4);
+        EmailRecords<EmailRecord> rec1 = emailController.getEmail(1);
+        EmailRecords<EmailRecord> rec4 = emailController.getEmail(4);
 
         assertNotNull(rec1);
         assertNotNull(rec4);
@@ -154,8 +158,6 @@ public class EmailControllerTest {
 
     @Test
     public void shouldReturnProperMailsForAutoComplete() {
-        when(auditService.findAllEmailRecords()).thenReturn(getTestEmailRecords());
-
         List<String> available = emailController.getAvailableMails("subject", "abc");
         List<String> available2 = emailController.getAvailableMails("subject", "def");
         List<String> available3 = emailController.getAvailableMails("subject", "abc@g");
