@@ -9,6 +9,7 @@ import org.motechproject.email.service.EmailSenderService;
 import org.motechproject.event.MotechEvent;
 import org.motechproject.event.listener.annotations.MotechListener;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.MailException;
 import org.springframework.stereotype.Service;
 
 import static org.motechproject.commons.date.util.DateUtil.now;
@@ -36,10 +37,16 @@ public class SendEmailEventHandlerImpl {
         String toAddress = (String) event.getParameters().get(SendEmailConstants.TO_ADDRESS);
         String subject = (String) event.getParameters().get(SendEmailConstants.SUBJECT);
         String message = (String) event.getParameters().get(SendEmailConstants.MESSAGE);
-        emailAuditService.log(new EmailRecord(
-                fromAddress, toAddress, subject, message,
-                now(), DeliveryStatus.PENDING));
 
-        emailSenderService.send(new Mail(fromAddress, toAddress, subject, message));
+        try {
+            emailSenderService.send(new Mail(fromAddress, toAddress, subject, message));
+            emailAuditService.log(new EmailRecord(
+                    fromAddress, toAddress, subject, message,
+                    now(), DeliveryStatus.SENT));
+        } catch (MailException me) {
+            emailAuditService.log(new EmailRecord(
+                    fromAddress, toAddress, subject, message,
+                    now(), DeliveryStatus.ERROR));
+        }
     }
 }

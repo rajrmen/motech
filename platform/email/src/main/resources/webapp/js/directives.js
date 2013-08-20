@@ -252,7 +252,7 @@
                 var elem = angular.element(element), filters;
 
                 elem.jqGrid({
-                    url: '../email/emails?deliveryStatus=PENDING,ERROR,RECEIVED,SENT,UNKNOWN',
+                    url: '../email/emails?deliveryStatus=ERROR,RECEIVED,SENT',
                     datatype: 'json',
                     jsonReader:{
                         repeatitems:false,

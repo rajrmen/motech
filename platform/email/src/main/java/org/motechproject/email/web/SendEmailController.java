@@ -7,6 +7,7 @@ import org.motechproject.email.service.EmailAuditService;
 import org.motechproject.email.service.EmailSenderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.mail.MailException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -37,10 +38,16 @@ public class SendEmailController {
     @RequestMapping(value = "/send", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.OK)
     public void sendEmail(@RequestBody Mail mail) {
-        auditService.log(new EmailRecord(
+        try {
+            senderService.send(mail);
+            auditService.log(new EmailRecord(
+                    mail.getFromAddress(), mail.getToAddress(), mail.getSubject(), mail.getMessage(),
+                    now(), DeliveryStatus.SENT));
+        } catch (MailException me) {
+            auditService.log(new EmailRecord(
                 mail.getFromAddress(), mail.getToAddress(), mail.getSubject(), mail.getMessage(),
-                now(), DeliveryStatus.PENDING));
-        senderService.send(mail);
+                now(), DeliveryStatus.ERROR));
+        }
     }
 
     @ExceptionHandler(Exception.class)
