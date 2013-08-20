@@ -114,3 +114,7 @@
 .nodays table {
     display: none;
 }
+
+.email .controls > .radio:first-child, .email .controls > .checkbox:first-child {
+    padding-top: 0;
+}
