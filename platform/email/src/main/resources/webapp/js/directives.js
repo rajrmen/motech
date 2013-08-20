@@ -293,12 +293,8 @@
                     }, {
                         name: 'deliveryTime',
                         index: 'deliveryTime',
+                        align: 'center',
                         width: 200
-                    }, {
-                        name: 'modifiedDate',
-                        index: 'modifiedDate',
-                        sortable: false,
-                        width: 100
                     }],
 
                     pager: '#' + attrs.emailloggingGrid,
@@ -349,12 +345,11 @@
 
                     },
                     loadComplete : function(array) {
-                        angular.forEach(['direction', 'deliveryStatus', 'toAddress', 'fromAddress', 'subject', 'deliveryTime', 'modifiedDate'], function (value) {
+                        angular.forEach(['direction', 'deliveryStatus', 'toAddress', 'fromAddress', 'subject', 'deliveryTime','message'], function (value) {
                             elem.jqGrid('setLabel', value, scope.msg('email.logging.' + value));
-                            elem.showCol('subgrid');
                             if (array.rows[0] !== undefined && !array.rows[0].hasOwnProperty(value)) {
                                 elem.jqGrid('hideCol', value);
-                                if ('toAddress' === value) {
+                                if ('message' === value) {
                                     elem.hideCol('subgrid');
                                 }
                             }
