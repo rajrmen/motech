@@ -249,13 +249,14 @@
         return {
             restrict: 'A',
             link: function(scope, element, attrs) {
-                var elem = angular.element(element), filters, colPos;
+                var elem = angular.element(element), filters;
 
                 elem.jqGrid({
                     url: '../email/emails?deliveryStatus=PENDING,ERROR,RECEIVED,SENT,UNKNOWN',
                     datatype: 'json',
                     jsonReader:{
-                        repeatitems:false
+                        repeatitems:false,
+                        root: 'rows'
                     },
                     prmNames: {
                         sort: 'sortColumn',
@@ -269,28 +270,36 @@
                     colModel: [{
                         name: 'direction',
                         index: 'direction',
-                        hidden: true
+                        hidden: true,
+                        width: 100
                     }, {
                         name: 'deliveryStatus',
                         index: 'deliveryStatus',
-                        align: 'center'
+                        align: 'center',
+                        width: 155
                     }, {
                         name: 'toAddress',
-                        index: 'toAddress'
+                        index: 'toAddress',
+                        width: 200
                     },{
                         name: 'fromAddress',
-                        index: 'fromAddress'
+                        index: 'fromAddress',
+                        width: 200
                     }, {
                         name: 'subject',
-                        index: 'subject'
+                        index: 'subject',
+                        width: 250
                     }, {
                         name: 'deliveryTime',
-                        index: 'deliveryTime'
+                        index: 'deliveryTime',
+                        width: 200
                     }, {
                         name: 'modifiedDate',
                         index: 'modifiedDate',
-                        sortable: false
+                        sortable: false,
+                        width: 100
                     }],
+
                     pager: '#' + attrs.emailloggingGrid,
                     width: '100%',
                     height: 'auto',
@@ -317,10 +326,9 @@
                                 root:  'rows'
                             },
                             viewrecords: true,
-                            colNames: ['subject', 'message'],
+                            colNames: ['Message'],
                             colModel: [
-                                {name:"subject",index:"subject", width: 80, align:"left"},
-                                {name:"message",index:"message", width: 100, align:"left", sortable: false}
+                                {name:"message",index:"message", width: 1000, align:"left", sortable: false}
                             ],
                             rowNum:1,
                             pager: pager_id,
@@ -329,7 +337,6 @@
                             height: '100%'
                         });
                         jQuery("#"+subgrid_table_id).jqGrid('navGrid',"#"+pager_id,{edit:false,add:false,del:false});
-
 
                         $('div.ui-widget-content').width('100%');
                         $('div.ui-jqgrid-bdiv').width('100%');
@@ -340,11 +347,11 @@
                         $('div.ui-jqgrid-hbox').css({'padding-right':'0'});
 
                     },
-                    gridComplete: function () {
+                    loadComplete : function(array) {
                         angular.forEach(['direction', 'deliveryStatus', 'toAddress', 'fromAddress', 'subject', 'deliveryTime', 'modifiedDate'], function (value) {
                             elem.jqGrid('setLabel', value, scope.msg('email.logging.' + value));
-                            var dataUser = elem.jqGrid('getRowData')[0];
-                            if (dataUser !== undefined && !dataUser.hasOwnProperty(value)) {
+
+                            if (!array.rows[0].hasOwnProperty(value)) {
                                 elem.jqGrid('hideCol', value);
                             }
                         });
@@ -354,7 +361,7 @@
                         $('.ui-jqgrid-btable').addClass("table-lightblue");
                         $('.ui-jqgrid-htable').addClass('table-lightblue');
                         $('.ui-jqgrid-bdiv').width('100%');
-                        $('.ui-jqgrid-hdiv').width('100%');
+                        $('.ui-jqgrid-hdiv').width('auto');
                         $('.ui-jqgrid-hbox').width('100%');
                         $('.ui-jqgrid-view').width('100%');
                         $('#t_emailLoggingTable').width('auto');
@@ -364,7 +371,9 @@
                             $(this).find('#emailLoggingTable').width('100%');
                             $(this).find('table').width('100%');
                        });
-
+                    },
+                    gridComplete: function () {
+                      elem.jqGrid('setGridWidth', '100%');
                     }
                 });
             }
