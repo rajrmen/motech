@@ -263,6 +263,7 @@
                         order: 'sortDirection'
                     },
                     shrinkToFit: true,
+                    forceFit: true,
                     autowidth: true,
                     rownumbers: true,
                     rowNum: 10,
@@ -328,7 +329,7 @@
                             viewrecords: true,
                             colNames: ['Message'],
                             colModel: [
-                                {name:"message",index:"message", width: 1000, align:"left", sortable: false}
+                                {name:"message",index:"message", align:"left", sortable: false}
                             ],
                             rowNum:1,
                             pager: pager_id,
@@ -350,9 +351,12 @@
                     loadComplete : function(array) {
                         angular.forEach(['direction', 'deliveryStatus', 'toAddress', 'fromAddress', 'subject', 'deliveryTime', 'modifiedDate'], function (value) {
                             elem.jqGrid('setLabel', value, scope.msg('email.logging.' + value));
-
-                            if (!array.rows[0].hasOwnProperty(value)) {
+                            elem.showCol('subgrid');
+                            if (array.rows[0] !== undefined && !array.rows[0].hasOwnProperty(value)) {
                                 elem.jqGrid('hideCol', value);
+                                if ('toAddress' === value) {
+                                    elem.hideCol('subgrid');
+                                }
                             }
                         });
 
