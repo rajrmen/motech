@@ -1,12 +1,14 @@
-package org.motechproject.server.config.service.impl;
+package org.motechproject.server.config.bootstrap.impl;
 
-import org.motechproject.server.config.service.ConfigFileReader;
+import org.motechproject.server.config.bootstrap.ConfigFileReader;
+import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
 
+@Component
 public class ConfigFileReaderImpl implements ConfigFileReader {
 
     @Override

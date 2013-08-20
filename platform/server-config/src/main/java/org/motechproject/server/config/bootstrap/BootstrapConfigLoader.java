@@ -1,4 +1,4 @@
-package org.motechproject.server.config.service;
+package org.motechproject.server.config.bootstrap;
 
 import org.motechproject.server.config.domain.BootstrapConfig;
 

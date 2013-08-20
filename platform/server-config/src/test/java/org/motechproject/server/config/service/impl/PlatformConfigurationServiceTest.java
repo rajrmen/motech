@@ -5,7 +5,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.motechproject.server.config.domain.BootstrapConfig;
-import org.motechproject.server.config.service.BootstrapConfigLoader;
+import org.motechproject.server.config.bootstrap.BootstrapConfigLoader;
+import org.motechproject.server.config.domain.DBConfig;
 import org.motechproject.server.config.service.PlatformConfigurationService;
 
 import static junit.framework.Assert.assertNotNull;
@@ -25,7 +26,7 @@ public class PlatformConfigurationServiceTest {
     @Test
     public void shouldLoadBootstrapDBConfiguration() {
         PlatformConfigurationService platformConfigService = new PlatformConfigurationServiceImpl(bootstrapConfigLoader);
-        BootstrapConfig expectedConfig = new BootstrapConfig();
+        BootstrapConfig expectedConfig = new BootstrapConfig(new DBConfig("http://localhost", null, null), null, null);
         when(bootstrapConfigLoader.getBootstrapConfig()).thenReturn(expectedConfig);
 
         BootstrapConfig bootstrapConfig = platformConfigService.getBootstrapConfig();

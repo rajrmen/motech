@@ -1,7 +1,7 @@
-package org.motechproject.server.config.service;
+package org.motechproject.server.config.bootstrap.impl;
 
 import org.junit.Test;
-import org.motechproject.server.config.service.impl.ConfigFileReaderImpl;
+import org.motechproject.server.config.bootstrap.ConfigFileReader;
 
 import java.io.File;
 import java.io.IOException;

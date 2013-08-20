@@ -1,7 +1,7 @@
 package org.motechproject.server.config.service.impl;
 
 import org.motechproject.server.config.domain.BootstrapConfig;
-import org.motechproject.server.config.service.BootstrapConfigLoader;
+import org.motechproject.server.config.bootstrap.BootstrapConfigLoader;
 import org.motechproject.server.config.service.PlatformConfigurationService;
 
 public class PlatformConfigurationServiceImpl implements PlatformConfigurationService {

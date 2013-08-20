@@ -1,7 +1,8 @@
-package org.motechproject.server.config.service;
+package org.motechproject.server.config.bootstrap.impl;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.motechproject.server.config.bootstrap.Environment;
 
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.hamcrest.core.IsNull.nullValue;
