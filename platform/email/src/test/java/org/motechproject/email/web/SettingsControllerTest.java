@@ -7,6 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.motechproject.email.model.SettingsDto;
+import org.motechproject.scheduler.domain.CronSchedulableJob;
 import org.motechproject.scheduler.impl.MotechSchedulerServiceImpl;
 import org.motechproject.server.config.SettingsFacade;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
@@ -77,7 +78,8 @@ public class SettingsControllerTest {
         when(settingsFacade.getProperty(MAIL_LOG_PURGE_TIME_PROPERY, EMAIL_PROPERTIES_FILE_NAME)).thenReturn(LOG_TIME);
         when(settingsFacade.getProperty(MAIL_LOG_PURGE_TIME_MULTIPLIER_PROPERTY, EMAIL_PROPERTIES_FILE_NAME)).thenReturn(LOG_MULTIPLIER);
 
-        doNothing().when(motechSchedulerService).unscheduleAllJobs("Purge Mails");
+        doNothing().when(motechSchedulerService).unscheduleAllJobs(anyString());
+        doNothing().when(motechSchedulerService).safeScheduleJob(any(CronSchedulableJob.class));
 
         controller = MockMvcBuilders.standaloneSetup(new SettingsController(settingsFacade, javaMailSender)).build();
     }

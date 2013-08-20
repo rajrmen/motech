@@ -82,17 +82,12 @@ public class SettingsController {
 
         settingsFacade.saveConfigProperties(EMAIL_PROPERTIES_FILE_NAME, settings.toProperties());
 
-        scheduleMailPurging(settings.getLogPurgeTime(), settings.getLogPurgeTimeMultiplier());
+        if (motechSchedulerService!=null) {
+            scheduleMailPurging(settings.getLogPurgeTime(), settings.getLogPurgeTimeMultiplier());
+        }
 
         mailSender.setHost(host);
         mailSender.setPort(Integer.valueOf(port));
-    }
-
-    @ExceptionHandler(Exception.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ResponseBody
-    public String handleException(Exception e) throws IOException {
-        return e.getMessage();
     }
 
     private void scheduleMailPurging(String time, String multiplier) {
@@ -103,5 +98,12 @@ public class SettingsController {
         motechSchedulerService.safeScheduleJob(new CronSchedulableJob(
                 new MotechEvent("Purge Mails", params), "0 0 1 * * ?"
         ));
+    }
+
+    @ExceptionHandler(Exception.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseBody
+    public String handleException(Exception e) throws IOException {
+        return e.getMessage();
     }
 }
