@@ -36,12 +36,12 @@ public class SettingsRecord extends MotechBaseDataObject implements MotechSettin
     public Properties getMotechProperties() {
         motechProperties = new Properties();
 
-        motechProperties.setProperty(MotechSettings.SYSTEM_LANGUAGE_PROP, language);
-        motechProperties.setProperty(MotechSettings.STATUS_MSG_TIMEOUT_PROP, statusMsgTimeout);
-        motechProperties.setProperty(MotechSettings.LOGIN_MODE_PROP, loginMode);
-        motechProperties.setProperty(MotechSettings.PROVIDER_NAME_PROP, providerName);
-        motechProperties.setProperty(MotechSettings.PROVIDER_URL_PROP, providerUrl);
-        motechProperties.setProperty(MotechSettings.UPLOAD_SIZE_PROP, uploadSize);
+//        motechProperties.setProperty(MotechSettings.SYSTEM_LANGUAGE_PROP, language);
+//        motechProperties.setProperty(MotechSettings.STATUS_MSG_TIMEOUT_PROP, statusMsgTimeout);
+//        motechProperties.setProperty(MotechSettings.LOGIN_MODE_PROP, loginMode);
+//        motechProperties.setProperty(MotechSettings.PROVIDER_NAME_PROP, providerName);
+//        motechProperties.setProperty(MotechSettings.PROVIDER_URL_PROP, providerUrl);
+//        motechProperties.setProperty(MotechSettings.UPLOAD_SIZE_PROP, uploadSize);
 
         return  motechProperties;
     }

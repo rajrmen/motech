@@ -10,7 +10,7 @@
     <bean id="activemqConfig" class="java.util.Properties" factory-bean="eventConfigManager"
           factory-method="getActivemqConfig"/>
 
-    <context:property-placeholder properties-ref="activemqConfig"/>
+    <context:property-placeholder order="2" properties-ref="activemqConfig"/>
 
     <bean id="tenantIdentity" class="org.motechproject.commons.api.TenantIdentity"/>
 
