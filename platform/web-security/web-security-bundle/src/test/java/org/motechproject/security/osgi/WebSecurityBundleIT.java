@@ -17,13 +17,10 @@ public class WebSecurityBundleIT extends BaseOsgiIT {
        assertNotNull(eventService);
        EventListenerRegistryService event = (EventListenerRegistryService) bundleContext.getService(eventService);
        assertNotNull(event);
-       settings.setActiveMqSetting("call.delay", "5000");
-
-       settings.evictMotechSettingsCache();
 
        final MotechSettings platformSettings = settings.getPlatformSettings();
-       final String delay = platformSettings.getActivemqProperties().getProperty("call.delay");
-       assertEquals("5000", delay);
+       final String brokerUrl = platformSettings.getActivemqProperties().getProperty("broker.url");
+       assertEquals("tcp://localhost:61616", brokerUrl);
 
    }
 }

@@ -89,7 +89,7 @@ public class SettingsControllerTest {
 
     @Test
     public void testGetPlatformSettings() {
-        SettingsOption option = new SettingsOption(new AbstractMap.SimpleEntry<Object, Object>(MotechSettings.LANGUAGE, "en"));
+        SettingsOption option = new SettingsOption(new AbstractMap.SimpleEntry<Object, Object>(MotechSettings.SYSTEM_LANGUAGE_PROP, "en"));
         List<Settings> pSettingsList = new ArrayList<>();
         pSettingsList.add(platformSettings);
 

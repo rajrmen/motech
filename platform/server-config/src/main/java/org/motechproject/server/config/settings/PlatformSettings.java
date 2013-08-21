@@ -20,7 +20,7 @@ public class PlatformSettings implements MotechSettings {
 
     @Override
     public Properties getMotechProperties() {
-        return motechProperties;
+        return motechProperties != null? motechProperties : new Properties();
     }
 
     public byte[] getChecksum() {

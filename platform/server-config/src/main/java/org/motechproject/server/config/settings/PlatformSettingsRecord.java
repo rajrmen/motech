@@ -32,7 +32,7 @@ public class PlatformSettingsRecord extends MotechBaseDataObject implements Mote
 
     @Override
     public Properties getMotechProperties() {
-        return motechProperties;
+        return motechProperties != null? motechProperties : new Properties();
     }
 
     public void setMotechProperties(Properties motechProperties) {

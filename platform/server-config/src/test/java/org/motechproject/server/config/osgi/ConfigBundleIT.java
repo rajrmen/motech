@@ -15,18 +15,15 @@ public class ConfigBundleIT extends BaseOsgiIT {
         assertNotNull(settingsReference);
         PlatformSettingsService settings = (PlatformSettingsService) bundleContext.getService(settingsReference);
         assertNotNull(settings);
-        settings.setActiveMqSetting("call.delay", "5000");
-
-        settings.evictMotechSettingsCache();
 
         final MotechSettings platformSettings = settings.getPlatformSettings();
-        final String delay = platformSettings.getActivemqProperties().getProperty("call.delay");
-        assertEquals("5000", delay);
+        final String brokerUrl = platformSettings.getActivemqProperties().getProperty("broker.url");
+        assertEquals("tcp://localhost:61616", brokerUrl);
     }
 
     @Override
     protected List<String> getImports() {
         return Arrays.asList("org.motechproject.server.config", "org.motechproject.commons.couchdb.service",
-                "org.motechproject.server.config.settings");
+                "org.motechproject.server.config.settings, org.motechproject.server.config.service");
     }
 }

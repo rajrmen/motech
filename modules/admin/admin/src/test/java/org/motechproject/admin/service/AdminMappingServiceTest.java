@@ -64,13 +64,13 @@ public class AdminMappingServiceTest {
     @Test
     public void testGetGraphiteUrl() {
         when(platformSettingsService.getPlatformSettings()).thenReturn(motechSettings);
-        when(motechSettings.getMetricsProperties()).thenReturn(metricsProperties());
+        when(motechSettings.getMotechProperties()).thenReturn(metricsProperties());
 
         String result = adminMappingService.getGraphiteUrl();
 
         assertEquals(GRAPHITE_URL, result);
         verify(platformSettingsService).getPlatformSettings();
-        verify(motechSettings).getMetricsProperties();
+        verify(motechSettings).getMotechProperties();
     }
 
     @Test
@@ -91,7 +91,7 @@ public class AdminMappingServiceTest {
 
     private Properties metricsProperties() {
         Properties props = new Properties();
-        props.put(MotechSettings.GRAPHITE_URL, GRAPHITE_URL);
+        props.put(MotechSettings.GRAPHITE_URL_PROP, GRAPHITE_URL);
         return  props;
     }
 }

@@ -30,10 +30,11 @@ public class SettingsRecord extends MotechBaseDataObject implements MotechSettin
     private Properties activemqProperties = new Properties();
     private Properties metricsProperties;
     private Properties schedulerProperties;
+    private Properties motechProperties;
 
     @Override
     public Properties getMotechProperties() {
-        Properties motechProperties = new Properties();
+        motechProperties = new Properties();
 
         motechProperties.setProperty(MotechSettings.SYSTEM_LANGUAGE_PROP, language);
         motechProperties.setProperty(MotechSettings.STATUS_MSG_TIMEOUT_PROP, statusMsgTimeout);

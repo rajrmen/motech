@@ -36,6 +36,9 @@ public class
     @Mock
     ConfigFileMonitor configFileMonitor;
 
+    @Mock
+    Properties properties;
+
     @InjectMocks
     PlatformSettingsService platformSettingsService = new PlatformSettingsServiceImpl();
 
@@ -55,13 +58,14 @@ public class
 
         // no language in settings
         when(platformSettingsService.getPlatformSettings()).thenReturn(motechSettings);
-        when(motechSettings.getLanguage()).thenReturn(null);
+        when(motechSettings.getMotechProperties()).thenReturn(properties);
+        when(properties.getProperty(MotechSettings.SYSTEM_LANGUAGE_PROP)).thenReturn(null);
 
         assertNull(platformSettingsService.getPlatformLanguage());
         assertEquals(platformSettingsService.getPlatformLanguage("en"), "en");
 
         // language set
-        when(motechSettings.getLanguage()).thenReturn("pl");
+        when(properties.getProperty(MotechSettings.SYSTEM_LANGUAGE_PROP)).thenReturn("pl");
 
         assertEquals(platformSettingsService.getPlatformLanguage(), "pl");
         assertEquals(platformSettingsService.getPlatformLanguage("en"), "pl");
@@ -76,12 +80,13 @@ public class
 
         // no language in settings
         when(platformSettingsService.getPlatformSettings()).thenReturn(motechSettings);
-        when(motechSettings.getLanguage()).thenReturn(null);
+        when(motechSettings.getMotechProperties()).thenReturn(properties);
+        when(properties.getProperty(MotechSettings.SYSTEM_LANGUAGE_PROP)).thenReturn(null);
 
         assertEquals(platformSettingsService.getPlatformLocale(), Locale.getDefault());
 
         // language set
-        when(motechSettings.getLanguage()).thenReturn("pl");
+        when(properties.getProperty(MotechSettings.SYSTEM_LANGUAGE_PROP)).thenReturn("pl");
 
         assertEquals(platformSettingsService.getPlatformLocale(), new Locale("pl"));
     }

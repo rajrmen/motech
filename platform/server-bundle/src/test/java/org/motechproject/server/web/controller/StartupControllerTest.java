@@ -89,8 +89,8 @@ public class StartupControllerTest {
         Properties properties = new Properties();
         properties.put("host", "localhost");
         properties.put("port", "12345");
-        properties.put(MotechSettings.AMQ_BROKER_URL, "test_url");
-        properties.put(MotechSettings.SCHEDULER_URL, "test_url");
+        properties.put(MotechSettings.BROKER_URL_PROP, "test_url");
+        properties.put(MotechSettings.SCHEDULER_URL_PROP, "test_url");
 
         NavigableMap<String, String> map = new TreeMap<>();
 
@@ -100,7 +100,7 @@ public class StartupControllerTest {
         when(startupManager.getLoadedConfig()).thenReturn(motechSettings);
 
         when(motechSettings.getActivemqProperties()).thenReturn(properties);
-        when(motechSettings.getSchedulerProperties()).thenReturn(properties);
+        when(motechSettings.getMotechProperties()).thenReturn(properties);
 
         when(localeSettings.getUserLocale(httpServletRequest)).thenReturn(new Locale("en"));
         when(localeSettings.getAvailableLanguages()).thenReturn(map);

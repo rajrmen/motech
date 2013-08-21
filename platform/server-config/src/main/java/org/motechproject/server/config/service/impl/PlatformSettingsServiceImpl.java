@@ -47,13 +47,13 @@ public class PlatformSettingsServiceImpl implements PlatformSettingsService {
     public MotechSettings getPlatformSettings() {
         MotechSettings settings = configFileMonitor.getCurrentSettings();
 
-        if (settings != null) {
-            SettingsRecord record = allSettings.getSettings();
-
-            if (record != null) {
-                settings = record;
-            }
-        }
+//        if (settings != null) {
+//            SettingsRecord record = allSettings.getSettings();
+//
+//            if (record != null) {
+//                settings = record;
+//            }
+//        }
 
         return settings;
     }

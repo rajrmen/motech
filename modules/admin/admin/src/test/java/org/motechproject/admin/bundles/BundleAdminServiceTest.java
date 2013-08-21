@@ -16,6 +16,7 @@ import org.motechproject.server.api.BundleInformation;
 import org.motechproject.server.config.monitor.ConfigFileMonitor;
 import org.motechproject.server.config.service.PlatformSettingsService;
 import org.motechproject.server.config.settings.ConfigFileSettings;
+import org.motechproject.server.config.settings.MotechSettings;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
@@ -31,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Dictionary;
 import java.util.List;
+import java.util.Properties;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
@@ -85,6 +87,9 @@ public class BundleAdminServiceTest {
 
     @Mock
     PlatformSettingsService platformSettingsService;
+
+    @Mock
+    Properties motechProperties;
 
     @Mock
     UIFrameworkService uiFrameworkService;
@@ -223,7 +228,7 @@ public class BundleAdminServiceTest {
         assertEquals("JDK 7", bundleInfo.getBuildJDK());
         assertEquals("Hammer", bundleInfo.getTool());
         assertEquals("Me", bundleInfo.getCreatedBy());
-        assertEquals("GF", bundleInfo.getVendor());;
+        assertEquals("GF", bundleInfo.getVendor());
         assertEquals("org.my.Activator", bundleInfo.getBundleActivator());
         assertEquals("bla bla", bundleInfo.getDescription());
         assertEquals("www.doc.org", bundleInfo.getDocURL());
@@ -234,7 +239,8 @@ public class BundleAdminServiceTest {
     @Test
     public void testSetUploadSize() {
         when(platformSettingsService.getPlatformSettings()).thenReturn(motechSettings);
-        when(motechSettings.getUploadSize()).thenReturn("1000000");
+        when(motechSettings.getMotechProperties()).thenReturn(motechProperties);
+        when(motechProperties.getProperty(MotechSettings.UPLOAD_SIZE_PROP)).thenReturn("1000000");
 
         MotechEvent motechEvent = new MotechEvent(ConfigFileMonitor.FILE_CHANGED_EVENT_SUBJECT);
 

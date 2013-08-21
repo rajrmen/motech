@@ -19,6 +19,7 @@ import org.motechproject.server.config.service.PlatformSettingsService;
 import org.motechproject.server.config.settings.MotechSettings;
 
 import java.util.Map;
+import java.util.Properties;
 
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.doReturn;
@@ -36,6 +37,9 @@ public class EmailNotifierTest {
     @Mock
     private EmailSenderService emailSenderService;
 
+    @Mock
+    private Properties motechProperties;
+
     @InjectMocks
     EmailNotifier emailNotifier;
     private MotechSettings motechSettings;
@@ -47,6 +51,7 @@ public class EmailNotifierTest {
 
         motechSettings = mock(MotechSettings.class);
         when(settingsService.getPlatformSettings()).thenReturn(motechSettings);
+        when(motechSettings.getMotechProperties()).thenReturn(motechProperties);
     }
 
     @Test
@@ -56,8 +61,7 @@ public class EmailNotifierTest {
         String moduleName = "admin";
         StatusMessage statusMessage = statusMessage(text, datetime, moduleName);
 
-        when(motechSettings.getServerUrl()).thenReturn("http://serverurl");
-        when(motechSettings.getServerHost()).thenReturn("serverurl");
+        when(motechSettings.getMotechProperties().getProperty(MotechSettings.SERVER_URL_PROP)).thenReturn("serverurl");
 
         EmailNotifier emailNotifierSpy = spy(emailNotifier);
 
@@ -68,7 +72,7 @@ public class EmailNotifierTest {
 
         Assert.assertEquals(text, velocityArgumentCaptor.getValue().get("msg"));
 
-        String msgLink = "http://serverurl/module/server/?moduleName=admin#/messages";
+        String msgLink = "serverurl/module/server/?moduleName=admin#/messages";
         Assert.assertEquals(msgLink, velocityArgumentCaptor.getValue().get("msgLink"));
         Assert.assertTrue(velocityArgumentCaptor.getValue().get("dateTime").toString().matches("^(12[./]20|20[./]12)[./]10 10:50(| AM)$"));
         Assert.assertEquals(moduleName, velocityArgumentCaptor.getValue().get("module"));
@@ -86,13 +90,13 @@ public class EmailNotifierTest {
 
     @Test
     public void shouldNotAddSchemeWhenHttpIsPartOfTheUrl() {
-        when(motechSettings.getServerUrl()).thenReturn("https://serverurl");
+        when(motechSettings.getMotechProperties().getProperty(MotechSettings.SERVER_URL_PROP)).thenReturn("https://serverurl");
         assertThat(emailNotifier.messagesUrl(), IsEqual.equalTo("https://serverurl/module/server/?moduleName=admin#/messages"));
     }
 
     @Test
     public void shouldJustReturnUrlPathWhenServerUrlIsNotGiven() {
-        when(motechSettings.getServerUrl()).thenReturn(null);
+        when(motechSettings.getMotechProperties().getProperty(MotechSettings.SERVER_URL_PROP)).thenReturn(null);
         assertThat(emailNotifier.messagesUrl(), IsEqual.equalTo("/module/server/?moduleName=admin#/messages"));
     }
 
