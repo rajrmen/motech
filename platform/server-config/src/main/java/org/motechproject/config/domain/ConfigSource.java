@@ -1,8 +1,11 @@
-package org.motechproject.server.config.domain;
+package org.motechproject.config.domain;
 
 
-import org.motechproject.server.config.bootstrap.MotechConfigurationException;
+import org.motechproject.config.MotechConfigurationException;
 
+/**
+ * Represents the source from which configuration is read.
+ */
 public final class ConfigSource {
     public static final ConfigSource FILE = new ConfigSource("FILE");
     public static final ConfigSource UI = new ConfigSource("UI");

@@ -1,13 +1,22 @@
-package org.motechproject.server.config.domain;
+package org.motechproject.config.domain;
 
 import org.apache.commons.lang.StringUtils;
-import org.motechproject.server.config.bootstrap.MotechConfigurationException;
+import org.motechproject.config.MotechConfigurationException;
 
+/**
+ * <p>Represents the bootstrap configuration object composed of:
+ *     <ol>
+ *         <li>DBConfig - represents the database related bootstrap object.</li>
+ *         <li>Tenant ID - represents the identifier of the tenant.</li>
+ *         <li>Configuration source - represents the source of configuration (FILE / UI).</li>
+ *     </ol>
+ * </p>
+ */
 public class BootstrapConfig {
 
     public static final String DEFAULT_TENANT_ID = "DEFAULT";
     private DBConfig dbConfig;
-    private String tenantId = DEFAULT_TENANT_ID;
+    private String tenantId;
     private ConfigSource configSource;
 
     public BootstrapConfig(DBConfig dbConfig, String tenantId, ConfigSource configSource) {

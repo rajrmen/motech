@@ -1,12 +1,15 @@
-package org.motechproject.server.config.domain;
+package org.motechproject.config.domain;
 
 import org.apache.commons.lang.StringUtils;
-import org.motechproject.server.config.bootstrap.MotechConfigurationException;
+import org.motechproject.config.MotechConfigurationException;
 
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 
+/**
+ * <p>DBConfig encapsulates the database configuration, composed of as db url, username and password.</p>
+ */
 public class DBConfig {
     private final String url;
     private String username;

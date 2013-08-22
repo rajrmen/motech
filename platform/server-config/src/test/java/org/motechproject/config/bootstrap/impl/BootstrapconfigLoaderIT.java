@@ -1,4 +1,4 @@
-package org.motechproject.server.config.bootstrap.impl;
+package org.motechproject.config.bootstrap.impl;
 
 import org.hamcrest.core.IsEqual;
 import org.junit.Test;
@@ -18,6 +18,6 @@ public class BootstrapconfigLoaderIT {
 
     @Test
     public void shouldLoadBootstrapConfigLocationFromPropertiesFile() {
-        assertThat(bootstrapConfigLoader.getDefaultBootstrapConfigLocation(), IsEqual.equalTo("/etc/motech/config"));
+        assertThat(bootstrapConfigLoader.getDefaultBootstrapConfigLocation(), IsEqual.equalTo("/tmp"));
     }
 }

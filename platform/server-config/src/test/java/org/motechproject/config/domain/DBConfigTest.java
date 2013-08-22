@@ -1,7 +1,7 @@
-package org.motechproject.server.config.domain;
+package org.motechproject.config.domain;
 
 import org.junit.Test;
-import org.motechproject.server.config.bootstrap.MotechConfigurationException;
+import org.motechproject.config.MotechConfigurationException;
 
 public class DBConfigTest {
 

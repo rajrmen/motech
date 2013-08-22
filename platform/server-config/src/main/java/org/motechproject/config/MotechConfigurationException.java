@@ -1,4 +1,4 @@
-package org.motechproject.server.config.bootstrap;
+package org.motechproject.config;
 
 public class MotechConfigurationException extends RuntimeException {
     public MotechConfigurationException(String message, Exception exception) {

@@ -1,7 +1,7 @@
-package org.motechproject.server.config.bootstrap.impl;
+package org.motechproject.config.bootstrap.impl;
 
 import org.junit.Test;
-import org.motechproject.server.config.bootstrap.ConfigFileReader;
+import org.motechproject.config.bootstrap.ConfigFileReader;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,6 +13,7 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
 public class ConfigFileReaderIT {
+
     @Test
     public void shouldReturnProperties() throws Exception {
         URL resource = getClass().getClassLoader().getResource("test.properties");

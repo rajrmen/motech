@@ -1,4 +1,4 @@
-package org.motechproject.server.config.bootstrap;
+package org.motechproject.config.bootstrap;
 
 import java.io.File;
 import java.io.IOException;

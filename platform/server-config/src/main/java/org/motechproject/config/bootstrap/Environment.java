@@ -1,6 +1,10 @@
-package org.motechproject.server.config.bootstrap;
+package org.motechproject.config.bootstrap;
 
+/**
+ * <p>Represents the system environment.</p>
+ */
 public interface Environment {
+
     String MOTECH_CONFIG_DIR = "MOTECH_CONFIG_DIR";
     String MOTECH_DB_URL = "MOTECH_DB_URL";
     String MOTECH_DB_USERNAME = "MOTECH_DB_USERNAME";
@@ -8,5 +12,15 @@ public interface Environment {
     String MOTECH_TENANT_ID = "MOTECH_TENANT_ID";
     String MOTECH_CONFIG_SOURCE = "MOTECH_CONFIG_SOURCE";
 
-    String getValue(String variableName);
+    String getConfigDir();
+
+    String getDBUrl();
+
+    String getDBUsername();
+
+    String getDBPassword();
+
+    String getTenantId();
+
+    String getConfigSource();
 }

@@ -1,8 +1,9 @@
-package org.motechproject.server.config.domain;
+package org.motechproject.config.domain;
 
 import org.hamcrest.core.IsEqual;
 import org.junit.Test;
-import org.motechproject.server.config.bootstrap.MotechConfigurationException;
+import org.motechproject.config.MotechConfigurationException;
+import org.motechproject.config.domain.ConfigSource;
 
 import static org.junit.Assert.assertThat;
 
