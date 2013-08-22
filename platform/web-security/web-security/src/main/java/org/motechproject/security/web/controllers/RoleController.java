@@ -11,7 +11,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import org.springframework.web.bind.annotation.RequestParam;
+
 import java.util.List;
+import static java.util.Arrays.asList;
 
 @Controller
 public class RoleController {
@@ -27,7 +30,8 @@ public class RoleController {
 
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/roles/getrole", method = RequestMethod.POST)
-    @ResponseBody public RoleDto getRole(@RequestBody String roleName) {
+    @ResponseBody
+    public RoleDto getRole(@RequestBody String roleName) {
         return motechRoleService.getRole(roleName);
     }
 
@@ -48,4 +52,39 @@ public class RoleController {
     public void saveRole(@RequestBody RoleDto role) {
         motechRoleService.createRole(role);
     }
+
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/roles/testDelete", method = RequestMethod.GET)
+    @ResponseBody
+    public String testDeleteRole(@RequestParam String roleName) {
+        try {
+            RoleDto role = motechRoleService.getRole(roleName);
+            if (null == role) {
+                return "Role named " + roleName + " never existed.";
+            }
+            
+            motechRoleService.deleteRole(role);
+            if (null == motechRoleService.getRole(roleName)) {
+                return "Role named " + roleName + " is gone.";
+            } else {
+                return "Role named " + roleName + " is stil there.";
+            }
+        } catch (Exception e) {
+            return "Error deleting role named " + roleName + ": " + e.toString();
+        }
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/roles/testCreate", method = RequestMethod.GET)
+    @ResponseBody
+    public String testCreateRole(@RequestParam String roleName) {
+        try {
+            RoleDto newRole = new RoleDto(roleName, asList("addUser", "editUser"), true);
+            motechRoleService.createRole(newRole);
+            return "Role named " + roleName + " created.";
+        } catch (Exception e) {
+            return "Error creating role named " + roleName + ": " + e.toString();
+        }
+    }
+
 }
