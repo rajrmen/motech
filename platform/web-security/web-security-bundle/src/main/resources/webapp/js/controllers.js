@@ -262,7 +262,7 @@
             };
 
             $scope.deleteRole = function() {
-                $http.post('../websecurity/api/users/delete', $scope.role).
+                $http.post('../websecurity/api/roles/delete', $scope.role).
                     success(function(){motechAlert('security.delete.role.saved', 'security.delete');}).
                     error(function(){motechAlert('security.delete.role.error', 'server.error');});
             };
