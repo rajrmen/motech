@@ -1,4 +1,4 @@
-package org.motechproject.server.config.service;
+package org.motechproject.config.bootstrap.impl;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -9,7 +9,7 @@ import static org.junit.Assert.assertThat;
 
 public class EnvironmentIT {
 
-    private Environment environment;
+    private EnvironmentImpl environment;
 
     @Before
     public void setUp() {

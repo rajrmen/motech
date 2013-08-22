@@ -32,6 +32,8 @@
     <bean id="settingsFacade" class="org.motechproject.server.config.SettingsFacade"/>
 
     <context:annotation-config/>
-    <context:component-scan base-package="org.motechproject.server.config"/>
+    <context:component-scan base-package="org.motechproject.server.config">
+        <context:exclude-filter type="regex" expression="org.motechproject.server.config.bootstrap.*"/>
+    </context:component-scan>
 
 </beans>
