@@ -2,6 +2,7 @@ package org.motechproject.security.web.controllers;
 
 import org.motechproject.security.model.RoleDto;
 import org.motechproject.security.service.MotechRoleService;
+import org.motechproject.security.ex.RoleHasUserException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -10,13 +11,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
-
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.io.IOException;
+import java.io.Writer;
 import java.util.List;
-import static java.util.Arrays.asList;
+
+import javax.servlet.http.HttpServletResponse;
 
 @Controller
 public class RoleController {
@@ -54,53 +55,13 @@ public class RoleController {
     public void saveRole(@RequestBody RoleDto role) {
         motechRoleService.createRole(role);
     }
+    
+    @ExceptionHandler(RoleHasUserException.class)
+    public void handleRoleHasUserException(HttpServletResponse response) throws IOException {
+        response.setStatus(HttpServletResponse.SC_CONFLICT);
 
-    @ResponseStatus(HttpStatus.OK)
-    @RequestMapping(value = "/roles/testDelete", method = RequestMethod.GET)
-    @ResponseBody
-    public String testDeleteRole(@RequestParam String roleName) {
-        try {
-            RoleDto role = motechRoleService.getRole(roleName);
-            if (null == role) {
-                return "Role named " + roleName + " never existed.";
-            }
-
-            motechRoleService.deleteRole(role);
-            if (null == motechRoleService.getRole(roleName)) {
-                return "Role named " + roleName + " is gone.";
-            } else {
-                return "Role named " + roleName + " is stil there.";
-            }
-        } catch (Exception e) {
-            return "Error deleting role named " + roleName + ": " + e.toString();
+        try (Writer writer = response.getWriter()) {
+            writer.write("key:security.roleHasUserException");
         }
     }
-
-    @ResponseStatus(HttpStatus.OK)
-    @RequestMapping(value = "/roles/testCreate", method = RequestMethod.GET)
-    @ResponseBody
-    public String testCreateRole(@RequestParam String roleName) {
-        try {
-            RoleDto newRole = new RoleDto(roleName, asList("addUser", "editUser"), true);
-            motechRoleService.createRole(newRole);
-            return "Role named " + roleName + " created.";
-        } catch (Exception e) {
-            return "Error creating role named " + roleName + ": " + e.toString();
-        }
-    }
-
-    @ResponseStatus(HttpStatus.OK)
-    @RequestMapping(value = "/roles/testException", method = RequestMethod.GET)
-    @ResponseBody
-    public void testException(@RequestParam String message) throws Exception {
-        throw new Exception(message);
-    }
-
-    @ExceptionHandler(Exception.class)
-    @ResponseStatus(HttpStatus.OK)
-    @ResponseBody
-    public String handleException(Exception e) throws IOException {
-        return "You had an exception: " + e.toString();
-    }
-
 }
