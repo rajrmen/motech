@@ -39,8 +39,7 @@ public class BootstrapConfigLoaderImplTest {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        bootstrapConfigLoader = new BootstrapConfigLoaderImpl(configFileReaderMock, environmentMock);
-        bootstrapConfigLoader.setDefaultBootstrapConfigLocation("/etc/motech/config");
+        bootstrapConfigLoader = new BootstrapConfigLoaderImpl(configFileReaderMock, environmentMock, "/etc/motech/config");
     }
 
     @Test

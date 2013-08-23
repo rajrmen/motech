@@ -30,22 +30,18 @@ public class BootstrapConfigLoaderImpl implements BootstrapConfigLoader {
 
     private Environment environment;
     private ConfigFileReader configFileReader;
-
-    @Value("${bootstrap.config.default.file.path:/etc/motech/config}")
     private String defaultBootstrapConfigLocation;
 
     @Autowired
-    public BootstrapConfigLoaderImpl(ConfigFileReader configFileReader, Environment environment) {
+    public BootstrapConfigLoaderImpl(ConfigFileReader configFileReader, Environment environment,
+                                     @Value("${bootstrap.config.default.file.path:/etc/motech/config}") String defaultBootstrapConfigLocation) {
         this.environment = environment;
         this.configFileReader = configFileReader;
+        this.defaultBootstrapConfigLocation = defaultBootstrapConfigLocation;
     }
 
     String getDefaultBootstrapConfigLocation() {
         return defaultBootstrapConfigLocation;
-    }
-
-    void setDefaultBootstrapConfigLocation(String defaultBootstrapConfigLocation) {
-        this.defaultBootstrapConfigLocation = defaultBootstrapConfigLocation;
     }
 
     @Override
@@ -53,7 +49,7 @@ public class BootstrapConfigLoaderImpl implements BootstrapConfigLoader {
         String configLocation = environment.getConfigDir();
 
         if (configLocation != null) {
-            final String errorMessage = "specified by '" + Environment.MOTECH_CONFIG_DIR + "' environment variable.";
+            final String errorMessage = String.format("specified by '%s' environment variable.", Environment.MOTECH_CONFIG_DIR);
             return readBootstrapConfigFromFile(getConfigFile(configLocation), errorMessage);
         }
 
