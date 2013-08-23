@@ -7,6 +7,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.motechproject.security.authentication.MotechPasswordEncoder;
 import org.motechproject.security.domain.MotechUser;
+import org.motechproject.security.ex.RoleHasUserException;
 import org.motechproject.security.model.RoleDto;
 import org.motechproject.security.repository.AllMotechRoles;
 import org.motechproject.security.repository.AllMotechRolesCouchdbImpl;
@@ -90,7 +91,7 @@ public class MotechRoleServiceTestIT extends SpringIntegrationTest {
         assertNotNull(role);
     }
     
-    @Test
+    @Test(expected=RoleHasUserException.class)
     public void testShouldNotDeleteRoleWithUsers() {
         motechRoleService.createRole(new RoleDto("Role-With-User", asList("permissionA, permissionB"), true));
         RoleDto role= motechRoleService.getRole("Role-With-User");
@@ -102,8 +103,6 @@ public class MotechRoleServiceTestIT extends SpringIntegrationTest {
         assertTrue(motechUser.getRoles().contains("Role-With-User"));
         
         motechRoleService.deleteRole(role);
-        role = motechRoleService.getRole("Role-With-User");
-        assertNotNull(role);
     }
 
     
