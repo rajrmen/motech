@@ -12,7 +12,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import java.io.IOException;
 import java.util.List;
 import static java.util.Arrays.asList;
 
@@ -62,7 +64,7 @@ public class RoleController {
             if (null == role) {
                 return "Role named " + roleName + " never existed.";
             }
-            
+
             motechRoleService.deleteRole(role);
             if (null == motechRoleService.getRole(roleName)) {
                 return "Role named " + roleName + " is gone.";
@@ -85,6 +87,20 @@ public class RoleController {
         } catch (Exception e) {
             return "Error creating role named " + roleName + ": " + e.toString();
         }
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/roles/testException", method = RequestMethod.GET)
+    @ResponseBody
+    public void testException(@RequestParam String message) throws Exception {
+        throw new Exception(message);
+    }
+
+    @ExceptionHandler(Exception.class)
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public String handleException(Exception e) throws IOException {
+        return "You had an exception: " + e.toString();
     }
 
 }
