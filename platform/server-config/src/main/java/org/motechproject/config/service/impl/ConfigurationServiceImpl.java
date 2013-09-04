@@ -1,36 +1,42 @@
 package org.motechproject.config.service.impl;
 
 import org.apache.log4j.Logger;
-import org.motechproject.config.bootstrap.BootstrapConfigLoader;
+import org.motechproject.config.bootstrap.BootstrapConfigManager;
 import org.motechproject.config.domain.BootstrapConfig;
 import org.motechproject.config.service.ConfigurationService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 /**
  * Default implementation of {@link org.motechproject.config.service.ConfigurationService}.
  */
-@Component
+@Service("configurationService")
 public class ConfigurationServiceImpl implements ConfigurationService {
-    private BootstrapConfigLoader bootstrapConfigLoader;
+    private BootstrapConfigManager bootstrapConfigManager;
     private static Logger logger = Logger.getLogger(ConfigurationServiceImpl.class);
 
     @Autowired
-    public ConfigurationServiceImpl(BootstrapConfigLoader bootstrapConfigLoader) {
-        this.bootstrapConfigLoader = bootstrapConfigLoader;
+    public ConfigurationServiceImpl(BootstrapConfigManager bootstrapConfigManager) {
+        this.bootstrapConfigManager = bootstrapConfigManager;
     }
 
     @Override
     public BootstrapConfig loadBootstrapConfig() {
-        if (logger.isDebugEnabled()) {
-            logger.debug("Loading bootstrap configuration.");
-        }
+        logger.debug("Loading bootstrap configuration.");
 
-        final BootstrapConfig bootstrapConfig = bootstrapConfigLoader.loadBootstrapConfig();
+        final BootstrapConfig bootstrapConfig = bootstrapConfigManager.loadBootstrapConfig();
 
-        if (logger.isDebugEnabled()) {
-            logger.debug("BootstrapConfig:" + bootstrapConfig);
-        }
+        logger.debug("BootstrapConfig:" + bootstrapConfig);
+
         return bootstrapConfig;
+    }
+
+    @Override
+    public void save(BootstrapConfig bootstrapConfig) {
+        logger.debug("Saving bootstrap configuration.");
+
+        bootstrapConfigManager.saveBootstrapConfig(bootstrapConfig);
+
+        logger.debug("Saved bootstrap configuration:" + bootstrapConfig);
     }
 }

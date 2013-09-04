@@ -58,4 +58,6 @@ public interface ConfigurationService {
      * @throws org.motechproject.config.MotechConfigurationException if bootstrap configuration cannot be loaded.
      */
     BootstrapConfig loadBootstrapConfig();
+
+    void save(BootstrapConfig bootstrapConfig);
 }

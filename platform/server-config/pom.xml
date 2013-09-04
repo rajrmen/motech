@@ -59,7 +59,9 @@
                             org.motechproject.server.config.monitor;version=${project.version},
                             org.motechproject.server.config.service;version=${project.version},
                             org.motechproject.server.config.service.impl;version=${project.version},
-                            org.motechproject.server.config.settings;version=${project.version}
+                            org.motechproject.server.config.settings;version=${project.version},
+                            org.motechproject.config.domain;version=${project.version},
+                            org.motechproject.config.service;version=${project.version}
                         </Export-Package>
                         <Import-Package>
                             org.aopalliance.aop,

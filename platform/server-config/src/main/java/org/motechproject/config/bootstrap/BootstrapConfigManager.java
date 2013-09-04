@@ -7,7 +7,7 @@ import org.motechproject.config.domain.BootstrapConfig;
  *
  * @see org.motechproject.config.service.ConfigurationService
  */
-public interface BootstrapConfigLoader {
+public interface BootstrapConfigManager {
 
     /**
      * Loads the bootstrap configuration.
@@ -15,4 +15,6 @@ public interface BootstrapConfigLoader {
      * @return bootstrap configuration.
      */
     BootstrapConfig loadBootstrapConfig();
+
+    void saveBootstrapConfig(BootstrapConfig bootstrapConfig);
 }

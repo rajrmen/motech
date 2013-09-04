@@ -3,6 +3,7 @@ package org.motechproject.server.startup;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.joda.time.DateTime;
 import org.motechproject.commons.couchdb.service.CouchDbManager;
+import org.motechproject.config.service.ConfigurationService;
 import org.motechproject.server.config.ConfigLoader;
 import org.motechproject.server.config.domain.SettingsRecord;
 import org.motechproject.server.config.service.AllSettings;
@@ -31,6 +32,8 @@ public final class StartupManager {
     @Autowired
     private ConfigLoader configLoader;
     @Autowired
+    private ConfigurationService configurationService;
+    @Autowired
     private CouchDbManager couchDbManager;
     @Autowired
     private EventAdmin eventAdmin;
@@ -51,8 +54,18 @@ public final class StartupManager {
         return platformState == MotechPlatformState.NEED_CONFIG;
     }
 
+    public boolean isBootstrapConfigRequired() {
+        return platformState == MotechPlatformState.NEED_BOOTSTRAP_CONFIG;
+    }
+
+    //    TODO: clean up
     @PostConstruct
     public void startup() {
+        if (configurationService.loadBootstrapConfig() == null) {
+            platformState = MotechPlatformState.NEED_BOOTSTRAP_CONFIG;
+            return;
+        }
+
         if (configFileSettings != null) {
             configFileSettings = null;
         }
@@ -68,7 +81,7 @@ public final class StartupManager {
             platformState = MotechPlatformState.STARTUP;
         }
 
-        if (platformState != MotechPlatformState.NEED_CONFIG) {
+        if (!isConfigRequired()) {
             syncSettingsWithDb();
         }
 
@@ -140,5 +153,4 @@ public final class StartupManager {
             platformState = MotechPlatformState.DB_ERROR;
         }
     }
-
 }

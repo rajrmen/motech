@@ -7,6 +7,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.motechproject.commons.couchdb.service.impl.CouchDbManagerImpl;
+import org.motechproject.config.service.ConfigurationService;
 import org.motechproject.server.config.ConfigLoader;
 import org.motechproject.server.config.monitor.ConfigFileMonitor;
 import org.motechproject.server.config.service.PlatformSettingsService;
@@ -49,6 +50,9 @@ public class StartupManagerTest {
     ConfigFileMonitor configFileMonitor;
 
     @Mock
+    private ConfigurationService configurationService;
+
+    @Mock
     private EventAdmin eventAdmin;
 
     @InjectMocks
@@ -78,5 +82,14 @@ public class StartupManagerTest {
 
         verify(eventAdmin, never()).postEvent(any(Event.class));
         verify(eventAdmin, never()).sendEvent(any(Event.class));
+    }
+
+    @Test
+    public void shouldSetPlatformStateToNeedBootstrapIfNoBootstrapConfigFound(){
+        when(configurationService.loadBootstrapConfig()).thenReturn(null);
+
+        startupManager.startup();
+
+        assertTrue(startupManager.isBootstrapConfigRequired());
     }
 }
