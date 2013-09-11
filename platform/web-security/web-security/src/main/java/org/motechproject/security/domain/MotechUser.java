@@ -29,6 +29,10 @@ public interface MotechUser {
 
     void setExternalId(String externalId);
 
+    void setAccessRights(List<String> accessRights);
+
+    List<String> getAccessRights();
+
     String getOpenId();
 
     void setOpenId(String openId);

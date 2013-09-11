@@ -61,7 +61,7 @@ public class MotechUserServiceImpl implements MotechUserService {
         }
 
         String encodePassword = passwordEncoder.encodePassword(password);
-        MotechUserCouchdbImpl user = new MotechUserCouchdbImpl(username, encodePassword, email, externalId, roles, openId, locale);
+        MotechUserCouchdbImpl user = new MotechUserCouchdbImpl(username, encodePassword, email, externalId, roles, openId, locale, null);
         user.setActive(isActive);
         allMotechUsers.add(user);
     }

@@ -6,7 +6,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import javax.servlet.Filter;
+import org.motechproject.security.authentication.MotechAccessVoter;
 import org.motechproject.security.filter.MotechChannelProcessingFilter;
+import org.motechproject.security.helper.MotechProxyManager;
+import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDecisionManager;
 import org.springframework.security.access.AccessDecisionVoter;
@@ -28,6 +31,7 @@ import org.springframework.security.web.context.SecurityContextPersistenceFilter
 import org.springframework.security.web.util.AntPathRequestMatcher;
 import org.springframework.security.web.util.RequestMatcher;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.WebApplicationContext;
 
 @Component
 public class MotechUrlSecurityServiceImpl {
@@ -42,13 +46,27 @@ public class MotechUrlSecurityServiceImpl {
     private BasicAuthenticationFilter basicAuth;
 
     @Autowired
-    private FilterChainProxy proxy;
+    private BeanFactory beanFactory;
+
+    @Autowired
+    private WebApplicationContext webContext;
+
+    @Autowired
+    private MotechProxyManager proxyManager;
+    
+    @Autowired
+    private MotechAccessVoter accessVoter;
+
+    public void factory() {
+        beanFactory.getBean("any");
+        webContext.containsBean("blah");
+    }
 
     /**
      * Secures given path with HTTPS (only one path right now, reset at each invocation)
      */
     public void secure(String path) {
-        List<SecurityFilterChain> chains = proxy.getFilterChains();
+        List<SecurityFilterChain> chains = proxyManager.getFilterChainProxy().getFilterChains();
 
         List<SecurityFilterChain> newChains = new ArrayList<SecurityFilterChain>();
         newChains.addAll(chains);
@@ -81,7 +99,7 @@ public class MotechUrlSecurityServiceImpl {
                     chain.getFilters().add(0, newFilter);
                     chain.getFilters().remove(targetFilter);
 
-                    proxy = new FilterChainProxy(newChains);
+                    proxyManager.setFilterChainProxy(new FilterChainProxy(newChains));
 
                     return;
                 }
@@ -100,6 +118,12 @@ public class MotechUrlSecurityServiceImpl {
     /**
      * Add permission requirement to a URL path
      */
+
+    public void addUserPermission(String path, String permission) {
+        List<String> filtersToAdd = new ArrayList<String>();
+        filtersToAdd.add("userFilter");
+        setupChain(path, filtersToAdd, permission);
+    }
 
     public void addRoleRequirement(String path, String permission) {
         List<String> filtersToAdd = new ArrayList<String>();
@@ -121,7 +145,7 @@ public class MotechUrlSecurityServiceImpl {
      */
     private void setupChain(String path, List<String> filtersToAdd, String role) {
         List<SecurityFilterChain> newChains = new ArrayList<SecurityFilterChain>();
-        newChains.addAll(proxy.getFilterChains());
+        newChains.addAll(proxyManager.getFilterChainProxy().getFilterChains());
 
         List<Filter> filters = new ArrayList<Filter>();
 
@@ -138,15 +162,22 @@ public class MotechUrlSecurityServiceImpl {
         }
 
         if (filtersToAdd.contains("roleFilter")) {
-            collectionTwo.add(new SecurityConfig("hasRole('" + role + "')"));
+            collectionTwo.add(new SecurityConfig(role));
+            requestMap.put(matcherTwo, collectionTwo);
+            addFilterSecurityInterceptor(filters, requestMap);
+        }
+
+        if (filtersToAdd.contains("userFilter")) {
+            collectionTwo.add(new SecurityConfig("ACCESS_" + role));
+            requestMap.put(matcherTwo, collectionTwo);
             addFilterSecurityInterceptor(filters, requestMap);
         }
 
         SecurityFilterChain newChain = new DefaultSecurityFilterChain(matcherTwo, filters);
 
-        newChains.add(newChain);
+        newChains.add(newChains.size() - 2, newChain );
 
-        proxy = new FilterChainProxy(newChains);
+        proxyManager.setFilterChainProxy(new FilterChainProxy(newChains));
     }
 
     /**
@@ -166,6 +197,8 @@ public class MotechUrlSecurityServiceImpl {
         roleVoter.setRolePrefix("");
         voters.add(roleVoter);
 
+        voters.add(accessVoter);
+
         AccessDecisionManager decisionManager = new AffirmativeBased(voters);
 
         interceptor.setAccessDecisionManager(decisionManager);
@@ -179,14 +212,14 @@ public class MotechUrlSecurityServiceImpl {
      */
     public void removeBasicAuth() {
         List<SecurityFilterChain> newChains = new ArrayList<SecurityFilterChain>();
-        newChains.addAll(proxy.getFilterChains());
+        newChains.addAll(proxyManager.getFilterChainProxy().getFilterChains());
 
         SecurityFilterChain chain = newChains.get(newChains.size() - 3);
 
         Filter filter = chain.getFilters().get(1);
         chain.getFilters().remove(filter);
 
-        proxy = new FilterChainProxy(newChains);
+        proxyManager.setFilterChainProxy(new FilterChainProxy(newChains));
 
     }
 }

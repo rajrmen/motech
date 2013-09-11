@@ -41,7 +41,7 @@ public class MotechAuthenticationProviderTest {
 
     @Test
     public void shouldRetrieveUserFromDatabase() {
-        MotechUser motechUser = new MotechUserCouchdbImpl("bob", "encodedPassword", "entity_1", "", asList("some_role"), "", Locale.ENGLISH);
+        MotechUser motechUser = new MotechUserCouchdbImpl("bob", "encodedPassword", "entity_1", "", asList("some_role"), "", Locale.ENGLISH, null);
         MotechRole motechRole = new MotechRoleCouchdbImpl("some_role", asList("some_permission"));
         when(allMotechUsers.findByUserName("bob")).thenReturn(motechUser);
         when(allMotechRoles.findByRoleName("some_role")).thenReturn(motechRole);
@@ -63,7 +63,7 @@ public class MotechAuthenticationProviderTest {
 
     @Test(expected = AuthenticationException.class)
     public void shouldThrowExceptionIfUserIsInactive() {
-        MotechUserCouchdbImpl motechUser = new MotechUserCouchdbImpl("bob", "encodedPassword", "entity_1", "", asList("some_role"), "", Locale.ENGLISH);
+        MotechUserCouchdbImpl motechUser = new MotechUserCouchdbImpl("bob", "encodedPassword", "entity_1", "", asList("some_role"), "", Locale.ENGLISH, null);
         motechUser.setActive(false);
         when(allMotechUsers.findByUserName("bob")).thenReturn(motechUser);
 

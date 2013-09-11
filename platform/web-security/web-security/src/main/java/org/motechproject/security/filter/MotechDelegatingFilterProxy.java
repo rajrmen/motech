@@ -1,5 +1,6 @@
 package org.motechproject.security.filter;
 
+import org.motechproject.security.helper.MotechProxyManager;
 import org.motechproject.security.model.PermissionDto;
 import org.motechproject.security.service.MotechPermissionService;
 import org.springframework.security.core.GrantedAuthority;
@@ -7,7 +8,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.AnonymousAuthenticationFilter;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.DelegatingFilterProxy;
-
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -43,9 +43,13 @@ public class MotechDelegatingFilterProxy extends DelegatingFilterProxy {
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        WebApplicationContext context = super.findWebApplicationContext();
+        MotechProxyManager proxyManager = context.getBean(MotechProxyManager.class);
         if (isAdminMode) {
             anonymousFilter.doFilter(request, response, filterChain);
-        } else {
+        } else if (proxyManager != null) {
+            proxyManager.getFilterChainProxy().doFilter(request, response, filterChain);
+        }else {
             super.doFilter(request, response, filterChain);
         }
     }

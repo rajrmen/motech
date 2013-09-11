@@ -35,12 +35,15 @@ public class MotechUserCouchdbImpl extends MotechBaseDataObject implements Motec
     @JsonProperty
     private Locale locale;
 
+    @JsonProperty
+    private List<String> accessRights;
+
     public MotechUserCouchdbImpl() {
         super();
         this.setType(DOC_TYPE);
     }
 
-    public MotechUserCouchdbImpl(String userName, String password, String email, String externalId, List<String> roles, String openId, Locale locale) {
+    public MotechUserCouchdbImpl(String userName, String password, String email, String externalId, List<String> roles, String openId, Locale locale, List<String> accessRights) {
         super();
         this.userName = userName == null ? null : userName.toLowerCase();
         this.password = password;
@@ -50,6 +53,7 @@ public class MotechUserCouchdbImpl extends MotechBaseDataObject implements Motec
         this.active = true;
         this.openId = openId;
         this.locale = locale;
+        this.accessRights = accessRights;
         this.setType(DOC_TYPE);
     }
 
@@ -117,6 +121,7 @@ public class MotechUserCouchdbImpl extends MotechBaseDataObject implements Motec
         this.locale = locale;
     }
 
+    
     @Override
     public boolean equals(Object o) {
         if (this == o) { return true; }
@@ -134,4 +139,13 @@ public class MotechUserCouchdbImpl extends MotechBaseDataObject implements Motec
         return userName.hashCode();
     }
 
+    @Override
+    public void setAccessRights(List<String> accessRights) {
+        this.accessRights = accessRights;
+    }
+
+    @Override
+    public List<String> getAccessRights() {
+        return accessRights;
+    }
 }
