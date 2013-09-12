@@ -358,6 +358,7 @@
                         <Context-File>META-INF/servlet/applicationAdminUIBundle.xml</Context-File>
                         <Resource-Path>admin</Resource-Path>
                         <Blueprint-Enabled>true</Blueprint-Enabled>
+                        <Bundle-Activator>org.motechproject.admin.Activator</Bundle-Activator>
                         <Import-Package>
                             org.aopalliance.aop,
                             org.apache.commons.fileupload,

@@ -2,10 +2,14 @@
 
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:osgi="http://www.eclipse.org/gemini/blueprint/schema/blueprint"
        xsi:schemaLocation="
             http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+            http://www.eclipse.org/gemini/blueprint/schema/blueprint http://www.eclipse.org/gemini/blueprint/schema/blueprint/gemini-blueprint.xsd
         ">
 
-    <import resource="classpath*:META-INF/motech/*.xml"/>
+    <bean id="testUpdater" class="org.motechproject.server.config.test.domain.TestConfigUpdater"/>
+
+    <osgi:reference id="platformConfigurationService" interface="org.motechproject.server.config.service.PlatformConfigurationService"/>
 
 </beans>

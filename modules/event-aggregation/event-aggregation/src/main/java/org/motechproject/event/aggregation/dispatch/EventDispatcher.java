@@ -32,6 +32,11 @@ public class EventDispatcher {
 
     public void dispatch(String aggregationRuleName) {
         AggregationRuleRecord aggregationRule = allAggregationRules.findByName(aggregationRuleName);
+
+        if(aggregationRule == null){
+            return;
+        }
+
         List<Aggregation> aggregations = allAggregatedEvents.findAllAggregations(aggregationRule.getName());
         if (log.isInfoEnabled()) {
             log.info(format("publishing aggregation for rule: %s", aggregationRuleName));
