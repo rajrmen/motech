@@ -11,6 +11,7 @@ import org.motechproject.security.filter.MotechChannelProcessingFilter;
 import org.motechproject.security.helper.MotechProxyManager;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.access.AccessDecisionManager;
 import org.springframework.security.access.AccessDecisionVoter;
 import org.springframework.security.access.ConfigAttribute;
@@ -19,9 +20,11 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.access.vote.AffirmativeBased;
 import org.springframework.security.access.vote.RoleVoter;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.DefaultSecurityFilterChain;
 import org.springframework.security.web.FilterChainProxy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.ExceptionTranslationFilter;
 import org.springframework.security.web.access.channel.ChannelDecisionManager;
 import org.springframework.security.web.access.intercept.DefaultFilterInvocationSecurityMetadataSource;
 import org.springframework.security.web.access.intercept.FilterInvocationSecurityMetadataSource;
@@ -37,6 +40,10 @@ import org.springframework.web.context.WebApplicationContext;
 public class MotechUrlSecurityServiceImpl {
 
     @Autowired
+    @Qualifier("basicAuthenticationEntryPoint")
+    private AuthenticationEntryPoint authenticationEntryPoint;
+
+    @Autowired
     private AuthenticationManager authenticationManager;
 
     @Autowired
@@ -46,21 +53,10 @@ public class MotechUrlSecurityServiceImpl {
     private BasicAuthenticationFilter basicAuth;
 
     @Autowired
-    private BeanFactory beanFactory;
-
-    @Autowired
-    private WebApplicationContext webContext;
-
-    @Autowired
     private MotechProxyManager proxyManager;
-    
+
     @Autowired
     private MotechAccessVoter accessVoter;
-
-    public void factory() {
-        beanFactory.getBean("any");
-        webContext.containsBean("blah");
-    }
 
     /**
      * Secures given path with HTTPS (only one path right now, reset at each invocation)
@@ -86,6 +82,7 @@ public class MotechUrlSecurityServiceImpl {
 
                     collectionOne.add(new SecurityConfig("ANY_CHANNEL"));
                     collectionTwo.add(new SecurityConfig("REQUIRES_SECURE_CHANNEL"));
+
 
                     requestMap.put(matcherTwo, collectionTwo);
                     requestMap.put(matcherOne, collectionOne);
@@ -161,6 +158,10 @@ public class MotechUrlSecurityServiceImpl {
             filters.add(basicAuth);
         }
 
+        ExceptionTranslationFilter exceptionFilter = new ExceptionTranslationFilter(authenticationEntryPoint);
+
+        filters.add(exceptionFilter);
+
         if (filtersToAdd.contains("roleFilter")) {
             collectionTwo.add(new SecurityConfig(role));
             requestMap.put(matcherTwo, collectionTwo);
@@ -221,5 +222,37 @@ public class MotechUrlSecurityServiceImpl {
 
         proxyManager.setFilterChainProxy(new FilterChainProxy(newChains));
 
+    }
+
+    public void removePathFilter(String path) {
+        removeAllSecurity(path, true);
+    }
+
+    public void removeSecurityForPath(String path) {
+        removeAllSecurity(path, false);
+    }
+
+    public void removeAllSecurity(String path, boolean removePath) {
+        List<DefaultSecurityFilterChain> filterChains = proxyManager.getDefaultSecurityChains();
+        List<SecurityFilterChain> newFilterChains = new ArrayList<SecurityFilterChain>();
+        for (DefaultSecurityFilterChain chain : filterChains) {
+            RequestMatcher matcher = chain.getRequestMatcher();
+            if (matcher instanceof AntPathRequestMatcher) {
+                AntPathRequestMatcher antMatcher = (AntPathRequestMatcher) matcher;
+                String pattern = antMatcher.getPattern();
+                if (!pattern.equals(path)) {
+                    newFilterChains.add(chain);
+                } else {
+                    if (!removePath) {
+                        DefaultSecurityFilterChain strippedChain = new DefaultSecurityFilterChain(matcher, new ArrayList<Filter>());
+                        newFilterChains.add(strippedChain);
+                    }
+                }
+            } else {
+                newFilterChains.add(chain);
+            }
+        }
+
+        proxyManager.setFilterChainProxy(new FilterChainProxy(newFilterChains));
     }
 }

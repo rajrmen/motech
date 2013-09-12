@@ -21,6 +21,22 @@ public class TestSecurityController {
     @Autowired
     private UserAccessServiceImpl userAccessService;
 
+    @RequestMapping(value = "/removeSecurity", method = RequestMethod.GET)
+    @ResponseBody
+    public String removeSecurity(HttpServletRequest request) {
+        String path = request.getParameter(PATH);
+        urlService.removeSecurityForPath(path);
+        return "Removed security for: " + path;
+    }
+
+    @RequestMapping(value = "/removePathSettings", method = RequestMethod.GET)
+    @ResponseBody
+    public String removePathSettings(HttpServletRequest request) {
+        String path = request.getParameter(PATH);
+        urlService.removePathFilter(path);
+        return "Removed path configuration for: " + path;
+    }
+
     @RequestMapping(value = "/annotatedTest", method = RequestMethod.GET)
     @ResponseBody
     public String tryIt() {
