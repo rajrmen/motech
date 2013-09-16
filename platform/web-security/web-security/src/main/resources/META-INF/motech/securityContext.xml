@@ -119,6 +119,11 @@
         <property name="authenticationSuccessHandler" ref="loginSuccessHandler" />
     </bean>
 
+    <bean id="restUserAuthenticationProcessingFilter" class="org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter">
+        <property name="filterProcessesUrl" value="/" />
+        <property name="authenticationManager" ref="authenticationManager" />
+    </bean>
+
     <bean id="openIdAuthenticationProcessingFilter" class="org.springframework.security.openid.OpenIDAuthenticationFilter">
         <property name="filterProcessesUrl" value="/j_spring_openid_security_check" />
         <property name="authenticationManager" ref="authenticationManager" />

@@ -1,5 +1,6 @@
 package org.motechproject.security.service;
 
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -8,8 +9,9 @@ import java.util.Map;
 import javax.servlet.Filter;
 import org.motechproject.security.authentication.MotechAccessVoter;
 import org.motechproject.security.filter.MotechChannelProcessingFilter;
+import org.motechproject.security.helper.MotechRestBasicAuthenticationEntryPoint;
 import org.motechproject.security.helper.MotechProxyManager;
-import org.springframework.beans.factory.BeanFactory;
+import org.motechproject.server.config.SettingsFacade;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.access.AccessDecisionManager;
@@ -18,6 +20,7 @@ import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.access.SecurityConfig;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.access.vote.AffirmativeBased;
+import org.springframework.security.access.vote.AuthenticatedVoter;
 import org.springframework.security.access.vote.RoleVoter;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.web.AuthenticationEntryPoint;
@@ -29,15 +32,21 @@ import org.springframework.security.web.access.channel.ChannelDecisionManager;
 import org.springframework.security.web.access.intercept.DefaultFilterInvocationSecurityMetadataSource;
 import org.springframework.security.web.access.intercept.FilterInvocationSecurityMetadataSource;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
+import org.springframework.security.web.authentication.AnonymousAuthenticationFilter;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.context.SecurityContextPersistenceFilter;
+import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
+import org.springframework.security.web.savedrequest.RequestCacheAwareFilter;
+import org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter;
 import org.springframework.security.web.util.AntPathRequestMatcher;
+import org.springframework.security.web.util.AnyRequestMatcher;
 import org.springframework.security.web.util.RequestMatcher;
 import org.springframework.stereotype.Component;
-import org.springframework.web.context.WebApplicationContext;
 
 @Component
 public class MotechUrlSecurityServiceImpl {
+
+    private static final String BASIC_FILTER = "basicFilter";
 
     @Autowired
     @Qualifier("basicAuthenticationEntryPoint")
@@ -50,13 +59,13 @@ public class MotechUrlSecurityServiceImpl {
     private ChannelDecisionManager manager;
 
     @Autowired
-    private BasicAuthenticationFilter basicAuth;
-
-    @Autowired
     private MotechProxyManager proxyManager;
 
     @Autowired
     private MotechAccessVoter accessVoter;
+
+    @Autowired
+    private SettingsFacade settingsFacade;
 
     /**
      * Secures given path with HTTPS (only one path right now, reset at each invocation)
@@ -133,7 +142,7 @@ public class MotechUrlSecurityServiceImpl {
      */
     public void addBasicAuth(String path) {
         List<String> filtersToAdd = new ArrayList<String>();
-        filtersToAdd.add("basicFilter");
+        filtersToAdd.add(BASIC_FILTER);
         setupChain(path, filtersToAdd, null);
     }
 
@@ -154,8 +163,23 @@ public class MotechUrlSecurityServiceImpl {
         RequestMatcher matcherTwo = new AntPathRequestMatcher("/**/" + path + "/**");
         Collection<ConfigAttribute> collectionTwo = new ArrayList<ConfigAttribute>();
 
-        if (filtersToAdd.contains("basicFilter")) {
-            filters.add(basicAuth);
+        //        if (filtersToAdd.contains("usernamePasswordFilter")) {
+        //            filters.add(usernamePasswordAuthenticationFilter);
+        //        }
+
+        if (filtersToAdd.contains(BASIC_FILTER)) {
+            MotechRestBasicAuthenticationEntryPoint restAuthPoint = new MotechRestBasicAuthenticationEntryPoint(settingsFacade);
+            BasicAuthenticationFilter basicAuthFilter = new BasicAuthenticationFilter(authenticationManager, restAuthPoint);
+            filters.add(basicAuthFilter);
+        }
+
+        this.addRequestCacheFilter(filters);
+        this.addSecurityContextHolderAwareRequestFilter(filters);
+
+        if (filtersToAdd.contains(BASIC_FILTER)) {
+            SecureRandom random = new SecureRandom();
+            AnonymousAuthenticationFilter anonFilter = new AnonymousAuthenticationFilter(Long.toString(random.nextLong()));
+            filters.add(anonFilter);
         }
 
         ExceptionTranslationFilter exceptionFilter = new ExceptionTranslationFilter(authenticationEntryPoint);
@@ -165,6 +189,12 @@ public class MotechUrlSecurityServiceImpl {
         if (filtersToAdd.contains("roleFilter")) {
             collectionTwo.add(new SecurityConfig(role));
             requestMap.put(matcherTwo, collectionTwo);
+            addFilterSecurityInterceptor(filters, requestMap);
+        }
+
+        if (filtersToAdd.contains(BASIC_FILTER)) {
+            collectionTwo.add(new SecurityConfig("IS_AUTHENTICATED_FULLY"));
+            requestMap.put(new AnyRequestMatcher(), collectionTwo);
             addFilterSecurityInterceptor(filters, requestMap);
         }
 
@@ -193,6 +223,10 @@ public class MotechUrlSecurityServiceImpl {
 
         List<AccessDecisionVoter> voters = new ArrayList<AccessDecisionVoter>();
 
+        AuthenticatedVoter authVoter = new AuthenticatedVoter();
+        
+        voters.add(authVoter);
+
         RoleVoter roleVoter = new RoleVoter();
 
         roleVoter.setRolePrefix("");
@@ -206,6 +240,17 @@ public class MotechUrlSecurityServiceImpl {
         interceptor.setAuthenticationManager(authenticationManager);
 
         filters.add(interceptor);
+    }
+
+    private void addRequestCacheFilter(List<Filter> filters) {
+        HttpSessionRequestCache sessionRequestCache = new HttpSessionRequestCache();
+        RequestCacheAwareFilter cacheFilter = new RequestCacheAwareFilter(sessionRequestCache);
+        filters.add(cacheFilter);
+    }
+
+    private void addSecurityContextHolderAwareRequestFilter(List<Filter> filters) {
+        SecurityContextHolderAwareRequestFilter securityFilter = new SecurityContextHolderAwareRequestFilter();
+        filters.add(securityFilter);
     }
 
     /**
