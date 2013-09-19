@@ -36,7 +36,7 @@ public class MotechOpenIdUserDetailsService implements AuthenticationUserDetails
                     roles.add(role.getRoleName());
                 }
             }
-            user = new MotechUserCouchdbImpl(getAttribute(token.getAttributes(), "Email"), "", getAttribute(token.getAttributes(), "Email"), "", roles, token.getName(), Locale.getDefault());
+            user = new MotechUserCouchdbImpl(getAttribute(token.getAttributes(), "Email"), "", getAttribute(token.getAttributes(), "Email"), "", roles, token.getName(), Locale.getDefault(), null);
             allMotechUsers.addOpenIdUser(user);
         }
 

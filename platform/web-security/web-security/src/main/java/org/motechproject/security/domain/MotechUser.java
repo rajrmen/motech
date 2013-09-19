@@ -36,4 +36,8 @@ public interface MotechUser {
     Locale getLocale();
 
     void setLocale(Locale locale);
+
+    void setAccessRights(List<String> accessRights);
+
+    List<String> getAccessRights();
 }
