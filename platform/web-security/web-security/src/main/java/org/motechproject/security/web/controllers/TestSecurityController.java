@@ -1,12 +1,21 @@
 package org.motechproject.security.web.controllers;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import org.motechproject.event.MotechEvent;
+import org.motechproject.event.listener.EventRelay;
+import org.motechproject.security.domain.MotechURLSecurityRule;
+import org.motechproject.security.domain.MotechURLSecurityRuleCouchdbImpl;
 import org.motechproject.security.helper.MotechProxyManager;
-import org.motechproject.security.service.UserAccessServiceImpl;
+import org.motechproject.security.repository.AllMotechSecurityRules;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -16,10 +25,39 @@ public class TestSecurityController {
     private static final String PATH = "path";
 
     @Autowired
+    private EventRelay eventRelay;
+
+    @Autowired
     private MotechProxyManager proxyManager;
 
     @Autowired
-    private UserAccessServiceImpl userAccessService;
+    private AllMotechSecurityRules allSecurityRules;
+
+    @RequestMapping(value = "/addRule", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.OK)
+    public void addSecurityRule(@RequestBody MotechURLSecurityRule securityRule) {
+        allSecurityRules.add(securityRule);
+    }
+
+    @RequestMapping(value = "/addTestRule", method = RequestMethod.GET)
+    @ResponseStatus(HttpStatus.OK)
+    public void addTestSecurityRule(HttpServletRequest request) {
+        MotechURLSecurityRule securityRule = new MotechURLSecurityRuleCouchdbImpl();
+        securityRule.setOrigin("webSecurityUi");
+        securityRule.setPattern(request.getParameter("pattern"));
+        securityRule.setPriority(1);
+        securityRule.setProtocol(request.getParameter("protocol"));
+        securityRule.setRest(Boolean.parseBoolean(request.getParameter("rest")));
+        securityRule.setSupportedSchemes(new ArrayList(Arrays.asList("BASIC", "USERNAME_PASSWORD")));
+        securityRule.setVersion("0.22");
+        allSecurityRules.add(securityRule);
+    }
+    
+    @RequestMapping(value = "/buildChain", method = RequestMethod.GET)
+    @ResponseStatus(HttpStatus.OK)
+    public void rebuildChain() {
+        eventRelay.sendEventMessage(new MotechEvent("rebuildchain"));
+    }
 
     @RequestMapping(value = "/removeSecurity", method = RequestMethod.GET)
     @ResponseBody
@@ -60,57 +98,5 @@ public class TestSecurityController {
     @ResponseBody
     public String test123(HttpServletRequest request) {
         return "test123";
-    }
-
-    @RequestMapping(value = "/changeChannelSecurity", method = RequestMethod.GET)
-    @ResponseBody
-    public String testTwo(HttpServletRequest request) {
-        proxyManager.secureWithHttps(request.getParameter(PATH));
-        return "Secured: " + request.getParameter(PATH);
-    }
-
-    @RequestMapping(value = "/addBasicAuth", method = RequestMethod.GET)
-    @ResponseBody
-    public String addBasicAuth(HttpServletRequest request) {
-        proxyManager.addBasicAuth(request.getParameter(PATH));
-        return "Added basic auth";
-    }
-
-    @RequestMapping(value = "/removeBasicAuth", method = RequestMethod.GET)
-    @ResponseBody
-    public String removeBasicAuth(HttpServletRequest request) {
-        proxyManager.removeBasicAuth();
-        return "Removed basic auth, only call this immediately after adding";
-    }
-
-    @RequestMapping(value = "/addAccessRight", method = RequestMethod.GET)
-    @ResponseBody
-    public String addAccessRight(HttpServletRequest request) {
-        String accessRight = request.getParameter("accessRight");
-        String username = request.getParameter("username");
-        userAccessService.addAccess(username, accessRight);
-        return "Added " + accessRight + " for user " + username;
-    }
-
-    @RequestMapping(value = "/addUserAccess", method = RequestMethod.GET)
-    @ResponseBody
-    public String addUserAccess(HttpServletRequest request) {
-        String path = request.getParameter(PATH);
-        String accessRight = request.getParameter("accessRight");
-
-        proxyManager.addUserPermission(path, accessRight);
-
-        return "Added " + accessRight + " security to path: " + path;
-    }
-
-    @RequestMapping(value = "/addRoleAccess", method = RequestMethod.GET)
-    @ResponseBody
-    public String addRoleAccess(HttpServletRequest request) {
-        String path = request.getParameter(PATH);
-        String permission = request.getParameter("role");
-
-        proxyManager.addRoleRequirement(path, permission);
-
-        return "Added " + permission + " security to path: " + path;
     }
 }

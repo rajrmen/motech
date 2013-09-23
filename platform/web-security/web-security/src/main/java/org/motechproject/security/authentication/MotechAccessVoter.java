@@ -3,21 +3,13 @@ package org.motechproject.security.authentication;
 import java.util.Collection;
 
 import org.motechproject.security.domain.MotechUserProfile;
-import org.motechproject.security.service.UserAccessServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDecisionVoter;
 import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.core.Authentication;
-import org.springframework.stereotype.Component;
 
-@Component
 public class MotechAccessVoter implements AccessDecisionVoter<Object> {
 
     private String accessPrefix = "ACCESS_";
-
-    @Autowired
-    private UserAccessServiceImpl userAccessService;
-
     @Override
     public boolean supports(ConfigAttribute attribute) {
         if (attribute.getAttribute() != null && attribute.getAttribute().startsWith(accessPrefix)) {
@@ -41,7 +33,7 @@ public class MotechAccessVoter implements AccessDecisionVoter<Object> {
 
                 MotechUserProfile motechProfile = (MotechUserProfile) authentication.getDetails();
 
-                if (userAccessService.hasAccess(motechProfile.getUserName(), attribute.getAttribute())) {
+                if (("ACCESS_" + motechProfile.getUserName()).equals(attribute.getAttribute())) {
                     return ACCESS_GRANTED;
                 }
             }

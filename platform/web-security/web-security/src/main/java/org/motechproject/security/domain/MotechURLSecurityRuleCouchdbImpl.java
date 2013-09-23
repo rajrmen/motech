@@ -1,7 +1,6 @@
 package org.motechproject.security.domain;
 
 import java.util.List;
-
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.ektorp.support.TypeDiscriminator;
 import org.motechproject.commons.couchdb.model.MotechBaseDataObject;
@@ -15,7 +14,7 @@ public class MotechURLSecurityRuleCouchdbImpl extends MotechBaseDataObject imple
     private String pattern;
 
     @JsonProperty
-    private String scheme;
+    private List<String> supportedSchemes;
 
     @JsonProperty
     private String protocol;
@@ -51,12 +50,12 @@ public class MotechURLSecurityRuleCouchdbImpl extends MotechBaseDataObject imple
         this.pattern = pattern;
     }
 
-    public String getScheme() {
-        return scheme;
+    public List<String> getSupportedSchemes() {
+        return supportedSchemes;
     }
 
-    public void setScheme(String scheme) {
-        this.scheme = scheme;
+    public void setSupportedSchemes(List<String> supportedSchemes) {
+        this.supportedSchemes = supportedSchemes;
     }
 
     public String getProtocol() {

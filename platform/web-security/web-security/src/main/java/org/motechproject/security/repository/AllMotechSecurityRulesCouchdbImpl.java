@@ -25,7 +25,7 @@ public class AllMotechSecurityRulesCouchdbImpl extends MotechBaseRepository<Mote
 
     @Override
     public void add(MotechURLSecurityRule rule) {
-
+        super.add((MotechURLSecurityRuleCouchdbImpl) rule);
     }
 
     @Override
@@ -44,7 +44,7 @@ public class AllMotechSecurityRulesCouchdbImpl extends MotechBaseRepository<Mote
     }
 
     @Override
-    @View(name = "by_module_and_pattern", map = "function(doc) { if (doc.type ==='MotechSecurityRule') { emit([doc.module, doc.pattern] doc._id); }}")
+    @View(name = "by_module_and_pattern", map = "function(doc) { if (doc.type ==='MotechSecurityRule') { emit([doc.module, doc.pattern], doc._id); }}")
     public MotechURLSecurityRule findByModuleAndPattern(String module, String pattern) {
         if (module == null || pattern == null) { return null; }
         ViewQuery viewQuery = createQuery("by_module_and_pattern").key(ComplexKey.of(module, pattern));
@@ -52,7 +52,7 @@ public class AllMotechSecurityRulesCouchdbImpl extends MotechBaseRepository<Mote
     }
 
     @Override
-    @View(name = "by_module", map = "function(doc) { if (doc.type ==='MotechSecurityRule') { emit(doc.module doc._id); }}")
+    @View(name = "by_module", map = "function(doc) { if (doc.type ==='MotechSecurityRule') { emit(doc.module, doc._id); }}")
     public List<MotechURLSecurityRule> findByModule(String module) {
         if (module == null) { return null; }
         ViewQuery viewQuery = createQuery("by_module").key(module).includeDocs(true);

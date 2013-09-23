@@ -8,9 +8,9 @@ public interface MotechURLSecurityRule {
 
     void setPattern(String pattern);
 
-    String getScheme();
+    List<String> getSupportedSchemes();
 
-    void setScheme(String scheme);
+    void setSupportedSchemes(List<String> supportedSchemes);
 
     String getProtocol();
 
