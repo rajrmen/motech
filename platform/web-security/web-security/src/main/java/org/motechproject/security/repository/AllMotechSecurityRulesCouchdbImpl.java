@@ -2,16 +2,13 @@ package org.motechproject.security.repository;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.ektorp.ComplexKey;
 import org.ektorp.CouchDbConnector;
 import org.ektorp.ViewQuery;
 import org.ektorp.support.View;
 import org.motechproject.commons.couchdb.dao.MotechBaseRepository;
-import org.motechproject.security.domain.MotechRoleCouchdbImpl;
 import org.motechproject.security.domain.MotechURLSecurityRule;
 import org.motechproject.security.domain.MotechURLSecurityRuleCouchdbImpl;
-import org.motechproject.security.domain.MotechUserCouchdbImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -42,7 +39,7 @@ public class AllMotechSecurityRulesCouchdbImpl extends MotechBaseRepository<Mote
     }
 
     @Override
-    public ArrayList<MotechURLSecurityRule> getRules() {
+    public List<MotechURLSecurityRule> getRules() {
         return new ArrayList<MotechURLSecurityRule>(getAll());
     }
 

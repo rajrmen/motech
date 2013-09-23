@@ -65,7 +65,7 @@ public class TestSecurityController {
     @RequestMapping(value = "/changeChannelSecurity", method = RequestMethod.GET)
     @ResponseBody
     public String testTwo(HttpServletRequest request) {
-        proxyManager.secure(request.getParameter(PATH));
+        proxyManager.secureWithHttps(request.getParameter(PATH));
         return "Secured: " + request.getParameter(PATH);
     }
 

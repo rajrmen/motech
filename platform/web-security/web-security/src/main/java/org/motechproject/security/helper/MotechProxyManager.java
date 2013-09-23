@@ -3,19 +3,14 @@ package org.motechproject.security.helper;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.servlet.Filter;
-
 import org.motechproject.event.listener.annotations.MotechListener;
 import org.motechproject.security.authentication.MotechAccessVoter;
 import org.motechproject.security.domain.MotechURLSecurityRule;
 import org.motechproject.security.filter.MotechChannelProcessingFilter;
-import org.motechproject.security.repository.AllMotechSecurityRules;
 import org.motechproject.security.service.MotechURLSecurityService;
 import org.motechproject.server.config.SettingsFacade;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -190,10 +185,6 @@ public class MotechProxyManager {
 
         RequestMatcher matcherTwo = new AntPathRequestMatcher("/**/" + path + "/**");
         Collection<ConfigAttribute> collectionTwo = new ArrayList<ConfigAttribute>();
-
-        //        if (filtersToAdd.contains("usernamePasswordFilter")) {
-        //            filters.add(usernamePasswordAuthenticationFilter);
-        //        }
 
         if (filtersToAdd.contains(BASIC_FILTER)) {
             MotechRestBasicAuthenticationEntryPoint restAuthPoint = new MotechRestBasicAuthenticationEntryPoint(settingsFacade);

@@ -203,7 +203,7 @@
                             org.openid4java.consumer,
                             net.sf.cglib.proxy,
                             net.sf.cglib.reflect,
-                            net.sf.cglib.core
+                            net.sf.cglib.core,
                             *
                         </Import-Package>
                         <Embed-Dependency>motech-platform-web-security;inline=true</Embed-Dependency>

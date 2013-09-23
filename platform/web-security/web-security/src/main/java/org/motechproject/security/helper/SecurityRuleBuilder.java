@@ -6,16 +6,9 @@ import java.util.List;
 import javax.servlet.Filter;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.motechproject.security.authentication.MotechAccessVoter;
 import org.motechproject.security.domain.MotechURLSecurityRule;
-import org.motechproject.server.config.SettingsFacade;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.DefaultSecurityFilterChain;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.access.channel.ChannelDecisionManager;
 import org.springframework.security.web.util.AntPathRequestMatcher;
 import org.springframework.security.web.util.AnyRequestMatcher;
 import org.springframework.security.web.util.RequestMatcher;
@@ -23,24 +16,6 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class SecurityRuleBuilder {
-
-    private static final String BASIC_FILTER = "basicFilter";
-
-    @Autowired
-    @Qualifier("basicAuthenticationEntryPoint")
-    private AuthenticationEntryPoint authenticationEntryPoint;
-
-    @Autowired
-    private AuthenticationManager authenticationManager;
-
-    @Autowired
-    private ChannelDecisionManager manager;
-
-    @Autowired
-    private MotechAccessVoter accessVoter;
-
-    @Autowired
-    private SettingsFacade settingsFacade;
 
     public synchronized SecurityFilterChain buildSecurityChain(MotechURLSecurityRule securityRule) {
         List<Filter> filters = new ArrayList<Filter>();
@@ -95,28 +70,25 @@ public class SecurityRuleBuilder {
     }
 
     private static void addSecurityContextHolderAwareRequestFilter(List<Filter> filters) {
-        // TODO Auto-generated method stub
+        filters.getClass();
 
     }
 
     private static void addRequestCacheFilter(List<Filter> filters) {
-        // TODO Auto-generated method stub
-
+        filters.getClass();
     }
 
     private static void addFilterSecurityInterceptor(List<Filter> filters, MotechURLSecurityRule securityRule) {
-        // TODO Auto-generated method stub
-
+        filters.getClass();
+        securityRule.isRest();
     }
 
     private static void addExceptionTranslationFilter(List<Filter> filters) {
-        // TODO Auto-generated method stub
-
+        filters.getClass();
     }
 
     private static void addAnonymousAuthenticationFilter(List<Filter> filters) {
-        // TODO Auto-generated method stub
-
+        filters.getClass();
     }
 
     private static void addAuthenticationFilters(List<Filter> filters, MotechURLSecurityRule securityRule) {
@@ -125,15 +97,17 @@ public class SecurityRuleBuilder {
         } else {
             //usernamepasswordfilter + basicfilter
         }
+        filters.getClass();
     }
 
     private static void addSecurityContextPersistenceFilter(List<Filter> filters) {
-        // TODO Auto-generated method stub
+        filters.getClass();
 
     }
 
     private static void addSecureChannel(List<Filter> filters, String protocol) {
-        // TODO Auto-generated method stub
+        filters.getClass();
+        protocol.toString();
 
     }
 

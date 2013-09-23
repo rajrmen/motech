@@ -4,39 +4,39 @@ import java.util.List;
 
 public interface MotechURLSecurityRule {
 
-    public String getPattern();
+    String getPattern();
 
-    public void setPattern(String pattern);
+    void setPattern(String pattern);
 
-    public String getScheme();
+    String getScheme();
 
-    public void setScheme(String scheme);
+    void setScheme(String scheme);
 
-    public String getProtocol();
+    String getProtocol();
 
-    public void setProtocol(String protocol);
+    void setProtocol(String protocol);
 
-    public List<String> getPermissionAccess();
+    List<String> getPermissionAccess();
 
-    public void setPermissionAccess(List<String> permissionAccess);
+    void setPermissionAccess(List<String> permissionAccess);
 
-    public List<String> getUserAccess();
+    List<String> getUserAccess();
 
-    public void setUserAccess(List<String> userAccess);
+    void setUserAccess(List<String> userAccess);
 
-    public int getPriority();
+    int getPriority();
 
-    public void setPriority(int priority);
+    void setPriority(int priority);
 
-    public boolean isRest();
+    boolean isRest();
 
-    public void setRest(boolean rest);
+    void setRest(boolean rest);
 
-    public String getOrigin();
+    String getOrigin();
 
-    public void setOrigin(String origin);
+    void setOrigin(String origin);
 
-    public String getVersion();
+    String getVersion();
 
-    public void setVersion(String version);
+    void setVersion(String version);
 }
