@@ -1,8 +1,8 @@
 package org.motechproject.security.helper;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
-import javax.servlet.Filter;
 import org.motechproject.event.MotechEvent;
 import org.motechproject.event.listener.annotations.MotechListener;
 import org.motechproject.security.domain.MotechURLSecurityRule;
@@ -12,8 +12,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.web.DefaultSecurityFilterChain;
 import org.springframework.security.web.FilterChainProxy;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.util.AntPathRequestMatcher;
-import org.springframework.security.web.util.RequestMatcher;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -52,40 +50,8 @@ public class MotechProxyManager {
         return;
     }
 
-    public void removePathFilter(String path) {
-        removeAllSecurity(path, true);
-    }
-
-    public void removeSecurityForPath(String path) {
-        removeAllSecurity(path, false);
-    }
-
-    public void removeAllSecurity(String path, boolean removePath) {
-        List<DefaultSecurityFilterChain> filterChains = getDefaultSecurityChains();
-        List<SecurityFilterChain> newFilterChains = new ArrayList<SecurityFilterChain>();
-        for (DefaultSecurityFilterChain chain : filterChains) {
-            RequestMatcher matcher = chain.getRequestMatcher();
-            if (matcher instanceof AntPathRequestMatcher) {
-                AntPathRequestMatcher antMatcher = (AntPathRequestMatcher) matcher;
-                String pattern = antMatcher.getPattern();
-                if (!pattern.equals(path)) {
-                    newFilterChains.add(chain);
-                } else {
-                    if (!removePath) {
-                        DefaultSecurityFilterChain strippedChain = new DefaultSecurityFilterChain(matcher, new ArrayList<Filter>());
-                        newFilterChains.add(strippedChain);
-                    }
-                }
-            } else {
-                newFilterChains.add(chain);
-            }
-        }
-
-        proxy = new FilterChainProxy(newFilterChains);
-    }
-
     @MotechListener(subjects = "rebuildchain")
-    public void rebuildProxyChain(MotechEvent event) {
+    public synchronized void rebuildProxyChain(MotechEvent event) {
         List<MotechURLSecurityRule> allSecurityRules = motechSecurityService.findAllSecurityRules();
 
         List<SecurityFilterChain> newFilterChains = new ArrayList<SecurityFilterChain>();
@@ -97,4 +63,15 @@ public class MotechProxyManager {
         proxy = new FilterChainProxy(newFilterChains);
     }
 
+    private class MotechSecurityRuleComparator implements Comparator<MotechURLSecurityRule> {
+
+        @Override
+        public int compare(MotechURLSecurityRule rule1, MotechURLSecurityRule rule2) {
+            if (rule1.getPriority() == rule2.getPriority()) {
+                return rule1.getPattern().compareTo(rule2.getPattern());
+            } else {
+                return rule1.getPriority() - rule2.getPriority();
+            }
+        }
+    }
 }

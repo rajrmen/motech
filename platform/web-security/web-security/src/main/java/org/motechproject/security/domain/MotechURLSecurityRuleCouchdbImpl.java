@@ -1,6 +1,8 @@
 package org.motechproject.security.domain;
 
 import java.util.List;
+import java.util.Set;
+
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.ektorp.support.TypeDiscriminator;
 import org.motechproject.commons.couchdb.model.MotechBaseDataObject;
@@ -36,6 +38,9 @@ public class MotechURLSecurityRuleCouchdbImpl extends MotechBaseDataObject imple
 
     @JsonProperty
     private String version;
+
+    @JsonProperty
+    private Set<String> methodsRequired;
 
     public MotechURLSecurityRuleCouchdbImpl() {
         super();
@@ -112,5 +117,13 @@ public class MotechURLSecurityRuleCouchdbImpl extends MotechBaseDataObject imple
 
     public void setVersion(String version) {
         this.version = version;
+    }
+
+    public Set<String> getMethodsRequired() {
+        return methodsRequired;
+    }
+
+    public void setMethodsRequired(Set<String> methodsRequired) {
+        this.methodsRequired = methodsRequired;
     }
 }

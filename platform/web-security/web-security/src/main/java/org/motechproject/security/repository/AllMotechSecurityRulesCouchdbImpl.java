@@ -25,7 +25,28 @@ public class AllMotechSecurityRulesCouchdbImpl extends MotechBaseRepository<Mote
 
     @Override
     public void add(MotechURLSecurityRule rule) {
-        super.add((MotechURLSecurityRuleCouchdbImpl) rule);
+        if (rule instanceof MotechURLSecurityRuleCouchdbImpl) {
+            super.add((MotechURLSecurityRuleCouchdbImpl) rule);
+        } else {
+            super.add(convertRule(rule));
+        }
+    }
+
+    private MotechURLSecurityRuleCouchdbImpl convertRule(MotechURLSecurityRule rule) {
+        MotechURLSecurityRuleCouchdbImpl newRule = new MotechURLSecurityRuleCouchdbImpl();
+        
+        newRule.setMethodsRequired(rule.getMethodsRequired());
+        newRule.setOrigin(rule.getOrigin());
+        newRule.setPattern(rule.getPattern());
+        newRule.setPermissionAccess(rule.getPermissionAccess());
+        newRule.setPriority(rule.getPriority());
+        newRule.setProtocol(rule.getProtocol());
+        newRule.setRest(rule.isRest());
+        newRule.setSupportedSchemes(rule.getSupportedSchemes());
+        newRule.setUserAccess(rule.getUserAccess());
+        newRule.setVersion(rule.getVersion());
+        
+        return newRule;
     }
 
     @Override

@@ -26,6 +26,9 @@ public class MotechAccessVoter implements AccessDecisionVoter<Object> {
     @Override
     public int vote(Authentication authentication, Object object, Collection<ConfigAttribute> attributes) {
         int result = ACCESS_ABSTAIN;
+        if (!(authentication.getDetails() instanceof MotechUserProfile)) {
+            return result;
+        }
 
         for (ConfigAttribute attribute : attributes) {
             if (this.supports(attribute)) {

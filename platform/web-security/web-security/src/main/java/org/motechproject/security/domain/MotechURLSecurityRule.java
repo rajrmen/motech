@@ -1,6 +1,7 @@
 package org.motechproject.security.domain;
 
 import java.util.List;
+import java.util.Set;
 
 public interface MotechURLSecurityRule {
 
@@ -39,4 +40,8 @@ public interface MotechURLSecurityRule {
     String getVersion();
 
     void setVersion(String version);
+
+    Set<String> getMethodsRequired();
+
+    void setMethodsRequired(Set<String> methodsRequired);
 }

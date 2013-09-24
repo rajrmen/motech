@@ -70,6 +70,9 @@ public class SecurityRuleBuilder {
     private OpenIDAuthenticationFilter openIDAuthenticationFilter;
 
     @Autowired
+    private MotechLogoutSuccessHandler motechLogoutHandler;
+
+    @Autowired
     @Qualifier("basicAuthenticationEntryPoint")
     private AuthenticationEntryPoint authenticationEntryPoint;
 
@@ -136,7 +139,6 @@ public class SecurityRuleBuilder {
     }
 
     private void addLogoutFilter(List<Filter> filters) {
-        LogoutHandler motechLogoutHandler = new MotechLogoutSuccessHandler();
         LogoutHandler springLogoutHandler = new SecurityContextLogoutHandler();
         LogoutFilter logoutFilter = new LogoutFilter("/module/server/login", motechLogoutHandler, springLogoutHandler );
         logoutFilter.setFilterProcessesUrl("/module/server/j_spring_security_logout");
@@ -156,16 +158,6 @@ public class SecurityRuleBuilder {
     private void addFilterSecurityInterceptor(List<Filter> filters, MotechURLSecurityRule securityRule) {
         Map<RequestMatcher, Collection<ConfigAttribute>> requestMap = new LinkedHashMap<RequestMatcher, Collection<ConfigAttribute>>();
 
-        String pattern = securityRule.getPattern();
-
-        RequestMatcher matcher;
-
-        if (pattern.equals("ANY") || pattern.equals("/**")) {
-            matcher = new AnyRequestMatcher();
-        } else {
-            matcher = new AntPathRequestMatcher(pattern);
-        }
-
         List<AccessDecisionVoter> voters = new ArrayList<AccessDecisionVoter>();
         Collection<ConfigAttribute> configAtts = new ArrayList<ConfigAttribute>();
 
@@ -179,14 +171,14 @@ public class SecurityRuleBuilder {
                     configAtts.add(new SecurityConfig(permission));
                 }
             }
-            if (CollectionUtils.isEmpty(securityRule.getUserAccess())) {
-                for (String userAccess : securityRule.getPermissionAccess()) {
+            if (!CollectionUtils.isEmpty(securityRule.getUserAccess())) {
+                for (String userAccess : securityRule.getUserAccess()) {
                     configAtts.add(new SecurityConfig("ACCESS_" + userAccess));
                 }
             }
         }
 
-        requestMap.put(matcher, configAtts);
+        buildRequestMap(requestMap, configAtts, securityRule);
 
         FilterInvocationSecurityMetadataSource metadataSource = new DefaultFilterInvocationSecurityMetadataSource((LinkedHashMap<RequestMatcher, Collection<ConfigAttribute>>) requestMap);
 
@@ -208,6 +200,25 @@ public class SecurityRuleBuilder {
         filters.add(interceptor);
     }
 
+
+    private void buildRequestMap(Map<RequestMatcher, Collection<ConfigAttribute>> requestMap, Collection<ConfigAttribute> configAtts, MotechURLSecurityRule securityRule) {
+        String pattern = securityRule.getPattern();
+
+        for (String method : securityRule.getMethodsRequired()) {
+
+            RequestMatcher matcher;
+
+            if (securityRule.getMethodsRequired().contains("ANY") && (pattern.equals("ANY") || pattern.equals("/**"))) {
+                matcher = new AnyRequestMatcher();
+                requestMap.put(matcher, configAtts);
+                return;
+            } else {
+                matcher = new AntPathRequestMatcher(pattern, method);
+            }
+
+            requestMap.put(matcher, configAtts);
+        }
+    }
 
     private void addExceptionTranslationFilter(List<Filter> filters, RequestCache requestCache) {
         ExceptionTranslationFilter exceptionFilter = new ExceptionTranslationFilter(authenticationEntryPoint, requestCache);

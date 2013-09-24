@@ -2,11 +2,13 @@ package org.motechproject.security.web.controllers;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import org.motechproject.event.MotechEvent;
 import org.motechproject.event.listener.EventRelay;
 import org.motechproject.security.domain.MotechURLSecurityRule;
 import org.motechproject.security.domain.MotechURLSecurityRuleCouchdbImpl;
 import org.motechproject.security.helper.MotechProxyManager;
+import org.motechproject.security.model.SecurityConfigDto;
 import org.motechproject.security.repository.AllMotechSecurityRules;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,8 +23,6 @@ import javax.servlet.http.HttpServletRequest;
 
 @Controller
 public class TestSecurityController {
-
-    private static final String PATH = "path";
 
     @Autowired
     private EventRelay eventRelay;
@@ -50,6 +50,9 @@ public class TestSecurityController {
         securityRule.setRest(Boolean.parseBoolean(request.getParameter("rest")));
         securityRule.setSupportedSchemes(new ArrayList(Arrays.asList("BASIC", "USERNAME_PASSWORD")));
         securityRule.setVersion("0.22");
+        securityRule.setPermissionAccess(new ArrayList(Arrays.asList("stopBundle", "testRole")));
+        securityRule.setUserAccess(new ArrayList(Arrays.asList("motech", "russell")));
+        securityRule.setMethodsRequired(new HashSet(Arrays.asList("GET")));
         allSecurityRules.add(securityRule);
     }
     
@@ -57,22 +60,6 @@ public class TestSecurityController {
     @ResponseStatus(HttpStatus.OK)
     public void rebuildChain() {
         eventRelay.sendEventMessage(new MotechEvent("rebuildchain"));
-    }
-
-    @RequestMapping(value = "/removeSecurity", method = RequestMethod.GET)
-    @ResponseBody
-    public String removeSecurity(HttpServletRequest request) {
-        String path = request.getParameter(PATH);
-        proxyManager.removeSecurityForPath(path);
-        return "Removed security for: " + path;
-    }
-
-    @RequestMapping(value = "/removePathSettings", method = RequestMethod.GET)
-    @ResponseBody
-    public String removePathSettings(HttpServletRequest request) {
-        String path = request.getParameter(PATH);
-        proxyManager.removePathFilter(path);
-        return "Removed path configuration for: " + path;
     }
 
     @RequestMapping(value = "/annotatedTest", method = RequestMethod.GET)
@@ -88,7 +75,7 @@ public class TestSecurityController {
         return "test1";
     }
 
-    @RequestMapping(value = "/https/1/2", method = RequestMethod.GET)
+    @RequestMapping(value = "/https/1/2")
     @ResponseBody
     public String test12() {
         return "test12";
@@ -98,5 +85,13 @@ public class TestSecurityController {
     @ResponseBody
     public String test123(HttpServletRequest request) {
         return "test123";
+    }
+    
+    @RequestMapping(value = "/updateSecurityRules", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.OK)
+    public void updateSecurityRules(@RequestBody SecurityConfigDto securityConfig) {
+        for (MotechURLSecurityRule rule : securityConfig.getSecurityRules()) {
+            allSecurityRules.add(rule);
+        }
     }
 }
