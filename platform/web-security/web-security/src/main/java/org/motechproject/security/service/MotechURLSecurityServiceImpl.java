@@ -12,25 +12,6 @@ public class MotechURLSecurityServiceImpl implements MotechURLSecurityService {
 
     @Autowired
     private AllMotechSecurityRules allSecurityRules;
-    
-    @Override
-    public void addNewSecurityRule(MotechURLSecurityRule rule) {
-        MotechURLSecurityRule oldRule = allSecurityRules.findByModuleAndPattern(rule.getOrigin(), rule.getPattern());
-        if (oldRule != null) {
-            return;
-        }
-        allSecurityRules.add(rule);
-    }
-
-    @Override
-    public void updateSecurityRule(MotechURLSecurityRule rule) {
-        allSecurityRules.update(rule);
-    }
-
-    @Override
-    public void removeSecurityRule(MotechURLSecurityRule rule) {
-        allSecurityRules.remove(rule);
-    }
 
     @Override
     public List<MotechURLSecurityRule> findAllSecurityRules() {

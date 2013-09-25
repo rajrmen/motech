@@ -1,12 +1,8 @@
 package org.motechproject.security.web.controllers;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
 import org.motechproject.event.MotechEvent;
 import org.motechproject.event.listener.EventRelay;
-import org.motechproject.security.domain.MotechURLSecurityRule;
-import org.motechproject.security.domain.MotechURLSecurityRuleCouchdbImpl;
+import org.motechproject.security.domain.MotechSecurityConfiguration;
 import org.motechproject.security.helper.MotechProxyManager;
 import org.motechproject.security.model.SecurityConfigDto;
 import org.motechproject.security.repository.AllMotechSecurityRules;
@@ -33,29 +29,6 @@ public class TestSecurityController {
     @Autowired
     private AllMotechSecurityRules allSecurityRules;
 
-    @RequestMapping(value = "/addRule", method = RequestMethod.POST)
-    @ResponseStatus(HttpStatus.OK)
-    public void addSecurityRule(@RequestBody MotechURLSecurityRule securityRule) {
-        allSecurityRules.add(securityRule);
-    }
-
-    @RequestMapping(value = "/addTestRule", method = RequestMethod.GET)
-    @ResponseStatus(HttpStatus.OK)
-    public void addTestSecurityRule(HttpServletRequest request) {
-        MotechURLSecurityRule securityRule = new MotechURLSecurityRuleCouchdbImpl();
-        securityRule.setOrigin("webSecurityUi");
-        securityRule.setPattern(request.getParameter("pattern"));
-        securityRule.setPriority(1);
-        securityRule.setProtocol(request.getParameter("protocol"));
-        securityRule.setRest(Boolean.parseBoolean(request.getParameter("rest")));
-        securityRule.setSupportedSchemes(new ArrayList(Arrays.asList("BASIC", "USERNAME_PASSWORD")));
-        securityRule.setVersion("0.22");
-        securityRule.setPermissionAccess(new ArrayList(Arrays.asList("stopBundle", "testRole")));
-        securityRule.setUserAccess(new ArrayList(Arrays.asList("motech", "russell")));
-        securityRule.setMethodsRequired(new HashSet(Arrays.asList("GET")));
-        allSecurityRules.add(securityRule);
-    }
-    
     @RequestMapping(value = "/buildChain", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     public void rebuildChain() {
@@ -90,8 +63,8 @@ public class TestSecurityController {
     @RequestMapping(value = "/updateSecurityRules", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.OK)
     public void updateSecurityRules(@RequestBody SecurityConfigDto securityConfig) {
-        for (MotechURLSecurityRule rule : securityConfig.getSecurityRules()) {
-            allSecurityRules.add(rule);
-        }
+        MotechSecurityConfiguration dbConfig = new MotechSecurityConfiguration();
+        dbConfig.setSecurityRules(securityConfig.getSecurityRules());
+        allSecurityRules.add(dbConfig);
     }
 }

@@ -2,19 +2,16 @@ package org.motechproject.security.repository;
 
 import java.util.List;
 
+import org.motechproject.security.domain.MotechSecurityConfiguration;
 import org.motechproject.security.domain.MotechURLSecurityRule;
 
 public interface AllMotechSecurityRules {
 
-    void add(MotechURLSecurityRule rule);
+    void add(MotechSecurityConfiguration config);
 
-    void update(MotechURLSecurityRule rule);
+    void update(MotechSecurityConfiguration config);
 
-    void remove(MotechURLSecurityRule rule);
+    void remove(MotechSecurityConfiguration config);
 
     List<MotechURLSecurityRule> getRules();
-
-    List<MotechURLSecurityRule> findByModule(String module);
-
-    MotechURLSecurityRule findByModuleAndPattern(String module, String pattern);
 }

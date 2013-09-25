@@ -1,47 +1,103 @@
 package org.motechproject.security.domain;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
 
-public interface MotechURLSecurityRule {
+public class MotechURLSecurityRule implements Serializable {
 
-    String getPattern();
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+    private String pattern;
+    private List<String> supportedSchemes;
+    private String protocol;
+    private List<String> permissionAccess;
+    private List<String> userAccess;
+    private int priority;
+    private boolean rest;
+    private String origin;
+    private String version;
+    private Set<String> methodsRequired;
 
-    void setPattern(String pattern);
+    public String getPattern() {
+        return pattern;
+    }
 
-    List<String> getSupportedSchemes();
+    public void setPattern(String pattern) {
+        this.pattern = pattern;
+    }
 
-    void setSupportedSchemes(List<String> supportedSchemes);
+    public List<String> getSupportedSchemes() {
+        return supportedSchemes;
+    }
 
-    String getProtocol();
+    public void setSupportedSchemes(List<String> supportedSchemes) {
+        this.supportedSchemes = supportedSchemes;
+    }
 
-    void setProtocol(String protocol);
+    public String getProtocol() {
+        return protocol;
+    }
 
-    List<String> getPermissionAccess();
+    public void setProtocol(String protocol) {
+        this.protocol = protocol;
+    }
 
-    void setPermissionAccess(List<String> permissionAccess);
+    public List<String> getPermissionAccess() {
+        return permissionAccess;
+    }
 
-    List<String> getUserAccess();
+    public void setPermissionAccess(List<String> permissionAccess) {
+        this.permissionAccess = permissionAccess;
+    }
 
-    void setUserAccess(List<String> userAccess);
+    public List<String> getUserAccess() {
+        return userAccess;
+    }
 
-    int getPriority();
+    public void setUserAccess(List<String> userAccess) {
+        this.userAccess = userAccess;
+    }
 
-    void setPriority(int priority);
+    public int getPriority() {
+        return priority;
+    }
 
-    boolean isRest();
+    public void setPriority(int priority) {
+        this.priority = priority;
+    }
 
-    void setRest(boolean rest);
+    public boolean isRest() {
+        return rest;
+    }
 
-    String getOrigin();
+    public void setRest(boolean rest) {
+        this.rest = rest;
+    }
 
-    void setOrigin(String origin);
+    public String getOrigin() {
+        return origin;
+    }
 
-    String getVersion();
+    public void setOrigin(String origin) {
+        this.origin = origin;
+    }
 
-    void setVersion(String version);
+    public String getVersion() {
+        return version;
+    }
 
-    Set<String> getMethodsRequired();
+    public void setVersion(String version) {
+        this.version = version;
+    }
 
-    void setMethodsRequired(Set<String> methodsRequired);
+    public Set<String> getMethodsRequired() {
+        return methodsRequired;
+    }
+
+    public void setMethodsRequired(Set<String> methodsRequired) {
+        this.methodsRequired = methodsRequired;
+    }
 }

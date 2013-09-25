@@ -2,15 +2,17 @@ package org.motechproject.security.model;
 
 import java.util.List;
 
+import org.motechproject.security.domain.MotechURLSecurityRule;
+
 public class SecurityConfigDto {
 
-    private List<SecurityRuleDto> securityRules;
+    private List<MotechURLSecurityRule> securityRules;
 
-    public List<SecurityRuleDto> getSecurityRules() {
+    public List<MotechURLSecurityRule> getSecurityRules() {
         return securityRules;
     }
 
-    public void setSecurityRules(List<SecurityRuleDto> securityRules) {
+    public void setSecurityRules(List<MotechURLSecurityRule> securityRules) {
         this.securityRules = securityRules;
     }
 }
