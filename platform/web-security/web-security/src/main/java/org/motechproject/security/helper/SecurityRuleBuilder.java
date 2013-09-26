@@ -51,8 +51,15 @@ import org.springframework.security.web.util.AnyRequestMatcher;
 import org.springframework.security.web.util.RequestMatcher;
 import org.springframework.stereotype.Component;
 
+/**
+ * 
+ * @author Russell
+ *
+ */
 @Component
 public class SecurityRuleBuilder {
+
+    private static final String ANY_METHOD = "ANY";
 
     @Autowired
     private ChannelDecisionManager channelDecisionManager;
@@ -82,7 +89,7 @@ public class SecurityRuleBuilder {
 
         String pattern = securityRule.getPattern();
 
-        if (pattern.equals("ANY") || pattern.equals("/**")) {
+        if (pattern.equals("ANY") || pattern.equals("/**") || pattern.equals("**")) {
             matcher = new AnyRequestMatcher();
         } else {
             matcher = new AntPathRequestMatcher(pattern);
@@ -100,7 +107,7 @@ public class SecurityRuleBuilder {
         if (!securityRule.getProtocol().equals("HTTP")) {
             return false;
         }
-        if (!securityRule.getSupportedSchemes().contains("NONE")) {
+        if (!securityRule.getSupportedSchemes().contains("NO_SECURITY")) {
             return false;
         }
         if (!CollectionUtils.isEmpty(securityRule.getPermissionAccess())) {
@@ -208,8 +215,12 @@ public class SecurityRuleBuilder {
 
             RequestMatcher matcher;
 
-            if (securityRule.getMethodsRequired().contains("ANY") && (pattern.equals("ANY") || pattern.equals("/**"))) {
+            if (securityRule.getMethodsRequired().contains(ANY_METHOD) && (pattern.equals(ANY_METHOD) || pattern.equals("/**"))) {
                 matcher = new AnyRequestMatcher();
+                requestMap.put(matcher, configAtts);
+                return;
+            } else if (securityRule.getMethodsRequired().contains(ANY_METHOD)){
+                matcher = new AntPathRequestMatcher(pattern, null);
                 requestMap.put(matcher, configAtts);
                 return;
             } else {

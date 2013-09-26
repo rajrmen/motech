@@ -42,6 +42,10 @@ public class MotechDelegatingFilterProxy extends DelegatingFilterProxy {
         anonymousFilter = new MotechAnonymousAuthenticationFilter(wac.getBean(MotechPermissionService.class));
     }
 
+    /**
+     * If the proxy manager is available, filtering should be instead
+     * delegated to its FilterChainProxy.
+     */
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         WebApplicationContext context = super.findWebApplicationContext();
@@ -51,7 +55,7 @@ public class MotechDelegatingFilterProxy extends DelegatingFilterProxy {
             anonymousFilter.doFilter(request, response, filterChain);
         } else if (proxyManager != null) {
             proxyManager.getFilterChainProxy().doFilter(request, response, filterChain);
-        }else {
+        } else {
             super.doFilter(request, response, filterChain);
         }
     }

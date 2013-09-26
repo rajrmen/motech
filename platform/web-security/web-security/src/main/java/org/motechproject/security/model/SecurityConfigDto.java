@@ -4,6 +4,10 @@ import java.util.List;
 
 import org.motechproject.security.domain.MotechURLSecurityRule;
 
+/**
+ * Used to transfer security configuration
+ * to and from a web request and UI
+ */
 public class SecurityConfigDto {
 
     private List<MotechURLSecurityRule> securityRules;

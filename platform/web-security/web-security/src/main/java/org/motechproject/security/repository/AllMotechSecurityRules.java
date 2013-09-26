@@ -5,6 +5,11 @@ import java.util.List;
 import org.motechproject.security.domain.MotechSecurityConfiguration;
 import org.motechproject.security.domain.MotechURLSecurityRule;
 
+/**
+ * 
+ * @author Russell
+ *
+ */
 public interface AllMotechSecurityRules {
 
     void add(MotechSecurityConfiguration config);

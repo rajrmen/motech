@@ -1,40 +1,28 @@
 package org.motechproject.security.helper;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-import org.motechproject.event.MotechEvent;
-import org.motechproject.event.listener.annotations.MotechListener;
 import org.motechproject.security.domain.MotechURLSecurityRule;
 import org.motechproject.security.service.MotechURLSecurityService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.web.DefaultSecurityFilterChain;
 import org.springframework.security.web.FilterChainProxy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.stereotype.Component;
 
+/**
+ * The MotechProxyManager acts as a wrapper around Spring's FilterChainProxy.
+ * The FilterChainProxy contains a list of immutable SecurityFilterChain objects
+ * which Spring's security consults for filters when handling requests. In order
+ * to dynamically define new secure, a new FilterChainProxy is constructed and the 
+ * reference is updated. The MotechProxyManager acts as a customized delegate 
+ * in MotechDelegatingFilterProxy.
+ *
+ */
 @Component
 public class MotechProxyManager {
 
     @Autowired
     private FilterChainProxy proxy;
-
-    public FilterChainProxy getFilterChainProxy() {
-        return proxy;
-    }
-
-    public void setFilterChainProxy(FilterChainProxy proxy) {
-        this.proxy = proxy;
-    }
-
-    public List<DefaultSecurityFilterChain> getDefaultSecurityChains() {
-        List<DefaultSecurityFilterChain> defaultSecurityChains = new ArrayList<DefaultSecurityFilterChain>();
-        for (SecurityFilterChain chain : proxy.getFilterChains()) {
-            defaultSecurityChains.add((DefaultSecurityFilterChain) chain);
-        }
-        return defaultSecurityChains;
-    }
 
     @Autowired
     private SecurityRuleBuilder securityRuleBuilder;
@@ -43,15 +31,12 @@ public class MotechProxyManager {
     private MotechURLSecurityService motechSecurityService;
 
     /**
-     * Test method for testing permissions on a method
+     * Method to invoke to dynamically re-define the Spring security.
+     * All rules converted into security filter chains in order
+     * to create a new FilterChainProxy. The order of the rules in the 
+     * list matters for filtering purposes.
      */
-    @PreAuthorize("hasRole('stopBundle')")
-    public void annotatedMethod() {
-        return;
-    }
-
-    @MotechListener(subjects = "rebuildchain")
-    public synchronized void rebuildProxyChain(MotechEvent event) {
+    public synchronized void rebuildProxyChain() {
         List<MotechURLSecurityRule> allSecurityRules = motechSecurityService.findAllSecurityRules();
 
         List<SecurityFilterChain> newFilterChains = new ArrayList<SecurityFilterChain>();
@@ -63,15 +48,11 @@ public class MotechProxyManager {
         proxy = new FilterChainProxy(newFilterChains);
     }
 
-    private class MotechSecurityRuleComparator implements Comparator<MotechURLSecurityRule> {
+    public FilterChainProxy getFilterChainProxy() {
+        return proxy;
+    }
 
-        @Override
-        public int compare(MotechURLSecurityRule rule1, MotechURLSecurityRule rule2) {
-            if (rule1.getPriority() == rule2.getPriority()) {
-                return rule1.getPattern().compareTo(rule2.getPattern());
-            } else {
-                return rule1.getPriority() - rule2.getPriority();
-            }
-        }
+    public void setFilterChainProxy(FilterChainProxy proxy) {
+        this.proxy = proxy;
     }
 }

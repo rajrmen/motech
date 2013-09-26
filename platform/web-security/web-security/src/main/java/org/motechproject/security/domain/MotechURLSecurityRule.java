@@ -4,11 +4,13 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * The MotechURLSecurityRule specifies the configuration
+ * for setting up a Spring SecurityFilterChain.
+ *
+ */
 public class MotechURLSecurityRule implements Serializable {
 
-    /**
-     * 
-     */
     private static final long serialVersionUID = 1L;
     private String pattern;
     private List<String> supportedSchemes;

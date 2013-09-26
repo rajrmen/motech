@@ -7,6 +7,17 @@ import org.springframework.security.access.AccessDecisionVoter;
 import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.core.Authentication;
 
+/**
+ * A custom AccessDecisionVoter for voting on whether
+ * a specific user has access to a particular URL. For example,
+ * a security rule can specify that the users motech and admin
+ * have access to a particular URL. This loads the metadata source
+ * with attributes for ACCESS_motech and ACCESS_admin. When a user
+ * invokes that URL, an affirmative based voting system will check
+ * whether or not the user is motech or admin. If not, they are denied
+ * permission, otherwise they are granted access.
+ *
+ */
 public class MotechAccessVoter implements AccessDecisionVoter<Object> {
 
     private String accessPrefix = "ACCESS_";
