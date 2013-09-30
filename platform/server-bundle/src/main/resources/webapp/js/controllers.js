@@ -1,7 +1,7 @@
 (function () {
     'use strict';
 
-    var serverModule = angular.module('motech-dashboard');
+    var serverModule = angular.module('motech-dashboard', ['ngRoute', 'localization', 'ngCookies', 'browserDetect', 'motech-widgets', 'ui']);
 
     serverModule.controller('MasterCtrl', function ($scope, $http, i18nService, $cookieStore, $q, BrowserDetect) {
         var handle = function () {

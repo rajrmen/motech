@@ -202,7 +202,7 @@
                                 <resource>
                                     <directory>${modules.root.dir}/platform/server-bundle/src/main/resources/webapp/lib/angular</directory>
                                     <includes>
-                                        <inlude>angular.min.js</inlude>
+                                        <inlude>angular.js</inlude>
                                     </includes>
                                 </resource>
                                 <resource>
@@ -248,8 +248,8 @@
 
                     <jsSrcDir>${project.build.directory}/jasmine</jsSrcDir>
                     <sourceIncludes>
-                        <include>js/core/angular/angular.min.js</include>
-                        <include>js/core/angular/angular-resource.min.js</include>
+                        <include>js/core/angular/angular.js</include>
+                        <include>js/core/angular/angular-resource.js</include>
                         <include>js/core/jquery/jquery.js</include>
                         <include>js/core/**/*.js</include>
                         <include>js/*.js</include>

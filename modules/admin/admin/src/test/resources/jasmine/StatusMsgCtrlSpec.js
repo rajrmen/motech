@@ -41,6 +41,8 @@
 
             scope = $rootScope.$new();
             ctrl = $controller('StatusMsgCtrl', {$scope: scope});
+
+			$rootScope.$digest();
         }));
 
 

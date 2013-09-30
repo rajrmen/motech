@@ -33,11 +33,13 @@
 <script type="text/javascript" src="resources/lib/jquery/jquery.livequery.min.js"></script>
 <script type="text/javascript" src="resources/lib/jquery/jquery.select2.js"></script>
 
-<script type="text/javascript" src="resources/lib/angular/angular.min.js"></script>
-<script type="text/javascript" src="resources/lib/angular/angular-resource.min.js"></script>
-<script type="text/javascript" src="resources/lib/angular/angular-cookies.min.js"></script>
+<script type="text/javascript" src="resources/lib/angular/angular.js"></script>
+<script type="text/javascript" src="resources/lib/angular/angular-route.js"></script>
+<script type="text/javascript" src="resources/lib/angular/angular-resource.js"></script>
+<script type="text/javascript" src="resources/lib/angular/angular-cookies.js"></script>
 <script type="text/javascript" src="resources/lib/angular/angular-bootstrap.js"></script>
-<script type="text/javascript" src="resources/lib/angular/angular-ui.min.js"></script>
+<script type="text/javascript" src="resources/lib/angular/angular-ui.js"></script>
+<script type="text/javascript" src="resources/lib/angular/ui-bootstrap.js"></script>
 
 <script type="text/javascript" src="resources/lib/bootstrap/bootstrap.min.js"></script>
 <script type="text/javascript" src="resources/lib/bootstrap/bootstrap-fileupload.min.js"></script>
