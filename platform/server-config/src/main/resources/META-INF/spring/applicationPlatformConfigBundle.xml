@@ -18,4 +18,6 @@
     <osgi:service ref="settingsFacade" interface="org.motechproject.server.config.SettingsFacade"/>
     <osgi:service ref="configurationService" interface="org.motechproject.config.service.ConfigurationService"/>
 
+    <osgi:service ref="configurationService" interface="org.motechproject.config.service.ConfigurationService"/>
+
 </beans>
