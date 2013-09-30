@@ -8,6 +8,7 @@ import org.motechproject.osgi.web.exception.ServletRegistrationException;
 import org.motechproject.osgi.web.UIFrameworkService;
 import org.motechproject.osgi.web.ext.UiHttpContext;
 import org.motechproject.security.filter.MotechDelegatingFilterProxy;
+import org.motechproject.security.helper.MotechProxyManager;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
@@ -109,6 +110,8 @@ public class Activator implements BundleActivator {
                 logger.debug("Servlet registered");
 
                 filter = new MotechDelegatingFilterProxy("springSecurityFilterChain", dispatcherServlet.getWebApplicationContext());
+                MotechProxyManager proxyManager = dispatcherServlet.getWebApplicationContext().getBean(MotechProxyManager.class);
+                proxyManager.initializeProxyChain();
                 service.registerFilter(filter, "/.*", null, 0, httpContext);
                 logger.debug("Filter registered");
             } finally {

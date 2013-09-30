@@ -52,8 +52,11 @@ import org.springframework.security.web.util.RequestMatcher;
 import org.springframework.stereotype.Component;
 
 /**
- * 
- * @author Russell
+ * The security rule builder is responsible for building a 
+ * SecurityFilterChain, which consists of a matcher pattern
+ * and a list of Spring security filters. The filters are
+ * created and configured base upon the security rule's
+ * settings.
  *
  */
 @Component
@@ -81,7 +84,11 @@ public class SecurityRuleBuilder {
 
     @Autowired
     @Qualifier("basicAuthenticationEntryPoint")
-    private AuthenticationEntryPoint authenticationEntryPoint;
+    private AuthenticationEntryPoint basicAuthenticationEntryPoint;
+
+    @Autowired
+    @Qualifier("loginFormAuthentication")
+    private AuthenticationEntryPoint loginAuthenticationEntryPoint;
 
     public synchronized SecurityFilterChain buildSecurityChain(MotechURLSecurityRule securityRule) {
         List<Filter> filters = new ArrayList<Filter>();
@@ -134,7 +141,7 @@ public class SecurityRuleBuilder {
         addSecurityContextHolderAwareRequestFilter(filters); //done
         addAnonymousAuthenticationFilter(filters); //done
         addSessionManagementFilter(filters, contextRepository); //done
-        addExceptionTranslationFilter(filters, requestCache); //done
+        addExceptionTranslationFilter(filters, requestCache, securityRule.isRest()); //done
         addFilterSecurityInterceptor(filters, securityRule); //done
 
         return filters;
@@ -231,10 +238,16 @@ public class SecurityRuleBuilder {
         }
     }
 
-    private void addExceptionTranslationFilter(List<Filter> filters, RequestCache requestCache) {
-        ExceptionTranslationFilter exceptionFilter = new ExceptionTranslationFilter(authenticationEntryPoint, requestCache);
-        filters.add(exceptionFilter);
+    private void addExceptionTranslationFilter(List<Filter> filters, RequestCache requestCache, boolean isRest) {
+        ExceptionTranslationFilter exceptionFilter;
 
+        if (isRest) {
+            exceptionFilter = new ExceptionTranslationFilter(basicAuthenticationEntryPoint, requestCache);
+        } else {
+            exceptionFilter = new ExceptionTranslationFilter(loginAuthenticationEntryPoint, requestCache);
+        }
+
+        filters.add(exceptionFilter);
     }
 
     private void addAnonymousAuthenticationFilter(List<Filter> filters) {

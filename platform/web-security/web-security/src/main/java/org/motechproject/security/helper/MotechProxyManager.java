@@ -3,6 +3,7 @@ package org.motechproject.security.helper;
 import java.util.ArrayList;
 import java.util.List;
 import org.motechproject.security.domain.MotechURLSecurityRule;
+import org.motechproject.security.repository.AllMotechSecurityRules;
 import org.motechproject.security.service.MotechURLSecurityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.web.FilterChainProxy;
@@ -29,6 +30,9 @@ public class MotechProxyManager {
 
     @Autowired
     private MotechURLSecurityService motechSecurityService;
+    
+    @Autowired
+    private AllMotechSecurityRules securityRulesDAO;
 
     /**
      * Method to invoke to dynamically re-define the Spring security.
@@ -54,5 +58,27 @@ public class MotechProxyManager {
 
     public void setFilterChainProxy(FilterChainProxy proxy) {
         this.proxy = proxy;
+    }
+
+    /**
+     * This method serves the same purpose of rebuild proxy chain, but does not required
+     * any kind of security authentication. So it should only ever be used by the activator,
+     * which does not have an authentication object.
+     */
+    public void initializeProxyChain() {
+        List<MotechURLSecurityRule> securityRules = securityRulesDAO.getRules();
+
+        //Security rules have not been configured in the DB, use the default spring security chain from the security context
+        if (securityRules.size() == 0) {
+            return;
+        }
+
+        List<SecurityFilterChain> newFilterChains = new ArrayList<SecurityFilterChain>();
+
+        for (MotechURLSecurityRule securityRule : securityRules) {
+            newFilterChains.add(securityRuleBuilder.buildSecurityChain(securityRule));
+        }
+
+        proxy = new FilterChainProxy(newFilterChains);
     }
 }
