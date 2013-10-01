@@ -21,6 +21,12 @@ public class MotechSecurityConfiguration extends MotechBaseDataObject {
     @JsonProperty
     private List<MotechURLSecurityRule> securityRules;
 
+    public MotechSecurityConfiguration() {}
+
+    public MotechSecurityConfiguration(List<MotechURLSecurityRule> securityRules) {
+        this.securityRules = securityRules;
+    }
+
     public List<MotechURLSecurityRule> getSecurityRules() {
         return securityRules;
     }

@@ -9,10 +9,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @Controller
 public class TestSecurityController {
+
+    private static final String OK = "OK";
 
     @Autowired
     private MotechURLSecurityService urlSecurityService;
@@ -23,5 +26,11 @@ public class TestSecurityController {
         MotechSecurityConfiguration dbConfig = new MotechSecurityConfiguration();
         dbConfig.setSecurityRules(securityConfig.getSecurityRules());
         urlSecurityService.updateSecurityConfiguration(dbConfig);
+    }
+
+    @RequestMapping(value = "/web-api/status")
+    @ResponseBody
+    public String securityStatus() {
+        return OK;
     }
 }

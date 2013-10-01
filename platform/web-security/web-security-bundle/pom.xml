@@ -105,6 +105,12 @@
             <groupId>org.hibernate</groupId>
             <artifactId>org.motechproject.org.hibernate.validator</artifactId>
         </dependency>
+        <dependency>
+            <groupId>${groupId}</groupId>
+            <artifactId>motech-testing-utils</artifactId>
+            <version>${version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -172,7 +178,9 @@
                             org.motechproject.security.model;version=${project.version},
                             org.motechproject.security.repository;version=${project.version},
                             org.motechproject.security.service;version=${project.version},
-                            org.motechproject.security.web.controllers;version=${project.version}
+                            org.motechproject.security.web.controllers;version=${project.version},
+                            org.motechproject.security.helper;version=${project.version},
+                            org.motechproject.security.repository;version=${project.version}
                         </Export-Package>
                         <Import-Package>
                             org.aopalliance.aop,

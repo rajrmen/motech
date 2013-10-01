@@ -304,7 +304,4 @@ public class SecurityRuleBuilder {
 
         filters.add(channelProcessingFilter);
     }
-
-
-
 }
