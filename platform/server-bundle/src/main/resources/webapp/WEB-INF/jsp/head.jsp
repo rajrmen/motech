@@ -40,6 +40,7 @@
 <script type="text/javascript" src="resources/lib/angular/angular-bootstrap.js"></script>
 <script type="text/javascript" src="resources/lib/angular/angular-ui.js"></script>
 <script type="text/javascript" src="resources/lib/angular/ui-bootstrap.js"></script>
+<script type="text/javascript" src="resources/lib/angular/angular-animate.js"></script>
 
 <script type="text/javascript" src="resources/lib/bootstrap/bootstrap.min.js"></script>
 <script type="text/javascript" src="resources/lib/bootstrap/bootstrap-fileupload.min.js"></script>
