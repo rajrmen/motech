@@ -1,5 +1,8 @@
 package org.motechproject.security.osgi;
 
+import static org.osgi.framework.Bundle.ACTIVE;
+import static org.osgi.framework.Bundle.UNINSTALLED;
+import static org.osgi.framework.Bundle.RESOLVED;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -10,24 +13,25 @@ import org.motechproject.security.domain.MotechURLSecurityRule;
 import org.motechproject.security.helper.MotechProxyManager;
 import org.motechproject.security.model.PermissionDto;
 import org.motechproject.security.model.RoleDto;
+import org.motechproject.security.osgi.helper.SecurityTestConfigBuilder;
 import org.motechproject.security.repository.AllMotechSecurityRules;
 import org.motechproject.security.service.MotechPermissionService;
 import org.motechproject.security.service.MotechRoleService;
-import org.motechproject.security.service.MotechURLSecurityService;
 import org.motechproject.security.service.MotechUserService;
 import org.motechproject.testing.osgi.BaseOsgiIT;
 import org.motechproject.testing.utils.PollingHttpClient;
 import org.motechproject.testing.utils.TestContext;
+import org.motechproject.testing.utils.Wait;
+import org.motechproject.testing.utils.WaitCondition;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleException;
 import org.osgi.framework.ServiceReference;
 import org.springframework.security.web.FilterChainProxy;
 import org.springframework.web.context.WebApplicationContext;
-
-import java.util.ArrayList;
+import java.io.IOException;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
 
 public class WebSecurityBundleIT extends BaseOsgiIT {
     private static final Integer TRIES_COUNT = 100;
@@ -38,19 +42,31 @@ public class WebSecurityBundleIT extends BaseOsgiIT {
     private static final String USER_EMAIL = "test@email.com";
     private static final String USER_EXTERNAL_ID = "test-externalId";
     private static final Locale USER_LOCALE = Locale.ENGLISH;
+    private static final String SECURITY_BUNDLE_NAME = "motech-platform-web-security";
 
     private PollingHttpClient httpClient = new PollingHttpClient(new DefaultHttpClient(), 60);
 
-    public void testDynamicSecurity() throws Exception {
+    public void testDynamicSecurity() throws InterruptedException, IOException, BundleException {
         HttpGet httpGet = new HttpGet(String.format("http://localhost:%d/websecurity/api/web-api/status", TestContext.getJettyPort()));
         addAuthHeader(httpGet, "motech", "motech");
-
-        Thread.sleep(30000);
 
         HttpResponse response = httpClient.execute(httpGet);
 
         assertNotNull(response);
         assertEquals(HttpStatus.SC_OK, response.getStatusLine().getStatusCode());
+
+        updateSecurity(SecurityTestConfigBuilder.buildConfig("removeAccess"));
+
+        restartSecurityBundle();
+
+        httpGet = new HttpGet(String.format("http://localhost:%d/websecurity/api/web-api/status", TestContext.getJettyPort()));
+        addAuthHeader(httpGet, "motech", "motech");
+
+        response = httpClient.execute(httpGet);
+
+        assertNotNull(response);
+        assertEquals(HttpStatus.SC_FORBIDDEN, response.getStatusLine().getStatusCode());
+
     }
 
     public void testWebSecurityServices() throws Exception {
@@ -76,54 +92,29 @@ public class WebSecurityBundleIT extends BaseOsgiIT {
 
     public void testProxyInitialization() throws Exception {
         WebApplicationContext theContext = getService(WebApplicationContext.class);
-        MotechProxyManager manager = (MotechProxyManager) theContext.getBean("motechProxyManager");
+        MotechProxyManager manager = theContext.getBean(MotechProxyManager.class);
         FilterChainProxy proxy = manager.getFilterChainProxy();
         assertNotNull(proxy);
         assertNotNull(proxy.getFilterChains());
     }
 
-    public void testUpdatingProxy() throws Exception {
-        WebApplicationContext theContext = getService(WebApplicationContext.class);
-        AllMotechSecurityRules allSecurityRules = theContext.getBean(AllMotechSecurityRules.class);
-        List<MotechURLSecurityRule> rules = allSecurityRules.getRules();
-        assertTrue(rules.size() == 0);
-        List<MotechURLSecurityRule> newRules = new ArrayList<MotechURLSecurityRule>();
-        MotechURLSecurityRule rule1 = new MotechURLSecurityRule();
+    public void testUpdatingProxy() throws InterruptedException, BundleException, IOException, ClassNotFoundException {
 
-        rule1.setPattern("/**/web-api**");
-        rule1.setOrigin("test");
-        rule1.setProtocol("HTTP");
-        rule1.setRest(true);
-        rule1.setVersion("1");
+        MotechSecurityConfiguration config = SecurityTestConfigBuilder.buildConfig("noSecurity");
+        updateSecurity(config);
 
-        List<String> supportedSchemes = new ArrayList<String>();
-        supportedSchemes.add("USERNAME_PASSWORD");
-        supportedSchemes.add("BASIC");
+        restartSecurityBundle();
 
-        rule1.setSupportedSchemes(supportedSchemes);
-        Set<String> methodsRequired = new HashSet<String>();
-        methodsRequired.add("ANY");
-        rule1.setMethodsRequired(methodsRequired);
+        MotechProxyManager manager = getProxyManager();
+        assertTrue(manager.getFilterChainProxy().getFilterChains().size() == 1);
 
-        MotechURLSecurityRule rule2 = new MotechURLSecurityRule();
+        MotechSecurityConfiguration updatedConfig = SecurityTestConfigBuilder.buildConfig("userAccess");
+        updateSecurity(updatedConfig);
 
-        rule2.setPattern("/**");
-        rule2.setOrigin("test");
-        rule2.setProtocol("HTTP");
-        rule2.setRest(true);
-        rule2.setVersion("1");
-        rule2.setSupportedSchemes(supportedSchemes);
-        rule2.setMethodsRequired(methodsRequired);
+        restartSecurityBundle();
 
-        newRules.add(rule1);
-        newRules.add(rule2);
-
-        MotechSecurityConfiguration config = new MotechSecurityConfiguration(newRules);
-        allSecurityRules.add(config);
-
-        rules = allSecurityRules.getRules();
-
-        assertTrue(rules.size() == 2);
+        manager = getProxyManager();
+        assertTrue(manager.getFilterChainProxy().getFilterChains().size() == 2);
     }
 
     private <T> T getService(Class<T> clazz) throws InterruptedException {
@@ -141,7 +132,7 @@ public class WebSecurityBundleIT extends BaseOsgiIT {
         do {
             serviceReference = bundleContext.getServiceReference(clazz.getName());
             ++tries;
-            Thread.sleep(1000);
+            Thread.sleep(2000);
         } while (serviceReference == null && tries < TRIES_COUNT);
 
         assertNotNull(String.format("Not found service reference for %s", clazz.getName()), serviceReference);
@@ -151,5 +142,53 @@ public class WebSecurityBundleIT extends BaseOsgiIT {
 
     private void addAuthHeader(HttpGet httpGet, String userName, String password) {
         httpGet.addHeader("Authorization", "Basic " + new String(Base64.encodeBase64((userName + ":" + password).getBytes())));
+    }
+
+    private Bundle getBundle(String symbolicName) {
+        Bundle testBundle = null;
+        for (Bundle bundle : bundleContext.getBundles()) {
+            if (null != bundle.getSymbolicName() && bundle.getSymbolicName().contains(symbolicName)
+                    && UNINSTALLED != bundle.getState()) {
+                testBundle = bundle;
+                break;
+            }
+        }
+        assertNotNull(testBundle);
+        return testBundle;
+    }
+
+    private void waitForBundleState(final Bundle bundle, final int state) throws InterruptedException {
+        new Wait(new WaitCondition() {
+            @Override
+            public boolean needsToWait() {
+                return state == bundle.getState();
+            }
+        }, 2000).start();
+        assertEquals(state, bundle.getState());
+    }
+
+    private void updateSecurity(MotechSecurityConfiguration config) throws InterruptedException {
+        WebApplicationContext theContext = getService(WebApplicationContext.class);
+        AllMotechSecurityRules allSecurityRules = theContext.getBean(AllMotechSecurityRules.class);
+        allSecurityRules.add(config);
+    }
+
+    private List<MotechURLSecurityRule> getRules() throws InterruptedException {
+        WebApplicationContext theContext = getService(WebApplicationContext.class);
+        AllMotechSecurityRules allSecurityRules = theContext.getBean(AllMotechSecurityRules.class);
+        return allSecurityRules.getRules();
+    }
+
+    private MotechProxyManager getProxyManager() throws InterruptedException {
+        WebApplicationContext theContext = getService(WebApplicationContext.class);
+        return theContext.getBean(MotechProxyManager.class);
+    }
+
+    private void restartSecurityBundle() throws BundleException, InterruptedException, IOException {
+        Bundle securityBundle = getBundle(SECURITY_BUNDLE_NAME);
+        securityBundle.stop();
+        waitForBundleState(securityBundle, RESOLVED);
+        securityBundle.start();
+        waitForBundleState(securityBundle, ACTIVE);
     }
 }
