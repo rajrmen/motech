@@ -6,8 +6,8 @@ localizationModule.factory("i18nService", function() {
     'use strict';
 
     var service = {
-        getMessage : function(key, value) {
-            return jQuery.i18n.prop(key, value);
+        getMessage : function(key, value1, value2, value3, value4) {
+            return jQuery.i18n.prop(key, value1, value2, value3, value4);
         },
 
         init : function(data) {

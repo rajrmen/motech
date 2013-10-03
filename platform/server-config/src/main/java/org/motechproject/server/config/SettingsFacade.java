@@ -128,7 +128,7 @@ public class SettingsFacade {
         return (result == null ? new Properties() : result);
     }
 
-    public Map<String, Properties> getAllProperties(final String bundleSymbolicName) throws IOException {
+    public Map<String, Properties> getAllProperties(String bundleSymbolicName) throws IOException {
         return platformSettingsService.getAllProperties(bundleSymbolicName);
     }
 

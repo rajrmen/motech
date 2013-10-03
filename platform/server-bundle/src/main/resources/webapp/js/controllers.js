@@ -57,8 +57,8 @@
                 });
         };
 
-        $scope.msg = function (key, value) {
-            return i18nService.getMessage(key, value);
+        $scope.msg = function (key, value1, value2, value3, value4) {
+            return i18nService.getMessage(key, value1, value2, value3, value4);
         };
 
         $scope.getLanguage = function (locale) {
