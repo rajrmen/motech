@@ -90,7 +90,7 @@ public class SecurityRuleBuilder {
     @Qualifier("loginFormAuthentication")
     private AuthenticationEntryPoint loginAuthenticationEntryPoint;
 
-    public synchronized SecurityFilterChain buildSecurityChain(MotechURLSecurityRule securityRule) {
+    public synchronized SecurityFilterChain buildSecurityChain(MotechURLSecurityRule securityRule, String method) {
         List<Filter> filters = new ArrayList<Filter>();
         RequestMatcher matcher;
 
@@ -99,7 +99,11 @@ public class SecurityRuleBuilder {
         if (pattern.equals("ANY") || pattern.equals("/**") || pattern.equals("**")) {
             matcher = new AnyRequestMatcher();
         } else {
-            matcher = new AntPathRequestMatcher(pattern);
+            if ("ANY".equals(method)) {
+                matcher = new AntPathRequestMatcher(pattern);
+            } else {
+                matcher = new AntPathRequestMatcher(pattern, method);
+            }
         }
 
         if (!noSecurity(securityRule)) {

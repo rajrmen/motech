@@ -14,11 +14,12 @@ public final class SecurityTestConfigBuilder {
         //static class 
     }
 
-    public static MotechSecurityConfiguration buildConfig(String testOption) {
+    public static MotechSecurityConfiguration buildConfig(String testOption, String configOption, String configOption2) {
         List<MotechURLSecurityRule> newRules = new ArrayList<MotechURLSecurityRule>();
         List<String> supportedSchemes = new ArrayList<String>();
         Set<String> methodsRequired = new HashSet<String>();
         List<String> permissionAccess = new ArrayList<String>();
+        List<String> userAccess = new ArrayList<String>();
 
         MotechURLSecurityRule rule1 = new MotechURLSecurityRule();
         MotechURLSecurityRule rule2 = new MotechURLSecurityRule();
@@ -39,13 +40,32 @@ public final class SecurityTestConfigBuilder {
         newRules.add(rule2);
 
         switch (testOption) {
-            case "removeAccess" : 
-                permissionAccess.add("not-motech");
-                rule1.setPermissionAccess(permissionAccess);
-            case "userAccess" :         
+            case "addUserAccess" : 
+                userAccess.add(configOption);
+                rule1.setUserAccess(userAccess);
                 supportedSchemes.add("USERNAME_PASSWORD");
                 supportedSchemes.add("BASIC");
                 methodsRequired.add("ANY");
+                break;
+            case "addPermissionAccess" : 
+                permissionAccess.add(configOption);
+                rule1.setPermissionAccess(permissionAccess);
+                supportedSchemes.add("USERNAME_PASSWORD");
+                supportedSchemes.add("BASIC");
+                methodsRequired.add("ANY");
+                break;
+            case "methodSpecific" : 
+                supportedSchemes.add("USERNAME_PASSWORD");
+                supportedSchemes.add("BASIC");
+                methodsRequired.add(configOption);
+                permissionAccess.add(configOption2);
+                rule1.setPermissionAccess(permissionAccess);
+                break;
+            case "loginAccess" :         
+                supportedSchemes.add("USERNAME_PASSWORD");
+                supportedSchemes.add("OATH");
+                methodsRequired.add("ANY");
+                rule1.setRest(false);
                 break;
             case "noSecurity" :
                 newRules.remove(rule1);

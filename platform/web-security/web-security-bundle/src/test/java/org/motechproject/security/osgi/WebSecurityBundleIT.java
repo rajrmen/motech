@@ -7,7 +7,10 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.junit.After;
 import org.motechproject.security.domain.MotechSecurityConfiguration;
 import org.motechproject.security.domain.MotechURLSecurityRule;
 import org.motechproject.security.helper.MotechProxyManager;
@@ -15,6 +18,7 @@ import org.motechproject.security.model.PermissionDto;
 import org.motechproject.security.model.RoleDto;
 import org.motechproject.security.osgi.helper.SecurityTestConfigBuilder;
 import org.motechproject.security.repository.AllMotechSecurityRules;
+import org.motechproject.security.repository.AllMotechSecurityRulesCouchdbImpl;
 import org.motechproject.security.service.MotechPermissionService;
 import org.motechproject.security.service.MotechRoleService;
 import org.motechproject.security.service.MotechUserService;
@@ -33,6 +37,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ * Test class that verifies the web security services
+ * and dynamic security configuration. Stops and
+ * starts the web security bundle and makes HTTP
+ * requests with various credentials to test
+ * different permutations of dynamic security.
+ */
 public class WebSecurityBundleIT extends BaseOsgiIT {
     private static final Integer TRIES_COUNT = 100;
     private static final String PERMISSION_NAME = "test-permission";
@@ -43,30 +54,45 @@ public class WebSecurityBundleIT extends BaseOsgiIT {
     private static final String USER_EXTERNAL_ID = "test-externalId";
     private static final Locale USER_LOCALE = Locale.ENGLISH;
     private static final String SECURITY_BUNDLE_NAME = "motech-platform-web-security";
+    private static final String QUERY_URL = "http://localhost:%d/websecurity/api/web-api/status";
 
     private PollingHttpClient httpClient = new PollingHttpClient(new DefaultHttpClient(), 60);
 
-    public void testDynamicSecurity() throws InterruptedException, IOException, BundleException {
-        HttpGet httpGet = new HttpGet(String.format("http://localhost:%d/websecurity/api/web-api/status", TestContext.getJettyPort()));
-        addAuthHeader(httpGet, "motech", "motech");
+    public void testDynamicPermissionAccessSecurity() throws InterruptedException, IOException, BundleException {
+        dynamicSecurity("motech", "motech", "addPermissionAccess", "stopBundle", null, HttpStatus.SC_OK);
+        dynamicSecurity("motech", "motech", "addPermissionAccess", "fakeRole", null, HttpStatus.SC_FORBIDDEN);
+        dynamicSecurity("motech2", "badpassword", "addPermissionAccess", "stopBundle", null, HttpStatus.SC_UNAUTHORIZED);
+    }
 
-        HttpResponse response = httpClient.execute(httpGet);
+    public void testDynamicUserAccessSecurity() throws InterruptedException, IOException, BundleException {
+        dynamicSecurity("motech", "motech", "addUserAccess", "motech", null, HttpStatus.SC_OK);
+        dynamicSecurity("motech", "motech", "addUserAccess", "not-motech", null, HttpStatus.SC_FORBIDDEN);
+        dynamicSecurity("motech2", "badpassword", "addUserAccess", "motech", null, HttpStatus.SC_UNAUTHORIZED);
+    }
 
-        assertNotNull(response);
-        assertEquals(HttpStatus.SC_OK, response.getStatusLine().getStatusCode());
+    public void testMethodSpecificSecurity() throws InterruptedException, IOException, BundleException {
+        dynamicSecurity("motech", "motech", "methodSpecific", "GET", "fakePermission", HttpStatus.SC_FORBIDDEN);
+        dynamicSecurity("motech", "motech", "methodSpecific", "POST", "fakePermission", HttpStatus.SC_FORBIDDEN);
+        dynamicSecurity("motech", "motech", "methodSpecific", "POST", "stopBundle", HttpStatus.SC_OK);
+    }
 
-        updateSecurity(SecurityTestConfigBuilder.buildConfig("removeAccess"));
-
+    private void dynamicSecurity(String username, String password, String accessType, String accessValue, String accessValue2, int expectedResponseStatus) throws InterruptedException, IOException, BundleException {
+        updateSecurity(SecurityTestConfigBuilder.buildConfig(accessType, accessValue, accessValue2));
         restartSecurityBundle();
 
-        httpGet = new HttpGet(String.format("http://localhost:%d/websecurity/api/web-api/status", TestContext.getJettyPort()));
-        addAuthHeader(httpGet, "motech", "motech");
+        HttpUriRequest request = null;
 
-        response = httpClient.execute(httpGet);
+        switch (accessValue) {
+            case "POST" : request = new HttpPost(String.format(QUERY_URL, TestContext.getJettyPort())); break;
+            default : request = new HttpGet(String.format(QUERY_URL, TestContext.getJettyPort()));
+        }
+        
+        addAuthHeader(request, username, password);
+
+        HttpResponse response = httpClient.execute(request);
 
         assertNotNull(response);
-        assertEquals(HttpStatus.SC_FORBIDDEN, response.getStatusLine().getStatusCode());
-
+        assertEquals(expectedResponseStatus, response.getStatusLine().getStatusCode());
     }
 
     public void testWebSecurityServices() throws Exception {
@@ -100,7 +126,7 @@ public class WebSecurityBundleIT extends BaseOsgiIT {
 
     public void testUpdatingProxy() throws InterruptedException, BundleException, IOException, ClassNotFoundException {
 
-        MotechSecurityConfiguration config = SecurityTestConfigBuilder.buildConfig("noSecurity");
+        MotechSecurityConfiguration config = SecurityTestConfigBuilder.buildConfig("noSecurity", null, null);
         updateSecurity(config);
 
         restartSecurityBundle();
@@ -108,7 +134,7 @@ public class WebSecurityBundleIT extends BaseOsgiIT {
         MotechProxyManager manager = getProxyManager();
         assertTrue(manager.getFilterChainProxy().getFilterChains().size() == 1);
 
-        MotechSecurityConfiguration updatedConfig = SecurityTestConfigBuilder.buildConfig("userAccess");
+        MotechSecurityConfiguration updatedConfig = SecurityTestConfigBuilder.buildConfig("loginAccess", null, null);
         updateSecurity(updatedConfig);
 
         restartSecurityBundle();
@@ -140,8 +166,8 @@ public class WebSecurityBundleIT extends BaseOsgiIT {
         return serviceReference;
     }
 
-    private void addAuthHeader(HttpGet httpGet, String userName, String password) {
-        httpGet.addHeader("Authorization", "Basic " + new String(Base64.encodeBase64((userName + ":" + password).getBytes())));
+    private void addAuthHeader(HttpUriRequest request, String userName, String password) {
+        request.addHeader("Authorization", "Basic " + new String(Base64.encodeBase64((userName + ":" + password).getBytes())));
     }
 
     private Bundle getBundle(String symbolicName) {
@@ -172,6 +198,12 @@ public class WebSecurityBundleIT extends BaseOsgiIT {
         AllMotechSecurityRules allSecurityRules = theContext.getBean(AllMotechSecurityRules.class);
         allSecurityRules.add(config);
     }
+    
+    private void deleteSecurityConfig() throws InterruptedException {
+        WebApplicationContext theContext = getService(WebApplicationContext.class);
+        AllMotechSecurityRules allSecurityRules = theContext.getBean(AllMotechSecurityRules.class);
+        ((AllMotechSecurityRulesCouchdbImpl) allSecurityRules).removeAll();
+    }
 
     private List<MotechURLSecurityRule> getRules() throws InterruptedException {
         WebApplicationContext theContext = getService(WebApplicationContext.class);
@@ -190,5 +222,10 @@ public class WebSecurityBundleIT extends BaseOsgiIT {
         waitForBundleState(securityBundle, RESOLVED);
         securityBundle.start();
         waitForBundleState(securityBundle, ACTIVE);
+    }
+    
+    @After
+    public void removeSecurityConfig() throws InterruptedException {
+        deleteSecurityConfig();
     }
 }

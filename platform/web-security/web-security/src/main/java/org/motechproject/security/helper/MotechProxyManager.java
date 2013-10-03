@@ -46,7 +46,10 @@ public class MotechProxyManager {
         List<SecurityFilterChain> newFilterChains = new ArrayList<SecurityFilterChain>();
 
         for (MotechURLSecurityRule securityRule : allSecurityRules) {
-            newFilterChains.add(securityRuleBuilder.buildSecurityChain(securityRule));
+            for (String method: securityRule.getMethodsRequired()) {
+                newFilterChains.add(securityRuleBuilder.buildSecurityChain(securityRule, method));
+
+            }
         }
 
         proxy = new FilterChainProxy(newFilterChains);
@@ -76,7 +79,10 @@ public class MotechProxyManager {
         List<SecurityFilterChain> newFilterChains = new ArrayList<SecurityFilterChain>();
 
         for (MotechURLSecurityRule securityRule : securityRules) {
-            newFilterChains.add(securityRuleBuilder.buildSecurityChain(securityRule));
+            for (String method: securityRule.getMethodsRequired()) {
+                newFilterChains.add(securityRuleBuilder.buildSecurityChain(securityRule, method));
+
+            }
         }
 
         proxy = new FilterChainProxy(newFilterChains);
