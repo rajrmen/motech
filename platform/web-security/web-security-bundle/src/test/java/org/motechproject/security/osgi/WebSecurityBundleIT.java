@@ -73,7 +73,7 @@ public class WebSecurityBundleIT extends BaseOsgiIT {
     public void testMethodSpecificSecurity() throws InterruptedException, IOException, BundleException {
         dynamicSecurity("motech", "motech", "methodSpecific", "GET", "fakePermission", HttpStatus.SC_FORBIDDEN);
         dynamicSecurity("motech", "motech", "methodSpecific", "POST", "fakePermission", HttpStatus.SC_FORBIDDEN);
-        dynamicSecurity("motech", "motech", "methodSpecific", "POST", "stopBundle", HttpStatus.SC_OK);
+        dynamicSecurity("motech", "motech", "methodSpecific", "POST", "stopBundle", HttpStatus.SC_OK);        
     }
 
     private void dynamicSecurity(String username, String password, String accessType, String accessValue, String accessValue2, int expectedResponseStatus) throws InterruptedException, IOException, BundleException {
