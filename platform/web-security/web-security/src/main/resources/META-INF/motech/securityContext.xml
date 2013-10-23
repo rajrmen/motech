@@ -30,6 +30,8 @@
 under different authorization schemes.  i.e. no security, api key, etc. -->
     <security:http pattern="/**/commcare/**" security="none"/>
 
+    <security:http pattern="/**/sms/**" security="none"/>
+
     <!-- ICAPPR project uses callbacks from Verboice that don't support security, should be removed once new web security is in -->
     <security:http pattern="/**/icappr/**" security="none"/>
 
