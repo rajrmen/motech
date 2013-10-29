@@ -24,17 +24,37 @@
     </c:if>
 </head>
 
-<body ng-controller="MasterCtrl"  ng-class="showDashboardLogo.backgroudUpDown()">
-<div class="bodywrap">
+<body ng-controller="MasterCtrl" id="container" ng-class="showDashboardLogo.backgroudUpDown()" class="custom ui-layout-container" layout state="bodyState" ng-init="bodyState = true">
+<span ng-controller="HomeCtrl">
+
+<div class="ui-layout-pane ui-layout-pane-north" id="outer-north">
     <div ng-show="ready" id="content-header" ng-include="'../server/resources/partials/header.html'"></div>
+</div>
 
-    <div id="content" class="container-fluid" ng-controller="HomeCtrl">
-        <div class="row-fluid">
-            <motech-modules></motech-modules>
+<div id="page-loading">Loading...</div>
 
-            <div id="main-content" class="span10">
-                <c:if test="${! empty currentModule}">
-                    <div>
+<div id="outer-south" class="ui-layout-pane ui-layout-pane-south inside"><div ng-show="ready" ng-include="'../server/resources/partials/footer.html'"></div></div>
+
+<div id="outer-west" class="ui-layout-west ui-layout-pane ui-layout-pane-west">
+
+    <div class="ui-layout-content">
+        <motech-modules></motech-modules>
+
+    </div>
+</div>
+
+<div  id="outer-center" class="outer-center ui-layout-pane ui-layout-pane-center ui-layout-container">
+
+    <div id="inner-center" class="inner-center ui-layout-pane ui-layout-pane-center">
+        <div class="">
+            <ul class="breadcrumb" role="navigation">
+                <li><a role="menu" href=".">{{msg('server.home')}}</a><span class="divider">/</span></li>
+            </ul>
+        </div>
+        <div class="ui-widget-content">
+            <div class="row-fluid">
+                <div id="main-content" class="span12">
+                    <c:if test="${! empty currentModule}">
                         <div class="splash" ng-hide="ready">
                             <div class="splash-logo"></div>
                             <div class="clearfix"></div>
@@ -53,15 +73,28 @@
                                 loadModule('${currentModule.url}', ${currentModule.angularModulesStr});
                             </script>
                         </div>
-                    </div>
-                </c:if>
+                    </c:if>
+                </div>
             </div>
-
         </div>
     </div>
 
-    <div ng-show="ready" ng-include="'../server/resources/partials/footer.html'"></div>
+    <div id="inner-east" class="inner-east ui-layout-pane ui-layout-pane-east">
+        <div class="ui-layout-center ui-layout-pane ui-layout-pane-center">
+            <div class="ui-widget-content">
+            </div>
+        </div>
+    </div>
 
-</div>
+</div><!-- /#tabpanels -->
+
+<div class="ui-layout-resizer ui-layout-resizer-north ui-layout-resizer-open ui-layout-resizer-north-open" id="tabbuttons-resizer"></div>
+</div><!-- /#outer-center -->
+
+
+<div class="ui-layout-resizer ui-layout-resizer-north ui-layout-resizer-open ui-layout-resizer-north-open" id="outer-north-resizer"></div>
+
+<div class="ui-layout-resizer ui-layout-resizer-south ui-layout-resizer-open ui-layout-resizer-south-open" id="outer-south-resizer"></div>
+</span>
 </body>
 </html>

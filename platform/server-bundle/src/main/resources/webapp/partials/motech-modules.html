@@ -1,8 +1,9 @@
-<div id="side-nav" class="span2" ng-show="ready">
-    <ul class="nav nav-tabs nav-stacked modulesWithSubMenu" ng-repeat="section in moduleMenu.sections">
-        <li class="nav-header">
+<div class="row-fluid">
+<div id="side-nav" class="span12" ng-show="ready">
+    <ul id="{{section.name}}" ng-class="changeName('{{section.name}}')" class="nav nav-tabs nav-stacked modulesWithSubMenu" ng-repeat="section in moduleMenu.sections">
+        <!--<li class="nav-header">
             {{msg(section.name)}}
-        </li>
+        </li>-->
         <li ng-repeat="link in section.links" ng-class="{active: isActiveLink(link)}">
             <a ng-href="?moduleName={{link.moduleName}}{{link.url}}" ng-click="setActiveLink(link)">
                 <i ui-if="link.needsAttention" class="icon icon-exclamation-sign icon-red"></i>
@@ -10,4 +11,5 @@
             </a>
         </li>
     </ul>
+</div>
 </div>

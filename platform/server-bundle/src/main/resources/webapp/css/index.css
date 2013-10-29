@@ -77,24 +77,26 @@ h1, h2, h3, h4, h5, h6 {
 #footer {
     width: 100%;
     height: 22px;
-    padding: 5px 0;
-    border-top: 1px solid #D4E1F9;
-    background: #e4f1f9;
-    position: absolute;
-    bottom: 0;
-    left: 0;
+    padding: 0;
     display: block;
-    opacity: 0.8;
     z-index: 990;
 }
 
 .dashboard-logo {
     width:320px;
-    height:70px;
+    height:50px;
     display:block;
     float:left;
-    margin: 0 5px 0 0;
-    background: #fff url("../img/motech-logo.jpg") no-repeat;
+    margin: 5px 20px;
+}
+.logo {
+    background: #fff;
+    height: 50px;
+    margin: 0;
+}
+
+.logo img {
+    max-width: 100%;
 }
 
 .header-title {
@@ -102,7 +104,7 @@ h1, h2, h3, h4, h5, h6 {
     height:28px;
     display:block;
     float:left;
-    margin: 40px 0 0 8%;
+    margin: 30px 0 0 8%;
     background: #fff;
     color:#224477;
     text-weight:400;
@@ -277,7 +279,7 @@ form.inside {
 }
 
 .nav-tabs > li > a {
-    line-height: 14px;
+    .line-height: 14px;
 }
 
 .nav > li > a:hover {
@@ -406,13 +408,7 @@ select {
 
 .tab-frame {
     margin: 0;
-    border: 1px solid #D4E1F9;
-    border-radius: 4px 4px 4px 4px;
     padding: 0;
-    background: #dbedf7 url("../img/frame-bg.jpg") repeat-x 0 0;
-    -webkit-box-shadow: 0 1px 2px #bec9de;
-       -moz-box-shadow: 0 1px 2px #bec9de;
-            box-shadow: 0 1px 2px #bec9de;
 }
 
 .frame-title {
@@ -1037,4 +1033,121 @@ a, li a {
 
 .badge-unknown {
     background-color: #C09853;
+}
+/*override index css */
+.nav-tabs {
+    background-color: #E4F1F9;
+    border-bottom: 1px solid #E4F1F9;
+    padding-top: 0px;
+}
+.nav-tabs > li > a {
+    color: #0098EA;
+    border-radius: 0;
+}
+.nav-tabs > .active > a,
+.nav-tabs > .active > a:hover,
+.nav-tabs > li > a:hover,
+.nav-tabs > .active > a:focus {
+    border: 1px solid #F6FBFF;
+    background: #F6FBFF;
+    color:#05346D;
+    border-top: 1px solid #F6FBFF;
+}
+.nav-tabs > li > a:hover,
+.nav-tabs > li > a:focus {
+    background: #F6FBFF;
+    color: #0098EA;
+}
+.custom .nav-tabs.nav-stacked {
+    margin: 0;
+    padding-top: 0;
+}
+.nav-tabs.nav-stacked > li > a {
+    background: #E4F1F9;
+    border: 1px solid #D4E1F9;
+    border-radius: 0;
+    text-transform: capitalize;
+}
+.nav-tabs.nav-stacked > li:first-child > a {
+    border-radius: 0;
+}
+.nav-tabs.nav-stacked > li:last-child > a,
+.nav-tabs.nav-stacked > li:last-child,
+.nav-tabs.nav-stacked > li {
+    border-radius: 0;
+}
+.nav-tabs.nav-stacked > .active > a,
+.nav-tabs.nav-stacked > .active > a:focus {
+    border: 1px solid #F6FBFF;
+    background: #F6FBFF;
+    color:#05346D;
+    border-top: 1px solid #0098EA;
+}
+.nav-tabs.nav-stacked li {
+    box-shadow: none;
+}
+#outer-north {
+    overflow: visible;
+}
+#outer-west {
+    background: #E4F1F9;
+}
+#inner-east {
+    padding: 35px 5px;
+    background: #F6FBFF;
+}
+#inner-east-resizer {
+    background: #F6FBFF;
+}
+#outer-west-resizer.ui-layout-resizer-west-closed,
+#inner-east-resizer.ui-layout-resizer-east-closed {
+    background: #E4F1F9;
+    border-right: 1px solid #D4E1F9;
+}
+#outer-west-toggler, #inner-east-toggler {
+    background: #ADE0FB;
+}
+span.button-close-west, #west-closer {
+    background: rgba(0, 255, 222, 1);
+}
+span.button-close-west, #west-closer {
+    left: 0;
+}
+span.button-pin, span.button-close, #west-closer {
+    cursor: pointer;
+    display: block;
+    height: 20px;
+    position: absolute;
+    top: 0;
+    width: 20px;
+    z-index: 99222;
+}
+.content {
+    overflow: auto;
+    padding: 10px;
+    position: relative;
+}
+.custom #tabbuttons li.active a {
+    background: #BCDEF7;
+    color: #05346D;
+    box-shadow: 0 2px 2px rgba(055, 055, 055, 0.5) inset;
+}
+
+#inner-center {
+    overflow: hidden;
+    position: relative;
+}
+
+/*override jquery css */
+
+.ui-widget-content a {
+    color: #333;
+}
+.ui-widget-content a.btn-warning,
+.ui-widget-content a.btn-danger,
+.ui-widget-content a.btn-success,
+.ui-widget-content a.btn-primary,
+.ui-widget-content a.btn-info,
+.ui-widget-content a.btn-inverse {
+    color: #fff;
 }

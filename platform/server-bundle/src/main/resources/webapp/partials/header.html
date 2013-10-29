@@ -1,12 +1,17 @@
 <div class="header">
     <div class="container-fluid">
-        <a href="."><div class="dashboard-logo" ng-show="showDashboardLogo.showDashboard"></div></a>
+        <a href="."><div class="dashboard-logo" ng-show="showDashboardLogo.showDashboard"><img class="logo" alt="Logo - {{msg('server.motechTitle')}}" src="../server/resources/img/motech-logo.jpg"></div></a>
         <div class="header-title" ng-show="showDashboardLogo.showDashboard">{{msg('server.motechTitle')}}</div>
+        <!--<button onclick="outerLayout.show('east',true)">Open #4</button>
+        <button onclick="$(this).closest('.ui-layout-pane').trigger('layoutpaneclose')">Close Me</button>
+        <button class="ui-layout-button-toggle-west ui-layout-button-toggle" layoutname="pageLayout">+/-</button>
+        <div class='btn' onclick="pageLayout.close('west')" >&lt;&lt; </div>
+        <button onclick="pageLayout.toggle('west')">Toggle West Pane</button>
+        <button onclick="toggleAll()">Toggle All Panes</button>-->
     </div>
 </div>
 <div class="clearfix"></div>
-
-<div class="header-nav navbar">
+<div class="header-nav navbar" overflow-change-panel>
     <div class="navbar-inner navbar-inverse navbar-inner-bg">
         <div class="container-fluid">
             <a class="btn btn-navbar btn-blue" data-toggle="collapse" data-target=".nav-collapse">
@@ -19,20 +24,29 @@
             <div class="nav-collapse">
                 <ul class="nav" role="navigation">
                     <li class="divider-vertical" ng-hide="showDashboardLogo.showDashboard" ></li>
-                    <li class="current"><a role="menu" href=".">{{msg('server.home')}}</a></li>
-                    <li class="divider-vertical divider-vertical-sub"></li>
-                    <li><a role="menu">{{msg('server.motech')}} {{msg('server.project')}}</a></li>
-                    <li class="divider-vertical divider-vertical-sub"></li>
-                    <li><a role="menu">{{msg('server.community')}}</a></li>
                 </ul>
-                <a id="minimize" class="btn btn-mini btn-blue" ng-click="minimizeHeader()">
-                    <img src="resources/img/trans.gif" title="{{msg(showDashboardLogo.changeTitle())}}"
-                         alt="{{msg(showDashboardLogo.changeTitle())}}"
-                         ng-class="showDashboardLogo.changeClass()"/>
-                </a>
-                <ul class="nav pull-right menu-left">
+                <ul role="tablist" id="tabbuttons" class="nav tabbuttons"  elementactive>
+                    <li><a role="menu" class="tab1" href="#servermodules">{{msg('server.modules')}}</a></li>
+                    <li><a role="menu" class="tab2" href="#adminmodule">{{msg('admin.module')}}</a></li>
+                    <li><a role="menu" class="tab3" href="#websecurity">{{msg('websecurity')}}</a></li>
+                </ul>
 
-                    <li class="dropdown">
+               <!-- <ul role="tablist" id="tabbuttons" class="ui-layout-pane ui-layout-pane-north ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-sortable">
+                    <li tabindex="0" role="tab" class="tab1 ui-state-default ui-tabs-active ui-state-active"><a id="ui-id-1" tabindex="0" class="ui-tabs-anchor" href="#tab1">Modules</a></li>
+                    <li tabindex="-1" role="tab" class="tab2 ui-state-default"><a id="ui-id-2" tabindex="-1" class="ui-tabs-anchor" href="#tab1">Admin</a></li>
+                    <li tabindex="-1" role="tab" class="tab3 ui-state-default"><a id="ui-id-3" tabindex="-1" class="ui-tabs-anchor" href="#tab1">Security</a></li>
+
+                </ul>-->
+                <ul class="nav pull-right menu-left">
+                    <li class="divider-vertical divider-vertical-sub"></li>
+                    <li><a id="minimize" class="btn btn-mini btn-blue" ng-click="minimizeHeader()">
+                        <img src="resources/img/trans.gif" title="{{msg(showDashboardLogo.changeTitle())}}"
+                             alt="{{msg(showDashboardLogo.changeTitle())}}"
+                             ng-class="showDashboardLogo.changeClass()"/>
+                        </a>
+                    </li>
+                    <li class="divider-vertical divider-vertical-sub"></li>
+                    <li class="dropdown overflowChange">
                         <a class="dropdown-toggle" href="#" data-toggle="dropdown">
                             <span>{{msg('server.loggedAs')}} <strong>{{ user.userName }}</strong><strong class="caret"></strong></span>
                         </a>

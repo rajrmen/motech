@@ -22,6 +22,7 @@
         $scope.pagedItems = [];
         $scope.currentPage = 0;
         $scope.config = {};
+        $scope.bodyState = true;
 
         $scope.showDashboardLogo = {
             showDashboard : true,
@@ -33,6 +34,9 @@
             },
             backgroudUpDown : function () {
                 return this.showDashboard ? "body-down" : "body-up";
+            },
+            changeHeight : function () {
+                return this.showDashboard ? "101" : "40";
             }
         };
 
@@ -67,6 +71,10 @@
                 key: locale.toString() || "en",
                 value: $scope.languages[locale.toString()] || $scope.languages[locale.withoutVariant()] || $scope.languages[locale.language] || "English"
             };
+        };
+
+        $scope.changeName = function (name) {
+            return name.replace('.', "");
         };
 
         $scope.minimizeHeader = function () {
@@ -182,6 +190,9 @@
 
         if ($cookieStore.get("showDashboardLogo") !== undefined) {
            $scope.showDashboardLogo.showDashboard=$cookieStore.get("showDashboardLogo");
+        }
+        if ($cookieStore.get("activeSection") !== undefined) {
+           $scope.activeSection=$cookieStore.get("activeSection");
         }
 
         $q.all([
