@@ -23,11 +23,13 @@
         $scope.currentPage = 0;
         $scope.config = {};
         $scope.bodyState = true;
+        $scope.outerLayout = {};
+        $scope.innerLayout = {};
 
         $scope.showDashboardLogo = {
             showDashboard : true,
             changeClass : function () {
-                return this.showDashboard ? "minimize action-minimize-up" : "minimize action-minimize-down";
+                return this.showDashboard ? "minimize icon-white icon-caret-up" : "minimize icon-white icon-caret-down";
             },
             changeTitle : function () {
                 return this.showDashboard ? "server.minimizeLogo" : "server.expandLogo";
@@ -36,7 +38,7 @@
                 return this.showDashboard ? "body-down" : "body-up";
             },
             changeHeight : function () {
-                return this.showDashboard ? "101" : "40";
+                return this.showDashboard ? "100" : "40";
             }
         };
 
@@ -79,6 +81,7 @@
 
         $scope.minimizeHeader = function () {
             $scope.showDashboardLogo.showDashboard = !$scope.showDashboardLogo.showDashboard;
+            $scope.outerLayout.sizePane('north', $scope.showDashboardLogo.changeHeight());
             $cookieStore.put("showDashboardLogo", $scope.showDashboardLogo.showDashboard);
         };
 

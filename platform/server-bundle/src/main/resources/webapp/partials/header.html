@@ -2,82 +2,62 @@
     <div class="container-fluid">
         <a href="."><div class="dashboard-logo" ng-show="showDashboardLogo.showDashboard"><img class="logo" alt="Logo - {{msg('server.motechTitle')}}" src="../server/resources/img/motech-logo.jpg"></div></a>
         <div class="header-title" ng-show="showDashboardLogo.showDashboard">{{msg('server.motechTitle')}}</div>
-        <!--<button onclick="outerLayout.show('east',true)">Open #4</button>
-        <button onclick="$(this).closest('.ui-layout-pane').trigger('layoutpaneclose')">Close Me</button>
-        <button class="ui-layout-button-toggle-west ui-layout-button-toggle" layoutname="pageLayout">+/-</button>
-        <div class='btn' onclick="pageLayout.close('west')" >&lt;&lt; </div>
-        <button onclick="pageLayout.toggle('west')">Toggle West Pane</button>
-        <button onclick="toggleAll()">Toggle All Panes</button>-->
     </div>
 </div>
 <div class="clearfix"></div>
 <div class="header-nav navbar" overflow-change-panel>
     <div class="navbar-inner navbar-inverse navbar-inner-bg">
         <div class="container-fluid">
-            <a class="btn btn-navbar btn-blue" data-toggle="collapse" data-target=".nav-collapse">
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </a>
             <a id="brand" class="brand" ng-hide="showDashboardLogo.showDashboard" href=".">MOTECH</a>
 
-            <div class="nav-collapse">
-                <ul class="nav" role="navigation">
-                    <li class="divider-vertical" ng-hide="showDashboardLogo.showDashboard" ></li>
-                </ul>
-                <ul role="tablist" id="tabbuttons" class="nav tabbuttons"  elementactive>
-                    <li><a role="menu" class="tab1" href="#servermodules">{{msg('server.modules')}}</a></li>
-                    <li><a role="menu" class="tab2" href="#adminmodule">{{msg('admin.module')}}</a></li>
-                    <li><a role="menu" class="tab3" href="#websecurity">{{msg('websecurity')}}</a></li>
-                </ul>
-
-               <!-- <ul role="tablist" id="tabbuttons" class="ui-layout-pane ui-layout-pane-north ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-sortable">
-                    <li tabindex="0" role="tab" class="tab1 ui-state-default ui-tabs-active ui-state-active"><a id="ui-id-1" tabindex="0" class="ui-tabs-anchor" href="#tab1">Modules</a></li>
-                    <li tabindex="-1" role="tab" class="tab2 ui-state-default"><a id="ui-id-2" tabindex="-1" class="ui-tabs-anchor" href="#tab1">Admin</a></li>
-                    <li tabindex="-1" role="tab" class="tab3 ui-state-default"><a id="ui-id-3" tabindex="-1" class="ui-tabs-anchor" href="#tab1">Security</a></li>
-
-                </ul>-->
-                <ul class="nav pull-right menu-left">
-                    <li class="divider-vertical divider-vertical-sub"></li>
-                    <li><a id="minimize" class="btn btn-mini btn-blue" ng-click="minimizeHeader()">
-                        <img src="resources/img/trans.gif" title="{{msg(showDashboardLogo.changeTitle())}}"
-                             alt="{{msg(showDashboardLogo.changeTitle())}}"
-                             ng-class="showDashboardLogo.changeClass()"/>
-                        </a>
-                    </li>
-                    <li class="divider-vertical divider-vertical-sub"></li>
-                    <li class="dropdown overflowChange">
-                        <a class="dropdown-toggle" href="#" data-toggle="dropdown">
-                            <span>{{msg('server.loggedAs')}} <strong>{{ user.userName }}</strong><strong class="caret"></strong></span>
-                        </a>
-                        <ul id="localization" class="dropdown-menu" role="menu">
-                            <li ui-if="user.securityLaunch">
-                                <a href="#/websecurity/profile/{{user.userName}}" tabindex="-1">
-                                    <i class="icon-user"></i> {{msg('server.profile')}}
-                                </a>
-                            </li>
-                            <li ui-if="user.securityLaunch" class="divider"></li>
-                            <li class="dropdown-submenu pull-left">
-                                <a class="menu-flag dropdown-toggle" tabindex="-1" data-toggle="dropdown" href="#">
-                                    <i class="flag flag-{{userLang.key}}" title="{{userLang.key}}" alt="{{userLang.key}}"></i>
-                                    <span class="text-capitalize">{{languages[userLang.key]}}</span>
-                                </a>
-                                <ul class="dropdown-menu">
-                                    <li ng-repeat="(key, value) in languages">
-                                        <a ng-click="setUserLang(key)"><i class="flag flag-{{key}}"></i> {{value}}</a>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li ui-if="user.securityLaunch" class="divider"></li>
-                            <li ui-if="user.securityLaunch">
-                                <a href="{{contextPath}}j_spring_security_logout" class="">
-                                    <i class="icon-off"></i> {{msg('server.signOut')}}
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-                </ul>
-            </div>
+            <ul class="nav" role="navigation">
+                <li class="divider-vertical" ng-hide="showDashboardLogo.showDashboard" ></li>
+            </ul>
+            <ul role="tablist" id="tabbuttons" class="nav tabbuttons"  elementactive>
+                <li><a role="menu" class="tab1" href="#servermodules">{{msg('server.modules')}}</a></li>
+                <li><a role="menu" class="tab2" href="#adminmodule">{{msg('admin.module')}}</a></li>
+                <li><a role="menu" class="tab3" href="#websecurity">{{msg('websecurity')}}</a></li>
+            </ul>
+            <ul id="tabbuttons-right" class="nav pull-right menu-left">
+                <li class="divider-vertical divider-vertical-sub"></li>
+                <li><a id="minimize" class="btn btn-mini btn-blue" ng-click="minimizeHeader()">
+                    <i title="{{msg(showDashboardLogo.changeTitle())}}"
+                         alt="{{msg(showDashboardLogo.changeTitle())}}"
+                         ng-class="showDashboardLogo.changeClass()"></i>
+                </a>
+                </li>
+                <li class="divider-vertical divider-vertical-sub"></li>
+                <li class="dropdown overflowChange">
+                    <a class="dropdown-toggle" href="#" data-toggle="dropdown">
+                        <span>{{msg('server.loggedAs')}} <strong>{{ user.userName }}</strong><strong class="caret"></strong></span>
+                    </a>
+                    <ul id="localization" class="dropdown-menu" role="menu">
+                        <li ui-if="user.securityLaunch">
+                            <a href="#/websecurity/profile/{{user.userName}}" tabindex="-1">
+                                <i class="icon-user"></i> {{msg('server.profile')}}
+                            </a>
+                        </li>
+                        <li ui-if="user.securityLaunch" class="divider"></li>
+                        <li class="dropdown-submenu pull-left">
+                            <a class="menu-flag dropdown-toggle" tabindex="-1" data-toggle="dropdown" href="#">
+                                <i class="flag flag-{{userLang.key}}" title="{{userLang.key}}" alt="{{userLang.key}}"></i>
+                                <span class="text-capitalize">{{languages[userLang.key]}}</span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li ng-repeat="(key, value) in languages">
+                                    <a ng-click="setUserLang(key)"><i class="flag flag-{{key}}"></i> {{value}}</a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li ui-if="user.securityLaunch" class="divider"></li>
+                        <li ui-if="user.securityLaunch">
+                            <a href="{{contextPath}}j_spring_security_logout" class="">
+                                <i class="icon-off"></i> {{msg('server.signOut')}}
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
         </div>
     </div>
 </div>

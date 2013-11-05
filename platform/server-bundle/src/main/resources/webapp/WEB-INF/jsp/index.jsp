@@ -33,17 +33,19 @@
 
 <div id="page-loading">Loading...</div>
 
-<div id="outer-south" class="ui-layout-pane ui-layout-pane-south inside"><div ng-show="ready" ng-include="'../server/resources/partials/footer.html'"></div></div>
+<div ng-show="ready" id="outer-south" class="ui-layout-pane ui-layout-pane-south inside">
+    <span id="tbarCloseSouth" class="southpane-open pull-right" title="Close This Pane"><i class="icon-caret-down button"></i></span>
+    <div ng-include="'../server/resources/partials/footer.html'"></div>
+</div>
 
 <div id="outer-west" class="ui-layout-west ui-layout-pane ui-layout-pane-west">
-
     <div class="ui-layout-content">
         <motech-modules></motech-modules>
 
     </div>
 </div>
 
-<div  id="outer-center" class="outer-center ui-layout-pane ui-layout-pane-center ui-layout-container">
+<div innerlayout id="outer-center" class="outer-center ui-layout-pane ui-layout-pane-center ui-layout-container">
 
     <div id="inner-center" class="inner-center ui-layout-pane ui-layout-pane-center">
         <div class="">
@@ -51,7 +53,7 @@
                 <li><a role="menu" href=".">{{msg('server.home')}}</a><span class="divider">/</span></li>
             </ul>
         </div>
-        <div class="ui-widget-content">
+        <div class="ui-widget-content last">
             <div class="row-fluid">
                 <div id="main-content" class="span12">
                     <c:if test="${! empty currentModule}">
@@ -86,8 +88,10 @@
         </div>
     </div>
 
-</div><!-- /#tabpanels -->
-
+</div><!-- #outer-center-->
+<div id="southpane-closed" class="header-toolbar">
+    <span id="tbarOpenSouth2"><i class="icon-caret-up button"></i></span>
+</div>
 <div class="ui-layout-resizer ui-layout-resizer-north ui-layout-resizer-open ui-layout-resizer-north-open" id="tabbuttons-resizer"></div>
 </div><!-- /#outer-center -->
 

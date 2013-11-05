@@ -92,7 +92,7 @@ body {
     padding: .5em 1em;
 }
 #outer-west {
-    padding: 35px 0;
+    padding: 0;
     background: #F6FBFF;
     color: #05346D;
     overflow: auto;
@@ -130,17 +130,8 @@ body.custom ,
     color: #05346D;
 }
 
-.toolbar {
-    overflow: hidden;
-}
-.custom .toolbar {
-    background: #666;
-    color: #FFF !important;
-    font-weight: bold;
-    padding: 6px 2em;
-}
 .custom .breadcrumb {
-    background: #F6FBFF;
+    background: #E4F1F9;
     border-radius: 0;
     list-style: none;
     margin: 0;
