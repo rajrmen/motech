@@ -1,9 +1,12 @@
 package org.motechproject.config.service;
 
 import org.motechproject.config.domain.BootstrapConfig;
+import org.motechproject.config.domain.ConfigSource;
 import org.motechproject.server.config.domain.MotechSettings;
 import org.springframework.cache.annotation.CacheEvict;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.Properties;
 
 /**
@@ -85,4 +88,17 @@ public interface ConfigurationService {
 
     @CacheEvict(value = SETTINGS_CACHE_NAME, allEntries = true)
     void savePlatformSettings(MotechSettings settings);
+
+    /**
+     * <p>
+     *     Uses current configuration and default one to find changed properties and then connects them with annotations.
+     *     Moreover creates file with non default configurations and packs is into the zip file.
+     * </p>
+     * @param propertyFile name of exported file
+     * @return FileInputStream that contains zip file
+     * @throws IOException
+     */
+    FileInputStream createZipWithConfigFiles(String propertyFile, String fileName) throws IOException;
+
+    ConfigSource getConfigSource();
 }

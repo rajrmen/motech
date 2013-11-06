@@ -1,11 +1,13 @@
 package org.motechproject.admin.service.impl;
 
 import org.apache.commons.io.IOUtils;
+import org.motechproject.admin.domain.AdminSettings;
 import org.motechproject.admin.service.SettingsService;
 import org.motechproject.admin.settings.ParamParser;
 import org.motechproject.admin.settings.Settings;
 import org.motechproject.admin.settings.SettingsOption;
 import org.motechproject.commons.api.MotechException;
+import org.motechproject.config.domain.ConfigSource;
 import org.motechproject.config.service.ConfigurationService;
 import org.motechproject.server.config.service.PlatformSettingsService;
 import org.motechproject.server.config.domain.MotechSettings;
@@ -44,9 +46,10 @@ public class SettingsServiceImpl implements SettingsService {
     private BundleContext bundleContext;
 
     @Override
-    public List<Settings> getSettings() {
+    public AdminSettings getSettings() {
         MotechSettings motechSettings = configurationService.getPlatformSettings();
         List<Settings> settingsList = new ArrayList<>();
+        AdminSettings adminSettings = new AdminSettings(settingsList, false);
 
         if (motechSettings != null) {
             Properties activemqProperties = motechSettings.getActivemqProperties();
@@ -66,8 +69,13 @@ public class SettingsServiceImpl implements SettingsService {
 
             Settings miscSettings = new Settings("other", miscOptions);
             settingsList.add(miscSettings);
+            if (ConfigSource.FILE.equals(configurationService.getConfigSource())) {
+                adminSettings = new AdminSettings(settingsList, true);
+            } else {
+                adminSettings = new AdminSettings(settingsList, false);
+            }
         }
-        return settingsList;
+        return adminSettings;
     }
 
     @Override
@@ -93,6 +101,11 @@ public class SettingsServiceImpl implements SettingsService {
         } catch (IOException e) {
             throw new MotechException("Error while saving bundle settings", e);
         }
+    }
+
+    @Override
+    public InputStream exportConfig(String fileName) throws IOException {
+        return configurationService.createZipWithConfigFiles(MotechSettings.SETTINGS_FILE_NAME, fileName);
     }
 
     @Override
