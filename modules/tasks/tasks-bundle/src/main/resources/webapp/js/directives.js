@@ -1014,31 +1014,31 @@
     });
 
     widgetModule.directive('triggerPopover', function () {
-           return {
-               restrict: 'A',
-               link: function (scope, element, attrs) {
-                    angular.element(element).popover({
-                        placement: 'right',
-                        trigger: 'hover',
-                        html: true,
-                        content: function () {
-                            var html = angular.element('<div style="text-align: left" />'),
-                                div = angular.element('<div />'),
-                                img = angular.element('<img />'),
-                                name = angular.element('<span style="margin-left: 5px" />');
+        return {
+            restrict: 'A',
+            link: function (scope, element, attrs) {
+                angular.element(element).popover({
+                    placement: 'right',
+                    trigger: 'hover',
+                    html: true,
+                    content: function () {
+                        var html = angular.element('<div style="text-align: left" />'),
+                            div = angular.element('<div />'),
+                            img = angular.element('<img />'),
+                            name = angular.element('<span style="margin-left: 5px" />');
 
-                            img.attr('src', '../tasks/api/channel/icon?moduleName=' + scope.item.task.trigger.moduleName);
-                            img.addClass('task-list-img');
-                            name.text(scope.msg(scope.item.task.trigger.channelName) + ": " + scope.msg(scope.item.task.trigger.displayName));
-                            div.append(img);
-                            div.append(name);
-                            html.append(div);
+                        img.attr('src', '../tasks/api/channel/icon?moduleName=' + scope.item.task.trigger.moduleName);
+                        img.addClass('task-list-img');
+                        name.text(scope.msg(scope.item.task.trigger.channelName) + ": " + scope.msg(scope.item.task.trigger.displayName));
+                        div.append(img);
+                        div.append(name);
+                        html.append(div);
 
-                            return html;
-                        }
-                    });
-               }
-           };
-        });
+                        return html;
+                    }
+                });
+            }
+        };
+    });
 
 }());

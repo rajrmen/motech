@@ -1,12 +1,22 @@
-<div class="tabbable"> <!-- Only required for left/right tabs -->
-    <ul id="content-tabs" class="nav nav-tabs tasks">
+<div id="inner-center" class="tasks inner-center ui-layout-center ui-tabs ui-layout-pane ui-layout-pane-center">
+    <ul class="breadcrumb header-footer" role="navigation">
+        <li><a role="menu" href=".">{{msg('server.home')}}</a><span class="divider">/</span></li>
+    </ul>
+    <!-- Only required for left/right tabs &ndash;&gt;-->
+    <ul id="content-tabs" class="ui-tabs-nav nav nav-tabs tasks ui-tabs-nav ui-helper-reset ui-helper-clearfix ">
         <li ng-class="active('#/dashboard')"><a  href="#/dashboard">{{msg('task.tab')}}</a></li>
         <li ng-class="active('#/settings')"><a  href="#/settings">{{msg('task.tab.settings')}}</a></li>
     </ul>
+    <div id="main-content" class="tab-pane active ui-layout-content layout-scroll">
+        <div ng-view></div>
+    </div>
 
-    <div class="tab-content tasks" id="tab-content">
-        <div id="main-content" class="tab-pane active" >
-            <div ng-view></div>
-        </div>
+</div>
+<div id="inner-east" class="inner-east ui-layout-pane ui-layout-pane-east">
+    <div class="header-toolbar header-footer"><i id="tbarCloseEast" class="button icon-caret-right pull-right"></i></div>
+    <!------------------------  Recent task activity  ------------------------>
+    <div class="inbox-header">{{msg('task.header.recentTaskActivity')}}</div>
+    <div ng-controller="RecentActivityCtrl" class="ui-layout-content">
+        <div ng-include="" src="'../tasks/partials/recent-task-activity.html'"></div>
     </div>
 </div>

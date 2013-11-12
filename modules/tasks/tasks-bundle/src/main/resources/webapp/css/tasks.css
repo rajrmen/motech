@@ -1,8 +1,6 @@
 .tasks.nav.nav-tabs {
     border-bottom: medium none;
-    margin-bottom: 0;
-    margin-left: 0;
-    margin-right: 10px;
+    margin: 0;
 }
 
 .tab-content {
@@ -500,8 +498,9 @@ editable-content .actionField.input-block-level span.badge {
     border-top: 1px solid #DDDDDD;
 }
 
-.table-recent-activity.table-condensed td {
-    padding: 1px 5px;
+.table-recent-activity.table td {
+    padding: 2px;
+    text-align: center;
 }
 
 .table-recent-activity.centered tbody td {
