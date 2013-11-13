@@ -195,7 +195,6 @@
             $scope.formatInput = [];
 
             $scope.getTasks = function () {
-                $scope.allTasks = [];
 
                 tasks = Tasks.query(function () {
                     activities = Activities.query(function () {
@@ -217,7 +216,6 @@
                                     item.error += 1;
                                 }
                             }
-                            $scope.allTasks.push(item);
                         }
 
                         for (i = 0; i < RECENT_TASK_COUNT && i < activities.length; i += 1) {

@@ -2,13 +2,15 @@
     <ul class="breadcrumb header-footer" role="navigation">
         <li><a role="menu" href=".">{{msg('server.home')}}</a><span class="divider">/</span></li>
     </ul>
-    <div>
+    <div class="ui-layout-content tabbable">
     <ul id="content-tabs" class="ui-tabs-nav nav nav-tabs tasks ui-tabs-nav ui-helper-reset ui-helper-clearfix ">
         <li ng-class="active('#/dashboard')"><a  href="#/dashboard">{{msg('task.tab')}}</a></li>
         <li ng-class="active('#/settings')"><a  href="#/settings">{{msg('task.tab.settings')}}</a></li>
     </ul>
-    <div id="main-content" class="tab-pane active ui-layout-content layout-scroll">
+    <div class="tab-content tasks" id="tab-content">
+    <div id="main-content" class="tab-pane active">
         <div ng-view></div>
+    </div>
     </div>
     </div>
 </div>
