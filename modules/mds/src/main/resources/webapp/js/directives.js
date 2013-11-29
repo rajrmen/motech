@@ -17,12 +17,12 @@
 
                 target.livequery(function () {
                     angular.element(this).on({
-                        show: function () {
+                        'show.bs.collapse': function () {
                             elem.find('i')
                                 .removeClass('icon-chevron-right')
                                 .addClass('icon-chevron-down');
                         },
-                        hide: function () {
+                        'hide.bs.collapse': function () {
                             elem.find('i')
                                 .removeClass('icon-chevron-down')
                                 .addClass('icon-chevron-right');
@@ -30,6 +30,29 @@
                     });
 
                     target.expire();
+                });
+            }
+        };
+    });
+
+    mds.directive('mdsHeaderAccordion', function () {
+        return {
+            restrict: 'A',
+            link: function (scope, element) {
+                var elem = angular.element(element),
+                    target = elem.find(".accordion-content");
+
+                target.on({
+                    show: function () {
+                        elem.find('.accordion-icon')
+                            .removeClass('icon-chevron-right')
+                            .addClass('icon-chevron-down');
+                    },
+                    hide: function () {
+                        elem.find('.accordion-icon')
+                            .removeClass('icon-chevron-down')
+                            .addClass('icon-chevron-right');
+                    }
                 });
             }
         };
@@ -160,4 +183,298 @@
         };
     });
 
+    mds.directive('restFieldsItem', function () {
+        return {
+            restrict: 'A',
+            link: function (scope, element) {
+                var elem = angular.element(element),
+                    group = elem.attr('rest-fields-item');
+
+                elem.click(function() {
+                    $(this).toggleClass("rest-fields-item-selected");
+                });
+
+                elem.dblclick(function() {
+                    var elem = angular.element(element),
+                        id = elem.attr('fieldId'),
+                        order = elem.attr('order'),
+                        item;
+
+                    if (typeof scope.findFieldById(id, scope.selectedEntityAdvancedAvailableFields) === "undefined") {
+                        item = scope.findFieldById(id, scope.selectedEntityAdvancedFields);
+                        scope.selectedEntityAdvancedFields.splice(order, 1);
+                        scope.selectedEntityAdvancedAvailableFields.push(item);
+                    } else {
+                        item = scope.findFieldById(id, scope.selectedEntityAdvancedAvailableFields);
+                        scope.selectedEntityAdvancedAvailableFields.splice(order, 1);
+                        scope.selectedEntityAdvancedFields.push(item);
+                    }
+                    scope.safeApply();
+                });
+
+                elem.disableSelection();
+            }
+        };
+    });
+
+    mds.directive('restFieldsRight', function () {
+        return {
+            restrict: 'A',
+            link: function (scope, element) {
+                var elem = angular.element(element),
+                    selectedItemsSelector = ".rest-fields-item-selected";
+
+                elem.click(function (e) {
+                    var source = $(".rest-fields-available"),
+                        selected = source.children(selectedItemsSelector),
+                        addItems = [], removeItems = [];
+
+                    if (selected.size() !== 0) {
+                        selected.each(function() {
+                            var e = $(this),
+                            id = e.attr('fieldId'),
+                            item = scope.findFieldById(id, scope.selectedEntityAdvancedAvailableFields),
+                            keepGoing = true;
+
+                            $(this).toggleClass("rest-fields-item-selected");
+
+                            angular.forEach(scope.selectedEntityAdvancedAvailableFields, function (field, index) {
+                                if (field.id === id && keepGoing === true) {
+                                    scope.selectedEntityAdvancedAvailableFields.splice(index, 1);
+                                    keepGoing = false;
+                                }
+                            });
+                            scope.selectedEntityAdvancedFields.push(item);
+                        });
+                    }
+                    scope.safeApply();
+                    e.preventDefault();
+                });
+            }
+        };
+    });
+
+    mds.directive('restFieldsLeft', function () {
+        return {
+            restrict: 'A',
+            link: function (scope, element) {
+                var elem = angular.element(element),
+                    selectedItemsSelector = ".rest-fields-item-selected";
+
+                elem.click(function (e) {
+                    var source = $(".rest-fields-selected"),
+                        selected = source.children(selectedItemsSelector),
+                        addItems = [], removeItems = [];
+
+                    if (selected.size() !== 0) {
+                        selected.each(function() {
+                            var e = $(this),
+                            id = e.attr('fieldId'),
+                            item = scope.findFieldById(id, scope.selectedEntityAdvancedFields),
+                            keepGoing = true;
+
+                            $(this).toggleClass("rest-fields-item-selected");
+
+                            angular.forEach(scope.selectedEntityAdvancedFields, function (field, index) {
+                                if (field.id === id && keepGoing === true) {
+                                    scope.selectedEntityAdvancedFields.splice(index, 1);
+                                    keepGoing = false;
+                                }
+                            });
+                            scope.selectedEntityAdvancedAvailableFields.push(item);
+                        });
+                    }
+                    scope.safeApply();
+                    e.preventDefault();
+                });
+            }
+        };
+    });
+
+    /**
+    * Displays entity instances data using jqGrid
+    */
+    mds.directive('entityInstancesGrid', function($compile, $http, $templateCache) {
+        return {
+            restrict: 'A',
+            link: function(scope, element, attrs) {
+                var elem = angular.element(element);
+
+                $.ajax({
+                    type: "GET",
+                    url: "../mds/entities/" + scope.selectedEntity.id + "/fields",
+                    dataType: "json",
+                    success: function(result)
+                    {
+                        var colModel = [], i;
+
+                        for (i=0; i<result.length; i+=1) {
+                            colModel.push({
+                                name: result[i].basic.displayName,
+                                index: result[i].basic.displayName,
+                                jsonmap: "fields." + i + ".value"
+                            });
+                        }
+
+                        elem.jqGrid({
+                            url: "../mds/entities/" + scope.selectedEntity.id + "/instances",
+                            datatype: 'json',
+                            jsonReader:{
+                                repeatitems:false
+                            },
+                            prmNames: {
+                                sort: 'sortColumn',
+                                order: 'sortDirection'
+                            },
+                            shrinkToFit: true,
+                            autowidth: true,
+                            rownumbers: true,
+                            rowNum: 2,
+                            rowList: [2, 5, 10, 20, 50],
+                            colModel: colModel,
+                            pager: '#' + attrs.entityInstancesGrid,
+                            width: '100%',
+                            height: 'auto',
+                            viewrecords: true,
+                            gridComplete: function () {
+                                $('#entityInstancesTable').children('div').width('100%');
+                                $('.ui-jqgrid-htable').addClass('table-lightblue');
+                                $('.ui-jqgrid-btable').addClass("table-lightblue");
+                                $('.ui-jqgrid-htable').addClass('table-lightblue');
+                                $('.ui-jqgrid-bdiv').width('100%');
+                                $('.ui-jqgrid-hdiv').width('100%');
+                                $('.ui-jqgrid-hbox').width('100%');
+                                $('.ui-jqgrid-view').width('100%');
+                                $('#t_resourceTable').width('auto');
+                                $('.ui-jqgrid-pager').width('100%');
+                                $('#entityInstancesTable').children('div').each(function() {
+                                    $('table', this).width('100%');
+                                    $(this).find('#resourceTable').width('100%');
+                                    $(this).find('table').width('100%');
+                               });
+                            }
+                        });
+                    }
+                });
+            }
+        };
+    });
+
+    mds.directive('draggable', function() {
+        return function(scope, element) {
+            var el = element[0];
+
+            el.draggable = true;
+            el.addEventListener(
+                'dragstart',
+                function(e) {
+                    e.dataTransfer.effectAllowed = 'move';
+                    e.dataTransfer.setData('Text', this.attributes.fieldId.value);
+                    this.classList.add('drag');
+                    return false;
+                },
+                false
+            );
+
+            el.addEventListener(
+                'dragend',
+                function(e) {
+                    this.classList.remove('drag');
+                    return false;
+                },
+                false
+            );
+        };
+    });
+
+    mds.directive('draggable', function() {
+        return function(scope, element) {
+            var el = element[0];
+
+            el.draggable = true;
+            el.addEventListener(
+                'dragstart',
+                function(e) {
+                    e.dataTransfer.effectAllowed = 'move';
+                    e.dataTransfer.setData('Text', this.attributes.fieldId.value);
+                    this.classList.add('drag');
+                    return false;
+                },
+                false
+            );
+
+            el.addEventListener(
+                'dragend',
+                function(e) {
+                    this.classList.remove('drag');
+                    return false;
+                },
+                false
+            );
+        };
+    });
+
+    mds.directive('droppable', function() {
+        return {
+            scope: {
+              drop: '&',
+              container: '='
+            },
+            link: function(scope, element) {
+
+                var el = element[0];
+                el.addEventListener(
+                    'dragover',
+                    function(e) {
+                        e.dataTransfer.dropEffect = 'move';
+                        if (e.preventDefault) {
+                            e.preventDefault();
+                        }
+                        this.classList.add('over');
+                        return false;
+                    },
+                    false
+                );
+
+                el.addEventListener(
+                    'dragenter',
+                    function(e) {
+                        this.classList.add('over');
+                        return false;
+                    },
+                    false
+                );
+
+                el.addEventListener(
+                    'dragleave',
+                    function(e) {
+                        this.classList.remove('over');
+                        return false;
+                    },
+                    false
+                );
+
+                el.addEventListener(
+                    'drop',
+                    function(e) {
+                        if (e.stopPropagation) {
+                            e.stopPropagation();
+                        }
+                        var fieldId = e.dataTransfer.getData('Text'),
+                            containerId = this.id;
+
+                        scope.$apply(function(scope) {
+                            var fn = scope.drop();
+                            if ('undefined' !== typeof fn) {
+                                fn(fieldId, containerId);
+                            }
+                        });
+
+                        return false;
+                    },
+                    false
+                );
+            }
+        };
+    });
 }());

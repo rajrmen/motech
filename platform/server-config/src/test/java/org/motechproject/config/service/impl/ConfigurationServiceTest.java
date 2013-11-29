@@ -6,14 +6,17 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.motechproject.config.bootstrap.BootstrapConfigManager;
-import org.motechproject.config.domain.BootstrapConfig;
-import org.motechproject.config.domain.ConfigSource;
-import org.motechproject.config.domain.DBConfig;
+import org.motechproject.config.core.MotechConfigurationException;
+import org.motechproject.config.core.domain.BootstrapConfig;
+import org.motechproject.config.core.domain.ConfigSource;
+import org.motechproject.config.core.domain.DBConfig;
+import org.motechproject.config.core.service.CoreConfigurationService;
+import org.motechproject.config.repository.AllModuleProperties;
 import org.motechproject.config.service.ConfigurationService;
 import org.motechproject.server.config.monitor.ConfigFileMonitor;
 
 import java.io.IOException;
+import java.util.Properties;
 
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNull;
@@ -25,10 +28,13 @@ import static org.mockito.MockitoAnnotations.initMocks;
 
 public class ConfigurationServiceTest {
     @Mock
-    private BootstrapConfigManager bootstrapConfigManager;
+    private CoreConfigurationService coreConfigurationService;
 
     @Mock
     private ConfigFileMonitor configFileMonitor;
+
+    @Mock
+    private AllModuleProperties allModuleProperties;
 
     @InjectMocks
     private ConfigurationService configurationService = new ConfigurationServiceImpl();
@@ -42,7 +48,7 @@ public class ConfigurationServiceTest {
     @Test
     public void shouldLoadBootstrapDBConfiguration() {
         BootstrapConfig expectedConfig = new BootstrapConfig(new DBConfig("http://localhost", null, null), null, null);
-        when(bootstrapConfigManager.loadBootstrapConfig()).thenReturn(expectedConfig);
+        when(coreConfigurationService.loadBootstrapConfig()).thenReturn(expectedConfig);
 
         BootstrapConfig bootstrapConfig = configurationService.loadBootstrapConfig();
         assertNotNull(bootstrapConfig);
@@ -56,16 +62,43 @@ public class ConfigurationServiceTest {
 
         configurationService.save(bootstrapConfig);
 
-        verify(bootstrapConfigManager).saveBootstrapConfig(bootstrapConfig);
+        verify(coreConfigurationService).saveBootstrapConfig(bootstrapConfig);
     }
 
     @Test
     public void shouldNotMonitorConfigFilesIfBootstrapConfigIsNotFound() throws FileSystemException {
-        when(bootstrapConfigManager.loadBootstrapConfig()).thenReturn(null);
+        when(coreConfigurationService.loadBootstrapConfig()).thenThrow(new MotechConfigurationException("File not found"));
 
         BootstrapConfig bootstrapConfig = configurationService.loadBootstrapConfig();
 
         assertNull(bootstrapConfig);
         verify(configFileMonitor, never()).monitor();
+    }
+
+    @Test
+    public void shouldGetModuleProperties() throws java.io.IOException {
+        final Properties defaultProperties = new Properties();
+        defaultProperties.put("apiKey", "123");
+        defaultProperties.put("port", "8000");
+        final String module = "mds";
+        final String filename = "filename";
+        final Properties overriddenProperties = new Properties();
+        overriddenProperties.put("port", "4000");
+        when(allModuleProperties.asProperties(module, filename)).thenReturn(overriddenProperties);
+
+        final Properties moduleProperties = configurationService.getModuleProperties(module, filename, defaultProperties);
+
+        assertThat(moduleProperties.getProperty("apiKey"), IsEqual.equalTo("123"));
+        assertThat(moduleProperties.getProperty("port"), IsEqual.equalTo("4000"));
+    }
+
+    @Test
+    public void shouldGetEmptyPropertiesWhenNoPropertiesAreFound() throws java.io.IOException {
+        final String module = "mds";
+        final String filename = "filename";
+        when(allModuleProperties.asProperties(module, filename)).thenReturn(null);
+
+        final Properties moduleProperties = configurationService.getModuleProperties(module, filename, null);
+        assertNotNull(moduleProperties);
     }
 }

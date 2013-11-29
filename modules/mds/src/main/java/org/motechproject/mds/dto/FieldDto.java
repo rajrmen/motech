@@ -5,6 +5,8 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
+import java.util.Map;
+
 /**
  * The <code>FieldDto</code> class contains information about an existing field in an entity.
  */
@@ -13,18 +15,22 @@ public class FieldDto extends SettingsDto {
     private String entityId;
     private TypeDto type;
     private FieldBasicDto basic;
+    private Map<String, String> metadata;
+    private FieldValidationDto validation;
 
     public FieldDto() {
-        this(null, null, null, null);
+        this(null, null, null, null, null, null);
     }
 
-    public FieldDto(String id, String entityId, TypeDto type, FieldBasicDto basic,
-                    SettingDto... settings) {
+    public FieldDto(String id, String entityId, TypeDto type, FieldBasicDto basic, Map<String, String> metadata,
+                    FieldValidationDto validation, SettingDto... settings) {
         super(settings);
         this.id = id;
         this.entityId = entityId;
         this.type = type;
         this.basic = basic;
+        this.metadata = metadata;
+        this.validation = validation;
     }
 
     public String getId() {
@@ -57,6 +63,22 @@ public class FieldDto extends SettingsDto {
 
     public void setBasic(FieldBasicDto basic) {
         this.basic = basic;
+    }
+
+    public Map getMetadata() {
+        return metadata;
+    }
+
+    public void setMetadata(Map metadata) {
+        this.metadata = metadata;
+    }
+
+    public FieldValidationDto getValidation() {
+        return validation;
+    }
+
+    public void setValidation(FieldValidationDto validation) {
+        this.validation = validation;
     }
 
     /**

@@ -1,15 +1,15 @@
-<div class="row-fluid">
-<div id="side-nav" class="span12" ng-show="ready">
-    <ul id="{{section.name}}" ng-class="changeName('{{section.name}}')" class="nav nav-tabs nav-stacked modulesWithSubMenu" ng-repeat="section in moduleMenu.sections">
-        <!--<li class="nav-header">
-            {{msg(section.name)}}
-        </li>-->
-        <li ng-repeat="link in section.links" ng-class="{active: isActiveLink(link)}">
-            <a ng-href="?moduleName={{link.moduleName}}{{link.url}}" ng-click="setActiveLink(link)">
-                <i ui-if="link.needsAttention" class="icon icon-exclamation-sign icon-red"></i>
-                {{msg(link.name)}}
-            </a>
-        </li>
-    </ul>
-</div>
+<div class="row">
+    <div id="side-nav" class="col-sm-12" ng-show="ready">
+        <ul id="{{section.name}}" ng-class="changeName('{{section.name}}')" class="nav nav-stacked modulesWithSubMenu" ng-repeat="section in moduleMenu.sections">
+            <!--<li class="nav-header text-uppercase">
+                {{msg(section.name)}}
+            </li>-->
+            <li ng-repeat="link in section.links" ng-class="{active: isActiveLink(link)}">
+                <a ng-href="?moduleName={{link.moduleName}}{{link.url}}" ng-click="setActiveLink(link)">
+                    <i ui-if="link.needsAttention" class="icon icon-exclamation-sign icon-red"></i>
+                    {{msg(link.name)}}
+                </a>
+            </li>
+        </ul>
+    </div>
 </div>

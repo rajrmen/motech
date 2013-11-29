@@ -8,7 +8,7 @@
 }
 
 .btn-in-frame-header {
-    margin:-10px 0;
+    margin:-15px -10px;
     font-weight: normal;
 }
 
@@ -35,7 +35,6 @@
 }
 
 #sortable li, #sortable-no li {
-    line-height: 26px;
     height: 26px;
     padding: 2px 6px;
     margin: 2px;
@@ -43,6 +42,7 @@
 
 #sortable-no li {
     height: 28px;
+    margin: 2px 28px;
 }
 
 #sortable li.active {
@@ -90,7 +90,7 @@
 }
 
 #sortable span > span {
-    margin-top: 5px;
+    margin-top: 3px;
 }
 
 .validation-area.error input,
@@ -129,13 +129,17 @@ editable-content .actionField.input-block-level span.badge {
     margin: 0 2px;
 }
 
-.accordion-inner.task-content {
+.panel-body.task-content {
     padding: 0;
     border: none;
     box-shadow: none;
 }
 
-#accordion3 .accordion-inner.task-content {
+.panel {
+     background-color: #deefff;
+}
+
+#accordion3 .panel-body.task-content {
     background: #deefff;
     background: -moz-linear-gradient(top,  #deefff 0%, #98bede 100%);
     background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#deefff), color-stop(100%,#98bede));
@@ -147,7 +151,7 @@ editable-content .actionField.input-block-level span.badge {
 }
 
 .tasks-list .inbox-header.paused,
-#accordion3 .accordion-inner.task-content.paused {
+#accordion3 .panel-body.task-content.paused {
     background: #FCFCFC;
     background: -moz-linear-gradient(top,  #FCFCFC 0%, #ACB7BF 100%);
     background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#FCFCFC), color-stop(100%,#ACB7BF));
@@ -170,7 +174,7 @@ editable-content .actionField.input-block-level span.badge {
     line-height: 40px;
 }
 
-.tasks-list .accordion-body .task-nav > li.divider-vertical {
+.tasks-list .panel-collapse .task-nav > li.divider-vertical {
     border-left: 1px solid #A9CAE6;
     border-right: 1px solid #CEE3F7;
     height: 40px;
@@ -231,7 +235,7 @@ editable-content .actionField.input-block-level span.badge {
     border: 1px solid #1566B1;
     border-radius: 6px;
     height: 20px;
-    line-height: 20px;
+    line-height: 1.42857;
 }
 
 .task-active .task-list-text-activity {
@@ -259,7 +263,7 @@ editable-content .actionField.input-block-level span.badge {
     border: 1px solid #666666;
     border-radius: 6px;
     height: 20px;
-    line-height: 20px
+    line-height: 1.42857;
 }
 
 .task-paused .task-list-text-activity {
@@ -329,14 +333,19 @@ editable-content .actionField.input-block-level span.badge {
     display: none;
 }
 
-#accordion3 .accordion-heading .accordion-toggle,
-#accordion4 .accordion-heading .accordion-toggle {
+#accordion3 .panel-heading {
+    border: none;
+}
+
+#accordion3 .panel-heading .accordion-toggle,
+#accordion4 .panel-heading .accordion-toggle {
     padding: 0;
     border: none;
     color: #224477;
 }
-#accordion3 .accordion-heading .accordion-toggle li:nth-child(5):hover,
-#accordion4 .accordion-heading .accordion-toggle li:nth-child(5):hover {
+
+#accordion3 .panel-heading .accordion-toggle li:nth-child(5):hover,
+#accordion4 .panel-heading .accordion-toggle li:nth-child(5):hover {
     color: #0088CC;
 }
 
@@ -352,11 +361,15 @@ editable-content .actionField.input-block-level span.badge {
     margin-bottom: 0;
 }
 
-.accordion-heading .accordion-toggle.inbox-header {
+.tasks .panel-heading {
     padding: 5px 10px;
 }
 
-.task-group .accordion-inner {
+.panel-heading .accordion-toggle.inbox-header {
+    padding: 5px 10px;
+}
+
+.task-group .panel-body {
     border-top: none;
 }
 
@@ -365,6 +378,15 @@ editable-content .actionField.input-block-level span.badge {
     border-radius: 4px;
     margin: 10px -10px;
     padding: 0 0 0 10px;
+}
+
+.task-group .control-section label {
+    padding-top: 5px;
+}
+
+.task-group .panel-body .form-group {
+    padding-left: 15px;
+    padding-right: 15px;
 }
 
 .move-element span {
@@ -379,10 +401,10 @@ editable-content .actionField.input-block-level span.badge {
     user-select: none;
 }
 
-.move-element.controls {
+.move-element {
     min-height: 20px;
     margin-bottom: 5px;
-    padding: 4px 0 0;
+    padding: 4px 0 0 15px;
 }
 
 .arrow-drop1 {
@@ -503,6 +525,10 @@ editable-content .actionField.input-block-level span.badge {
     text-align: center;
 }
 
+.table-recent-activity.table-condensed td {
+    padding: 1px;
+}
+
 .table-recent-activity.centered tbody td {
     text-align: center;
 }
@@ -514,6 +540,7 @@ editable-content .actionField.input-block-level span.badge {
 
 .recent-activity-arrow {
     width: 20px;
+    padding-top: 10px;
 }
 
 .recent-activity-icon {
@@ -599,7 +626,7 @@ editable-content .actionField.input-block-level span.badge {
 .section-source .popover .popover-content {
     color: #224477;
     margin: 0;
-    padding: 0 10px 10px 10px;
+    padding: 0 10px 10px 25px;
 }
 
 .section-source .popover-title {
@@ -796,42 +823,21 @@ li.padding-botton6 {
     height: 20px;
 }
 
-.formatButtonGroup {
-    width: 200px;
-    margin: 40px auto 0 auto;
-}
-
 .format-edit-img {
-    margin: 6px 5px 0px 0px;
+    margin: 4px 5px 0px 0px;
     float: right;
     cursor: pointer;
 }
 
-.formatInput {
-    width: 600px;
-    float: left;
-    padding-bottom: 10px;
-}
-
-.formatInputDelete {
-    float: right;
-}
-
-.formatInputValueClear {
-    height: 40px;
+.formFormatInput {
+    display: block;
+    min-height: 34px;
+    height: auto;
 }
 
 input.input-popover {
     width: 50px;
     margin: 0px 8px;
-}
-
-#formatManipulation.modal {
-    width: 860px;
-}
-
-#formatManipulation.modal .body {
-    padding: 20px;
 }
 
 #helpModal.modal {
@@ -890,17 +896,16 @@ a, li a {
 
 /* ----- Tasks enhancements -----*/
 
-.create-edit-task .accordion {
+.create-edit-task .panel-group {
     margin-bottom: 10px;
 }
 
-.create-edit-task .section-additives .control-group {
+.create-edit-task .section-additives .form-group {
     margin-bottom: 10px;
 }
 
 .task.form-horizontal .control-label.task-label {
     float: left;
-    font-size: 1.1em;
     font-weight: bold;
 }
 
@@ -955,8 +960,8 @@ a, li a {
     *background-color:  rgba(0, 77, 118, 0.7);
 }
 
-.control-group.error .control-label.tip .popover,
-.control-group .control-label.tip .popover {
+.form-group.error .control-label.tip .popover,
+.form-group .control-label.tip .popover {
     color: #595959;
     text-align: left;
 }
@@ -1019,7 +1024,7 @@ i.close-channel.icon-remove {
     background-position: -309px 3px;
 }
 
-.accordion-heading a:hover {
+.panel-heading a:hover {
     text-decoration: none;
     cursor: auto;
 }
@@ -1047,7 +1052,7 @@ i.close-channel.icon-remove {
 
 .interval {
     min-height: 20px;
-    padding-left: 20px;
+    padding-left: 18px;
 }
 
 .interval2 {
@@ -1061,4 +1066,5 @@ i.close-channel.icon-remove {
 
 .popover {
     max-width: 450px;
+    min-width: 230px;
 }

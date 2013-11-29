@@ -1,8 +1,9 @@
 package org.motechproject.config.service;
 
-import org.motechproject.config.domain.BootstrapConfig;
-import org.motechproject.config.domain.ConfigSource;
+import org.motechproject.config.core.domain.BootstrapConfig;
+import org.motechproject.config.core.domain.ConfigSource;
 import org.motechproject.server.config.domain.MotechSettings;
+import org.motechproject.server.config.domain.SettingsRecord;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.core.io.Resource;
 
@@ -63,7 +64,7 @@ public interface ConfigurationService {
      *     </ol>
      * </p>
      * @return Bootstrap configuration
-     * @throws org.motechproject.config.MotechConfigurationException if bootstrap configuration cannot be loaded.
+     * @throws org.motechproject.config.core.MotechConfigurationException if bootstrap configuration cannot be loaded.
      */
     BootstrapConfig loadBootstrapConfig();
 
@@ -75,7 +76,7 @@ public interface ConfigurationService {
      * </p>
      *
      * @param bootstrapConfig Bootstrap configuration.
-     * @throws org.motechproject.config.MotechConfigurationException if bootstrap configuration cannot be saved.
+     * @throws org.motechproject.config.core.MotechConfigurationException if bootstrap configuration cannot be saved.
      */
     void save(BootstrapConfig bootstrapConfig);
 
@@ -151,7 +152,7 @@ public interface ConfigurationService {
      * @return Properties mapped by filename
      * @throws IOException if any of the module properties file cannot be read
      */
-    Map<String, Properties> getAllModuleProperties(String module, Map<String,Properties> defaultProperties) throws IOException;
+    Map<String, Properties> getAllModuleProperties(String module, Map<String, Properties> defaultProperties) throws IOException;
 
     /**
      * <p>
@@ -216,4 +217,8 @@ public interface ConfigurationService {
      * @return True if properties exist, false otherwise
      */
     boolean registersProperties(String module, String filename);
+
+    SettingsRecord loadConfig();
+
+    SettingsRecord loadDefaultConfig();
 }

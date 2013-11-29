@@ -1,5 +1,5 @@
 <div class="header">
-    <div class="container-fluid">
+    <div class="navbar-collapse hidden-xs">
         <a href="."><div class="dashboard-logo" ng-show="showDashboardLogo.showDashboard"><img class="logo" alt="Logo - {{msg('server.motechTitle')}}" src="../server/resources/img/motech-logo.jpg"></div></a>
         <div class="header-title" ng-show="showDashboardLogo.showDashboard">{{msg('server.motechTitle')}}</div>
     </div>
@@ -18,12 +18,12 @@
                 <li><a role="menu" class="tab2" href="#adminmodule">{{msg('admin.module')}}</a></li>
                 <li><a role="menu" class="tab3" href="#websecurity">{{msg('websecurity')}}</a></li>
             </ul>
-            <ul id="tabbuttons-right" class="nav pull-right menu-left">
-                <li class="divider-vertical divider-vertical-sub"></li>
-                <li><a id="minimize" class="btn btn-mini btn-blue" ng-click="minimizeHeader()">
-                    <i title="{{msg(showDashboardLogo.changeTitle())}}"
+            <ul id="tabbuttons-right" class="nav navbar-nav pull-right menu-left">
+                <li class="divider-vertical divider-vertical-sub hidden-xs"></li>
+                <li><a id="minimize" class="btn btn-xs btn-blue" ng-click="minimizeHeader()">
+                    <img title="{{msg(showDashboardLogo.changeTitle())}}"
                          alt="{{msg(showDashboardLogo.changeTitle())}}"
-                         ng-class="showDashboardLogo.changeClass()"></i>
+                         ng-class="showDashboardLogo.changeClass()"/>
                 </a>
                 </li>
                 <li class="divider-vertical divider-vertical-sub"></li>
@@ -34,13 +34,13 @@
                     <ul id="localization" class="dropdown-menu" role="menu">
                         <li ui-if="user.securityLaunch">
                             <a href="#/websecurity/profile/{{user.userName}}" tabindex="-1">
-                                <i class="icon-user"></i> {{msg('server.profile')}}
+                                <span class="icon-user"></span> {{msg('server.profile')}}
                             </a>
                         </li>
                         <li ui-if="user.securityLaunch" class="divider"></li>
                         <li class="dropdown-submenu pull-left">
                             <a class="menu-flag dropdown-toggle" tabindex="-1" data-toggle="dropdown" href="#">
-                                <i class="flag flag-{{userLang.key}}" title="{{userLang.key}}" alt="{{userLang.key}}"></i>
+                                <span class="flag flag-{{userLang.key}}" title="{{userLang.key}}" alt="{{userLang.key}}"></span>
                                 <span class="text-capitalize">{{languages[userLang.key]}}</span>
                             </a>
                             <ul class="dropdown-menu">
@@ -52,7 +52,7 @@
                         <li ui-if="user.securityLaunch" class="divider"></li>
                         <li ui-if="user.securityLaunch">
                             <a href="{{contextPath}}j_spring_security_logout" class="">
-                                <i class="icon-off"></i> {{msg('server.signOut')}}
+                                <span class="icon-off"></span> {{msg('server.signOut')}}
                             </a>
                         </li>
                     </ul>

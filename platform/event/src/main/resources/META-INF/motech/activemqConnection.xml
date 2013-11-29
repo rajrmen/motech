@@ -5,12 +5,11 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <bean id="eventConfigManager" class="org.motechproject.event.config.EventConfigManagerImpl"/>
+    <context:property-placeholder location="classpath:motech-settings.conf" system-properties-mode="OVERRIDE"/>
 
-    <bean id="activemqConfig" class="java.util.Properties" factory-bean="eventConfigManager"
-          factory-method="getActivemqConfig"/>
-
-    <context:property-placeholder properties-ref="activemqConfig"/>
+    <bean id="eventSettings" class="org.motechproject.server.config.SettingsFacade" autowire="byType">
+        <property name="moduleName" value="event"/>
+    </bean>
 
     <bean id="tenantIdentity" class="org.motechproject.commons.api.TenantIdentity"/>
 
