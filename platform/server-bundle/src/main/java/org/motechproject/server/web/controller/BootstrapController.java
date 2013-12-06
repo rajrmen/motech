@@ -5,6 +5,8 @@ import org.ektorp.DbAccessException;
 import org.ektorp.http.HttpClient;
 import org.ektorp.http.StdHttpClient;
 import org.ektorp.impl.StdCouchDbInstance;
+import org.motechproject.commons.couchdb.osgi.DbSetUpService;
+import org.motechproject.commons.couchdb.service.CouchDbManager;
 import org.motechproject.config.core.domain.BootstrapConfig;
 import org.motechproject.config.core.domain.ConfigSource;
 import org.motechproject.config.core.domain.DBConfig;
@@ -53,6 +55,12 @@ public class BootstrapController {
     @Autowired
     private ConfigurationService configurationService;
 
+    @Autowired
+    private DbSetUpService dbSetUpService;
+
+    @Autowired
+    private CouchDbManager couchDbManager;
+
     @InitBinder
     protected void initBinder(WebDataBinder binder) {
         binder.setValidator(new BootstrapConfigFormValidator());
@@ -86,6 +94,9 @@ public class BootstrapController {
         BootstrapConfig bootstrapConfig = new BootstrapConfig(new DBConfig(form.getDbUrl(), form.getDbUsername(), form.getDbPassword()), form.getTenantId(), ConfigSource.valueOf(form.getConfigSource()));
         try {
             configurationService.save(bootstrapConfig);
+            dbSetUpService.preProcess();
+            dbSetUpService.setUpDb(couchDbManager);
+            dbSetUpService.postProcess();
         } catch (Exception e) {
             ModelAndView bootstrapView = new ModelAndView(BOOTSTRAP_CONFIG_VIEW);
             bootstrapView.addObject("errors", Arrays.asList("server.error.bootstrap.save"));

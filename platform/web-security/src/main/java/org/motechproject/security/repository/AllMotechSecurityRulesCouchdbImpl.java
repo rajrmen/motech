@@ -29,10 +29,8 @@ import org.springframework.stereotype.Component;
 @View(name = "all", map = "function(doc) { emit(doc._id, doc); }")
 public class AllMotechSecurityRulesCouchdbImpl extends MotechBaseRepository<MotechSecurityConfiguration> implements AllMotechSecurityRules {
 
-    @Autowired
-    protected AllMotechSecurityRulesCouchdbImpl(@Qualifier("webSecurityDbConnector") CouchDbConnector db) {
-        super(MotechSecurityConfiguration.class, db);
-        initStandardDesignDocument();
+    protected AllMotechSecurityRulesCouchdbImpl() {
+        super("motech-web-security", MotechSecurityConfiguration.class);
     }
 
     @Override

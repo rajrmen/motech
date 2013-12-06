@@ -1,6 +1,7 @@
 package org.motechproject.security;
 
-import org.ektorp.CouchDbConnector;
+
+import org.motechproject.commons.couchdb.annotation.PostDbSetUpStep;
 import org.motechproject.security.domain.MotechPermission;
 import org.motechproject.security.domain.MotechPermissionCouchdbImpl;
 import org.motechproject.security.domain.MotechRole;
@@ -10,7 +11,7 @@ import org.motechproject.security.repository.AllMotechPermissions;
 import org.motechproject.security.repository.AllMotechRoles;
 import org.motechproject.security.repository.AllMotechUsers;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.ApplicationContext;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -38,9 +39,11 @@ public class Initialize {
     @Autowired
     private AllMotechUsers allMotechUsers;
 
-    @Autowired
-    public void initialize(@Qualifier("webSecurityDbConnector") CouchDbConnector db) throws IOException {
+    public void initialize() throws IOException {
+    }
 
+    @PostDbSetUpStep
+    public void addRolesAndPermissions(ApplicationContext applicationContext) {
         //change role name only if it doesn't exist yet, to prevent multiple roles of the same name
         MotechRole userAdminRole = null;
         userAdminRole = allMotechRoles.findByRoleName(USER_ADMIN);

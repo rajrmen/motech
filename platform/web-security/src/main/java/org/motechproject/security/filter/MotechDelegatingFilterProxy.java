@@ -63,6 +63,7 @@ public class MotechDelegatingFilterProxy extends DelegatingFilterProxy {
         if (isAdminMode) {
             anonymousFilter.doFilter(request, response, filterChain);
         } else if (proxyManager != null) {
+            proxyManager.initializeProxyChainWithDefaultRules();
             proxyManager.getFilterChainProxy().doFilter(request, response, filterChain);
         } else {
             super.doFilter(request, response, filterChain);
@@ -102,7 +103,7 @@ public class MotechDelegatingFilterProxy extends DelegatingFilterProxy {
         public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
             List<GrantedAuthority> permissions = createPermissionList();
 
-            if(permissions.size() > getAuthorities().size()) {
+            if (permissions.size() > getAuthorities().size()) {
                 this.getAuthorities().clear();
                 this.getAuthorities().addAll(permissions);
 

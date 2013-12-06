@@ -5,6 +5,7 @@ import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.joda.time.DateTime;
 import org.motechproject.commons.api.DataProvider;
+import org.motechproject.commons.couchdb.annotation.PostDbSetUpStep;
 import org.motechproject.event.MotechEvent;
 import org.motechproject.event.listener.EventListener;
 import org.motechproject.event.listener.EventListenerRegistryService;
@@ -74,6 +75,10 @@ public class TaskTriggerHandler implements TriggerHandler {
 
         this.executor = new TaskActionExecutor(taskService, activityService, eventRelay);
 
+    }
+
+    @PostDbSetUpStep
+    public void registerHandlers(TaskService taskService) {
         for (Task task : taskService.getAllTasks()) {
             registerHandlerFor(task.getTrigger().getSubject());
         }
@@ -84,7 +89,7 @@ public class TaskTriggerHandler implements TriggerHandler {
         String serviceName = "taskTriggerHandler";
         Method method = ReflectionUtils.findMethod(this.getClass(), "handle", MotechEvent.class);
         Object obj = CollectionUtils.find(
-            registryService.getListeners(subject), withServiceName(serviceName)
+                registryService.getListeners(subject), withServiceName(serviceName)
         );
 
         try {
@@ -96,8 +101,8 @@ public class TaskTriggerHandler implements TriggerHandler {
             }
         } catch (Exception exp) {
             LOG.error(
-                String.format("%s can not listen on subject %s due to:", serviceName, subject),
-                exp
+                    String.format("%s can not listen on subject %s due to:", serviceName, subject),
+                    exp
             );
         }
     }
@@ -156,8 +161,8 @@ public class TaskTriggerHandler implements TriggerHandler {
         param.put(HANDLER_ERROR_PARAM, errorParam);
 
         eventRelay.sendEventMessage(new MotechEvent(
-            createHandlerFailureSubject(task.getName(), e.getFailureCause()),
-            param
+                createHandlerFailureSubject(task.getName(), e.getFailureCause()),
+                param
         ));
     }
 
@@ -165,8 +170,8 @@ public class TaskTriggerHandler implements TriggerHandler {
         activityService.addSuccess(task);
 
         eventRelay.sendEventMessage(new MotechEvent(
-            createHandlerSuccessSubject(task.getName()),
-            trigger.getParameters()
+                createHandlerSuccessSubject(task.getName()),
+                trigger.getParameters()
         ));
     }
 
@@ -205,8 +210,8 @@ public class TaskTriggerHandler implements TriggerHandler {
             number = Integer.parseInt(property);
         } catch (NumberFormatException e) {
             LOG.error(String.format(
-                "The value of key: %s is not a number. Possible errors number is set to zero.",
-                TASK_POSSIBLE_ERRORS_KEY
+                    "The value of key: %s is not a number. Possible errors number is set to zero.",
+                    TASK_POSSIBLE_ERRORS_KEY
             ));
             number = 0;
         }

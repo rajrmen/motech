@@ -58,9 +58,9 @@ public class SecurityContextTracker extends ServiceTracker {
 
         synchronized (lock) {
             if (!contextProcessed.contains(contextId)) {
-                securityAnnotationBeanPostProcessor.processAnnotations(applicationContext);
-                securityRoleLoader.loadRoles(applicationContext);
-                securityRuleLoader.loadRules(applicationContext);
+//                securityAnnotationBeanPostProcessor.processAnnotations(applicationContext);
+//                securityRoleLoader.loadRoles(applicationContext);
+//                securityRuleLoader.loadRules(applicationContext);
                 contextProcessed.add(contextId);
             }
         }

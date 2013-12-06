@@ -1,11 +1,9 @@
 package org.motechproject.tasks.repository;
 
-import org.ektorp.CouchDbConnector;
 import org.ektorp.support.View;
 import org.motechproject.commons.couchdb.dao.MotechBaseRepository;
 import org.motechproject.tasks.domain.TaskDataProvider;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -14,9 +12,9 @@ import java.util.List;
 @View(name = "by_name", map = "function(doc) { if(doc.type === 'TaskDataProvider') emit(doc.name); }")
 public class AllTaskDataProviders extends MotechBaseRepository<TaskDataProvider> {
 
-    @Autowired
-    public AllTaskDataProviders(@Qualifier("taskDbConnector") final CouchDbConnector connector) {
-        super(TaskDataProvider.class, connector);
+
+    public AllTaskDataProviders() {
+        super("motech-tasks", TaskDataProvider.class);
     }
 
     public boolean addOrUpdate(TaskDataProvider entity) {

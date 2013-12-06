@@ -46,6 +46,10 @@
             <groupId>org.ektorp</groupId>
             <artifactId>org.motechproject.org.ektorp</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.github.ldriscoll</groupId>
+            <artifactId>org.motechproject.ektorplucene</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
@@ -57,6 +61,7 @@
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
+                        <Bundle-Activator>org.motechproject.commons.couchdb.osgi.Activator</Bundle-Activator>
                         <Import-Package>
                             !org.motechproject.commons.couchdb.*,
                             *
@@ -65,9 +70,11 @@
                             org.springframework.beans.*
                         </DynamicImport-Package>
                         <Export-Package>
+                            org.motechproject.commons.couchdb.annotation;version=${project.version},
                             org.motechproject.commons.couchdb.model;version=${project.version},
                             org.motechproject.commons.couchdb.dao;version=${project.version},
                             org.motechproject.commons.couchdb.service;version=${project.version},
+                            org.motechproject.commons.couchdb.osgi;version=${project.version},
                             org.motechproject.commons.couchdb.query;version=${project.version},
                             org.motechproject.commons.couchdb.lucene.query;version=${project.version}
                         </Export-Package>

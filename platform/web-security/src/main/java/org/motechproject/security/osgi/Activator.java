@@ -128,8 +128,6 @@ public class Activator implements BundleActivator {
                 logger.debug("Servlet registered");
 
                 filter = new MotechDelegatingFilterProxy("springSecurityFilterChain", dispatcherServlet.getWebApplicationContext());
-                MotechProxyManager proxyManager = dispatcherServlet.getWebApplicationContext().getBean(MotechProxyManager.class);
-                proxyManager.initializeProxyChain();
                 service.registerFilter(filter, "/.*", null, 0, httpContext);
                 logger.debug("Filter registered");
             } finally {

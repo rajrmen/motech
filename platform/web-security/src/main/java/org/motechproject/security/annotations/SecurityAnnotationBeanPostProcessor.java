@@ -1,9 +1,11 @@
 package org.motechproject.security.annotations;
 
+import org.motechproject.commons.couchdb.annotation.PostDbSetUpStep;
 import org.motechproject.security.model.PermissionDto;
 import org.motechproject.security.service.MotechPermissionService;
 import org.osgi.framework.BundleContext;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.expression.ExpressionParser;
@@ -12,6 +14,7 @@ import org.springframework.expression.spel.standard.SpelExpression;
 import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -32,7 +35,8 @@ import static org.springframework.util.ReflectionUtils.findMethod;
  * annotation value. The names of permissions are then saved using the {@link MotechPermissionService}. The bundle
  * name used to construct the permission is retrieved from the application context.
  */
-public class SecurityAnnotationBeanPostProcessor implements BeanPostProcessor {
+@Component
+public class SecurityAnnotationBeanPostProcessor {
 
     private MotechPermissionService permissionService;
 
@@ -40,10 +44,12 @@ public class SecurityAnnotationBeanPostProcessor implements BeanPostProcessor {
 
     private String currentBundleName = "";
 
+    @Autowired
     public SecurityAnnotationBeanPostProcessor(MotechPermissionService permissionService) {
         this.permissionService = permissionService;
     }
 
+    @PostDbSetUpStep
     public void processAnnotations(ApplicationContext applicationContext) {
         currentBundleName = getBundleName(applicationContext);
 
@@ -53,12 +59,7 @@ public class SecurityAnnotationBeanPostProcessor implements BeanPostProcessor {
         }
     }
 
-    @Override
-    public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
-        return bean;
-    }
 
-    @Override
     public Object postProcessAfterInitialization(final Object bean, final String beanName) throws BeansException {
         doWithMethods(bean.getClass(), new MethodCallback() {
             @Override

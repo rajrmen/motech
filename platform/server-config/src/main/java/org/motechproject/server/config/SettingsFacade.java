@@ -4,12 +4,12 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.motechproject.commons.api.MotechException;
 import org.motechproject.commons.api.Tenant;
+import org.motechproject.commons.couchdb.annotation.PostDbSetUpStep;
 import org.motechproject.config.service.ConfigurationService;
 import org.motechproject.server.config.domain.MotechSettings;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
-import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -41,7 +41,7 @@ public class SettingsFacade {
         this.configurationService = configurationService;
     }
 
-    @PostConstruct
+    @PostDbSetUpStep
     public void afterPropertiesSet() {
         if (!propsRegistered) {
             registerAllProperties();

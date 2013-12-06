@@ -1,12 +1,10 @@
 package org.motechproject.config.repository;
 
 import org.apache.commons.collections.MapUtils;
-import org.ektorp.CouchDbConnector;
-import org.ektorp.support.CouchDbRepositorySupport;
 import org.ektorp.support.View;
+import org.motechproject.commons.couchdb.dao.MotechBaseRepository;
 import org.motechproject.config.domain.ModulePropertiesRecord;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -20,9 +18,14 @@ import java.util.Properties;
  */
 @Repository
 @View(name = "by_name", map = "function(doc) { if(doc.type === 'ModulePropertiesRecord') emit(doc.module); }")
-public class AllModuleProperties extends CouchDbRepositorySupport<ModulePropertiesRecord> {
+public class AllModuleProperties extends MotechBaseRepository<ModulePropertiesRecord> {
 
     private static final String BY_NAME = "by_name";
+
+
+    public AllModuleProperties() {
+        super("motech-module-settings", ModulePropertiesRecord.class);
+    }
 
     public List<ModulePropertiesRecord> byModuleName(String module) {
         List<ModulePropertiesRecord> records = queryView(BY_NAME, module);
@@ -60,18 +63,12 @@ public class AllModuleProperties extends CouchDbRepositorySupport<ModuleProperti
 
     public void addOrUpdate(ModulePropertiesRecord record) {
         ModulePropertiesRecord rec = byModuleAndFileName(record.getModule(), record.getFilename());
-        if (rec==null) {
+        if (rec == null) {
             add(record);
         } else {
             rec.setProperties(record.getProperties());
             update(rec);
         }
-    }
-
-    @Autowired
-    public AllModuleProperties(@Qualifier("propertiesDbConnector") final CouchDbConnector connector) {
-        super(ModulePropertiesRecord.class, connector);
-        initStandardDesignDocument();
     }
 
 

@@ -12,10 +12,6 @@
         <property name="moduleName" value="rules-api"/>
     </bean>
 
-    <bean id="rulesDatabase" factory-bean="couchDbManager" factory-method="getConnector">
-        <constructor-arg value="rules"/>
-    </bean>
-
     <bean id="filesystemRuleLoader" class="org.motechproject.rules.service.FilesystemRuleLoader" init-method="load">
         <!-- <property name="internalRuleFolder" value="/rules" /> -->
         <property name="externalRuleFolder" value="#{systemProperties['user.home']}/.motech/rules"/>

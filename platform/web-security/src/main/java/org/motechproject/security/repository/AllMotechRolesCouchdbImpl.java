@@ -17,10 +17,8 @@ import java.util.List;
 @View(name = "all", map = "function(doc) { emit(doc._id, doc); }")
 public class AllMotechRolesCouchdbImpl extends MotechBaseRepository<MotechRoleCouchdbImpl> implements AllMotechRoles {
 
-    @Autowired
-    protected AllMotechRolesCouchdbImpl(@Qualifier("webSecurityDbConnector") CouchDbConnector db) {
-        super(MotechRoleCouchdbImpl.class, db);
-        initStandardDesignDocument();
+    protected AllMotechRolesCouchdbImpl() {
+        super("motech-web-security", MotechRoleCouchdbImpl.class);
     }
 
     @Override
@@ -30,14 +28,18 @@ public class AllMotechRolesCouchdbImpl extends MotechBaseRepository<MotechRoleCo
 
     @Override
     public void add(MotechRole role) {
-        if (findByRoleName(role.getRoleName()) != null) { return; }
+        if (findByRoleName(role.getRoleName()) != null) {
+            return;
+        }
         super.add((MotechRoleCouchdbImpl) role);
     }
 
     @Override
     @View(name = "by_roleName", map = "function(doc) { if (doc.type ==='MotechRole') { emit(doc.roleName, doc._id); }}")
     public MotechRole findByRoleName(String roleName) {
-        if (roleName == null) { return null; }
+        if (roleName == null) {
+            return null;
+        }
         ViewQuery viewQuery = createQuery("by_roleName").key(roleName).includeDocs(true);
         return singleResult(db.queryView(viewQuery, MotechRoleCouchdbImpl.class));
     }

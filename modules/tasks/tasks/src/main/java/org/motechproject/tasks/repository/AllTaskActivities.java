@@ -14,9 +14,9 @@ import java.util.List;
 @View(name = "by_taskId", map = "function(doc) { if(doc.type === 'TaskActivity') emit(doc.task); }")
 public class AllTaskActivities extends MotechBaseRepository<TaskActivity> {
 
-    @Autowired
-    public AllTaskActivities(@Qualifier("taskDbConnector") final CouchDbConnector db) {
-        super(TaskActivity.class, db);
+
+    public AllTaskActivities() {
+        super("motech-tasks",TaskActivity.class);
     }
 
     public List<TaskActivity> byTaskId(final String taskId) {

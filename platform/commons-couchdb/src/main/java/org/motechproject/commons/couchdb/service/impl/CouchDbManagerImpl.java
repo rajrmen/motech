@@ -6,6 +6,7 @@ import org.ektorp.CouchDbInstance;
 import org.ektorp.impl.StdCouchDbInstance;
 import org.ektorp.spring.HttpClientFactoryBean;
 import org.motechproject.commons.api.Tenant;
+import org.motechproject.commons.couchdb.annotation.PreDbSetUpStep;
 import org.motechproject.commons.couchdb.service.CouchDbManager;
 import org.motechproject.commons.couchdb.service.DbConnectionException;
 import org.motechproject.config.core.domain.DBConfig;
@@ -33,19 +34,20 @@ public class CouchDbManagerImpl implements CouchDbManager {
         this.coreConfigurationService = coreConfigurationService;
         this.couchdbProperties = couchdbProperties;
         httpClientFactoryBean = new HttpClientFactoryBean();
-        configureDb();
     }
 
     @Override
     public CouchDbConnector getConnector(String dbName) {
         String prefixedDbName = getDbPrefix() + dbName;
         if (!couchDbConnectors.containsKey(prefixedDbName)) {
-            couchDbConnectors.put(prefixedDbName, couchDbInstance.createConnector(prefixedDbName, true));
+            couchDbConnectors.put(prefixedDbName, couchDbInstance.createConnector(prefixedDbName, false));
         }
         return couchDbConnectors.get(prefixedDbName);
     }
 
-    private void configureDb() {
+
+    @PreDbSetUpStep
+    public void configureDb() {
         final Properties mergedCouchdbProps = getCouchdbProperties();
         httpClientFactoryBean.setProperties(mergedCouchdbProps);
         httpClientFactoryBean.setTestConnectionAtStartup(true);

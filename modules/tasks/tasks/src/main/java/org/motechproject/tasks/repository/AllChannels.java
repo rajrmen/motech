@@ -14,9 +14,9 @@ import java.util.List;
 @View(name = "by_moduleName", map = "function(doc) { if(doc.type === 'Channel') emit(doc.moduleName); }")
 public class AllChannels extends MotechBaseRepository<Channel> {
 
-    @Autowired
-    public AllChannels(@Qualifier("taskDbConnector") final CouchDbConnector connector) {
-        super(Channel.class, connector);
+
+    public AllChannels() {
+        super("motech-tasks",Channel.class);
     }
 
     public boolean addOrUpdate(Channel channel) {

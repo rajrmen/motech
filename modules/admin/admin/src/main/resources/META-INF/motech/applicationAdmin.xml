@@ -26,11 +26,6 @@
         <property name="bundleDir" value="${user.home}/.motech/bundles"/>
     </bean>
 
-    <bean id="adminDbConnector" factory-bean="couchDbManager" factory-method="getConnector">
-        <constructor-arg value="motech-admin"/>
-    </bean>
-
-
     <bean id="velocityEngine" class="org.springframework.ui.velocity.VelocityEngineFactoryBean">
         <property name="velocityProperties">
             <value>

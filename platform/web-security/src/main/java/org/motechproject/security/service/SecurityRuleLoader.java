@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import org.motechproject.commons.api.json.MotechJsonReader;
+import org.motechproject.commons.couchdb.annotation.PostDbSetUpStep;
 import org.motechproject.security.domain.MotechSecurityConfiguration;
 import org.motechproject.security.domain.MotechURLSecurityRule;
 import org.motechproject.security.repository.AllMotechSecurityRules;
@@ -43,6 +44,7 @@ public class SecurityRuleLoader {
      * on the data.
      */
 
+    @PostDbSetUpStep
     public synchronized void loadRules(ApplicationContext applicationContext) {
         LOG.debug("Loading rules");
         Resource securityResource = applicationContext.getResource(CONFIG_LOCATION);

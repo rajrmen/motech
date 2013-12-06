@@ -1,6 +1,5 @@
 package org.motechproject.security.repository;
 
-import org.ektorp.CouchDbConnector;
 import org.ektorp.ViewQuery;
 import org.ektorp.support.View;
 import org.joda.time.DateTime;
@@ -9,7 +8,6 @@ import org.motechproject.commons.date.util.DateUtil;
 import org.motechproject.security.domain.PasswordRecovery;
 import org.motechproject.security.domain.PasswordRecoveryCouchDbImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -21,10 +19,8 @@ import java.util.Locale;
 public class AllPasswordRecoveriesCouchDbImpl extends MotechBaseRepository<PasswordRecoveryCouchDbImpl>
         implements AllPasswordRecoveries {
 
-    @Autowired
-    public AllPasswordRecoveriesCouchDbImpl(@Qualifier("webSecurityDbConnector") CouchDbConnector db) {
-        super(PasswordRecoveryCouchDbImpl.class, db);
-        initStandardDesignDocument();
+    public AllPasswordRecoveriesCouchDbImpl() {
+        super("motech-web-security", PasswordRecoveryCouchDbImpl.class);
     }
 
     @Override

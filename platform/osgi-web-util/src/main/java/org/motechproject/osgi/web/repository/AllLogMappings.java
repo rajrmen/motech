@@ -1,12 +1,11 @@
 package org.motechproject.osgi.web.repository;
 
-import org.ektorp.CouchDbConnector;
 import org.ektorp.support.View;
 import org.motechproject.commons.couchdb.dao.MotechBaseRepository;
 import org.motechproject.osgi.web.domain.LogMapping;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
+
 import java.util.List;
 
 /**
@@ -16,9 +15,9 @@ import java.util.List;
 @Repository
 public class AllLogMappings extends MotechBaseRepository<LogMapping> {
 
-    @Autowired
-    public AllLogMappings(@Qualifier("loggerDbConnector") CouchDbConnector connector) {
-        super(LogMapping.class, connector);
+
+    public AllLogMappings() {
+        super("motech-loggers", LogMapping.class);
     }
 
     @View(name = "by_logName", map = "function(doc) { if(doc.type === 'LogMapping') emit(doc.logName); }")

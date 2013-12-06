@@ -20,9 +20,9 @@ import static org.ektorp.ComplexKey.emptyObject;
 @Repository
 public class AllAggregatedEvents extends MotechBaseRepository<AggregatedEventRecord> {
 
-    @Autowired
-    public AllAggregatedEvents(@Qualifier("eventAggregationDbConnector") CouchDbConnector db) {
-        super(AggregatedEventRecord.class, db);
+
+    public AllAggregatedEvents() {
+        super("motech-event-aggregation",AggregatedEventRecord.class);
     }
 
     private static final String FIND =

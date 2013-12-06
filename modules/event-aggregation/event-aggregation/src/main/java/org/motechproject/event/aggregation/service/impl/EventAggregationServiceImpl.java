@@ -1,20 +1,21 @@
 package org.motechproject.event.aggregation.service.impl;
 
 import org.apache.log4j.Logger;
+import org.motechproject.commons.couchdb.annotation.PostDbSetUpStep;
 import org.motechproject.event.aggregation.aggregate.EventAggregator;
-import org.motechproject.event.aggregation.model.rule.AggregationRuleRecord;
 import org.motechproject.event.aggregation.model.event.PeriodicDispatchEvent;
 import org.motechproject.event.aggregation.model.event.SporadicDispatchEvent;
 import org.motechproject.event.aggregation.model.mapper.AggregationRuleMapper;
-import org.motechproject.event.aggregation.repository.AllAggregatedEvents;
-import org.motechproject.event.aggregation.repository.AllAggregationRules;
 import org.motechproject.event.aggregation.model.rule.AggregationRule;
+import org.motechproject.event.aggregation.model.rule.AggregationRuleRecord;
 import org.motechproject.event.aggregation.model.rule.AggregationRuleRequest;
 import org.motechproject.event.aggregation.model.schedule.AggregationScheduleRequest;
 import org.motechproject.event.aggregation.model.schedule.CronBasedAggregationRequest;
 import org.motechproject.event.aggregation.model.schedule.CustomAggregationRequest;
-import org.motechproject.event.aggregation.service.EventAggregationService;
 import org.motechproject.event.aggregation.model.schedule.PeriodicAggregationRequest;
+import org.motechproject.event.aggregation.repository.AllAggregatedEvents;
+import org.motechproject.event.aggregation.repository.AllAggregationRules;
+import org.motechproject.event.aggregation.service.EventAggregationService;
 import org.motechproject.event.listener.EventListenerRegistryService;
 import org.motechproject.scheduler.MotechSchedulerService;
 import org.motechproject.scheduler.domain.CronSchedulableJob;
@@ -44,10 +45,10 @@ public class EventAggregationServiceImpl implements EventAggregationService {
         this.allAggregatedEvents = allAggregatedEvents;
         this.schedulerService = schedulerService;
         this.aggregationRuleMapper = new AggregationRuleMapper();
-        registerListenersForRules();
     }
 
-    private void registerListenersForRules() {
+    @PostDbSetUpStep
+    public void registerListenersForRules() {
         for (AggregationRuleRecord rule : allAggregationRules.getAll()) {
             registerListenerForRule(rule);
         }

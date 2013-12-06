@@ -12,9 +12,9 @@ import java.util.List;
 @Repository
 public class AllSettings extends MotechBaseRepository<SettingsRecord> {
 
-    @Autowired
-    public AllSettings(@Qualifier("settingsDbConnector") CouchDbConnector couchDbConnector) {
-        super(SettingsRecord.class, couchDbConnector);
+
+    public AllSettings() {
+        super("motech-platform-startup", SettingsRecord.class);
     }
 
     public SettingsRecord getSettings() {

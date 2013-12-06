@@ -1,6 +1,5 @@
 package org.motechproject.tasks.repository;
 
-import org.ektorp.CouchDbConnector;
 import org.ektorp.DocumentNotFoundException;
 import org.ektorp.ViewQuery;
 import org.ektorp.ViewResult;
@@ -8,7 +7,6 @@ import org.ektorp.support.View;
 import org.motechproject.commons.couchdb.dao.MotechBaseRepository;
 import org.motechproject.tasks.domain.Task;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
 import java.util.HashMap;
@@ -25,9 +23,9 @@ public class AllTasks extends MotechBaseRepository<Task> {
 
     private static Map<String, Object> taskUpdateLock = new HashMap<>();
 
-    @Autowired
-    public AllTasks(@Qualifier("taskDbConnector") final CouchDbConnector connector) {
-        super(Task.class, connector);
+
+    public AllTasks() {
+        super("motech-tasks", Task.class);
     }
 
     public void addOrUpdate(Task task) {
@@ -70,15 +68,15 @@ public class AllTasks extends MotechBaseRepository<Task> {
     }
 
     @View(
-        name = "byModuleName",
-        map = "function(doc) {" +
-                 "if (doc.type === 'Task') {" +
+            name = "byModuleName",
+            map = "function(doc) {" +
+                    "if (doc.type === 'Task') {" +
                     "emit(doc.trigger.moduleName, doc._id);" +
                     "for (var i = 0; i < doc.actions.length; i++) {" +
-                        "emit(doc.actions[i].moduleName, doc._id);" +
+                    "emit(doc.actions[i].moduleName, doc._id);" +
                     "}" +
-                 "}" +
-              "}"
+                    "}" +
+                    "}"
     )
     public List<Task> dependentOnModule(String moduleName) {
         ViewResult idsResult = db.queryView(createQuery("byModuleName").key(moduleName));

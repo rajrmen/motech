@@ -148,7 +148,6 @@ public class RolesBundleIT extends BaseOsgiIT {
 
     private HttpResponse get(String urlTemplate, String username, String password) throws Exception {
         String url = String.format(urlTemplate, TestContext.getJettyPort());
-        System.out.println(url);
         HttpGet httpGet = new HttpGet(url);
         return request(httpGet, username, password);
     }
@@ -164,7 +163,6 @@ public class RolesBundleIT extends BaseOsgiIT {
 
     private HttpResponse delete(String urlTemplate, String username, String password) throws Exception {
         String url = String.format(urlTemplate, TestContext.getJettyPort());
-        System.out.println(url);
         HttpDelete httpDelete = new HttpDelete(url);
         return request(httpDelete, username, password);
     }

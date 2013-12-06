@@ -18,10 +18,8 @@ import java.util.List;
 @View(name = "all", map = "function(doc) { emit(doc._id, doc); }")
 public class AllMotechUsersCouchdbImpl extends MotechBaseRepository<MotechUserCouchdbImpl> implements AllMotechUsers {
 
-    @Autowired
-    protected AllMotechUsersCouchdbImpl(@Qualifier("webSecurityDbConnector") CouchDbConnector db) {
-        super(MotechUserCouchdbImpl.class, db);
-        initStandardDesignDocument();
+    protected AllMotechUsersCouchdbImpl() {
+        super("motech-web-security", MotechUserCouchdbImpl.class);
     }
 
     @Override

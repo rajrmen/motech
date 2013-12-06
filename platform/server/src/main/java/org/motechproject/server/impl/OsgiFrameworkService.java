@@ -145,7 +145,7 @@ public class OsgiFrameworkService implements ApplicationContextAware {
 
     private void startupModules() {
         synchronized (lock) {
-            if (httpServiceRegistered && startupEventReceived) {
+            if (httpServiceRegistered) {
                 startBundles(MODULE_BUNDLES);
             }
         }

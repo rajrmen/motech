@@ -1,12 +1,10 @@
 package org.motechproject.eventlogging.repository;
 
 import org.ektorp.ComplexKey;
-import org.ektorp.CouchDbConnector;
 import org.ektorp.support.View;
 import org.motechproject.commons.couchdb.dao.MotechBaseRepository;
 import org.motechproject.eventlogging.domain.CouchEventLog;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -14,9 +12,9 @@ import java.util.List;
 @Repository
 public class AllCouchLogs extends MotechBaseRepository<CouchEventLog> {
 
-    @Autowired
-    protected AllCouchLogs(@Qualifier("eventLoggingDBConnector") CouchDbConnector db) {
-        super(CouchEventLog.class, db);
+
+    protected AllCouchLogs() {
+        super("motech-event-logging", CouchEventLog.class);
     }
 
     public void log(CouchEventLog couchLog) {

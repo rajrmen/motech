@@ -1,23 +1,18 @@
 package org.motechproject.email.repository;
 
-import com.github.ldriscoll.ektorplucene.CouchDbRepositorySupportWithLucene;
 import com.github.ldriscoll.ektorplucene.CustomLuceneResult;
-import com.github.ldriscoll.ektorplucene.LuceneAwareCouchDbConnector;
 import com.github.ldriscoll.ektorplucene.LuceneQuery;
 import com.github.ldriscoll.ektorplucene.designdocument.annotation.FullText;
 import com.github.ldriscoll.ektorplucene.designdocument.annotation.Index;
 import org.codehaus.jackson.type.TypeReference;
-import org.ektorp.CouchDbConnector;
-import org.ektorp.impl.StdCouchDbInstance;
 import org.joda.time.DateTime;
+import org.motechproject.commons.couchdb.dao.MotechLuceneAwareBaseRepository;
 import org.motechproject.commons.couchdb.lucene.query.CouchDbLuceneQuery;
 import org.motechproject.commons.couchdb.query.QueryParam;
 import org.motechproject.email.domain.EmailRecord;
 import org.motechproject.email.service.EmailRecordSearchCriteria;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
 
@@ -32,14 +27,19 @@ import static java.util.Collections.reverseOrder;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 /**
-* The <code>AllEmailRecords</code> class provides methods, allowing to work with, alter
-* and search {@Link EmailRecord} documents in CouchDB
-*/
+ * The <code>AllEmailRecords</code> class provides methods, allowing to work with, alter
+ * and search {@Link EmailRecord} documents in CouchDB
+ */
 
 @Repository
-public final class AllEmailRecords extends CouchDbRepositorySupportWithLucene<EmailRecord> {
+public final class AllEmailRecords extends MotechLuceneAwareBaseRepository<EmailRecord> {
 
     private final Logger logger = LoggerFactory.getLogger(AllEmailRecords.class);
+
+
+    private AllEmailRecords() throws IOException {
+        super("motech-email-audit", EmailRecord.class);
+    }
 
     public EmailRecord findLatestBy(String toAddress) {
         List<EmailRecord> emailRecords = findAllBy(new EmailRecordSearchCriteria()
@@ -119,9 +119,4 @@ public final class AllEmailRecords extends CouchDbRepositorySupportWithLucene<Em
         }
     }
 
-    @Autowired
-    private AllEmailRecords(@Qualifier("emailDBConnector") CouchDbConnector db) throws IOException {
-        super(EmailRecord.class, new LuceneAwareCouchDbConnector(db.getDatabaseName(), new StdCouchDbInstance(db.getConnection())));
-        initStandardDesignDocument();
-    }
 }

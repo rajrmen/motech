@@ -13,8 +13,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class AllNotificationRules extends MotechBaseRepository<NotificationRule> {
 
-    @Autowired
-    protected AllNotificationRules(@Qualifier("adminDbConnector") CouchDbConnector db) {
-        super(NotificationRule.class, db);
+
+    protected AllNotificationRules() {
+        super("motech-admin",NotificationRule.class);
     }
 }

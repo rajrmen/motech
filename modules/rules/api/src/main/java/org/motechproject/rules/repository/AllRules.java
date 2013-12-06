@@ -31,17 +31,15 @@
  */
 package org.motechproject.rules.repository;
 
-import org.ektorp.CouchDbConnector;
 import org.motechproject.commons.couchdb.dao.MotechBaseRepository;
 import org.motechproject.rules.domain.Rule;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public class AllRules extends MotechBaseRepository<Rule> {
-    @Autowired
-    public AllRules(@Qualifier("rulesDatabase") CouchDbConnector db) {
-        super(Rule.class, db);
+
+    public AllRules() {
+        super("rules", Rule.class);
     }
 }
