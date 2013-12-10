@@ -1,5 +1,5 @@
 
-.ui-widget-content a {
+//.ui-widget-content a {
     color: none;
 }
 .hidden {
@@ -19,7 +19,7 @@
     overflow: hidden !important;
 }
 
-.ui-widget-content {
+/.ui-widget-content {
     padding: 0;
     overflow: auto;
 }
@@ -64,23 +64,23 @@
     list-style: none;
     margin: 0;
 }
-.custom .breadcrumb li > a {
+//.custom .breadcrumb li > a {
     color: #0088CC;
 }
-.custom #tabpanels .tab-panel {
+/.custom #tabpanels .tab-panel {
     border-radius: 0px;
     -moz-border-radius: 0px;
     -webkit-border-radius: 0px;
 }
 
-.ui-widget-header {
+/.ui-widget-header {
     padding: 4px 1em;
 }
-.ui-widget-footer {
+/.ui-widget-footer {
     font-size: .85em;
     font-weight: normal !important;
 }
-.custom .ui-widget-header {
+/.custom .ui-widget-header {
     border: 0;
     color: #FFF;
     font-size: .85em;
@@ -88,7 +88,7 @@
     letter-spacing: normal;
     text-transform: uppercase;
 }
-.custom .ui-widget-footer {
+/.custom .ui-widget-footer {
     border: 0;
     color: #FFF;
     letter-spacing: normal;
@@ -96,7 +96,7 @@
     text-align: center;
     padding: 3px 1ex 4px;
 }
-.custom .ui-widget-content {
+//.custom .ui-widget-content {
     border: 0;
     background: #F6FBFF;
     color: #333;
@@ -122,7 +122,7 @@
 * Just to make demo-pages look better - not actually relevant to Layout!
 */
 body {
-font-family: Geneva, Arial, Helvetica, sans-serif;
+/font-family: Geneva, Arial, Helvetica, sans-serif;
 *font-size: 80%;
 }
 html {
@@ -285,32 +285,11 @@ font-weight: bold;
 width: 100%;
 padding-bottom: 0.35ex; /* to 'vertically center' text inside text-span */
 }
-/*
-* PANE-MASKS
-* these styles are hard-coded on mask elems, but are also
-* included here as !important to ensure will overrides any generic styles
-*/
-.ui-layout-mask {
-    border: none !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    overflow: hidden !important;
-    position: absolute !important;
-    opacity: 0 !important;
-    filter: Alpha(Opacity="0") !important;
-}
-.ui-layout-mask-inside-pane { /* masks always inside pane EXCEPT when pane is an iframe */
-    top: 0 !important;
-    left: 0 !important;
-    width: 100% !important;
-    height: 100% !important;
-}
-div.ui-layout-mask {} /* standard mask for iframes */
 
 /**********************************************/
 /*override jquery css */
 
-.ui-widget-content a {
+//.ui-widget-content a {
     color: #333;
 }
 .ui-widget-content a.btn-warning,
@@ -338,7 +317,10 @@ div.ui-layout-mask {} /* standard mask for iframes */
     margin-top: 4px;
 }
 #outer-south {
-    padding: 5px 10px;
+    padding: 0 0 0 15px;
+}
+#outer-south.inside {
+    padding: 0 0 0 35px;
 }
 #outer-west {
     padding: 0;
@@ -376,7 +358,7 @@ body.custom,
     padding: 0;
 }
 
-.content {
+/.content {
     overflow: auto;
     padding: 0px;
     position: relative;
@@ -386,12 +368,15 @@ body.custom,
     color: #05346D;
     box-shadow: 0 2px 2px rgba(055, 055, 055, 0.5) inset;
 }
+.custom .navbar-inverse #tabbuttons.navbar-brand, .custom .navbar-inverse #tabbuttons.navbar-nav > li > a {
+    text-shadow: 0 0 0 rgba(0, 0, 0, 0.0);
+}
 #inner-center {
     overflow: hidden;
     position: relative;
 }
 #inner-center .ui-layout-content {
-    padding: 10px;
+    padding: 0 15px;
 }
 .ui-layout-toggler-north .btnWest {
     background: #009900;
@@ -408,7 +393,7 @@ body.custom,
 .ui-layout-toggler-north .btnCenter {
     background: #0000CC;
 }
-#southpane-closed, .southpane-open {
+/#southpane-closed, .southpane-open {
     border: 1px solid #BFD4FC;
     border-radius: 2px 2px 0 0;
     color: #FFFFFF;
@@ -427,7 +412,7 @@ body.custom,
     bottom: 1px;
     background-color: #4F8FFF;
 }
-.southpane-open {
+/.southpane-open {
     right: 50px;
 }
 .custom .header-toolbar {
@@ -451,8 +436,30 @@ body.custom,
     font-size: 16px;
     overflow: hidden;
     position: relative;
+
 }
 .button:hover {
     background: #7EABF4;
+}
+.icon-caret-up.button, .icon-caret-down.button {
+    padding: 0px 10px 3px;
+    vertical-align: top;
+    line-height: 6px;
+}
+
+.icon-caret-down.button {
+    line-height: 25px;
+}
+
+.ui-layout-resizer, .ui-layout-toggler.ui-layout-toggler-south {
+    background-color: #E4F1F9;
+}
+
+.header-footer {
+    height: 36px !important;
+}
+
+.header-footer-breadcrumb {
+    height: 35px !important;
 }
 

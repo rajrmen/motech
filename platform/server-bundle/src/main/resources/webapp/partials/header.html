@@ -7,13 +7,15 @@
 <div class="clearfix"></div>
 <div class="header-nav navbar" overflow-change-panel>
     <div class="navbar-inner navbar-inverse navbar-inner-bg">
-        <div class="container-fluid">
-            <a id="brand" class="brand" ng-hide="showDashboardLogo.showDashboard" href=".">MOTECH</a>
+        <div class="">
+            <div class="navbar-header">
+                <a id="brand" class="navbar-brand" ng-hide="showDashboardLogo.showDashboard" href=".">MOTECH</a>
+            </div>
 
-            <ul class="nav" role="navigation">
+            <ul class="nav navbar-nav" role="navigation">
                 <li class="divider-vertical" ng-hide="showDashboardLogo.showDashboard" ></li>
             </ul>
-            <ul role="tablist" id="tabbuttons" class="nav tabbuttons"  elementactive>
+            <ul role="tablist" id="tabbuttons" class="nav navbar-nav tabbuttons"  elementactive>
                 <li><a role="menu" class="tab1" href="#servermodules">{{msg('server.modules')}}</a></li>
                 <li><a role="menu" class="tab2" href="#adminmodule">{{msg('admin.module')}}</a></li>
                 <li><a role="menu" class="tab3" href="#websecurity">{{msg('websecurity')}}</a></li>
@@ -21,9 +23,9 @@
             <ul id="tabbuttons-right" class="nav navbar-nav pull-right menu-left">
                 <li class="divider-vertical divider-vertical-sub hidden-xs"></li>
                 <li><a id="minimize" class="btn btn-xs btn-blue" ng-click="minimizeHeader()">
-                    <img title="{{msg(showDashboardLogo.changeTitle())}}"
+                    <i title="{{msg(showDashboardLogo.changeTitle())}}"
                          alt="{{msg(showDashboardLogo.changeTitle())}}"
-                         ng-class="showDashboardLogo.changeClass()"/>
+                         ng-class="showDashboardLogo.changeClass()"/></i>
                 </a>
                 </li>
                 <li class="divider-vertical divider-vertical-sub"></li>

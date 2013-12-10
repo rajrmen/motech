@@ -22,7 +22,8 @@
 <link rel="stylesheet" type="text/css" href="resources/css/alert-blackgloss.css"/>
 <link rel="stylesheet" type="text/css" href="resources/css/select2.css"/>
 
-<script type="text/javascript" src="resources/lib/jquery/jquery.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script type="text/javascript" src="resources/lib/jquery/jquery-migrate.js"></script>
 <script type="text/javascript" src="resources/lib/jquery/jquery.form.js"></script>
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
 <script type="text/javascript" src="resources/lib/jquery/jquery.alerts.js"></script>
@@ -51,6 +52,7 @@
 <script type="text/javascript" src="resources/lib/bootstrap/bootstrap-notify.js"></script>
 <script type="text/javascript" src="resources/lib/bootstrap/bootstrap-switch.js"></script>
 <script type="text/javascript" src="resources/lib/bootstrap/bootstrap-multiselect.js"></script>
+<script type="text/javascript" src="resources/lib/bootstrap/bootbox.js"></script>
 
 <script type="text/javascript" src="resources/lib/tagsinput/jquery.tagsinput.js"></script>
 

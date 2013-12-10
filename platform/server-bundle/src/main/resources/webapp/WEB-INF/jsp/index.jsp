@@ -25,7 +25,7 @@
 </head>
 
 <body ng-controller="MasterCtrl" id="container" ng-class="showDashboardLogo.backgroudUpDown()" class="custom ui-layout-container container-full" layout state="bodyState" ng-init="bodyState = true">
-    <span ng-controller="HomeCtrl">
+    <div ng-controller="HomeCtrl">
 
         <div class="ui-layout-pane ui-layout-pane-north" id="outer-north">
             <div ng-show="ready" id="content-header" ng-include="'../server/resources/partials/header.html'"></div>
@@ -47,22 +47,20 @@
 
         <div innerlayout id="outer-center" class="outer-center ui-layout-pane ui-layout-pane-center ui-layout-container">
             <c:if test="${! empty currentModule}">
-                <div id="main-content" class="row">
-                    <div id="inner-center" class="inner-center ui-layout-center ui-tabs ui-layout-pane ui-layout-pane-center">
-                        <div class="col-sm-12 ui-layout-content">
-                            <div class="splash" ng-hide="ready">
-                                <div class="splash-logo"></div>
-                                <div class="clearfix"></div>
-                                <div class="splash-loader"><img src="../server/resources/img/loader.gif" alt="loading" /></div>
-                                <div class="clearfix"></div>
-                            </div>
-                            <c:if test="${criticalNotification != null && criticalNotification != ''}">
-                                <div id="criticalNotification" class="alert alert-danger">
-                                    ${criticalNotification}
-                                </div>
-                            </c:if>
-                        </div>
+                <div id="main-content">
+                    <div class="splash" ng-hide="ready">
+                        <div class="splash-logo"></div>
+                        <div class="clearfix"></div>
+                        <div class="splash-loader"><img src="../server/resources/img/loader.gif" alt="loading" /></div>
+                        <div class="clearfix"></div>
+                        <div class="splash-msg">{{msg('server.module.loading')}}</div>
+                        <div class="clearfix"></div>
                     </div>
+                    <c:if test="${criticalNotification != null && criticalNotification != ''}">
+                        <div id="criticalNotification" class="alert alert-danger">
+                            ${criticalNotification}
+                        </div>
+                    </c:if>
                     <div id="module-content" ng-show="ready">
                         <script type="text/javascript">
                             loadModule('${currentModule.url}', ${currentModule.angularModulesStr});
@@ -72,10 +70,6 @@
             </c:if>
         </div> <!-- #outer-center-->
 
-        <div id="southpane-closed" class="header-toolbar">
-            <span id="tbarOpenSouth2"><i class="icon-caret-up button"></i></span>
-        </div>
-
-    </span>
+    </div>
 </body>
 </html>

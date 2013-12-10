@@ -1,25 +1,51 @@
 <div id="inner-center" class="tasks inner-center ui-layout-center ui-tabs ui-layout-pane ui-layout-pane-center">
-    <ul class="breadcrumb header-footer" role="navigation">
-        <li><a role="menu" href=".">{{msg('server.home')}}</a><span class="divider">/</span></li>
-    </ul>
-    <div class="ui-layout-content tabbable">
-    <ul id="content-tabs" class="ui-tabs-nav nav nav-tabs tasks ui-tabs-nav ui-helper-reset ui-helper-clearfix ">
-        <li ng-class="active('#/dashboard')"><a  href="#/dashboard">{{msg('task.tab')}}</a></li>
-        <li ng-class="active('#/settings')"><a  href="#/settings">{{msg('task.tab.settings')}}</a></li>
-    </ul>
-    <div class="tab-content tasks" id="tab-content">
-    <div id="main-content" class="tab-pane active">
-        <div ng-view></div>
+    <div class="header-footer-breadcrumb">
+        <ul class="breadcrumb" role="navigation">
+            <li><a role="menu" href=".">{{msg('server.home')}}</a></li>
+            <li><a role="menu" href="#/dashboard">{{msg('task.tab')}}</a></li>
+            <li ng-show="active('#/dashboard')" ng-class="active('#/dashboard')">{{msg('task.tab')}} list</li>
+            <li ng-show="active('#/settings')" ng-class="active('#/settings')">{{msg('task.tab.settings')}}</li>
+            <li ng-show="active('#/task/new')" ng-class="active('#/task/new')">{{msg('task.new')}}</li>
+        </ul>
     </div>
+    <div class="header-footer">
+        <ul id="content-tabs" class="nav nav-tabs tasks ">
+            <li ng-class="active('#/dashboard')"><a  href="#/dashboard">{{msg('task.tab')}}</a></li>
+            <li ng-class="active('#/settings')"><a  href="#/settings">{{msg('task.tab.settings')}}</a></li>
+        </ul>
     </div>
+    <div class="ui-layout-content">
+        <div class="tab-content tasks" id="tab-content">
+            <div id="main-content" class=" active">
+                <div ng-view></div>
+            </div>
+        </div>
     </div>
 </div>
 
 <div id="inner-east" class="inner-east ui-layout-pane ui-layout-pane-east">
     <div class="header-toolbar header-footer"><i id="tbarCloseEast" class="button icon-caret-right pull-right"></i></div>
-    <!------------------------  Recent task activity  ------------------------>
-    <div class="inbox-header">{{msg('task.header.recentTaskActivity')}}</div>
-    <div ng-controller="RecentActivityCtrl" class="ui-layout-content">
-        <div ng-include="" src="'../tasks/partials/recent-task-activity.html'"></div>
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="#recentTaskActivity" data-toggle="tab">{{msg('task.header.recentTaskActivity')}}</a></li>
+        <li><a href="#filters" data-toggle="tab">{{msg('task.section.filters')}}</a></li>
+    </ul>
+    <div class="ui-layout-content">
+        <div class="tab-content">
+            <div ng-controller="RecentActivityCtrl" class="tab-pane fade in active" id="recentTaskActivity">
+                <!------------------------  Recent task activity  ------------------------>
+                <div ng-include="" src="'../tasks/partials/recent-task-activity.html'"></div>
+            </div>
+            <div class="tab-pane fade" id="filters">
+                <!------------------------  Filters  ------------------------>
+                <div  class="inside form-group">
+                    <label >{{msg('task.header.searchTasks')}}</label>
+                    <input type="text" ng-model="query" ng-change="search()" class="form-control search-query" placeholder="{{msg('task.header.searchByNameOrDescription')}}">
+                    <div data-toggle="buttons-checkbox" class="btn-group">
+                        <button ng-click="setHideActive()" class="btn btn-xs btn-info setHideActive active" type="button"><i class="icon-white icon-ok"></i> {{msg('task.header.activeTasks')}}</button>
+                        <button ng-click="setHidePaused()" class="btn btn-xs btn-info setHidePaused active" type="button"><i class="icon-white icon-ok"></i> {{msg('task.header.pausedTasks')}}</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>

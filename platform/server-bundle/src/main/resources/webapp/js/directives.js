@@ -23,7 +23,7 @@
                     center__paneSelector: "#outer-center",
                     south__paneSelector: "#outer-south",
                     south__spacing_open: 0,
-                    south__spacing_closed: 0,
+                    south__spacing_closed: 8,
                     south__minSize: 30,
                     south__size: 30,
                     north__spacing_open: 0,
@@ -31,7 +31,8 @@
                     spacing_closed: 30,
                     north__spacing_closed: 0,
                     north__minSize: 40,
-                    //north__showOverflowOnHover: true,
+                    //south__showOverflowOnHover: true,
+                    center__showOverflowOnHover: true,
                     west__size: 350,
                     useStateCookie: true,
                     cookie__keys: "north.size,north.isClosed,south.size,south.isClosed,west.size,west.isClosed,east.size,east.isClosed",
@@ -40,11 +41,15 @@
                     center__minHeight: 100,
                     contentSelector: ".ui-layout-content",
                     togglerContent_closed: '<span><i class="icon-caret-right button"></i></span>',
-                    togglerContent_open: '<span><i class="icon-caret-left button"></i></span>',
+                    togglerContent_open: '<span><i class="icon-caret-left"></i></span>',
                     togglerAlign_closed: "top", // align to top of resizer
+                    south__togglerAlign_closed: "bottom",
+                    south__togglerContent_closed: '<span><i class="icon-caret-up button"></i></span>',
+                    south__togglerContent_open: '',
                     togglerAlign_open: "top",
                     togglerLength_open: 0, // NONE - using custom togglers INSIDE west-pane
                     togglerLength_closed: 35,
+                    south__togglerLength_closed: 30,
                     togglerTip_open: "Close This Pane",
                     togglerTip_closed: "Open This Pane",
                     slideTrigger_open: "click",  // default
@@ -56,58 +61,10 @@
                 scope.outerLayout.sizePane('north', scope.showDashboardLogo.changeHeight());
 
                 // BIND events to hard-coded buttons in the NORTH toolbar
-                scope.outerLayout.addOpenBtn( "#tbarOpenSouth2", "south" );
+               // scope.outerLayout.addOpenBtn( "#tbarOpenSouth2", "south" );
                 scope.outerLayout.addCloseBtn( "#tbarCloseSouth", "south" );
                 scope.outerLayout.addCloseBtn( "#tbarCloseWest", "west" );
 
-            }
-        };
-    });
-
-    widgetModule.directive('innerlayout', function() {
-        return {
-            link: function(scope, elm, attrs) {
-                var eastSelector;
-                /*
-                * Define options for inner layout
-                */
-                scope.innerLayoutOptions = {
-                    name: 'innerLayout',
-                    resizeWithWindowDelay: 250, // delay calling resizeAll when window is *still* resizing
-                    // resizeWithWindowMaxDelay: 2000, // force resize every XX ms while window is being resized
-                    resizable: true,
-                    slidable: true,
-                    closable: true,
-                    east__paneSelector: "#inner-east",
-                    center__paneSelector: "#inner-center",
-                    east__spacing_open: 6,
-                    spacing_closed: 30,
-                    //east__showOverflowOnHover: true,
-                    east__size: 300,
-                    showErrorMessages: true, // some panes do not have an inner layout
-                    resizeWhileDragging: true,
-                    center__minHeight: 100,
-                    contentSelector: ".ui-layout-content",
-                    togglerContent_open: '',
-                    togglerContent_closed: '<div><i class="icon-caret-left button"></i></div>',
-                    autoReopen: false, // auto-open panes that were previously auto-closed due to 'no room'
-                    noRoom: true,
-                    togglerAlign_closed: "top", // align to top of resizer
-                    togglerAlign_open: "top",
-                    togglerLength_open: 0,
-                    togglerLength_closed: 35,
-                    togglerTip_open: "Close This Pane",
-                    togglerTip_closed: "Open This Pane",
-                    east__initClosed: false,
-                    initHidden: false
-                    //isHidden: true
-                };
-
-                // create the page-layout, which will ALSO create the tabs-wrapper child-layout
-                scope.innerLayout = elm.layout(scope.innerLayoutOptions);
-
-                // BIND events to hard-coded buttons in the NORTH toolbar
-                scope.innerLayout.addCloseBtn( "#tbarCloseEast", "east" );
             }
         };
     });
