@@ -1162,7 +1162,7 @@
                     togglerTip_open: "Close This Pane",
                     togglerTip_closed: "Open This Pane",
                     east__initClosed: true,
-                    initHidden: false
+                    initHidden: true
                     //isHidden: true
                 };
 

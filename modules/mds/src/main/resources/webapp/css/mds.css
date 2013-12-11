@@ -5,6 +5,10 @@
     margin-right: 0;
 }
 
+.mds .tab-content .nav-tabs {
+    background-color: #EFF9FF;
+}
+
 .mds-settings.nav.nav-tabs {
     border-bottom: 1px solid #D4E1F9;
 }
@@ -367,4 +371,13 @@
 
 .exportCsvButton {
     margin-left: 10px;
+}
+
+.mds #entityFieldsTable.table > thead > tr > th:first-child,
+.mds #entityFieldsTable.table > tbody > tr > th:first-child,
+.mds #entityFieldsTable.table > tfoot > tr > th:first-child,
+.mds #entityFieldsTable.table > thead > tr > td:first-child,
+.mds #entityFieldsTable.table > tbody > tr > td:first-child,
+.mds #entityFieldsTable.table > tfoot > tr > td:first-child {
+    width: 72px;
 }
