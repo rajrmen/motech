@@ -66,6 +66,6 @@ public class AllEmailRecordsIT {
 
     @After
     public void tearDown() {
-       // allEmailRecords.removeAll();
+        allEmailRecords.removeAll();
     }
 }
