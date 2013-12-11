@@ -327,16 +327,6 @@ directive.popover = ['popoverElement', function(popover) {
   }
 }];
 
-directive.tabPane = function() {
-  return {
-    require: '^tabbable',
-    restrict: 'C',
-    link: function(scope, element, attrs, tabsCtrl) {
-      element.on('$remove', tabsCtrl.addPane(element, attrs));
-    }
-  };
-};
-
 directive.foldout = ['$http', '$animate','$window', function($http, $animate, $window) {
   return {
     restrict: 'A',
