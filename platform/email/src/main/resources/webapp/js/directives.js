@@ -217,7 +217,7 @@
         };
     });
 
-    emailModule.directive('jqgridSearch', function ($compile) {
+    emailModule.directive('jqgridSearch', function () {
         return {
             restrict: 'A',
             link: function (scope, element, attrs) {
@@ -229,7 +229,7 @@
                         var field = elem.data('search-field'),
                             value = elem.data('search-value'),
                             type = elem.data('field-type') || 'string',
-                            url = parseUri(table.jqGrid('getGridParam', 'url')),
+                            url = parseUri(jQuery('#' + attrs.jqgridSearch).jqGrid('getGridParam', 'url')),
                             query = {},
                             params = '?',
                             array = [],

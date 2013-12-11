@@ -29,3 +29,11 @@
     margin-top: 0;
     margin-bottom: 0;
 }
+
+.panel-heading a {
+    text-decoration: none;
+}
+
+.dynamic-select {
+    width: 100%;
+}
