@@ -65,16 +65,16 @@
                 </ul>
 
                 <div class="tab-content">
-                    <div class="tab-pane active" id="basic-{{$index}}">
+                    <div class="active" id="basic-{{$index}}">
                         <div ng-include="'../mds/resources/partials/widgets/field-basic.html'"></div>
                     </div>
-                    <div class="tab-pane" id="metadata-{{$index}}">
+                    <div class="" id="metadata-{{$index}}">
                         <div ng-include="'../mds/resources/partials/widgets/field-metadata.html'"></div>
                     </div>
-                    <div class="tab-pane" id="validation-{{$index}}" ui-if="field.validation">
+                    <div class="" id="validation-{{$index}}" ui-if="field.validation">
                         <div ng-include="'../mds/resources/partials/widgets/field-validation.html'"></div>
                     </div>
-                    <div class="tab-pane" id="settings-{{$index}}" ui-if="field.settings.length > 0">
+                    <div class="" id="settings-{{$index}}" ui-if="field.settings.length > 0">
                         <div ng-include="'../mds/resources/partials/widgets/field-settings.html'"></div>
                     </div>
                 </div>
