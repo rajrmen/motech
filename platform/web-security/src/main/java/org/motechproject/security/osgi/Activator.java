@@ -1,12 +1,11 @@
 package org.motechproject.security.osgi;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.felix.http.api.ExtHttpService;
+import org.motechproject.osgi.web.Header;
 import org.motechproject.osgi.web.ModuleRegistrationData;
 import org.motechproject.osgi.web.MotechOsgiWebApplicationContext;
 import org.motechproject.osgi.web.UIFrameworkService;
 import org.motechproject.osgi.web.exception.ServletRegistrationException;
-import org.motechproject.osgi.web.ext.ApplicationEnvironment;
 import org.motechproject.osgi.web.ext.HttpContextFactory;
 import org.motechproject.security.filter.MotechDelegatingFilterProxy;
 import org.motechproject.security.service.MotechProxyManager;
@@ -20,10 +19,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.filter.DelegatingFilterProxy;
 import org.springframework.web.servlet.DispatcherServlet;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringWriter;
-
 /**
  * The Spring security activator is used to register
  * the spring security filter, dispatcher servlet, and
@@ -32,7 +27,6 @@ import java.io.StringWriter;
  * will be consulted for security configuration, if it's not
  * there then the default security filter from the securityContext
  * file is used.
- *
  */
 public class Activator implements BundleActivator {
     private static Logger logger = LoggerFactory.getLogger(Activator.class);
@@ -120,8 +114,10 @@ public class Activator implements BundleActivator {
             try {
                 Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
 
-                HttpContext httpContext = HttpContextFactory.getHttpContext(service.createDefaultHttpContext(),
-                        bundleContext.getBundle(), new ApplicationEnvironment());
+                HttpContext httpContext = HttpContextFactory.getHttpContext(
+                        service.createDefaultHttpContext(),
+                        bundleContext.getBundle()
+                );
 
                 service.registerServlet(SERVLET_URL_MAPPING, dispatcherServlet, null, null);
                 service.registerResources(RESOURCE_URL_MAPPING, "/webapp", httpContext);
@@ -159,20 +155,9 @@ public class Activator implements BundleActivator {
         regData.addI18N("messages", "../websecurity/messages/");
         regData.setBundle(bundleContext.getBundle());
 
-        InputStream is = null;
-        StringWriter writer = new StringWriter();
-        try {
-            is = this.getClass().getClassLoader().getResourceAsStream("header.html");
-            IOUtils.copy(is, writer);
-
-            regData.setHeader(writer.toString());
-        } catch (IOException e) {
-            logger.error("Cant read header.html", e);
-            throw new ServletRegistrationException(e);
-        } finally {
-            IOUtils.closeQuietly(is);
-            IOUtils.closeQuietly(writer);
-        }
+        Header header = new Header(bundleContext);
+        header.setResourcePath(RESOURCE_URL_MAPPING);
+        regData.setHeader(header.asString());
 
         service.registerModule(regData);
         logger.debug("Web Security registered in UI framework");

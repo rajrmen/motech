@@ -173,7 +173,7 @@
             require: 'ngModel',
             link: function (scope, element, attr, ngModel) {
                 ngModel.$parsers.push(function (text) {
-                    return text.split("\n");
+                    return text ? text.split("\n") : [];
                 });
 
                 ngModel.$formatters.push(function (array) {
@@ -183,109 +183,586 @@
         };
     });
 
-    mds.directive('restFieldsItem', function () {
+    /**
+    * Add "Item" functionality of "Connected Lists" control to the element. "Connected Lists Group"
+    * is passed as a value of the attribute. If item is selected '.connected-list-item-selected-{group}
+    * class is added.
+    */
+    mds.directive('connectedListTargetItem', function () {
         return {
             restrict: 'A',
             link: function (scope, element) {
-                var elem = angular.element(element),
-                    group = elem.attr('rest-fields-item');
+                var jQelem = angular.element(element),
+                    elem = element[0],
+                    connectWith = jQelem.attr('connect-with'),
+                    sourceContainer = $('.connected-list-source.' + connectWith),
+                    targetContainer = $('.connected-list-target.' + connectWith);
 
-                elem.click(function() {
-                    $(this).toggleClass("rest-fields-item-selected");
+                jQelem.addClass(connectWith);
+                jQelem.addClass("target-item");
+
+                jQelem.click(function() {
+                    $(this).toggleClass("selected");
+                    scope.$apply();
                 });
 
-                elem.dblclick(function() {
-                    var elem = angular.element(element),
-                        id = elem.attr('fieldId'),
-                        order = elem.attr('order'),
-                        item;
+                jQelem.dblclick(function() {
+                    var e = $(this),
+                        source = scope[sourceContainer.attr('connected-list-source')],
+                        target = scope[targetContainer.attr('connected-list-target')],
+                        index = parseInt(e.attr('item-index'), 10),
+                        item = target[index];
+                    e.removeClass("selected");
+                    scope.$apply(function() {
+                        source.push(item);
+                        target.splice(index, 1);
+                        sourceContainer.trigger('contentChange', [source]);
+                        targetContainer.trigger('contentChange', [target]);
+                    });
+                });
 
-                    if (typeof scope.findFieldById(id, scope.selectedEntityAdvancedAvailableFields) === "undefined") {
-                        item = scope.findFieldById(id, scope.selectedEntityAdvancedFields);
-                        scope.selectedEntityAdvancedFields.splice(order, 1);
-                        scope.selectedEntityAdvancedAvailableFields.push(item);
-                    } else {
-                        item = scope.findFieldById(id, scope.selectedEntityAdvancedAvailableFields);
-                        scope.selectedEntityAdvancedAvailableFields.splice(order, 1);
-                        scope.selectedEntityAdvancedFields.push(item);
+                elem.addEventListener('dragenter', function(e) {
+                    $(this).addClass('over');
+                    return false;
+                }, false);
+
+                elem.addEventListener('dragleave', function(e) {
+                    $(this).removeClass('over');
+                }, false);
+
+                elem.addEventListener('dragover', function(e) {
+                    e.preventDefault();
+                    return false;
+                }, false);
+
+                elem.addEventListener('dragstart', function(e) {
+                    var item = $(this);
+                    item.addClass('selected');
+                    item.fadeTo(100, 0.4);
+                    e.dataTransfer.effectAllowed = 'move';
+                    e.dataTransfer.setData('origin', 'target');
+                    e.dataTransfer.setData('index', item.attr('item-index'));
+                    return false;
+                }, false);
+
+                elem.addEventListener('dragend', function(e) {
+                    var item = $(this);
+                    item.removeClass('selected');
+                    item.fadeTo(100, 1.0);
+                    return false;
+                }, false);
+
+                elem.addEventListener('drop', function(e) {
+                    e.stopPropagation();
+                    var itemOriginContainer = e.dataTransfer.getData('origin'),
+                        index = parseInt(e.dataTransfer.getData('index'), 10),
+                        thisIndex = parseInt($(this).attr('item-index'), 10),
+                        source, target, item;
+
+                    $(this).removeClass('over');
+                    source = scope[sourceContainer.attr('connected-list-source')];
+                    target = scope[targetContainer.attr('connected-list-target')];
+
+                    if (itemOriginContainer === 'target') {
+                        // movement inside one container
+                        item = target[index];
+                        if(thisIndex > index) {
+                            thisIndex += 1;
+                        }
+                        scope.$apply(function() {
+                            target[index] = 'null';
+                            target.splice(thisIndex, 0, item);
+                            target.splice(target.indexOf('null'), 1);
+                            targetContainer.trigger('contentChange', [target]);
+                        });
+                    } else if (itemOriginContainer === 'source') {
+                        item = source[index];
+                        scope.$apply(function() {
+                            target.splice(thisIndex, 0, item);
+                            source.splice(index, 1);
+                            sourceContainer.trigger('contentChange', [source]);
+                            targetContainer.trigger('contentChange', [target]);
+                        });
                     }
-                    scope.safeApply();
-                });
+                    return false;
+                }, false);
 
-                elem.disableSelection();
+                jQelem.disableSelection();
             }
         };
     });
 
-    mds.directive('restFieldsRight', function () {
+    mds.directive('connectedListSourceItem', function () {
         return {
             restrict: 'A',
             link: function (scope, element) {
-                var elem = angular.element(element),
-                    selectedItemsSelector = ".rest-fields-item-selected";
+                var jQelem = angular.element(element),
+                    elem = element[0],
+                    connectWith = jQelem.attr('connect-with'),
+                    sourceContainer = $('.connected-list-source.' + connectWith),
+                    targetContainer = $('.connected-list-target.' + connectWith);
 
-                elem.click(function (e) {
-                    var source = $(".rest-fields-available"),
-                        selected = source.children(selectedItemsSelector),
-                        addItems = [], removeItems = [];
+                jQelem.addClass(connectWith);
+                jQelem.addClass("source-item");
 
-                    if (selected.size() !== 0) {
-                        selected.each(function() {
-                            var e = $(this),
-                            id = e.attr('fieldId'),
-                            item = scope.findFieldById(id, scope.selectedEntityAdvancedAvailableFields),
-                            keepGoing = true;
+                jQelem.click(function() {
+                    $(this).toggleClass("selected");
+                    scope.$apply();
+                });
 
-                            $(this).toggleClass("rest-fields-item-selected");
+                jQelem.dblclick(function() {
+                    var e = $(this),
+                        source = scope[sourceContainer.attr('connected-list-source')],
+                        target = scope[targetContainer.attr('connected-list-target')],
+                        index = parseInt(e.attr('item-index'), 10),
+                        item = source[index];
+                    e.removeClass("selected");
+                    scope.$apply(function() {
+                        target.push(item);
+                        source.splice(index, 1);
+                        sourceContainer.trigger('contentChange', [source]);
+                        targetContainer.trigger('contentChange', [target]);
+                    });
+                });
 
-                            angular.forEach(scope.selectedEntityAdvancedAvailableFields, function (field, index) {
-                                if (field.id === id && keepGoing === true) {
-                                    scope.selectedEntityAdvancedAvailableFields.splice(index, 1);
-                                    keepGoing = false;
-                                }
-                            });
-                            scope.selectedEntityAdvancedFields.push(item);
+                elem.addEventListener('dragenter', function(e) {
+                    $(this).addClass('over');
+                    return false;
+                }, false);
+
+                elem.addEventListener('dragleave', function(e) {
+                    $(this).removeClass('over');
+                    return false;
+                }, false);
+
+                elem.addEventListener('dragover', function(e) {
+                    e.preventDefault();
+                    return false;
+                }, false);
+
+                elem.addEventListener('dragstart', function(e) {
+                    var item = $(this);
+                    item.addClass('selected');
+                    item.fadeTo(100, 0.4);
+                    e.dataTransfer.effectAllowed = 'move';
+                    e.dataTransfer.setData('origin', 'source');
+                    e.dataTransfer.setData('index', item.attr('item-index'));
+                    return false;
+                }, false);
+
+                elem.addEventListener('dragend', function(e) {
+                    var item = $(this);
+                    item.removeClass('selected');
+                    item.fadeTo(100, 1.0);
+                    return false;
+                }, false);
+
+                elem.addEventListener('drop', function(e) {
+                    e.stopPropagation();
+                    var itemOriginContainer = e.dataTransfer.getData('origin'),
+                        index = parseInt(e.dataTransfer.getData('index'), 10),
+                        thisIndex = parseInt($(this).attr('item-index'), 10),
+                        source, target, item;
+
+                    $(this).removeClass('over');
+                    source = scope[sourceContainer.attr('connected-list-source')];
+                    target = scope[targetContainer.attr('connected-list-target')];
+                    if (itemOriginContainer === 'source') {
+                        // movement inside one container
+                        item = source[index];
+                        if(thisIndex > index) {
+                            thisIndex += 1;
+                        }
+                        scope.$apply(function() {
+                            source[index] = 'null';
+                            source.splice(thisIndex, 0, item);
+                            source.splice(source.indexOf('null'), 1);
+                            sourceContainer.trigger('contentChange', [source]);
+                        });
+                    } else if (itemOriginContainer === 'target') {
+                        item = target[index];
+                        scope.$apply(function() {
+                            source.splice(thisIndex, 0, item);
+                            target.splice(index, 1);
+                            sourceContainer.trigger('contentChange', [source]);
+                            targetContainer.trigger('contentChange', [target]);
                         });
                     }
-                    scope.safeApply();
+                    return false;
+                }, false);
+
+                jQelem.disableSelection();
+            }
+        };
+    });
+
+    /**
+    * Add "Source List" functionality of "Connected Lists" control to the element (container).
+    * "Connected Lists Group" is passed as a value of the attribute. "onItemsAdd", "onItemsRemove"
+    * and "onItemMove" callback functions are registered to handle items adding/removing/sorting.
+    */
+    mds.directive('connectedListSource', function () {
+        return {
+            restrict: 'A',
+            link: function (scope, element) {
+                var jQelem = angular.element(element), elem = element[0], connectWith = jQelem.attr('connect-with'),
+                    onContentChange = jQelem.attr('on-content-change');
+
+                jQelem.addClass('connected-list-source');
+                jQelem.addClass(connectWith);
+
+                if(typeof scope[onContentChange] === typeof Function) {
+                    jQelem.on('contentChange', function(e, content) {
+                        scope[onContentChange](content);
+                    });
+                }
+
+                elem.addEventListener('dragenter', function(e) {
+                    $(this).addClass('over');
+                    return false;
+                }, false);
+
+                elem.addEventListener('dragleave', function(e) {
+                    $(this).removeClass('over');
+                    return false;
+                }, false);
+
+                elem.addEventListener('dragover', function(e) {
                     e.preventDefault();
+                    return false;
+                }, false);
+
+                elem.addEventListener('drop', function(e) {
+                    e.stopPropagation();
+
+                    var itemOriginContainer = e.dataTransfer.getData('origin'),
+                        index = parseInt(e.dataTransfer.getData('index'), 10),
+                        sourceContainer = $('.connected-list-source.' + connectWith),
+                        targetContainer = $('.connected-list-target.' + connectWith),
+                        source, target, item;
+
+                    $(this).removeClass('over');
+                    source = scope[sourceContainer.attr('connected-list-source')];
+                    target = scope[targetContainer.attr('connected-list-target')];
+                    if (itemOriginContainer === 'source') {
+                        // movement inside one container
+                        item = source[index];
+                        scope.$apply(function() {
+                            source.splice(index, 1);
+                            source.push(item);
+                            sourceContainer.trigger('contentChange', [source]);
+                        });
+                    } else if (itemOriginContainer === 'target') {
+                        item = target[index];
+                        scope.$apply(function() {
+                            source.push(item);
+                            target.splice(index, 1);
+                            sourceContainer.trigger('contentChange', [source]);
+                            targetContainer.trigger('contentChange', [target]);
+                        });
+                    }
+                    return false;
+                }, false);
+            }
+        };
+    });
+
+    /*
+    * Add "Target List" functionality of "Connected Lists" control to the element (container).
+    * "Connected Lists Group" is passed as a value of the attribute. "onItemsAdd", "onItemsRemove"
+    * and "onItemMove" callback functions are registered to handle items adding/removing/sorting.
+    */
+    mds.directive('connectedListTarget', function () {
+        return {
+            restrict: 'A',
+            link: function (scope, element) {
+                var jQelem = angular.element(element), elem = element[0], connectWith = jQelem.attr('connect-with'),
+                    onContentChange = jQelem.attr('on-content-change');
+
+                jQelem.addClass('connected-list-target');
+                jQelem.addClass(connectWith);
+
+                if(typeof scope[onContentChange] === typeof Function) {
+                    jQelem.on('contentChange', function(e, content) {
+                        scope[onContentChange](content);
+                    });
+                }
+
+                elem.addEventListener('dragenter', function(e) {
+                    $(this).addClass('over');
+                    return false;
+                }, false);
+
+                elem.addEventListener('dragleave', function(e) {
+                    $(this).removeClass('over');
+                    return false;
+                }, false);
+
+                elem.addEventListener('dragover', function(e) {
+                    e.preventDefault();
+                    return false;
+                }, false);
+
+                elem.addEventListener('drop', function(e) {
+                    e.stopPropagation();
+
+                    var itemOriginContainer = e.dataTransfer.getData('origin'),
+                        index = parseInt(e.dataTransfer.getData('index'), 10),
+                        sourceContainer = $('.connected-list-source.' + connectWith),
+                        targetContainer = $('.connected-list-target.' + connectWith),
+                        source, target, item;
+
+                    $(this).removeClass('over');
+                    source = scope[sourceContainer.attr('connected-list-source')];
+                    target = scope[targetContainer.attr('connected-list-target')];
+                    if (itemOriginContainer === 'target') {
+                        // movement inside one container
+                        item = target[index];
+                        scope.$apply(function() {
+                            target.splice(index, 1);
+                            target.push(item);
+                            targetContainer.trigger('contentChange', [target]);
+                        });
+                    } else if (itemOriginContainer === 'source') {
+                        item = source[index];
+                        scope.$apply(function() {
+                            target.push(item);
+                            source.splice(index, 1);
+                            sourceContainer.trigger('contentChange', [source]);
+                            targetContainer.trigger('contentChange', [target]);
+                        });
+                    }
+                    return false;
+                }, false);
+            }
+        };
+    });
+
+    /**
+    * Add "Move selected to target" functionality of "Connected Lists" control to the element (button).
+    * "Connected Lists Group" is passed as a value of the 'connect-with' attribute.
+    */
+    mds.directive('connectedListBtnTo', function (Entities) {
+        return {
+            restrict: 'A',
+            link: function (scope, element, attr) {
+                angular.element(element).click(function (e) {
+                    var sourceContainer = $('.connected-list-source.' + attr.connectWith),
+                        targetContainer = $('.connected-list-target.' + attr.connectWith),
+                        source = scope[sourceContainer.attr('connected-list-source')],
+                        target = scope[targetContainer.attr('connected-list-target')],
+                        selectedElements = sourceContainer.children('.selected'),
+                        selectedIndices = [], selectedItems = [],
+                        array = [];
+
+                    selectedElements.each(function() {
+                         var that = $(this),
+                             index = parseInt(that.attr('item-index'), 10),
+                             item = source[index];
+
+                         that.removeClass('selected');
+                         selectedIndices.push(index);
+                         selectedItems.push(item);
+                    });
+
+                    scope.safeApply(function () {
+                        angular.forEach(selectedIndices.reverse(), function(itemIndex) {
+                             source.splice(itemIndex, 1);
+                        });
+
+                        angular.forEach(selectedItems, function(item) {
+                            target.push(item);
+                        });
+
+                        angular.forEach(target, function (item) {
+                            array.push(item.id);
+                        });
+
+                        Entities.draft({
+                            id: scope.selectedEntity.id
+                        }, {
+                            edit: true,
+                            values: {
+                                path: attr.mdsPath,
+                                advanced: true,
+                                value: [array]
+                            }
+                        }, function () {
+                             scope.selectedEntity.draft = true;
+                        });
+
+                        sourceContainer.trigger('contentChange', [source]);
+                        targetContainer.trigger('contentChange', [target]);
+                    });
+                });
+
+                angular.element(element).disableSelection();
+            }
+        };
+    });
+
+    /**
+    * Add "Move all to target" functionality of "Connected Lists" control to the element (button).
+    * "Connected Lists Group" is passed as a value of the 'connect-with' attribute.
+    */
+    mds.directive('connectedListBtnToAll', function (Entities) {
+        return {
+            restrict: 'A',
+            link: function (scope, element, attr) {
+                angular.element(element).click(function (e) {
+                    var sourceContainer = $('.connected-list-source.' + attr.connectWith),
+                        targetContainer = $('.connected-list-target.' + attr.connectWith),
+                        source = scope[sourceContainer.attr('connected-list-source')],
+                        target = scope[targetContainer.attr('connected-list-target')],
+                        selectedItems = sourceContainer.children(),
+                        array = [];
+
+                        angular.forEach(source, function (item) {
+                            array.push(item.id);
+                        });
+
+                        Entities.draft({
+                            id: scope.selectedEntity.id
+                        }, {
+                            edit: true,
+                            values: {
+                                path: attr.mdsPath,
+                                advanced: true,
+                                value: [array]
+                            }
+                        }, function () {
+                             scope.selectedEntity.draft = true;
+
+                             scope.safeApply(function () {
+                                angular.forEach(source, function(item) {
+                                    target.push(item);
+                                });
+
+                                source.length = 0;
+
+                                sourceContainer.trigger('contentChange', [source]);
+                                targetContainer.trigger('contentChange', [target]);
+                             });
+                        });
                 });
             }
         };
     });
 
-    mds.directive('restFieldsLeft', function () {
+    /**
+    * Add "Move selected to source" functionality of "Connected Lists" control to the element (button).
+    * "Connected Lists Group" is passed as a value of the 'connect-with' attribute.
+    */
+    mds.directive('connectedListBtnFrom', function (Entities) {
         return {
             restrict: 'A',
-            link: function (scope, element) {
-                var elem = angular.element(element),
-                    selectedItemsSelector = ".rest-fields-item-selected";
+            link: function (scope, element, attr) {
+                angular.element(element).click(function (e) {
+                    var sourceContainer = $('.connected-list-source.' + attr.connectWith),
+                        targetContainer = $('.connected-list-target.' + attr.connectWith),
+                        source = scope[sourceContainer.attr('connected-list-source')],
+                        target = scope[targetContainer.attr('connected-list-target')],
+                        selectedElements = targetContainer.children('.selected'),
+                        selectedIndices = [], selectedItems = [],
+                        array = [];
 
-                elem.click(function (e) {
-                    var source = $(".rest-fields-selected"),
-                        selected = source.children(selectedItemsSelector),
-                        addItems = [], removeItems = [];
+                    selectedElements.each(function() {
+                         var that = $(this),
+                             index = parseInt(that.attr('item-index'), 10),
+                             item = target[index];
 
-                    if (selected.size() !== 0) {
-                        selected.each(function() {
-                            var e = $(this),
-                            id = e.attr('fieldId'),
-                            item = scope.findFieldById(id, scope.selectedEntityAdvancedFields),
-                            keepGoing = true;
+                         that.removeClass('selected');
+                         selectedIndices.push(index);
+                         selectedItems.push(item);
+                    });
 
-                            $(this).toggleClass("rest-fields-item-selected");
-
-                            angular.forEach(scope.selectedEntityAdvancedFields, function (field, index) {
-                                if (field.id === id && keepGoing === true) {
-                                    scope.selectedEntityAdvancedFields.splice(index, 1);
-                                    keepGoing = false;
-                                }
-                            });
-                            scope.selectedEntityAdvancedAvailableFields.push(item);
+                    scope.safeApply(function () {
+                        angular.forEach(selectedIndices.reverse(), function(itemIndex) {
+                            target.splice(itemIndex, 1);
                         });
-                    }
-                    scope.safeApply();
-                    e.preventDefault();
+
+                        angular.forEach(selectedItems, function(item) {
+                            source.push(item);
+                        });
+
+                        angular.forEach(target, function (item) {
+                            array.push(item.id);
+                        });
+
+                        Entities.draft({
+                            id: scope.selectedEntity.id
+                        }, {
+                            edit: true,
+                            values: {
+                                path: attr.mdsPath,
+                                advanced: true,
+                                value: [array]
+                            }
+                        }, function () {
+                             scope.selectedEntity.draft = true;
+                        });
+
+                        sourceContainer.trigger('contentChange', [source]);
+                        targetContainer.trigger('contentChange', [target]);
+                    });
+                });
+            }
+        };
+    });
+
+    /**
+    * Add "Move all to source" functionality of "Connected Lists" control to the element (button).
+    * "Connected Lists Group" is passed as a value of the 'connect-with' attribute.
+    */
+    mds.directive('connectedListBtnFromAll', function (Entities) {
+        return {
+            restrict: 'A',
+            link: function (scope, element, attr) {
+                angular.element(element).click(function (e) {
+                    var sourceContainer = $('.connected-list-source.' + attr.connectWith),
+                        targetContainer = $('.connected-list-target.' + attr.connectWith),
+                        source = scope[sourceContainer.attr('connected-list-source')],
+                        target = scope[targetContainer.attr('connected-list-target')],
+                        selectedItems = targetContainer.children();
+
+                        Entities.draft({
+                            id: scope.selectedEntity.id
+                        }, {
+                            edit: true,
+                            values: {
+                                path: attr.mdsPath,
+                                advanced: true,
+                                value: [[]]
+                            }
+                        }, function () {
+                             scope.selectedEntity.draft = true;
+
+                             scope.safeApply(function () {
+                                angular.forEach(target, function(item) {
+                                    source.push(item);
+                                });
+
+                                target.length = 0;
+
+                                sourceContainer.trigger('contentChange', [source]);
+                                targetContainer.trigger('contentChange', [target]);
+                             });
+                        });
+                });
+            }
+        };
+    });
+
+    /**
+    * Initializes filterable checkbox and sets a watch in the filterable scope to track changes
+    * in "advancedSettings.browsing.filterableFields".
+    */
+    mds.directive('initFilterable', function () {
+        return {
+            restrict: 'A',
+            link: function (scope) {
+                scope.$watch('advancedSettings.browsing.filterableFields', function() {
+                    scope.checked = (scope.advancedSettings.browsing.filterableFields.indexOf(scope.field.id) >= 0);
                 });
             }
         };
@@ -294,21 +771,20 @@
     /**
     * Displays entity instances data using jqGrid
     */
-    mds.directive('entityInstancesGrid', function($compile, $http, $templateCache) {
+    mds.directive('entityInstancesGrid', function () {
         return {
             restrict: 'A',
-            link: function(scope, element, attrs) {
+            link: function (scope, element, attrs) {
                 var elem = angular.element(element);
 
                 $.ajax({
                     type: "GET",
                     url: "../mds/entities/" + scope.selectedEntity.id + "/fields",
                     dataType: "json",
-                    success: function(result)
-                    {
+                    success: function (result) {
                         var colModel = [], i;
 
-                        for (i=0; i<result.length; i+=1) {
+                        for (i = 0; i < result.length; i += 1) {
                             colModel.push({
                                 name: result[i].basic.displayName,
                                 index: result[i].basic.displayName,
@@ -319,12 +795,15 @@
                         elem.jqGrid({
                             url: "../mds/entities/" + scope.selectedEntity.id + "/instances",
                             datatype: 'json',
-                            jsonReader:{
-                                repeatitems:false
+                            jsonReader: {
+                                repeatitems: false
                             },
                             prmNames: {
                                 sort: 'sortColumn',
                                 order: 'sortDirection'
+                            },
+                            onSelectRow: function (id) {
+                                scope.selectInstanceHistory(id);
                             },
                             shrinkToFit: true,
                             autowidth: true,
@@ -347,11 +826,16 @@
                                 $('.ui-jqgrid-view').width('100%');
                                 $('#t_resourceTable').width('auto');
                                 $('.ui-jqgrid-pager').width('100%');
-                                $('#entityInstancesTable').children('div').each(function() {
-                                    $('table', this).width('100%');
-                                    $(this).find('#resourceTable').width('100%');
-                                    $(this).find('table').width('100%');
-                               });
+                                $(".jqgfirstrow").addClass("ng-hide");
+                                angular.forEach($("select.multiselect")[0], function(field) {
+                                    if (field.selected){
+                                        $("th[id='resourceTable_" + field.label + "']").show();
+                                        $("td[aria-describedby='resourceTable_" + field.label + "']").show();
+                                    } else {
+                                        $("th[id='resourceTable_" + field.label + "']").hide();
+                                        $("td[aria-describedby='resourceTable_" + field.label + "']").hide();
+                                    }
+                                });
                             }
                         });
                     }
@@ -360,120 +844,283 @@
         };
     });
 
-    mds.directive('draggable', function() {
-        return function(scope, element) {
-            var el = element[0];
-
-            el.draggable = true;
-            el.addEventListener(
-                'dragstart',
-                function(e) {
-                    e.dataTransfer.effectAllowed = 'move';
-                    e.dataTransfer.setData('Text', this.attributes.fieldId.value);
-                    this.classList.add('drag');
-                    return false;
-                },
-                false
-            );
-
-            el.addEventListener(
-                'dragend',
-                function(e) {
-                    this.classList.remove('drag');
-                    return false;
-                },
-                false
-            );
-        };
-    });
-
-    mds.directive('draggable', function() {
-        return function(scope, element) {
-            var el = element[0];
-
-            el.draggable = true;
-            el.addEventListener(
-                'dragstart',
-                function(e) {
-                    e.dataTransfer.effectAllowed = 'move';
-                    e.dataTransfer.setData('Text', this.attributes.fieldId.value);
-                    this.classList.add('drag');
-                    return false;
-                },
-                false
-            );
-
-            el.addEventListener(
-                'dragend',
-                function(e) {
-                    this.classList.remove('drag');
-                    return false;
-                },
-                false
-            );
-        };
-    });
-
-    mds.directive('droppable', function() {
-        return {
-            scope: {
-              drop: '&',
-              container: '='
-            },
-            link: function(scope, element) {
-
-                var el = element[0];
-                el.addEventListener(
-                    'dragover',
-                    function(e) {
-                        e.dataTransfer.dropEffect = 'move';
-                        if (e.preventDefault) {
-                            e.preventDefault();
-                        }
-                        this.classList.add('over');
-                        return false;
-                    },
-                    false
-                );
-
-                el.addEventListener(
-                    'dragenter',
-                    function(e) {
-                        this.classList.add('over');
-                        return false;
-                    },
-                    false
-                );
-
-                el.addEventListener(
-                    'dragleave',
-                    function(e) {
-                        this.classList.remove('over');
-                        return false;
-                    },
-                    false
-                );
-
-                el.addEventListener(
-                    'drop',
-                    function(e) {
-                        if (e.stopPropagation) {
-                            e.stopPropagation();
-                        }
-                        var fieldId = e.dataTransfer.getData('Text'),
-                            containerId = this.id;
-
-                        scope.$apply(function(scope) {
-                            var fn = scope.drop();
-                            if ('undefined' !== typeof fn) {
-                                fn(fieldId, containerId);
+    mds.directive('multiselectDropdown', function () {
+            return {
+                restrict: 'A',
+                require : 'ngModel',
+                link: function (scope, element, attrs) {
+                    var selectAll = scope.msg('mds.btn.selectAll');
+                    element.multiselect({
+                        buttonClass : 'btn btn-default',
+                        buttonWidth : 'auto',
+                        buttonContainer : '<div class="btn-group" />',
+                        maxHeight : false,
+                        buttonText : function() {
+                                return scope.msg('mds.btn.fields');
+                        },
+                        selectAllText: selectAll,
+                        selectAllValue: 'multiselect-all',
+                        includeSelectAllOption: true,
+                        onChange: function (optionElement, checked) {
+                            optionElement.removeAttr('selected');
+                            if (checked) {
+                                optionElement.attr('selected', 'selected');
                             }
+                            element.change();
+
+                            $(".jqgfirstrow").addClass("ng-hide");
+                            angular.forEach(element[0], function(field) {
+                                if (field.selected){
+                                    $("th[id='resourceTable_" + field.label + "']").show("fast");
+                                    $("td[aria-describedby='resourceTable_" + field.label + "']").show("fast");
+                                } else {
+                                    $("th[id='resourceTable_" + field.label + "']").hide("fast");
+                                    $("td[aria-describedby='resourceTable_" + field.label + "']").hide("fast");
+                                }
+                            });
+                        }
+                   });
+
+                   scope.$watch(function () {
+                       return element[0].length;
+                   }, function () {
+                       element.multiselect('rebuild');
+                   });
+
+                   scope.$watch(attrs.ngModel, function () {
+                       element.multiselect('refresh');
+                   });
+                }
+            };
+    });
+
+    /**
+    * Displays instance history data using jqGrid
+    */
+    mds.directive('instanceHistoryGrid', function($compile, $http, $templateCache) {
+        return {
+            restrict: 'A',
+            link: function(scope, element, attrs) {
+                var elem = angular.element(element);
+
+                $.ajax({
+                    type: "GET",
+                    url: "../mds/instances/" + scope.selectedInstance + "/fields",
+                    dataType: "json",
+                    success: function(result)
+                    {
+                        var colModel = [], i;
+
+                        colModel.push({
+                            name: "",
+                            width: 15,
+                            formatter: function () {
+                                return "<a><i class='icon-refresh icon-large'></i></a>";
+                            },
+                            sortable: false
                         });
 
-                        return false;
-                    },
-                    false
-                );
+                        for (i=0; i<result.length; i+=1) {
+                            if (result[i].basic.displayName === "Date") {
+                                colModel.push({
+                                    name: result[i].basic.displayName,
+                                    index: result[i].basic.displayName,
+                                    jsonmap: "fields." + i + ".value"
+                                });
+                            } else {
+                                colModel.push({
+                                    name: result[i].basic.displayName,
+                                    index: result[i].basic.displayName,
+                                    jsonmap: "fields." + i + ".value",
+                                    sortable: false
+                                });
+                            }
+                        }
+
+                        elem.jqGrid({
+                            url: "../mds/instances/" + scope.selectedInstance + "/history",
+                            datatype: 'json',
+                            jsonReader:{
+                                repeatitems:false
+                            },
+                            prmNames: {
+                                sort: 'sortColumn',
+                                order: 'sortDirection'
+                            },
+                            shrinkToFit: true,
+                            autowidth: true,
+                            rownumbers: true,
+                            rowNum: 2,
+                            rowList: [2, 5, 10, 20, 50],
+                            colModel: colModel,
+                            pager: '#' + attrs.instanceHistoryGrid,
+                            width: '100%',
+                            height: 'auto',
+                            viewrecords: true,
+                            gridComplete: function () {
+                                $('#instanceHistoryTable').children('div').width('100%');
+                                $('.ui-jqgrid-htable').addClass('table-lightblue');
+                                $('.ui-jqgrid-btable').addClass("table-lightblue");
+                                $('.ui-jqgrid-htable').addClass('table-lightblue');
+                                $('.ui-jqgrid-bdiv').width('100%');
+                                $('.ui-jqgrid-hdiv').width('100%');
+                                $('.ui-jqgrid-hbox').width('100%');
+                                $('.ui-jqgrid-view').width('100%');
+                                $('#t_historyTable').width('auto');
+                                $('.ui-jqgrid-pager').width('100%');
+                            }
+                        });
+                    }
+                });
+            }
+        };
+    });
+
+    mds.directive('droppable', function () {
+        return {
+            scope: {
+                drop: '&'
+            },
+            link: function (scope, element) {
+
+                var el = element[0];
+                el.addEventListener('dragover', function (e) {
+                    e.dataTransfer.dropEffect = 'move';
+
+                    if (e.preventDefault) {
+                        e.preventDefault();
+                    }
+
+                    this.classList.add('over');
+
+                    return false;
+                }, false);
+
+                el.addEventListener('dragenter', function () {
+                    this.classList.add('over');
+                    return false;
+                }, false);
+
+                el.addEventListener('dragleave', function () {
+                    this.classList.remove('over');
+                    return false;
+                }, false);
+
+                el.addEventListener('drop', function (e) {
+                    var fieldId = e.dataTransfer.getData('Text'),
+                        containerId = this.id;
+
+                    if (e.stopPropagation) {
+                        e.stopPropagation();
+                    }
+
+                    scope.$apply(function (scope) {
+                        var fn = scope.drop();
+
+                        if (_.isFunction(fn)) {
+                            fn(fieldId, containerId);
+                        }
+                    });
+
+                    return false;
+                }, false);
+            }
+        };
+    });
+
+    /**
+    * Add auto saving for field properties.
+    */
+    mds.directive('mdsAutoSaveFieldChange', function (Entities) {
+        return {
+            restrict: 'A',
+            require: 'ngModel',
+            link: function (scope, element, attr, ngModel) {
+                var func = attr.mdsAutoSaveFieldChange || 'focusout';
+
+                angular.element(element).on(func, function () {
+                    var fieldPath = attr.mdsPath,
+                        fieldId = attr.mdsFieldId,
+                        parent = scope,
+                        entity,
+                        value;
+
+                    while (parent.selectedEntity === undefined) {
+                        parent = parent.$parent;
+                    }
+
+                    entity = parent.selectedEntity;
+
+                    if (fieldPath === undefined) {
+                        fieldPath = attr.ngModel;
+                        fieldPath = fieldPath.substring(fieldPath.indexOf('.') + 1);
+                    }
+
+                    value = _.isBoolean(ngModel.$modelValue)
+                        ? !ngModel.$modelValue
+                        : ngModel.$modelValue;
+
+                    Entities.draft({
+                        id: entity.id
+                    }, {
+                        edit: true,
+                        values: {
+                            path: fieldPath,
+                            fieldId: fieldId,
+                            value: [value]
+                        }
+                    }, function () {
+                        entity.draft = true;
+                    });
+                });
+            }
+        };
+    });
+
+    /*
+    * Add auto saving for field properties.
+    */
+    mds.directive('mdsAutoSaveAdvancedChange', function (Entities) {
+        return {
+            restrict: 'A',
+            require: 'ngModel',
+            link: function (scope, element, attr, ngModel) {
+                var func = attr.mdsAutoSaveAdvancedChange || 'focusout';
+
+                angular.element(element).on(func, function () {
+                    var advancedPath = attr.mdsPath,
+                        parent = scope,
+                        entity,
+                        value;
+
+                    while (parent.selectedEntity === undefined) {
+                        parent = parent.$parent;
+                    }
+
+                    entity = parent.selectedEntity;
+
+                    if (advancedPath === undefined) {
+                        advancedPath = attr.ngModel;
+                        advancedPath = advancedPath.substring(advancedPath.indexOf('.') + 1);
+                    }
+
+                    value = _.isBoolean(ngModel.$modelValue)
+                        ? !ngModel.$modelValue
+                        : ngModel.$modelValue;
+
+                    Entities.draft({
+                        id: entity.id
+                    }, {
+                        edit: true,
+                        values: {
+                            path: advancedPath,
+                            advanced: true,
+                            value: [value]
+                        }
+                    }, function () {
+                        entity.draft = true;
+                    });
+                });
             }
         };
     });

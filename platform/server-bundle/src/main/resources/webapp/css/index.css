@@ -501,7 +501,7 @@ select {
     background: none;
 }
 
-.box-contents {
+.box-content {
     border-radius: 4px;
     border: 1px solid #D4E1F9;
     padding: 0;
@@ -511,7 +511,7 @@ select {
             box-shadow: 0 1px 2px #bec9de;
 }
 
-.box-content form {
+.box-contents form {
     margin:0;
 }
 

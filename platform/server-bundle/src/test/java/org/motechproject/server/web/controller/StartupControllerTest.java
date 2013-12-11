@@ -6,6 +6,7 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatcher;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.motechproject.config.core.constants.ConfigurationConstants;
 import org.motechproject.config.service.ConfigurationService;
 import org.motechproject.security.service.MotechUserService;
 import org.motechproject.server.config.domain.LoginMode;
@@ -48,26 +49,26 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({StartupManager.class})
 public class StartupControllerTest {
     private static final String SUGGESTIONS_KEY = "suggestions";
     private static final String STARTUP_SETTINGS_KEY = "startupSettings";
     private static final String LANGUAGES_KEY = "languages";
     private static final String PAGE_LANG_KEY = "pageLang";
     private static final String IS_FILE_MODE_KEY = "isFileMode";
-    private static  final List<String> uriAssertFalseList = Arrays.asList("failoverr:(tcp://127.0.0.1:61616,tcp://127.0.0.1:61616)?initialReconnectDelay=100","failover:(tcp://localhost:61616,tcp://remotehost:61616)?initialReconnectDelay=100",
-                                                                        "failover:(tcp://256.0.0.1:61616,tcp://127.0.0.1:61616)?initialReconnectDelay=100","failover:(tcp://127.0..0.1:61616,tcp://127.0.0.1:61616)?initialReconnectDelay=100",
-                                                                        "failover:((tcp:///127.0.0.1:61616,tcp://127.0.0.1:61616))?initialReconnectDelay=100","failover:(tcp://127.0.0.1:61616,tcp://127.0.0.1:612616)?initialReconnectDelay=100",
-                                                                        "failover:(tcp://127.0.0.1:61616,tcp://1217.0.0.1:61616)?initialReconnectDelay=100","failover://(tcp://137.0.0.1:61616,tcp://137.0.0.1:61616)?timeout=3000",
-                                                                        "fanout:(static:(tcp:///localhost:61629,tcp://localhost:61639,tcp://localhost:61649))", "fanout:(staatic:(tcp://localhost:61629,tcp://localhost:61639,tcp://localhost:61649))",
-                                                                        "vm:(brooker:(tcp://localhost:6000)?persistent=false)?marshal=false", "wjfwwfeweffwwewf", "  ", ".....");
+    private static final String HEADER_KEY = "mainHeader";
 
-    private static  final List<String> uriAssertTrueList = Arrays.asList("failover:(tcp://127.0.0.1:61616,tcp://127.0.0.1:61616)?initialReconnectDelay=100", "failover:(tcp://117.0.0.1:61616,tcp://117.0.0.1:61616)?randomize=false",
-                                                                        "fanout:(static:(tcp://127.0.0.1:61629,tcp://127.0.0.1:61639,tcp://127.0.0.1:61649))", "failover:(tcp://192.168.42.100:61616,tcp://192.168.42.101:61616)",
-                                                                        "failover:(tcp://137.0.0.1:61616,udp://137.0.0.1:61616)?randomize=false&priorityBackup=true", "vm:(broker:(tcp://127.0.0.1:6000)?persistent=false)?marshal=false",
-                                                                        "failover:(vm://137.0.0.1:61616,http://137.0.0.1:61616,https://137.0.0.1:61616)?randomize=false&priorityBackup=true&priorityURIs=tcp://137.0.0.1:61616,tcp://137.0.0.1:61616",
-                                                                        "vm:(static:(tcp://137.0.0.1:6000)?persistent=false)?marshal=false", "ssl://137.0.0.1:61616?transport.enabledCipherSuites=SSL_RSA_WITH_RC4_128_SHA,SSL_DH_anon_WITH_3DES_EDE_CBC_SHA");
+    private static final List<String> uriAssertFalseList = Arrays.asList("failoverr:(tcp://127.0.0.1:61616,tcp://127.0.0.1:61616)?initialReconnectDelay=100", "failover:(tcp://localhost:61616,tcp://remotehost:61616)?initialReconnectDelay=100",
+            "failover:(tcp://256.0.0.1:61616,tcp://127.0.0.1:61616)?initialReconnectDelay=100", "failover:(tcp://127.0..0.1:61616,tcp://127.0.0.1:61616)?initialReconnectDelay=100",
+            "failover:((tcp:///127.0.0.1:61616,tcp://127.0.0.1:61616))?initialReconnectDelay=100", "failover:(tcp://127.0.0.1:61616,tcp://127.0.0.1:612616)?initialReconnectDelay=100",
+            "failover:(tcp://127.0.0.1:61616,tcp://1217.0.0.1:61616)?initialReconnectDelay=100", "failover://(tcp://137.0.0.1:61616,tcp://137.0.0.1:61616)?timeout=3000",
+            "fanout:(static:(tcp:///localhost:61629,tcp://localhost:61639,tcp://localhost:61649))", "fanout:(staatic:(tcp://localhost:61629,tcp://localhost:61639,tcp://localhost:61649))",
+            "vm:(brooker:(tcp://localhost:6000)?persistent=false)?marshal=false", "wjfwwfeweffwwewf", "  ", ".....");
+
+    private static final List<String> uriAssertTrueList = Arrays.asList("failover:(tcp://127.0.0.1:61616,tcp://127.0.0.1:61616)?initialReconnectDelay=100", "failover:(tcp://117.0.0.1:61616,tcp://117.0.0.1:61616)?randomize=false",
+            "fanout:(static:(tcp://127.0.0.1:61629,tcp://127.0.0.1:61639,tcp://127.0.0.1:61649))", "failover:(tcp://192.168.42.100:61616,tcp://192.168.42.101:61616)",
+            "failover:(tcp://137.0.0.1:61616,udp://137.0.0.1:61616)?randomize=false&priorityBackup=true", "vm:(broker:(tcp://127.0.0.1:6000)?persistent=false)?marshal=false",
+            "failover:(vm://137.0.0.1:61616,http://137.0.0.1:61616,https://137.0.0.1:61616)?randomize=false&priorityBackup=true&priorityURIs=tcp://137.0.0.1:61616,tcp://137.0.0.1:61616",
+            "vm:(static:(tcp://137.0.0.1:6000)?persistent=false)?marshal=false", "ssl://137.0.0.1:61616?transport.enabledCipherSuites=SSL_RSA_WITH_RC4_128_SHA,SSL_DH_anon_WITH_3DES_EDE_CBC_SHA");
 
     @Mock
     private StartupManager startupManager;
@@ -98,8 +99,6 @@ public class StartupControllerTest {
 
     @Before
     public void setUp() {
-        PowerMockito.mockStatic(StartupManager.class);
-
         initMocks(this);
     }
 
@@ -108,7 +107,7 @@ public class StartupControllerTest {
         Properties properties = new Properties();
         properties.put("host", "localhost");
         properties.put("port", "12345");
-        properties.put(MotechSettings.AMQ_BROKER_URL, "test_url");
+        properties.put(ConfigurationConstants.AMQ_BROKER_URL, "test_url");
 
         NavigableMap<String, String> map = new TreeMap<>();
 
@@ -129,7 +128,7 @@ public class StartupControllerTest {
         verify(localeService).getUserLocale(httpServletRequest);
 
         assertEquals("startup", result.getViewName());
-        assertModelMap(result.getModelMap(), SUGGESTIONS_KEY, STARTUP_SETTINGS_KEY, LANGUAGES_KEY, PAGE_LANG_KEY, IS_FILE_MODE_KEY);
+        assertModelMap(result.getModelMap(), SUGGESTIONS_KEY, STARTUP_SETTINGS_KEY, LANGUAGES_KEY, PAGE_LANG_KEY, IS_FILE_MODE_KEY, HEADER_KEY);
 
         StartupSuggestionsForm startupSuggestionsForm = (StartupSuggestionsForm) result.getModelMap().get(SUGGESTIONS_KEY);
 
@@ -190,17 +189,17 @@ public class StartupControllerTest {
     @Test
     public void testUriValidation() {
         StartupForm startupForm = startupForm();
-        StartupFormValidator validator =  new StartupFormValidator(userService, configurationService);
+        StartupFormValidator validator = new StartupFormValidator(userService, configurationService);
 
         Errors errors;
-        for(String uri : uriAssertFalseList) {
-            errors = new BeanPropertyBindingResult(startupForm,"validQueue");
+        for (String uri : uriAssertFalseList) {
+            errors = new BeanPropertyBindingResult(startupForm, "validQueue");
             validator.validateQueueUrl(errors, uri, "queueUrl");
             assertTrue(errors.hasErrors());
         }
 
-        for(String uri : uriAssertTrueList) {
-            errors = new BeanPropertyBindingResult(startupForm,"validQueue");
+        for (String uri : uriAssertTrueList) {
+            errors = new BeanPropertyBindingResult(startupForm, "validQueue");
             validator.validateQueueUrl(errors, uri, "queueUrl");
             assertFalse(errors.hasErrors());
         }
@@ -210,7 +209,9 @@ public class StartupControllerTest {
         assertEquals(keys.length, modelMap.size());
 
         for (String k : keys) {
-            assertNotNull(modelMap.get(k));
+            if (!k.equalsIgnoreCase(HEADER_KEY)) {
+                assertNotNull(modelMap.get(k));
+            }
         }
     }
 
@@ -236,7 +237,9 @@ public class StartupControllerTest {
                     @Override
                     public boolean matches(Object argument) {
                         List<String> val = (List<String>) argument;
-                        return val.equals(Arrays.asList(StartupController.USER_ADMIN_ROLE, StartupController.BUNDLE_ADMIN_ROLE, StartupController.EMAIL_ADMIN_ROLE, StartupController.SECURITY_ADMIN_ROLE));
+                        return val.equals(Arrays.asList(StartupController.USER_ADMIN_ROLE, StartupController.BUNDLE_ADMIN_ROLE, StartupController.EMAIL_ADMIN_ROLE,
+                                StartupController.SECURITY_ADMIN_ROLE,
+                                StartupController.ROLES_ADMIN));
                     }
                 }), eq(Locale.ENGLISH));
     }

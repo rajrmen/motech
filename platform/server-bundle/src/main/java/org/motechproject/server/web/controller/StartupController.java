@@ -13,6 +13,7 @@ import org.motechproject.server.web.form.StartupSuggestionsForm;
 import org.motechproject.server.web.helper.SuggestionHelper;
 import org.motechproject.server.web.validator.StartupFormValidator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
@@ -30,7 +31,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
-import static org.motechproject.server.config.domain.MotechSettings.AMQ_BROKER_URL;
+import static org.motechproject.config.core.constants.ConfigurationConstants.AMQ_BROKER_URL;
 import static org.motechproject.server.web.controller.Constants.REDIRECT_HOME;
 
 /**
@@ -43,6 +44,7 @@ public class StartupController {
     public static final String USER_ADMIN_ROLE = "User Admin";
     public static final String EMAIL_ADMIN_ROLE = "Email Admin";
     public static final String SECURITY_ADMIN_ROLE = "Security Admin";
+    public static final String ROLES_ADMIN = "Roles Admin";
 
     @Autowired
     private StartupManager startupManager;
@@ -58,6 +60,10 @@ public class StartupController {
 
     @Autowired
     private SuggestionHelper suggestionHelper;
+
+    @Autowired
+    @Qualifier("mainHeaderStr")
+    private String mainHeader;
 
     @InitBinder
     protected void initBinder(WebDataBinder binder) {
@@ -79,6 +85,7 @@ public class StartupController {
             StartupForm startupSettings = new StartupForm();
             startupSettings.setLanguage(userLocale.getLanguage());
 
+            view.addObject("mainHeader", mainHeader);
             view.addObject("suggestions", createSuggestions());
             view.addObject("startupSettings", startupSettings);
             view.addObject("languages", localeService.getAvailableLanguages());
@@ -97,7 +104,7 @@ public class StartupController {
                 configurationService.loadBootstrapConfig().getConfigSource() : ConfigSource.UI;
 
         if (result.hasErrors()) {
-
+            view.addObject("mainHeader", mainHeader);
             view.addObject("suggestions", createSuggestions());
             view.addObject("languages", localeService.getAvailableLanguages());
             view.addObject("loginMode", form.getLoginMode());
@@ -159,7 +166,7 @@ public class StartupController {
         String email = form.getAdminEmail();
         Locale locale = new Locale(form.getLanguage());
 
-        List<String> roles = Arrays.asList(USER_ADMIN_ROLE, BUNDLE_ADMIN_ROLE, EMAIL_ADMIN_ROLE, SECURITY_ADMIN_ROLE);
+        List<String> roles = Arrays.asList(USER_ADMIN_ROLE, BUNDLE_ADMIN_ROLE, EMAIL_ADMIN_ROLE, SECURITY_ADMIN_ROLE, ROLES_ADMIN);
 
         userService.register(login, password, email, null, roles, locale);
     }
