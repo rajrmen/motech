@@ -440,13 +440,13 @@ select {
 }
 
 .box-header {
-    border-radius: 4px;
+    border-radius: 2px;
     font-weight: bold;
     line-height: 20px;
     font-size: 15px;
     padding:5px 10px;
     color: #c2eafe;
-    background: #001e4f url("../img/head-bg.jpg") repeat-x left top;
+    background: #144573;
 }
 
 .btn-in-header {

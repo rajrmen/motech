@@ -23,7 +23,7 @@
     </div>
 </div>
 
-<div id="inner-east" class="inner-east ui-layout-pane ui-layout-pane-east">
+<div id="inner-east" class="tasks inner-east ui-layout-pane ui-layout-pane-east">
     <div class="header-toolbar header-footer"><i id="tbarCloseEast" class="button icon-caret-right pull-right"></i></div>
     <ul class="nav nav-tabs">
         <li class="active"><a href="#recentTaskActivity" data-toggle="tab">{{msg('task.header.recentTaskActivity')}}</a></li>
@@ -37,13 +37,8 @@
             </div>
             <div class="tab-pane fade" id="filters">
                 <!------------------------  Filters  ------------------------>
-                <div  class="inside form-group">
-                    <label >{{msg('task.header.searchTasks')}}</label>
-                    <input type="text" ng-model="query" ng-change="search()" class="form-control search-query" placeholder="{{msg('task.header.searchByNameOrDescription')}}">
-                    <div data-toggle="buttons-checkbox" class="btn-group">
-                        <button ng-click="setHideActive()" class="btn btn-xs btn-info setHideActive active" type="button"><i class="icon-white icon-ok"></i> {{msg('task.header.activeTasks')}}</button>
-                        <button ng-click="setHidePaused()" class="btn btn-xs btn-info setHidePaused active" type="button"><i class="icon-white icon-ok"></i> {{msg('task.header.pausedTasks')}}</button>
-                    </div>
+                <div  class="inside">
+
                 </div>
             </div>
         </div>

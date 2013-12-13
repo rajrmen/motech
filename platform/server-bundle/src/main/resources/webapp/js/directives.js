@@ -54,7 +54,7 @@
                     togglerTip_closed: "Open This Pane",
                     slideTrigger_open: "click",  // default
                     initClosed: false,
-                    south__initClosed: true
+                    south__initClosed: false
                 };
 
                 scope.outerLayout = elm.layout( scope.outerLayoutOptions);
@@ -65,27 +65,6 @@
                 scope.outerLayout.addCloseBtn( "#tbarCloseSouth", "south" );
                 scope.outerLayout.addCloseBtn( "#tbarCloseWest", "west" );
 
-            }
-        };
-    });
-
-    widgetModule.directive('elementactive', function() {
-        return {
-            restrict: 'A',
-            link: function (scope, element, attrs) {
-                $(element).find('li').livequery(function () {
-                    $(this).on({
-                         click: function (e) {
-                             $(element).children().removeClass('active');
-                             $(this).addClass('active');
-                             $(element).children().children().attr("href");
-                             $('#side-nav').children().addClass('hidden');
-                             //$($(this).children().attr("href")).removeClass('hidden');
-                             $($(this).children().attr("href").replace('#', ".")).removeClass('hidden');
-                         }
-                    });
-
-                });
             }
         };
     });

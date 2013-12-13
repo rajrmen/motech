@@ -36,7 +36,7 @@
 
         <div id="page-loading">Loading...</div>
 
-        <div ng-show="ready" id="outer-south" class="ui-layout-pane ui-layout-pane-south inside">
+        <div ng-show="ready" id="outer-south" class="ui-layout-pane ui-layout-pane-south">
             <span id="tbarCloseSouth" class="southpane-open pull-right" title="Close This Pane"><i class="icon-caret-down button"></i></span>
             <div ng-include="'../server/resources/partials/footer.html'"></div>
         </div>

@@ -15,10 +15,10 @@
             <ul class="nav navbar-nav" role="navigation">
                 <li class="divider-vertical" ng-hide="showDashboardLogo.showDashboard" ></li>
             </ul>
-            <ul role="tablist" id="tabbuttons" class="nav navbar-nav tabbuttons"  elementactive>
-                <li><a role="menu" class="tab1" href="#servermodules">{{msg('server.modules')}}</a></li>
-                <li><a role="menu" class="tab2" href="#adminmodule">{{msg('admin.module')}}</a></li>
-                <li><a role="menu" class="tab3" href="#websecurity">{{msg('websecurity')}}</a></li>
+            <ul role="tablist" id="tabbuttons" class="nav navbar-nav tabbuttons">
+                <li ng-class="showActiveMenu.changeModulesClass()"><a ng-click="selectModules('servermodules')" role="menu" class=" " href="?moduleName=">{{msg('server.modules')}}</a></li>
+                <li ng-class="showActiveMenu.changeAdminClass()"><a ng-click="selectModules('adminmodule')" role="menu" class=" " href="?moduleName=admin.module#/bundles">{{msg('admin.module')}}</a></li>
+                <li ng-class="showActiveMenu.changeSecurityClass()"><a ng-click="selectModules('websecurity')" role="menu" class=" " href="?moduleName=websecurity#/permissions">{{msg('websecurity')}}</a></li>
             </ul>
             <ul id="tabbuttons-right" class="nav navbar-nav pull-right menu-left">
                 <li class="divider-vertical divider-vertical-sub hidden-xs"></li>

@@ -42,6 +42,46 @@
             }
         };
 
+        $scope.changeName = function (name) {
+            return name.replace('.', "");
+        };
+
+        $scope.showActiveMenu = {
+            hideSection : function (modulesSection) {
+                var nameModulesSection = $scope.changeName(modulesSection);
+                if (nameModulesSection === 'servermodules') {
+                    return $scope.showServerModules.modulesActiveMenu ? "" : "hidden";
+                }
+                if (nameModulesSection === 'adminmodule') {
+                    return $scope.showAdminModules.adminActiveMenu ? "" : "hidden";
+                }
+                if (nameModulesSection === 'websecurity') {
+                    return $scope.showSecurityModules.securityActiveMenu ? "" : "hidden";
+                }
+            },
+            changeModulesClass : function () {
+                return $scope.showServerModules.modulesActiveMenu ? "active" : "";
+            },
+            changeAdminClass : function () {
+                return $scope.showAdminModules.adminActiveMenu ? "active" : "";
+            },
+            changeSecurityClass : function () {
+                return $scope.showSecurityModules.securityActiveMenu ? "active" : "";
+            }
+        };
+
+        $scope.showServerModules = {
+            modulesActiveMenu : true
+        };
+
+        $scope.showAdminModules = {
+            adminActiveMenu : false
+        };
+
+        $scope.showSecurityModules = {
+            securityActiveMenu : false
+        };
+
         $scope.setUserLang = function (lang, refresh) {
             var locale = toLocale(lang);
             $http({ method: "POST", url: "lang", params: locale })
@@ -75,14 +115,41 @@
             };
         };
 
-        $scope.changeName = function (name) {
-            return name.replace('.', "");
-        };
-
         $scope.minimizeHeader = function () {
             $scope.showDashboardLogo.showDashboard = !$scope.showDashboardLogo.showDashboard;
             $scope.outerLayout.sizePane('north', $scope.showDashboardLogo.changeHeight());
             $cookieStore.put("showDashboardLogo", $scope.showDashboardLogo.showDashboard);
+        };
+
+        $scope.storeSelected = function () {
+            $cookieStore.put("showServerModules", $scope.showServerModules.modulesActiveMenu);
+            $cookieStore.put("showAdminModules", $scope.showAdminModules.adminActiveMenu);
+            $cookieStore.put("showSecurityModules", $scope.showSecurityModules.securityActiveMenu);
+        };
+
+        $scope.selectModules = function (sectionName) {
+            var sectionNameModules = $scope.changeName(sectionName);
+            if (sectionNameModules === 'servermodules') {
+                $scope.showServerModules.modulesActiveMenu = true;
+                $scope.showAdminModules.adminActiveMenu = false;
+                $scope.showSecurityModules.securityActiveMenu = false;
+                $scope.showActiveMenu.hideSection(sectionNameModules);
+                $scope.storeSelected();
+            }
+            if (sectionNameModules === 'adminmodule') {
+                $scope.showAdminModules.adminActiveMenu = true;
+                $scope.showServerModules.modulesActiveMenu = false;
+                $scope.showSecurityModules.securityActiveMenu = false;
+                $scope.showActiveMenu.hideSection(sectionNameModules);
+                $scope.storeSelected();
+            }
+            if (sectionNameModules === 'websecurity') {
+                $scope.showSecurityModules.securityActiveMenu = true;
+                $scope.showAdminModules.adminActiveMenu = false;
+                $scope.showServerModules.modulesActiveMenu = false;
+                $scope.showActiveMenu.hideSection(sectionNameModules);
+                $scope.storeSelected();
+            }
         };
 
         $scope.loadI18n = function (data) {
@@ -206,8 +273,11 @@
         if ($cookieStore.get("showDashboardLogo") !== undefined) {
            $scope.showDashboardLogo.showDashboard=$cookieStore.get("showDashboardLogo");
         }
-        if ($cookieStore.get("activeSection") !== undefined) {
-           $scope.activeSection=$cookieStore.get("activeSection");
+
+        if ($cookieStore.get("showServerModules") !== undefined) {
+           $scope.showServerModules.modulesActiveMenu=$cookieStore.get("showServerModules");
+           $scope.showAdminModules.adminActiveMenu=$cookieStore.get("showAdminModules");
+           $scope.showSecurityModules.securityActiveMenu=$cookieStore.get("showSecurityModules");
         }
 
         $q.all([

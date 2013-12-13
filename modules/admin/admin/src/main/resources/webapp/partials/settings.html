@@ -53,7 +53,7 @@
 </div>
 <div class="clearfix"></div>
 <div class="row">
-    <div ng-show="platformSettings.settingsList.length > 0">
+    <div ng-show="platformSettings.settingsList.length > 0" class="col-sm-12">
         <div class="box-header"> {{msg('admin.settings.platform')}}</div>
         <div class="box-content">
             <div class="settings-form lightblue-settings col-lg-6" ng-repeat="pSettings in platformSettings.settingsList" ng-show="pSettings.settings.length > 0">
