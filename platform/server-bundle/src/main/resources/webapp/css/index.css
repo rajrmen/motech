@@ -173,13 +173,11 @@ form.inside {
 }
 
 .navbar .btn-blue.navbar-btn, .navbar .btn-blue {
-    //background: #224477 url("../img/navbar.jpg") repeat-x 0 -6px;
     border-color: rgba(0, 0, 0, 0.5) rgba(0, 0, 0, 0.5) rgba(0, 0, 0, 0.25);
     box-shadow: 0 1px 0 rgba(255, 255, 255, 0.1) inset, 0 1px 0 rgba(255, 255, 255, 0.075);
 }
 
 .navbar .btn-blue.navbar-btn:hover, .navbar .btn-blue:hover, .navbar-collapse .nav > li > a:hover {
-    //background: #224477 url("../img/navbar.jpg") repeat-x 0 -1px;
     box-shadow: 0 0 5px rgba(055, 055, 055, 0.3) inset, 0 0 1px rgba(255, 255, 255, 0.5);
 }
 
@@ -249,13 +247,6 @@ form.inside {
 .action-minimize-down:hover {
     background-position: -279px -24px;
 }
-/.container-full {
-    margin: 0 auto;
-    width: 100%;
-    min-height:100%;
-    overflow:hidden;
-    padding: 0 10px;
-}
 
 .navbar .nav > li > a, .navbar .navbar-brand {
     color: #c2eafe;
@@ -324,11 +315,6 @@ form.inside {
     border-radius: 0;
 }
 
-//.nav.nav-stacked li {
-    -webkit-box-shadow: 0 1px 3px #bec9de;
-       -moz-box-shadow: 0 1px 3px #bec9de;
-            box-shadow: 0 1px 3px #bec9de;
-}
 .nav.nav-stacked li.nav-header {
     -webkit-box-shadow: 0 0 0 #bec9de;
        -moz-box-shadow: 0 0 0 #bec9de;
@@ -1192,7 +1178,6 @@ a, li a {
     padding-top: 0px;
 }
 .nav-tabs > li > a {
-   // color: #0098EA;
     border-radius: 0;
 }
 .nav-tabs > .active > a,
@@ -1358,13 +1343,6 @@ label.checkbox {
   background-color: #1a1a1a;
 }
 
-#inner-center .ui-layout-content {
-//    border: 1px solid #D4E1F9;
-}
-
-#inner-east .btn-group-vertical > .btn {
-    //float: left;
-}
 #inner-east .btn-group-vertical .btn {
     text-align: left;
 }

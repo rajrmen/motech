@@ -27,7 +27,7 @@
     </c:if>
 </head>
 
-<body ng-controller="MasterCtrl" id="container" ng-class="showDashboardLogo.backgroudUpDown()" class="custom ui-layout-container container-full" layout state="bodyState" ng-init="bodyState = true">
+<body ng-controller="MasterCtrl" id="container" ng-class="showDashboardLogo.backgroudUpDown()" class="custom ui-layout-container" layout state="bodyState" ng-init="bodyState = true">
     <div ng-controller="HomeCtrl">
 
         <div class="ui-layout-pane ui-layout-pane-north" id="outer-north">
