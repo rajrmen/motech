@@ -6,6 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.motechproject.config.domain.ModulePropertiesRecord;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -28,7 +29,8 @@ public class AllModulePropertiesTest {
     @Before
     public void setUp() {
         initMocks(this);
-        allModuleProperties = new AllModuleProperties(db);
+        allModuleProperties = new AllModuleProperties();
+        ReflectionTestUtils.setField(allModuleProperties, "db", db);
     }
 
     @Test
