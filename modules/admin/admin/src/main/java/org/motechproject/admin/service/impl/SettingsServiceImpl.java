@@ -7,13 +7,16 @@ import org.motechproject.admin.settings.ParamParser;
 import org.motechproject.admin.settings.Settings;
 import org.motechproject.admin.settings.SettingsOption;
 import org.motechproject.commons.api.MotechException;
+import org.motechproject.config.core.constants.ConfigurationConstants;
 import org.motechproject.config.core.domain.ConfigSource;
-import org.motechproject.config.core.service.CoreConfigurationService;
+import org.motechproject.config.monitor.ConfigFileMonitor;
 import org.motechproject.config.service.ConfigurationService;
+import org.motechproject.event.MotechEvent;
+import org.motechproject.event.listener.EventRelay;
 import org.motechproject.server.config.domain.MotechSettings;
-import org.motechproject.server.config.service.PlatformSettingsService;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.Version;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +28,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,16 +44,16 @@ public class SettingsServiceImpl implements SettingsService {
     private static final Logger LOG = LoggerFactory.getLogger(SettingsServiceImpl.class);
 
     @Autowired
-    private PlatformSettingsService platformSettingsService;
-
-    @Autowired
-    private CoreConfigurationService coreConfigurationService;
-
-    @Autowired
     private ConfigurationService configurationService;
 
     @Autowired
     private BundleContext bundleContext;
+
+    @Autowired
+    private EventRelay eventRelay;
+
+    @Autowired(required = false)
+    private ConfigFileMonitor configFileMonitor;
 
     @Override
     public AdminSettings getSettings() {
@@ -64,13 +68,13 @@ public class SettingsServiceImpl implements SettingsService {
 
             List<SettingsOption> miscOptions = new ArrayList<>();
 
-            SettingsOption languageOption = ParamParser.parseParam(MotechSettings.LANGUAGE, motechSettings.getLanguage());
+            SettingsOption languageOption = ParamParser.parseParam(ConfigurationConstants.LANGUAGE, motechSettings.getLanguage());
             miscOptions.add(languageOption);
-            SettingsOption msgOption = ParamParser.parseParam(MotechSettings.STATUS_MSG_TIMEOUT, motechSettings.getStatusMsgTimeout());
+            SettingsOption msgOption = ParamParser.parseParam(ConfigurationConstants.STATUS_MSG_TIMEOUT, motechSettings.getStatusMsgTimeout());
             miscOptions.add(msgOption);
-            SettingsOption serverUrlOption = ParamParser.parseParam(MotechSettings.SERVER_URL, motechSettings.getServerUrl());
+            SettingsOption serverUrlOption = ParamParser.parseParam(ConfigurationConstants.SERVER_URL, motechSettings.getServerUrl());
             miscOptions.add(serverUrlOption);
-            SettingsOption uploadSizeOption = ParamParser.parseParam(MotechSettings.UPLOAD_SIZE, motechSettings.getUploadSize());
+            SettingsOption uploadSizeOption = ParamParser.parseParam(ConfigurationConstants.UPLOAD_SIZE, motechSettings.getUploadSize());
             miscOptions.add(uploadSizeOption);
 
             Settings miscSettings = new Settings("other", miscOptions);
@@ -103,11 +107,21 @@ public class SettingsServiceImpl implements SettingsService {
     @Override
     public void saveBundleSettings(Settings settings, long bundleId) {
         String symbolicName = getSymbolicName(bundleId);
+        String version = getVersion(bundleId);
+        String bundleName = getBundleName(bundleId);
         Properties props = ParamParser.constructProperties(settings);
 
         try {
-            configurationService.updateProperties(symbolicName, settings.getSection(),
-                    getBundleDefaultProperties(bundleId).get(settings.getSection()), props);
+            configurationService.addOrUpdateProperties(symbolicName, version, bundleName, settings.getSection(),
+                    props, getBundleDefaultProperties(bundleId).get(settings.getSection()));
+
+            Map<String, Object> params = new HashMap<>();
+            params.put(ConfigurationConstants.BUNDLE_ID, bundleId);
+            params.put(ConfigurationConstants.BUNDLE_SYMBOLIC_NAME, symbolicName);
+            params.put(ConfigurationConstants.BUNDLE_SECTION, settings.getSection());
+
+            MotechEvent bundleSettingsChangedEvent = new MotechEvent(ConfigurationConstants.BUNDLE_SETTINGS_CHANGED_EVENT_SUBJECT, params);
+            eventRelay.sendEventMessage(bundleSettingsChangedEvent);
         } catch (Exception e) {
             throw new MotechException("Error while saving bundle settings", e);
         }
@@ -115,7 +129,7 @@ public class SettingsServiceImpl implements SettingsService {
 
     @Override
     public InputStream exportConfig(String fileName) throws IOException {
-        return configurationService.createZipWithConfigFiles(MotechSettings.SETTINGS_FILE_NAME, fileName);
+        return configurationService.createZipWithConfigFiles(ConfigurationConstants.SETTINGS_FILE_NAME, fileName);
     }
 
     @Override
@@ -123,6 +137,13 @@ public class SettingsServiceImpl implements SettingsService {
         for (SettingsOption option : settings.getSettings()) {
             configurationService.setPlatformSetting(option.getKey(), String.valueOf(option.getValue()));
         }
+
+        Map<String, Object> params = new HashMap<>();
+        params.put(ConfigurationConstants.SETTINGS, settings);
+
+        MotechEvent platformSettingsChangedEvent = new MotechEvent(ConfigurationConstants.BUNDLE_SETTINGS_CHANGED_EVENT_SUBJECT, params);
+        eventRelay.sendEventMessage(platformSettingsChangedEvent);
+
     }
 
     @Override
@@ -130,12 +151,25 @@ public class SettingsServiceImpl implements SettingsService {
         for (Settings s : settings) {
             savePlatformSettings(s);
         }
+
+        Map<String, Object> params = new HashMap<>();
+        params.put(ConfigurationConstants.SETTINGS, settings);
+
+        MotechEvent platformSettingsChangedEvent = new MotechEvent(ConfigurationConstants.PLATFORM_SETTINGS_CHANGED_EVENT_SUBJECT, params);
+        eventRelay.sendEventMessage(platformSettingsChangedEvent);
     }
 
     @Override
     public void saveSettingsFile(MultipartFile configFile) {
         Properties settings = loadMultipartFileIntoProperties(configFile);
         configurationService.savePlatformSettings(settings);
+
+        Map<String, Object> params = new HashMap<>();
+        params.put(ConfigurationConstants.SETTINGS, settings);
+
+        MotechEvent platformSettingsChangedEvent = new MotechEvent(ConfigurationConstants.PLATFORM_SETTINGS_CHANGED_EVENT_SUBJECT, params);
+        eventRelay.sendEventMessage(platformSettingsChangedEvent);
+
     }
 
     private Properties loadMultipartFileIntoProperties(MultipartFile configFile) {
@@ -161,9 +195,11 @@ public class SettingsServiceImpl implements SettingsService {
     }
 
     @Override
-    public void addSettingsPath(String path) throws IOException {
-        coreConfigurationService.addConfigLocation(path);
-        platformSettingsService.monitor();
+    public void addSettingsPath(String newConfigLocation) throws IOException {
+        configurationService.updateConfigLocation(newConfigLocation);
+        if (configFileMonitor != null) {
+            configFileMonitor.updateFileMonitor();
+        }
     }
 
     @Override
@@ -180,9 +216,12 @@ public class SettingsServiceImpl implements SettingsService {
     public void saveRawFile(MultipartFile file, String filename, long bundleId) {
         InputStream is = null;
         String symbolicName = getSymbolicName(bundleId);
+        String version = getVersion(bundleId);
+        String bundleName = getBundleName(bundleId);
+
         try {
             is = file.getInputStream();
-            configurationService.saveRawConfig(symbolicName, filename, is);
+            configurationService.saveRawConfig(symbolicName, version, bundleName, filename, is);
         } catch (IOException e) {
             LOG.error("Error reading uploaded file", e);
             throw new MotechException(e.getMessage(), e);
@@ -191,11 +230,11 @@ public class SettingsServiceImpl implements SettingsService {
         }
     }
 
-    private Map<String,Properties> getBundleDefaultProperties(long bundleId) throws IOException {
+    private Map<String, Properties> getBundleDefaultProperties(long bundleId) throws IOException {
         Bundle bundle = bundleContext.getBundle(bundleId);
         //Find all property files in main bundle directory
-        Enumeration<URL> enumeration = bundle.findEntries("", "*.properties",false);
-        Map<String,Properties> allDefaultProperties = new LinkedHashMap<>();
+        Enumeration<URL> enumeration = bundle.findEntries("", "*.properties", false);
+        Map<String, Properties> allDefaultProperties = new LinkedHashMap<>();
 
         while (enumeration.hasMoreElements()) {
             InputStream is = null;
@@ -223,5 +262,18 @@ public class SettingsServiceImpl implements SettingsService {
         String symbolicName = bundle.getSymbolicName();
 
         return symbolicName.endsWith("-bundle") ? symbolicName : symbolicName + "-bundle";
+    }
+
+    private String getVersion(long bundleId) {
+        Bundle bundle = bundleContext.getBundle(bundleId);
+        Version version = bundle.getVersion();
+
+        return version != null ? version.toString() : "";
+    }
+
+    private String getBundleName(long bundleId) {
+        Bundle bundle = bundleContext.getBundle(bundleId);
+
+        return bundle.getSymbolicName();
     }
 }

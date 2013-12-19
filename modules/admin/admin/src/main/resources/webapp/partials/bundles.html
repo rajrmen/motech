@@ -1,16 +1,14 @@
-<div class="box-header">{{msg('admin.bundles')}}</div>
-<div class="table-content lightblue-2">
+<div class="row table-content">
 
-    <div class="row">
-
-        <div class="col-sm-4 filter">
+    <div class="col-sm-12 row">
+        <div class="col-sm-12 col-md-12 col-lg-4 filter">
             <form class="inside form-inline">
                 <label class="control-label" for="filter">{{msg('admin.filter')}}</label>
                 <input class="input-auto form-control" id="filter" type="text" ng-model="filterProp" autofocus="autofocus"/>
             </form>
         </div>
 
-        <div class="col-sm-8 statistics">
+        <div class="col-sm-12 col-md-12 col-lg-8 statistics">
             <div class="inline">
                 <span><b>{{msg('admin.bundles.statistics')}}:</b></span>
                 <span><b>{{msg('admin.bundles.statistics.total')}}:</b> {{allBundlesCount()}}.</span>
@@ -124,7 +122,7 @@
                              class="action action-settings"/>
                     </a>
                 </span>
-                    <a ng-click="uninstallBundle(bundle)">
+                    <a role="button" data-toggle="modal" data-target="#removeBundleModal" data-backdrop="static" ng-click="selectBundle(bundle)">
                         <img src="../admin/img/trans.gif" alt="{{msg('admin.bundles.uninstall')}}"
                              title="{{msg('admin.bundles.uninstall')}}"
                              class="action action-remove"/>
@@ -137,5 +135,6 @@
         </tr>
         </tbody>
     </table>
+    <div ng-include="'../admin/partials/widgets/remove-bundle-modal.html'"></div>
 </div>
 

@@ -5,8 +5,15 @@ import org.apache.commons.lang.StringUtils;
 import org.motechproject.commons.api.MotechException;
 import org.motechproject.commons.api.Tenant;
 import org.motechproject.commons.couchdb.annotation.PostDbSetUpStep;
+import org.motechproject.config.core.MotechConfigurationException;
 import org.motechproject.config.service.ConfigurationService;
 import org.motechproject.server.config.domain.MotechSettings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
@@ -22,6 +29,11 @@ import java.util.Properties;
  */
 public class SettingsFacade {
 
+    private static Logger logger = LoggerFactory.getLogger(SettingsFacade.class);
+
+    @Autowired(required = false)
+    private BundleContext bundleContext;
+
     private ConfigurationService configurationService;
 
     private boolean rawConfigRegistered;
@@ -36,6 +48,9 @@ public class SettingsFacade {
 
     private static final String QUEUE_FOR_EVENTS = "jms.queue.for.events";
     private static final String QUEUE_FOR_SCHEDULER = "jms.queue.for.scheduler";
+    private static final String STRING_BUNDLE_ENDING = "-bundle";
+
+    private Bundle bundle;
 
     public void setConfigurationService(ConfigurationService configurationService) {
         this.configurationService = configurationService;
@@ -43,11 +58,12 @@ public class SettingsFacade {
 
     @PostDbSetUpStep
     public void afterPropertiesSet() {
-        if (!propsRegistered) {
-            registerAllProperties();
-        }
-        if (!rawConfigRegistered) {
-            registerAllRawConfig();
+        try {
+            registerConfigurationSettings();
+        } catch (MotechConfigurationException ex) {
+            rawConfigRegistered = false;
+            propsRegistered = false;
+            logger.error(ex.getMessage(), ex);
         }
     }
 
@@ -139,11 +155,12 @@ public class SettingsFacade {
 
     public void saveConfigProperties(String filename, Properties properties) {
         config.put(filename, properties);
-
+        String version = (bundle != null && bundle.getVersion() != null) ? bundle.getVersion().toString() : "";
+        String bundleSymbolicName = bundle != null ? bundle.getSymbolicName() : "";
         if (propsRegistered) {
             try {
                 if (configurationService != null) {
-                    configurationService.updateProperties(getSymbolicName(), filename, defaultConfig.get(filename), properties);
+                    configurationService.addOrUpdateProperties(getSymbolicName(),version, bundleSymbolicName, filename, properties, defaultConfig.get(filename));
                 }
             } catch (IOException e) {
                 throw new MotechException("Can't save settings " + filename, e);
@@ -154,32 +171,15 @@ public class SettingsFacade {
 
     public void saveRawConfig(String filename, Resource resource) {
         rawConfig.put(filename, resource);
-
+        String version = (bundle != null && bundle.getVersion() != null) ? bundle.getVersion().toString() : "";
+        String bundleSymbolicName = bundle != null ? bundle.getSymbolicName() : "";
         try {
             InputStream is = resource.getInputStream();
             if (configurationService != null) {
-                configurationService.saveRawConfig(getSymbolicName(), filename, is);
+                configurationService.saveRawConfig(getSymbolicName(), version, bundleSymbolicName, filename, is);
             }
         } catch (IOException e) {
             throw new MotechException("Error saving file " + filename, e);
-        }
-    }
-
-    public void registerProperties(Resource resource) {
-        String filename = getResourceFileName(resource);
-        InputStream is = null;
-        try {
-            is = resource.getInputStream();
-
-            Properties props = new Properties();
-            props.load(is);
-
-            config.put(filename, props);
-            registerProperties(filename, props);
-        } catch (IOException e) {
-            throw new MotechException("Error registering resource " + resource.getFilename(), e);
-        } finally {
-            IOUtils.closeQuietly(is);
         }
     }
 
@@ -229,11 +229,17 @@ public class SettingsFacade {
     }
 
     protected void registerProperties(String filename, Properties properties) {
+        String version = (bundle != null && bundle.getVersion() != null) ? bundle.getVersion().toString() : "";
+        String bundleSymbolicName = bundle != null ? bundle.getSymbolicName() : "";
         try {
             if (configurationService != null &&
                     !configurationService.registersProperties(getSymbolicName(), filename)) {
-                configurationService.updateProperties(
-                        getSymbolicName(), filename, defaultConfig.get(filename), properties);
+                configurationService.addOrUpdateProperties(
+                        getSymbolicName(), version, bundleSymbolicName, filename, properties, defaultConfig.get(filename));
+            } else if (configurationService != null &&
+                    configurationService.registersProperties(getSymbolicName(), filename)) {
+                configurationService.updatePropertiesAfterReinstallation(getSymbolicName(), version, bundleSymbolicName,
+                        filename, defaultConfig.get(filename), properties);
             }
 
             Properties registeredProps = configurationService.getModuleProperties(
@@ -244,7 +250,13 @@ public class SettingsFacade {
         }
     }
 
+    public void unregisterProperties(String symbolicName) {
+        configurationService.removeProperties(symbolicName, "");
+    }
+
     protected void registerAllRawConfig() {
+        String version = (bundle != null && bundle.getVersion() != null) ? bundle.getVersion().toString() : "";
+        String bundleSymbolicName = bundle != null ? bundle.getSymbolicName() : "";
         if (configurationService != null) {
             for (Map.Entry<String, Resource> entry : rawConfig.entrySet()) {
                 String filename = entry.getKey();
@@ -254,7 +266,7 @@ public class SettingsFacade {
                     // register new config with the platform
                     try {
                         InputStream is = resource.getInputStream();
-                        configurationService.saveRawConfig(getSymbolicName(), filename, is);
+                        configurationService.saveRawConfig(getSymbolicName(), version, bundleSymbolicName, filename, is);
                     } catch (IOException e) {
                         throw new MotechException("Can't save raw config " + filename, e);
                     }
@@ -282,8 +294,8 @@ public class SettingsFacade {
 
         sb.append(moduleName);
 
-        if (!moduleName.endsWith("-bundle")) {
-            sb.append("-bundle");
+        if (!moduleName.endsWith(STRING_BUNDLE_ENDING)) {
+            sb.append(STRING_BUNDLE_ENDING);
         }
 
         return sb.toString();
@@ -324,6 +336,17 @@ public class SettingsFacade {
 
         return name;
     }
+
+    private void registerConfigurationSettings() {
+        bundle = bundleContext != null ? bundleContext.getBundle() : null;
+        if (!propsRegistered) {
+            registerAllProperties();
+        }
+        if (!rawConfigRegistered) {
+            registerAllRawConfig();
+        }
+    }
+
 
     private void setProperty(String filename, String key, String value) {
         if (!config.containsKey(filename)) {
@@ -379,5 +402,9 @@ public class SettingsFacade {
 
     private String getQueuePrefix() {
         return Tenant.current().getSuffixedId();
+    }
+
+    public boolean areConfigurationSettingsRegistered() {
+        return propsRegistered && rawConfigRegistered;
     }
 }

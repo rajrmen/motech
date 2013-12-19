@@ -23,8 +23,7 @@ import java.util.List;
  * @see SecurityRoleLoader
  */
 public class SecurityContextTracker extends ServiceTracker {
-
-    private static final Logger LOG = LoggerFactory.getLogger(SecurityContextTracker.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SecurityContextTracker.class);
 
     private final Object lock = new Object();
 
@@ -38,19 +37,22 @@ public class SecurityContextTracker extends ServiceTracker {
     public Object addingService(ServiceReference reference) {
         ApplicationContext applicationContext = (ApplicationContext) super.addingService(reference);
 
-        LOG.debug("Starting to process " + applicationContext.getDisplayName());
+        LOGGER.info("Starting to process {}", applicationContext.getDisplayName());
 
         if (ApplicationContextServiceReferenceUtils.isNotValid(reference)) {
             return applicationContext;
         }
 
         String contextId = applicationContext.getId();
+        LOGGER.debug("Application context id: {}", contextId);
 
         synchronized (lock) {
             if (!contextProcessed.contains(contextId)) {
                 contextProcessed.add(contextId);
             }
         }
+
+        LOGGER.info("End to process {}", applicationContext.getDisplayName());
 
         return applicationContext;
     }

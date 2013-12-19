@@ -8,8 +8,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <%@include file="head.jsp" %>
-    <script src="../server/resources/js/startup.js" type="text/javascript"></script>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>MOTECH - Mobile Technology for Community Health</title>
+
+    ${mainHeader}
 
     <script type="text/javascript">
         $(window).load(function() {
@@ -29,12 +31,15 @@
         <div class="startup-title ng-binding">Mobile Technology for Community Health</div>
         <div class="clearfix"></div>
         <div class="startup-strip">
-            <div class="form-group">
+            <div class="form-group" ng-show="!${requireConfigFiles}">
                 <h2 class="title ng-binding"><fmt:message key="server.welcome.startup" bundle="${bundle}"/></h2>
+            </div>
+            <div class="form-group alert-danger" ng-show="${requireConfigFiles}">
+                <h2 class="title ng-binding"><fmt:message key="server.error.config.file.required" bundle="${bundle}"/></h2>
             </div>
         </div>
         <div class="clearfix"></div>
-        <div class="startup-form">
+        <div class="startup-form" ng-show="!${requireConfigFiles}">
             <div class="diver">
                 <form action="startup.do" method="POST" class="form-horizontal">
                     <div ng-show="!${isFileMode}" class="form-group">

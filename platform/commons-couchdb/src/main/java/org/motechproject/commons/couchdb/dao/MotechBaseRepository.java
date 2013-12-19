@@ -1,5 +1,6 @@
 package org.motechproject.commons.couchdb.dao;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.ektorp.BulkDeleteDocument;
 import org.ektorp.ComplexKey;
 import org.ektorp.CouchDbConnector;
@@ -14,6 +15,9 @@ import org.motechproject.commons.couchdb.service.CouchDbManager;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Base class that all CouchDb repository classes should extend.
+ */
 public abstract class MotechBaseRepository<T extends MotechBaseDataObject> {
     private Class<T> type;
     private String dbName;
@@ -51,6 +55,24 @@ public abstract class MotechBaseRepository<T extends MotechBaseDataObject> {
         this.repository = new MotechCouchDbRepositorySupport<>(type, db, stdDesignDocumentId, this);
         this.db.createDatabaseIfNotExists();
         this.repository.initStandardDesignDocument();
+
+    }
+
+    public void bulkAddOrUpdate(List<T> records) {
+        if (CollectionUtils.isNotEmpty(records)) {
+            db.executeBulk(records);
+        }
+    }
+
+    public void bulkDelete(List<T> records) {
+        if (CollectionUtils.isEmpty(records)) {
+            return;
+        }
+        List<BulkDeleteDocument> bulkDocs = new ArrayList<>();
+        for (T record : records) {
+            bulkDocs.add(BulkDeleteDocument.of(record));
+        }
+        db.executeBulk(bulkDocs);
     }
 
     private List<T> entities(String businessFieldName, String businessId) {

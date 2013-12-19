@@ -1,6 +1,7 @@
 package org.motechproject.server.web.controller;
 
 import org.apache.commons.lang.StringUtils;
+import org.motechproject.config.core.domain.BootstrapConfig;
 import org.motechproject.config.core.domain.ConfigSource;
 import org.motechproject.config.service.ConfigurationService;
 import org.motechproject.security.service.MotechUserService;
@@ -13,6 +14,7 @@ import org.motechproject.server.web.form.StartupSuggestionsForm;
 import org.motechproject.server.web.helper.SuggestionHelper;
 import org.motechproject.server.web.validator.StartupFormValidator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
@@ -30,7 +32,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
-import static org.motechproject.server.config.domain.MotechSettings.AMQ_BROKER_URL;
+import static org.motechproject.config.core.constants.ConfigurationConstants.AMQ_BROKER_URL;
 import static org.motechproject.server.web.controller.Constants.REDIRECT_HOME;
 
 /**
@@ -60,6 +62,10 @@ public class StartupController {
     @Autowired
     private SuggestionHelper suggestionHelper;
 
+    @Autowired
+    @Qualifier("mainHeaderStr")
+    private String mainHeader;
+
     @InitBinder
     protected void initBinder(WebDataBinder binder) {
         binder.setValidator(new StartupFormValidator(userService, configurationService));
@@ -74,12 +80,15 @@ public class StartupController {
         } else {
             Locale userLocale = localeService.getUserLocale(request);
 
-            ConfigSource configSource = (configurationService.loadBootstrapConfig() != null) ?
-                    configurationService.loadBootstrapConfig().getConfigSource() : ConfigSource.UI;
+            BootstrapConfig bootstrapConfig = configurationService.loadBootstrapConfig();
+            ConfigSource configSource = (bootstrapConfig != null) ? bootstrapConfig.getConfigSource() : ConfigSource.UI;
 
             StartupForm startupSettings = new StartupForm();
             startupSettings.setLanguage(userLocale.getLanguage());
 
+            boolean requiresConfigFiles = configSource.isFile() && configurationService.requiresConfigurationFiles();
+            view.addObject("requireConfigFiles", requiresConfigFiles);
+            view.addObject("mainHeader", mainHeader);
             view.addObject("suggestions", createSuggestions());
             view.addObject("startupSettings", startupSettings);
             view.addObject("languages", localeService.getAvailableLanguages());
@@ -98,7 +107,7 @@ public class StartupController {
                 configurationService.loadBootstrapConfig().getConfigSource() : ConfigSource.UI;
 
         if (result.hasErrors()) {
-
+            view.addObject("mainHeader", mainHeader);
             view.addObject("suggestions", createSuggestions());
             view.addObject("languages", localeService.getAvailableLanguages());
             view.addObject("loginMode", form.getLoginMode());

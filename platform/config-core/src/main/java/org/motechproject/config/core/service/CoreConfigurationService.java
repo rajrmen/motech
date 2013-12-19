@@ -2,6 +2,7 @@ package org.motechproject.config.core.service;
 
 import org.motechproject.config.core.domain.BootstrapConfig;
 import org.motechproject.config.core.domain.ConfigLocation;
+import org.springframework.cache.annotation.CacheEvict;
 
 import java.nio.file.FileSystemException;
 
@@ -9,7 +10,7 @@ import java.nio.file.FileSystemException;
  * Loads and saves the core configuration required to start the Motech instance.
  */
 public interface CoreConfigurationService {
-
+    String CORE_SETTINGS_CACHE_NAME = "MotechCoreSettings";
     /**
      * Loads the bootstrap configuration.
      *
@@ -20,15 +21,19 @@ public interface CoreConfigurationService {
     /**
      * Saves the bootstrap configuration
      *
-     * @param bootstrapConfig
+     * @param bootstrapConfig Bootstrap config
      */
+    @CacheEvict(value = CORE_SETTINGS_CACHE_NAME, allEntries = true)
     void saveBootstrapConfig(BootstrapConfig bootstrapConfig);
 
+    @CacheEvict(value = CORE_SETTINGS_CACHE_NAME, allEntries = true)
+    void evictMotechCoreSettingsCache();
+
     /**
-     * Gets the list of configuration locations in the order of priority.
-     * @return config locations.
+     * Returns the config location where all the config files are present.
+     * @return configLocation.
      */
-    Iterable<ConfigLocation> getConfigLocations();
+    ConfigLocation getConfigLocation();
 
     /**
      * Adds the new config location to the list of existing config locations where configurations are loaded from in the file system.

@@ -4,6 +4,8 @@ import org.motechproject.commons.couchdb.annotation.PostDbSetUpStep;
 import org.motechproject.security.model.PermissionDto;
 import org.motechproject.security.service.MotechPermissionService;
 import org.osgi.framework.BundleContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanPostProcessor;
@@ -38,6 +40,8 @@ import static org.springframework.util.ReflectionUtils.findMethod;
 @Component
 public class SecurityAnnotationBeanPostProcessor {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(SecurityAnnotationBeanPostProcessor.class);
+
     private MotechPermissionService permissionService;
 
     private ExpressionParser annotationParser = new DefaultMethodSecurityExpressionHandler().getExpressionParser();
@@ -51,16 +55,21 @@ public class SecurityAnnotationBeanPostProcessor {
 
     @PostDbSetUpStep
     public void processAnnotations(ApplicationContext applicationContext) {
+        LOGGER.info("Searching for security annotations in: {}", applicationContext.getDisplayName());
         currentBundleName = getBundleName(applicationContext);
 
         for (String beanName : applicationContext.getBeanDefinitionNames()) {
             Object bean = applicationContext.getBean(beanName);
             postProcessAfterInitialization(bean, beanName);
         }
+
+        LOGGER.info("Searched for security annotations in: {}", applicationContext.getDisplayName());
     }
 
 
     public Object postProcessAfterInitialization(final Object bean, final String beanName) throws BeansException {
+        LOGGER.info("Searching for security annotations in: {}", beanName);
+
         doWithMethods(bean.getClass(), new MethodCallback() {
             @Override
             public void doWith(Method method) throws IllegalArgumentException, IllegalAccessException {
@@ -91,6 +100,8 @@ public class SecurityAnnotationBeanPostProcessor {
             }
         });
 
+        LOGGER.info("Searched for security annotations in: {}", beanName);
+
         return bean;
     }
 
@@ -106,6 +117,8 @@ public class SecurityAnnotationBeanPostProcessor {
                 list.addAll(findPermissions(node.getChild(i)));
             }
         }
+
+        LOGGER.debug("Found permissions: {}", list);
 
         return list;
     }

@@ -1,8 +1,6 @@
 package org.motechproject.security.service;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
+import com.google.gson.reflect.TypeToken;
 import org.motechproject.commons.api.json.MotechJsonReader;
 import org.motechproject.commons.couchdb.annotation.PostDbSetUpStep;
 import org.motechproject.security.domain.MotechSecurityConfiguration;
@@ -14,7 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
-import com.google.gson.reflect.TypeToken;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
 
 /**
  * Helper class that scans an application context
@@ -24,6 +25,7 @@ import com.google.gson.reflect.TypeToken;
 
 @Component
 public class SecurityRuleLoader {
+    private static final Logger LOGGER = LoggerFactory.getLogger(SecurityRoleLoader.class);
 
     private static final String CONFIG_LOCATION = "securityRules.json";
 
@@ -35,21 +37,20 @@ public class SecurityRuleLoader {
     @Autowired
     private MotechProxyManager proxyManager;
 
-    private static final Logger LOG = LoggerFactory.getLogger(SecurityRuleLoader.class);
-
     /**
      * Attempts to load rules from the application context,
      * if rules are found, the security configuration is
      * updated. Synchronized so there are not race conditions
      * on the data.
      */
-
     @PostDbSetUpStep
     public synchronized void loadRules(ApplicationContext applicationContext) {
-        LOG.debug("Loading rules");
+        LOGGER.debug("Loading rules from {}", applicationContext.getDisplayName());
         Resource securityResource = applicationContext.getResource(CONFIG_LOCATION);
 
         if (securityResource.exists()) {
+            LOGGER.debug("File {} exists in {}", CONFIG_LOCATION, applicationContext.getDisplayName());
+
             try (InputStream in = securityResource.getInputStream()) {
                 List<MotechURLSecurityRule> rules = (List<MotechURLSecurityRule>)
                         motechJsonReader.readFromStream(in, new TypeToken<List<MotechURLSecurityRule>>() { } .getType());
@@ -59,20 +60,23 @@ public class SecurityRuleLoader {
                 }
 
             } catch (IOException e) {
-                LOG.error("Unable to security rules in " + applicationContext.getDisplayName(), e);
+                LOGGER.error("Unable to security rules in " + applicationContext.getDisplayName(), e);
             }
         }
+
+        LOGGER.debug("Loaded rules from {}", applicationContext.getDisplayName());
     }
 
     private void updateSecurityConfig(List<MotechURLSecurityRule> newRules) {
-
         //Assume all rules are of the same origin
         String origin = newRules.get(0).getOrigin();
+        LOGGER.debug("Rules origin: {}", origin);
 
         List<MotechURLSecurityRule> moduleRules = allSecurityRules.getRulesByOrigin(origin);
 
         if (moduleRules.size() > 0) {
             //Don't update security if rules from this origin have already been loaded
+            LOGGER.debug("Rules from the origin {} have already been loaded", origin);
             return;
         }
 

@@ -2,22 +2,31 @@ package org.motechproject.server.web.helper;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.motechproject.osgi.web.Header;
 import org.motechproject.osgi.web.ModuleRegistrationData;
 import org.motechproject.osgi.web.UIFrameworkService;
+import org.motechproject.osgi.web.ext.ApplicationEnvironment;
 import org.motechproject.security.model.RoleDto;
 import org.motechproject.security.service.MotechRoleService;
 import org.motechproject.security.service.MotechUserService;
 import org.motechproject.server.web.dto.ModuleMenu;
 import org.motechproject.server.web.dto.ModuleMenuLink;
 import org.motechproject.server.web.dto.ModuleMenuSection;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Dictionary;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
@@ -27,6 +36,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
+@RunWith(PowerMockRunner.class)
+@PrepareForTest(ApplicationEnvironment.class)
 public class MenuBuilderTest {
 
     private static final String USERNAME = "motech";
@@ -43,9 +54,25 @@ public class MenuBuilderTest {
     @Mock
     private MotechUserService userService;
 
+    @Mock
+    private BundleContext bundleContext;
+
+    @Mock
+    private Bundle bundle;
+
+    private Dictionary dictionary = new Hashtable();
+
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
+
+        PowerMockito.mockStatic(ApplicationEnvironment.class);
+
+        when(ApplicationEnvironment.isInDevelopmentMode()).thenReturn(true);
+
+        when(bundleContext.getBundle()).thenReturn(bundle);
+        when(bundle.getHeaders()).thenReturn(dictionary);
+
         setUpMenu();
         setUpPermissions();
     }
@@ -91,7 +118,7 @@ public class MenuBuilderTest {
 
     private void setUpMenu() {
         HashMap<String, String> i18n = new HashMap<>();
-        Header header = new Header();
+        Header header = new Header(bundleContext);
         List<String> angularModules = Arrays.asList("m1", "m2");
 
         ModuleRegistrationData adminRegData = new ModuleRegistrationData("admin", "/admin",

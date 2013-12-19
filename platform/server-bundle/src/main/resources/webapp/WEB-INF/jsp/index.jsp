@@ -9,7 +9,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <%@include file="head.jsp" %>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>MOTECH - Mobile Technology for Community Health</title>
+
+    ${mainHeader}
 
     <c:if test="${! empty currentModule}">
        ${currentModule.header}
@@ -24,17 +27,35 @@
     </c:if>
 </head>
 
-<body ng-controller="MasterCtrl"  ng-class="showDashboardLogo.backgroudUpDown()">
-<div class="bodywrap">
-    <div ng-show="ready" id="content-header" ng-include="'../server/resources/partials/header.html'"></div>
+<body ng-controller="MasterCtrl" id="container" ng-class="showDashboardLogo.backgroudUpDown()" class="custom ui-layout-container" layout state="bodyState" ng-init="bodyState = true">
+    <div ng-controller="HomeCtrl">
 
-    <div id="content" class="container-full" ng-controller="HomeCtrl">
-        <div class="row">
-            <motech-modules></motech-modules>
+        <div class="ui-layout-pane ui-layout-pane-north" id="outer-north">
+            <div ng-show="ready" id="content-header" ng-include="'../server/resources/partials/header.html'"></div>
+        </div>
 
-            <div id="main-content" class="col-lg-10 col-sm-9">
-                <c:if test="${! empty currentModule}">
-                    <div>
+        <div id="page-loading">Loading...</div>
+
+        <div ng-show="ready" id="outer-south" class="ui-layout-pane ui-layout-pane-south">
+            <span id="tbarCloseSouth" class="southpane-open pull-right" title="Close This Pane"><i class="icon-caret-down button"></i></span>
+            <div ng-include="'../server/resources/partials/footer.html'"></div>
+        </div>
+
+        <div id="outer-west" class="ui-layout-pane ui-layout-pane-west">
+            <div class="header-toolbar header-footer"><i id="tbarCloseWest" class="button icon-caret-left"></i></div>
+            <div class="ui-layout-content">
+                <motech-modules></motech-modules>
+            </div>
+        </div>
+
+        <div innerlayout id="outer-center" class="outer-center ui-layout-pane ui-layout-pane-center ui-layout-container">
+            <div id="main-content">
+                <c:choose>
+                    <c:when test="${isAccessDenied}">
+                        <div ng-include="'../server/resources/partials/access-denied-splash.html'"></div>
+                    </c:when>
+                    <c:otherwise>
+                        <c:if test="${! empty currentModule}">
                         <div class="splash" ng-hide="ready">
                             <div class="splash-logo"></div>
                             <div class="clearfix"></div>
@@ -53,15 +74,12 @@
                                 loadModule('${currentModule.url}', ${currentModule.angularModulesStr});
                             </script>
                         </div>
-                    </div>
-                </c:if>
+                        </c:if>
+                    </c:otherwise>
+                </c:choose>
             </div>
+        </div> <!-- #outer-center-->
 
-        </div>
     </div>
-
-    <div ng-show="ready" ng-include="'../server/resources/partials/footer.html'"></div>
-
-</div>
 </body>
 </html>

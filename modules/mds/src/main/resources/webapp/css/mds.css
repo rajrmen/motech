@@ -2,7 +2,11 @@
     border-bottom: none;
     margin-bottom: 0;
     margin-left: 0;
-    margin-right: 10px;
+    margin-right: 0;
+}
+
+.mds .tab-content .nav-tabs {
+    background-color: #EFF9FF;
 }
 
 .mds-settings.nav.nav-tabs {
@@ -18,7 +22,6 @@
 .hide {
     display: none;
 }
-
 
 .modal-content.large {
     width: 200%;
@@ -134,7 +137,7 @@
 .lookup-field {
     float: left;
     margin-left: 10px;
-    width: 300px;
+    width: 250px;
 }
 
 .form-field .btn-group {
@@ -193,14 +196,14 @@
     font-size: 16px;
     padding: 10px;
     color: #224477;
-    background: #deefff;
-    background: -moz-linear-gradient(top,  #deefff 0%, #98bede 100%);
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#deefff), color-stop(100%,#98bede));
-    background: -webkit-linear-gradient(top,  #deefff 0%,#98bede 100%);
-    background: -o-linear-gradient(top,  #deefff 0%,#98bede 100%);
-    background: -ms-linear-gradient(top,  #deefff 0%,#98bede 100%);
-    background: linear-gradient(to bottom,  #deefff 0%,#98bede 100%);
-    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#deefff', endColorstr='#98bede',GradientType=0 );
+    background: #CBE6FF;
+    background: -moz-linear-gradient(top,  #CBE6FF 0%, #B7D8F2 100%);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#CBE6FF), color-stop(100%,#B7D8F2));
+    background: -webkit-linear-gradient(top,  #CBE6FF 0%,#B7D8F2 100%);
+    background: -o-linear-gradient(top,  #CBE6FF 0%,#B7D8F2 100%);
+    background: -ms-linear-gradient(top,  #CBE6FF 0%,#B7D8F2 100%);
+    background: linear-gradient(to bottom,  #CBE6FF 0%,#B7D8F2 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#CBE6FF', endColorstr='#B7D8F2',GradientType=0 );
     -webkit-box-shadow: 0 0 4px #bec9de;
        -moz-box-shadow: 0 0 4px #bec9de;
             box-shadow: 0 0 4px #bec9de;
@@ -217,7 +220,7 @@
     line-height: 45px;
     color: #224477;
     font-weight: bold;
-    background-color: #f9f9f9;
+    background-color: #F6FBFF;
 }
 
 .entity-entry:hover {
@@ -354,4 +357,68 @@
 
 .button-flat {
     width: 48px;
+}
+
+.inline {
+    display: inline-flex;
+    list-style-type: none;
+}
+
+.fieldsSelect {
+    margin-left: 10px;
+}
+
+.exportCsvButton {
+    margin-left: 10px;
+}
+
+.mds #entityFieldsTable.table > thead > tr > th:first-child,
+.mds #entityFieldsTable.table > tbody > tr > th:first-child,
+.mds #entityFieldsTable.table > tfoot > tr > th:first-child,
+.mds #entityFieldsTable.table > thead > tr > td:first-child,
+.mds #entityFieldsTable.table > tbody > tr > td:first-child,
+.mds #entityFieldsTable.table > tfoot > tr > td:first-child {
+    width: 72px;
+}
+
+.lookupButton {
+    margin-left: 10px;
+}
+
+.lookup-label {
+    float: left;
+    width: 130px;
+    text-align: right;
+    padding-right: 10px;
+}
+
+.lookup-input {
+    float: left;
+}
+
+.list-picker {
+    min-width: 200px;
+}
+
+#lookup-dialog {
+    max-width: 80%;
+    top: 50px;
+    left: 50px;
+}
+
+#lookup-dialog .single-field-selection {
+    margin-top: 10px;
+    width: 100%;
+}
+
+#lookup-dialog .remove-button {
+    float: left;
+    margin-top: 25px;
+    margin-bottom: 10px;
+}
+
+#lookup-dialog .go-button {
+    float: right;
+    margin-top: 25px;
+    margin-bottom: 10px;
 }

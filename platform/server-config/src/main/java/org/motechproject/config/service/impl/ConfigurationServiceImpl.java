@@ -1,9 +1,10 @@
 package org.motechproject.config.service.impl;
 
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.collections.Predicate;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.vfs.FileSystemException;
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.motechproject.commons.api.MotechException;
@@ -18,15 +19,12 @@ import org.motechproject.config.repository.AllModuleProperties;
 import org.motechproject.config.service.ConfigurationService;
 import org.motechproject.server.config.domain.MotechSettings;
 import org.motechproject.server.config.domain.SettingsRecord;
-import org.motechproject.server.config.monitor.ConfigFileMonitor;
 import org.motechproject.server.config.repository.AllSettings;
+import org.motechproject.server.config.service.ConfigLoader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.core.io.Resource;
-import org.motechproject.server.config.domain.LoginMode;
-import org.osgi.service.event.Event;
-import org.osgi.service.event.EventAdmin;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
 
@@ -49,42 +47,36 @@ import java.util.Properties;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import static org.motechproject.config.core.filters.ConfigFileFilter.isPlatformCoreConfigFile;
+
 /**
  * Default implementation of {@link org.motechproject.config.service.ConfigurationService}.
  */
 @Service("configurationService")
 public class ConfigurationServiceImpl implements ConfigurationService {
-
+    private static final String STRING_FORMAT = "%s/%s";
     private static Logger logger = Logger.getLogger(ConfigurationServiceImpl.class);
-    private static final String USER_HOME = "user.home";
 
-    @Autowired
-    private ConfigFileMonitor configFileMonitor;
-
-    @Autowired
+    private AllModuleProperties allModuleProperties;
+    private AllSettings allSettings;
+    private ConfigLoader configLoader;
+    private ConfigSource configSource;
+    private ResourceLoader resourceLoader;
     private CoreConfigurationService coreConfigurationService;
 
-    @Autowired
-    private AllSettings allSettings;
-
-    @javax.annotation.Resource(name = "defaultSettings")
     private Properties defaultConfig;
-
-    @javax.annotation.Resource(name = "defaultAnnotations")
     private Properties configAnnotation;
 
     @Autowired
-    private AllModuleProperties allModuleProperties;
-
-    private ConfigSource configSource;
-
-    private static final String BROKER_URL = "jms.broker.url";
-
-    @Autowired
-    private ResourceLoader resourceLoader;
-
-    @Autowired(required = false)
-    private EventAdmin eventAdmin;
+    public ConfigurationServiceImpl(CoreConfigurationService coreConfigurationService,
+                                    AllSettings allSettings, AllModuleProperties allModuleProperties,
+                                    ConfigLoader configLoader, ResourceLoader resourceLoader) {
+        this.coreConfigurationService = coreConfigurationService;
+        this.allSettings = allSettings;
+        this.allModuleProperties = allModuleProperties;
+        this.configLoader = configLoader;
+        this.resourceLoader = resourceLoader;
+    }
 
     @Override
     public BootstrapConfig loadBootstrapConfig() {
@@ -100,14 +92,8 @@ public class ConfigurationServiceImpl implements ConfigurationService {
             return null;
         }
 
-        configSource = bootstrapConfig.getConfigSource();
-
-        if (ConfigSource.FILE.equals(configSource)) {
-            try {
-                configFileMonitor.monitor();
-            } catch (FileSystemException e) {
-                logger.error("Can't start config file monitor. ", e);
-            }
+        if (null != bootstrapConfig) {
+            configSource = bootstrapConfig.getConfigSource();
         }
 
         if (logger.isDebugEnabled()) {
@@ -115,42 +101,6 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         }
 
         return bootstrapConfig;
-    }
-
-    @Override
-    public SettingsRecord loadConfig() {
-        SettingsRecord settingsRecord = null;
-
-        Iterable<ConfigLocation> configLocations = coreConfigurationService.getConfigLocations();
-        for (ConfigLocation configLocation : configLocations) {
-            org.springframework.core.io.Resource configLocationResource = configLocation.toResource();
-            try {
-                org.springframework.core.io.Resource motechSettings = configLocationResource.createRelative(MotechSettings.SETTINGS_FILE_NAME);
-                if (!motechSettings.isReadable()) {
-                    logger.warn("Could not read motech-settings.conf from: " + configLocationResource.toString());
-                    continue;
-                }
-
-                settingsRecord = loadSettingsFromStream(motechSettings);
-                settingsRecord.setFilePath(configLocationResource.getURL().getPath());
-
-                if (eventAdmin != null) {
-                    Map<String, String> properties = new HashMap<>();
-                    Properties activemqProperties = settingsRecord.getActivemqProperties();
-                    if (activemqProperties != null && activemqProperties.containsKey(BROKER_URL)) {
-                        properties.put(BROKER_URL, activemqProperties.getProperty(BROKER_URL));
-                        eventAdmin.postEvent(new Event("org/motechproject/osgi/event/RELOAD", properties));
-                    }
-                }
-                break;
-            } catch (IOException e) {
-                logger.warn("Problem reading motech-settings.conf from location: " + configLocationResource.toString(), e);
-            }
-        }
-
-        checkSettingsRecord(settingsRecord);
-
-        return settingsRecord;
     }
 
     @Override
@@ -173,7 +123,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     }
 
     @Override
-    @Caching(cacheable = { @Cacheable(value = SETTINGS_CACHE_NAME, key = "#root.methodName") })
+    @Caching(cacheable = {@Cacheable(value = SETTINGS_CACHE_NAME, key = "#root.methodName")})
     public MotechSettings getPlatformSettings() {
         if (allSettings == null) {
             return null;
@@ -231,30 +181,35 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         File file = new File(propertyFile);
         Properties properties = allSettings.getSettings().getPlatformSettings();
         ZipOutputStream zipOutputStream = new ZipOutputStream(new FileOutputStream(fileName));
-        BufferedWriter out = new BufferedWriter(new FileWriter(file));
 
-        try {
+        try (BufferedWriter out = new BufferedWriter(new FileWriter(file))) {
             if (!properties.isEmpty()) {
                 StringBuilder stringBuilder = new StringBuilder();
 
                 for (Map.Entry<Object, Object> configProperty : properties.entrySet()) {
-                    stringBuilder.append("#" + configAnnotation.getProperty(configProperty.getKey().toString()) + "\n");
+                    stringBuilder.append("#")
+                            .append(configAnnotation.getProperty(configProperty.getKey().toString()))
+                            .append("\n");
 
                     if (defaultConfig.containsKey(configProperty.getKey())
-                            && !"".equals(defaultConfig.getProperty(configProperty.getKey().toString()))) {
-                        stringBuilder.append("#Default value:\n" + "#" + configProperty.getKey() +
-                                "=" + defaultConfig.getProperty(configProperty.getKey().toString()) +
-                                "\n");
+                            && !defaultConfig.getProperty(configProperty.getKey().toString()).equals("")) {
+                        stringBuilder.append("#Default value:\n" + "#")
+                                .append(configProperty.getKey())
+                                .append("=")
+                                .append(defaultConfig.getProperty(configProperty.getKey().toString()))
+                                .append("\n");
                     }
 
-                    stringBuilder.append("\n" + configProperty.getKey() + "=" + configProperty.getValue() + "\n\n");
+                    stringBuilder.append("\n")
+                            .append(configProperty.getKey())
+                            .append("=")
+                            .append(configProperty.getValue())
+                            .append("\n\n");
                 }
 
                 out.write(stringBuilder.toString());
             }
         } finally {
-            out.close();
-
             if (!properties.isEmpty()) {
                 zipOutputStream.putNextEntry(new ZipEntry(propertyFile));
                 IOUtils.copy(new FileInputStream(file), zipOutputStream);
@@ -309,22 +264,49 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     }
 
     @Override
-    public void updateProperties(String module, String filename, Properties defaultProperties, Properties newProperties) throws IOException {
+    public void addOrUpdateProperties(String module, String version, String bundle, String filename, Properties newProperties, Properties defaultProperties) throws IOException {
+        Properties toPersist;
         if (ConfigSource.UI.equals(configSource)) {
             //Persist only non-default properties in database
-            Properties toPersist = new Properties();
+            toPersist = new Properties();
             for (Map.Entry<Object, Object> entry : newProperties.entrySet()) {
                 if (!defaultProperties.containsKey(entry.getKey()) ||
                         (!defaultProperties.get(entry.getKey()).equals(newProperties.get(entry.getKey())))) {
                     toPersist.put(entry.getKey(), entry.getValue());
                 }
             }
+        } else {
+            toPersist = newProperties;
+        }
+        ModulePropertiesRecord properties = new ModulePropertiesRecord(toPersist, module, version, bundle, filename, false);
+        allModuleProperties.addOrUpdate(properties);
+    }
 
-            ModulePropertiesRecord properties = new ModulePropertiesRecord(toPersist, module, filename, false);
+    @Override
+    public void updatePropertiesAfterReinstallation(String module, String version, String bundle, String filename, Properties defaultProperties, Properties newProperties) throws IOException {
+        if (ConfigSource.UI.equals(configSource)) {
+            Properties oldProperties = getModuleProperties(module, filename, defaultProperties);
+            //Persist only non-default properties in database
+            Properties toPersist = new Properties();
+            Properties tempPropreties = (Properties) newProperties.clone();
+            for (Map.Entry<Object, Object> entry : oldProperties.entrySet()) {
+                if (newProperties.containsKey(entry.getKey())) {
+                    tempPropreties.put(entry.getKey(), entry.getValue());
+                }
+            }
 
+            for (Map.Entry<Object, Object> entry : tempPropreties.entrySet()) {
+                if (!defaultProperties.containsKey(entry.getKey()) ||
+                        (!defaultProperties.get(entry.getKey()).equals(tempPropreties.get(entry.getKey())))) {
+                    toPersist.put(entry.getKey(), entry.getValue());
+                }
+            }
+
+            ModulePropertiesRecord properties = new ModulePropertiesRecord(toPersist, module, version, bundle, filename, false);
+            delete(module);
             allModuleProperties.addOrUpdate(properties);
         } else if (ConfigSource.FILE.equals(configSource)) {
-            File file = new File(String.format("%s/%s", getModuleConfigDir(module), filename));
+            File file = new File(String.format(STRING_FORMAT, getModuleConfigDir(module), filename));
             setUpDirsForFile(file);
             try (FileOutputStream fileOutputStream = new FileOutputStream(file)) {
                 newProperties.store(fileOutputStream, null);
@@ -332,15 +314,62 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         }
     }
 
-    private void checkSettingsRecord(SettingsRecord settingsRecord) {
-        if (settingsRecord == null) {
-            throw new MotechConfigurationException("Could not read settings from file");
-        } else {
-            LoginMode loginMode = settingsRecord.getLoginMode();
-            if (loginMode == null || (!loginMode.isRepository() && !loginMode.isOpenId())) {
-                throw new MotechConfigurationException("Login mode has an incorrect value. Acceptable values: \"repository\", \"openId\".");
+    public void removeProperties(String module, String filename) {
+        if (ConfigSource.UI.equals(configSource)) {
+            deleteByBundle(module);
+        } else if (ConfigSource.FILE.equals(configSource)) {
+            File file = new File(String.format(STRING_FORMAT, getModuleConfigDir(module), filename));
+            if (!file.delete()) {
+                throw new MotechConfigurationException("Could not delete configuration file");
             }
         }
+    }
+
+    @Override
+    public void processExistingConfigs(List<File> files) {
+        List<ModulePropertiesRecord> records = new ArrayList<>();
+        List<ModulePropertiesRecord> dbRecords = allModuleProperties.getAll();
+
+        for (File file : files) {
+            if (isPlatformCoreConfigFile(file)) {
+                savePlatformSettings(loadConfig());
+                continue;
+            }
+
+            final ModulePropertiesRecord record = ModulePropertiesRecord.buildFrom(file);
+            if (record == null) {
+                continue;
+            }
+            ModulePropertiesRecord dbRecord = (ModulePropertiesRecord) CollectionUtils.find(dbRecords, new Predicate() {
+                @Override
+                public boolean evaluate(Object object) {
+                    return record.sameAs((ModulePropertiesRecord) object);
+                }
+            });
+            if (dbRecord != null) {
+                dbRecords.remove(dbRecord);
+                record.setId(dbRecord.getId());
+                record.setRevision(dbRecord.getRevision());
+            }
+            records.add(record);
+        }
+
+        if (CollectionUtils.isNotEmpty(records)) {
+            allModuleProperties.bulkAddOrUpdate(records);
+        }
+        if (CollectionUtils.isNotEmpty(dbRecords)) {
+            allModuleProperties.bulkDelete(dbRecords);
+        }
+    }
+
+    @Override
+    public void addOrUpdate(File file) {
+        if (isPlatformCoreConfigFile(file)) {
+            savePlatformSettings(loadConfig());
+            return;
+        }
+
+        allModuleProperties.addOrUpdate(ModulePropertiesRecord.buildFrom(file));
     }
 
     private SettingsRecord loadSettingsFromStream(org.springframework.core.io.Resource motechSettings) {
@@ -362,11 +391,11 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     }
 
     @Override
-    public void saveRawConfig(String module, String filename, InputStream rawData) throws IOException {
+    public void saveRawConfig(String module, String version, String bundle, String filename, InputStream rawData) throws IOException {
         if (ConfigSource.UI.equals(configSource)) {
             Properties p = new Properties();
             p.put("rawData", IOUtils.toString(rawData));
-            ModulePropertiesRecord record = new ModulePropertiesRecord(p, module, filename, true);
+            ModulePropertiesRecord record = new ModulePropertiesRecord(p, module, version, bundle, filename, true);
             allModuleProperties.addOrUpdate(record);
         } else if (ConfigSource.FILE.equals(configSource)) {
             File file = new File(String.format("%s/raw/%s", getModuleConfigDir(module), filename));
@@ -458,20 +487,42 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
     @Override
     public boolean registersProperties(String module, String filename) {
+        this.loadBootstrapConfig();
         if (ConfigSource.UI.equals(configSource)) {
             ModulePropertiesRecord rec = allModuleProperties.byModuleAndFileName(module, filename);
-            return rec == null ? false : true;
+            return rec != null;
         } else {
-            File file = new File(String.format("%s/%s", getModuleConfigDir(module), filename));
+            File file = new File(String.format(STRING_FORMAT, getModuleConfigDir(module), filename));
             return file.exists();
         }
+    }
+
+    @Override
+    public void updateConfigLocation(String newConfigLocation) {
+        try {
+            coreConfigurationService.addConfigLocation(newConfigLocation);
+        } catch (java.nio.file.FileSystemException e) {
+            throw new MotechConfigurationException("Cannot add and/or update file monitoring location", e);
+        }
+    }
+
+    @Override
+    public void delete(String module) {
+        List<ModulePropertiesRecord> records = allModuleProperties.byModuleName(module);
+        allModuleProperties.remove(records.get(0));
+    }
+
+    @Override
+    public void deleteByBundle(String module) {
+        List<ModulePropertiesRecord> records = allModuleProperties.byBundle(module);
+        allModuleProperties.remove(records.get(0));
     }
 
     @Override
     public boolean rawConfigExists(String module, String filename) {
         if (ConfigSource.UI.equals(configSource)) {
             ModulePropertiesRecord rec = allModuleProperties.byModuleAndFileName(module, filename);
-            return (rec == null) ? false : rec.isRaw();
+            return (rec != null) && rec.isRaw();
         } else if (configSource != null && ConfigSource.FILE.equals(configSource)) {
             File file = new File(String.format("%s/raw/%s", getModuleConfigDir(module), filename));
             return file.exists();
@@ -480,10 +531,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     }
 
     private String getConfigDir() {
-        if (configFileMonitor != null && configFileMonitor.getCurrentSettings() != null) {
-            return configFileMonitor.getCurrentSettings().getFilePath();
-        }
-        return String.format("%s/.motech/config/", System.getProperty(USER_HOME));
+        return coreConfigurationService.getConfigLocation().getLocation();
     }
 
     private String getModuleConfigDir(String module) {
@@ -494,9 +542,10 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         file.getParentFile().mkdirs();
     }
 
+    @Override
     public SettingsRecord loadDefaultConfig() {
         SettingsRecord settingsRecord = null;
-        org.springframework.core.io.Resource defaultSettings = resourceLoader.getResource("classpath:motech-settings.conf");
+        org.springframework.core.io.Resource defaultSettings = resourceLoader.getResource("classpath:motech-settings.properties");
         if (defaultSettings != null) {
             settingsRecord = loadSettingsFromStream(defaultSettings);
         }
@@ -504,11 +553,39 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         return settingsRecord;
     }
 
+    @Override
+    public SettingsRecord loadConfig() {
+        return configLoader.loadMotechSettings();
+    }
+
+    @Override
+    public boolean requiresConfigurationFiles() {
+        try {
+            if (getConfigSource() == null) {
+                configSource = loadBootstrapConfig().getConfigSource();
+            }
+            if (!configSource.isFile()) {
+                return false;
+            }
+            ConfigLocation configLocation = coreConfigurationService.getConfigLocation();
+            return !configLocation.hasPlatformConfigurationFile();
+        } catch (MotechConfigurationException ex) {
+            logger.error(ex.getMessage(), ex);
+            return true;
+        }
+    }
+
     void setResourceLoader(ResourceLoader resourceLoader) {
         this.resourceLoader = resourceLoader;
     }
 
-    void setCoreConfigurationService(CoreConfigurationService coreConfigurationService) {
-        this.coreConfigurationService = coreConfigurationService;
+    @javax.annotation.Resource(name = "defaultSettings")
+    public void setDefaultConfig(Properties defaultConfig) {
+        this.defaultConfig = defaultConfig;
+    }
+
+    @javax.annotation.Resource(name = "defaultAnnotations")
+    public void setConfigAnnotation(Properties configAnnotation) {
+        this.configAnnotation = configAnnotation;
     }
 }

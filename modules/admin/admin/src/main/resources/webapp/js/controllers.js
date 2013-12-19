@@ -115,30 +115,34 @@
             'org.motechproject:motech-callflow:[0,)':'Call Flow',
             'org.motechproject:motech-event-aggregation-bundle:[0,)':'Event aggregation',
             'org.motechproject:motech-event-logging:[0,)':'Event logging',
-            'org.motechproject:motech-tasks-bundle:[0,)':'Tasks',
+            'org.motechproject:motech-dataservices:[0,)':'Data Services',
+            'org.motechproject:motech-tasks:[0,)':'Tasks',
             'org.motechproject:motech-pillreminder-api:[0,)':'Pill reminder',
-            'org.motechproject:motech-outbox-bundle:[0,)':'Outbox',
+            'org.motechproject:motech-outbox:[0,)':'Outbox',
             'org.motechproject:motech-mrs-couchdb:[0,)':'MRS CouchDB',
             'org.motechproject:motech-openmrs-api-bundle:[0,)':'OpenMRS',
             'org.motechproject:motech-openmrs-ws-bundle:[0,)':'OpenMRS WS',
             'org.motechproject:motech-openmrs-atomfeed-bundle:[0,)':'OpenMRS AtomFeed',
             'org.motechproject:motech-decisiontree-core:[0,)':'Decision Tree Core',
             'org.motechproject:motech-http-agent-bundle:[0,)':'Http agent',
-            'org.motechproject:motech-ivr-api-bundle:[0,)':'IVR',
+            'org.motechproject:motech-ivr-api:[0,)':'IVR',
             'org.motechproject:motech-ivr-asterisk-bundle:[0,)':'IVR Asterisk',
             'org.motechproject:motech-ivr-kookoo-bundle:[0,)':'IVR Kookoo',
             'org.motechproject:motech-ivr-verboice-bundle:[0,)':'IVR Verboice',
             'org.motechproject:motech-ivr-voxeo-bundle:[0,)':'IVR Voxeo',
-            'org.motechproject:motech-mobileforms-api-bundle:[0,)':'Mobile Forms',
+            'org.motechproject:motech-mobileforms-api:[0,)':'Mobile Forms',
             'org.motechproject:motech-rules-api-bundle:[0,)':'Rules',
             'org.motechproject:motech-scheduler:[0,)':'Scheduler',
-            'org.motechproject:motech-sms-api-bundle:[0,)':'SMS',
-            'org.motechproject:motech-sms-http-bundle:[0,)':'SMS Http',
-            'org.motechproject:motech-sms-smpp-bundle:[0,)':'SMS Smpp',
+            'org.motechproject:motech-sms-bundle:[0,)':'SMS',
             'org.motechproject:motech-platform-metrics:[0,)':'Metrics'
         };
 
         $scope.module = "";
+        $scope.bundle = undefined;
+
+        $scope.selectBundle = function (bundle) {
+            $scope.bundle = bundle;
+        };
 
         $scope.stopBundle = function (bundle) {
             bundle.state = LOADING_STATE;
@@ -181,26 +185,38 @@
             });
         };
 
-        $scope.uninstallBundle = function (bundle) {
-            jConfirm(jQuery.i18n.prop('admin.bundles.uninstall.confirm'), jQuery.i18n.prop("admin.confirm"), function (val) {
-                if (val) {
-                    var oldState = bundle.state;
-                    bundle.state = LOADING_STATE;
+        $scope.closeRemoveBundleModal = function () {
+            $('#removeBundleModal').modal('hide');
+            $scope.bundle = undefined;
+        };
 
-                    blockUI();
-
-                    bundle.$uninstall(function () {
-                            // remove bundle from list
-                            $scope.bundles.removeObject(bundle);
-                            $scope.refreshModuleList();
-                            unblockUI();
-                        }, function () {
-                            motechAlert('admin.bundles.error.uninstall', 'admin.error');
-                            bundle.state = oldState;
-                            unblockUI();
-                        });
-                }
-            });
+        $scope.uninstallBundle = function (withConfig) {
+            $('#removeBundleModal').modal('hide');
+            var oldState = $scope.bundle.state;
+            $scope.bundle.state = LOADING_STATE;
+            if (withConfig) {
+                $scope.bundle.$uninstallWithConfig(function () {
+                    // remove bundle from list
+                    $scope.bundles.removeObject($scope.bundle);
+                    $scope.refreshModuleList();
+                    unblockUI();
+                }, function () {
+                    motechAlert('admin.bundles.error.uninstall', 'admin.error');
+                    $scope.bundle.state = oldState;
+                    unblockUI();
+                });
+            } else {
+                $scope.bundle.$uninstall(function () {
+                    // remove bundle from list
+                    $scope.bundles.removeObject($scope.bundle);
+                    $scope.refreshModuleList();
+                    unblockUI();
+                }, function () {
+                    motechAlert('admin.bundles.error.uninstall', 'admin.error');
+                    $scope.bundle.state = oldState;
+                    unblockUI();
+                });
+            }
         };
 
         $scope.getIconClass = function (bundle) {
@@ -214,7 +230,6 @@
         $scope.bundleStable = function (bundle) {
             return bundle.state !== LOADING_STATE;
         };
-
 
         $scope.startOnUpload = function () {
             if ($scope.startUpload !== true) {

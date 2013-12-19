@@ -17,8 +17,7 @@ import java.util.List;
 
 @Component
 public class SecurityRoleLoader {
-
-    private static final Logger LOG = LoggerFactory.getLogger(SecurityRoleLoader.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SecurityRoleLoader.class);
 
     private MotechJsonReader motechJsonReader = new MotechJsonReader();
 
@@ -32,9 +31,13 @@ public class SecurityRoleLoader {
 
     @PostDbSetUpStep
     public void loadRoles(ApplicationContext applicationContext) {
+        LOGGER.info("Loading roles from: {}", applicationContext.getDisplayName());
+
         Resource rolesResource = applicationContext.getResource("roles.json");
 
         if (rolesResource.exists()) {
+            LOGGER.debug("File roles.json exists in {}", applicationContext.getDisplayName());
+
             try (InputStream in = rolesResource.getInputStream()) {
                 List<RoleDto> roles = (List<RoleDto>)
                         motechJsonReader.readFromStream(in, new TypeToken<List<RoleDto>>() {
@@ -51,8 +54,10 @@ public class SecurityRoleLoader {
                     }
                 }
             } catch (IOException e) {
-                LOG.error("Unable to read roles in " + applicationContext.getDisplayName(), e);
+                LOGGER.error("Unable to read roles in " + applicationContext.getDisplayName(), e);
             }
         }
+
+        LOGGER.info("Loaded roles from: {}", applicationContext.getDisplayName());
     }
 }

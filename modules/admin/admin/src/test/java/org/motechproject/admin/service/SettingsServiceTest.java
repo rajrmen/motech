@@ -2,15 +2,17 @@ package org.motechproject.admin.service;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.motechproject.admin.domain.AdminSettings;
 import org.motechproject.admin.service.impl.SettingsServiceImpl;
 import org.motechproject.admin.settings.Settings;
 import org.motechproject.admin.settings.SettingsOption;
+import org.motechproject.config.monitor.ConfigFileMonitor;
 import org.motechproject.config.service.ConfigurationService;
+import org.motechproject.event.listener.EventRelay;
 import org.motechproject.server.config.domain.MotechSettings;
-import org.motechproject.server.config.service.PlatformSettingsService;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.springframework.security.web.savedrequest.Enumerator;
@@ -30,11 +32,12 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyMap;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
-import static org.motechproject.server.config.domain.MotechSettings.AMQ_REDELIVERY_DELAY_IN_MILLIS;
-import static org.motechproject.server.config.domain.MotechSettings.LANGUAGE;
+import static org.motechproject.config.core.constants.ConfigurationConstants.AMQ_REDELIVERY_DELAY_IN_MILLIS;
+import static org.motechproject.config.core.constants.ConfigurationConstants.LANGUAGE;
 
 public class SettingsServiceTest {
     private static final Long BUNDLE_ID = 1L;
@@ -48,9 +51,6 @@ public class SettingsServiceTest {
     private static final String OPTION_VALUE = "test";
 
     @Mock
-    PlatformSettingsService platformSettingsService;
-
-    @Mock
     ConfigurationService configurationService;
 
     @Mock
@@ -59,11 +59,17 @@ public class SettingsServiceTest {
     @Mock
     Bundle bundle;
 
-    @InjectMocks
-    SettingsService settingsService = new SettingsServiceImpl();
-
     @Mock
     MotechSettings motechSettings;
+
+    @Mock
+    private ConfigFileMonitor configFileMonitor;
+
+    @Mock
+    private EventRelay eventRelay;
+
+    @InjectMocks
+    SettingsService settingsService = new SettingsServiceImpl();
 
     Properties bundleProperty = new Properties();
 
@@ -73,7 +79,7 @@ public class SettingsServiceTest {
 
         initMotechSettings();
         initBundle();
-        initPlatformSettingsService();
+        initConfigService();
         initConfigurationService();
     }
 
@@ -122,10 +128,19 @@ public class SettingsServiceTest {
         Settings settings = new Settings(BUNDLE_FILENAME, asList(option));
         settingsService.saveBundleSettings(settings, BUNDLE_ID);
 
-        verify(configurationService).updateProperties(BUNDLE_SYMBOLIC_NAME, BUNDLE_FILENAME, null, bundleProperty);
+        verify(configurationService).addOrUpdateProperties(BUNDLE_SYMBOLIC_NAME, "", BUNDLE_SYMBOLIC_NAME, BUNDLE_FILENAME, bundleProperty, null);
     }
 
-    private void initPlatformSettingsService() throws IOException {
+    @Test
+    public void shouldAddSettingsPath() throws IOException {
+        final String path = "some-path";
+        settingsService.addSettingsPath(path);
+        InOrder inOrder = inOrder(configurationService, configFileMonitor);
+        inOrder.verify(configurationService).updateConfigLocation(path);
+        inOrder.verify(configFileMonitor).updateFileMonitor();
+    }
+
+    private void initConfigService() throws IOException {
         bundleProperty.put(OPTION_KEY, OPTION_VALUE);
         Map<String, Properties> propertiesMap = new HashMap<>(1);
         propertiesMap.put(BUNDLE_FILENAME, bundleProperty);

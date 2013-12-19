@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
+import org.motechproject.config.core.MotechConfigurationException;
 import org.motechproject.config.service.ConfigurationService;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -14,13 +15,20 @@ import java.util.List;
 import java.util.Properties;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 public class SettingsFacadeTest {
 
     private static final String BUNDLE_NAME = "org.motechproject.motech-module-bundle";
+    private static final String BUNDLE_SIMPLE_NAME = "";
+    private static final String BUNDLE_VERSION = "";
     private static final String FILENAME = "settings.properties";
     private static final String LANGUAGE_PROP = "system.language";
     private static final String LANGUAGE_VALUE = "en";
@@ -80,8 +88,8 @@ public class SettingsFacadeTest {
         settingsFacade.afterPropertiesSet();
 
         ArgumentCaptor<Properties> argument = ArgumentCaptor.forClass(Properties.class);
-        verify(configurationService).updateProperties(eq(BUNDLE_NAME), eq(FILENAME),
-                any(Properties.class), argument.capture());
+        verify(configurationService).addOrUpdateProperties(eq(BUNDLE_NAME), eq(BUNDLE_VERSION), eq(BUNDLE_SIMPLE_NAME), eq(FILENAME),
+                argument.capture(), any(Properties.class));
         assertEquals(LANGUAGE_VALUE, argument.getValue().getProperty(LANGUAGE_PROP));
     }
 
@@ -98,6 +106,15 @@ public class SettingsFacadeTest {
         assertEquals(2, result.size());
         assertEquals(TEST_VAL, result.get(TEST_PROP));
         assertEquals(LANGUAGE_VALUE, result.get(LANGUAGE_PROP));
+    }
+
+
+    @Test
+    public void shouldMarkConfigurationSettingsNotRegisteredWhenMotechConfigExceptionIsThrown() throws IOException {
+        when(configurationService.registersProperties(anyString(), anyString()))
+                .thenThrow(new MotechConfigurationException("file could not be read"));
+        settingsFacade.afterPropertiesSet();
+        assertFalse(settingsFacade.areConfigurationSettingsRegistered());
     }
 
     private void setUpConfig() {

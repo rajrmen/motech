@@ -9,7 +9,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <%@include file="head.jsp" %>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>MOTECH - Mobile Technology for Community Health</title>
+
+    ${mainHeader}
 
     <c:if test="${! empty currentModule}">
         ${currentModule.header}
@@ -28,10 +31,10 @@
     <div class="header">
         <div class="container">
             <a href=".">
-                <div class="dashboard-logo"></div>
+                <div class="dashboard-logo" ng-show="showDashboardLogo.showDashboard"><img class="logo" alt="Logo - {{msg('server.motechTitle')}}" src="../server/resources/img/motech-logo.jpg"></div>
             </a>
 
-            <div class="navbar-collapse hidden-xs">
+            <div class="hidden-xs hidden-sm">
                 <div class="header-title"><fmt:message key="server.motechTitle" bundle="${bundle}"/></div>
             </div>
             <div class="clearfix"></div>
