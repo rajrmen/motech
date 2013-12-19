@@ -1,13 +1,10 @@
 package org.motechproject.security.repository;
 
-import org.ektorp.CouchDbConnector;
 import org.ektorp.ViewQuery;
 import org.ektorp.support.View;
 import org.motechproject.commons.couchdb.dao.MotechBaseRepository;
 import org.motechproject.security.domain.MotechPermission;
 import org.motechproject.security.domain.MotechPermissionCouchdbImpl;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -39,7 +36,7 @@ public class AllMotechPermissionsCouchdbImpl extends MotechBaseRepository<Motech
             return null;
         }
         ViewQuery viewQuery = createQuery("by_permissionName").key(permissionName).includeDocs(true);
-        return singleResult(db.queryView(viewQuery, MotechPermissionCouchdbImpl.class));
+        return singleResult(getDb().queryView(viewQuery, MotechPermissionCouchdbImpl.class));
     }
 
     @Override

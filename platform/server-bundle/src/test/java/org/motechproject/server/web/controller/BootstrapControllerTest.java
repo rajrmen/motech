@@ -6,6 +6,8 @@ import org.junit.runner.RunWith;
 import org.mockito.InOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.motechproject.commons.couchdb.osgi.DbSetUpService;
+import org.motechproject.commons.couchdb.service.CouchDbManager;
 import org.motechproject.config.core.MotechConfigurationException;
 import org.motechproject.config.core.domain.BootstrapConfig;
 import org.motechproject.config.core.domain.ConfigSource;
@@ -47,6 +49,10 @@ public class BootstrapControllerTest {
     private StartupManager startupManager;
     @Mock
     private ConfigurationService configurationService;
+    @Mock
+    private DbSetUpService dbSetUpService;
+    @Mock
+    private CouchDbManager couchDbManager;
 
     @InjectMocks
     private BootstrapController bootstrapController = new BootstrapController();

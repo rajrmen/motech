@@ -1,4 +1,4 @@
-package org.motechproject.commons.couchdb;
+package org.motechproject.commons.couchdb.dao;
 
 import org.ektorp.CouchDbConnector;
 import org.ektorp.UpdateConflictException;
@@ -6,6 +6,7 @@ import org.ektorp.support.CouchDbRepositorySupport;
 import org.ektorp.support.DesignDocument;
 import org.ektorp.support.DesignDocumentFactory;
 import org.ektorp.support.StdDesignDocumentFactory;
+import org.motechproject.commons.couchdb.dao.MotechViewGenerator;
 import org.motechproject.commons.couchdb.dao.MotechBaseRepository;
 import org.motechproject.commons.couchdb.model.MotechBaseDataObject;
 

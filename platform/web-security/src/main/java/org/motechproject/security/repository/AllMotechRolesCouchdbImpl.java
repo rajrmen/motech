@@ -1,13 +1,10 @@
 package org.motechproject.security.repository;
 
-import org.ektorp.CouchDbConnector;
 import org.ektorp.ViewQuery;
 import org.ektorp.support.View;
 import org.motechproject.commons.couchdb.dao.MotechBaseRepository;
 import org.motechproject.security.domain.MotechRole;
 import org.motechproject.security.domain.MotechRoleCouchdbImpl;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -41,7 +38,7 @@ public class AllMotechRolesCouchdbImpl extends MotechBaseRepository<MotechRoleCo
             return null;
         }
         ViewQuery viewQuery = createQuery("by_roleName").key(roleName).includeDocs(true);
-        return singleResult(db.queryView(viewQuery, MotechRoleCouchdbImpl.class));
+        return singleResult(getDb().queryView(viewQuery, MotechRoleCouchdbImpl.class));
     }
 
     @Override

@@ -1,14 +1,11 @@
 package org.motechproject.security.repository;
 
-import org.ektorp.CouchDbConnector;
 import org.ektorp.ViewQuery;
 import org.ektorp.support.View;
 import org.motechproject.commons.couchdb.dao.MotechBaseRepository;
 import org.motechproject.security.domain.MotechUser;
 import org.motechproject.security.domain.MotechUserCouchdbImpl;
 import org.motechproject.security.ex.EmailExistsException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -29,7 +26,7 @@ public class AllMotechUsersCouchdbImpl extends MotechBaseRepository<MotechUserCo
 
         String lowerUserName = userName.toLowerCase();
         ViewQuery viewQuery = createQuery("by_userName").key(lowerUserName).includeDocs(true);
-        return singleResult(db.queryView(viewQuery, MotechUserCouchdbImpl.class));
+        return singleResult(getDb().queryView(viewQuery, MotechUserCouchdbImpl.class));
     }
 
     @Override
@@ -37,7 +34,7 @@ public class AllMotechUsersCouchdbImpl extends MotechBaseRepository<MotechUserCo
     public MotechUser findUserByOpenId(String openId) {
         if (openId == null) { return null; }
         ViewQuery viewQuery = createQuery("by_openId").key(openId).includeDocs(true);
-        return singleResult(db.queryView(viewQuery, MotechUserCouchdbImpl.class));
+        return singleResult(getDb().queryView(viewQuery, MotechUserCouchdbImpl.class));
     }
 
     @Override
@@ -47,7 +44,7 @@ public class AllMotechUsersCouchdbImpl extends MotechBaseRepository<MotechUserCo
             return null;
         }
         ViewQuery viewQuery = createQuery("by_email").key(email).includeDocs(true);
-        return singleResult(db.queryView(viewQuery, MotechUserCouchdbImpl.class));
+        return singleResult(getDb().queryView(viewQuery, MotechUserCouchdbImpl.class));
     }
 
     @Override
@@ -56,7 +53,7 @@ public class AllMotechUsersCouchdbImpl extends MotechBaseRepository<MotechUserCo
         if (role == null) { return null; }
 
         ViewQuery viewQuery = createQuery("find_by_role").key(role).includeDocs(true);
-        return db.queryView(viewQuery, MotechUserCouchdbImpl.class);
+        return getDb().queryView(viewQuery, MotechUserCouchdbImpl.class);
     }
 
     @Override

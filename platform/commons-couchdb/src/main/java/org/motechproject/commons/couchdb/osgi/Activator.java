@@ -12,16 +12,15 @@ public class Activator implements BundleActivator {
     private ServiceRegistration serviceRegistration;
 
     @Override
-    public void start(BundleContext context) throws Exception {
+    public void start(BundleContext context) {
         DbSetUpServiceImpl designDocumentInitializationService = new DbSetUpServiceImpl();
         serviceRegistration = context.registerService(DbSetUpService.class.getName(), designDocumentInitializationService, new Properties());
         applicationContextTracker = new ApplicationContextTracker(context, designDocumentInitializationService);
         applicationContextTracker.open();
-        System.out.println("################ DONE #######################");
     }
 
     @Override
-    public void stop(BundleContext context) throws Exception {
+    public void stop(BundleContext context) {
         if (serviceRegistration != null) {
             context.ungetService(serviceRegistration.getReference());
         }

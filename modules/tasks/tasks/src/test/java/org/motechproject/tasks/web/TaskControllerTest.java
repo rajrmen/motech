@@ -36,7 +36,6 @@ import static org.apache.commons.lang.CharEncoding.UTF_8;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
@@ -89,7 +88,7 @@ public class TaskControllerTest {
 
         List<Task> actual = controller.getAllTasks();
 
-        verify(taskService, times(2)).getAllTasks();
+        verify(taskService).getAllTasks();
 
         assertNotNull(actual);
         assertEquals(expected, actual);

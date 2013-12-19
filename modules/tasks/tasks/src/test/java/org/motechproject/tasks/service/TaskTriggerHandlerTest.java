@@ -167,6 +167,7 @@ public class TaskTriggerHandlerTest {
         handler = new TaskTriggerHandler(taskService, taskActivityService, registryService, eventRelay, settingsFacade);
         handler.addDataProvider(TASK_DATA_PROVIDER_ID, dataProvider);
         handler.setBundleContext(null);
+        handler.registerHandlers(taskService);
 
         verify(taskService).getAllTasks();
         verify(registryService).registerListener(any(EventListener.class), eq(task.getTrigger().getSubject()));

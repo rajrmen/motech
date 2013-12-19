@@ -3,7 +3,6 @@ package org.motechproject.event.aggregation.repository;
 import org.ektorp.support.GenerateView;
 import org.motechproject.commons.couchdb.dao.MotechBaseRepository;
 import org.motechproject.event.aggregation.model.rule.AggregationRuleRecord;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 @Repository

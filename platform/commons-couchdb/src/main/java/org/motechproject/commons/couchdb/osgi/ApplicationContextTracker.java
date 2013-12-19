@@ -16,7 +16,7 @@ import java.lang.reflect.Method;
 
 public class ApplicationContextTracker extends ServiceTracker {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationContextTracker.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ApplicationContextTracker.class);
 
     private DbSetUpService dbSetUpService;
 
@@ -29,7 +29,9 @@ public class ApplicationContextTracker extends ServiceTracker {
     public Object addingService(ServiceReference reference) {
         ApplicationContext applicationContext = (ApplicationContext) super.addingService(reference);
         String bundleName = OsgiStringUtils.nullSafeSymbolicName(reference.getBundle());
-        info(String.format("Application context created for bundle %s ", bundleName));
+
+        LOG.info(String.format("Application context created for bundle %s ", bundleName));
+
         String[] beanDefinitionNames = applicationContext.getBeanDefinitionNames();
         for (String beanDefinitionName : beanDefinitionNames) {
             addPreDbSetUp(applicationContext, beanDefinitionName);
@@ -88,9 +90,5 @@ public class ApplicationContextTracker extends ServiceTracker {
                     }
                 }
         );
-    }
-
-    private void info(String message) {
-        System.out.println(message);
     }
 }

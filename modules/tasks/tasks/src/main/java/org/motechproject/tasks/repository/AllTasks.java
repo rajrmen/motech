@@ -6,7 +6,6 @@ import org.ektorp.ViewResult;
 import org.ektorp.support.View;
 import org.motechproject.commons.couchdb.dao.MotechBaseRepository;
 import org.motechproject.tasks.domain.Task;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.HashMap;
@@ -79,12 +78,12 @@ public class AllTasks extends MotechBaseRepository<Task> {
                     "}"
     )
     public List<Task> dependentOnModule(String moduleName) {
-        ViewResult idsResult = db.queryView(createQuery("byModuleName").key(moduleName));
+        ViewResult idsResult = getDb().queryView(createQuery("byModuleName").key(moduleName));
         Set<String> taskIds = new HashSet<>();
         for (ViewResult.Row row : idsResult.getRows()) {
             taskIds.add(row.getValue());
         }
-        return db.queryView(new ViewQuery().allDocs().includeDocs(true).keys(taskIds), Task.class);
+        return getDb().queryView(new ViewQuery().allDocs().includeDocs(true).keys(taskIds), Task.class);
     }
 
     private Object getTaskUpdateLock(String taskId) {

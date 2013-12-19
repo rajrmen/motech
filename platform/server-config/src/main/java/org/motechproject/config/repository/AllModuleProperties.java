@@ -4,7 +4,6 @@ import org.apache.commons.collections.MapUtils;
 import org.ektorp.support.View;
 import org.motechproject.commons.couchdb.dao.MotechBaseRepository;
 import org.motechproject.config.domain.ModulePropertiesRecord;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;

@@ -7,7 +7,6 @@ import org.motechproject.commons.couchdb.dao.MotechBaseRepository;
 import org.motechproject.commons.date.util.DateUtil;
 import org.motechproject.security.domain.PasswordRecovery;
 import org.motechproject.security.domain.PasswordRecoveryCouchDbImpl;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -48,7 +47,7 @@ public class AllPasswordRecoveriesCouchDbImpl extends MotechBaseRepository<Passw
             return null;
         }
         ViewQuery viewQuery = createQuery("by_username").key(username).includeDocs(true);
-        return singleResult(db.queryView(viewQuery, PasswordRecoveryCouchDbImpl.class));
+        return singleResult(getDb().queryView(viewQuery, PasswordRecoveryCouchDbImpl.class));
     }
 
     @Override
@@ -58,7 +57,7 @@ public class AllPasswordRecoveriesCouchDbImpl extends MotechBaseRepository<Passw
             return null;
         }
         ViewQuery viewQuery = createQuery("by_token").key(token).includeDocs(true);
-        return singleResult(db.queryView(viewQuery, PasswordRecoveryCouchDbImpl.class));
+        return singleResult(getDb().queryView(viewQuery, PasswordRecoveryCouchDbImpl.class));
     }
 
     @Override

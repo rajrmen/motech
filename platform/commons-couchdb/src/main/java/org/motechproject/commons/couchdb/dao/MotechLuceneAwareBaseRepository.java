@@ -7,7 +7,7 @@ import org.ektorp.ViewQuery;
 import org.ektorp.http.HttpClient;
 import org.ektorp.impl.NameConventions;
 import org.ektorp.impl.StdCouchDbInstance;
-import org.motechproject.commons.couchdb.MotechCouchDbRepositorySupportWithLucene;
+import org.motechproject.commons.couchdb.dao.MotechCouchDbRepositorySupportWithLucene;
 import org.motechproject.commons.couchdb.annotation.DbSetUpStep;
 import org.motechproject.commons.couchdb.model.MotechBaseDataObject;
 import org.motechproject.commons.couchdb.service.CouchDbManager;
@@ -17,11 +17,11 @@ import java.util.List;
 
 public class MotechLuceneAwareBaseRepository<T extends MotechBaseDataObject> {
 
-    protected final String dbName;
+    private final String dbName;
     private final Class<T> type;
     private final String stdDesignDocumentId;
     private CouchDbRepositorySupportWithLucene repository;
-    protected LuceneAwareCouchDbConnector db;
+    private LuceneAwareCouchDbConnector db;
 
     protected MotechLuceneAwareBaseRepository(String dbName, Class<T> type) {
         this.dbName = dbName;
@@ -97,4 +97,7 @@ public class MotechLuceneAwareBaseRepository<T extends MotechBaseDataObject> {
                 type);
     }
 
+    protected LuceneAwareCouchDbConnector getDb() {
+        return db;
+    }
 }

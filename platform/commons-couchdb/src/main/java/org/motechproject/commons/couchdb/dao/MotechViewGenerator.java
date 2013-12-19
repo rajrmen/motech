@@ -1,4 +1,4 @@
-package org.motechproject.commons.couchdb;
+package org.motechproject.commons.couchdb.dao;
 
 import org.apache.commons.io.IOUtils;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -16,7 +16,6 @@ import org.ektorp.util.Exceptions;
 import org.ektorp.util.Joiner;
 import org.ektorp.util.Predicate;
 import org.ektorp.util.ReflectionUtils;
-import org.motechproject.commons.couchdb.dao.MotechBaseRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,22 +42,22 @@ import static org.ektorp.util.ReflectionUtils.hasAnnotation;
 
 public class MotechViewGenerator extends SimpleViewGenerator {
 
-    private final static Logger LOG = LoggerFactory
+    private static final Logger LOG = LoggerFactory
             .getLogger(MotechViewGenerator.class);
-    private final static String ALL_VIEW_TEMPLATE = "function(doc) { if(%s) {emit(null, doc._id)} }";
-    private final static String LOOKUP_BY_PROPERTY_TEMPLATE = "function(doc) { if(%s) {emit(doc.%s, doc._id)} }";
-    private final static String ITERABLE_PROPERTY_TEMPLATE = "function(doc) {%s}";
-    private final static String ITERABLE_PROPERTY_WITH_DISCRMINATOR_TEMPLATE = "function(doc) {if (%s) {%s}}";
-    private final static String ITERABLE_PROPERTY_BODY = "for (var i in doc.%s) {emit(doc.%s[i], doc._id);}";
-    private final static String REFERING_CHILDREN_AS_SET_W_ORDER_BY = "function(doc) { if(%s) { emit([doc.%s, '%s', doc.%s], null); } }";
-    private final static String REFERING_CHILDREN_AS_SET = "function(doc) { if(%s) { emit([doc.%s, '%s'], null); } }";
+    private static final String ALL_VIEW_TEMPLATE = "function(doc) { if(%s) {emit(null, doc._id)} }";
+    private static final String LOOKUP_BY_PROPERTY_TEMPLATE = "function(doc) { if(%s) {emit(doc.%s, doc._id)} }";
+    private static final String ITERABLE_PROPERTY_TEMPLATE = "function(doc) {%s}";
+    private static final String ITERABLE_PROPERTY_WITH_DISCRMINATOR_TEMPLATE = "function(doc) {if (%s) {%s}}";
+    private static final String ITERABLE_PROPERTY_BODY = "for (var i in doc.%s) {emit(doc.%s[i], doc._id);}";
+    private static final String REFERING_CHILDREN_AS_SET_W_ORDER_BY = "function(doc) { if(%s) { emit([doc.%s, '%s', doc.%s], null); } }";
+    private static final String REFERING_CHILDREN_AS_SET = "function(doc) { if(%s) { emit([doc.%s, '%s'], null); } }";
+    private static final String GET = "get";
 
     private SoftReference<ObjectMapper> mapperRef;
 
     public DesignDocument.View generateFindByView(String propertyName,
                                                   String typeDiscriminator) {
-        String selector = typeDiscriminator.length() > 0 ? typeDiscriminator
-                + " && doc." + propertyName : "doc." + propertyName;
+        String selector = propertySelector(propertyName, typeDiscriminator);
         return new DesignDocument.View(String.format(
                 LOOKUP_BY_PROPERTY_TEMPLATE, selector, propertyName));
     }
@@ -80,8 +79,7 @@ public class MotechViewGenerator extends SimpleViewGenerator {
     public DesignDocument.View generateDocRefsAsSetWithOrderByView(
             String backRef, String fieldName, String orderBy,
             String typeDiscriminator) {
-        String selector = typeDiscriminator.length() > 0 ? typeDiscriminator
-                + " && doc." + backRef : "doc." + backRef;
+        String selector = propertySelector(backRef, typeDiscriminator);
         return new DesignDocument.View(String.format(
                 REFERING_CHILDREN_AS_SET_W_ORDER_BY, selector, backRef,
                 fieldName, orderBy));
@@ -89,8 +87,7 @@ public class MotechViewGenerator extends SimpleViewGenerator {
 
     public DesignDocument.View generateDocRefsAsSetView(String backRef,
                                                         String fieldName, String typeDiscriminator) {
-        String selector = typeDiscriminator.length() > 0 ? typeDiscriminator
-                + " && doc." + backRef : "doc." + backRef;
+        String selector = propertySelector(backRef, typeDiscriminator);
         return new DesignDocument.View(String.format(REFERING_CHILDREN_AS_SET,
                 selector, backRef, fieldName));
     }
@@ -247,10 +244,10 @@ public class MotechViewGenerator extends SimpleViewGenerator {
                          Class<?> repositoryClass) {
         if (input.file().length() > 0) {
             views.put(input.name(),
-                    loadViewFromFile(views, input, repositoryClass));
+                    loadViewFromFile(input, repositoryClass));
         } else if (shouldLoadFunctionFromClassPath(input.map())
                 || shouldLoadFunctionFromClassPath(input.reduce())) {
-            views.put(input.name(), loadViewFromFile(input, repositoryClass));
+            views.put(input.name(), loadViewFromMap(input, repositoryClass));
         } else {
             views.put(input.name(), DesignDocument.View.of(input));
         }
@@ -260,8 +257,8 @@ public class MotechViewGenerator extends SimpleViewGenerator {
         return function != null && function.startsWith("classpath:");
     }
 
-    private DesignDocument.View loadViewFromFile(View input,
-                                                 Class<?> repositoryClass) {
+    private DesignDocument.View loadViewFromMap(View input,
+                                                Class<?> repositoryClass) {
         String mapPath = input.map();
         String map;
         if (shouldLoadFunctionFromClassPath(mapPath)) {
@@ -294,9 +291,7 @@ public class MotechViewGenerator extends SimpleViewGenerator {
         }
     }
 
-    private DesignDocument.View loadViewFromFile(
-            Map<String, DesignDocument.View> views, View input,
-            Class<?> repositoryClass) {
+    private DesignDocument.View loadViewFromFile(View input, Class<?> repositoryClass) {
         try {
             String json = loadResourceFromClasspath(repositoryClass,
                     input.file());
@@ -393,7 +388,7 @@ public class MotechViewGenerator extends SimpleViewGenerator {
     }
 
     private String resolveTypeDiscriminatorForBackReference(Member m) {
-        Method me = ReflectionUtils.findMethod(m.getDeclaringClass(), "get"
+        Method me = ReflectionUtils.findMethod(m.getDeclaringClass(), GET
                 + firstCharToUpperCase(m.getName()));
         if (me != null) {
             return resolveTypeDiscriminator(resolveReturnType(me));
@@ -437,11 +432,11 @@ public class MotechViewGenerator extends SimpleViewGenerator {
 
         String finderName = name.substring(6);
         String fieldName = resolveFieldName(me, finderName);
-        Method getter = findMethod(type, "get" + fieldName);
+        Method getter = findMethod(type, GET + fieldName);
         if (getter == null) {
             // try pluralis
             fieldName += "s";
-            getter = findMethod(type, "get" + fieldName);
+            getter = findMethod(type, GET + fieldName);
         }
         if (getter == null) {
             throw new ViewGenerationException(
@@ -505,4 +500,8 @@ public class MotechViewGenerator extends SimpleViewGenerator {
         return mapper;
     }
 
+    private String propertySelector(String backRef, String typeDiscriminator) {
+        return typeDiscriminator.length() > 0 ? typeDiscriminator + " && doc." + backRef :
+                "doc." + backRef;
+    }
 }

@@ -1,11 +1,15 @@
 package org.motechproject.commons.couchdb.osgi;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 public class PostDbSetUp {
+
+    private static final Logger LOG = LoggerFactory.getLogger(PostDbSetUp.class);
 
     private final Object bean;
     private final Method method;
@@ -25,7 +29,7 @@ public class PostDbSetUp {
         } else if (parameterTypes.length == 1 && parameterTypes[0].equals(ApplicationContext.class)) {
             method.invoke(bean, applicationContext);
         } else {
-            System.out.println(String.format("Could not find arguments for method %s on object %s ", method.getName(), bean));
+           LOG.error(String.format("Could not find arguments for method %s on object %s ", method.getName(), bean));
         }
     }
 

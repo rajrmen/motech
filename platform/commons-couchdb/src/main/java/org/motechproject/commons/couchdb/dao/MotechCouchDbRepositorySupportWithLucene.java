@@ -1,4 +1,4 @@
-package org.motechproject.commons.couchdb;
+package org.motechproject.commons.couchdb.dao;
 
 import com.github.ldriscoll.ektorplucene.CouchDbRepositorySupportWithLucene;
 import com.github.ldriscoll.ektorplucene.LuceneAwareCouchDbConnector;
@@ -6,6 +6,7 @@ import com.github.ldriscoll.ektorplucene.designdocument.LuceneDesignDocument;
 import org.ektorp.UpdateConflictException;
 import org.ektorp.support.DesignDocument;
 import org.ektorp.support.StdDesignDocumentFactory;
+import org.motechproject.commons.couchdb.dao.MotechViewGenerator;
 import org.motechproject.commons.couchdb.dao.MotechLuceneAwareBaseRepository;
 import org.motechproject.commons.couchdb.model.MotechBaseDataObject;
 
@@ -55,7 +56,7 @@ public class MotechCouchDbRepositorySupportWithLucene<T extends MotechBaseDataOb
                     initDesignDocInternal(1);
                 }
             }
-        } else if (log.isDebugEnabled()) {
+        } else {
             log.debug("DesignDocument was unchanged. Database was not updated.");
         }
     }
@@ -65,7 +66,6 @@ public class MotechCouchDbRepositorySupportWithLucene<T extends MotechBaseDataOb
             Thread.sleep(new Random().nextInt(400));
         } catch (InterruptedException ie) {
             Thread.currentThread().interrupt();
-            return;
         }
     }
 }

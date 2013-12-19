@@ -41,7 +41,7 @@ public class EventAggregationServiceImplTest {
     @Mock
     private AllAggregationRules allAggregationRules;
     @Mock
-    EventListenerRegistryService eventListenerRegistryService;
+    private EventListenerRegistryService eventListenerRegistryService;
     @Mock
     private AllAggregatedEvents allAggregatedEvents;
     @Mock
@@ -77,6 +77,7 @@ public class EventAggregationServiceImplTest {
 
         EventListenerRegistryService mockEventListenerRegistryService = mock(EventListenerRegistryService.class);
         eventAggregationService = new EventAggregationServiceImpl(allAggregationRules, mockEventListenerRegistryService, allAggregatedEvents, schedulerService);
+        ((EventAggregationServiceImpl) eventAggregationService).registerListenersForRules();
 
         verify(mockEventListenerRegistryService).registerListener(new EventAggregator("foo1", asList("bar", "maz"), allAggregatedEvents, allAggregationRules), "event1");
         verify(mockEventListenerRegistryService).registerListener(new EventAggregator("foo3", asList("bar", "maz"), allAggregatedEvents, allAggregationRules), "event3");

@@ -1,19 +1,16 @@
 package org.motechproject.security.repository;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import org.apache.commons.lang.StringUtils;
-import org.ektorp.CouchDbConnector;
 import org.ektorp.ViewQuery;
 import org.ektorp.support.View;
 import org.motechproject.commons.couchdb.dao.MotechBaseRepository;
 import org.motechproject.security.domain.MotechSecurityConfiguration;
 import org.motechproject.security.domain.MotechURLSecurityRule;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Implementation of DAO interface that utilizes
@@ -67,7 +64,7 @@ public class AllMotechSecurityRulesCouchdbImpl extends MotechBaseRepository<Mote
 
         ViewQuery viewQuery = createQuery("by_origin").key(origin).includeDocs(true);
 
-        MotechSecurityConfiguration config = singleResult(db.queryView(viewQuery, MotechSecurityConfiguration.class));
+        MotechSecurityConfiguration config = singleResult(getDb().queryView(viewQuery, MotechSecurityConfiguration.class));
 
         if (config == null) {
             return Collections.<MotechURLSecurityRule>emptyList();

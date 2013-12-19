@@ -99,7 +99,7 @@ public final class AllEmailRecords extends MotechLuceneAwareBaseRepository<Email
         TypeReference<CustomLuceneResult<EmailRecord>> typeRef
                 = new TypeReference<CustomLuceneResult<EmailRecord>>() {
         };
-        return convertToEmailRecordList(db.queryLucene(query, typeRef));
+        return convertToEmailRecordList(getDb().queryLucene(query, typeRef));
     }
 
     private List<EmailRecord> convertToEmailRecordList(CustomLuceneResult<EmailRecord> result) {

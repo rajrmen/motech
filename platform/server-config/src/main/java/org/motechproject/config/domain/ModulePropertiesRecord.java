@@ -16,7 +16,7 @@ import java.util.Properties;
 public class ModulePropertiesRecord extends MotechBaseDataObject {
 
     private static final long serialVersionUID = -2184859902798932902L;
-    private Map<String,String> properties;
+    private Map<String, String> properties;
     private String module;
     private String filename;
     private boolean raw;

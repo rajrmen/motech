@@ -3,9 +3,6 @@ package org.motechproject.security.osgi;
 import org.motechproject.commons.api.ApplicationContextServiceReferenceUtils;
 import org.motechproject.security.annotations.SecurityAnnotationBeanPostProcessor;
 import org.motechproject.security.service.SecurityRoleLoader;
-import org.motechproject.security.service.MotechPermissionService;
-import org.motechproject.security.service.MotechRoleService;
-import org.motechproject.security.service.SecurityRuleLoader;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
@@ -33,15 +30,8 @@ public class SecurityContextTracker extends ServiceTracker {
 
     private List<String> contextProcessed = new ArrayList<>();
 
-    private SecurityAnnotationBeanPostProcessor securityAnnotationBeanPostProcessor;
-    private SecurityRoleLoader securityRoleLoader;
-    private SecurityRuleLoader securityRuleLoader;
-
-    public SecurityContextTracker(BundleContext bundleContext, MotechRoleService roleService, MotechPermissionService permissionService, SecurityRuleLoader securityRuleLoader) {
+    public SecurityContextTracker(BundleContext bundleContext) {
         super(bundleContext, ApplicationContext.class.getName(), null);
-        this.securityAnnotationBeanPostProcessor = new SecurityAnnotationBeanPostProcessor(permissionService);
-        this.securityRoleLoader = new SecurityRoleLoader(roleService);
-        this.securityRuleLoader = securityRuleLoader;
     }
 
     @Override
@@ -58,9 +48,6 @@ public class SecurityContextTracker extends ServiceTracker {
 
         synchronized (lock) {
             if (!contextProcessed.contains(contextId)) {
-//                securityAnnotationBeanPostProcessor.processAnnotations(applicationContext);
-//                securityRoleLoader.loadRoles(applicationContext);
-//                securityRuleLoader.loadRules(applicationContext);
                 contextProcessed.add(contextId);
             }
         }

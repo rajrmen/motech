@@ -7,7 +7,6 @@ import org.ektorp.ViewQuery;
 import org.ektorp.impl.NameConventions;
 import org.ektorp.support.CouchDbRepositorySupport;
 import org.ektorp.support.GenerateView;
-import org.motechproject.commons.couchdb.MotechCouchDbRepositorySupport;
 import org.motechproject.commons.couchdb.annotation.DbSetUpStep;
 import org.motechproject.commons.couchdb.model.MotechBaseDataObject;
 import org.motechproject.commons.couchdb.service.CouchDbManager;
@@ -19,7 +18,7 @@ public abstract class MotechBaseRepository<T extends MotechBaseDataObject> {
     private Class<T> type;
     private String dbName;
     private CouchDbRepositorySupport<T> repository;
-    protected CouchDbConnector db;
+    private CouchDbConnector db;
     private String stdDesignDocumentId;
 
     protected MotechBaseRepository(String dbName, Class<T> type) {
@@ -158,4 +157,7 @@ public abstract class MotechBaseRepository<T extends MotechBaseDataObject> {
         return type;
     }
 
+    protected CouchDbConnector getDb() {
+        return db;
+    }
 }

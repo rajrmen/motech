@@ -2,13 +2,10 @@ package org.motechproject.event.aggregation.repository;
 
 import org.ektorp.BulkDeleteDocument;
 import org.ektorp.ComplexKey;
-import org.ektorp.CouchDbConnector;
 import org.ektorp.support.View;
 import org.motechproject.commons.couchdb.dao.MotechBaseRepository;
-import org.motechproject.event.aggregation.model.event.AggregatedEventRecord;
 import org.motechproject.event.aggregation.model.Aggregation;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.motechproject.event.aggregation.model.event.AggregatedEventRecord;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -98,7 +95,7 @@ public class AllAggregatedEvents extends MotechBaseRepository<AggregatedEventRec
         "}";
     @View(name = "valid_events_by_aggregation_fields", map = VALID_EVENTS_BY_AGGREGATION_FIELDS, reduce = GROUP)
     public List<Aggregation> findAllAggregations(String aggregationRuleName) {
-        return db.queryView(createQuery("valid_events_by_aggregation_fields")
+        return getDb().queryView(createQuery("valid_events_by_aggregation_fields")
             .startKey(ComplexKey.of(aggregationRuleName, null))
             .endKey(ComplexKey.of(aggregationRuleName, emptyObject()))
             .group(true), Aggregation.class);
@@ -106,7 +103,7 @@ public class AllAggregatedEvents extends MotechBaseRepository<AggregatedEventRec
 
     @View(name = "error_events_by_aggregation_fields", map = ERROR_EVENTS_BY_AGGREGATION_FIELDS, reduce = GROUP)
     public List<Aggregation> findAllErrorEventsForAggregations(String aggregationRuleName) {
-        return db.queryView(createQuery("error_events_by_aggregation_fields")
+        return getDb().queryView(createQuery("error_events_by_aggregation_fields")
             .startKey(ComplexKey.of(aggregationRuleName, null))
             .endKey(ComplexKey.of(aggregationRuleName, emptyObject()))
             .group(true), Aggregation.class);
@@ -129,7 +126,7 @@ public class AllAggregatedEvents extends MotechBaseRepository<AggregatedEventRec
         for (AggregatedEventRecord aggregatedEvent : findByAggregationRule(aggregationRule)) {
             docs.add(BulkDeleteDocument.of(aggregatedEvent));
         }
-        db.executeBulk(docs);
+        getDb().executeBulk(docs);
     }
 
     public void removeByAggregation(Aggregation aggregation) {
@@ -138,6 +135,6 @@ public class AllAggregatedEvents extends MotechBaseRepository<AggregatedEventRec
         for (AggregatedEventRecord event : aggregation.getEventRecords()) {
             docs.add(BulkDeleteDocument.of(event));
         }
-        db.executeBulk(docs);
+        getDb().executeBulk(docs);
     }
 }

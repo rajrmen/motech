@@ -8,7 +8,6 @@ import org.motechproject.osgi.web.UIFrameworkService;
 import org.motechproject.osgi.web.exception.ServletRegistrationException;
 import org.motechproject.osgi.web.ext.HttpContextFactory;
 import org.motechproject.security.filter.MotechDelegatingFilterProxy;
-import org.motechproject.security.service.MotechProxyManager;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
