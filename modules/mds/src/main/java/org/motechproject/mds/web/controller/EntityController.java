@@ -12,6 +12,7 @@ import org.motechproject.mds.dto.FieldDto;
 import org.motechproject.mds.ex.EntityAlreadyExistException;
 import org.motechproject.mds.ex.EntityNotFoundException;
 import org.motechproject.mds.ex.EntityReadOnlyException;
+import org.motechproject.mds.service.EntityService;
 import org.motechproject.mds.web.DraftData;
 import org.motechproject.mds.web.SelectData;
 import org.motechproject.mds.web.SelectResult;
@@ -23,6 +24,7 @@ import org.motechproject.mds.web.domain.GridSettings;
 import org.motechproject.mds.web.domain.Records;
 import org.motechproject.mds.web.matcher.EntityMatcher;
 import org.motechproject.mds.web.matcher.WIPEntityMatcher;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -56,8 +58,14 @@ import static org.apache.commons.lang.CharEncoding.UTF_8;
  */
 @Controller
 public class EntityController extends MdsController {
-
     private static final String NO_MODULE = "(No module)";
+
+    private EntityService entityService;
+
+    @Autowired
+    public EntityController(EntityService entityService) {
+        this.entityService = entityService;
+    }
 
     @RequestMapping(value = "/entities/byModule", method = RequestMethod.GET)
     @ResponseBody
@@ -156,13 +164,7 @@ public class EntityController extends MdsController {
     @RequestMapping(value = "/entities", method = RequestMethod.POST)
     @ResponseBody
     public EntityDto saveEntity(@RequestBody EntityDto entity) {
-        if (getExampleData().hasEntityWithName(entity.getName())) {
-            throw new EntityAlreadyExistException();
-        } else {
-            getExampleData().addEntity(entity);
-        }
-
-        return entity;
+        return entityService.createEntity(entity);
     }
 
     @RequestMapping(value = "/entities/{entityId}/draft", method = RequestMethod.POST)

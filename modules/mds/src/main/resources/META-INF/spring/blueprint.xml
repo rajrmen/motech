@@ -8,33 +8,5 @@
 
     <import resource="classpath*:META-INF/motech/mdsContext.xml"/>
 
-    <bean id="moduleRegistrationData" class="org.motechproject.osgi.web.ModuleRegistrationData">
-        <constructor-arg name="url" value="../mds/resources/index.html"/>
-        <constructor-arg name="moduleName" value="data-services"/>
-        <constructor-arg name="angularModules">
-            <list>
-                <value>mds</value>
-            </list>
-        </constructor-arg>
-        <constructor-arg name="i18n">
-            <map>
-                <entry key="messages" value="../mds/resources/messages/"/>
-            </map>
-        </constructor-arg>
-        <constructor-arg name="header">
-            <bean class="org.motechproject.osgi.web.Header"/>
-        </constructor-arg>
-    </bean>
-
-
-    <bean id="mdsSettings" class="org.motechproject.server.config.SettingsFacade" autowire="byType">
-        <property name="moduleName" value="motech-mds"/>
-        <property name="configFiles">
-            <list>
-                <value>classpath:motech-mds.properties</value>
-            </list>
-        </property>
-    </bean>
-
     <osgi:reference id="configurationServiceOsgi" interface="org.motechproject.config.service.ConfigurationService"/>
 </beans>
