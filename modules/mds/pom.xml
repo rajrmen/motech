@@ -41,6 +41,50 @@
             <artifactId>com.springsource.org.apache.commons.beanutils</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.datanucleus</groupId>
+            <artifactId>datanucleus-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.datanucleus</groupId>
+            <artifactId>datanucleus-rdbms</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.datanucleus</groupId>
+            <artifactId>datanucleus-api-jdo</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.datanucleus</groupId>
+            <artifactId>datanucleus-api-jpa</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.javassist</groupId>
+            <artifactId>com.springsource.javassist</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.persistence</groupId>
+            <artifactId>javax.persistence</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.jdo</groupId>
+            <artifactId>jdo-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.time</groupId>
+            <artifactId>org.motechproject.javax.time</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>org.springframework.orm</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>org.springframework.transaction</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>net.sourceforge.cglib</groupId>
+            <artifactId>com.springsource.net.sf.cglib</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.motechproject</groupId>
             <artifactId>motech-platform-osgi-extender-fragment</artifactId>
             <version>${project.version}</version>
@@ -60,11 +104,24 @@
                         <Resource-Path>mds/resources</Resource-Path>
                         <Blueprint-Enabled>true</Blueprint-Enabled>
                         <Import-Package>
+                            net.sf.cglib.core,
+                            net.sf.cglib.proxy,
+                            net.sf.cglib.reflect,
+                            org.aopalliance.aop,
+                            org.springframework.aop,
+                            org.springframework.aop.framework,
+                            org.datanucleus.api.jdo,
+                            org.datanucleus.state,
                             org.eclipse.gemini.blueprint.config,
+                            org.motechproject.config.service,
+                            org.motechproject.osgi.web,
+                            org.motechproject.server.config,
+                            org.springframework.aop.aspectj.annotation,
                             org.springframework.beans.factory.config,
                             org.springframework.beans.factory.xml,
                             org.springframework.context.config,
                             org.springframework.context.support,
+                            org.springframework.orm.jdo,
                             org.springframework.web.context,
                             org.springframework.web.context.support,
                             org.springframework.web.multipart.commons,
@@ -73,9 +130,6 @@
                             org.springframework.web.servlet.mvc,
                             org.springframework.web.servlet.support,
                             org.springframework.web.servlet.view,
-                            org.motechproject.osgi.web,
-                            org.motechproject.server.config,
-                            org.motechproject.config.service,
                             *
                         </Import-Package>
                     </instructions>
