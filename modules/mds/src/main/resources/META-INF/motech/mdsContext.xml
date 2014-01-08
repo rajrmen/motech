@@ -19,7 +19,7 @@
 
     <tx:annotation-driven transaction-manager="transactionManager"/>
 
-    <aop:aspectj-autoproxy />
+    <aop:aspectj-autoproxy/>
 
     <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
         <property name="basenames">

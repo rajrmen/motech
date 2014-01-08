@@ -713,6 +713,11 @@
                 <version>1.6.8.RELEASE</version>
             </dependency>
             <dependency>
+                <groupId>org.aspectj</groupId>
+                <artifactId>com.springsource.org.aspectj.weaver</artifactId>
+                <version>1.6.12.RELEASE</version>
+            </dependency>
+            <dependency>
                 <groupId>org.antlr</groupId>
                 <artifactId>com.springsource.antlr</artifactId>
                 <version>2.7.6</version>

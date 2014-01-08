@@ -85,6 +85,18 @@
             <artifactId>com.springsource.net.sf.cglib</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>org.springframework.aop</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>com.springsource.org.aspectj.runtime</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>com.springsource.org.aspectj.weaver</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.motechproject</groupId>
             <artifactId>motech-platform-osgi-extender-fragment</artifactId>
             <version>${project.version}</version>
@@ -124,15 +136,15 @@
                             net.sf.cglib.proxy,
                             net.sf.cglib.reflect,
                             org.aopalliance.aop,
-                            org.springframework.aop,
-                            org.springframework.aop.framework,
                             org.datanucleus.api.jdo,
                             org.datanucleus.state,
                             org.eclipse.gemini.blueprint.config,
                             org.motechproject.config.service,
                             org.motechproject.osgi.web,
                             org.motechproject.server.config,
+                            org.springframework.aop,
                             org.springframework.aop.aspectj.annotation,
+                            org.springframework.aop.framework,
                             org.springframework.beans.factory.config,
                             org.springframework.beans.factory.xml,
                             org.springframework.context.config,
