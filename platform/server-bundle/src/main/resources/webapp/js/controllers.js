@@ -28,8 +28,11 @@
         $scope.user = {
             anonymous: true
         };
+
         $scope.loginViewData = {};
         $scope.resetViewData = {};
+        $scope.startupViewData = {};
+        $scope.forgotViewData = {};
 
         $scope.showDashboardLogo = {
             showDashboard : true,
@@ -96,7 +99,7 @@
                         $scope.loadI18n($scope.i18n);
                     });
 
-                    $scope.userLang = $scope.getLanguage(locale);
+                    $scope.startupViewData.startupSettings.language = lang;
                     moment.lang(lang);
                     motechAlert('server.success.changed.language', 'server.changed.language',function(){
                         if (refresh ) {
@@ -366,6 +369,47 @@
                 motechAlert('server.reset.error');
                 $scope.resetViewData.errors = ['server.reset.error'];
             });
+        };
+
+        $scope.getStartupViewData = function() {
+            $scope.doAJAXHttpRequest('GET', '../server/startupviewdata', function (data) {
+                $scope.startupViewData = data;
+            });
+        };
+
+        $scope.submitStartupConfig = function() {
+             $scope.startupViewData.startupSettings.loginMode = $scope.securityMode;
+             $http({
+                method: "POST",
+                url: "../server/startup",
+                data: $scope.startupViewData.startupSettings
+             })
+             .success(function(data) {
+                if (data.length === 0) {
+                    window.location.assign("../server/");
+                }
+                $scope.errors = data;
+             });
+        };
+
+        $scope.getForgotViewData = function() {
+            $scope.doAJAXHttpRequest('GET', 'forgotviewdata', function (data) {
+                $scope.forgotViewData = data;
+            });
+        };
+
+        $scope.sendReset = function () {
+             if ($scope.forgotViewData.email !== "") {
+                 $http({ method: "POST", url: "../server/forgot", data: $scope.forgotViewData.email})
+                     .success(function (response) {
+                        $scope.error=response;
+                        $scope.forgotViewData.emailGetter=false;
+                        $scope.forgotViewData.processed=true;
+                     })
+                     .error(function (response) {
+                        $scope.error = 'security.tokenSendError';
+                     });
+             }
         };
 
         $scope.verifyDbConnection = function() {
