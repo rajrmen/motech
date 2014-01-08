@@ -48,11 +48,14 @@ public class EntityServiceImpl extends BaseMdsService implements EntityService {
         try {
             EntityBuilder builder = new EntityBuilder()
                     .withSingleName(entity.getName())
-                    .withClassLoader(getEnhancerClassLoader());
+                    .withClassLoader(getEnhancerClassLoader())
+                    .build();
 
-            byte[] enhancedBytes = enhance(builder, getEnhancerClassLoader());
-            getPersistenceClassLoader().defineClass(builder.getClassName(), enhancedBytes);
-            JDOMetadata metadata = populate(persistenceManagerFactory.newMetadata(), builder.getClassName());
+            String className = builder.getClassName();
+            byte[] enhancedBytes = enhance(builder);
+
+            getPersistenceClassLoader().defineClass(className, enhancedBytes);
+            JDOMetadata metadata = populate(persistenceManagerFactory.newMetadata(), className);
 
             persistenceManagerFactory.registerMetadata(metadata);
         } catch (IOException e) {
@@ -62,13 +65,14 @@ public class EntityServiceImpl extends BaseMdsService implements EntityService {
         return entity;
     }
 
-    private byte[] enhance(EntityBuilder builder, ClassLoader classLoader) throws IOException {
+    private byte[] enhance(EntityBuilder builder) throws IOException {
         JDOEnhancer enhancer = new JDOEnhancer(dataNucleusProperties);
         enhancer.setVerbose(true);
+        enhancer.setClassLoader(builder.getClassLoader());
 
-        enhancer.setClassLoader(classLoader);
-        enhancer.registerMetadata(populate(enhancer.newMetadata(), builder.getClassName()));
-        enhancer.addClass(builder.getClassName(), builder.build());
+        JDOMetadata metadata = populate(enhancer.newMetadata(), builder.getClassName());
+        enhancer.registerMetadata(metadata);
+        enhancer.addClass(builder.getClassName(), builder.getClassBytes());
         enhancer.enhance();
 
         return enhancer.getEnhancedBytes(builder.getClassName());
@@ -76,11 +80,13 @@ public class EntityServiceImpl extends BaseMdsService implements EntityService {
 
     private JDOMetadata populate(JDOMetadata md, String className) {
         String packageName = className.substring(0, className.lastIndexOf("."));
-        PackageMetadata pmd = md.newPackageMetadata(packageName);
         String simpleName = className.substring(className.lastIndexOf(".") + 1);
+
+        PackageMetadata pmd = md.newPackageMetadata(packageName);
         ClassMetadata cmd = pmd.newClassMetadata(simpleName);
 
-        cmd.setTable(WordUtils.capitalize(simpleName)).setDetachable(true);
+        cmd.setTable(WordUtils.capitalize(simpleName));
+        cmd.setDetachable(true);
         cmd.setIdentityType(IdentityType.DATASTORE);
         cmd.setPersistenceModifier(ClassPersistenceModifier.PERSISTENCE_CAPABLE);
 

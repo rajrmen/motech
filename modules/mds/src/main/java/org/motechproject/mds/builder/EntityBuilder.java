@@ -13,6 +13,7 @@ public class EntityBuilder {
 
     private String className;
     private JDOClassLoader classLoader;
+    private byte[] classBytes;
 
     public EntityBuilder withSingleName(String simpleName) {
         return withClassName(String.format("%s.%s", PACKAGE, simpleName));
@@ -20,11 +21,13 @@ public class EntityBuilder {
 
     public EntityBuilder withClassName(String className) {
         this.className = className;
+        this.classBytes = null;
         return this;
     }
 
     public EntityBuilder withClassLoader(JDOClassLoader classLoader) {
         this.classLoader = classLoader;
+        this.classBytes = null;
         return this;
     }
 
@@ -32,12 +35,20 @@ public class EntityBuilder {
         return className;
     }
 
-    public byte[] build() {
+    public byte[] getClassBytes() {
+        return classBytes;
+    }
+
+    public JDOClassLoader getClassLoader() {
+        return classLoader;
+    }
+
+    public EntityBuilder build() {
         try {
             CtClass ctClass = ClassPool.getDefault().makeClass(className);
             byte[] classBytes = ctClass.toBytecode();
             classLoader.defineClass(className, classBytes);
-            return classBytes;
+            return this;
         } catch (IOException | CannotCompileException e) {
             throw new EntityBuilderException();
         }
