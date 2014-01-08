@@ -8,12 +8,8 @@ import org.motechproject.mds.ex.EntityReadOnlyException;
 import org.motechproject.mds.ex.MdsException;
 import org.motechproject.mds.service.BaseMdsService;
 import org.motechproject.mds.service.EntityService;
-import org.motechproject.server.config.SettingsFacade;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-import javax.jdo.PersistenceManagerFactory;
 import javax.jdo.annotations.IdentityType;
 import javax.jdo.annotations.Transactional;
 import javax.jdo.metadata.ClassMetadata;
@@ -28,15 +24,7 @@ import java.util.Properties;
  */
 @Service
 public class EntityServiceImpl extends BaseMdsService implements EntityService {
-    private PersistenceManagerFactory persistenceManagerFactory;
-    private Properties dataNucleusProperties;
-
-    @Autowired
-    public EntityServiceImpl(@Qualifier("persistenceManagerFactory") PersistenceManagerFactory pmf,
-                             SettingsFacade settingsFacade) {
-        this.persistenceManagerFactory = pmf;
-        this.dataNucleusProperties = settingsFacade.getProperties("datanucleus.properties");
-    }
+    private static final String DATANUCLEUS_PROPERTIES = "datanucleus.properties";
 
     @Override
     @Transactional
@@ -55,10 +43,15 @@ public class EntityServiceImpl extends BaseMdsService implements EntityService {
             byte[] enhancedBytes = enhance(builder);
 
             getPersistenceClassLoader().defineClass(className, enhancedBytes);
-            JDOMetadata metadata = populate(persistenceManagerFactory.newMetadata(), className);
+            JDOMetadata metadata = populate(getPersistenceManagerFactory().newMetadata(), className);
 
-            persistenceManagerFactory.registerMetadata(metadata);
-        } catch (IOException e) {
+            getPersistenceManagerFactory().registerMetadata(metadata);
+
+            Class clazz = getPersistenceClassLoader().loadClass(className);
+            Object obj = clazz.newInstance();
+
+            getPersistenceManager().makePersistent(obj);
+        } catch (IOException | ClassNotFoundException | InstantiationException | IllegalAccessException e) {
             throw new MdsException(e.getMessage());
         }
 
@@ -66,7 +59,8 @@ public class EntityServiceImpl extends BaseMdsService implements EntityService {
     }
 
     private byte[] enhance(EntityBuilder builder) throws IOException {
-        JDOEnhancer enhancer = new JDOEnhancer(dataNucleusProperties);
+        Properties properties = getSettingsFacade().getProperties(DATANUCLEUS_PROPERTIES);
+        JDOEnhancer enhancer = new JDOEnhancer(properties);
         enhancer.setVerbose(true);
         enhancer.setClassLoader(builder.getClassLoader());
 

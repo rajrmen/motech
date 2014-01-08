@@ -46,7 +46,7 @@ public class EntityBuilder {
     public EntityBuilder build() {
         try {
             CtClass ctClass = ClassPool.getDefault().makeClass(className);
-            byte[] classBytes = ctClass.toBytecode();
+            classBytes = ctClass.toBytecode();
             classLoader.defineClass(className, classBytes);
             return this;
         } catch (IOException | CannotCompileException e) {
