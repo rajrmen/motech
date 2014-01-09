@@ -1,7 +1,5 @@
 package org.motechproject.mds.factory;
 
-import org.motechproject.mds.builder.ClassName;
-
 import javax.jdo.annotations.IdentityType;
 import javax.jdo.metadata.ClassMetadata;
 import javax.jdo.metadata.ClassPersistenceModifier;
@@ -14,12 +12,13 @@ public final class EntityMetadataFactory {
     }
 
     public static JDOMetadata createBaseEntity(JDOMetadata md, String className) {
-        ClassName clazz = new ClassName(className);
+        String packageName = className.substring(0, className.lastIndexOf("."));
+        String simpleName = className.substring(className.lastIndexOf(".") + 1);
 
-        PackageMetadata pmd = md.newPackageMetadata(clazz.getPackage());
-        ClassMetadata cmd = pmd.newClassMetadata(clazz.getSimpleName());
+        PackageMetadata pmd = md.newPackageMetadata(packageName);
+        ClassMetadata cmd = pmd.newClassMetadata(simpleName);
 
-        cmd.setTable(clazz.getSimpleName());
+        cmd.setTable(simpleName);
         cmd.setDetachable(true);
         cmd.setIdentityType(IdentityType.DATASTORE);
         cmd.setPersistenceModifier(ClassPersistenceModifier.PERSISTENCE_CAPABLE);
