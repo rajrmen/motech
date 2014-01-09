@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 
 @Aspect
 @Component
-public class ClassLoaderAspect {
+public class MdsServiceAspect {
 
     @Around("within(org.motechproject.mds.service.impl.*)")
     public void changeClassLoader(ProceedingJoinPoint joinPoint) throws Throwable {
