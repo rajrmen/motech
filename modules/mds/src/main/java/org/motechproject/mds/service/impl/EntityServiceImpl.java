@@ -9,9 +9,9 @@ import org.motechproject.mds.ex.MdsException;
 import org.motechproject.mds.service.BaseMdsService;
 import org.motechproject.mds.service.EntityService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.jdo.annotations.IdentityType;
-import javax.jdo.annotations.Transactional;
 import javax.jdo.metadata.ClassMetadata;
 import javax.jdo.metadata.ClassPersistenceModifier;
 import javax.jdo.metadata.JDOMetadata;
