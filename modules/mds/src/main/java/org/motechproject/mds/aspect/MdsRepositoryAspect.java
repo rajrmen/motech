@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 public class MdsRepositoryAspect {
 
     @Around("within(org.motechproject.mds.repository.All*)")
-    public Object changeClassLoader(ProceedingJoinPoint joinPoint) throws Throwable {
+    public Object changeClassLoader(ProceedingJoinPoint joinPoint) throws Throwable { // NO CHECKSTYLE IllegalThrowsCheck
         Object target = joinPoint.getTarget();
 
         if (!(target instanceof BaseMdsRepository)) {
@@ -21,12 +21,13 @@ public class MdsRepositoryAspect {
         }
 
         ClassLoader webAppClassLoader = Thread.currentThread().getContextClassLoader();
-        Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
 
-        Object value = joinPoint.proceed();
+        try {
+            Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
 
-        Thread.currentThread().setContextClassLoader(webAppClassLoader);
-
-        return value;
+            return joinPoint.proceed();
+        } finally {
+            Thread.currentThread().setContextClassLoader(webAppClassLoader);
+        }
     }
 }

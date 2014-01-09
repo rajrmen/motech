@@ -7,6 +7,7 @@ import org.motechproject.mds.ex.EntityBuilderException;
 import org.motechproject.mds.service.JDOClassLoader;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 public class EntityBuilder {
     public static final String PACKAGE = "org.motechproject.mds.entity";
@@ -21,13 +22,13 @@ public class EntityBuilder {
 
     public EntityBuilder withClassName(String className) {
         this.className = className;
-        this.classBytes = null;
+        this.classBytes = new byte[0];
         return this;
     }
 
     public EntityBuilder withClassLoader(JDOClassLoader classLoader) {
         this.classLoader = classLoader;
-        this.classBytes = null;
+        this.classBytes = new byte[0];
         return this;
     }
 
@@ -36,7 +37,7 @@ public class EntityBuilder {
     }
 
     public byte[] getClassBytes() {
-        return classBytes;
+        return Arrays.copyOf(classBytes, classBytes.length);
     }
 
     public JDOClassLoader getClassLoader() {
@@ -50,7 +51,7 @@ public class EntityBuilder {
             classLoader.defineClass(className, classBytes);
             return this;
         } catch (IOException | CannotCompileException e) {
-            throw new EntityBuilderException();
+            throw new EntityBuilderException(e);
         }
     }
 }

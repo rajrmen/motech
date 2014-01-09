@@ -12,8 +12,8 @@ public final class EntityMetadataFactory {
     }
 
     public static JDOMetadata createBaseEntity(JDOMetadata md, String className) {
-        String packageName = className.substring(0, className.lastIndexOf("."));
-        String simpleName = className.substring(className.lastIndexOf(".") + 1);
+        String packageName = className.substring(0, className.lastIndexOf('.'));
+        String simpleName = className.substring(className.lastIndexOf('.') + 1);
 
         PackageMetadata pmd = md.newPackageMetadata(packageName);
         ClassMetadata cmd = pmd.newClassMetadata(simpleName);

@@ -9,7 +9,6 @@ import org.motechproject.commons.api.CsvConverter;
 import org.motechproject.mds.dto.AdvancedSettingsDto;
 import org.motechproject.mds.dto.EntityDto;
 import org.motechproject.mds.dto.FieldDto;
-import org.motechproject.mds.ex.EntityAlreadyExistException;
 import org.motechproject.mds.ex.EntityNotFoundException;
 import org.motechproject.mds.ex.EntityReadOnlyException;
 import org.motechproject.mds.service.EntityService;
@@ -27,13 +26,12 @@ import org.motechproject.mds.web.matcher.WIPEntityMatcher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
-
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -45,7 +43,6 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
 
 import static org.apache.commons.lang.CharEncoding.UTF_8;
 
@@ -277,7 +274,7 @@ public class EntityController extends MdsController {
                 EntityRecord record = it.next();
                 for (FieldRecord field : record.getFields()) {
                     if (entry.getKey().equals(field.getName()) &&
-                            !entry.getValue().toString().toLowerCase().equals(field.getValue().toString().toLowerCase())) {
+                            !entry.getValue().toString().equalsIgnoreCase(field.getValue().toString())) {
                         it.remove();
                     }
                 }

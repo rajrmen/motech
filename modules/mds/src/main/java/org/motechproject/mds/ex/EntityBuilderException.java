@@ -7,7 +7,7 @@ public class EntityBuilderException extends MdsException {
      * Constructs a new EntityBuilderException with <i>mds.error.entityBuilderFailure</i> as
      * a message key.
      */
-    public EntityBuilderException() {
-        super("mds.error.entityBuilderFailure");
+    public EntityBuilderException(Throwable cause) {
+        super("mds.error.entityBuilderFailure", cause);
     }
 }

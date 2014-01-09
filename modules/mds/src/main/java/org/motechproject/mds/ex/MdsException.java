@@ -17,6 +17,11 @@ public class MdsException extends RuntimeException {
      *                   language on UI.
      */
     public MdsException(String messageKey) {
+        this(messageKey, null);
+    }
+
+    public MdsException(String messageKey, Throwable cause) {
+        super(cause);
         this.messageKey = messageKey;
     }
 
