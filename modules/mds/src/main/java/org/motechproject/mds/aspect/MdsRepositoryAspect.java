@@ -1,8 +1,9 @@
-package org.motechproject.mds.repository;
+package org.motechproject.mds.aspect;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.motechproject.mds.repository.BaseMdsRepository;
 import org.springframework.stereotype.Component;
 
 @Aspect

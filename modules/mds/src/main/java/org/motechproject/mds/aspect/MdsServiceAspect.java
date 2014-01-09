@@ -1,4 +1,4 @@
-package org.motechproject.mds.service;
+package org.motechproject.mds.aspect;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
