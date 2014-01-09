@@ -1,5 +1,9 @@
 package org.motechproject.mds.service;
 
+/**
+ * The <code>JDOClassLoader</code> class is a wrapper for {@link java.lang.ClassLoader} and it is
+ * used in mds services.
+ */
 public class JDOClassLoader extends ClassLoader {
 
     public JDOClassLoader() {

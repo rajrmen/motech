@@ -7,6 +7,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
 
+/**
+ * The <code>BaseMdsService</code> class is a base class for all services in mds module.
+ */
 public class BaseMdsService {
     private PersistenceManagerFactory persistenceManagerFactory;
     private SettingsFacade settingsFacade;

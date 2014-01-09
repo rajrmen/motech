@@ -10,6 +10,14 @@ import org.springframework.stereotype.Component;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 
+/**
+ * The main purpose of the <code>MdsServiceAspect</code> class is change class loader for
+ * current thread while methods inside service classes are executed. After performing
+ * a service method, the old class loader is restored to current thread.
+ *
+ * @see org.aspectj.lang.annotation.Aspect
+ * @see org.motechproject.mds.service.BaseMdsService
+ */
 @Aspect
 @Component
 public class MdsServiceAspect {

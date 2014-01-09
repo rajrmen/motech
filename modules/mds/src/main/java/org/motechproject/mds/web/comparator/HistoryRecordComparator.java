@@ -12,9 +12,9 @@ import java.util.Date;
 import java.util.Locale;
 
 /**
-* The <code>HistoryRecordComparator</code> class compares two objects of
-* {@link HistoryRecord}  by value of their field property.
-*/
+ * The <code>HistoryRecordComparator</code> class compares two objects of
+ * {@link HistoryRecord}  by value of their field property.
+ */
 public class HistoryRecordComparator implements Comparator<HistoryRecord>, Serializable {
     private static final DateFormat DATE_FORMAT = new SimpleDateFormat("MMMM d, yyyy hh:mm aaa", Locale.ENGLISH);
     private static final long serialVersionUID = -6246986278201461196L;

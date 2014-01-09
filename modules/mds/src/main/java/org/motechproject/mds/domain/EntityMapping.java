@@ -8,6 +8,10 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
+/**
+ * The <code>EntityMapping</code> class contains basic information about an entity. This class is
+ * related with table in database with the same name.
+ */
 @PersistenceCapable(identityType = IdentityType.DATASTORE, detachable = "true")
 public class EntityMapping {
 

@@ -9,7 +9,13 @@ import org.motechproject.mds.service.JDOClassLoader;
 import java.io.IOException;
 import java.util.Arrays;
 
+/**
+ * The <code>EntityBuilder</code> is use to create a new empty class in a given class loader.
+ */
 public class EntityBuilder {
+    /**
+     * Constant <code>PACKAGE</code> presents a package for a new entities.
+     */
     public static final String PACKAGE = "org.motechproject.mds.entity";
 
     private String className;
