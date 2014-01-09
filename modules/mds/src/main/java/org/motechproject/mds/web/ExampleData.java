@@ -207,7 +207,6 @@ public class ExampleData {
 
 
     public void addEntity(EntityDto entity) {
-        entity.setId(String.valueOf(entities.size() + 1));
         entities.add(entity);
     }
 

@@ -1,13 +1,15 @@
 package org.motechproject.mds.service.impl;
 
-import org.apache.commons.lang.WordUtils;
 import org.datanucleus.api.jdo.JDOEnhancer;
 import org.motechproject.mds.builder.EntityBuilder;
+import org.motechproject.mds.domain.EntityMapping;
 import org.motechproject.mds.dto.EntityDto;
+import org.motechproject.mds.ex.EntityAlreadyExistException;
 import org.motechproject.mds.ex.EntityReadOnlyException;
-import org.motechproject.mds.ex.MdsException;
+import org.motechproject.mds.repository.AllEntityMappings;
 import org.motechproject.mds.service.BaseMdsService;
 import org.motechproject.mds.service.EntityService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,36 +28,36 @@ import java.util.Properties;
 public class EntityServiceImpl extends BaseMdsService implements EntityService {
     private static final String DATANUCLEUS_PROPERTIES = "datanucleus.properties";
 
+    private AllEntityMappings allEntityMappings;
+
     @Override
     @Transactional
-    public EntityDto createEntity(EntityDto entity) {
+    public EntityDto createEntity(EntityDto entity) throws IOException {
         if (entity.isReadOnly()) {
             throw new EntityReadOnlyException();
         }
 
-        try {
-            EntityBuilder builder = new EntityBuilder()
-                    .withSingleName(entity.getName())
-                    .withClassLoader(getEnhancerClassLoader())
-                    .build();
+        String simpleName = entity.getName();
 
-            String className = builder.getClassName();
-            byte[] enhancedBytes = enhance(builder);
-
-            getPersistenceClassLoader().defineClass(className, enhancedBytes);
-            JDOMetadata metadata = populate(getPersistenceManagerFactory().newMetadata(), className);
-
-            getPersistenceManagerFactory().registerMetadata(metadata);
-
-            Class clazz = getPersistenceClassLoader().loadClass(className);
-            Object obj = clazz.newInstance();
-
-            getPersistenceManager().makePersistent(obj);
-        } catch (IOException | ClassNotFoundException | InstantiationException | IllegalAccessException e) {
-            throw new MdsException(e.getMessage());
+        if (allEntityMappings.containsEntity(simpleName)) {
+            throw new EntityAlreadyExistException();
         }
 
-        return entity;
+        EntityBuilder builder = new EntityBuilder()
+                .withSingleName(simpleName)
+                .withClassLoader(getEnhancerClassLoader())
+                .build();
+
+        String className = builder.getClassName();
+        byte[] enhancedBytes = enhance(builder);
+
+        getPersistenceClassLoader().defineClass(className, enhancedBytes);
+        JDOMetadata metadata = populate(getPersistenceManagerFactory().newMetadata(), className);
+
+        getPersistenceManagerFactory().registerMetadata(metadata);
+        EntityMapping entityMapping = allEntityMappings.save(className);
+
+        return entityMapping.toDto();
     }
 
     private byte[] enhance(EntityBuilder builder) throws IOException {
@@ -79,11 +81,16 @@ public class EntityServiceImpl extends BaseMdsService implements EntityService {
         PackageMetadata pmd = md.newPackageMetadata(packageName);
         ClassMetadata cmd = pmd.newClassMetadata(simpleName);
 
-        cmd.setTable(WordUtils.capitalize(simpleName));
+        cmd.setTable(simpleName);
         cmd.setDetachable(true);
         cmd.setIdentityType(IdentityType.DATASTORE);
         cmd.setPersistenceModifier(ClassPersistenceModifier.PERSISTENCE_CAPABLE);
 
         return md;
+    }
+
+    @Autowired
+    public void setAllEntityMappings(AllEntityMappings allEntityMappings) {
+        this.allEntityMappings = allEntityMappings;
     }
 }

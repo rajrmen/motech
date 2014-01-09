@@ -9,7 +9,7 @@ import org.motechproject.mds.service.JDOClassLoader;
 import java.io.IOException;
 
 public class EntityBuilder {
-    private static final String PACKAGE = "org.motechproject.mds.domain";
+    public static final String PACKAGE = "org.motechproject.mds.entity";
 
     private String className;
     private JDOClassLoader classLoader;

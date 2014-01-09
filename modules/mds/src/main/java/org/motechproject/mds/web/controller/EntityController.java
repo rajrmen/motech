@@ -163,8 +163,11 @@ public class EntityController extends MdsController {
 
     @RequestMapping(value = "/entities", method = RequestMethod.POST)
     @ResponseBody
-    public EntityDto saveEntity(@RequestBody EntityDto entity) {
-        return entityService.createEntity(entity);
+    public EntityDto saveEntity(@RequestBody EntityDto entity) throws IOException {
+        EntityDto dto = entityService.createEntity(entity);
+        getExampleData().addEntity(dto);
+
+        return dto;
     }
 
     @RequestMapping(value = "/entities/{entityId}/draft", method = RequestMethod.POST)
