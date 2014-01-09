@@ -2,12 +2,14 @@ package org.motechproject.mds.repository;
 
 import org.motechproject.mds.builder.EntityBuilder;
 import org.motechproject.mds.domain.EntityMapping;
+import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.jdo.Query;
 import java.util.Collection;
 import java.util.List;
 
+@Repository
 public class AllEntityMappings extends BaseMdsRepository {
 
     @Transactional
@@ -28,6 +30,6 @@ public class AllEntityMappings extends BaseMdsRepository {
         Collection collection = (Collection) query.execute(className);
         List<EntityMapping> mappings = cast(EntityMapping.class, collection);
 
-        return mappings.isEmpty();
+        return !mappings.isEmpty();
     }
 }

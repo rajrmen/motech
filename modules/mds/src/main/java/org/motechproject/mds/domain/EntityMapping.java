@@ -25,7 +25,7 @@ public class EntityMapping {
     private String namespace;
 
     public EntityDto toDto() {
-        String simpleName = className.substring(className.lastIndexOf('.'));
+        String simpleName = className.substring(className.lastIndexOf('.') + 1);
 
         return new EntityDto(id.toString(), simpleName, module, namespace);
     }

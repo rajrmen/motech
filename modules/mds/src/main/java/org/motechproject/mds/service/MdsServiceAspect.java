@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 public class MdsServiceAspect {
 
     @Around("within(org.motechproject.mds.service.impl.*)")
-    public void changeClassLoader(ProceedingJoinPoint joinPoint) throws Throwable {
+    public Object changeClassLoader(ProceedingJoinPoint joinPoint) throws Throwable {
         Object target = joinPoint.getTarget();
 
         if (!(target instanceof BaseMdsService)) {
@@ -31,11 +31,13 @@ public class MdsServiceAspect {
         baseMdsService.setEnhancerClassLoader(enhancerClassLoader);
         baseMdsService.setPersistenceClassLoader(persistenceClassLoader);
 
-        joinPoint.proceed();
+        Object value = joinPoint.proceed();
 
         baseMdsService.setEnhancerClassLoader(null);
         baseMdsService.setPersistenceClassLoader(null);
 
         Thread.currentThread().setContextClassLoader(webAppClassLoader);
+
+        return value;
     }
 }
