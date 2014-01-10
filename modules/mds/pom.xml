@@ -180,6 +180,7 @@
                             net.sf.cglib.proxy,
                             net.sf.cglib.reflect,
                             org.aopalliance.aop,
+                            org.datanucleus,
                             org.datanucleus.api.jdo,
                             org.datanucleus.state,
                             org.eclipse.gemini.blueprint.config,
