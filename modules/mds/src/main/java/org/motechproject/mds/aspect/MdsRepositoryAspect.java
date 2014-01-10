@@ -31,7 +31,7 @@ public class MdsRepositoryAspect {
         ClassLoader webAppClassLoader = Thread.currentThread().getContextClassLoader();
 
         try {
-            Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+            Thread.currentThread().setContextClassLoader(BaseMdsRepository.class.getClassLoader());
 
             return joinPoint.proceed();
         } finally {

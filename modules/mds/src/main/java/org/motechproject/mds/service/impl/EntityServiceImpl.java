@@ -1,6 +1,5 @@
 package org.motechproject.mds.service.impl;
 
-import org.motechproject.mds.service.EntityBuilder;
 import org.motechproject.mds.domain.EntityMapping;
 import org.motechproject.mds.dto.EntityDto;
 import org.motechproject.mds.ex.EntityAlreadyExistException;
@@ -8,7 +7,9 @@ import org.motechproject.mds.ex.EntityReadOnlyException;
 import org.motechproject.mds.factory.EntityMetadataFactory;
 import org.motechproject.mds.repository.AllEntityMappings;
 import org.motechproject.mds.service.BaseMdsService;
+import org.motechproject.mds.service.EntityBuilder;
 import org.motechproject.mds.service.EntityService;
+import org.motechproject.mds.service.JDOClassLoader;
 import org.motechproject.mds.service.MdsJDOEnhancer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -37,12 +38,12 @@ public class EntityServiceImpl extends BaseMdsService implements EntityService {
 
         EntityBuilder builder = new EntityBuilder()
                 .withSingleName(entity.getName())
-                .withClassLoader(getEnhancerClassLoader());
+                .withClassLoader(new JDOClassLoader(JDOClassLoader.PERSISTANCE_CLASS_LOADER));
 
         String className = builder.getClassName();
         byte[] enhancedBytes = new MdsJDOEnhancer(getSettingsFacade()).enhance(builder);
 
-        getPersistenceClassLoader().defineClass(className, enhancedBytes);
+        JDOClassLoader.PERSISTANCE_CLASS_LOADER.defineClass(className, enhancedBytes);
         JDOMetadata metadata = EntityMetadataFactory.createBaseEntity(
                 getPersistenceManagerFactory().newMetadata(), className
         );

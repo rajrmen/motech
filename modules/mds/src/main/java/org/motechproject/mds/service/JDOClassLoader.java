@@ -5,6 +5,7 @@ package org.motechproject.mds.service;
  * used in mds services.
  */
 public class JDOClassLoader extends ClassLoader {
+    public static final JDOClassLoader PERSISTANCE_CLASS_LOADER = new JDOClassLoader();
 
     public JDOClassLoader() {
         this(JDOClassLoader.class.getClassLoader());

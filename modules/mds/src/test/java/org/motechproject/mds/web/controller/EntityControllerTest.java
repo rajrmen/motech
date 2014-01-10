@@ -46,7 +46,8 @@ public class EntityControllerTest {
     @Before
     public void setUp() throws Exception {
         initMocks(this);
-        controller = new EntityController(entityService);
+        controller = new EntityController();
+        controller.setEntityService(entityService);
 
         EntityController.setExampleData(new ExampleData());
     }

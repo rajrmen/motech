@@ -61,11 +61,6 @@ public class EntityController extends MdsController {
 
     private EntityService entityService;
 
-    @Autowired
-    public EntityController(EntityService entityService) {
-        this.entityService = entityService;
-    }
-
     @RequestMapping(value = "/entities/byModule", method = RequestMethod.GET)
     @PreAuthorize(MdsRolesConstants.HAS_DATA_ACCESS)
     @ResponseBody
@@ -357,4 +352,8 @@ public class EntityController extends MdsController {
         return list;
     }
 
+    @Autowired
+    public void setEntityService(EntityService entityService) {
+        this.entityService = entityService;
+    }
 }

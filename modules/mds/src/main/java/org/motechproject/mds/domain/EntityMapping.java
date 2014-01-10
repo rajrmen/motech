@@ -28,6 +28,20 @@ public class EntityMapping {
     @Persistent
     private String namespace;
 
+    public EntityMapping() {
+        this(null);
+    }
+
+    public EntityMapping(String className) {
+        this(className, null, null);
+    }
+
+    public EntityMapping(String className, String module, String namespace) {
+        this.className = className;
+        this.module = module;
+        this.namespace = namespace;
+    }
+
     public EntityDto toDto() {
         String simpleName = className.substring(className.lastIndexOf('.') + 1);
 

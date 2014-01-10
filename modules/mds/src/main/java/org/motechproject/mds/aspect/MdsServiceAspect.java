@@ -7,9 +7,6 @@ import org.motechproject.mds.service.BaseMdsService;
 import org.motechproject.mds.service.JDOClassLoader;
 import org.springframework.stereotype.Component;
 
-import java.security.AccessController;
-import java.security.PrivilegedAction;
-
 /**
  * The main purpose of the <code>MdsServiceAspect</code> class is change class loader for
  * current thread while methods inside service classes are executed. After performing
@@ -33,32 +30,14 @@ public class MdsServiceAspect {
         }
 
         ClassLoader webAppClassLoader = Thread.currentThread().getContextClassLoader();
-        BaseMdsService baseMdsService = (BaseMdsService) target;
 
         try {
-            JDOClassLoader persistenceClassLoader = createClassLoader(getClass().getClassLoader());
-
-            Thread.currentThread().setContextClassLoader(persistenceClassLoader);
-            JDOClassLoader enhancerClassLoader = createClassLoader(persistenceClassLoader);
-
-            baseMdsService.setEnhancerClassLoader(enhancerClassLoader);
-            baseMdsService.setPersistenceClassLoader(persistenceClassLoader);
+            Thread.currentThread().setContextClassLoader(JDOClassLoader.PERSISTANCE_CLASS_LOADER);
 
             return joinPoint.proceed();
         } finally {
-            baseMdsService.setEnhancerClassLoader(null);
-            baseMdsService.setPersistenceClassLoader(null);
-
             Thread.currentThread().setContextClassLoader(webAppClassLoader);
         }
     }
 
-    private JDOClassLoader createClassLoader(final ClassLoader parent) {
-        return AccessController.doPrivileged(new PrivilegedAction<JDOClassLoader>() {
-            @Override
-            public JDOClassLoader run() {
-                return new JDOClassLoader(parent);
-            }
-        });
-    }
 }

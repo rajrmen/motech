@@ -1,7 +1,7 @@
 package org.motechproject.mds.repository;
 
-import org.motechproject.mds.service.EntityBuilder;
 import org.motechproject.mds.domain.EntityMapping;
+import org.motechproject.mds.service.EntityBuilder;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
