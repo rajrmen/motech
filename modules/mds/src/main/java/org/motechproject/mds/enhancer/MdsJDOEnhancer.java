@@ -12,7 +12,8 @@ import java.io.IOException;
 
 /**
  * The <code>MdsJDOEnhancer</code> class is a wrapper for
- * {@link org.datanucleus.api.jdo.JDOEnhancer} class.
+ * {@link org.datanucleus.api.jdo.JDOEnhancer} class. Its task is to add the missing information
+ * into created entity class.
  */
 @Component
 public class MdsJDOEnhancer extends JDOEnhancer {

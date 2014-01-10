@@ -34,7 +34,6 @@ public class PersistanceClassLoader extends ClassLoader {
         getPersistenceManager().makePersistent(mapping);
     }
 
-
     @Autowired
     @Qualifier("persistenceManagerFactory")
     public void setPersistenceManagerFactory(PersistenceManagerFactory persistenceManagerFactory) {

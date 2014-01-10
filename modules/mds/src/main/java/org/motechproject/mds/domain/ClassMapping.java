@@ -8,6 +8,10 @@ import javax.jdo.annotations.PrimaryKey;
 import javax.jdo.annotations.Unique;
 import java.util.Arrays;
 
+/**
+ * The <code>ClassMapping</code> class contains bytecode of created entity class. This class is
+ * related with table in database with the same name.
+ */
 @PersistenceCapable(identityType = IdentityType.DATASTORE, detachable = "true")
 public class ClassMapping {
 

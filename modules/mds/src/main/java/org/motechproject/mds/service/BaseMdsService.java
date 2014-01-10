@@ -4,7 +4,6 @@ import org.motechproject.mds.PersistanceClassLoader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
 
 /**
@@ -14,7 +13,7 @@ public class BaseMdsService {
     private PersistenceManagerFactory persistenceManagerFactory;
     private PersistanceClassLoader persistanceClassLoader;
 
-    public PersistenceManagerFactory getPersistenceManagerFactory() {
+    protected PersistenceManagerFactory getPersistenceManagerFactory() {
         return persistenceManagerFactory;
     }
 
@@ -24,13 +23,7 @@ public class BaseMdsService {
         this.persistenceManagerFactory = persistenceManagerFactory;
     }
 
-    public PersistenceManager getPersistenceManager() {
-        return null != persistenceManagerFactory
-                ? persistenceManagerFactory.getPersistenceManager()
-                : null;
-    }
-
-    public PersistanceClassLoader getPersistanceClassLoader() {
+    protected PersistanceClassLoader getPersistanceClassLoader() {
         return persistanceClassLoader;
     }
 
