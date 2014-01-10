@@ -674,7 +674,7 @@ public class ExampleData {
         fields.add(new FieldRecord("user", "User", "User1"));
         fields.add(new FieldRecord("action", "Action", "CREATE"));
         fields.add(new FieldRecord("changes", "Changes", ""));
-        HistoryRecord historyRecord = new HistoryRecord("1","1", fields);
+        HistoryRecord historyRecord = new HistoryRecord("1", "1", fields);
         ret.add(historyRecord);
 
         fields = new ArrayList<>();
@@ -682,7 +682,7 @@ public class ExampleData {
         fields.add(new FieldRecord("user", "User", "User2"));
         fields.add(new FieldRecord("action", "Action", "UPDATE"));
         fields.add(new FieldRecord("changes", "Changes", "Changed state"));
-        historyRecord = new HistoryRecord("2","1", fields);
+        historyRecord = new HistoryRecord("2", "1", fields);
         ret.add(historyRecord);
 
         fields = new ArrayList<>();
@@ -690,7 +690,7 @@ public class ExampleData {
         fields.add(new FieldRecord("user", "User", "User2"));
         fields.add(new FieldRecord("action", "Action", "UPDATE"));
         fields.add(new FieldRecord("changes", "Changes", "Is Active"));
-        historyRecord = new HistoryRecord("3","1", fields);
+        historyRecord = new HistoryRecord("3", "1", fields);
         ret.add(historyRecord);
 
         return ret;

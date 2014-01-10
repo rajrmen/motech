@@ -1,6 +1,6 @@
 package org.motechproject.mds.service;
 
-import org.motechproject.server.config.SettingsFacade;
+import org.motechproject.mds.PersistanceClassLoader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -12,7 +12,7 @@ import javax.jdo.PersistenceManagerFactory;
  */
 public class BaseMdsService {
     private PersistenceManagerFactory persistenceManagerFactory;
-    private SettingsFacade settingsFacade;
+    private PersistanceClassLoader persistanceClassLoader;
 
     public PersistenceManagerFactory getPersistenceManagerFactory() {
         return persistenceManagerFactory;
@@ -30,12 +30,12 @@ public class BaseMdsService {
                 : null;
     }
 
-    public SettingsFacade getSettingsFacade() {
-        return settingsFacade;
+    public PersistanceClassLoader getPersistanceClassLoader() {
+        return persistanceClassLoader;
     }
 
     @Autowired
-    public void setSettingsFacade(SettingsFacade settingsFacade) {
-        this.settingsFacade = settingsFacade;
+    public void setPersistanceClassLoader(PersistanceClassLoader persistanceClassLoader) {
+        this.persistanceClassLoader = persistanceClassLoader;
     }
 }

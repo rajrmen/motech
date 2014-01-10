@@ -24,6 +24,7 @@ public class EntityRecord {
     public List<FieldRecord> getFields() {
         return fields;
     }
+
     public String getId() {
         return id;
     }

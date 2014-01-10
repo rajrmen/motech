@@ -1,7 +1,6 @@
-package org.motechproject.mds.service;
+package org.motechproject.mds.builder;
 
 import javassist.ClassPool;
-import javassist.CtClass;
 import org.motechproject.mds.ex.EntityBuilderException;
 
 import java.util.Arrays;
@@ -16,7 +15,7 @@ public class EntityBuilder {
     public static final String PACKAGE = "org.motechproject.mds.entity";
 
     private String className;
-    private JDOClassLoader classLoader;
+    private EntityClassLoader classLoader;
     private byte[] classBytes;
 
     public EntityBuilder withSingleName(String simpleName) {
@@ -29,8 +28,8 @@ public class EntityBuilder {
         return this;
     }
 
-    public EntityBuilder withClassLoader(JDOClassLoader classLoader) {
-        this.classLoader = classLoader;
+    public EntityBuilder withClassLoader(ClassLoader classLoader) {
+        this.classLoader = new EntityClassLoader(classLoader);
         this.classBytes = new byte[0];
         return this;
     }
@@ -43,14 +42,13 @@ public class EntityBuilder {
         return Arrays.copyOf(classBytes, classBytes.length);
     }
 
-    public JDOClassLoader getClassLoader() {
+    public EntityClassLoader getClassLoader() {
         return classLoader;
     }
 
     public void build() {
         try {
-            CtClass ctClass = ClassPool.getDefault().makeClass(className);
-            classBytes = ctClass.toBytecode();
+            classBytes = ClassPool.getDefault().makeClass(className).toBytecode();
             classLoader.defineClass(className, classBytes);
         } catch (Exception e) {
             throw new EntityBuilderException(e);

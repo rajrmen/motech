@@ -238,7 +238,7 @@ public class EntityController extends MdsController {
     @ResponseBody
     public Records<EntityRecord> getInstances(@PathVariable String entityId, @RequestBody final String url, GridSettings settings) {
         List<EntityRecord> entityList = getExampleData().getEntityRecordsById(entityId);
-        Map<String,Object> lookupMap = getLookupMap(url);
+        Map<String, Object> lookupMap = getLookupMap(url);
 
         if (!lookupMap.isEmpty()) {
             entityList = filterByLookup(entityList, lookupMap);
@@ -286,7 +286,7 @@ public class EntityController extends MdsController {
     public List<FieldRecord> getInstance(@PathVariable String entityId, @PathVariable String instanceId) {
         List<EntityRecord> entityList = getExampleData().getEntityRecordsById(entityId);
         for (EntityRecord record : entityList) {
-            if (record.getId().equals(instanceId))  {
+            if (record.getId().equals(instanceId)) {
                 return record.getFields();
             }
         }
@@ -318,10 +318,11 @@ public class EntityController extends MdsController {
 
         JsonFactory factory = new JsonFactory();
         ObjectMapper mapper = new ObjectMapper(factory);
-        TypeReference<HashMap<String,Object>> typeRef
+        TypeReference<HashMap<String, Object>> typeRef
                 = new TypeReference<
-                HashMap<String,Object>
-                >() {};
+                HashMap<String, Object>
+                >() {
+        };
         try {
             jsonFields = URLDecoder.decode(jsonFields, "UTF-8");
             return mapper.readValue(jsonFields, typeRef);

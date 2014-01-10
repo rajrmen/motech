@@ -1,7 +1,7 @@
 package org.motechproject.mds.repository;
 
+import org.motechproject.mds.builder.EntityBuilder;
 import org.motechproject.mds.domain.EntityMapping;
-import org.motechproject.mds.service.EntityBuilder;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,7 +28,7 @@ public class AllEntityMappings extends BaseMdsRepository {
     public boolean containsEntity(String simpleName) {
         Query query = getPersistenceManager().newQuery(EntityMapping.class);
         query.setFilter("className == name");
-        query.declareParameters("String name");
+        query.declareParameters("java.lang.String name");
 
         String className = String.format("%s.%s", EntityBuilder.PACKAGE, simpleName);
         Collection collection = (Collection) query.execute(className);
