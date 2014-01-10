@@ -6,6 +6,7 @@ import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 import org.motechproject.commons.api.CsvConverter;
+import org.motechproject.mds.constants.MdsRolesConstants;
 import org.motechproject.mds.dto.AdvancedSettingsDto;
 import org.motechproject.mds.dto.EntityDto;
 import org.motechproject.mds.dto.FieldDto;
@@ -25,6 +26,7 @@ import org.motechproject.mds.web.matcher.EntityMatcher;
 import org.motechproject.mds.web.matcher.WIPEntityMatcher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -65,6 +67,7 @@ public class EntityController extends MdsController {
     }
 
     @RequestMapping(value = "/entities/byModule", method = RequestMethod.GET)
+    @PreAuthorize(MdsRolesConstants.HAS_DATA_ACCESS)
     @ResponseBody
     public Map<String, List<String>> getEntitiesByModule() {
         Map<String, List<String>> byModule = new LinkedHashMap<>();
@@ -89,6 +92,7 @@ public class EntityController extends MdsController {
     }
 
     @RequestMapping(value = "/entities/wip", method = RequestMethod.GET)
+    @PreAuthorize(MdsRolesConstants.HAS_ANY_SEUSS_ROLE)
     @ResponseBody
     public List<EntityDto> getWorkInProgressEntities() {
         List<EntityDto> list = getExampleData().getEntities();
@@ -99,6 +103,7 @@ public class EntityController extends MdsController {
     }
 
     @RequestMapping(value = "/selectEntities", method = RequestMethod.GET)
+    @PreAuthorize(MdsRolesConstants.HAS_DATA_OR_SCHEMA_ACCESS)
     @ResponseBody
     public SelectResult<EntityDto> getEntities(SelectData data) {
         List<EntityDto> list = getExampleData().getEntities();
@@ -110,6 +115,7 @@ public class EntityController extends MdsController {
     }
 
     @RequestMapping(value = "/entities/getEntity/{module}/{entityName}", method = RequestMethod.GET)
+    @PreAuthorize(MdsRolesConstants.HAS_DATA_OR_SCHEMA_ACCESS)
     @ResponseBody
     public EntityDto getEntityByModuleAndEntityName(@PathVariable String module, @PathVariable String entityName) {
         List<EntityDto> entities = getAllEntities();
@@ -127,12 +133,14 @@ public class EntityController extends MdsController {
     }
 
     @RequestMapping(value = "/entities", method = RequestMethod.GET)
+    @PreAuthorize(MdsRolesConstants.HAS_ANY_SEUSS_ROLE)
     @ResponseBody
     public List<EntityDto> getAllEntities() {
         return getExampleData().getEntities();
     }
 
     @RequestMapping(value = "/entities/{entityId}", method = RequestMethod.GET)
+    @PreAuthorize(MdsRolesConstants.HAS_DATA_OR_SCHEMA_ACCESS)
     @ResponseBody
     public EntityDto getEntity(@PathVariable String entityId) {
         EntityDto entity = getExampleData().getEntity(entityId);
@@ -145,6 +153,7 @@ public class EntityController extends MdsController {
     }
 
     @RequestMapping(value = "/entities/{entityId}", method = RequestMethod.DELETE)
+    @PreAuthorize(MdsRolesConstants.HAS_SCHEMA_ACCESS)
     @ResponseBody
     public void deleteEntity(@PathVariable final String entityId) {
         EntityDto entity = getExampleData().getEntity(entityId);
@@ -159,6 +168,7 @@ public class EntityController extends MdsController {
     }
 
     @RequestMapping(value = "/entities", method = RequestMethod.POST)
+    @PreAuthorize(MdsRolesConstants.HAS_SCHEMA_ACCESS)
     @ResponseBody
     public EntityDto saveEntity(@RequestBody EntityDto entity) throws IOException {
         EntityDto dto = entityService.createEntity(entity);
@@ -168,6 +178,7 @@ public class EntityController extends MdsController {
     }
 
     @RequestMapping(value = "/entities/{entityId}/draft", method = RequestMethod.POST)
+    @PreAuthorize(MdsRolesConstants.HAS_SCHEMA_ACCESS)
     @ResponseStatus(HttpStatus.OK)
     public void draft(@PathVariable String entityId, @RequestBody DraftData data) {
         EntityDto entity = getExampleData().getEntity(entityId);
@@ -184,6 +195,7 @@ public class EntityController extends MdsController {
     }
 
     @RequestMapping(value = "/entities/{entityId}/abandon", method = RequestMethod.POST)
+    @PreAuthorize(MdsRolesConstants.HAS_SCHEMA_ACCESS)
     @ResponseStatus(HttpStatus.OK)
     public void abandonChanges(@PathVariable String entityId) {
         if (null == getExampleData().getEntity(entityId)) {
@@ -194,6 +206,7 @@ public class EntityController extends MdsController {
     }
 
     @RequestMapping(value = "/entities/{entityId}/commit", method = RequestMethod.POST)
+    @PreAuthorize(MdsRolesConstants.HAS_SCHEMA_ACCESS)
     @ResponseStatus(HttpStatus.OK)
     public void commitChanges(@PathVariable String entityId) {
         if (null == getExampleData().getEntity(entityId)) {
@@ -204,6 +217,7 @@ public class EntityController extends MdsController {
     }
 
     @RequestMapping(value = "/entities/{entityId}/fields", method = RequestMethod.GET)
+    @PreAuthorize(MdsRolesConstants.HAS_DATA_OR_SCHEMA_ACCESS)
     @ResponseBody
     public List<FieldDto> getFields(@PathVariable String entityId) {
         if (null == getExampleData().getEntity(entityId)) {
@@ -214,6 +228,7 @@ public class EntityController extends MdsController {
     }
 
     @RequestMapping(value = "entities/{entityId}/fields/{name}", method = RequestMethod.GET)
+    @PreAuthorize(MdsRolesConstants.HAS_DATA_OR_SCHEMA_ACCESS)
     @ResponseBody
     public FieldDto getFieldByName(@PathVariable String entityId, @PathVariable String name) {
         if (null == getExampleData().getEntity(entityId)) {
@@ -224,6 +239,7 @@ public class EntityController extends MdsController {
     }
 
     @RequestMapping(value = "/entities/{entityId}/instances", method = RequestMethod.POST)
+    @PreAuthorize(MdsRolesConstants.HAS_DATA_ACCESS)
     @ResponseBody
     public Records<EntityRecord> getInstances(@PathVariable String entityId, @RequestBody final String url, GridSettings settings) {
         List<EntityRecord> entityList = getExampleData().getEntityRecordsById(entityId);
@@ -246,12 +262,14 @@ public class EntityController extends MdsController {
 
 
     @RequestMapping(value = "/entities/{entityId}/advanced", method = RequestMethod.GET)
+    @PreAuthorize(MdsRolesConstants.HAS_DATA_OR_SCHEMA_ACCESS)
     @ResponseBody
     public AdvancedSettingsDto getAdvanced(@PathVariable final String entityId) {
         return getExampleData().getAdvanced(entityId);
     }
 
     @RequestMapping(value = "/entities/{entityId}/exportInstances", method = RequestMethod.GET)
+    @PreAuthorize(MdsRolesConstants.HAS_DATA_ACCESS)
     public void exportEntityInstances(@PathVariable String entityId, HttpServletResponse response) throws IOException {
         if (null == getExampleData().getEntity(entityId)) {
             throw new EntityNotFoundException();
@@ -265,6 +283,19 @@ public class EntityController extends MdsController {
                 "attachment; filename=" + fileName + ".csv");
 
         response.getWriter().write(CsvConverter.convertToCSV(prepareForCsvConversion(entityId, getExampleData().getEntityRecordsById(entityId))));
+    }
+
+    @RequestMapping(value = "/entities/{entityId}/instance/{instanceId}", method = RequestMethod.GET)
+    @PreAuthorize(MdsRolesConstants.HAS_DATA_ACCESS)
+    @ResponseBody
+    public List<FieldRecord> getInstance(@PathVariable String entityId, @PathVariable String instanceId) {
+        List<EntityRecord> entityList = getExampleData().getEntityRecordsById(entityId);
+        for (EntityRecord record : entityList) {
+            if (record.getId().equals(instanceId))  {
+                return record.getFields();
+            }
+        }
+        throw new EntityNotFoundException();
     }
 
     private List<EntityRecord> filterByLookup(List<EntityRecord> entityList, Map<String, Object> lookups) {
@@ -326,15 +357,4 @@ public class EntityController extends MdsController {
         return list;
     }
 
-    @RequestMapping(value = "/entities/{entityId}/instance/{instanceId}", method = RequestMethod.GET)
-    @ResponseBody
-    public List<FieldRecord> getInstance(@PathVariable String entityId, @PathVariable String instanceId) {
-        List<EntityRecord> entityList = getExampleData().getEntityRecordsById(entityId);
-        for (EntityRecord record : entityList) {
-            if (record.getId().equals(instanceId))  {
-                return record.getFields();
-            }
-        }
-        throw new EntityNotFoundException();
-    }
 }

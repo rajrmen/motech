@@ -110,6 +110,10 @@
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>org.springframework.security.core</artifactId>
+        </dependency>
     </dependencies>
     <build>
         <resources>
@@ -167,6 +171,9 @@
                             org.eclipse.gemini.blueprint.config,
                             org.motechproject.config.service,
                             org.motechproject.osgi.web,
+                            org.motechproject.security.annotations,
+                            org.motechproject.security.model,
+                            org.motechproject.security.service,
                             org.motechproject.server.config,
                             org.springframework.aop,
                             org.springframework.aop.aspectj.annotation,
@@ -176,6 +183,7 @@
                             org.springframework.context.config,
                             org.springframework.context.support,
                             org.springframework.orm.jdo,
+                            org.springframework.security.config,
                             org.springframework.web.context,
                             org.springframework.web.context.support,
                             org.springframework.web.multipart.commons,
