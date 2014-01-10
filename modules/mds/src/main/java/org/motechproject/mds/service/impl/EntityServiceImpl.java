@@ -1,7 +1,6 @@
 package org.motechproject.mds.service.impl;
 
-import org.datanucleus.api.jdo.JDOEnhancer;
-import org.motechproject.mds.builder.EntityBuilder;
+import org.motechproject.mds.service.EntityBuilder;
 import org.motechproject.mds.domain.EntityMapping;
 import org.motechproject.mds.dto.EntityDto;
 import org.motechproject.mds.ex.EntityAlreadyExistException;
@@ -38,11 +37,10 @@ public class EntityServiceImpl extends BaseMdsService implements EntityService {
 
         EntityBuilder builder = new EntityBuilder()
                 .withSingleName(entity.getName())
-                .withClassLoader(getEnhancerClassLoader())
-                .build();
+                .withClassLoader(getEnhancerClassLoader());
 
         String className = builder.getClassName();
-        byte[] enhancedBytes = enhance(builder);
+        byte[] enhancedBytes = new MdsJDOEnhancer(getSettingsFacade()).enhance(builder);
 
         getPersistenceClassLoader().defineClass(className, enhancedBytes);
         JDOMetadata metadata = EntityMetadataFactory.createBaseEntity(
@@ -53,19 +51,6 @@ public class EntityServiceImpl extends BaseMdsService implements EntityService {
         EntityMapping entityMapping = allEntityMappings.save(className);
 
         return entityMapping.toDto();
-    }
-
-    private byte[] enhance(EntityBuilder builder) throws IOException {
-        JDOEnhancer enhancer = new MdsJDOEnhancer(getSettingsFacade(), builder.getClassLoader());
-        JDOMetadata metadata = EntityMetadataFactory.createBaseEntity(
-                enhancer.newMetadata(), builder.getClassName()
-        );
-
-        enhancer.registerMetadata(metadata);
-        enhancer.addClass(builder.getClassName(), builder.getClassBytes());
-        enhancer.enhance();
-
-        return enhancer.getEnhancedBytes(builder.getClassName());
     }
 
     @Autowired

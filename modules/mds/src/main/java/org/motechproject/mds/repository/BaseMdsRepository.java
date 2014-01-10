@@ -15,10 +15,6 @@ import java.util.List;
 public class BaseMdsRepository {
     private PersistenceManagerFactory persistenceManagerFactory;
 
-    public PersistenceManagerFactory getPersistenceManagerFactory() {
-        return persistenceManagerFactory;
-    }
-
     @Autowired
     @Qualifier("persistenceManagerFactory")
     public void setPersistenceManagerFactory(PersistenceManagerFactory persistenceManagerFactory) {

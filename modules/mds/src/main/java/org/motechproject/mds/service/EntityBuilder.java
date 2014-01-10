@@ -1,12 +1,9 @@
-package org.motechproject.mds.builder;
+package org.motechproject.mds.service;
 
-import javassist.CannotCompileException;
 import javassist.ClassPool;
 import javassist.CtClass;
 import org.motechproject.mds.ex.EntityBuilderException;
-import org.motechproject.mds.service.JDOClassLoader;
 
-import java.io.IOException;
 import java.util.Arrays;
 
 /**
@@ -50,13 +47,12 @@ public class EntityBuilder {
         return classLoader;
     }
 
-    public EntityBuilder build() {
+    public void build() {
         try {
             CtClass ctClass = ClassPool.getDefault().makeClass(className);
             classBytes = ctClass.toBytecode();
             classLoader.defineClass(className, classBytes);
-            return this;
-        } catch (IOException | CannotCompileException e) {
+        } catch (Exception e) {
             throw new EntityBuilderException(e);
         }
     }

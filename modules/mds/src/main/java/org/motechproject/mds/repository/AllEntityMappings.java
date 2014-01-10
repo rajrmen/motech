@@ -1,6 +1,6 @@
 package org.motechproject.mds.repository;
 
-import org.motechproject.mds.builder.EntityBuilder;
+import org.motechproject.mds.service.EntityBuilder;
 import org.motechproject.mds.domain.EntityMapping;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,12 +16,6 @@ import java.util.List;
 @Repository
 public class AllEntityMappings extends BaseMdsRepository {
 
-    /**
-     * <p>save.</p>
-     *
-     * @param className a {@link java.lang.String} object.
-     * @return a {@link org.motechproject.mds.domain.EntityMapping} object.
-     */
     @Transactional
     public EntityMapping save(String className) {
         EntityMapping mapping = new EntityMapping();
@@ -30,12 +24,6 @@ public class AllEntityMappings extends BaseMdsRepository {
         return getPersistenceManager().makePersistent(mapping);
     }
 
-    /**
-     * <p>containsEntity.</p>
-     *
-     * @param simpleName a {@link java.lang.String} object.
-     * @return a boolean.
-     */
     @Transactional
     public boolean containsEntity(String simpleName) {
         Query query = getPersistenceManager().newQuery(EntityMapping.class);
