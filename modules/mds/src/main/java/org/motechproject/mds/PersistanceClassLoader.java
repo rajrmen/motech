@@ -9,6 +9,10 @@ import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
 import javax.jdo.Query;
 
+/**
+ * The <code>PersistanceClassLoader</code> class is a wrapper for {@link ClassLoader} and its main
+ * purpose is to save and get classes definition from mds database.
+ */
 @Component
 public class PersistanceClassLoader extends ClassLoader {
     private PersistenceManagerFactory persistenceManagerFactory;

@@ -35,6 +35,10 @@ public class EntityBuilder {
     }
 
     public byte[] getClassBytes() {
+        if (null == classBytes) {
+            classBytes = new byte[0];
+        }
+
         return Arrays.copyOf(classBytes, classBytes.length);
     }
 
