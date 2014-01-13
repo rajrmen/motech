@@ -18,12 +18,8 @@ public class EntityBuilder {
     private EntityClassLoader classLoader;
     private byte[] classBytes;
 
-    public EntityBuilder withSingleName(String simpleName) {
-        return withClassName(String.format("%s.%s", PACKAGE, simpleName));
-    }
-
-    public EntityBuilder withClassName(String className) {
-        this.className = className;
+    public EntityBuilder withSimpleName(String simpleName) {
+        this.className = String.format("%s.%s", PACKAGE, simpleName);
         this.classBytes = new byte[0];
         return this;
     }
@@ -42,7 +38,7 @@ public class EntityBuilder {
         return Arrays.copyOf(classBytes, classBytes.length);
     }
 
-    public EntityClassLoader getClassLoader() {
+    public ClassLoader getClassLoader() {
         return classLoader;
     }
 
@@ -53,5 +49,21 @@ public class EntityBuilder {
         } catch (Exception e) {
             throw new EntityBuilderException(e);
         }
+    }
+
+    /**
+     * The <code>EntityClassLoader</code> class is a wrapper for {@link ClassLoader} and it is
+     * used by {@link EntityBuilder} when new entity is built.
+     */
+    private static class EntityClassLoader extends ClassLoader {
+
+        public EntityClassLoader(ClassLoader parent) {
+            super(parent);
+        }
+
+        public void defineClass(String className, byte[] classBytes) {
+            defineClass(className, classBytes, 0, classBytes.length);
+        }
+
     }
 }

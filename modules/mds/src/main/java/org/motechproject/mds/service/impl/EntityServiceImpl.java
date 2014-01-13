@@ -1,7 +1,6 @@
 package org.motechproject.mds.service.impl;
 
 import org.motechproject.mds.builder.EntityBuilder;
-import org.motechproject.mds.domain.ClassMapping;
 import org.motechproject.mds.domain.EntityMapping;
 import org.motechproject.mds.dto.EntityDto;
 import org.motechproject.mds.enhancer.MdsJDOEnhancer;
@@ -38,17 +37,13 @@ public class EntityServiceImpl extends BaseMdsService implements EntityService {
         }
 
         EntityBuilder builder = new EntityBuilder()
-                .withSingleName(entity.getName())
+                .withSimpleName(entity.getName())
                 .withClassLoader(getPersistanceClassLoader());
 
         String className = builder.getClassName();
         byte[] enhancedBytes = enhancer.enhance(builder);
 
-        ClassMapping classMapping = new ClassMapping();
-        classMapping.setClassName(builder.getClassName());
-        classMapping.setBytecode(enhancedBytes);
-
-        getPersistanceClassLoader().defineClass(classMapping);
+        getPersistanceClassLoader().saveClass(className, enhancedBytes);
         JDOMetadata metadata = EntityMetadataFactory.createBaseEntity(
                 getPersistenceManagerFactory().newMetadata(), className
         );
