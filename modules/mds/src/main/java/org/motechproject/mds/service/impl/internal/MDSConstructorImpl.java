@@ -28,7 +28,7 @@ public class MDSConstructorImpl extends BaseMdsService implements MDSConstructor
     @Override
     @Transactional
     public void constructEntity(EntityMapping mapping) throws IOException {
-        MDSClassLoader classLoader = MDSClassLoader.PERSISTANCE;
+        MDSClassLoader classLoader = MDSClassLoader.PERSISTENCE;
         byte[] enhancedBytes = enhancer.enhance(mapping);
 
         Class<?> clazz = classLoader.defineClass(mapping.getClassName(), enhancedBytes);

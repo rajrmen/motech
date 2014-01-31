@@ -23,6 +23,9 @@ import static org.motechproject.mds.constants.Constants.Config;
 public class MdsJDOEnhancer extends JDOEnhancer {
 
     @Autowired
+    private EntityBuilder entityBuilder;
+
+    @Autowired
     public MdsJDOEnhancer(SettingsFacade settingsFacade) {
         super(settingsFacade.getProperties(Config.DATANUCLEUS_FILE));
 
@@ -30,20 +33,16 @@ public class MdsJDOEnhancer extends JDOEnhancer {
     }
 
     public byte[] enhance(EntityMapping mapping) throws IOException {
-        EntityBuilder builder = new EntityBuilder()
-                .withClassName(mapping.getClassName())
-                .withClassLoader(MDSClassLoader.PERSISTANCE);
+        byte[] classBytes = entityBuilder.build(mapping);
 
-        builder.build();
-
-        setClassLoader(builder.getClassLoader());
+        setClassLoader(MDSClassLoader.PERSISTENCE);
 
         JDOMetadata metadata = EntityMetadataBuilder.createBaseEntity(newMetadata(), mapping);
 
         registerMetadata(metadata);
-        addClass(builder.getClassName(), builder.getClassBytes());
+        addClass(mapping.getClassName(), classBytes);
         enhance();
 
-        return getEnhancedBytes(builder.getClassName());
+        return getEnhancedBytes(mapping.getClassName());
     }
 }

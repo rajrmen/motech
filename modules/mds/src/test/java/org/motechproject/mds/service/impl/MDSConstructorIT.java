@@ -45,7 +45,7 @@ public class MDSConstructorIT extends BaseIT {
 
         constructor.constructEntity(mapping);
 
-        MDSClassLoader classLoader = MDSClassLoader.PERSISTANCE;
+        MDSClassLoader classLoader = MDSClassLoader.PERSISTENCE;
 
         Class<?> entityClass = classLoader.loadClass(VOUCHER_CLASS);
         Class<?> repositoryClass = classLoader.loadClass(VOUCHER_REPOSITORY);
