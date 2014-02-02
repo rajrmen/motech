@@ -5,7 +5,7 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * This is a basic repository class with CRUD operations. Mainly it is used as super class to create
+ * This is a basic repository class with CRUD operations. Mainly it is used as super class to buildInfrastructure
  * a repository related with the given entity schema in
  * {@link org.motechproject.mds.builder.EntityInfrastructureBuilder} but it can be also used by
  * other repositories inside this package.

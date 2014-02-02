@@ -4,7 +4,7 @@ import java.util.List;
 
 /**
  * This is a basic service interface with CRUD operations. Mainly it is used as super interface to
- * create service interface related with the given entity schema in
+ * buildInfrastructure service interface related with the given entity schema in
  * {@link org.motechproject.mds.builder.EntityInfrastructureBuilder} but it can be also used by
  * other service interfaces inside this package.
  *

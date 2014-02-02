@@ -19,7 +19,7 @@ import java.io.IOException;
 import java.util.List;
 
 /**
- * The purpose of this class is to create classes for all entities that are in MDS database.
+ * The purpose of this class is to buildInfrastructure classes for all entities that are in MDS database.
  */
 @Component
 public class MDSInitializer {
@@ -41,12 +41,8 @@ public class MDSInitializer {
             List<EntityMapping> mappings = (List<EntityMapping>) query.execute();
 
             for (EntityMapping mapping : mappings) {
-                try {
-                    if (!(mapping instanceof EntityDraft)) {
-                        constructor.constructEntity(mapping);
-                    }
-                } catch (IOException e) {
-                    throw new IllegalStateException(e);
+                if (!(mapping instanceof EntityDraft)) {
+                    constructor.constructEntity(mapping);
                 }
             }
         }

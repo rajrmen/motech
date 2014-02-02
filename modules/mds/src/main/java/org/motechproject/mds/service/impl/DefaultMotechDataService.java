@@ -7,7 +7,7 @@ import java.util.List;
 
 /**
  * This is a basic implementation of {@link org.motechproject.mds.service.MotechDataService}. Mainly
- * it is used as super class to create a service related with the given entity schema in
+ * it is used as super class to buildInfrastructure a service related with the given entity schema in
  * {@link org.motechproject.mds.builder.EntityInfrastructureBuilder} but it can be also used by
  * other services inside this package.
  *

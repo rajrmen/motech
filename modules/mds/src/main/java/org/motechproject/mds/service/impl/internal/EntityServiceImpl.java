@@ -29,6 +29,7 @@ import org.motechproject.mds.repository.AllTypeSettingsMappings;
 import org.motechproject.mds.repository.AllTypeValidationMappings;
 import org.motechproject.mds.service.BaseMdsService;
 import org.motechproject.mds.service.EntityService;
+import org.motechproject.mds.service.JarGeneratorService;
 import org.motechproject.mds.service.MDSConstructor;
 import org.motechproject.mds.util.FieldHelper;
 import org.motechproject.mds.web.DraftData;
@@ -61,6 +62,7 @@ public class EntityServiceImpl extends BaseMdsService implements EntityService {
     private AllTypeValidationMappings allTypeValidationMappings;
     private AllEntityDrafts allEntityDrafts;
     private AllTypeSettingsMappings allTypeSettingsMappings;
+    private JarGeneratorService jarGeneratorService;
 
     // TODO remove this once everything is in db
     private ExampleData exampleData = new ExampleData();
@@ -78,6 +80,7 @@ public class EntityServiceImpl extends BaseMdsService implements EntityService {
 
         String className = String.format("%s.%s", Packages.ENTITY, entity.getName());
         EntityMapping entityMapping = allEntityMappings.save(className);
+
         constructor.constructEntity(entityMapping);
 
         return entityMapping.toDto();
@@ -204,8 +207,11 @@ public class EntityServiceImpl extends BaseMdsService implements EntityService {
         EntityMapping parent = draft.getParentEntity();
 
         parent.updateFromDraft(draft);
-
         allEntityDrafts.delete(draft);
+
+        constructor.constructEntity(parent);
+
+        jarGeneratorService.regenerateMdsDataBundle();
     }
 
 
@@ -413,5 +419,10 @@ public class EntityServiceImpl extends BaseMdsService implements EntityService {
     @Autowired
     public void setAllTypeSettingsMappings(AllTypeSettingsMappings allTypeSettingsMappings) {
         this.allTypeSettingsMappings = allTypeSettingsMappings;
+    }
+
+    @Autowired
+    public void setJarGeneratorService(JarGeneratorService jarGeneratorService) {
+        this.jarGeneratorService = jarGeneratorService;
     }
 }

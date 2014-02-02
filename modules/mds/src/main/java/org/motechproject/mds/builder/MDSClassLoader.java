@@ -4,7 +4,15 @@ package org.motechproject.mds.builder;
  * The <code>MDSClassLoader</code> class is a mds wrapper for {@link ClassLoader}.
  */
 public class MDSClassLoader extends ClassLoader {
-    public static final MDSClassLoader PERSISTENCE = new MDSClassLoader();
+    private static MDSClassLoader INSTANCE = new MDSClassLoader();
+
+    public static final MDSClassLoader getInstance() {
+        return INSTANCE;
+    }
+
+    public static void reloadClassLoader() {
+        INSTANCE = new MDSClassLoader();
+    }
 
     public MDSClassLoader() {
         this(MDSClassLoader.class.getClassLoader());
@@ -18,4 +26,7 @@ public class MDSClassLoader extends ClassLoader {
         return defineClass(name, bytecode, 0, bytecode.length);
     }
 
+    public Class<?> defineClass(ClassData classData) {
+        return defineClass(classData.getClassName(), classData.getBytecode());
+    }
 }
