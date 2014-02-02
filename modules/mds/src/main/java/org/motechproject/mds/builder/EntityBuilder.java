@@ -1,11 +1,13 @@
 package org.motechproject.mds.builder;
 
+import javassist.CannotCompileException;
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.CtField;
 import javassist.Modifier;
 import javassist.NotFoundException;
 import org.apache.commons.lang.StringUtils;
+import org.joda.time.DateTime;
 import org.motechproject.commons.date.model.Time;
 import org.motechproject.mds.domain.AvailableFieldTypeMapping;
 import org.motechproject.mds.domain.EntityMapping;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -33,20 +36,7 @@ public class EntityBuilder {
 
             CtClass ctClass = classPool.makeClass(entityMapping.getClassName());
 
-            for (FieldMapping field : entityMapping.getFields()) {
-                AvailableFieldTypeMapping fieldType = field.getType();
-
-                CtClass type = MotechClassPool.getDefault().get(fieldType.getTypeClass());
-
-                CtField ctField = new CtField(type, field.getName(), ctClass);
-                ctField.setModifiers(Modifier.PRIVATE);
-
-                if (StringUtils.isBlank(field.getDefaultValue())) {
-                    ctClass.addField(ctField);
-                } else {
-                    ctClass.addField(ctField, initializerForField(field));
-                }
-            }
+            addFields(ctClass, entityMapping.getFields());
 
             byte[] classBytes = ctClass.toBytecode();
             classLoader.defineClass(className, classBytes);
@@ -54,6 +44,23 @@ public class EntityBuilder {
             return classBytes;
         } catch (Exception e) {
             throw new EntityBuilderException(e);
+        }
+    }
+
+    private void addFields(CtClass ctClass, List<FieldMapping> fields) throws NotFoundException, CannotCompileException {
+        for (FieldMapping field : fields) {
+            AvailableFieldTypeMapping fieldType = field.getType();
+
+            CtClass type = MotechClassPool.getDefault().get(fieldType.getTypeClass());
+
+            CtField ctField = new CtField(type, field.getName(), ctClass);
+            ctField.setModifiers(Modifier.PRIVATE);
+
+            if (StringUtils.isBlank(field.getDefaultValue())) {
+                ctClass.addField(ctField);
+            } else {
+                ctClass.addField(ctField, initializerForField(field));
+            }
         }
     }
 
@@ -75,9 +82,12 @@ public class EntityBuilder {
             case "org.motechproject.commons.date.model.Time":
                 Time time  = (Time) defaultValue;
                 return newInitializer(typeClass, '"' + time.timeStr() + '"');
-     /*       case "org.joda.time.DateTime":
-                DateTime dateTime = (DateTime) defaultValue; new DateTime()
-                return CtField.Initializer.byNewWithParams(classPool.get(DateTime.class.getName()), )*/
+            case "org.joda.time.DateTime":
+                DateTime dateTime = (DateTime) defaultValue;
+                return newInitializer(typeClass, dateTime.getMillis()  + "l"); // explicit long
+            case "java.util.Date":
+                Date date = (Date) defaultValue;
+                return newInitializer(typeClass, date.getTime() + "l"); // explicit long
             default:
                 return null;
         }
@@ -87,25 +97,26 @@ public class EntityBuilder {
         StringBuilder sb = new StringBuilder();
 
         sb.append("new ").append(ArrayList.class.getName()).append('(');
-        sb.append(Arrays.class.getName()).append(".asList(");
+        sb.append(Arrays.class.getName()).append(".asList(new Object[]{");
 
         List defValList = (List) defaultValue;
-        for (Object obj : defValList) {
-            sb.append(obj).append(", ");
+
+        for (int i = 0; i < defValList.size(); i++) {
+            Object obj = defValList.get(i);
+            // list of strings
+            sb.append('\"').append(obj).append('\"');
+
+            if (i < defValList.size() - 1) {
+                sb.append(',');
+            }
         }
 
-        sb.deleteCharAt(sb.length() - 1);
-        sb.append("))");
+        sb.append("}))");
 
         return CtField.Initializer.byExpr(sb.toString());
     }
 
     private CtField.Initializer newInitializer(String type, Object defaultValue) {
-        StringBuilder sb = new StringBuilder();
-
-        sb.append("new ").append(type).append('(')
-          .append(defaultValue.toString()).append(')');
-
-        return CtField.Initializer.byExpr(sb.toString());
+        return CtField.Initializer.byExpr("new " + type + '(' + defaultValue.toString() + ')');
     }
 }

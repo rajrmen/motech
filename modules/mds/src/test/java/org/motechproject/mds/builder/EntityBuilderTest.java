@@ -14,9 +14,10 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
+import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.when;
@@ -32,9 +33,10 @@ public class EntityBuilderTest {
     @Test
     public void shouldBuildAnEntityWithFields() throws Exception {
         when(entity.getClassName()).thenReturn("BuilderTest");
-        when(entity.getFields()).thenReturn(Arrays.asList(field("count", Integer.class),
+        when(entity.getFields()).thenReturn(asList(field("count", Integer.class),
                 field("time", Time.class), field("str", String.class), field("dec", Double.class),
-                field("bool", Boolean.class), field("date", Date.class), field("dt", DateTime.class)));
+                field("bool", Boolean.class), field("date", Date.class), field("dt", DateTime.class),
+                field("list", List.class)));
 
         entityBuilder.build(entity);
 
@@ -48,6 +50,7 @@ public class EntityBuilderTest {
         assertField(clazz, "bool", Boolean.class);
         assertField(clazz, "date", Date.class);
         assertField(clazz, "dt", DateTime.class);
+        assertField(clazz, "list", List.class);
     }
 
     @Test
@@ -56,10 +59,11 @@ public class EntityBuilderTest {
         final DateTime dateTime = DateUtil.now();
 
         when(entity.getClassName()).thenReturn("BuilderTest2");
-        when(entity.getFields()).thenReturn(Arrays.asList(field("count", Integer.class, 1),
+        when(entity.getFields()).thenReturn(asList(field("count", Integer.class, 1),
                 field("time", Time.class, new Time(10, 10)), field("str", String.class, "defStr"),
                 field("dec", Double.class, 3.1), field("bool", Boolean.class, true),
-                field("date", Date.class, date), field("dt", DateTime.class, dateTime)));
+                field("date", Date.class, date), field("dt", DateTime.class, dateTime),
+                field("list", List.class, asList("1", "2", "3"))));
 
         entityBuilder.build(entity);
 
@@ -73,6 +77,7 @@ public class EntityBuilderTest {
         assertField(clazz, "bool", Boolean.class, true);
         assertField(clazz, "date", Date.class, date);
         assertField(clazz, "dt", DateTime.class, dateTime);
+        assertField(clazz, "list", List.class, asList("1", "2", "3"));
     }
 
     private void assertField(Class<?> clazz, String name, Class<?> fieldType)
