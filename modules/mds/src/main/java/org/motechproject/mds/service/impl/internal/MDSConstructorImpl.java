@@ -47,7 +47,7 @@ public class MDSConstructorImpl extends BaseMdsService implements MDSConstructor
         } else {
             // editing a class requires reloading the classLoader and regenerating the entities
             MDSClassLoader.reloadClassLoader();
-            generateEntities();
+            generateAllEntities();
         }
     }
 
@@ -74,7 +74,7 @@ public class MDSConstructorImpl extends BaseMdsService implements MDSConstructor
     }
 
     @Override
-    public void generateEntities() {
+    public void generateAllEntities() {
         MDSClassLoader tmpClassLoader = new MDSClassLoader();
 
         List<EntityMapping> mappings = allEntityMappings.getAllEntities();

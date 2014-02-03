@@ -76,7 +76,7 @@ public class EntityServiceIT extends BaseIT {
         String className = String.format("%s.%s", Packages.ENTITY, "Test");
         assertTrue(String.format("Not found %s in database", className), containsEntity(className));
 
-        // 2. there should be ability to buildInfrastructure a new instance of created entity
+        // 2. there should be ability to create a new instance of created entity
         Class<?> clazz = MDSClassLoader.getInstance().loadClass(className);
         Object instance = clazz.newInstance();
 

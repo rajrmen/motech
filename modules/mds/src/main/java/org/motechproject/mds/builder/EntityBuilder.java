@@ -9,7 +9,7 @@ import org.motechproject.mds.domain.EntityMapping;
 public interface EntityBuilder {
 
     /**
-     * Builds the schema for a given entity. The class is not registered with any classloader.
+     * Builds a class definition for a given entity. The class is not registered with any classloader.
      * @param entityMapping the entity schema
      * @return bytes of the newly constructured class
      */
