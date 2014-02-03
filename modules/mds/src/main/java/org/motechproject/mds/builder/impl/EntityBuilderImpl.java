@@ -4,6 +4,8 @@ import javassist.CannotCompileException;
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.CtField;
+import javassist.CtMethod;
+import javassist.CtNewMethod;
 import javassist.Modifier;
 import javassist.NotFoundException;
 import org.apache.commons.lang.StringUtils;
@@ -55,11 +57,12 @@ public class EntityBuilderImpl implements EntityBuilder {
 
     private void addFields(CtClass ctClass, List<FieldMapping> fields) throws NotFoundException, CannotCompileException {
         for (FieldMapping field : fields) {
+            String fieldName = field.getName();
             AvailableFieldTypeMapping fieldType = field.getType();
 
             CtClass type = MotechClassPool.getDefault().get(fieldType.getTypeClass());
 
-            CtField ctField = new CtField(type, field.getName(), ctClass);
+            CtField ctField = new CtField(type, fieldName, ctClass);
             ctField.setModifiers(Modifier.PRIVATE);
 
             if (StringUtils.isBlank(field.getDefaultValue())) {
@@ -67,6 +70,12 @@ public class EntityBuilderImpl implements EntityBuilder {
             } else {
                 ctClass.addField(ctField, initializerForField(field));
             }
+
+            CtMethod getter = CtNewMethod.getter("get" + StringUtils.capitalize(fieldName), ctField);
+            CtMethod setter = CtNewMethod.setter("set" + StringUtils.capitalize(fieldName), ctField);
+
+            ctClass.addMethod(getter);
+            ctClass.addMethod(setter);
         }
     }
 

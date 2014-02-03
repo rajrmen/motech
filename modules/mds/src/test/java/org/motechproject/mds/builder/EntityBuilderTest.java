@@ -1,5 +1,6 @@
 package org.motechproject.mds.builder;
 
+import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
@@ -15,6 +16,8 @@ import org.motechproject.mds.domain.FieldMapping;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Date;
 import java.util.List;
@@ -88,7 +91,7 @@ public class EntityBuilderTest {
     }
 
     @Test
-    public void shouldEditClasses() throws IllegalAccessException, NoSuchFieldException, InstantiationException {
+    public void shouldEditClasses() throws Exception {
         when(entity.getFields()).thenReturn(asList(field("name", Integer.class)));
 
         Class<?> clazz = buildClass();
@@ -119,13 +122,12 @@ public class EntityBuilderTest {
         return mdsClassLoader.defineClass(classData.getClassName(), classData.getBytecode());
     }
 
-    private void assertField(Class<?> clazz, String name, Class<?> fieldType)
-            throws IllegalAccessException, NoSuchFieldException, InstantiationException {
+    private void assertField(Class<?> clazz, String name, Class<?> fieldType) throws Exception {
         assertField(clazz, name, fieldType, null);
     }
 
     private void assertField(Class<?> clazz, String name, Class<?> fieldType, Object expectedDefaultVal)
-            throws NoSuchFieldException, IllegalAccessException, InstantiationException {
+            throws NoSuchFieldException, IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
         Field field = clazz.getDeclaredField(name);
 
         assertNotNull(field);
@@ -135,6 +137,25 @@ public class EntityBuilderTest {
         Object instance = clazz.newInstance();
         Object val = ReflectionTestUtils.getField(instance, name);
         assertEquals(expectedDefaultVal, val);
+
+        // assert getters and setters
+
+        Method getter = clazz.getMethod("get" + StringUtils.capitalize(name));
+        assertEquals(fieldType, getter.getReturnType());
+        assertEquals(Modifier.PUBLIC, getter.getModifiers());
+
+        Method setter = clazz.getMethod("set" + StringUtils.capitalize(name), fieldType);
+        assertEquals(Void.TYPE, setter.getReturnType());
+        assertEquals(Modifier.PUBLIC, setter.getModifiers());
+
+        // getter returns default value
+        assertEquals(expectedDefaultVal, getter.invoke(instance));
+
+        // set then get
+        Object newVal = newVal(fieldType);
+        setter.invoke(instance, newVal);
+
+        assertEquals(newVal, getter.invoke(instance));
     }
 
     private FieldMapping field(String name, Class<?> typeClass) {
@@ -153,5 +174,23 @@ public class EntityBuilderTest {
         field.setDefaultValue(type.format(defaultVal));
 
         return field;
+    }
+
+    private Object newVal(Class<?> clazz) throws IllegalAccessException, InstantiationException {
+        if (Integer.class.equals(clazz)) {
+            return 5;
+        } else if (Double.class.equals(clazz)) {
+            return 2.1;
+        } else if (String.class.equals(clazz)) {
+            return "test";
+        } else if (List.class.equals(clazz)) {
+            return asList("3", "4", "5");
+        } else if (Time.class.equals(clazz)) {
+            return new Time(10, 54);
+        } else if (Boolean.class.equals(clazz)) {
+            return true;
+        } else {
+            return clazz.newInstance();
+        }
     }
 }
