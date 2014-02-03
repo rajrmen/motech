@@ -11,4 +11,5 @@ public interface MDSConstructor {
 
     void constructEntity(EntityMapping mapping);
 
+    void generateEntities();
 }

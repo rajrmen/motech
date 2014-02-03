@@ -29,7 +29,6 @@ import org.motechproject.mds.repository.AllTypeSettingsMappings;
 import org.motechproject.mds.repository.AllTypeValidationMappings;
 import org.motechproject.mds.service.BaseMdsService;
 import org.motechproject.mds.service.EntityService;
-import org.motechproject.mds.service.JarGeneratorService;
 import org.motechproject.mds.service.MDSConstructor;
 import org.motechproject.mds.util.FieldHelper;
 import org.motechproject.mds.web.DraftData;
@@ -62,7 +61,6 @@ public class EntityServiceImpl extends BaseMdsService implements EntityService {
     private AllTypeValidationMappings allTypeValidationMappings;
     private AllEntityDrafts allEntityDrafts;
     private AllTypeSettingsMappings allTypeSettingsMappings;
-    private JarGeneratorService jarGeneratorService;
 
     // TODO remove this once everything is in db
     private ExampleData exampleData = new ExampleData();
@@ -208,10 +206,6 @@ public class EntityServiceImpl extends BaseMdsService implements EntityService {
 
         parent.updateFromDraft(draft);
         allEntityDrafts.delete(draft);
-
-        constructor.constructEntity(parent);
-
-        jarGeneratorService.regenerateMdsDataBundle();
     }
 
 
@@ -421,8 +415,4 @@ public class EntityServiceImpl extends BaseMdsService implements EntityService {
         this.allTypeSettingsMappings = allTypeSettingsMappings;
     }
 
-    @Autowired
-    public void setJarGeneratorService(JarGeneratorService jarGeneratorService) {
-        this.jarGeneratorService = jarGeneratorService;
-    }
 }

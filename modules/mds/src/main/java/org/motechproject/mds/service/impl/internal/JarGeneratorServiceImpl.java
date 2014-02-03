@@ -89,8 +89,8 @@ public class JarGeneratorServiceImpl extends BaseMdsService implements JarGenera
                 String className = mapping.getClassName();
 
                 String[] classes = new String[]{
-                        mapping.getClassName(), getRepositoryName(className),
-                        getInterfaceName(className), getServiceName(className)
+                        mapping.getClassName(), getInterfaceName(className),
+                        getServiceName(className), getRepositoryName(className)
                 };
 
                 for (String c : classes) {

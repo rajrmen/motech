@@ -1,7 +1,5 @@
 package org.motechproject.mds;
 
-import org.motechproject.mds.domain.EntityDraft;
-import org.motechproject.mds.domain.EntityMapping;
 import org.motechproject.mds.service.MDSConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -14,9 +12,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import javax.annotation.PostConstruct;
 import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
-import javax.jdo.Query;
 import java.io.IOException;
-import java.util.List;
 
 /**
  * The purpose of this class is to buildInfrastructure classes for all entities that are in MDS database.
@@ -37,14 +33,7 @@ public class MDSInitializer {
 
         @Override
         protected void doInTransactionWithoutResult(TransactionStatus status) {
-            Query query = getPersistenceManager().newQuery(EntityMapping.class);
-            List<EntityMapping> mappings = (List<EntityMapping>) query.execute();
-
-            for (EntityMapping mapping : mappings) {
-                if (!(mapping instanceof EntityDraft)) {
-                    constructor.constructEntity(mapping);
-                }
-            }
+            constructor.generateEntities();
         }
 
     }

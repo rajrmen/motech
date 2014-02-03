@@ -5,7 +5,7 @@ import org.apache.commons.lang.ArrayUtils;
 import java.util.Arrays;
 
 /**
- * Represents a full class name and its bytecode.
+ * Represents a class name and its byte code.
  */
 public class ClassData {
 
