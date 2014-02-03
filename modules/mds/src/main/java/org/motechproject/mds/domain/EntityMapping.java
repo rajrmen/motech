@@ -35,7 +35,7 @@ import static org.motechproject.mds.constants.Constants.Util.TRUE;
 @Discriminator(strategy = DiscriminatorStrategy.CLASS_NAME)
 @Version(strategy = VersionStrategy.VERSION_NUMBER, column = "VERSION",
         extensions = {@Extension(vendorName = "datanucleus", key = "field-name", value = "entityVersion")})
-@Unique(name="DRAFT_USER_IDX", members={"parentEntity", "draftOwnerUsername"})
+@Unique(name = "DRAFT_USER_IDX", members = {"parentEntity", "draftOwnerUsername"})
 public class EntityMapping {
 
     @PrimaryKey
