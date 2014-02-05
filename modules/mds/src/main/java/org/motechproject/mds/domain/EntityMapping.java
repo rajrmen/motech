@@ -1,7 +1,9 @@
 package org.motechproject.mds.domain;
 
 import org.apache.commons.lang.StringUtils;
-import org.motechproject.mds.dto.*;
+import org.motechproject.mds.dto.AdvancedSettingsDto;
+import org.motechproject.mds.dto.EntityDto;
+import org.motechproject.mds.dto.LookupDto;
 import org.motechproject.mds.util.ClassName;
 
 import javax.jdo.annotations.Discriminator;
@@ -56,10 +58,6 @@ public class EntityMapping {
     @Persistent(mappedBy = "entity")
     @Element(dependent = TRUE)
     private List<LookupMapping> lookups;
-
-    @Persistent(mappedBy = "entity")
-    @Element(dependent = TRUE)
-    private List<BrowsingSettingsMapping> browsingSettings;
 
     @Persistent(mappedBy = "entity")
     @Element(dependent = TRUE)
@@ -150,7 +148,6 @@ public class EntityMapping {
         return lookups;
     }
 
-
     public void setLookups(List<LookupMapping> lookups) {
         this.lookups = lookups;
     }
@@ -162,10 +159,6 @@ public class EntityMapping {
                 return lookup;
             }
         }
-        return null;
-    }
-
-    public BrowsingSettingsDto getBrowsingSettings(Long settingsId){
         return null;
     }
 
@@ -313,33 +306,6 @@ public class EntityMapping {
         }
 
         for (LookupDto lookupDto : advancedSettings.getIndexes()) {
-            LookupMapping lookup = getLookupById(lookupDto.getId());
-            if (lookup == null) {
-                LookupMapping newLookup = new LookupMapping(lookupDto);
-                addLookup(newLookup);
-            } else {
-                lookup.update(lookupDto);
-            }
-        }
-
-
-        for (Iterator<BrowsingSettingsMapping> it = getBrowsingSettings().iterator(); it.hasNext(); ) {
-            BrowsingSettingsMapping lookup = it.next();
-
-            boolean inNewList = false;
-            for (BrowsingSettingsDto browsingSettingsDto : advancedSettings.getIndexes()) {
-                if (Objects.equals(lookup.getId(), BrowsingSettingsDto.getId())) {
-                    inNewList = true;
-                    break;
-                }
-            }
-
-            if (!inNewList) {
-                it.remove();
-            }
-        }
-
-        for (BrowsingSettingsDto browsingSettingsDto : advancedSettings.getIndexes()) {
             LookupMapping lookup = getLookupById(lookupDto.getId());
             if (lookup == null) {
                 LookupMapping newLookup = new LookupMapping(lookupDto);

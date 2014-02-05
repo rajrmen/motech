@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The <code>BrowsingSettingsDto</code> contains informations about filled browsing settings
+ * The <code>BrowsingSettingsDto</code> contains informations about filed browsing settings
  */
 public class BrowsingSettingsDto {
 
