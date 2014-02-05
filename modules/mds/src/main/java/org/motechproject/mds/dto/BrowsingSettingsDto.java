@@ -13,31 +13,35 @@ import java.util.List;
  */
 public class BrowsingSettingsDto {
 
-    private List<String> filterableFields = new ArrayList<>();
-    private List<String> displayedFields = new ArrayList<>();
+    private List<Long> filterableFields = new ArrayList<>();
+    private List<Long> displayedFields = new ArrayList<>();
 
-    public void addFilterableField(String id) {
-        this.filterableFields.add(id);
+    public void addFilterableField(Number id) {
+        this.filterableFields.add(id.longValue());
     }
 
-    public void removeFilterableField(String id) {
-        this.filterableFields.remove(id);
+    public void removeFilterableField(Number id) {
+        this.filterableFields.remove(id.longValue());
     }
 
-    public List<String> getFilterableFields() {
+    public List<Long> getFilterableFields() {
         return filterableFields;
     }
 
-    public void setFilterableFields(List<String> filterableFields) {
-        this.filterableFields = null != filterableFields ? filterableFields : new ArrayList<String>();
+    public void setFilterableFields(List<Long> filterableFields) {
+        this.filterableFields = null != filterableFields ? filterableFields : new ArrayList<Long>();
     }
 
-    public List<String> getDisplayedFields() {
+    public void addDisplayedField(Number id) {
+        this.displayedFields.add(id.longValue());
+    }
+
+    public List<Long> getDisplayedFields() {
         return displayedFields;
     }
 
-    public void setDisplayedFields(List<String> displayedFields) {
-        this.displayedFields = null != displayedFields ? displayedFields : new ArrayList<String>();
+    public void setDisplayedFields(List<Long> displayedFields) {
+        this.displayedFields = null != displayedFields ? displayedFields : new ArrayList<Long>();
     }
 
     /**

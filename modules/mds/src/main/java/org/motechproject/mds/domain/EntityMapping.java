@@ -1,7 +1,10 @@
 package org.motechproject.mds.domain;
 
+import org.apache.commons.beanutils.BeanPropertyValueChangeClosure;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.motechproject.mds.dto.AdvancedSettingsDto;
+import org.motechproject.mds.dto.BrowsingSettingsDto;
 import org.motechproject.mds.dto.EntityDto;
 import org.motechproject.mds.dto.LookupDto;
 import org.motechproject.mds.util.ClassName;
@@ -36,7 +39,7 @@ import static org.motechproject.mds.constants.Constants.Util.TRUE;
 @Discriminator(strategy = DiscriminatorStrategy.CLASS_NAME)
 @Version(strategy = VersionStrategy.VERSION_NUMBER, column = "VERSION",
         extensions = {@Extension(vendorName = "datanucleus", key = "field-name", value = "entityVersion")})
-@Unique(name="DRAFT_USER_IDX", members={"parentEntity", "draftOwnerUsername"})
+@Unique(name = "DRAFT_USER_IDX", members = {"parentEntity", "draftOwnerUsername"})
 public class EntityMapping {
 
     @PrimaryKey
@@ -66,6 +69,9 @@ public class EntityMapping {
     @Persistent(mappedBy = "parentEntity")
     @Element(dependent = TRUE)
     private List<EntityDraft> drafts;
+
+    @Persistent
+    private BrowsingSettingsMapping browsingSettings;
 
     private Long entityVersion;
 
@@ -288,6 +294,11 @@ public class EntityMapping {
     }
 
     public void updateAdvancedSetting(AdvancedSettingsDto advancedSettings) {
+        updateIndexes(advancedSettings);
+        updateBrowsingSettings(advancedSettings);
+    }
+
+    private void updateIndexes(AdvancedSettingsDto advancedSettings) {
         // deletion
         for (Iterator<LookupMapping> it = getLookups().iterator(); it.hasNext(); ) {
             LookupMapping lookup = it.next();
@@ -314,5 +325,34 @@ public class EntityMapping {
                 lookup.update(lookupDto);
             }
         }
+    }
+
+    private void updateBrowsingSettings(AdvancedSettingsDto advancedSettings) {
+        BrowsingSettingsDto dto = advancedSettings.getBrowsing();
+
+        if (null != dto) {
+            if (null == browsingSettings) {
+                browsingSettings = new BrowsingSettingsMapping();
+            }
+
+            CollectionUtils.forAllDo(fields, new BeanPropertyValueChangeClosure("displayed", false));
+            CollectionUtils.forAllDo(fields, new BeanPropertyValueChangeClosure("filterable", false));
+
+            for (Long fieldId : dto.getDisplayedFields()) {
+                getField(fieldId).setDisplayed(true);
+            }
+
+            for (Long fieldId : dto.getDisplayedFields()) {
+                getField(fieldId).setFilterable(true);
+            }
+        }
+    }
+
+    public BrowsingSettingsMapping getBrowsingSettings() {
+        return browsingSettings;
+    }
+
+    public void setBrowsingSettings(BrowsingSettingsMapping browsingSettings) {
+        this.browsingSettings = browsingSettings;
     }
 }

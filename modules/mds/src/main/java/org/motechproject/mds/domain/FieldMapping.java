@@ -52,6 +52,12 @@ public class FieldMapping {
     @Persistent
     private AvailableFieldTypeMapping type;
 
+    @Persistent
+    private boolean displayed;
+
+    @Persistent
+    private boolean filterable;
+
     @Persistent(mappedBy = "field")
     @Element(dependent = "true")
     private List<FieldMetadataMapping> metadata;
@@ -315,5 +321,21 @@ public class FieldMapping {
             }
         }
         return null;
+    }
+
+    public boolean isDisplayed() {
+        return displayed;
+    }
+
+    public void setDisplayed(boolean displayed) {
+        this.displayed = displayed;
+    }
+
+    public boolean isFilterable() {
+        return filterable;
+    }
+
+    public void setFilterable(boolean filterable) {
+        this.filterable = filterable;
     }
 }
