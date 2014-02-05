@@ -5,9 +5,15 @@ import org.junit.Before;
 import org.junit.Test;
 import org.motechproject.mds.BaseIT;
 import org.motechproject.mds.builder.MDSClassLoader;
+import org.motechproject.mds.domain.EntityMapping;
+import org.motechproject.mds.domain.FieldMapping;
+import org.motechproject.mds.dto.AvailableTypeDto;
 import org.motechproject.mds.dto.EntityDto;
+import org.motechproject.mds.dto.FieldDto;
+import org.motechproject.mds.dto.TypeDto;
 import org.motechproject.mds.ex.EntityNotFoundException;
 import org.motechproject.mds.ex.EntityReadOnlyException;
+import org.motechproject.mds.testutil.DraftBuilder;
 import org.motechproject.mds.web.DraftData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -20,6 +26,7 @@ import org.springframework.security.core.userdetails.User;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,17 +48,18 @@ public class EntityServiceIT extends BaseIT {
     @Autowired
     private EntityService entityService;
 
+    @Autowired
+    private TypeService typeService;
+
     @Before
     public void setUp() throws Exception {
-        getPersistenceManager().deletePersistentAll(getLookupMappings());
-        getPersistenceManager().deletePersistentAll(getEntityMappings());
+        clearDB();
         setUpSecurityContext();
     }
 
     @After
     public void tearDown() throws Exception {
-        getPersistenceManager().deletePersistentAll(getLookupMappings());
-        getPersistenceManager().deletePersistentAll(getEntityMappings());
+        clearDB();
     }
 
     @Test
@@ -115,38 +123,107 @@ public class EntityServiceIT extends BaseIT {
         assertTrue(containsLookup("New lookup"));
     }
 
-    @Test(expected = EntityReadOnlyException.class)
-    public void shouldThrowExceptionWhenAddingLookupToReadOnlyEntity() throws Exception {
-        EntityDto entityDto = new EntityDto();
-        entityDto.setReadOnly(true);
-        entityDto.setName("readOnlyEntity");
-
-        Map<String, Object> values = new HashMap<>();
-        values.put("path", DraftData.ADD_NEW_INDEX);
-        values.put("advanced", true);
-
-        DraftData draftData = new DraftData();
-        draftData.setEdit(true);
-        draftData.setValues(values);
-        entityDto = entityService.createEntity(entityDto);
-
-        entityService.saveDraftEntityChanges(entityDto.getId(), draftData);
-        entityService.commitChanges(entityDto.getId());
-    }
-
     @Test
     public void shouldRetrieveAllEntities() throws IOException {
-        EntityDto entityDto = new EntityDto();
-
-        entityDto.setName(SIMPLE_NAME_2);
-        entityService.createEntity(entityDto);
-
-        entityDto.setName(SIMPLE_NAME_3);
-        entityService.createEntity(entityDto);
+        entityService.createEntity(new EntityDto(null, null, SIMPLE_NAME_2, null, null));
+        entityService.createEntity(new EntityDto(null, null, SIMPLE_NAME_3, null, null));
 
         List<EntityDto> result = entityService.listEntities();
 
-        assertEquals(asList(SIMPLE_NAME_2, SIMPLE_NAME_3), extract(result, on(EntityDto.class).getName()));
+        List<String> expected = asList(SIMPLE_NAME_2, SIMPLE_NAME_3);
+        List<String> actual = extract(result, on(EntityDto.class).getName());
+
+        Collections.sort(expected);
+        Collections.sort(actual);
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void shouldRetrieveAllWorkInProgress() throws IOException {
+        typeService.createFieldType(new AvailableTypeDto("defName",
+                new TypeDto("disp", "desc", Integer.class.getName())), null);
+
+        EntityDto entityDto = new EntityDto();
+
+        entityDto.setName("WIP1");
+        EntityDto result1 = entityService.createEntity(entityDto);
+
+        entityDto.setClassName(null);
+        entityDto.setName("WIP2");
+        EntityDto result2 = entityService.createEntity(entityDto);
+
+        entityService.saveDraftEntityChanges(result1.getId(),
+                DraftBuilder.forNewField("disp", "name", Integer.class.getName()));
+        entityService.saveDraftEntityChanges(result2.getId(),
+                DraftBuilder.forNewField("disp", "name", Integer.class.getName()));
+
+        List<EntityDto> wip = entityService.listWorkInProgress();
+
+        assertNotNull(wip);
+
+        List<String> result = extract(wip, on(EntityDto.class).getName());
+        Collections.sort(result);
+        assertEquals(asList("WIP1", "WIP2"), result);
+    }
+
+    @Test
+    public void testDraftWorkflow() throws IOException {
+        typeService.createFieldType(new AvailableTypeDto("defName",
+                new TypeDto("disp", "desc", Integer.class.getName())), null);
+
+        EntityDto entityDto = new EntityDto();
+        entityDto.setName("DraftTest");
+        entityDto = entityService.createEntity(entityDto);
+
+        final Long entityId = entityDto.getId();
+
+        entityService.saveDraftEntityChanges(entityId,
+                DraftBuilder.forNewField("disp", "f1name", Integer.class.getName()));
+
+        List<FieldDto> fields = entityService.getFields(entityId);
+        assertNotNull(fields);
+        assertEquals(asList("f1name"),
+                extract(fields, on(FieldDto.class).getBasic().getName()));
+
+        // check if abandoning works
+        entityService.abandonChanges(entityId);
+        fields = entityService.getFields(entityId);
+
+        assertNotNull(fields);
+        assertTrue(fields.isEmpty());
+
+        // check add-edit-commit
+        entityService.saveDraftEntityChanges(entityId,
+                DraftBuilder.forNewField("disp", "f1name", Integer.class.getName()));
+
+        fields = entityService.getFields(entityId);
+
+        assertNotNull(fields);
+        assertEquals(1, fields.size());
+        FieldDto field = fields.get(0);
+
+        entityService.saveDraftEntityChanges(entityDto.getId(),
+                DraftBuilder.forFieldEdit(field.getId(), "basic.displayName", "newDisp"));
+
+        fields = entityService.getFields(entityId);
+
+        assertNotNull(fields);
+        assertEquals(asList("newDisp"),
+                extract(fields, on(FieldDto.class).getBasic().getDisplayName()));
+
+        entityService.commitChanges(entityId);
+
+        // check if changes were persisted in db
+        EntityMapping entityFromDb = getEntityMappings().get(0);
+        assertEquals(1, entityFromDb.getFields().size());
+
+        FieldMapping fieldFromDb = entityFromDb.getField("f1name");
+        assertNotNull(fieldFromDb);
+        assertEquals("newDisp", fieldFromDb.getDisplayName());
+
+        // no drafts in db
+        assertTrue(entityService.listWorkInProgress().isEmpty());
     }
 
     private void setUpSecurityContext() {

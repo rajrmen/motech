@@ -20,7 +20,7 @@
 
         <jasmine.server.port>8234</jasmine.server.port>
 
-        <external.dependency.release.tag>r026</external.dependency.release.tag>
+        <external.dependency.release.tag>r027</external.dependency.release.tag>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <modules.root.dir>${basedir}</modules.root.dir>
         <jdk.version>1.7</jdk.version>
@@ -30,6 +30,8 @@
         <spring.integration.version>2.1.0.RELEASE</spring.integration.version>
 
         <activemq.version>5.4.2-${external.dependency.release.tag}</activemq.version>
+
+        <flyway.version>2.3.1</flyway.version>
 
         <check.code.skip>${maven.test.skip}</check.code.skip>
         <pmd.skip>${check.code.skip}</pmd.skip>
@@ -511,6 +513,49 @@
                 <version>2.2.0</version>
                 <scope>provided</scope>
             </dependency>
+            <dependency>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>org.apache.felix.http.api</artifactId>
+                <version>2.2.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>org.apache.felix.scr</artifactId>
+                <version>1.0.0</version>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>javax.servlet</artifactId>
+                        <groupId>org.apache.felix</groupId>
+                    </exclusion>
+                    <exclusion>
+                        <artifactId>org.osgi.compendium</artifactId>
+                        <groupId>org.apache.felix</groupId>
+                    </exclusion>
+                    <exclusion>
+                        <artifactId>org.osgi.core</artifactId>
+                        <groupId>org.apache.felix</groupId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.felix</groupId>
+                        <artifactId>org.apache.felix.shell</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>org.apache.felix.shell</artifactId>
+                <version>1.0.1</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>org.apache.felix.webconsole</artifactId>
+                <version>1.0.0</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.servlet</groupId>
+                <artifactId>jstl</artifactId>
+                <version>1.2</version>
+            </dependency>
             <!-- Apache Commons -->
             <dependency>
                 <groupId>org.apache.commons</groupId>
@@ -695,6 +740,12 @@
                 <artifactId>datanucleus-jodatime</artifactId>
                 <version>3.2.1</version>
             </dependency>
+            <!-- flywaydb -->
+            <dependency>
+                <groupId>com.googlecode.flyway</groupId>
+                <artifactId>flyway-core</artifactId>
+                <version>${flyway.version}</version>
+            </dependency>
             <!-- Fragment -->
             <dependency>
                 <groupId>${project.groupId}</groupId>
@@ -706,6 +757,16 @@
                 <groupId>org.reflections</groupId>
                 <artifactId>org.motechproject.reflections</artifactId>
                 <version>0.9.5-${external.dependency.release.tag}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>org.motechproject.guava</artifactId>
+                <version>0.8.0-${external.dependency.release.tag}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.servicemix.bundles</groupId>
+                <artifactId>org.apache.servicemix.bundles.paranamer</artifactId>
+                <version>2.6_1</version>
             </dependency>
             <dependency>
                 <groupId>org.javassist</groupId>
@@ -929,6 +990,12 @@
                 <groupId>org.subethamail</groupId>
                 <artifactId>org.motechproject.org.subethamail</artifactId>
                 <version>3.1.7-${external.dependency.release.tag}</version>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>activation</artifactId>
+                        <groupId>javax.activation</groupId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>net.sourceforge.cglib</groupId>
@@ -985,6 +1052,12 @@
                 <artifactId>powermock-module-junit4</artifactId>
                 <version>1.4.9</version>
                 <scope>test</scope>
+                <exclusions>
+                    <exclusion>
+                        <groupId>junit</groupId>
+                        <artifactId>junit</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.powermock</groupId>
@@ -1023,6 +1096,10 @@
                         <groupId>org.springframework</groupId>
                         <artifactId>spring-test</artifactId>
                     </exclusion>
+                    <exclusion>
+                        <groupId>org.hamcrest</groupId>
+                        <artifactId>hamcrest-library</artifactId>
+                    </exclusion>
                 </exclusions>
             </dependency>
             <dependency>
@@ -1047,7 +1124,7 @@
             <dependency>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>org.apache.felix.http.jetty</artifactId>
-                <version>2.0.4</version>
+                <version>2.2.0</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
@@ -1105,6 +1182,7 @@
         <module>modules/event-logging/event-logging</module>
         <module>modules/scheduler/scheduler</module>
         <module>modules/mds</module>
+        <module>modules/mds-migration</module>
         <module>utils/http-agent/http-agent-bundle</module>
         <module>modules/osgi-integration-tests/osgi-integration-tests</module>
         <module>modules/metrics/metrics</module>
@@ -1186,6 +1264,11 @@
                             <include>spec/*.js</include>
                         </specIncludes>
                     </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>2.6</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -1437,6 +1520,17 @@
                 </dependencies>
                 <executions>
                     <execution>
+                        <id>enforce-dependency-convergence</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <DependencyConvergence/>
+                            </rules>
+                        </configuration>
+                    </execution>
+                    <execution>
                         <id>enforce-no-package-cycles</id>
                         <goals>
                             <goal>enforce</goal>
@@ -1460,8 +1554,8 @@
             <build>
                 <plugins>
                     <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-resources-plugin</artifactId>
-                        <version>2.6</version>
                         <executions>
                             <execution>
                                 <id>copy-test-config-files</id>

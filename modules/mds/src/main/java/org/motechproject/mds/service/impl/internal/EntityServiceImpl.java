@@ -5,6 +5,8 @@ import org.motechproject.mds.domain.AvailableFieldTypeMapping;
 import org.motechproject.mds.domain.EntityDraft;
 import org.motechproject.mds.domain.EntityMapping;
 import org.motechproject.mds.domain.FieldMapping;
+import org.motechproject.mds.domain.LookupMapping;
+import org.motechproject.mds.domain.TypeSettingsMapping;
 import org.motechproject.mds.domain.TypeValidationMapping;
 import org.motechproject.mds.dto.AdvancedSettingsDto;
 import org.motechproject.mds.dto.AvailableTypeDto;
@@ -13,6 +15,7 @@ import org.motechproject.mds.dto.FieldBasicDto;
 import org.motechproject.mds.dto.FieldDto;
 import org.motechproject.mds.dto.FieldInstanceDto;
 import org.motechproject.mds.dto.FieldValidationDto;
+import org.motechproject.mds.dto.LookupDto;
 import org.motechproject.mds.dto.SecuritySettingsDto;
 import org.motechproject.mds.dto.SettingDto;
 import org.motechproject.mds.dto.TypeDto;
@@ -24,10 +27,12 @@ import org.motechproject.mds.ex.NoSuchTypeException;
 import org.motechproject.mds.repository.AllEntityDrafts;
 import org.motechproject.mds.repository.AllEntityMappings;
 import org.motechproject.mds.repository.AllFieldTypes;
+import org.motechproject.mds.repository.AllTypeSettingsMappings;
 import org.motechproject.mds.repository.AllTypeValidationMappings;
 import org.motechproject.mds.service.BaseMdsService;
 import org.motechproject.mds.service.EntityService;
 import org.motechproject.mds.service.MDSConstructor;
+import org.motechproject.mds.util.ClassName;
 import org.motechproject.mds.util.FieldHelper;
 import org.motechproject.mds.web.DraftData;
 import org.motechproject.mds.web.ExampleData;
@@ -58,6 +63,7 @@ public class EntityServiceImpl extends BaseMdsService implements EntityService {
     private AllFieldTypes allFieldTypes;
     private AllTypeValidationMappings allTypeValidationMappings;
     private AllEntityDrafts allEntityDrafts;
+    private AllTypeSettingsMappings allTypeSettingsMappings;
 
     // TODO remove this once everything is in db
     private ExampleData exampleData = new ExampleData();
@@ -65,17 +71,24 @@ public class EntityServiceImpl extends BaseMdsService implements EntityService {
     @Override
     @Transactional
     public EntityDto createEntity(EntityDto entity) throws IOException {
-        if (entity.isReadOnly()) {
-            throw new EntityReadOnlyException();
+        String packageName = ClassName.getPackage(entity.getClassName());
+        boolean fromUI = StringUtils.isEmpty(packageName);
+
+        if (fromUI) {
+            // in this situation entity.getName() returns a simple name of class
+            String className = String.format("%s.%s", Packages.ENTITY, entity.getName());
+            entity.setClassName(className);
         }
 
-        if (allEntityMappings.containsEntity(entity.getName())) {
+        if (allEntityMappings.containsEntity(entity.getClassName())) {
             throw new EntityAlreadyExistException();
         }
 
-        String className = String.format("%s.%s", Packages.ENTITY, entity.getName());
-        EntityMapping entityMapping = allEntityMappings.save(className);
-        constructor.constructEntity(entityMapping);
+        EntityMapping entityMapping = allEntityMappings.save(entity);
+
+        if (fromUI) {
+            constructor.constructEntity(entityMapping);
+        }
 
         return entityMapping.toDto();
     }
@@ -158,17 +171,19 @@ public class EntityServiceImpl extends BaseMdsService implements EntityService {
         TypeValidationMapping fieldValidation = allTypeValidationMappings.createValidationInstance(availableType);
         FieldValidationDto validationDto = (fieldValidation == null) ? null : fieldValidation.toDto();
 
-        // TODO move to db
-        List<SettingDto> fieldSettings = exampleData.getTypeSettings(fieldType);
+        List<TypeSettingsMapping> fieldSettings = allTypeSettingsMappings.createEmptySettingsInstance(availableType);
+        List<SettingDto> settingDtos = new ArrayList<>();
+        for (TypeSettingsMapping typeSettings : fieldSettings) {
+            settingDtos.add(typeSettings.toDto());
+        }
 
         FieldDto field = new FieldDto();
         field.setBasic(basic);
         field.setType(fieldType);
         field.setValidation(validationDto);
-        field.setSettings(fieldSettings);
-        field.setSettings(fieldSettings);
+        field.setSettings(settingDtos);
 
-        FieldMapping fieldMapping = new FieldMapping(field, draft, availableType, fieldValidation);
+        FieldMapping fieldMapping = new FieldMapping(field, draft, availableType, fieldValidation, fieldSettings);
 
         draft.addField(fieldMapping);
 
@@ -234,8 +249,26 @@ public class EntityServiceImpl extends BaseMdsService implements EntityService {
     @Override
     @Transactional
     public AdvancedSettingsDto getAdvancedSettings(Long entityId) {
-        EntityMapping entity = getEntityDraft(entityId);
-        return entity.advancedSettingsDto();
+        return getAdvancedSettings(entityId, false);
+    }
+
+    @Override
+    @Transactional
+    public AdvancedSettingsDto getAdvancedSettings(Long entityId, boolean committed) {
+        if (committed) {
+            EntityMapping entity = allEntityMappings.getEntityById(entityId);
+            return entity.advancedSettingsDto();
+        } else {
+            EntityMapping entity = getEntityDraft(entityId);
+            return entity.advancedSettingsDto();
+        }
+    }
+
+    @Override
+    @Transactional
+    public void addLookupToEntity(Long entityId, LookupDto lookup) {
+        EntityMapping entityMapping = allEntityMappings.getEntityById(entityId);
+        entityMapping.addLookup(new LookupMapping(lookup));
     }
 
     @Override
@@ -277,6 +310,7 @@ public class EntityServiceImpl extends BaseMdsService implements EntityService {
             entity = ((EntityDraft) entity).getParentEntity();
         }
 
+        allEntityDrafts.deleteAllDraftsForEntity(entity);
         allEntityMappings.delete(entity);
     }
 
@@ -303,6 +337,12 @@ public class EntityServiceImpl extends BaseMdsService implements EntityService {
 
     @Override
     @Transactional
+    public EntityDto getEntityByClassName(String className) {
+         EntityMapping entity = allEntityMappings.getEntityByClassName(className);
+         return (entity == null) ? null : entity.toDto();
+    }
+
+    @Override
     public List<FieldDto> getFields(Long entityId) {
         EntityMapping entity = getEntityDraft(entityId);
 
@@ -323,7 +363,7 @@ public class EntityServiceImpl extends BaseMdsService implements EntityService {
 
         FieldMapping field = entity.getField(name);
 
-        if (field  == null) {
+        if (field == null) {
             throw new FieldNotFoundException();
         }
 
@@ -402,5 +442,10 @@ public class EntityServiceImpl extends BaseMdsService implements EntityService {
     @Autowired
     public void setAllTypeValidationMappings(AllTypeValidationMappings allTypeValidationMappings) {
         this.allTypeValidationMappings = allTypeValidationMappings;
+    }
+
+    @Autowired
+    public void setAllTypeSettingsMappings(AllTypeSettingsMappings allTypeSettingsMappings) {
+        this.allTypeSettingsMappings = allTypeSettingsMappings;
     }
 }
