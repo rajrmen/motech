@@ -41,7 +41,7 @@ public class AllEntityMappings extends BaseMdsRepository {
         EntityMapping entityMapping = getEntityById(id);
 
         if (entityMapping != null) {
-            if (entityMapping.isReadOnly()) {
+            if (entityMapping.isDDE()) {
                 throw new EntityReadOnlyException();
             }
 

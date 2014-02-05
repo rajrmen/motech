@@ -165,7 +165,7 @@ public class EntityMapping {
     }
 
     @NotPersistent
-    public boolean isReadOnly() {
+    public boolean isDDE() {
         return isNotBlank(module) || isNotBlank(namespace);
     }
 

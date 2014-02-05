@@ -274,7 +274,7 @@ public class EntityServiceImpl extends BaseMdsService implements EntityService {
 
         if (entity == null) {
             throw new EntityNotFoundException();
-        } else if (entity.isReadOnly()) {
+        } else if (entity.isDDE()) {
             throw new EntityReadOnlyException();
         }
 
