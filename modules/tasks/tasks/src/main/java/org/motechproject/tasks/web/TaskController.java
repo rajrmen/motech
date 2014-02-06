@@ -56,6 +56,15 @@ public class TaskController {
     @RequestMapping(value = "/task", method = RequestMethod.GET)
     @ResponseBody
     public List<Task> getAllTasks() {
+        try {
+            Class<?> clazz = getClass().getClassLoader().loadClass("org.motechproject.event.aggregation.model.rule.MdsExample");
+            Object instance = clazz.newInstance();
+
+            System.out.println(instance);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         return taskService.getAllTasks();
     }
 

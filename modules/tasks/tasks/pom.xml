@@ -156,6 +156,7 @@
                             org.springframework.web.servlet.mvc,
                             org.springframework.web.servlet.support,
                             org.springframework.web.servlet.view,
+                            org.motechproject.event.aggregation.model.rule,
                             *
                         </Import-Package>
                     </instructions>

@@ -43,12 +43,21 @@ class EntityProcessor extends AbstractProcessor {
             String name = getName(annotation, clazz);
             String module = getModule(annotation);
             String namespace = getNamespace(annotation);
+            String className = clazz.getName();
 
             try {
-                EntityDto entity = new EntityDto(clazz.getName(), name, module, namespace);
-                EntityDto db = entityService.createEntity(entity);
+                EntityDto fromDb = entityService.getEntityByClassName(className);
 
-                findFields(clazz, db);
+                if (fromDb == null) {
+                    LOGGER.debug("DDE for {} already exists, updating if necessary", className);
+                } else {
+                    LOGGER.debug("Creating DDE for {}", className);
+
+                    EntityDto entity = new EntityDto(className, name, module, namespace);
+                    fromDb = entityService.createEntity(entity);
+                }
+
+                findFields(clazz, fromDb);
             } catch (Exception e) {
                 LOGGER.error(
                         "Failed to create an entity for class {} from bundle {}",

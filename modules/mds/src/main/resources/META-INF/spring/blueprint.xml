@@ -9,4 +9,8 @@
     <import resource="classpath*:META-INF/motech/mdsContext.xml"/>
 
     <osgi:reference id="configurationServiceOsgi" interface="org.motechproject.config.service.ConfigurationService"/>
+
+    <osgi:service ref="mdsWeavingHook" interface="org.osgi.framework.hooks.weaving.WeavingHook"/>
+
+    <osgi:service ref="mdsResolverHook" interface="org.osgi.framework.hooks.resolver.ResolverHook"/>
 </beans>
