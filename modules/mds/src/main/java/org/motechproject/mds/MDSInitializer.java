@@ -15,14 +15,10 @@ import javax.jdo.PersistenceManagerFactory;
 import java.io.IOException;
 
 /**
-<<<<<<< HEAD
- * The purpose of this class is to buildInfrastructure classes for all entities that are in MDS database.
-=======
  * The purpose of this class is to build classes for all entities that are in MDS database at startup.
  * It uses the {@link org.motechproject.mds.service.MDSConstructor} for generation. Since @PostConstruct does
  * not work with @Transactional, we use a {@link org.springframework.transaction.support.TransactionCallbackWithoutResult}
  * implementation.
->>>>>>> master
  */
 @Component
 public class MDSInitializer {

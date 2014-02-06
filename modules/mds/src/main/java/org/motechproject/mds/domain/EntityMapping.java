@@ -4,6 +4,7 @@ import org.apache.commons.lang.StringUtils;
 import org.motechproject.mds.dto.AdvancedSettingsDto;
 import org.motechproject.mds.dto.EntityDto;
 import org.motechproject.mds.dto.LookupDto;
+import org.motechproject.mds.dto.RestOptionsDto;
 import org.motechproject.mds.util.ClassName;
 
 import javax.jdo.annotations.Discriminator;
@@ -24,6 +25,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
+import static org.apache.commons.lang.StringUtils.defaultIfBlank;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.motechproject.mds.constants.Constants.Util.TRUE;
 
@@ -46,6 +48,9 @@ public class EntityMapping {
     private String className;
 
     @Persistent
+    private String name;
+
+    @Persistent
     private String module;
 
     @Persistent
@@ -65,6 +70,9 @@ public class EntityMapping {
 
     private Long entityVersion;
 
+    @Persistent(dependent = TRUE)
+    private RestOptionsMapping restOptions;
+
     public EntityMapping() {
         this(null);
     }
@@ -74,13 +82,18 @@ public class EntityMapping {
     }
 
     public EntityMapping(String className, String module, String namespace) {
+        this(className, ClassName.getSimpleName(className), module, namespace);
+    }
+
+    public EntityMapping(String className, String name, String module, String namespace) {
         this.className = className;
+        this.name = name;
         this.module = module;
         this.namespace = namespace;
     }
 
     public EntityDto toDto() {
-        return new EntityDto(id, ClassName.getSimpleName(className), module, namespace);
+        return new EntityDto(id, className, getName(), module, namespace);
     }
 
     public Long getId() {
@@ -97,6 +110,14 @@ public class EntityMapping {
 
     public void setClassName(String className) {
         this.className = className;
+    }
+
+    public String getName() {
+        return defaultIfBlank(name, ClassName.getSimpleName(className));
+    }
+
+    public void setName(String name) {
+        this.name = defaultIfBlank(name, ClassName.getSimpleName(className));
     }
 
     public String getModule() {
@@ -133,16 +154,6 @@ public class EntityMapping {
 
     public void setLookups(List<LookupMapping> lookups) {
         this.lookups = lookups;
-    }
-
-
-    public LookupMapping getLookup(Long lookupId) {
-        for (LookupMapping lookup : lookups) {
-            if (Objects.equals(lookup.getId(), lookupId)) {
-                return lookup;
-            }
-        }
-        return null;
     }
 
     public List<EntityDraft> getDrafts() {
@@ -186,6 +197,7 @@ public class EntityMapping {
                 return field;
             }
         }
+
         return null;
     }
 
@@ -247,6 +259,10 @@ public class EntityMapping {
             copy.setEntity(this);
             addLookup(copy);
         }
+
+        if (draft.getRestOptions() != null) {
+            restOptions = draft.getRestOptions().copy();
+        }
     }
 
     @NotPersistent
@@ -258,18 +274,35 @@ public class EntityMapping {
     public AdvancedSettingsDto advancedSettingsDto() {
         AdvancedSettingsDto advancedSettingsDto = new AdvancedSettingsDto();
 
+        RestOptionsMapping restOptionsMapping = getRestOptions();
+        RestOptionsDto restDto = (restOptionsMapping != null) ? restOptionsMapping.toDto() : new RestOptionsDto();
+
         List<LookupDto> indexes = new ArrayList<>();
         for (LookupMapping lookup : getLookups()) {
             indexes.add(lookup.toDto());
+            if (restDto != null && lookup.isExposedViaRest()) {
+                restDto.addLookup(lookup.getId());
+            }
         }
 
         advancedSettingsDto.setIndexes(indexes);
         advancedSettingsDto.setEntityId(getId());
 
+        advancedSettingsDto.setRestOptions(restDto);
+
         return advancedSettingsDto;
     }
 
     public void updateAdvancedSetting(AdvancedSettingsDto advancedSettings) {
+        RestOptionsMapping restOptionsMapping = getRestOptions();
+
+        if (restOptionsMapping == null) {
+            restOptionsMapping = new RestOptionsMapping(advancedSettings.getRestOptions());
+            setRestOptions(restOptionsMapping);
+        } else {
+            restOptionsMapping.update(advancedSettings.getRestOptions());
+        }
+
         // deletion
         for (Iterator<LookupMapping> it = getLookups().iterator(); it.hasNext(); ) {
             LookupMapping lookup = it.next();
@@ -296,5 +329,19 @@ public class EntityMapping {
                 lookup.update(lookupDto);
             }
         }
+
+        // update exposed via REST for lookups
+        for (LookupMapping lookup : getLookups()) {
+            boolean exposedViaRest = advancedSettings.getRestOptions().getLookupIds().contains(lookup.getId());
+            lookup.setExposedViaRest(exposedViaRest);
+        }
+    }
+
+    public RestOptionsMapping getRestOptions() {
+        return restOptions;
+    }
+
+    public void setRestOptions(RestOptionsMapping restOptions) {
+        this.restOptions = restOptions;
     }
 }

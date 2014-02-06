@@ -60,8 +60,6 @@ public class MDSConstructorImpl extends BaseMdsService implements MDSConstructor
 
             EnhancedClassData enhancedClassData = enhancer.enhance(mapping, classData.getBytecode(), tmpClassLoader);
 
-            MotechClassPool.registerEnhancedData(enhancedClassData);
-
             Class<?> clazz = MDSClassLoader.getInstance().defineClass(enhancedClassData);
 
             JDOMetadata jdoMetadata = metadataBuilder.createBaseEntity(
@@ -82,7 +80,7 @@ public class MDSConstructorImpl extends BaseMdsService implements MDSConstructor
         List<EntityMapping> mappings = allEntityMappings.getAllEntities();
 
         for (EntityMapping mapping : mappings) {
-            if (!(mapping instanceof EntityDraft)) {
+            if (!mapping.isDraft() && !mapping.isDDE()) {
                 constructEntity(mapping, tmpClassLoader);
             }
         }

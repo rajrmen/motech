@@ -1,13 +1,13 @@
 package org.motechproject.mds.dto;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * The <code>LookupDto</code> class contains information about single lookup defined by user
@@ -16,27 +16,29 @@ public class LookupDto {
     private Long id;
     private String lookupName;
     private boolean singleObjectReturn;
+    private boolean exposedViaRest;
     private List<String> fieldList;
 
     public LookupDto() {
-        this(null, false);
+        this(null, false, false);
     }
 
-    public LookupDto(String lookupName, boolean singleObjectReturn) {
-        this(lookupName, singleObjectReturn, null);
+    public LookupDto(String lookupName, boolean singleObjectReturn, boolean exposedViaRest) {
+        this(lookupName, singleObjectReturn, exposedViaRest, null);
     }
 
-    public LookupDto(String lookupName, boolean singleObjectReturn,
+    public LookupDto(String lookupName, boolean singleObjectReturn, boolean exposedViaRest,
                      List<String> fieldList) {
         this.lookupName = lookupName;
         this.singleObjectReturn = singleObjectReturn;
+        this.exposedViaRest = exposedViaRest;
         this.fieldList = CollectionUtils.isEmpty(fieldList)
                 ? new LinkedList<String>()
                 : fieldList;
     }
 
-    public LookupDto(Long id, String lookupName, boolean singleObjectReturn) {
-        this(lookupName, singleObjectReturn);
+    public LookupDto(Long id, String lookupName, boolean singleObjectReturn, boolean exposedViaRest) {
+        this(lookupName, singleObjectReturn, exposedViaRest);
         this.id = id;
     }
 
@@ -54,6 +56,14 @@ public class LookupDto {
 
     public void setSingleObjectReturn(boolean singleObjectReturn) {
         this.singleObjectReturn = singleObjectReturn;
+    }
+
+    public boolean isExposedViaRest() {
+        return exposedViaRest;
+    }
+
+    public void setExposedViaRest(boolean isExposedViaRest) {
+        this.exposedViaRest = isExposedViaRest;
     }
 
     public void addField(String field) {
@@ -101,8 +111,19 @@ public class LookupDto {
      * {@inheritDoc}
      */
     @Override
-    public boolean equals(Object obj) {
-        return EqualsBuilder.reflectionEquals(this, obj);
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+
+        if (!(o instanceof LookupDto)) {
+            return false;
+        }
+
+        LookupDto other = (LookupDto) o;
+
+        return singleObjectReturn == other.singleObjectReturn && Objects.equals(fieldList, other.fieldList) &&
+                Objects.equals(lookupName, other.lookupName) && exposedViaRest == other.exposedViaRest;
     }
 
     /**

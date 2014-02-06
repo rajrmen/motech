@@ -139,6 +139,10 @@
             <artifactId>org.apache.felix.framework</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.apache.servicemix.bundles</groupId>
+            <artifactId>org.apache.servicemix.bundles.paranamer</artifactId>
+        </dependency>
     </dependencies>
     <build>
         <resources>

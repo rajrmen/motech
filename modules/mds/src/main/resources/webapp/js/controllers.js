@@ -104,7 +104,7 @@
 
             if ($scope.advancedSettings.indexes) {
                 angular.forEach($scope.advancedSettings.indexes, function (lookup, index) {
-                    if ($.inArray(lookup.lookupName, $scope.advancedSettings.restOptions.lookupIds) !== -1) {
+                    if ($.inArray(lookup.id, $scope.advancedSettings.restOptions.lookupIds) !== -1) {
                         $scope.selectedEntityRestLookups[index] = true;
                     } else {
                         $scope.selectedEntityRestLookups[index] = false;
@@ -340,11 +340,14 @@
                                 entity.namespace
                             ))
                         : undefined,
-                    info = (module || namespace)
-                        ? angular.element('<div>').append(module).append(namespace)
+                    info1 = module
+                        ? angular.element('<div>').append(module)
                         : undefined,
-                    parent = (name || info)
-                        ? angular.element('<div>').append(name).append(info)
+                    info2 = namespace
+                        ? angular.element('<div>').append(namespace)
+                        : undefined,
+                    parent = (name || info1 || info2)
+                        ? angular.element('<div>').append(name).append(info1).append(info2)
                         : undefined;
 
                 return parent || $scope.msg('mds.error');
@@ -537,17 +540,17 @@
                 values: {
                     path: 'restOptions.${0}'.format(value ? 'addLookup' : 'removeLookup'),
                     advanced: true,
-                    value: [lookup.lookupName]
+                    value: [lookup.id]
                 }
             }, function () {
                 $scope.safeApply(function () {
                     if (value) {
                         $scope.advancedSettings.restOptions.lookupIds.push(
-                            lookup.lookupName
+                            lookup.id
                         );
                     } else {
                         $scope.advancedSettings.restOptions.lookupIds.removeObject(
-                            lookup.lookupName
+                            lookup.id
                         );
                     }
                 });

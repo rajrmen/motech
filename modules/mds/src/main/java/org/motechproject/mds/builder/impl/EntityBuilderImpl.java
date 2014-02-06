@@ -17,6 +17,7 @@ import org.motechproject.mds.domain.AvailableFieldTypeMapping;
 import org.motechproject.mds.domain.EntityMapping;
 import org.motechproject.mds.domain.FieldMapping;
 import org.motechproject.mds.ex.EntityCreationException;
+import org.motechproject.mds.javassist.JavassistHelper;
 import org.motechproject.mds.javassist.MotechClassPool;
 import org.springframework.stereotype.Component;
 
@@ -58,12 +59,16 @@ public class EntityBuilderImpl implements EntityBuilder {
     private void addFields(CtClass ctClass, List<FieldMapping> fields) throws NotFoundException, CannotCompileException {
         for (FieldMapping field : fields) {
             String fieldName = field.getName();
-            AvailableFieldTypeMapping fieldType = field.getType();
+            String typeClass = field.getType().getTypeClass();
 
-            CtClass type = MotechClassPool.getDefault().get(fieldType.getTypeClass());
+            CtClass type = MotechClassPool.getDefault().get(typeClass);
 
             CtField ctField = new CtField(type, fieldName, ctClass);
             ctField.setModifiers(Modifier.PRIVATE);
+
+            if (List.class.getName().equals(typeClass)) {
+                ctField.setGenericSignature(JavassistHelper.genericFieldSignature(List.class, String.class));
+            }
 
             if (StringUtils.isBlank(field.getDefaultValue())) {
                 ctClass.addField(ctField);

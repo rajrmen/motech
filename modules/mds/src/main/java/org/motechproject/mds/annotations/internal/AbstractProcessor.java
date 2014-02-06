@@ -29,6 +29,10 @@ abstract class AbstractProcessor {
 
     protected abstract void process(AnnotatedElement element);
 
+    public void execute() {
+        execute(null);
+    }
+
     public void execute(Bundle bundle) {
         this.bundle = bundle;
         Class<? extends Annotation> annotation = getAnnotation();
@@ -46,6 +50,10 @@ abstract class AbstractProcessor {
         return bundle;
     }
 
+    void setBundle(Bundle bundle) {
+        this.bundle = bundle;
+    }
+
     protected Reflections configureReflection(Scanner... scanners) {
         ConfigurationBuilder configuration = new ConfigurationBuilder();
         configuration.addUrls(resolveLocation());
@@ -56,7 +64,10 @@ abstract class AbstractProcessor {
     }
 
     protected URL resolveLocation() {
-        LOGGER.debug("Resolving the following file location for bundle: {}", bundle.getSymbolicName());
+        LOGGER.debug(
+                "Resolving the following file location for bundle: {}",
+                bundle.getSymbolicName()
+        );
         URL resolved;
 
         try {
@@ -66,7 +77,10 @@ abstract class AbstractProcessor {
             resolved = null;
         }
 
-        LOGGER.debug("Resolved the following file location for bundle: {}", bundle.getSymbolicName());
+        LOGGER.debug(
+                "Resolved the following file location for bundle: {}",
+                bundle.getSymbolicName()
+        );
 
         return resolved;
     }
@@ -99,7 +113,7 @@ abstract class AbstractProcessor {
         LOGGER.debug("Searching for methods with annotations: {}", annotation.getName());
 
         Reflections reflections = configureReflection(new MethodAnnotationsScanner());
-        List<Method> annotatedMethods = new ArrayList(reflections.getMethodsAnnotatedWith(annotation));
+        List<Method> annotatedMethods = new ArrayList<>(reflections.getMethodsAnnotatedWith(annotation));
 
         LOGGER.debug("Searched for methods with annotations: {}", annotation.getName());
         LOGGER.trace("Found {} methods with annotations: {}", annotatedMethods.size(), annotation.getName());

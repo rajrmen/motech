@@ -28,6 +28,6 @@ public class ClassData {
     }
 
     public int getLength() {
-            return bytecode.length;
-        }
+        return bytecode.length;
+    }
 }

@@ -6,6 +6,7 @@ import javassist.NotFoundException;
 import org.eclipse.gemini.blueprint.util.OsgiBundleUtils;
 import org.motechproject.mds.domain.EntityMapping;
 import org.motechproject.mds.ex.MdsException;
+import org.motechproject.mds.javassist.JavassistHelper;
 import org.motechproject.mds.javassist.MotechClassPool;
 import org.motechproject.mds.repository.AllEntityMappings;
 import org.motechproject.mds.service.BaseMdsService;
@@ -17,6 +18,7 @@ import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -49,6 +51,7 @@ public class JarGeneratorServiceImpl extends BaseMdsService implements JarGenera
     private BundleContext bundleContext;
 
     @Override
+    @Transactional
     public void regenerateMdsDataBundle() {
         File tmpBundleFile;
 
@@ -86,20 +89,22 @@ public class JarGeneratorServiceImpl extends BaseMdsService implements JarGenera
         try (JarOutputStream output = new JarOutputStream(fileOutput, manifest)) {
             List<EntityMapping> mappings = entityMappings.getAllEntities();
             for (EntityMapping mapping : mappings) {
-                String className = mapping.getClassName();
+                if (!mapping.isDraft() && !mapping.isDDE()) {
+                    String className = mapping.getClassName();
 
-                String[] classes = new String[]{
-                        mapping.getClassName(), getInterfaceName(className),
-                        getServiceName(className), getRepositoryName(className)
-                };
+                    String[] classes = new String[]{
+                            mapping.getClassName(), getInterfaceName(className),
+                            getServiceName(className), getRepositoryName(className)
+                    };
 
-                for (String c : classes) {
-                    CtClass clazz = MotechClassPool.getDefault().get(c);
+                    for (String c : classes) {
+                        CtClass clazz = MotechClassPool.getDefault().get(c);
 
-                    JarEntry entry = new JarEntry(createClassPath(c));
-                    output.putNextEntry(entry);
-                    output.write(clazz.toBytecode());
-                    output.closeEntry();
+                        JarEntry entry = new JarEntry(createClassPath(c));
+                        output.putNextEntry(entry);
+                        output.write(clazz.toBytecode());
+                        output.closeEntry();
+                    }
                 }
             }
         }
@@ -161,7 +166,7 @@ public class JarGeneratorServiceImpl extends BaseMdsService implements JarGenera
     }
 
     private String createClassPath(String className) {
-        return className.replace('.', '/') + ".class";
+        return JavassistHelper.toClassPath(className) + ".class";
     }
 
     @Autowired

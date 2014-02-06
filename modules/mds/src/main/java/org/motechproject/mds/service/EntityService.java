@@ -4,6 +4,7 @@ import org.motechproject.mds.dto.AdvancedSettingsDto;
 import org.motechproject.mds.dto.EntityDto;
 import org.motechproject.mds.dto.FieldDto;
 import org.motechproject.mds.dto.FieldInstanceDto;
+import org.motechproject.mds.dto.LookupDto;
 import org.motechproject.mds.dto.SecuritySettingsDto;
 import org.motechproject.mds.web.DraftData;
 import org.motechproject.mds.web.domain.EntityRecord;
@@ -26,6 +27,9 @@ public interface EntityService {
 
     List<EntityDto> listWorkInProgress();
     EntityDto getEntityForEdit(Long entityId);
+    EntityDto getEntityByClassName(String className);
+
+    void addLookupToEntity(Long entityId, LookupDto lookup);
 
     // TODO: replace with entity.getFields
     List<FieldDto> getFields(Long entityId);
@@ -40,6 +44,7 @@ public interface EntityService {
 
     // TODO: replace with entity.getAdvancedSettings
     AdvancedSettingsDto getAdvancedSettings(Long entityId);
+    AdvancedSettingsDto getAdvancedSettings(Long entityId, boolean committed);
     // TODO: replace with entity.getSecuritySettings
     SecuritySettingsDto getSecuritySettings(Long entityId);
 
@@ -47,4 +52,6 @@ public interface EntityService {
     List<FieldInstanceDto> getInstanceFields(Long instanceId);
     List<HistoryRecord> getInstanceHistory(Long instanceId);
     List<PreviousRecord> getPreviousRecords(Long instanceId);
+
+    void addFields(EntityDto entity, List<FieldDto> fields);
 }
