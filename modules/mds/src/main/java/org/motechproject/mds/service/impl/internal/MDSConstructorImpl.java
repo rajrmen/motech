@@ -95,8 +95,6 @@ public class MDSConstructorImpl extends BaseMdsService implements MDSConstructor
         }
     }
 
-
-
     @Autowired
     public void setEnhancer(MdsJDOEnhancer enhancer) {
         this.enhancer = enhancer;

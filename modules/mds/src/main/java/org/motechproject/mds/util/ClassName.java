@@ -29,6 +29,10 @@ public final class ClassName {
         return idx < 0 ? EMPTY : str.substring(0, idx);
     }
 
+    public static String getEntityName(String className) {
+        return String.format("%s.%s", Packages.ENTITY, getSimpleName(className));
+    }
+
     public static String getRepositoryName(String className) {
         return String.format("%s.All%ss", Packages.REPOSITORY, getSimpleName(className));
     }

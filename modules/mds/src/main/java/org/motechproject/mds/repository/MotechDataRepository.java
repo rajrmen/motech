@@ -1,5 +1,7 @@
 package org.motechproject.mds.repository;
 
+import org.springframework.stereotype.Repository;
+
 import javax.jdo.Query;
 import java.util.Collection;
 import java.util.List;
@@ -12,12 +14,15 @@ import java.util.List;
  *
  * @param <T> the type of entity schema.
  */
+@Repository
 public abstract class MotechDataRepository<T> extends BaseMdsRepository {
     private Class<T> type;
 
     public MotechDataRepository(Class<T> type) {
         this.type = type;
     }
+
+    public MotechDataRepository() { }
 
     public T create(T object) {
         return getPersistenceManager().makePersistent(object);
@@ -30,6 +35,14 @@ public abstract class MotechDataRepository<T> extends BaseMdsRepository {
         query.setUnique(true);
 
         return type.cast(query.execute(value));
+    }
+
+    public List<T> getAll(long fromIncl, long toExcl) {
+        Query query = getPersistenceManager().newQuery(type);
+        query.setRange(fromIncl, toExcl);
+        Collection collection = (Collection) query.execute();
+
+        return cast(type, collection);
     }
 
     public List<T> retrieveAll() {

@@ -1800,7 +1800,7 @@
     /**
     * The DataBrowserCtrl controller is used on the 'Data Browser' view.
     */
-    mds.controller('DataBrowserCtrl', function ($scope, $http, Entities,Instances) {
+    mds.controller('DataBrowserCtrl', function ($scope, $http, Entities, Instances) {
         workInProgress.setActualEntity(Entities, undefined);
 
         /**
@@ -1869,7 +1869,7 @@
         */
         $scope.addInstance = function(module, entityName) {
             blockUI();
-            $scope.addedEntity  = Entities.getEntity({
+            $scope.addedEntity = Entities.getEntity({
                 param:  module,
                 params: entityName},
                 function () {
@@ -1917,6 +1917,18 @@
                 $scope.historyFields = undefined;
                 $scope.unselectEntity();
         };
+
+        /**
+        *
+        * Description of this function
+        *
+        */
+        $scope.addEntityInstance = function () {
+                Instances.save(function () {
+
+                });
+        };
+
 
         /**
         * Find field setting with given name.

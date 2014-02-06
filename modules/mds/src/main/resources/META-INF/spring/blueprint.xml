@@ -7,6 +7,7 @@
         http://www.eclipse.org/gemini/blueprint/schema/blueprint http://www.eclipse.org/gemini/blueprint/schema/blueprint/gemini-blueprint.xsd">
 
     <import resource="classpath*:META-INF/motech/mdsContext.xml"/>
+    <import resource="classpath*:META-INF/motech/mdsCommonContext.xml"/>
 
     <osgi:reference id="configurationServiceOsgi" interface="org.motechproject.config.service.ConfigurationService"/>
 </beans>

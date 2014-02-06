@@ -12,7 +12,6 @@ import org.motechproject.mds.dto.EntityDto;
 import org.motechproject.mds.dto.FieldDto;
 import org.motechproject.mds.dto.TypeDto;
 import org.motechproject.mds.ex.EntityNotFoundException;
-import org.motechproject.mds.ex.EntityReadOnlyException;
 import org.motechproject.mds.testutil.DraftBuilder;
 import org.motechproject.mds.web.DraftData;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -104,7 +103,7 @@ public class EntityServiceIT extends BaseIT {
     }
 
     @Test
-    public void shouldSaveEntityWithGivenLookups() throws IOException {
+    public void shouldSaveEntityWithGivenLookups() throws IOException, IllegalAccessException, ClassNotFoundException, InstantiationException {
         EntityDto entityDto = new EntityDto();
         entityDto.setName("myEntity");
 
@@ -124,7 +123,7 @@ public class EntityServiceIT extends BaseIT {
     }
 
     @Test
-    public void shouldRetrieveAllEntities() throws IOException {
+    public void shouldRetrieveAllEntities() throws IOException, IllegalAccessException, ClassNotFoundException, InstantiationException {
         entityService.createEntity(new EntityDto(null, null, SIMPLE_NAME_2, null, null));
         entityService.createEntity(new EntityDto(null, null, SIMPLE_NAME_3, null, null));
 
@@ -140,7 +139,7 @@ public class EntityServiceIT extends BaseIT {
     }
 
     @Test
-    public void shouldRetrieveAllWorkInProgress() throws IOException {
+    public void shouldRetrieveAllWorkInProgress() throws IOException, IllegalAccessException, ClassNotFoundException, InstantiationException {
         typeService.createFieldType(new AvailableTypeDto("defName",
                 new TypeDto("disp", "desc", Integer.class.getName())), null);
 
@@ -168,7 +167,7 @@ public class EntityServiceIT extends BaseIT {
     }
 
     @Test
-    public void testDraftWorkflow() throws IOException {
+    public void testDraftWorkflow() throws IOException, IllegalAccessException, ClassNotFoundException, InstantiationException {
         typeService.createFieldType(new AvailableTypeDto("defName",
                 new TypeDto("disp", "desc", Integer.class.getName())), null);
 

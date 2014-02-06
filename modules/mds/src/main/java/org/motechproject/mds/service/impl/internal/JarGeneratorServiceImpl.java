@@ -3,6 +3,12 @@ package org.motechproject.mds.service.impl.internal;
 import javassist.CannotCompileException;
 import javassist.CtClass;
 import javassist.NotFoundException;
+import org.apache.commons.io.IOUtils;
+import org.apache.velocity.Template;
+import org.apache.velocity.VelocityContext;
+import org.apache.velocity.app.VelocityEngine;
+import org.apache.velocity.runtime.RuntimeConstants;
+import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 import org.eclipse.gemini.blueprint.util.OsgiBundleUtils;
 import org.motechproject.mds.domain.EntityMapping;
 import org.motechproject.mds.ex.MdsException;
@@ -16,6 +22,8 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,10 +33,14 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringWriter;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.jar.Attributes;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
@@ -78,6 +90,9 @@ public class JarGeneratorServiceImpl extends BaseMdsService implements JarGenera
         }
     }
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(JarGeneratorServiceImpl.class);
+
+
     @Override
     @Transactional
     public File generate() throws IOException, NotFoundException, CannotCompileException {
@@ -89,9 +104,11 @@ public class JarGeneratorServiceImpl extends BaseMdsService implements JarGenera
 
         try (JarOutputStream output = new JarOutputStream(fileOutput, manifest)) {
             List<EntityMapping> mappings = entityMappings.getAllEntities();
+            List<String> classNames = new ArrayList<>();
             for (EntityMapping mapping : mappings) {
                 if (!mapping.isDraft() && !mapping.isReadOnly()) {
                     String className = mapping.getClassName();
+                    classNames.add(className);
 
                     String[] classes = new String[]{
                             mapping.getClassName(), getInterfaceName(className),
@@ -108,9 +125,58 @@ public class JarGeneratorServiceImpl extends BaseMdsService implements JarGenera
                     }
                 }
             }
+
+            String blueprint = mergeTemplate(classNames, "/velocity/templates/blueprint-template.vm");
+            String context = mergeTemplate(classNames, "/velocity/templates/mdsEntitiesContext-template.vm");
+
+            JarEntry blueprintEntry = new JarEntry("META-INF/spring/blueprint.xml");
+            output.putNextEntry(blueprintEntry);
+            output.write(blueprint.getBytes());
+            output.closeEntry();
+
+            JarEntry contextEntry = new JarEntry("META-INF/motech/mdsEntitiesContext.xml");
+            output.putNextEntry(contextEntry);
+            output.write(context.getBytes());
+            output.closeEntry();
+
+            JarEntry commonContextEntry = new JarEntry("META-INF/motech/mdsCommonContext.xml");
+            output.putNextEntry(commonContextEntry);
+            output.write(IOUtils.toByteArray(getClass().getClassLoader().getResourceAsStream("META-INF/motech/mdsCommonContext.xml")));
+            output.closeEntry();
+
+            return tempFile.toFile();
+        }
+    }
+
+    private String mergeTemplate(List<String> classNames, String templatePath) {
+        List allClassesList = new ArrayList();
+
+        for (String className : classNames) {
+            Map map = new HashMap();
+            map.put("name", className.substring(className.lastIndexOf(".") + 1));
+            map.put("interface", getInterfaceName(className));
+            map.put("service", getServiceName(className));
+            map.put("repository", getRepositoryName(className));
+            allClassesList.add(map);
         }
 
-        return tempFile.toFile();
+        VelocityEngine velocityEngine = new VelocityEngine();
+        VelocityContext velocityContext = new VelocityContext();
+        velocityContext.put("list", allClassesList);
+        Template template;
+        StringWriter writer = new StringWriter();
+
+        try {
+            velocityEngine.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
+            velocityEngine.setProperty("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
+
+            template = velocityEngine.getTemplate(templatePath);
+            template.merge(velocityContext, writer);
+        } catch (Exception e) {
+            LOGGER.error("An exception occured, while trying to load" + templatePath + " template and merge it with data", e);
+        }
+
+        return writer.toString();
     }
 
     private java.util.jar.Manifest createManifest() {
