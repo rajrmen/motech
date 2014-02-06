@@ -85,18 +85,11 @@ public class EntityServiceImpl extends BaseMdsService implements EntityService {
             throw new EntityAlreadyExistException();
         }
 
-<<<<<<< HEAD
-        String className = String.format("%s.%s", Packages.ENTITY, entity.getName());
-        EntityMapping entityMapping = allEntityMappings.save(className);
-
-        constructor.constructEntity(entityMapping);
-=======
         EntityMapping entityMapping = allEntityMappings.save(entity);
 
         if (fromUI) {
             constructor.constructEntity(entityMapping);
         }
->>>>>>> origin/master
 
         return entityMapping.toDto();
     }
@@ -307,15 +300,7 @@ public class EntityServiceImpl extends BaseMdsService implements EntityService {
     public void deleteEntity(Long entityId) {
         EntityMapping entity = allEntityMappings.getEntityById(entityId);
 
-<<<<<<< HEAD
-        if (entity == null) {
-            throw new EntityNotFoundException();
-        } else if (entity.isDDE()) {
-            throw new EntityReadOnlyException();
-        }
-=======
         assertWritableEntity(entity);
->>>>>>> origin/master
 
         if (entity.isDraft()) {
             entity = ((EntityDraft) entity).getParentEntity();
@@ -454,7 +439,7 @@ public class EntityServiceImpl extends BaseMdsService implements EntityService {
     private void assertWritableEntity(EntityMapping entity) {
         assertEntityExists(entity);
 
-        if (entity.isReadOnly()) {
+        if (entity.isDDE()) {
             throw new EntityReadOnlyException();
         }
     }
