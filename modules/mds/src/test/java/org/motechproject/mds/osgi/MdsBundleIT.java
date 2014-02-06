@@ -1,18 +1,19 @@
 package org.motechproject.mds.osgi;
 
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.eclipse.gemini.blueprint.test.platform.EquinoxPlatform;
 import org.eclipse.gemini.blueprint.test.platform.OsgiPlatform;
 import org.motechproject.testing.osgi.BaseOsgiIT;
-import org.osgi.framework.Constants;
-import org.springframework.util.ClassUtils;
-import org.springframework.util.StringUtils;
 
-import java.util.Iterator;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 
 public class MdsBundleIT extends BaseOsgiIT {
     private Logger logger = Logger.getLogger(this.getClass());
+
+    private static final String SYSTEM_PACKAGES = "org.osgi.framework.system.packages";
 
     //private static final String SAMPLE_CLASS = String.format("%s.%s", Constants.Packages.ENTITY, SAMPLE);
     //private static final String EXAMPLE_CLASS = String.format("%s.%s", Constants.Packages.ENTITY, EXAMPLE);
@@ -21,61 +22,43 @@ public class MdsBundleIT extends BaseOsgiIT {
 
 
     @Override
-    protected OsgiPlatform createPlatform() {
-        boolean trace = logger.isTraceEnabled();
-        String platformClassName = getPlatformName();
+    protected String[] getTestBundlesNames() {
+        String[] names = super.getTestBundlesNames();
 
-        OsgiPlatform platform = null;
-        ClassLoader currentCL = getClass().getClassLoader();
+        int paranamerSourcesIndex = -1;
 
-        if (StringUtils.hasText(platformClassName)) {
-            if (ClassUtils.isPresent(platformClassName, currentCL)) {
-                Class<?> platformClass = ClassUtils.resolveClassName(platformClassName, currentCL);
-                if (OsgiPlatform.class.isAssignableFrom(platformClass)) {
-                    if (trace)
-                        logger.trace("Instantiating platform wrapper...");
-                    try {
-                        platform = (OsgiPlatform) platformClass.newInstance();
-                    }
-                    catch (Exception ex) {
-                        logger.warn("cannot instantiate class [" + platformClass + "]; using default");
-                    }
-                }
-                else
-                    logger.warn("Class [" + platformClass + "] does not implement " + OsgiPlatform.class.getName()
-                            + " interface; falling back to defaults");
+        for (int i = 0; i < names.length; i++) {
+            String name = names[i];
+            if (StringUtils.equals(name, "com.thoughtworks.paranamer,paranamer,sources")) {
+                paranamerSourcesIndex = i;
+                break;
             }
-            else {
-                logger.warn("OSGi platform starter [" + platformClassName + "] not found; using default");
-            }
-
         }
-        else
-            logger.trace("No platform specified; using default");
 
-        // fall back
-        if (platform == null)
-            platform = new EquinoxPlatform();
+        if (paranamerSourcesIndex >= 0) {
+            names = (String[]) ArrayUtils.remove(names, paranamerSourcesIndex);
+        }
 
-        Properties config = platform.getConfigurationProperties();
-        // add boot delegation
-        config.setProperty(Constants.FRAMEWORK_BOOTDELEGATION,
-                getBootDelegationPackageString());
-
-        return platform;
+        return names;
     }
 
-    private String getBootDelegationPackageString() {
-        StringBuilder buf = new StringBuilder();
+    public void testSomething() {
+    }
 
-        for (Iterator iter = getBootDelegationPackages().iterator(); iter.hasNext();) {
-            String s = (String) iter.next();
-            buf.append(s.trim());
-            if (iter.hasNext()) {
-                buf.append(",");
-            }
+    @Override
+    protected OsgiPlatform createPlatform() {
+        OsgiPlatform platform = super.createPlatform();
+
+        try (InputStream in = getClass().getResourceAsStream("/osgi.properties")) {
+            Properties osgiProperties = new Properties();
+            osgiProperties.load(in);
+
+            platform.getConfigurationProperties().setProperty(SYSTEM_PACKAGES, osgiProperties.getProperty(SYSTEM_PACKAGES));
+        } catch (IOException e) {
+            logger.error("Cannot read osgi.properties", e);
         }
-        return buf.toString();
+
+        return platform;
     }
 
     public void setUpp() throws Exception {
