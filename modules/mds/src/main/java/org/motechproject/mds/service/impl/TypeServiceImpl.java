@@ -92,7 +92,7 @@ public class TypeServiceImpl extends BaseMdsService implements TypeService {
         if (null != mapping) {
             return mapping.toDto().getType();
         } else {
-            throw new TypeNotFoundException();
+            throw new TypeNotFoundException("Type unavailable: " + type.getName());
         }
     }
 

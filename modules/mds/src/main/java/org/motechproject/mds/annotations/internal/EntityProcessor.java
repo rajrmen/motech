@@ -49,12 +49,12 @@ class EntityProcessor extends AbstractProcessor {
                 EntityDto fromDb = entityService.getEntityByClassName(className);
 
                 if (fromDb == null) {
-                    LOGGER.debug("DDE for {} already exists, updating if necessary", className);
-                } else {
                     LOGGER.debug("Creating DDE for {}", className);
 
                     EntityDto entity = new EntityDto(className, name, module, namespace);
                     fromDb = entityService.createEntity(entity);
+                } else {
+                    LOGGER.debug("DDE for {} already exists, updating if necessary", className);
                 }
 
                 findFields(clazz, fromDb);
@@ -78,16 +78,6 @@ class EntityProcessor extends AbstractProcessor {
         entityService.addFields(entity, fieldProcessor.getFields());
     }
 
-    @Autowired
-    public void setEntityService(EntityService entityService) {
-        this.entityService = entityService;
-    }
-
-    @Autowired
-    public void setFieldProcessor(FieldProcessor fieldProcessor) {
-        this.fieldProcessor = fieldProcessor;
-    }
-
     private String getName(Entity annotation, Class clazz) {
         return defaultIfBlank(annotation.name(), ClassName.getSimpleName(clazz.getName()));
     }
@@ -104,5 +94,15 @@ class EntityProcessor extends AbstractProcessor {
 
     private String getNamespace(Entity annotation) {
         return defaultIfBlank(annotation.namespace(), null);
+    }
+
+    @Autowired
+    public void setEntityService(EntityService entityService) {
+        this.entityService = entityService;
+    }
+
+    @Autowired
+    public void setFieldProcessor(FieldProcessor fieldProcessor) {
+        this.fieldProcessor = fieldProcessor;
     }
 }

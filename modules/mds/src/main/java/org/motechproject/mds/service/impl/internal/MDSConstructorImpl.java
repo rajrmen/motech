@@ -8,7 +8,6 @@ import org.motechproject.mds.builder.EntityBuilder;
 import org.motechproject.mds.builder.EntityInfrastructureBuilder;
 import org.motechproject.mds.builder.EntityMetadataBuilder;
 import org.motechproject.mds.builder.MDSClassLoader;
-import org.motechproject.mds.domain.EntityDraft;
 import org.motechproject.mds.domain.EntityMapping;
 import org.motechproject.mds.enhancer.MdsJDOEnhancer;
 import org.motechproject.mds.ex.EntityCreationException;

@@ -25,6 +25,10 @@ public class MdsWeavingHook implements WeavingHook {
     public void weave(WovenClass wovenClass) {
         String className = wovenClass.getClassName();
 
+        if (className.contains("MdsExample")) {
+            LOG.info("WINNER WINNER CHICKEN DINNER");
+        }
+
         LOG.trace("Weaving called for: {}", className);
 
         String realDDEClassName = ClassName.getDDEName(className);

@@ -7,7 +7,7 @@ import org.motechproject.mds.annotations.Field;
 public class MdsExample {
 
     @Field
-    private boolean trueFalse;
+    private Boolean trueFalse;
 
     public boolean isTrueFalse() {
         return trueFalse;
