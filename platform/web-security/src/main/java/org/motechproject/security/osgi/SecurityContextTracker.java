@@ -1,6 +1,6 @@
 package org.motechproject.security.osgi;
 
-import org.motechproject.commons.api.ApplicationContextServiceReferenceUtils;
+import org.motechproject.osgi.web.ApplicationContextTracker;
 import org.motechproject.security.annotations.SecurityAnnotationBeanPostProcessor;
 import org.motechproject.security.service.MotechPermissionService;
 import org.motechproject.security.service.MotechRoleService;
@@ -13,9 +13,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * A {@link ServiceTracker} that tracks {@link ApplicationContext} objects published as OSGi services.
  * When a new context becomes available it processed by this class using {@link SecurityAnnotationBeanPostProcessor}
@@ -25,19 +22,15 @@ import java.util.List;
  * @see SecurityAnnotationBeanPostProcessor
  * @see SecurityRoleLoader
  */
-public class SecurityContextTracker extends ServiceTracker {
+public class SecurityContextTracker extends ApplicationContextTracker {
     private static final Logger LOGGER = LoggerFactory.getLogger(SecurityContextTracker.class);
-
-    private final Object lock = new Object();
-
-    private List<String> contextProcessed = new ArrayList<>();
 
     private SecurityAnnotationBeanPostProcessor securityAnnotationBeanPostProcessor;
     private SecurityRoleLoader securityRoleLoader;
     private SecurityRuleLoader securityRuleLoader;
 
     public SecurityContextTracker(BundleContext bundleContext, MotechRoleService roleService, MotechPermissionService permissionService, SecurityRuleLoader securityRuleLoader) {
-        super(bundleContext, ApplicationContext.class.getName(), null);
+        super(bundleContext);
         this.securityAnnotationBeanPostProcessor = new SecurityAnnotationBeanPostProcessor(permissionService);
         this.securityRoleLoader = new SecurityRoleLoader(roleService);
         this.securityRuleLoader = securityRuleLoader;
@@ -49,24 +42,32 @@ public class SecurityContextTracker extends ServiceTracker {
 
         LOGGER.info("Starting to process {}", applicationContext.getDisplayName());
 
-        if (ApplicationContextServiceReferenceUtils.isNotValid(reference)) {
-            return applicationContext;
-        }
-
         String contextId = applicationContext.getId();
         LOGGER.debug("Application context id: {}", contextId);
 
-        synchronized (lock) {
-            if (!contextProcessed.contains(contextId)) {
-                securityAnnotationBeanPostProcessor.processAnnotations(applicationContext);
-                securityRoleLoader.loadRoles(applicationContext);
-                securityRuleLoader.loadRules(applicationContext);
-                contextProcessed.add(contextId);
+        synchronized (getLock()) {
+            if (contextInvalidOrProcessed(reference, applicationContext)) {
+                return applicationContext;
             }
+            markAsProcessed(applicationContext);
+
+            securityAnnotationBeanPostProcessor.processAnnotations(applicationContext);
+            securityRoleLoader.loadRoles(applicationContext);
+            securityRuleLoader.loadRules(applicationContext);
         }
 
         LOGGER.info("End to process {}", applicationContext.getDisplayName());
 
         return applicationContext;
+    }
+
+    @Override
+    public void removedService(ServiceReference reference, Object service) {
+        super.removedService(reference, service);
+
+        ApplicationContext applicationContext = (ApplicationContext) service;
+        synchronized (getLock()) {
+            removeFromProcessed(applicationContext);
+        }
     }
 }

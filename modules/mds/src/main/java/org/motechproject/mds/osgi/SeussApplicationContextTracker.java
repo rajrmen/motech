@@ -1,12 +1,11 @@
 package org.motechproject.mds.osgi;
 
-import org.motechproject.commons.api.ApplicationContextServiceReferenceUtils;
 import org.motechproject.mds.annotations.internal.SeussAnnotationProcessor;
+import org.motechproject.osgi.web.ApplicationContextTracker;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceReference;
-import org.osgi.util.tracker.ServiceTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,11 +14,6 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import static org.eclipse.gemini.blueprint.util.OsgiStringUtils.nullSafeSymbolicName;
 
 /**
  * The <code>SeussApplicationContextTracker</code> in Motech Data Services listens to the service registrations
@@ -55,13 +49,10 @@ public class SeussApplicationContextTracker {
         this.processor = processor;
     }
 
-    private class SeussServiceTracker extends ServiceTracker {
-        private final List<String> contextsProcessed;
+    private class SeussServiceTracker extends ApplicationContextTracker {
 
         public SeussServiceTracker(BundleContext bundleContext) {
-            super(bundleContext, ApplicationContext.class.getName(), null);
-
-            this.contextsProcessed = Collections.synchronizedList(new ArrayList<String>());
+            super(bundleContext);
         }
 
         @Override
@@ -69,17 +60,14 @@ public class SeussApplicationContextTracker {
             ApplicationContext applicationContext = (ApplicationContext) super.addingService(serviceReference);
             LOGGER.debug("Starting to process {}", applicationContext.getDisplayName());
 
-            if (ApplicationContextServiceReferenceUtils.isValid(serviceReference)) {
-                synchronized (contextsProcessed) {
-                    String bundleSymbolicName = nullSafeSymbolicName(serviceReference.getBundle());
-
-                    if (!contextsProcessed.contains(bundleSymbolicName)) {
-                        contextsProcessed.add(bundleSymbolicName);
-
-                        processor.processAnnotations(serviceReference.getBundle());
-                    }
+            synchronized (getLock()) {
+                if (contextInvalidOrProcessed(serviceReference, applicationContext)) {
+                    return applicationContext;
                 }
+                markAsProcessed(applicationContext);
             }
+
+            processor.processAnnotations(serviceReference.getBundle());
 
             LOGGER.debug("Processed {}", applicationContext.getDisplayName());
             return applicationContext;
@@ -90,12 +78,7 @@ public class SeussApplicationContextTracker {
             super.removedService(reference, service);
             ApplicationContext applicationContext = (ApplicationContext) service;
 
-            if (ApplicationContextServiceReferenceUtils.isValid(reference)) {
-                contextsProcessed.remove(applicationContext.getId());
-            }
+            removeFromProcessed(applicationContext);
         }
-
     }
-
-
 }

@@ -2,13 +2,10 @@ package org.motechproject.mds.annotations.internal;
 
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.wiring.FrameworkWiring;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.util.Arrays;
 
 /**
  * The <code>SeussAnnotationProcessor</code> class is responsible for scanning bundle contexts and
@@ -33,16 +30,16 @@ public class SeussAnnotationProcessor {
 
         if (annotationsFound) {
             LOGGER.info("Refreshing wiring for {} after annotation processing", bundle.getSymbolicName());
-            refresh(bundle);
+            //refresh(bundle);
         }
 
         LOGGER.debug("Finished scanning bundle {} for MDS annotations.", bundle.getSymbolicName());
     }
 
     private void refresh(Bundle bundleToRefresh) {
-        Bundle frameworkBundle = bundleContext.getBundle(0);
+     /*   Bundle frameworkBundle = bundleContext.getBundle(0);
         FrameworkWiring frameworkWiring = frameworkBundle.adapt(FrameworkWiring.class);
-        frameworkWiring.refreshBundles(Arrays.asList(bundleToRefresh));
+        frameworkWiring.refreshBundles(Arrays.asList(bundleToRefresh));*/
     }
 
     @Autowired

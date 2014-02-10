@@ -4,7 +4,6 @@ import org.motechproject.server.api.BundleLoadingException;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
-import org.osgi.util.tracker.ServiceTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -18,7 +17,7 @@ import static org.eclipse.gemini.blueprint.util.OsgiStringUtils.nullSafeSymbolic
  * The <code>BlueprintApplicationContextTracker</code> class tracks application contexts, which are registered as services.
  */
 
-public class BlueprintApplicationContextTracker extends ServiceTracker {
+public class BlueprintApplicationContextTracker extends ApplicationContextTracker {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BlueprintApplicationContextTracker.class);
 
@@ -30,7 +29,7 @@ public class BlueprintApplicationContextTracker extends ServiceTracker {
     private final UIServiceTrackers uiServiceTrackers;
 
     public BlueprintApplicationContextTracker(BundleContext context) {
-        super(context, ApplicationContext.class.getName(), null);
+        super(context);
         this.httpServiceTrackers = new HttpServiceTrackers();
         this.uiServiceTrackers = new UIServiceTrackers();
         registerServiceTrackersAsService(context);

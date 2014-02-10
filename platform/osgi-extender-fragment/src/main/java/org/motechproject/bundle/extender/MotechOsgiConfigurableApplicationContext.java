@@ -50,4 +50,10 @@ public class MotechOsgiConfigurableApplicationContext extends OsgiBundleXmlAppli
     public void setConfigLocation(String configLocation) {
         this.setConfigLocations(new String[]{configLocation});
     }
+
+    @Override
+    protected void doClose() {
+        super.doClose();
+        System.out.println("Do close called for " + getId());
+    }
 }
