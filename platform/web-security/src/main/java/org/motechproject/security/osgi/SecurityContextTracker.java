@@ -40,6 +40,10 @@ public class SecurityContextTracker extends ApplicationContextTracker {
     public Object addingService(ServiceReference reference) {
         ApplicationContext applicationContext = (ApplicationContext) super.addingService(reference);
 
+        if (applicationContext == null) {
+            return null;
+        }
+
         LOGGER.info("Starting to process {}", applicationContext.getDisplayName());
 
         String contextId = applicationContext.getId();
