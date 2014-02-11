@@ -221,7 +221,13 @@ public class EntityMapping {
     }
 
     public void addField(FieldMapping field) {
-        getFields().add(field);
+        FieldMapping existing = getField(field.getName());
+
+        if (existing == null) {
+            getFields().add(field);
+        } else {
+            existing.update(field.toDto());
+        }
     }
 
     public void addLookup(LookupMapping lookup) {
