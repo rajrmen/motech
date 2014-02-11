@@ -1,16 +1,11 @@
 package org.motechproject.mds;
 
 import org.junit.runner.RunWith;
-import org.motechproject.mds.domain.AvailableFieldTypeMapping;
+import org.motechproject.mds.domain.Entity;
 import org.motechproject.mds.domain.EntityDraft;
-import org.motechproject.mds.domain.EntityMapping;
-import org.motechproject.mds.domain.RestOptionsMapping;
-import org.motechproject.mds.domain.LookupMapping;
-import org.motechproject.mds.domain.SettingOptionsMapping;
-import org.motechproject.mds.domain.FieldMapping;
-import org.motechproject.mds.domain.TypeSettingsMapping;
-import org.motechproject.mds.domain.TypeValidationMapping;
-import org.motechproject.mds.domain.ValidationCriterionMapping;
+import org.motechproject.mds.domain.Field;
+import org.motechproject.mds.domain.Lookup;
+import org.motechproject.mds.domain.RestOptions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
@@ -50,8 +45,8 @@ public abstract class BaseIT {
     }
 
     protected boolean containsEntity(String className) {
-        for (EntityMapping mapping : getEntityMappings()) {
-            if (className.equalsIgnoreCase(mapping.getClassName())) {
+        for (Entity entity : getEntities()) {
+            if (className.equalsIgnoreCase(entity.getClassName())) {
                 return true;
             }
         }
@@ -60,8 +55,8 @@ public abstract class BaseIT {
     }
 
     protected boolean containsLookup(String lookupName) {
-        for (LookupMapping mapping : getLookupMappings()) {
-            if (lookupName.equalsIgnoreCase(mapping.getLookupName())) {
+        for (Lookup lookup : getLookups()) {
+            if (lookupName.equalsIgnoreCase(lookup.getLookupName())) {
                 return true;
             }
         }
@@ -69,57 +64,27 @@ public abstract class BaseIT {
         return false;
     }
 
-    protected List<EntityMapping> getEntityMappings() {
-        return getAll(EntityMapping.class);
+    protected List<Entity> getEntities() {
+        return getAll(Entity.class);
     }
 
     protected List<EntityDraft> getEntityDrafts() {
         return getAll(EntityDraft.class);
     }
 
-    protected List<FieldMapping> getFieldMappings() {
-        return getAll(FieldMapping.class);
+    protected List<Field> getFields() {
+        return getAll(Field.class);
     }
 
-    protected List<LookupMapping> getLookupMappings() {
-        return getAll(LookupMapping.class);
-    }
-
-    protected List<TypeSettingsMapping> getTypeSettingsMappings() {
-        return getAll(TypeSettingsMapping.class);
-    }
-
-    protected List<TypeValidationMapping> getTypeValidationMappings() {
-        return getAll(TypeValidationMapping.class);
-    }
-
-    protected List<ValidationCriterionMapping> getValidationCriterionMappings() {
-        return getAll(ValidationCriterionMapping.class);
-    }
-
-    protected List<AvailableFieldTypeMapping> getAvailableFieldTypeMappings() {
-        return getAll(AvailableFieldTypeMapping.class);
-    }
-
-    protected List<SettingOptionsMapping> getSettingsOptionMappings() {
-        return getAll(SettingOptionsMapping.class);
-    }
-
-
-    protected List<RestOptionsMapping> getEntityRestOptionsMappings() {
-        return getAll(RestOptionsMapping.class);
+    protected List<Lookup> getLookups() {
+        return getAll(Lookup.class);
     }
 
     protected void clearDB() {
-        getPersistenceManager().deletePersistentAll(getValidationCriterionMappings());
-        getPersistenceManager().deletePersistentAll(getFieldMappings());
-        getPersistenceManager().deletePersistentAll(getTypeValidationMappings());
-        getPersistenceManager().deletePersistentAll(getSettingsOptionMappings());
-        getPersistenceManager().deletePersistentAll(getTypeSettingsMappings());
-        getPersistenceManager().deletePersistentAll(getAvailableFieldTypeMappings());
-        getPersistenceManager().deletePersistentAll(getLookupMappings());
+        getPersistenceManager().deletePersistentAll(getFields());
+        getPersistenceManager().deletePersistentAll(getLookups());
         getPersistenceManager().deletePersistentAll(getEntityDrafts());
-        getPersistenceManager().deletePersistentAll(getEntityMappings());
+        getPersistenceManager().deletePersistentAll(getEntities());
     }
 
     protected <T> List<T> cast(Class<T> clazz, Collection collection) {

@@ -11,9 +11,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- *  This class holds the javasisst classpool, enriched by motech classes. All predefined additions to the ClassPool
- *  should take place here. The classpool should also be retrieved using this class, in order to be sure that the a
- *  initialization took place.
+ * This class holds the javasisst classpool, enriched by motech classes. All predefined additions to the ClassPool
+ * should take place here. The classpool should also be retrieved using this class, in order to be sure that the a
+ * initialization took place.
  */
 public final class MotechClassPool {
 

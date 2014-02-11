@@ -9,9 +9,9 @@ import org.motechproject.commons.date.model.Time;
 import org.motechproject.commons.date.util.DateUtil;
 import org.motechproject.mds.BaseIT;
 import org.motechproject.mds.builder.MDSClassLoader;
-import org.motechproject.mds.domain.EntityMapping;
+import org.motechproject.mds.domain.Entity;
 import org.motechproject.mds.dto.EntityDto;
-import org.motechproject.mds.repository.AllEntityMappings;
+import org.motechproject.mds.repository.AllEntities;
 import org.motechproject.mds.repository.MotechDataRepository;
 import org.motechproject.mds.service.MDSConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +24,7 @@ import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.motechproject.mds.constants.Constants.Packages;
+import static org.motechproject.mds.util.Constants.Packages;
 import static org.motechproject.mds.testutil.FieldTestHelper.field;
 
 public class MDSConstructorIT extends BaseIT {
@@ -39,13 +39,13 @@ public class MDSConstructorIT extends BaseIT {
     private MDSConstructor constructor;
 
     @Autowired
-    private AllEntityMappings allEntityMappings;
+    private AllEntities allEntities;
 
-    private EntityMapping entity;
+    private Entity entity;
 
     @Before
     public void setUp() throws Exception {
-        entity = allEntityMappings.save(new EntityDto(CLASS_NAME));
+        entity = allEntities.create(new EntityDto(CLASS_NAME));
     }
 
     @After
@@ -55,10 +55,10 @@ public class MDSConstructorIT extends BaseIT {
 
     @Test
     public void testConstructEntity() throws Exception {
-        EntityMapping mapping = new EntityMapping();
-        mapping.setClassName(CLASS_NAME);
+        Entity temp = new Entity();
+        temp.setClassName(CLASS_NAME);
 
-        constructor.constructEntity(mapping);
+        constructor.constructEntity(temp);
 
         MDSClassLoader classLoader = MDSClassLoader.getInstance();
 
@@ -87,7 +87,7 @@ public class MDSConstructorIT extends BaseIT {
 
     @Test
     public void shouldConstructEntityWithFields() throws Exception {
-        EntityMapping entity = new EntityMapping(ENTITY_WITH_FIELDS);
+        Entity entity = new Entity(ENTITY_WITH_FIELDS);
         entity.setFields(asList(field("fieldInt", Integer.class), field("fieldStr", String.class),
                 field("fieldDouble", Double.class), field("fieldBool", Boolean.class),
                 field("fieldDate", Date.class), field("fieldDateTime", DateTime.class),

@@ -10,13 +10,12 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.motechproject.commons.date.model.Time;
 import org.motechproject.commons.date.util.DateUtil;
 import org.motechproject.mds.builder.impl.EntityBuilderImpl;
-import org.motechproject.mds.domain.AvailableFieldTypeMapping;
-import org.motechproject.mds.domain.EntityMapping;
+import org.motechproject.mds.domain.Entity;
+import org.motechproject.mds.domain.Field;
 import org.motechproject.mds.domain.FieldMapping;
-import org.motechproject.mds.domain.EntityMapping;
+import org.motechproject.mds.domain.Type;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -28,7 +27,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.when;
-import static org.motechproject.mds.testutil.FieldTestHelper.field;
 import static org.motechproject.mds.testutil.FieldTestHelper.newVal;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -41,7 +39,7 @@ public class EntityBuilderTest {
     private MDSClassLoader mdsClassLoader;
 
     @Mock
-    private EntityMapping entity;
+    private Entity entity;
 
     @Before
     public void setUp() {
@@ -92,7 +90,7 @@ public class EntityBuilderTest {
         assertField(clazz, "dt", DateTime.class, dateTime);
         assertField(clazz, "list", List.class, asList("1", "2", "3"));
 
-        Field listField = clazz.getDeclaredField("list");
+        java.lang.reflect.Field listField = clazz.getDeclaredField("list");
         // no exception = proper signature
         listField.getGenericType();
     }
@@ -129,16 +127,16 @@ public class EntityBuilderTest {
         return mdsClassLoader.defineClass(classData.getClassName(), classData.getBytecode());
     }
 
-    private FieldMapping field(String name, Class<?> typeClass) {
+    private Field field(String name, Class<?> typeClass) {
         return field(name, typeClass, null);
     }
 
-    private FieldMapping field(String name, Class<?> typeClass, Object defaultVal) {
-        AvailableFieldTypeMapping type = new AvailableFieldTypeMapping();
+    private Field field(String name, Class<?> typeClass, Object defaultVal) {
+        Type type = new Type();
         // we only need the type
-        type.setTypeClass(typeClass.getName());
+        type.setTypeClass(typeClass);
 
-        FieldMapping field = new FieldMapping();
+        Field field = new Field();
         // we only need the name, type and default value
         field.setName(name);
         field.setType(type);
@@ -153,7 +151,7 @@ public class EntityBuilderTest {
 
     private void assertField(Class<?> clazz, String name, Class<?> fieldType, Object expectedDefaultVal)
             throws NoSuchFieldException, IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
-        Field field = clazz.getDeclaredField(name);
+        java.lang.reflect.Field field = clazz.getDeclaredField(name);
 
         assertNotNull(field);
         assertEquals(Modifier.PRIVATE, field.getModifiers());

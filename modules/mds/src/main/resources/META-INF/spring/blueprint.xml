@@ -10,6 +10,9 @@
 
     <osgi:reference id="configurationServiceOsgi" interface="org.motechproject.config.service.ConfigurationService"/>
 
+    <osgi:reference id="sqlDbManager" interface="org.motechproject.commons.sql.service.SqlDBManager" bean-name="sqlDbManager"/>
+
+
     <osgi:service ref="mdsWeavingHook" interface="org.osgi.framework.hooks.weaving.WeavingHook"/>
 
     <osgi:service ref="mdsResolverHook" interface="org.osgi.framework.hooks.resolver.ResolverHook"/>

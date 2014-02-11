@@ -4,7 +4,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.motechproject.mds.BaseIT;
-import org.motechproject.mds.domain.EntityMapping;
+import org.motechproject.mds.domain.Entity;
 import org.motechproject.mds.dto.EntityDto;
 import org.motechproject.mds.util.ClassName;
 import org.motechproject.osgi.web.BundleHeaders;
@@ -24,8 +24,8 @@ import java.util.jar.JarInputStream;
 
 import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.junit.Assert.assertEquals;
-import static org.motechproject.mds.constants.Constants.Manifest;
-import static org.motechproject.mds.constants.Constants.Packages;
+import static org.motechproject.mds.util.Constants.Manifest;
+import static org.motechproject.mds.util.Constants.Packages;
 
 public class JarGeneratorServiceIT extends BaseIT {
     private static final String SAMPLE = "Sample";
@@ -61,7 +61,7 @@ public class JarGeneratorServiceIT extends BaseIT {
 
     @After
     public void tearDown() throws Exception {
-        getPersistenceManager().newQuery(EntityMapping.class).deletePersistentAll();
+        getPersistenceManager().newQuery(Entity.class).deletePersistentAll();
     }
 
     @Test

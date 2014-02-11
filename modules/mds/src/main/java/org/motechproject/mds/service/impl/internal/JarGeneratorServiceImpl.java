@@ -4,11 +4,11 @@ import javassist.CannotCompileException;
 import javassist.CtClass;
 import javassist.NotFoundException;
 import org.eclipse.gemini.blueprint.util.OsgiBundleUtils;
-import org.motechproject.mds.domain.EntityMapping;
+import org.motechproject.mds.domain.Entity;
 import org.motechproject.mds.ex.MdsException;
 import org.motechproject.mds.javassist.JavassistHelper;
 import org.motechproject.mds.javassist.MotechClassPool;
-import org.motechproject.mds.repository.AllEntityMappings;
+import org.motechproject.mds.repository.AllEntities;
 import org.motechproject.mds.service.BaseMdsService;
 import org.motechproject.mds.service.JarGeneratorService;
 import org.motechproject.osgi.web.BundleHeaders;
@@ -35,8 +35,8 @@ import java.util.jar.JarOutputStream;
 
 import static java.util.jar.Attributes.Name;
 import static org.apache.commons.lang.StringUtils.isBlank;
-import static org.motechproject.mds.constants.Constants.Manifest;
-import static org.motechproject.mds.constants.Constants.Packages;
+import static org.motechproject.mds.util.Constants.Manifest;
+import static org.motechproject.mds.util.Constants.Packages;
 import static org.motechproject.mds.util.ClassName.getInterfaceName;
 import static org.motechproject.mds.util.ClassName.getRepositoryName;
 import static org.motechproject.mds.util.ClassName.getServiceName;
@@ -46,7 +46,7 @@ import static org.motechproject.mds.util.ClassName.getServiceName;
  */
 @Service
 public class JarGeneratorServiceImpl extends BaseMdsService implements JarGeneratorService {
-    private AllEntityMappings entityMappings;
+    private AllEntities allEntities;
     private BundleHeaders bundleHeaders;
     private BundleContext bundleContext;
 
@@ -87,13 +87,13 @@ public class JarGeneratorServiceImpl extends BaseMdsService implements JarGenera
         FileOutputStream fileOutput = new FileOutputStream(tempFile.toFile());
 
         try (JarOutputStream output = new JarOutputStream(fileOutput, manifest)) {
-            List<EntityMapping> mappings = entityMappings.getAllEntities();
-            for (EntityMapping mapping : mappings) {
-                if (!mapping.isDraft() && !mapping.isDDE()) {
-                    String className = mapping.getClassName();
+            List<Entity> mappings = allEntities.retrieveAll();
+            for (Entity entity : mappings) {
+                if (!entity.isDraft() && !entity.isDDE()) {
+                    String className = entity.getClassName();
 
                     String[] classes = new String[]{
-                            mapping.getClassName(), getInterfaceName(className),
+                            entity.getClassName(), getInterfaceName(className),
                             getServiceName(className), getRepositoryName(className)
                     };
 
@@ -170,8 +170,8 @@ public class JarGeneratorServiceImpl extends BaseMdsService implements JarGenera
     }
 
     @Autowired
-    public void setEntityMappings(AllEntityMappings entityMappings) {
-        this.entityMappings = entityMappings;
+    public void setAllEntities(AllEntities allEntities) {
+        this.allEntities = allEntities;
     }
 
     @Autowired

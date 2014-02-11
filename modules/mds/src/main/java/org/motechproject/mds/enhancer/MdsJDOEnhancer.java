@@ -3,8 +3,8 @@ package org.motechproject.mds.enhancer;
 import org.datanucleus.api.jdo.JDOEnhancer;
 import org.motechproject.mds.builder.EnhancedClassData;
 import org.motechproject.mds.builder.EntityMetadataBuilder;
-import org.motechproject.mds.domain.EntityMapping;
 import org.motechproject.mds.util.ClassName;
+import org.motechproject.mds.domain.Entity;
 import org.motechproject.server.config.SettingsFacade;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 import javax.jdo.metadata.JDOMetadata;
 import java.io.IOException;
 
-import static org.motechproject.mds.constants.Constants.Config;
+import static org.motechproject.mds.util.Constants.Config;
 
 /**
  * The <code>MdsJDOEnhancer</code> class is a wrapper for
@@ -32,13 +32,14 @@ public class MdsJDOEnhancer extends JDOEnhancer {
         setVerbose(true);
     }
 
-    public EnhancedClassData enhance(EntityMapping mapping, byte[] originalBytes, ClassLoader tmpClassLoader)
+    public EnhancedClassData enhance(Entity entity, byte[] originalBytes,
+                                     ClassLoader tmpClassLoader)
             throws IOException {
-        String className = (mapping.isDDE()) ? ClassName.getDDEName(mapping.getClassName()) : mapping.getClassName();
+        String className = (entity.isDDE()) ? ClassName.getDDEName(entity.getClassName()) : entity.getClassName();
 
         setClassLoader(tmpClassLoader);
 
-        JDOMetadata metadata = metadataBuilder.createBaseEntity(newMetadata(), mapping);
+        JDOMetadata metadata = metadataBuilder.createBaseEntity(newMetadata(), entity);
 
         registerMetadata(metadata);
         addClass(className, originalBytes);

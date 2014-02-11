@@ -5,14 +5,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.motechproject.mds.BaseIT;
 import org.motechproject.mds.builder.MDSClassLoader;
-import org.motechproject.mds.domain.EntityMapping;
-import org.motechproject.mds.domain.FieldMapping;
-import org.motechproject.mds.dto.AvailableTypeDto;
+import org.motechproject.mds.domain.Entity;
+import org.motechproject.mds.domain.Field;
 import org.motechproject.mds.dto.EntityDto;
 import org.motechproject.mds.dto.FieldDto;
-import org.motechproject.mds.dto.TypeDto;
 import org.motechproject.mds.ex.EntityNotFoundException;
-import org.motechproject.mds.ex.EntityReadOnlyException;
 import org.motechproject.mds.testutil.DraftBuilder;
 import org.motechproject.mds.web.DraftData;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +35,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.motechproject.mds.constants.Constants.Packages;
+import static org.motechproject.mds.util.Constants.Packages;
 
 public class EntityServiceIT extends BaseIT {
     private static final String SIMPLE_NAME = "Test";
@@ -141,9 +138,6 @@ public class EntityServiceIT extends BaseIT {
 
     @Test
     public void shouldRetrieveAllWorkInProgress() throws IOException {
-        typeService.createFieldType(new AvailableTypeDto("defName",
-                new TypeDto("disp", "desc", Integer.class.getName())), null);
-
         EntityDto entityDto = new EntityDto();
 
         entityDto.setName("WIP1");
@@ -169,9 +163,6 @@ public class EntityServiceIT extends BaseIT {
 
     @Test
     public void testDraftWorkflow() throws IOException {
-        typeService.createFieldType(new AvailableTypeDto("defName",
-                new TypeDto("disp", "desc", Integer.class.getName())), null);
-
         EntityDto entityDto = new EntityDto();
         entityDto.setName("DraftTest");
         entityDto = entityService.createEntity(entityDto);
@@ -215,10 +206,10 @@ public class EntityServiceIT extends BaseIT {
         entityService.commitChanges(entityId);
 
         // check if changes were persisted in db
-        EntityMapping entityFromDb = getEntityMappings().get(0);
+        Entity entityFromDb = getEntities().get(0);
         assertEquals(1, entityFromDb.getFields().size());
 
-        FieldMapping fieldFromDb = entityFromDb.getField("f1name");
+        Field fieldFromDb = entityFromDb.getField("f1name");
         assertNotNull(fieldFromDb);
         assertEquals("newDisp", fieldFromDb.getDisplayName());
 
@@ -227,10 +218,17 @@ public class EntityServiceIT extends BaseIT {
     }
 
     private void setUpSecurityContext() {
-        SecurityContext securityContext = new SecurityContextImpl();
-        Authentication authentication = new UsernamePasswordAuthenticationToken(new User("motech", "motech", asList(new SimpleGrantedAuthority("seussSchemaAccess"))), null);
-        securityContext.setAuthentication(authentication);
+        SimpleGrantedAuthority authority = new SimpleGrantedAuthority("mdsSchemaAccess");
+        List<SimpleGrantedAuthority> authorities = asList(authority);
+
+        User principal = new User("motech", "motech", authorities);
+
+        Authentication authentication = new UsernamePasswordAuthenticationToken(principal, null);
         authentication.setAuthenticated(false);
+
+        SecurityContext securityContext = new SecurityContextImpl();
+        securityContext.setAuthentication(authentication);
+
         SecurityContextHolder.setContext(securityContext);
     }
 }

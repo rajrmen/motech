@@ -45,7 +45,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.apache.commons.lang.CharEncoding.UTF_8;
-import static org.motechproject.mds.constants.Constants.Roles;
+import static org.motechproject.mds.util.Constants.Roles;
 
 /**
  * The <code>EntityController</code> is the Spring Framework Controller used by view layer for
@@ -86,7 +86,7 @@ public class EntityController extends MdsController {
     }
 
     @RequestMapping(value = "/entities/wip", method = RequestMethod.GET)
-    @PreAuthorize(Roles.HAS_ANY_SEUSS_ROLE)
+    @PreAuthorize(Roles.HAS_ANY_MDS_ROLE)
     @ResponseBody
     public List<EntityDto> getWorkInProgressEntities() {
         return entityService.listWorkInProgress();
@@ -123,7 +123,7 @@ public class EntityController extends MdsController {
     }
 
     @RequestMapping(value = "/entities", method = RequestMethod.GET)
-    @PreAuthorize(Roles.HAS_ANY_SEUSS_ROLE)
+    @PreAuthorize(Roles.HAS_ANY_MDS_ROLE)
     @ResponseBody
     public List<EntityDto> getAllEntities() {
         return entityService.listEntities();

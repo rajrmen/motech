@@ -1,7 +1,7 @@
 package org.motechproject.mds.builder.impl;
 
 import org.motechproject.mds.builder.EntityMetadataBuilder;
-import org.motechproject.mds.domain.EntityMapping;
+import org.motechproject.mds.domain.Entity;
 import org.motechproject.mds.util.ClassName;
 import org.springframework.stereotype.Component;
 
@@ -21,13 +21,13 @@ import static org.apache.commons.lang.StringUtils.isNotBlank;
 public class EntityMetadataBuilderImpl implements EntityMetadataBuilder {
 
     @Override
-    public JDOMetadata createBaseEntity(JDOMetadata md, EntityMapping mapping) {
-        PackageMetadata pmd = md.newPackageMetadata(ClassName.getPackage(mapping.getClassName()));
+    public JDOMetadata createBaseEntity(JDOMetadata md, Entity entity) {
+        PackageMetadata pmd = md.newPackageMetadata(ClassName.getPackage(entity.getClassName()));
 
-        String className = getName(mapping);
+        String className = getName(entity);
         ClassMetadata cmd = pmd.newClassMetadata(ClassName.getSimpleName(className));
 
-        cmd.setTable(getTableName(mapping));
+        cmd.setTable(getTableName(entity));
         cmd.setDetachable(true);
         cmd.setIdentityType(IdentityType.DATASTORE);
         cmd.setPersistenceModifier(ClassPersistenceModifier.PERSISTENCE_CAPABLE);
@@ -35,12 +35,12 @@ public class EntityMetadataBuilderImpl implements EntityMetadataBuilder {
         return md;
     }
 
-    private static String getTableName(EntityMapping mapping) {
-        String className = getName(mapping);
+    private static String getTableName(Entity entity) {
+        String className = getName(entity);
 
         String simpleName = ClassName.getSimpleName(className);
-        String module = mapping.getModule();
-        String namespace = mapping.getNamespace();
+        String module = entity.getModule();
+        String namespace = entity.getNamespace();
 
         StringBuilder builder = new StringBuilder();
         if (isNotBlank(module)) {
@@ -56,7 +56,7 @@ public class EntityMetadataBuilderImpl implements EntityMetadataBuilder {
         return builder.toString().toUpperCase();
     }
 
-    private static String getName(EntityMapping entity) {
+    private static String getName(Entity entity) {
         return (entity.isDDE()) ? ClassName.getDDEName(entity.getClassName()) : entity.getClassName();
     }
 }

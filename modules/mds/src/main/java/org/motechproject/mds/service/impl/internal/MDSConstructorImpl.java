@@ -9,12 +9,12 @@ import org.motechproject.mds.builder.EntityBuilder;
 import org.motechproject.mds.builder.EntityInfrastructureBuilder;
 import org.motechproject.mds.builder.EntityMetadataBuilder;
 import org.motechproject.mds.builder.MDSClassLoader;
-import org.motechproject.mds.domain.EntityMapping;
+import org.motechproject.mds.domain.Entity;
 import org.motechproject.mds.enhancer.MdsJDOEnhancer;
 import org.motechproject.mds.ex.EntityCreationException;
 import org.motechproject.mds.javassist.JavassistHelper;
 import org.motechproject.mds.javassist.MotechClassPool;
-import org.motechproject.mds.repository.AllEntityMappings;
+import org.motechproject.mds.repository.AllEntities;
 import org.motechproject.mds.service.BaseMdsService;
 import org.motechproject.mds.service.MDSConstructor;
 import org.osgi.framework.Bundle;
@@ -40,17 +40,17 @@ public class MDSConstructorImpl extends BaseMdsService implements MDSConstructor
     private EntityBuilder entityBuilder;
     private EntityInfrastructureBuilder infrastructureBuilder;
     private EntityMetadataBuilder metadataBuilder;
-    private AllEntityMappings allEntityMappings;
     private BundleContext bundleContext;
+    private AllEntities allEntities;
 
     @Override
     @Transactional
-    public void constructEntity(EntityMapping mapping) {
-        CtClass existingClass = MotechClassPool.getDefault().getOrNull(mapping.getClassName());
+    public void constructEntity(Entity entity) {
+        CtClass existingClass = MotechClassPool.getDefault().getOrNull(entity.getClassName());
 
         if (existingClass == null) {
             // just add a class
-            constructEntity(mapping, new MDSClassLoader());
+            constructEntity(entity, new MDSClassLoader());
         } else {
             // editing a class requires reloading the classLoader and regenerating the entities
             MDSClassLoader.reloadClassLoader();
@@ -58,40 +58,38 @@ public class MDSConstructorImpl extends BaseMdsService implements MDSConstructor
         }
     }
 
-    private void constructEntity(EntityMapping mapping, MDSClassLoader tmpClassLoader) {
+    private void constructEntity(Entity entity, MDSClassLoader tmpClassLoader) {
         try {
             ClassData classData;
 
             // create the initial class, for DDEs we extend the class from the declaring bundle
-            if (mapping.isDDE()) {
+            if (entity.isDDE()) {
                 Bundle declaringBundle = OsgiBundleUtils.findBundleBySymbolicName(bundleContext, "org.motechproject.motech-event-aggregation");
 
                 if (declaringBundle == null) {
-                    throw new EntityCreationException("Declaring bundle unavailable for entity" + mapping.getClassName());
+                    throw new EntityCreationException("Declaring bundle unavailable for entity" + entity.getClassName());
                 } else {
-                    classData = entityBuilder.buildDDE(mapping, declaringBundle);
+                    classData = entityBuilder.buildDDE(entity, declaringBundle);
                     // make a copy of parent for enhancement purposes
-                    CtClass copyOfOriginal = JavassistHelper.loadClass(declaringBundle, mapping.getClassName());
+                    CtClass copyOfOriginal = JavassistHelper.loadClass(declaringBundle, entity.getClassName());
 
-                    tmpClassLoader.defineClass(mapping.getClassName(), copyOfOriginal.toBytecode());
-                    MDSClassLoader.getInstance().defineClass(mapping.getClassName(), copyOfOriginal.toBytecode());
+                    tmpClassLoader.defineClass(entity.getClassName(), copyOfOriginal.toBytecode());
+                    MDSClassLoader.getInstance().defineClass(entity.getClassName(), copyOfOriginal.toBytecode());
                 }
             } else {
-                classData = entityBuilder.build(mapping);
+                classData = entityBuilder.build(entity);
             }
-
-
             // we need a temporary classloader to define initial classes before enhancement
 
             tmpClassLoader.defineClass(classData);
 
-            EnhancedClassData enhancedClassData = enhancer.enhance(mapping, classData.getBytecode(), tmpClassLoader);
+            EnhancedClassData enhancedClassData = enhancer.enhance(entity, classData.getBytecode(), tmpClassLoader);
             MotechClassPool.registerEnhancedData(enhancedClassData);
 
             Class<?> clazz = MDSClassLoader.getInstance().defineClass(enhancedClassData);
 
             JDOMetadata jdoMetadata = metadataBuilder.createBaseEntity(
-                    getPersistenceManagerFactory().newMetadata(), mapping);
+                    getPersistenceManagerFactory().newMetadata(), entity);
 
             getPersistenceManagerFactory().registerMetadata(jdoMetadata);
 
@@ -105,14 +103,14 @@ public class MDSConstructorImpl extends BaseMdsService implements MDSConstructor
     public void generateAllEntities() {
         MDSClassLoader tmpClassLoader = new MDSClassLoader();
 
-        List<EntityMapping> mappings = allEntityMappings.getAllEntities();
+        List<Entity> entities = allEntities.retrieveAll();
 
-        for (EntityMapping mapping : mappings) {
-            if (!mapping.isDraft()) {
+        for (Entity entity : entities) {
+            if (!entity.isDraft()) {
                 try {
-                    constructEntity(mapping, tmpClassLoader);
+                    constructEntity(entity, tmpClassLoader);
                 } catch (Exception e) {
-                    LOG.error("Unable to process entity " + mapping.getClassName(), e);
+                    LOG.error("Unable to process entity " + entity.getClassName(), e);
                 }
             }
         }
@@ -150,8 +148,8 @@ public class MDSConstructorImpl extends BaseMdsService implements MDSConstructor
     }
 
     @Autowired
-    public void setAllEntityMappings(AllEntityMappings allEntityMappings) {
-        this.allEntityMappings = allEntityMappings;
+    public void setAllEntities(AllEntities allEntities) {
+        this.allEntities = allEntities;
     }
 
     @Autowired

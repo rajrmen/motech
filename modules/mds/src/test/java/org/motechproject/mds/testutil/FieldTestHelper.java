@@ -1,8 +1,9 @@
 package org.motechproject.mds.testutil;
 
 import org.motechproject.commons.date.model.Time;
-import org.motechproject.mds.domain.AvailableFieldTypeMapping;
-import org.motechproject.mds.domain.FieldMapping;
+import org.motechproject.mds.domain.AvailableType;
+import org.motechproject.mds.domain.Field;
+import org.motechproject.mds.domain.Type;
 
 import java.util.List;
 
@@ -13,16 +14,16 @@ import static java.util.Arrays.asList;
  */
 public final class FieldTestHelper {
 
-    public static FieldMapping field(String name, Class<?> typeClass) {
+    public static Field field(String name, Class<?> typeClass) {
         return field(name, typeClass, null);
     }
 
-    public static FieldMapping field(String name, Class<?> typeClass, Object defaultVal) {
-        AvailableFieldTypeMapping type = new AvailableFieldTypeMapping();
+    public static Field field(String name, Class<?> typeClass, Object defaultVal) {
+        Type type = new Type();
         // we only need the type
-        type.setTypeClass(typeClass.getName());
+        type.setTypeClass(typeClass);
 
-        FieldMapping field = new FieldMapping();
+        Field field = new Field();
         // we only need the name, type and default value
         field.setName(name);
         field.setType(type);
