@@ -6,13 +6,13 @@ import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
 import org.springframework.context.ApplicationContext;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 public abstract class ApplicationContextTracker extends ServiceTracker {
 
-    private List<String> contextsProcessed = Collections.synchronizedList(new ArrayList<String>());
+    private Set<String> contextsProcessed = Collections.synchronizedSet(new HashSet<String>());
 
     private final Object lock = new Object();
 
@@ -25,12 +25,12 @@ public abstract class ApplicationContextTracker extends ServiceTracker {
                 contextsProcessed.contains(applicationContext.getId());
     }
 
-    protected void markAsProcessed(ApplicationContext applicationContext) {
-        contextsProcessed.add(applicationContext.getId());
+    protected void markAsProcessed(ServiceReference serviceReference) {
+        contextsProcessed.add(serviceReference.getBundle().getSymbolicName());
     }
 
-    protected void removeFromProcessed(ApplicationContext applicationContext) {
-        contextsProcessed.remove(applicationContext.getId());
+    protected void removeFromProcessed(ServiceReference serviceReference) {
+        contextsProcessed.remove(serviceReference.getBundle().getSymbolicName());
     }
 
     protected Object getLock() {

@@ -40,7 +40,7 @@ public class BlueprintApplicationContextTracker extends ApplicationContextTracke
             if (contextInvalidOrProcessed(serviceReference, applicationContext)) {
                 return applicationContext;
             }
-            markAsProcessed(applicationContext);
+            markAsProcessed(serviceReference);
         }
 
         try {
@@ -76,9 +76,8 @@ public class BlueprintApplicationContextTracker extends ApplicationContextTracke
             LOGGER.info(format("Deregistered channel for %s.", module.getSymbolicName()));
         }
 
-        ApplicationContext applicationContext = (ApplicationContext) service;
         synchronized (getLock()) {
-            removeFromProcessed(applicationContext);
+            removeFromProcessed(reference);
         }
     }
 }

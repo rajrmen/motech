@@ -30,7 +30,7 @@ public class BlueprintApplicationContextTracker extends ApplicationContextTracke
             if (contextInvalidOrProcessed(serviceReference, applicationContext)) {
                 return applicationContext;
             }
-            markAsProcessed(applicationContext);
+            markAsProcessed(serviceReference);
         }
 
         eventAnnotationBeanPostProcessor.processAnnotations(applicationContext);
@@ -48,7 +48,7 @@ public class BlueprintApplicationContextTracker extends ApplicationContextTracke
         if (ApplicationContextServiceReferenceUtils.isValid(reference)) {
             eventAnnotationBeanPostProcessor.clearListeners(applicationContext);
             synchronized (getLock()) {
-                removeFromProcessed(applicationContext);
+                removeFromProcessed(reference);
             }
         }
     }

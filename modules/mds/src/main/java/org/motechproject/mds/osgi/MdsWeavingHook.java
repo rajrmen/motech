@@ -28,6 +28,9 @@ public class MdsWeavingHook implements WeavingHook {
         if (className.contains("MdsExample")) {
             LOG.info("WINNER WINNER CHICKEN DINNER");
         }
+        if (className.contains("MdsExampleDde")) {
+            LOG.info("DOUBLE WINNER");
+        }
 
         LOG.trace("Weaving called for: {}", className);
 
@@ -39,7 +42,9 @@ public class MdsWeavingHook implements WeavingHook {
             LOG.trace("{} does not have enhanced registered DDE metadata", className);
         } else {
             LOG.debug("Weaving {}", className);
-            wovenClass.setBytes(enhancedClassData.getBytecode());
+            if (!"org.motechproject.motech-event-aggregation".equals(wovenClass.getBundleWiring().getBundle().getSymbolicName())) {
+                wovenClass.setBytes(enhancedClassData.getBytecode());
+            }
         }
     }
 }

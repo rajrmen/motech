@@ -36,6 +36,7 @@ public final class AnnotationsUtil extends AnnotationUtils {
     }
 
     public static List<Class> getClasses(Class<? extends Annotation> annotation, Bundle bundle) {
+        LOGGER.debug("Scanning bundle: {}", bundle.getSymbolicName());
         LOGGER.debug("Searching for classes with annotations: {}", annotation.getName());
 
         Reflections reflections = configureReflection(bundle, new TypeAnnotationsScanner());
@@ -50,6 +51,8 @@ public final class AnnotationsUtil extends AnnotationUtils {
                         "Failed to load class {} from bundle {}",
                         className, bundle.getSymbolicName()
                 );
+            } catch (Throwable t) {
+                LOGGER.error("Throwable for bundle " + bundle.getSymbolicName(), t);
             }
         }
 

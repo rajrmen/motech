@@ -53,7 +53,7 @@ public class SecurityContextTracker extends ApplicationContextTracker {
             if (contextInvalidOrProcessed(reference, applicationContext)) {
                 return applicationContext;
             }
-            markAsProcessed(applicationContext);
+            markAsProcessed(reference);
 
             securityAnnotationBeanPostProcessor.processAnnotations(applicationContext);
             securityRoleLoader.loadRoles(applicationContext);
@@ -69,9 +69,8 @@ public class SecurityContextTracker extends ApplicationContextTracker {
     public void removedService(ServiceReference reference, Object service) {
         super.removedService(reference, service);
 
-        ApplicationContext applicationContext = (ApplicationContext) service;
         synchronized (getLock()) {
-            removeFromProcessed(applicationContext);
+            removeFromProcessed(reference);
         }
     }
 }
