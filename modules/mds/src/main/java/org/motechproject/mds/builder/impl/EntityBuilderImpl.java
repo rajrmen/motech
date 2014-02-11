@@ -19,8 +19,11 @@ import org.motechproject.mds.domain.FieldMapping;
 import org.motechproject.mds.ex.EntityCreationException;
 import org.motechproject.mds.javassist.JavassistHelper;
 import org.motechproject.mds.javassist.MotechClassPool;
+import org.motechproject.mds.util.ClassName;
+import org.osgi.framework.Bundle;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -52,6 +55,22 @@ public class EntityBuilderImpl implements EntityBuilder {
 
             return new ClassData(className, ctClass.toBytecode());
         } catch (Exception e) {
+            throw new EntityCreationException(e);
+        }
+    }
+
+    @Override
+    public ClassData buildDDE(EntityMapping entity, Bundle bundle) {
+        String className = entity.getClassName();
+
+        try {
+            CtClass originalDdeClass = JavassistHelper.loadClass(bundle, className);
+
+            String ddeName = ClassName.getDDEName(className);
+            CtClass newDdeClass = classPool.makeClass(ddeName, originalDdeClass);
+
+            return new ClassData(ddeName, newDdeClass.toBytecode());
+        } catch (IOException | CannotCompileException e) {
             throw new EntityCreationException(e);
         }
     }

@@ -2,6 +2,7 @@ package org.motechproject.mds.service.impl.internal;
 
 import javassist.CtClass;
 import org.apache.commons.collections.CollectionUtils;
+import org.eclipse.gemini.blueprint.util.OsgiBundleUtils;
 import org.motechproject.mds.builder.ClassData;
 import org.motechproject.mds.builder.EnhancedClassData;
 import org.motechproject.mds.builder.EntityBuilder;
@@ -11,16 +12,20 @@ import org.motechproject.mds.builder.MDSClassLoader;
 import org.motechproject.mds.domain.EntityMapping;
 import org.motechproject.mds.enhancer.MdsJDOEnhancer;
 import org.motechproject.mds.ex.EntityCreationException;
+import org.motechproject.mds.javassist.JavassistHelper;
 import org.motechproject.mds.javassist.MotechClassPool;
 import org.motechproject.mds.repository.AllEntityMappings;
 import org.motechproject.mds.service.BaseMdsService;
 import org.motechproject.mds.service.MDSConstructor;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.jdo.metadata.JDOMetadata;
-import java.io.IOException;
 import java.util.List;
 
 /**
@@ -28,12 +33,15 @@ import java.util.List;
  */
 @Service
 public class MDSConstructorImpl extends BaseMdsService implements MDSConstructor {
+    private static final Logger LOG = LoggerFactory.getLogger(MDSConstructorImpl.class);
+
     private MdsJDOEnhancer enhancer;
 
     private EntityBuilder entityBuilder;
     private EntityInfrastructureBuilder infrastructureBuilder;
     private EntityMetadataBuilder metadataBuilder;
     private AllEntityMappings allEntityMappings;
+    private BundleContext bundleContext;
 
     @Override
     @Transactional
@@ -52,12 +60,33 @@ public class MDSConstructorImpl extends BaseMdsService implements MDSConstructor
 
     private void constructEntity(EntityMapping mapping, MDSClassLoader tmpClassLoader) {
         try {
-            ClassData classData = entityBuilder.build(mapping);
+            ClassData classData;
+
+            // create the initial class, for DDEs we extend the class from the declaring bundle
+            if (mapping.isDDE()) {
+                Bundle declaringBundle = OsgiBundleUtils.findBundleBySymbolicName(bundleContext, "org.motechproject.motech-event-aggregation");
+
+                if (declaringBundle == null) {
+                    throw new EntityCreationException("Declaring bundle unavailable for entity" + mapping.getClassName());
+                } else {
+                    classData = entityBuilder.buildDDE(mapping, declaringBundle);
+                    // make a copy of parent for enhancement purposes
+                    CtClass copyOfOriginal = JavassistHelper.loadClass(declaringBundle, mapping.getClassName());
+
+                    tmpClassLoader.defineClass(mapping.getClassName(), copyOfOriginal.toBytecode());
+                    MDSClassLoader.getInstance().defineClass(mapping.getClassName(), copyOfOriginal.toBytecode());
+                }
+            } else {
+                classData = entityBuilder.build(mapping);
+            }
+
 
             // we need a temporary classloader to define initial classes before enhancement
+
             tmpClassLoader.defineClass(classData);
 
             EnhancedClassData enhancedClassData = enhancer.enhance(mapping, classData.getBytecode(), tmpClassLoader);
+            MotechClassPool.registerEnhancedData(enhancedClassData);
 
             Class<?> clazz = MDSClassLoader.getInstance().defineClass(enhancedClassData);
 
@@ -67,7 +96,7 @@ public class MDSConstructorImpl extends BaseMdsService implements MDSConstructor
             getPersistenceManagerFactory().registerMetadata(jdoMetadata);
 
             buildInfrastructure(clazz);
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new EntityCreationException(e);
         }
     }
@@ -79,8 +108,12 @@ public class MDSConstructorImpl extends BaseMdsService implements MDSConstructor
         List<EntityMapping> mappings = allEntityMappings.getAllEntities();
 
         for (EntityMapping mapping : mappings) {
-            if (!mapping.isDraft() && !mapping.isDDE()) {
-                constructEntity(mapping, tmpClassLoader);
+            if (!mapping.isDraft()) {
+                try {
+                    constructEntity(mapping, tmpClassLoader);
+                } catch (Exception e) {
+                    LOG.error("Unable to process entity " + mapping.getClassName(), e);
+                }
             }
         }
     }
@@ -94,7 +127,6 @@ public class MDSConstructorImpl extends BaseMdsService implements MDSConstructor
             }
         }
     }
-
 
 
     @Autowired
@@ -120,5 +152,10 @@ public class MDSConstructorImpl extends BaseMdsService implements MDSConstructor
     @Autowired
     public void setAllEntityMappings(AllEntityMappings allEntityMappings) {
         this.allEntityMappings = allEntityMappings;
+    }
+
+    @Autowired
+    public void setBundleContext(BundleContext bundleContext) {
+        this.bundleContext = bundleContext;
     }
 }

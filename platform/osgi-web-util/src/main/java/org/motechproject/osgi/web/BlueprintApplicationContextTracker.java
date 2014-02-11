@@ -24,7 +24,6 @@ public class BlueprintApplicationContextTracker extends ApplicationContextTracke
     private static final String APPLICATION_CONTEXT_SERVICE_NAME = "org.springframework.context.service.name";
     private static final String OSGI_WEB_UTIL = "org.motechproject.motech-platform-osgi-web-util";
     private Log4JBundleLoader logBundleLoader;
-    private BundleRegister bundleRegister;
     private HttpServiceTrackers httpServiceTrackers;
     private final UIServiceTrackers uiServiceTrackers;
 
@@ -57,7 +56,7 @@ public class BlueprintApplicationContextTracker extends ApplicationContextTracke
         }
         synchronized (this) {
             try {
-                bundleRegister = BundleRegister.getInstance();
+                BundleRegister bundleRegister = BundleRegister.getInstance();
                 bundleRegister.addBundle(bundle);
 
                 if (logBundleLoader != null) {
@@ -101,7 +100,7 @@ public class BlueprintApplicationContextTracker extends ApplicationContextTracke
 
 
     private boolean isBlueprintEnabledBundle(Bundle bundle) {
-        return new BundleHeaders(bundle).isBluePrintEnabled();
+        return bundle != null && new BundleHeaders(bundle).isBluePrintEnabled();
     }
 
     private String getServiceName(ServiceReference serviceReference) {

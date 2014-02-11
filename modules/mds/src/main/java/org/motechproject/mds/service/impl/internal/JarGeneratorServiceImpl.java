@@ -166,7 +166,7 @@ public class JarGeneratorServiceImpl extends BaseMdsService implements JarGenera
     }
 
     private String createClassPath(String className) {
-        return JavassistHelper.toClassPath(className) + ".class";
+        return JavassistHelper.toClassPath(className);
     }
 
     @Autowired
