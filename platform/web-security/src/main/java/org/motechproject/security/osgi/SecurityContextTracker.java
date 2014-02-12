@@ -50,7 +50,7 @@ public class SecurityContextTracker extends ApplicationContextTracker {
         LOGGER.debug("Application context id: {}", contextId);
 
         synchronized (getLock()) {
-            if (contextInvalidOrProcessed(reference, applicationContext)) {
+            if (contextInvalidOrProcessed(reference)) {
                 return applicationContext;
             }
             markAsProcessed(reference);

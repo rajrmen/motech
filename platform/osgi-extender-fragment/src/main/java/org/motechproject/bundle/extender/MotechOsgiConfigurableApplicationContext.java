@@ -1,9 +1,6 @@
 package org.motechproject.bundle.extender;
 
 import org.eclipse.gemini.blueprint.context.support.OsgiBundleXmlApplicationContext;
-import org.springframework.context.ApplicationEvent;
-import org.springframework.context.ApplicationListener;
-import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.web.context.ConfigurableWebApplicationContext;
 
 import javax.servlet.ServletConfig;
@@ -15,22 +12,8 @@ public class MotechOsgiConfigurableApplicationContext extends OsgiBundleXmlAppli
     private ServletConfig servletConfig;
     private String namespace;
 
-    private boolean initialized;
-    private final Object lock = new Object();
-
     public MotechOsgiConfigurableApplicationContext(String[] configurationLocations) {
         super(configurationLocations);
-        addApplicationListener(new ApplicationListener<ApplicationEvent>() {
-            @Override
-            public void onApplicationEvent(ApplicationEvent event) {
-                if (event instanceof ContextRefreshedEvent) {
-                    synchronized (lock) {
-                        initialized = true;
-                        lock.notifyAll();
-                    }
-                }
-            }
-        });
     }
 
     @Override
@@ -66,13 +49,5 @@ public class MotechOsgiConfigurableApplicationContext extends OsgiBundleXmlAppli
     @Override
     public void setConfigLocation(String configLocation) {
         this.setConfigLocations(new String[]{configLocation});
-    }
-
-    public boolean isInitialized() {
-        return initialized;
-    }
-
-    public Object getLock() {
-        return lock;
     }
 }

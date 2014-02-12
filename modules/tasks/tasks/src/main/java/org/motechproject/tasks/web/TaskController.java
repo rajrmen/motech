@@ -58,9 +58,14 @@ public class TaskController {
     public List<Task> getAllTasks() {
         try {
             Class<?> clazz = getClass().getClassLoader().loadClass("org.motechproject.event.aggregation.model.rule.MdsExample");
-            Object instance = clazz.newInstance();
-
-            System.out.println(instance);
+            System.out.println(clazz.getName());
+            boolean containsField = true;
+            try {
+                clazz.getDeclaredField("testField");
+            } catch (NoSuchFieldException e) {
+                containsField = false;
+            }
+            System.out.println("Contains our new field: " + containsField);
         } catch (Exception e) {
             e.printStackTrace();
         }

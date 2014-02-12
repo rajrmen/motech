@@ -17,12 +17,16 @@ public abstract class ApplicationContextTracker extends ServiceTracker {
     private final Object lock = new Object();
 
     public ApplicationContextTracker(BundleContext context) {
-        super(context, ApplicationContext.class.getName(), null);
+        this(context, ApplicationContext.class);
     }
 
-    protected boolean contextInvalidOrProcessed(ServiceReference serviceReference, ApplicationContext applicationContext) {
+    public ApplicationContextTracker(BundleContext context, Class<? extends ApplicationContext> clazz) {
+        super(context, clazz.getName(), null);
+    }
+
+    protected boolean contextInvalidOrProcessed(ServiceReference serviceReference) {
         return ApplicationContextServiceReferenceUtils.isNotValid(serviceReference)||
-                contextsProcessed.contains(applicationContext.getId());
+                contextsProcessed.contains(serviceReference.getBundle().getSymbolicName());
     }
 
     protected void markAsProcessed(ServiceReference serviceReference) {

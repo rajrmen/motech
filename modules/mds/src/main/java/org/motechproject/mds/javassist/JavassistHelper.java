@@ -1,6 +1,7 @@
 package org.motechproject.mds.javassist;
 
 
+import javassist.ClassPool;
 import javassist.CtClass;
 import org.apache.commons.lang.StringUtils;
 import org.osgi.framework.Bundle;
@@ -16,7 +17,7 @@ public final class JavassistHelper {
     }
 
     public static String genericFieldSignature(String typeClass, String genericParam) {
-        return "L" + toClassPath(typeClass) + "<L" + toClassPath(genericParam) + ";>;";
+        return "L" + replaceDotsWithSlashes(typeClass) + "<L" + replaceDotsWithSlashes(genericParam) + ";>;";
     }
 
     public static String toClassPath(Class<?> clazz) {
@@ -24,20 +25,24 @@ public final class JavassistHelper {
     }
 
     public static String toClassPath(String clazz) {
-        return StringUtils.replace(clazz, ".", "/") + ".class";
+        return replaceDotsWithSlashes(clazz) + ".class";
     }
 
-    public static CtClass loadClass(Bundle bundle, String className) throws IOException {
+    public static CtClass loadClass(Bundle bundle, String className, ClassPool classPool) throws IOException {
         CtClass clazz = null;
 
         URL classUrl = bundle.getResource(toClassPath(className));
         if (classUrl != null) {
             try (InputStream classInputStream = classUrl.openStream()) {
-                clazz = MotechClassPool.getDefault().makeClass(classInputStream);
+                clazz = classPool.makeClass(classInputStream);
             }
         }
 
         return clazz;
+    }
+
+    private static String replaceDotsWithSlashes(String str) {
+        return StringUtils.replace(str, ".", "/");
     }
 
     private JavassistHelper() {

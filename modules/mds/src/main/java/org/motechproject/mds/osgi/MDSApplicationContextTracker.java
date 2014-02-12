@@ -1,6 +1,5 @@
 package org.motechproject.mds.osgi;
 
-import org.motechproject.bundle.extender.MotechOsgiConfigurableApplicationContext;
 import org.motechproject.mds.annotations.internal.MDSAnnotationProcessor;
 import org.motechproject.osgi.web.ApplicationContextTracker;
 import org.motechproject.osgi.web.MotechOsgiWebApplicationContext;
@@ -8,7 +7,7 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceReference;
-import org.osgi.framework.wiring.FrameworkWiring;
+import org.osgi.service.packageadmin.PackageAdmin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +16,6 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -29,11 +27,11 @@ import java.util.Set;
 @Component
 public class MDSApplicationContextTracker {
     private static final Logger LOGGER = LoggerFactory.getLogger(MDSApplicationContextTracker.class);
-    private static final int CONTEXT_WAIT_TIME = 5000;
 
     private MDSServiceTracker serviceTracker;
 
     private MDSAnnotationProcessor processor;
+    private PackageAdmin packageAdmin;
 
     @PostConstruct
     public void startTracker() {
@@ -57,12 +55,17 @@ public class MDSApplicationContextTracker {
         this.processor = processor;
     }
 
+    @Autowired
+    public void setPackageAdmin(PackageAdmin packageAdmin) {
+        this.packageAdmin = packageAdmin;
+    }
+
     private class MDSServiceTracker extends ApplicationContextTracker {
 
         private Set<String> bundlesRefreshed = new HashSet<>();
 
         public MDSServiceTracker(BundleContext bundleContext) {
-            super(bundleContext);
+            super(bundleContext, MotechOsgiWebApplicationContext.class);
         }
 
         @Override
@@ -71,87 +74,47 @@ public class MDSApplicationContextTracker {
             LOGGER.debug("Starting to process {}", applicationContext.getDisplayName());
 
             synchronized (getLock()) {
-                if (contextInvalidOrProcessed(serviceReference, applicationContext)) {
+                if (contextInvalidOrProcessed(serviceReference)) {
                     return applicationContext;
                 }
                 markAsProcessed(serviceReference);
 
-                process(serviceReference, applicationContext);
+                process(serviceReference);
             }
 
             LOGGER.debug("Processed {}", applicationContext.getDisplayName());
             return applicationContext;
         }
 
-        private void process(ServiceReference serviceReference, ApplicationContext applicationContext) {
+        private void process(ServiceReference serviceReference) {
             Bundle bundle = serviceReference.getBundle();
-            String symbolicName = bundle.getSymbolicName();
 
-            if (bundlesRefreshed.contains(symbolicName)) {
-                // the refresh came from us
-                LOGGER.debug("Bundle {} was already processed, ignoring");
-                // next time we want to process it, since the refresh won't come from us
-                bundlesRefreshed.remove(symbolicName);
-            } else {
-                // process
-                boolean annotationsFound = processor.processAnnotations(bundle);
-                // if we found annotations, we will refresh the bundle in order to start weaving the classes it exposes
-                if (annotationsFound) {
-                    refresh(bundle, applicationContext);
-                }
+            boolean annotationsFound = processor.processAnnotations(bundle);
+            // if we found annotations, we will refresh the bundle in order to start weaving the classes it exposes
+            if (annotationsFound) {
+                // TODO: use FrameworkWiring
+                // We use a deprecated method from the package admin in order to avoid compile time issues
+                // since we have osgi.core 4.2.0 on the classpath. We cannot simply switch to 4.3.0 because
+                // of issues with OSGi ITs. Until they are resolved, we have to rely on the PackageAdmin.
+                packageAdmin.refreshPackages(new Bundle[]{bundle});
             }
-        }
-
-        private void refresh(Bundle bundleToRefresh, ApplicationContext applicationContext) {
-            waitForContext(applicationContext, bundleToRefresh);
-
-            Bundle frameworkBundle = context.getBundle(0);
-            FrameworkWiring frameworkWiring = frameworkBundle.adapt(FrameworkWiring.class);
-
-            bundlesRefreshed.add(bundleToRefresh.getSymbolicName());
-
-            frameworkWiring.refreshBundles(Arrays.asList(bundleToRefresh));
         }
 
         @Override
         public void removedService(ServiceReference reference, Object service) {
             super.removedService(reference, service);
 
-            synchronized (getLock()) {
-                removeFromProcessed(reference);
-            }
-        }
-    }
+            String bundleSymbolicName = reference.getBundle().getSymbolicName();
 
-    private void waitForContext(ApplicationContext applicationContext, Bundle bundle) {
-        if (applicationContext instanceof MotechOsgiWebApplicationContext) {
-            MotechOsgiWebApplicationContext motechOsgiWebApplicationContext =
-                    (MotechOsgiWebApplicationContext) applicationContext;
-            if (!motechOsgiWebApplicationContext.isInitialized()) {
-                try {
-                    synchronized (motechOsgiWebApplicationContext.getLock()) {
-                        motechOsgiWebApplicationContext.getLock().wait(CONTEXT_WAIT_TIME);
-                    }
-                } catch (InterruptedException e) {
-                    if (!motechOsgiWebApplicationContext.isInitialized()) {
-                        LOGGER.warn("Refreshing context for bundle {} before it was initialized",
-                                bundle.getSymbolicName());
-                    }
-                }
-            }
-        } else if (applicationContext instanceof MotechOsgiConfigurableApplicationContext) {
-            MotechOsgiConfigurableApplicationContext motechOsgiWebApplicationContext =
-                    (MotechOsgiConfigurableApplicationContext) applicationContext;
-            if (!motechOsgiWebApplicationContext.isInitialized()) {
-                try {
-                    synchronized (motechOsgiWebApplicationContext.getLock()) {
-                        motechOsgiWebApplicationContext.getLock().wait(CONTEXT_WAIT_TIME);
-                    }
-                } catch (InterruptedException e) {
-                    if (!motechOsgiWebApplicationContext.isInitialized()) {
-                        LOGGER.warn("Refreshing context for bundle {} before it was initialized",
-                                bundle.getSymbolicName());
-                    }
+            synchronized (getLock()) {
+                if (bundlesRefreshed.contains(bundleSymbolicName)) {
+                    // the refresh came from us
+                    LOGGER.debug("Bundle {} was already processed, ignoring", bundleSymbolicName);
+                    // next time we want to process it, since the refresh won't come from us
+                    bundlesRefreshed.remove(bundleSymbolicName);
+                } else {
+                    // bundle was stopped/removed by a 3rd party
+                    removeFromProcessed(reference);
                 }
             }
         }

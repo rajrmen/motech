@@ -2,7 +2,6 @@ package org.motechproject.mds.osgi;
 
 import org.motechproject.mds.builder.EnhancedClassData;
 import org.motechproject.mds.javassist.MotechClassPool;
-import org.motechproject.mds.util.ClassName;
 import org.osgi.framework.hooks.weaving.WeavingHook;
 import org.osgi.framework.hooks.weaving.WovenClass;
 import org.slf4j.Logger;
@@ -10,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import java.util.List;
 
 @Service
 public class MdsWeavingHook implements WeavingHook {
@@ -25,26 +25,25 @@ public class MdsWeavingHook implements WeavingHook {
     public void weave(WovenClass wovenClass) {
         String className = wovenClass.getClassName();
 
-        if (className.contains("MdsExample")) {
-            LOG.info("WINNER WINNER CHICKEN DINNER");
-        }
-        if (className.contains("MdsExampleDde")) {
-            LOG.info("DOUBLE WINNER");
-        }
-
         LOG.trace("Weaving called for: {}", className);
 
-        String realDDEClassName = ClassName.getDDEName(className);
-
-        EnhancedClassData enhancedClassData = MotechClassPool.getEnhancedData(realDDEClassName);
+        EnhancedClassData enhancedClassData = MotechClassPool.getEnhancedData(className);
 
         if (enhancedClassData == null) {
             LOG.trace("{} does not have enhanced registered DDE metadata", className);
         } else {
             LOG.debug("Weaving {}", className);
-            if (!"org.motechproject.motech-event-aggregation".equals(wovenClass.getBundleWiring().getBundle().getSymbolicName())) {
-                wovenClass.setBytes(enhancedClassData.getBytecode());
-            }
+            // these imports will be required by the provider
+            addCommonJdoImports(wovenClass);
+            // change the bytecode
+            wovenClass.setBytes(enhancedClassData.getBytecode());
         }
+    }
+
+    private void addCommonJdoImports(WovenClass wovenClass) {
+        List<String> dynamicImports = wovenClass.getDynamicImports();
+
+        dynamicImports.add("javax.jdo");
+        dynamicImports.add("javax.jdo.spi");
     }
 }

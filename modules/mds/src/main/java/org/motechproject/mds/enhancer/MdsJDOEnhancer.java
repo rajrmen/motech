@@ -3,7 +3,6 @@ package org.motechproject.mds.enhancer;
 import org.datanucleus.api.jdo.JDOEnhancer;
 import org.motechproject.mds.builder.EnhancedClassData;
 import org.motechproject.mds.builder.EntityMetadataBuilder;
-import org.motechproject.mds.util.ClassName;
 import org.motechproject.mds.domain.Entity;
 import org.motechproject.server.config.SettingsFacade;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +34,7 @@ public class MdsJDOEnhancer extends JDOEnhancer {
     public EnhancedClassData enhance(Entity entity, byte[] originalBytes,
                                      ClassLoader tmpClassLoader)
             throws IOException {
-        String className = (entity.isDDE()) ? ClassName.getDDEName(entity.getClassName()) : entity.getClassName();
+        String className = entity.getClassName();
 
         setClassLoader(tmpClassLoader);
 

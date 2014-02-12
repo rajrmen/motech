@@ -12,7 +12,6 @@ import org.motechproject.mds.builder.MDSClassLoader;
 import org.motechproject.mds.domain.Entity;
 import org.motechproject.mds.enhancer.MdsJDOEnhancer;
 import org.motechproject.mds.ex.EntityCreationException;
-import org.motechproject.mds.javassist.JavassistHelper;
 import org.motechproject.mds.javassist.MotechClassPool;
 import org.motechproject.mds.repository.AllEntities;
 import org.motechproject.mds.service.BaseMdsService;
@@ -62,7 +61,6 @@ public class MDSConstructorImpl extends BaseMdsService implements MDSConstructor
         try {
             ClassData classData;
 
-            // create the initial class, for DDEs we extend the class from the declaring bundle
             if (entity.isDDE()) {
                 Bundle declaringBundle = OsgiBundleUtils.findBundleBySymbolicName(bundleContext, "org.motechproject.motech-event-aggregation");
 
@@ -70,17 +68,12 @@ public class MDSConstructorImpl extends BaseMdsService implements MDSConstructor
                     throw new EntityCreationException("Declaring bundle unavailable for entity" + entity.getClassName());
                 } else {
                     classData = entityBuilder.buildDDE(entity, declaringBundle);
-                    // make a copy of parent for enhancement purposes
-                    CtClass copyOfOriginal = JavassistHelper.loadClass(declaringBundle, entity.getClassName());
-
-                    tmpClassLoader.defineClass(entity.getClassName(), copyOfOriginal.toBytecode());
-                    MDSClassLoader.getInstance().defineClass(entity.getClassName(), copyOfOriginal.toBytecode());
                 }
             } else {
                 classData = entityBuilder.build(entity);
             }
-            // we need a temporary classloader to define initial classes before enhancement
 
+            // we need a temporary classloader to define initial classes before enhancement
             tmpClassLoader.defineClass(classData);
 
             EnhancedClassData enhancedClassData = enhancer.enhance(entity, classData.getBytecode(), tmpClassLoader);

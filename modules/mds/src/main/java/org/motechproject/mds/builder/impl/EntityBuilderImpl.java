@@ -19,7 +19,6 @@ import org.motechproject.mds.domain.Type;
 import org.motechproject.mds.ex.EntityCreationException;
 import org.motechproject.mds.javassist.JavassistHelper;
 import org.motechproject.mds.javassist.MotechClassPool;
-import org.motechproject.mds.util.ClassName;
 import org.osgi.framework.Bundle;
 import org.springframework.stereotype.Component;
 
@@ -64,12 +63,13 @@ public class EntityBuilderImpl implements EntityBuilder {
         String className = entity.getClassName();
 
         try {
-            CtClass originalDdeClass = JavassistHelper.loadClass(bundle, className);
+            CtClass ddeClass = JavassistHelper.loadClass(bundle, className, classPool);
 
-            String ddeName = ClassName.getDDEName(className);
-            CtClass newDdeClass = classPool.makeClass(ddeName, originalDdeClass);
+            CtField testField = new CtField(MotechClassPool.getDefault().getOrNull(Integer.class.getName()),
+                    "testField", ddeClass);
+            ddeClass.addField(testField);
 
-            return new ClassData(ddeName, newDdeClass.toBytecode());
+            return new ClassData(className, ddeClass.toBytecode());
         } catch (IOException | CannotCompileException e) {
             throw new EntityCreationException(e);
         }

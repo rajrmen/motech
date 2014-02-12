@@ -51,8 +51,6 @@ public final class AnnotationsUtil extends AnnotationUtils {
                         "Failed to load class {} from bundle {}",
                         className, bundle.getSymbolicName()
                 );
-            } catch (Throwable t) {
-                LOGGER.error("Throwable for bundle " + bundle.getSymbolicName(), t);
             }
         }
 

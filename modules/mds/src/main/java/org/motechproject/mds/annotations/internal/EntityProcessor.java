@@ -16,7 +16,6 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
 import java.util.List;
 
-import static org.apache.commons.lang.StringUtils.defaultIfBlank;
 import static org.motechproject.mds.util.Constants.AnnotationFields.MODULE;
 import static org.motechproject.mds.util.Constants.AnnotationFields.NAME;
 import static org.motechproject.mds.util.Constants.AnnotationFields.NAMESPACE;
@@ -99,24 +98,6 @@ class EntityProcessor extends AbstractProcessor {
         fieldProcessor.execute();
 
         entityService.addFields(entity, fieldProcessor.getFields());
-    }
-
-    private String getName(Entity annotation, Class clazz) {
-        return defaultIfBlank(annotation.name(), ClassName.getSimpleName(clazz.getName()));
-    }
-
-    private String getModule(Entity annotation) {
-        BundleHeaders headers = new BundleHeaders(getBundle());
-
-        String module = defaultIfBlank(annotation.module(), headers.getName());
-        module = defaultIfBlank(module, headers.getSymbolicName());
-        module = defaultIfBlank(module, null);
-
-        return module;
-    }
-
-    private String getNamespace(Entity annotation) {
-        return defaultIfBlank(annotation.namespace(), null);
     }
 
     @Autowired

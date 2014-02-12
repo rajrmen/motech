@@ -11,9 +11,9 @@ public class JavassistHelperTest {
 
     @Test
     public void shouldCreateClassPathEntries() {
-        assertEquals("this/is/a/test/package", JavassistHelper.toClassPath("this.is.a.test.package"));
-        assertEquals("java/lang/String", JavassistHelper.toClassPath(String.class));
-        assertEquals("java/lang/String", JavassistHelper.toClassPath(String.class.getName()));
+        assertEquals("this/is/a/test/package.class", JavassistHelper.toClassPath("this.is.a.test.package"));
+        assertEquals("java/lang/String.class", JavassistHelper.toClassPath(String.class));
+        assertEquals("java/lang/String.class", JavassistHelper.toClassPath(String.class.getName()));
     }
 
     @Test

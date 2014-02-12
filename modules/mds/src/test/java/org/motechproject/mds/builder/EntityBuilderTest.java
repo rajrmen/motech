@@ -12,7 +12,6 @@ import org.motechproject.commons.date.util.DateUtil;
 import org.motechproject.mds.builder.impl.EntityBuilderImpl;
 import org.motechproject.mds.domain.Entity;
 import org.motechproject.mds.domain.Field;
-import org.motechproject.mds.domain.FieldMapping;
 import org.motechproject.mds.domain.Type;
 import org.springframework.test.util.ReflectionTestUtils;
 

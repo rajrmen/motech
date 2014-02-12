@@ -130,9 +130,7 @@
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
-                        <Blueprint-Enabled>true</Blueprint-Enabled>
                         <Context-Path>event-aggregation</Context-Path>
-                        <Context-File>META-INF/osgi/applicationEventAggregationBundle.xml</Context-File>
                         <Resource-Path>event-aggregation/resources</Resource-Path>
                         <Export-Package>
                             org.motechproject.event.aggregation.model.schedule;version=${project.version},
@@ -142,6 +140,8 @@
                             org.motechproject.event.aggregation.service;version=${project.version}
                         </Export-Package>
                         <Import-Package>
+   <!--                         javax.jdo.spi,
+                            javax.jdo,-->
                             org.ektorp.impl,
                             org.ektorp.spring,
                             org.ektorp.support,

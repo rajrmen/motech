@@ -27,7 +27,7 @@ public class BlueprintApplicationContextTracker extends ApplicationContextTracke
         LOGGER.debug("Staring to process " + applicationContext.getDisplayName());
 
         synchronized (getLock()) {
-            if (contextInvalidOrProcessed(serviceReference, applicationContext)) {
+            if (contextInvalidOrProcessed(serviceReference)) {
                 return applicationContext;
             }
             markAsProcessed(serviceReference);

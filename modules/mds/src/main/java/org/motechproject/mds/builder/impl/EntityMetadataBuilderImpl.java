@@ -24,7 +24,7 @@ public class EntityMetadataBuilderImpl implements EntityMetadataBuilder {
     public JDOMetadata createBaseEntity(JDOMetadata md, Entity entity) {
         PackageMetadata pmd = md.newPackageMetadata(ClassName.getPackage(entity.getClassName()));
 
-        String className = getName(entity);
+        String className = entity.getClassName();
         ClassMetadata cmd = pmd.newClassMetadata(ClassName.getSimpleName(className));
 
         cmd.setTable(getTableName(entity));
@@ -36,7 +36,7 @@ public class EntityMetadataBuilderImpl implements EntityMetadataBuilder {
     }
 
     private static String getTableName(Entity entity) {
-        String className = getName(entity);
+        String className = entity.getClassName();
 
         String simpleName = ClassName.getSimpleName(className);
         String module = entity.getModule();
@@ -54,9 +54,5 @@ public class EntityMetadataBuilderImpl implements EntityMetadataBuilder {
         builder.append(simpleName);
 
         return builder.toString().toUpperCase();
-    }
-
-    private static String getName(Entity entity) {
-        return (entity.isDDE()) ? ClassName.getDDEName(entity.getClassName()) : entity.getClassName();
     }
 }

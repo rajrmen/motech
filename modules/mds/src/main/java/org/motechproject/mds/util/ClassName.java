@@ -40,13 +40,4 @@ public final class ClassName {
     public static String getServiceName(String className) {
         return String.format("%s.%sServiceImpl", Packages.SERVICE_IMPL, getSimpleName(className));
     }
-
-    /**
-     * Since DDEs are actually redefined in the class pool, we use a different name for them underneath
-     * @param className Full name of the class
-     * @return the name of the enhanced class in the class pool
-     */
-    public static String getDDEName(String className) {
-        return String.format("%sDde", className);
-    }
 }
