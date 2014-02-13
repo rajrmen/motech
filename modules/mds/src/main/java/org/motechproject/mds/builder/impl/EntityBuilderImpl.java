@@ -19,6 +19,7 @@ import org.motechproject.mds.domain.Type;
 import org.motechproject.mds.ex.EntityCreationException;
 import org.motechproject.mds.javassist.JavassistHelper;
 import org.motechproject.mds.javassist.MotechClassPool;
+import org.motechproject.mds.util.ClassName;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
@@ -37,7 +38,7 @@ public class EntityBuilderImpl implements EntityBuilder {
     @Override
     public ClassData build(Entity entity) {
         try {
-            String className = entity.getClassName();
+            String className = ClassName.getEntityName(entity.getClassName());
 
             CtClass ctClass = classPool.getOrNull(className);
 

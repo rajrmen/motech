@@ -6,6 +6,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.motechproject.mds.builder.impl.EntityInfrastructureBuilderImpl;
+import org.motechproject.mds.util.Constants.PackagesGenerated;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -26,9 +27,9 @@ import static org.mockito.Mockito.when;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(MDSClassLoader.class)
 public class EntityInfrastructureBuilderTest {
-    private static final String SAMPLE_REPOSITORY = "org.motechproject.mds.repository.AllSamples";
-    private static final String SAMPLE_INTERFACE = "org.motechproject.mds.service.SampleService";
-    private static final String SAMPLE_SERVICE = "org.motechproject.mds.service.impl.SampleServiceImpl";
+    private static final String SAMPLE_REPOSITORY = PackagesGenerated.REPOSITORY.concat(".AllSamples");
+    private static final String SAMPLE_INTERFACE = PackagesGenerated.SERVICE.concat(".SampleService");
+    private static final String SAMPLE_SERVICE = PackagesGenerated.SERVICE_IMPL.concat(".SampleServiceImpl");
 
     @Mock
     private MDSClassLoader classLoader;

@@ -118,6 +118,46 @@ public final class Constants {
         }
     }
 
+    public static final class PackagesGenerated {
+
+        /**
+         * Constant <code>BASE</code> represents the base package for all pakcages inside generated MDS-Entities module.
+         */
+        public static final String BASE = Packages.BASE.concat("generated");
+
+        /**
+         * Constant <code>ENTITY</code> presents a package for generated entity classes.
+         *
+         * @see {@link #BASE}
+         */
+        public static final String ENTITY = BASE + ".entity";
+
+        /**
+         * Constant <code>REPOSITORY</code> presents a package for generated repository classes.
+         *
+         * @see {@link #BASE}
+         */
+        public static final String REPOSITORY = BASE + ".repository";
+
+        /**
+         * Constant <code>SERVICE</code> presents a package for generated service interfaces.
+         *
+         * @see {@link #BASE}
+         */
+        public static final String SERVICE = BASE + ".service";
+
+        /**
+         * Constant <code>SERVICE_IMPL</code> presents a package for generated implementation of interfaces
+         * defined in {@link #SERVICE} package.
+         *
+         * @see {@link #BASE}
+         */
+        public static final String SERVICE_IMPL = SERVICE + ".impl";
+
+        private PackagesGenerated() {
+        }
+    }
+
     /**
      * The <code>Config</code> contains constant values related with properties inside files:
      * <ul>

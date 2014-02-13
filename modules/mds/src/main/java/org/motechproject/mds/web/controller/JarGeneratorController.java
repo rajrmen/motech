@@ -35,6 +35,7 @@ public class JarGeneratorController extends MdsController {
         );
 
         OutputStream output = response.getOutputStream();
+        jarGeneratorService.regenerateMdsDataBundle();
         File jar = jarGeneratorService.generate();
 
         try (FileInputStream input = new FileInputStream(jar)) {

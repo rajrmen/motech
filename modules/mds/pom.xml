@@ -38,6 +38,11 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>motech-platform-web-security</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>com.springsource.org.apache.commons.collections</artifactId>
         </dependency>
@@ -215,7 +220,8 @@
                             org.motechproject.mds.entity;version=${project.version},
                             org.motechproject.mds.ex;version=${project.version},
                             org.motechproject.mds.repository;version=${project.version},
-                            org.motechproject.mds.service;version=${project.version}
+                            org.motechproject.mds.service;version=${project.version},
+                            org.motechproject.mds.service.impl;version=${project.version}
                         </Export-Package>
                         <Import-Package>
                             com.googlecode.flyway.core,

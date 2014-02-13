@@ -11,5 +11,5 @@
     <osgi:reference id="sqlDbManager" interface="org.motechproject.commons.sql.service.SqlDBManager" bean-name="sqlDbManager"/>
 
     <import resource="classpath*:META-INF/motech/mdsContext.xml"/>
-
+    <import resource="classpath*:META-INF/motech/mdsCommonContext.xml"/>
 </beans>

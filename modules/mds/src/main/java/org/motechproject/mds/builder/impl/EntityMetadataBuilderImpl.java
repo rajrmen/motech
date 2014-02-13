@@ -22,8 +22,8 @@ public class EntityMetadataBuilderImpl implements EntityMetadataBuilder {
 
     @Override
     public JDOMetadata createBaseEntity(JDOMetadata md, Entity entity) {
-        PackageMetadata pmd = md.newPackageMetadata(ClassName.getPackage(entity.getClassName()));
-        ClassMetadata cmd = pmd.newClassMetadata(ClassName.getSimpleName(entity.getClassName()));
+        PackageMetadata pmd = md.newPackageMetadata(ClassName.getPackage(ClassName.getEntityName(entity.getClassName())));
+        ClassMetadata cmd = pmd.newClassMetadata(ClassName.getSimpleName(ClassName.getEntityName(entity.getClassName())));
 
         cmd.setTable(getTableName(entity));
         cmd.setDetachable(true);

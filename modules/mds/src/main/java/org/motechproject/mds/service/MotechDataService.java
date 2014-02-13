@@ -18,6 +18,8 @@ public interface MotechDataService<T> {
 
     List<T> retrieveAll();
 
+    List<T> getAll(int page, int onPage);
+
     T update(T object);
 
     void delete(T object);

@@ -30,6 +30,7 @@ import org.motechproject.mds.service.BaseMdsService;
 import org.motechproject.mds.service.EntityService;
 import org.motechproject.mds.service.MDSConstructor;
 import org.motechproject.mds.util.ClassName;
+import org.motechproject.mds.util.Constants;
 import org.motechproject.mds.util.FieldHelper;
 import org.motechproject.mds.web.DraftData;
 import org.motechproject.mds.web.ExampleData;
@@ -50,8 +51,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import static org.motechproject.mds.util.Constants.Packages;
 
 /**
  * Default implementation of {@link org.motechproject.mds.service.EntityService} interface.
@@ -75,7 +74,7 @@ public class EntityServiceImpl extends BaseMdsService implements EntityService {
 
         if (fromUI) {
             // in this situation entity.getName() returns a simple name of class
-            String className = String.format("%s.%s", Packages.ENTITY, entityDto.getName());
+            String className = String.format("%s.%s", Constants.PackagesGenerated.ENTITY, entityDto.getName());
             entityDto.setClassName(className);
         }
 
