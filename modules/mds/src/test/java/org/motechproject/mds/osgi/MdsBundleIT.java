@@ -85,7 +85,7 @@ public class MdsBundleIT extends BaseOsgiIT {
         assertEquals(actualService, expectedService);
 
 
-        Class clazz = service.getClass().getClassLoader().loadClass("org.motechproject.mdsgenerated.entity.Foo");
+        Class clazz = service.loadClass("org.motechproject.mdsgenerated.entity.Foo");
         Object o = clazz.newInstance();
 
         service.create(o);

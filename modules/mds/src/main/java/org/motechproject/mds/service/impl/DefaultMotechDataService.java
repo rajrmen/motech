@@ -108,4 +108,12 @@ public abstract class DefaultMotechDataService<T> implements MotechDataService<T
         }
         return classLoader.loadClass(classPath);
     }
+
+    public Class<?> loadClass(String classPath) throws ClassNotFoundException{
+        MDSClassLoader classLoader = MDSClassLoader.getInstance();
+        if (null == classLoader.loadClass(classPath)) {
+            throw new ClassNotFoundException();
+        }
+        return classLoader.loadClass(classPath);
+    }
 }
