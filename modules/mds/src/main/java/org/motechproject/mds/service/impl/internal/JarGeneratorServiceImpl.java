@@ -10,7 +10,6 @@ import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.runtime.RuntimeConstants;
 import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 import org.eclipse.gemini.blueprint.util.OsgiBundleUtils;
-import org.motechproject.mds.builder.EntityMetadataBuilder;
 import org.motechproject.mds.domain.Entity;
 import org.motechproject.mds.ex.MdsException;
 import org.motechproject.mds.javassist.JavassistHelper;
@@ -18,6 +17,7 @@ import org.motechproject.mds.javassist.MotechClassPool;
 import org.motechproject.mds.repository.AllEntities;
 import org.motechproject.mds.service.BaseMdsService;
 import org.motechproject.mds.service.JarGeneratorService;
+import org.motechproject.mds.service.MDSConstructor;
 import org.motechproject.osgi.web.BundleHeaders;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -62,7 +62,7 @@ public class JarGeneratorServiceImpl extends BaseMdsService implements JarGenera
     private AllEntities allEntities;
     private BundleHeaders bundleHeaders;
     private BundleContext bundleContext;
-    private EntityMetadataBuilder metadataBuilder;
+    private MDSConstructor mdsConstructor;
 
     @Override
     @Transactional
@@ -131,7 +131,7 @@ public class JarGeneratorServiceImpl extends BaseMdsService implements JarGenera
 
             JarEntry jdoEntry = new JarEntry("META-INF/package.jdo");
             output.putNextEntry(jdoEntry);
-            output.write(metadataBuilder.getJdoMetadata().toString().getBytes());
+            output.write(mdsConstructor.getCurrentMetadata().toString().getBytes());
             output.closeEntry();
 
             String blueprint = mergeTemplate(classNames, "/velocity/templates/blueprint-template.vm");
@@ -305,7 +305,7 @@ public class JarGeneratorServiceImpl extends BaseMdsService implements JarGenera
     }
 
     @Autowired
-    public void setMetadataBuilder(EntityMetadataBuilder metadataBuilder) {
-        this.metadataBuilder = metadataBuilder;
+    public void setMdsConstructor(MDSConstructor mdsConstructor) {
+        this.mdsConstructor = mdsConstructor;
     }
 }

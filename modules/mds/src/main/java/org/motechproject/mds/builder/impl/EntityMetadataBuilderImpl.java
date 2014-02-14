@@ -1,12 +1,12 @@
 package org.motechproject.mds.builder.impl;
 
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
 import org.motechproject.mds.builder.EntityMetadataBuilder;
 import org.motechproject.mds.domain.Entity;
 import org.motechproject.mds.util.ClassName;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.jdo.PersistenceManagerFactory;
 import javax.jdo.annotations.IdentityType;
 import javax.jdo.metadata.ClassMetadata;
 import javax.jdo.metadata.ClassPersistenceModifier;
@@ -22,39 +22,31 @@ import static org.apache.commons.lang.StringUtils.isNotBlank;
 @Component
 public class EntityMetadataBuilderImpl implements EntityMetadataBuilder {
 
-    private PersistenceManagerFactory persistenceManagerFactory;
-
-    private JDOMetadata jdoMetadata;
-
     @Override
-    public JDOMetadata createBaseEntity(Entity entity) {
-        JDOMetadata md = persistenceManagerFactory.newMetadata();
+    public void addEntityMetadata(JDOMetadata jdoMetadata, Entity entity) {
+        String packageName = ClassName.getPackage(ClassName.getEntityName(entity.getClassName()));
 
-        PackageMetadata pmd = md.newPackageMetadata(ClassName.getPackage(ClassName.getEntityName(entity.getClassName())));
+        PackageMetadata pmd = getPackageMetadata(jdoMetadata, packageName);
         ClassMetadata cmd = pmd.newClassMetadata(ClassName.getSimpleName(ClassName.getEntityName(entity.getClassName())));
 
         cmd.setTable(getTableName(entity));
         cmd.setDetachable(true);
         cmd.setIdentityType(IdentityType.DATASTORE);
         cmd.setPersistenceModifier(ClassPersistenceModifier.PERSISTENCE_CAPABLE);
-
-        PackageMetadata pmd2 = getJdoMetadata().newPackageMetadata(ClassName.getPackage(ClassName.getEntityName(entity.getClassName())));
-        ClassMetadata cmd2 = pmd2.newClassMetadata(ClassName.getSimpleName(ClassName.getEntityName(entity.getClassName())));
-
-        cmd2.setTable(getTableName(entity));
-        cmd2.setDetachable(true);
-        cmd2.setIdentityType(IdentityType.DATASTORE);
-        cmd2.setPersistenceModifier(ClassPersistenceModifier.PERSISTENCE_CAPABLE);
-
-        return md;
     }
 
-    @Override
-    public JDOMetadata getJdoMetadata() {
-        if (jdoMetadata == null) {
-            jdoMetadata = persistenceManagerFactory.newMetadata();
+    private PackageMetadata getPackageMetadata(JDOMetadata jdoMetadata, String packageName) {
+        // first look for existing metadata
+        PackageMetadata[] packages = jdoMetadata.getPackages();
+        if (ArrayUtils.isNotEmpty(packages)) {
+            for (PackageMetadata pkgMetadata : packages) {
+                if (StringUtils.equals(pkgMetadata.getName(), packageName)) {
+                    return pkgMetadata;
+                }
+            }
         }
-        return jdoMetadata;
+        // if not found, create new
+        return jdoMetadata.newPackageMetadata(packageName);
     }
 
     private static String getTableName(Entity entity) {
@@ -74,10 +66,5 @@ public class EntityMetadataBuilderImpl implements EntityMetadataBuilder {
         builder.append(simpleName);
 
         return builder.toString().toUpperCase();
-    }
-
-    @Autowired
-    public void setPersistenceManagerFactory(PersistenceManagerFactory persistenceManagerFactory) {
-        this.persistenceManagerFactory = persistenceManagerFactory;
     }
 }

@@ -1,16 +1,7 @@
 package org.motechproject.mds.enhancer;
 
 import org.datanucleus.api.jdo.JDOEnhancer;
-import org.motechproject.mds.builder.EnhancedClassData;
-import org.motechproject.mds.builder.EntityMetadataBuilder;
-import org.motechproject.mds.domain.Entity;
-import org.motechproject.mds.util.ClassName;
 import org.motechproject.server.config.SettingsFacade;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import javax.jdo.metadata.JDOMetadata;
-import java.io.IOException;
 
 import static org.motechproject.mds.util.Constants.Config;
 
@@ -19,32 +10,11 @@ import static org.motechproject.mds.util.Constants.Config;
  * {@link org.datanucleus.api.jdo.JDOEnhancer} class. Its task is to add the missing information
  * into created entity class.
  */
-@Component
 public class MdsJDOEnhancer extends JDOEnhancer {
 
-    @Autowired
-    private EntityMetadataBuilder metadataBuilder;
-
-    @Autowired
-    public MdsJDOEnhancer(SettingsFacade settingsFacade) {
+    public MdsJDOEnhancer(SettingsFacade settingsFacade, ClassLoader classLoader) {
         super(settingsFacade.getProperties(Config.DATANUCLEUS_FILE));
-
+        setClassLoader(classLoader);
         setVerbose(true);
-    }
-
-    public EnhancedClassData enhance(Entity entity, byte[] originalBytes,
-                                     ClassLoader tmpClassLoader)
-            throws IOException {
-        String className = ClassName.getEntityName(entity.getClassName());
-
-        setClassLoader(tmpClassLoader);
-
-        JDOMetadata metadata = metadataBuilder.createBaseEntity(entity);
-
-        registerMetadata(metadata);
-        addClass(className, originalBytes);
-        enhance();
-
-        return new EnhancedClassData(className, getEnhancedBytes(className), metadata);
     }
 }

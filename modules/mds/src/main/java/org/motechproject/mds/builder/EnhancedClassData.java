@@ -1,6 +1,6 @@
 package org.motechproject.mds.builder;
 
-import javax.jdo.metadata.JDOMetadata;
+import javax.jdo.metadata.ClassMetadata;
 
 /**
  * Apart from fields inherited from {@link org.motechproject.mds.builder.ClassData}, this class
@@ -8,14 +8,14 @@ import javax.jdo.metadata.JDOMetadata;
  */
 public class EnhancedClassData extends ClassData {
 
-    private final JDOMetadata jdoMetadata;
+    private final ClassMetadata classMetadata;
 
-    public EnhancedClassData(String className, byte[] bytecode, JDOMetadata jdoMetadata) {
+    public EnhancedClassData(String className, byte[] bytecode, ClassMetadata classMetadata) {
         super(className, bytecode);
-        this.jdoMetadata = jdoMetadata;
+        this.classMetadata = classMetadata;
     }
 
-    public JDOMetadata getJdoMetadata() {
-        return jdoMetadata;
+    public ClassMetadata getClassMetadata() {
+        return classMetadata;
     }
 }
