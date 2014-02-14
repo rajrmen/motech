@@ -19,5 +19,7 @@ public interface EntityMetadataBuilder {
      * @return an instance of {@link javax.jdo.metadata.JDOMetadata} with information about package
      * and class name.
      */
-    JDOMetadata createBaseEntity(JDOMetadata md, Entity entity);
+    JDOMetadata createBaseEntity(Entity entity);
+
+    JDOMetadata getJdoMetadata();
 }

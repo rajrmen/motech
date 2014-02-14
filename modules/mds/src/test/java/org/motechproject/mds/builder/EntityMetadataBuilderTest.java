@@ -33,7 +33,7 @@ public class EntityMetadataBuilderTest {
         Entity entity = new Entity();
         entity.setClassName(CLASS_NAME);
 
-        entityMetadataBuilder.createBaseEntity(mainMetadata, entity);
+        entityMetadataBuilder.createBaseEntity(entity);
 
         assertEquals(1, mainMetadata.getNumberOfPackages());
 
@@ -65,7 +65,7 @@ public class EntityMetadataBuilderTest {
         entity.setModule(module);
         entity.setNamespace(namespace);
 
-        entityMetadataBuilder.createBaseEntity(mainMetadata, entity);
+        entityMetadataBuilder.createBaseEntity(entity);
         return mainMetadata.getPackages()[0].getClasses()[0];
     }
 }

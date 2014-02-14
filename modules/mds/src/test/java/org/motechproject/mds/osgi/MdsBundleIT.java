@@ -87,9 +87,10 @@ public class MdsBundleIT extends BaseOsgiIT {
 
         Class clazz = service.loadClass("org.motechproject.mdsgenerated.entity.Foo");
         Object o = clazz.newInstance();
+        //assertTrue(PersistenceCapable.class.isAssignableFrom(clazz));
 
         service.create(o);
-
+        assertFalse(service.retrieveAll().isEmpty());
     }
 
     @Override

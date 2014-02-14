@@ -19,7 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.jdo.metadata.JDOMetadata;
 import java.io.IOException;
 import java.util.List;
 
@@ -58,13 +57,13 @@ public class MDSConstructorImpl extends BaseMdsService implements MDSConstructor
             tmpClassLoader.defineClass(classData);
 
             EnhancedClassData enhancedClassData = enhancer.enhance(entity, classData.getBytecode(), tmpClassLoader);
+            MotechClassPool.registerEnhancedData(enhancedClassData);
 
             Class<?> clazz = MDSClassLoader.getInstance().defineClass(enhancedClassData);
 
-            JDOMetadata jdoMetadata = metadataBuilder.createBaseEntity(
-                    getPersistenceManagerFactory().newMetadata(), entity);
+            //JDOMetadata jdoMetadata = metadataBuilder.createBaseEntity(entity);
 
-            getPersistenceManagerFactory().registerMetadata(jdoMetadata);
+            //getPersistenceManagerFactory().registerMetadata(jdoMetadata);
 
             buildInfrastructure(clazz);
         } catch (IOException e) {

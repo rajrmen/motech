@@ -1,9 +1,9 @@
 package org.motechproject.mds.service.impl;
 
 import org.motechproject.mds.builder.MDSClassLoader;
-import org.motechproject.mds.util.Constants;
 import org.motechproject.mds.repository.MotechDataRepository;
 import org.motechproject.mds.service.MotechDataService;
+import org.motechproject.mds.util.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,12 +25,13 @@ public abstract class DefaultMotechDataService<T> implements MotechDataService<T
     @Override
     @Transactional
     public T create(T object) {
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        ClassLoader bundleClassLoader = getClass().getClassLoader();
-        Thread.currentThread().setContextClassLoader(MDSClassLoader.getInstance());
-        T created = repository.create(object);
-        Thread.currentThread().setContextClassLoader(classLoader);
-        return created;
+        ClassLoader oldClassLoader = Thread.currentThread().getContextClassLoader();
+        try {
+            Thread.currentThread().setContextClassLoader(MDSClassLoader.getInstance());
+            return repository.create(object);
+        } finally {
+            Thread.currentThread().setContextClassLoader(oldClassLoader);
+        }
     }
 
     @Override

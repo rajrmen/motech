@@ -10,6 +10,7 @@ import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.runtime.RuntimeConstants;
 import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 import org.eclipse.gemini.blueprint.util.OsgiBundleUtils;
+import org.motechproject.mds.builder.EntityMetadataBuilder;
 import org.motechproject.mds.domain.Entity;
 import org.motechproject.mds.ex.MdsException;
 import org.motechproject.mds.javassist.JavassistHelper;
@@ -61,6 +62,7 @@ public class JarGeneratorServiceImpl extends BaseMdsService implements JarGenera
     private AllEntities allEntities;
     private BundleHeaders bundleHeaders;
     private BundleContext bundleContext;
+    private EntityMetadataBuilder metadataBuilder;
 
     @Override
     @Transactional
@@ -126,6 +128,11 @@ public class JarGeneratorServiceImpl extends BaseMdsService implements JarGenera
                     }
                 }
             }
+
+            JarEntry jdoEntry = new JarEntry("META-INF/package.jdo");
+            output.putNextEntry(jdoEntry);
+            output.write(metadataBuilder.getJdoMetadata().toString().getBytes());
+            output.closeEntry();
 
             String blueprint = mergeTemplate(classNames, "/velocity/templates/blueprint-template.vm");
             String context = mergeTemplate(classNames, "/velocity/templates/mdsEntitiesContext-template.vm");
@@ -297,5 +304,8 @@ public class JarGeneratorServiceImpl extends BaseMdsService implements JarGenera
         this.bundleHeaders = new BundleHeaders(bundleContext);
     }
 
-
+    @Autowired
+    public void setMetadataBuilder(EntityMetadataBuilder metadataBuilder) {
+        this.metadataBuilder = metadataBuilder;
+    }
 }

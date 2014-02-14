@@ -39,7 +39,7 @@ public class MdsJDOEnhancer extends JDOEnhancer {
 
         setClassLoader(tmpClassLoader);
 
-        JDOMetadata metadata = metadataBuilder.createBaseEntity(newMetadata(), entity);
+        JDOMetadata metadata = metadataBuilder.createBaseEntity(entity);
 
         registerMetadata(metadata);
         addClass(className, originalBytes);
