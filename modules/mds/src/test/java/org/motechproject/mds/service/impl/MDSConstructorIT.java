@@ -14,6 +14,7 @@ import org.motechproject.mds.dto.EntityDto;
 import org.motechproject.mds.repository.AllEntities;
 import org.motechproject.mds.repository.MotechDataRepository;
 import org.motechproject.mds.service.MDSConstructor;
+import org.motechproject.mds.util.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.jdo.Query;
@@ -24,16 +25,15 @@ import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.motechproject.mds.util.Constants.Packages;
 import static org.motechproject.mds.testutil.FieldTestHelper.field;
 
 public class MDSConstructorIT extends BaseIT {
     private static final String SIMPLE_NAME = "Constructor";
-    private static final String CLASS_NAME = String.format("%s.%s", Packages.ENTITY, SIMPLE_NAME);
-    private static final String REPOSITORY_NAME = String.format("%s.All%ss", Packages.REPOSITORY, SIMPLE_NAME);
-    private static final String INTERFACE_NAME = String.format("%s.%sService", Packages.SERVICE, SIMPLE_NAME);
-    private static final String SERVICE_NAME = String.format("%s.%sServiceImpl", Packages.SERVICE_IMPL, SIMPLE_NAME);
-    private static final String ENTITY_WITH_FIELDS = String.format("%s.EntityWithFields", Packages.ENTITY);
+    private static final String CLASS_NAME = String.format("%s.%s", Constants.PackagesGenerated.ENTITY, SIMPLE_NAME);
+    private static final String REPOSITORY_NAME = String.format("%s.All%ss", Constants.PackagesGenerated.REPOSITORY, SIMPLE_NAME);
+    private static final String INTERFACE_NAME = String.format("%s.%sService", Constants.PackagesGenerated.SERVICE, SIMPLE_NAME);
+    private static final String SERVICE_NAME = String.format("%s.%sServiceImpl", Constants.PackagesGenerated.SERVICE_IMPL, SIMPLE_NAME);
+    private static final String ENTITY_WITH_FIELDS = String.format("%s.EntityWithFields", Constants.PackagesGenerated.ENTITY);
 
     @Autowired
     private MDSConstructor constructor;

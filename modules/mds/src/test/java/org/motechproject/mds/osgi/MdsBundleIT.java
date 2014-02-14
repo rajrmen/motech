@@ -11,6 +11,7 @@ import org.motechproject.mds.repository.AllEntities;
 import org.motechproject.mds.service.EntityService;
 import org.motechproject.mds.service.JarGeneratorService;
 import org.motechproject.mds.service.impl.DefaultMotechDataService;
+import org.motechproject.mds.util.Constants;
 import org.motechproject.testing.osgi.BaseOsgiIT;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
@@ -36,6 +37,11 @@ public class MdsBundleIT extends BaseOsgiIT {
     private static final String EXAMPLE = "Example";
     private static final String FOO = "Foo";
     private static final String BAR = "Bar";
+
+    private static final String SAMPLE_CLASS = String.format("%s.%s", Constants.PackagesGenerated.ENTITY, SAMPLE);
+    private static final String EXAMPLE_CLASS = String.format("%s.%s", Constants.PackagesGenerated.ENTITY, EXAMPLE);
+    private static final String FOO_CLASS = String.format("%s.%s", Constants.PackagesGenerated.ENTITY, FOO);
+    private static final String BAR_CLASS = String.format("%s.%s", Constants.PackagesGenerated.ENTITY, BAR);
 
     private EntityService entityService;
     private AllEntities allEntities;

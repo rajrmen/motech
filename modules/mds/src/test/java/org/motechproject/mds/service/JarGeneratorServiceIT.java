@@ -25,7 +25,7 @@ import java.util.jar.JarInputStream;
 import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.junit.Assert.assertEquals;
 import static org.motechproject.mds.util.Constants.Manifest;
-import static org.motechproject.mds.util.Constants.Packages;
+import static org.motechproject.mds.util.Constants.PackagesGenerated;
 
 public class JarGeneratorServiceIT extends BaseIT {
     private static final String SAMPLE = "Sample";
@@ -33,10 +33,10 @@ public class JarGeneratorServiceIT extends BaseIT {
     private static final String FOO = "Foo";
     private static final String BAR = "Bar";
 
-    private static final String SAMPLE_CLASS = String.format("%s.%s", Packages.ENTITY, SAMPLE);
-    private static final String EXAMPLE_CLASS = String.format("%s.%s", Packages.ENTITY, EXAMPLE);
-    private static final String FOO_CLASS = String.format("%s.%s", Packages.ENTITY, FOO);
-    private static final String BAR_CLASS = String.format("%s.%s", Packages.ENTITY, BAR);
+    private static final String SAMPLE_CLASS = String.format("%s.%s", PackagesGenerated.ENTITY, SAMPLE);
+    private static final String EXAMPLE_CLASS = String.format("%s.%s", PackagesGenerated.ENTITY, EXAMPLE);
+    private static final String FOO_CLASS = String.format("%s.%s", PackagesGenerated.ENTITY, FOO);
+    private static final String BAR_CLASS = String.format("%s.%s", PackagesGenerated.ENTITY, BAR);
 
     @Autowired
     private JarGeneratorService generator;
@@ -100,7 +100,7 @@ public class JarGeneratorServiceIT extends BaseIT {
         java.util.jar.Manifest manifest = input.getManifest();
         Attributes attributes = manifest.getMainAttributes();
 
-        String exports = createExportPackage(Packages.ENTITY, Packages.SERVICE);
+        String exports = createExportPackage(PackagesGenerated.ENTITY, PackagesGenerated.SERVICE);
 
         // standard attributes
         assertEquals(Manifest.MANIFEST_VERSION, attributes.getValue(Attributes.Name.MANIFEST_VERSION));

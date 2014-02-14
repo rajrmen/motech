@@ -12,6 +12,7 @@ import org.motechproject.mds.dto.FieldBasicDto;
 import org.motechproject.mds.dto.FieldDto;
 import org.motechproject.mds.ex.EntityNotFoundException;
 import org.motechproject.mds.testutil.DraftBuilder;
+import org.motechproject.mds.util.Constants;
 import org.motechproject.mds.web.DraftData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -36,7 +37,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.motechproject.mds.util.Constants.Packages;
 
 public class EntityServiceIT extends BaseIT {
     private static final String SIMPLE_NAME = "Test";
@@ -71,7 +71,7 @@ public class EntityServiceIT extends BaseIT {
 
         // then
         // 1. new entry in db should be added
-        String className = String.format("%s.%s", Packages.ENTITY, "Test");
+        String className = String.format("%s.%s", Constants.PackagesGenerated.ENTITY, "Test");
         assertTrue(String.format("Not found %s in database", className), containsEntity(className));
 
         // 2. there should be ability to create a new instance of created entity
