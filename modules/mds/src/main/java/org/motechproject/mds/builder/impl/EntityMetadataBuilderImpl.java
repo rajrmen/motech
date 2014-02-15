@@ -35,7 +35,7 @@ public class EntityMetadataBuilderImpl implements EntityMetadataBuilder {
         cmd.setPersistenceModifier(ClassPersistenceModifier.PERSISTENCE_CAPABLE);
     }
 
-    private PackageMetadata getPackageMetadata(JDOMetadata jdoMetadata, String packageName) {
+    private static PackageMetadata getPackageMetadata(JDOMetadata jdoMetadata, String packageName) {
         // first look for existing metadata
         PackageMetadata[] packages = jdoMetadata.getPackages();
         if (ArrayUtils.isNotEmpty(packages)) {

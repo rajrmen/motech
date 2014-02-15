@@ -3,6 +3,7 @@ package org.motechproject.mds.javassist;
 import org.junit.Test;
 import org.motechproject.mds.domain.Field;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -14,6 +15,9 @@ public class JavassistHelperTest {
         assertEquals("this/is/a/test/package", JavassistHelper.toClassPath("this.is.a.test.package"));
         assertEquals("java/lang/String", JavassistHelper.toClassPath(String.class));
         assertEquals("java/lang/String", JavassistHelper.toClassPath(String.class.getName()));
+
+        List<String> lsit = new ArrayList<>();
+        lsit.getClass();
     }
 
     @Test

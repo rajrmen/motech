@@ -217,7 +217,6 @@
                             org.motechproject.mds.domain;version=${project.version},
                             org.motechproject.mds.dto;version=${project.version},
                             org.motechproject.mds.enhancer;version=${project.version},
-                            org.motechproject.mds.entity;version=${project.version},
                             org.motechproject.mds.ex;version=${project.version},
                             org.motechproject.mds.repository;version=${project.version},
                             org.motechproject.mds.service;version=${project.version},

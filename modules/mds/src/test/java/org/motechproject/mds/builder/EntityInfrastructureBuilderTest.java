@@ -46,7 +46,7 @@ public class EntityInfrastructureBuilderTest {
     public void shouldCreateCodeIfClassNotExistsInClassPath() throws Exception {
         doThrow(new ClassNotFoundException()).when(classLoader).loadClass(SAMPLE_SERVICE);
 
-        List<ClassData> data = entityInfrastructureBuilder.buildInfrastructure(Sample.class);
+        List<ClassData> data = entityInfrastructureBuilder.buildInfrastructure(Sample.class.getName());
 
         assertNotNull(data);
         assertFalse(data.isEmpty());
@@ -59,6 +59,6 @@ public class EntityInfrastructureBuilderTest {
     public void shouldNotCreateCodeIfClassExistsInClassPath() throws Exception {
         doReturn(Sample.class).when(classLoader).loadClass(anyString());
 
-        assertTrue(entityInfrastructureBuilder.buildInfrastructure(Sample.class).isEmpty());
+        assertTrue(entityInfrastructureBuilder.buildInfrastructure(Sample.class.getName()).isEmpty());
     }
 }

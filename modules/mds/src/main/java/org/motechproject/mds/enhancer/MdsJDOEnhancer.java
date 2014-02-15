@@ -1,9 +1,9 @@
 package org.motechproject.mds.enhancer;
 
 import org.datanucleus.api.jdo.JDOEnhancer;
-import org.motechproject.server.config.SettingsFacade;
+import org.motechproject.mds.builder.ClassData;
 
-import static org.motechproject.mds.util.Constants.Config;
+import java.util.Properties;
 
 /**
  * The <code>MdsJDOEnhancer</code> class is a wrapper for
@@ -12,9 +12,13 @@ import static org.motechproject.mds.util.Constants.Config;
  */
 public class MdsJDOEnhancer extends JDOEnhancer {
 
-    public MdsJDOEnhancer(SettingsFacade settingsFacade, ClassLoader classLoader) {
-        super(settingsFacade.getProperties(Config.DATANUCLEUS_FILE));
+    public MdsJDOEnhancer(Properties config, ClassLoader classLoader) {
+        super(config);
         setClassLoader(classLoader);
         setVerbose(true);
+    }
+
+    public void addClass(ClassData classData) {
+        addClass(classData.getClassName(), classData.getBytecode());
     }
 }
