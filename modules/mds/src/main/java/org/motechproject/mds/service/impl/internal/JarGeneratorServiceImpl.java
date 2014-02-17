@@ -3,7 +3,6 @@ package org.motechproject.mds.service.impl.internal;
 import javassist.CannotCompileException;
 import javassist.CtClass;
 import javassist.NotFoundException;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
@@ -162,9 +161,6 @@ public class JarGeneratorServiceImpl extends BaseMdsService implements JarGenera
             writeResourceToStream(MOTECH_MDS_PROPERTIES, output);
 
             output.closeEntry();
-
-            // TODO: remove
-            FileUtils.copyFile(tempFile.toFile(), new File("/home/pawel/motech/genbundle.jar"));
 
             return tempFile.toFile();
         }
