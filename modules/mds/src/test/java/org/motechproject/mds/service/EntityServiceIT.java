@@ -11,6 +11,7 @@ import org.motechproject.mds.dto.EntityDto;
 import org.motechproject.mds.dto.FieldBasicDto;
 import org.motechproject.mds.dto.FieldDto;
 import org.motechproject.mds.ex.EntityNotFoundException;
+import org.motechproject.mds.repository.MetadataHolder;
 import org.motechproject.mds.testutil.DraftBuilder;
 import org.motechproject.mds.util.Constants;
 import org.motechproject.mds.web.DraftData;
@@ -49,10 +50,14 @@ public class EntityServiceIT extends BaseIT {
     @Autowired
     private TypeService typeService;
 
+    @Autowired
+    private MetadataHolder metadataHolder;
+
     @Before
     public void setUp() throws Exception {
         clearDB();
         setUpSecurityContext();
+        metadataHolder.reloadMetadata();
     }
 
     @After
@@ -80,12 +85,22 @@ public class EntityServiceIT extends BaseIT {
 
         assertNotNull(instance);
 
-        getPersistenceManager().makePersistent(instance);
+        ClassLoader oldClassLoader = Thread.currentThread().getContextClassLoader();
+        try {
+            // We want to use the current factory for persisting so this hack is required
+            // Normally these classes live in a separate bundle
+            Thread.currentThread().setContextClassLoader(MDSClassLoader.getInstance());
+            getPersistenceManagerFactory().registerMetadata(metadataHolder.getJdoMetadata());
 
-        List<?> list = cast(clazz, (Collection) getPersistenceManager().newQuery(clazz).execute());
+            getPersistenceManager().makePersistent(instance);
 
-        assertNotNull(list);
-        assertFalse("The instance of entity should be saved in database", list.isEmpty());
+            List<?> list = cast(clazz, (Collection) getPersistenceManager().newQuery(clazz).execute());
+
+            assertNotNull(list);
+            assertFalse("The instance of entity should be saved in database", list.isEmpty());
+        } finally {
+            Thread.currentThread().setContextClassLoader(oldClassLoader);
+        }
     }
 
     @Test(expected = EntityNotFoundException.class)
