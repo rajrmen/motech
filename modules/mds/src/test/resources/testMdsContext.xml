@@ -7,7 +7,6 @@
             http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
 
     <import resource="classpath*:META-INF/motech/mdsContext.xml"/>
-    <import resource="classpath*:META-INF/motech/mdsCommonContext.xml"/>
 
     <bean class="org.eclipse.gemini.blueprint.mock.MockBundleContext">
         <property name="bundle">
