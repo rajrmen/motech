@@ -27,12 +27,24 @@ public class EntityMetadataBuilderImpl implements EntityMetadataBuilder {
         String packageName = ClassName.getPackage(ClassName.getEntityName(entity.getClassName()));
 
         PackageMetadata pmd = getPackageMetadata(jdoMetadata, packageName);
-        ClassMetadata cmd = pmd.newClassMetadata(ClassName.getSimpleName(ClassName.getEntityName(entity.getClassName())));
+        ClassMetadata cmd = getClassMetadata(pmd, ClassName.getSimpleName(ClassName.getEntityName(entity.getClassName())));
 
         cmd.setTable(getTableName(entity));
         cmd.setDetachable(true);
         cmd.setIdentityType(IdentityType.DATASTORE);
         cmd.setPersistenceModifier(ClassPersistenceModifier.PERSISTENCE_CAPABLE);
+    }
+
+    private static ClassMetadata getClassMetadata(PackageMetadata pmd, String className) {
+        ClassMetadata[] classes = pmd.getClasses();
+        if (ArrayUtils.isNotEmpty(classes)) {
+            for (ClassMetadata cmd : classes) {
+                if (StringUtils.equals(className, cmd.getName())) {
+                    return cmd;
+                }
+            }
+        }
+        return pmd.newClassMetadata(className);
     }
 
     private static PackageMetadata getPackageMetadata(JDOMetadata jdoMetadata, String packageName) {

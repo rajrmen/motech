@@ -38,17 +38,21 @@ abstract class AbstractProcessor {
         execute(null);
     }
 
-    public void execute(Bundle bundle) {
+    public boolean execute(Bundle bundle) {
         this.bundle = bundle;
         Class<? extends Annotation> annotation = getAnnotation();
 
-        for (AnnotatedElement element : getElements()) {
+        List<? extends AnnotatedElement> annotatedElements = getElements();
+
+        for (AnnotatedElement element : annotatedElements) {
             LOGGER.debug("Processing: Annotation: {} Object: {}", annotation.getName(), element);
 
             process(element);
 
             LOGGER.debug("Processed: Annotation: {} Object: {}", annotation.getName(), element);
         }
+
+        return !annotatedElements.isEmpty();
     }
 
     protected Bundle getBundle() {
@@ -87,8 +91,9 @@ abstract class AbstractProcessor {
             boolean hasAnnotation = AnnotationsUtil.hasAnnotation(object, getAnnotation());
             boolean hasIgnoreAnnotation = AnnotationsUtil.hasAnnotation(object, Ignore.class);
             boolean isPublic = Modifier.isPublic(object.getModifiers());
+            boolean isStatic = Modifier.isStatic(object.getModifiers());
 
-            return (hasAnnotation || isPublic) && !hasIgnoreAnnotation;
+            return (hasAnnotation || isPublic) && !hasIgnoreAnnotation && !isStatic;
         }
     }
 

@@ -4,21 +4,24 @@ import javassist.CannotCompileException;
 import javassist.NotFoundException;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.reflect.MethodUtils;
 import org.apache.log4j.Logger;
 import org.eclipse.gemini.blueprint.test.platform.OsgiPlatform;
+import org.eclipse.gemini.blueprint.util.OsgiBundleUtils;
 import org.motechproject.mds.dto.EntityDto;
 import org.motechproject.mds.repository.AllEntities;
 import org.motechproject.mds.service.EntityService;
 import org.motechproject.mds.service.JarGeneratorService;
-import org.motechproject.mds.service.impl.DefaultMotechDataService;
 import org.motechproject.mds.util.Constants;
 import org.motechproject.testing.osgi.BaseOsgiIT;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Properties;
 
@@ -54,27 +57,19 @@ public class MdsBundleIT extends BaseOsgiIT {
         allEntities = (AllEntities) context.getBean("allEntities");
         jarGeneratorService = (JarGeneratorService) context.getBean("jarGeneratorServiceImpl");
 
-        try {
-            entityService.createEntity(new EntityDto(null, EXAMPLE));
-            entityService.createEntity(new EntityDto(null, FOO));
-            entityService.createEntity(new EntityDto(null, BAR));
-        } catch (Exception e) {
-
-        }
+        clearEntities();
     }
 
     @Override
     public void onTearDown() throws Exception {
-        try {
-            entityService.deleteEntity(9997L);
-            entityService.deleteEntity(9998L);
-            entityService.deleteEntity(9999L);
-        } catch (Exception e) {
-
-        }
+        clearEntities();
     }
 
-    public void testEntitiesBundleInstallsProperly() throws NotFoundException, CannotCompileException, IOException, InvalidSyntaxException, InterruptedException, ClassNotFoundException, IllegalAccessException, InstantiationException {
+    public void testEntitiesBundleInstallsProperly() throws NotFoundException, CannotCompileException, IOException, InvalidSyntaxException, InterruptedException, ClassNotFoundException, IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
+        entityService.createEntity(new EntityDto(null, EXAMPLE));
+        entityService.createEntity(new EntityDto(null, FOO));
+        entityService.createEntity(new EntityDto(null, BAR));
+
         jarGeneratorService.regenerateMdsDataBundle();
 
 
@@ -82,21 +77,23 @@ public class MdsBundleIT extends BaseOsgiIT {
 
         assertNotNull(entitiesContext);
 
-        String beanName = "FooService";
+        ServiceReference ref = bundleContext.getServiceReference("org.motechproject.mds.entity.service.FooService");
+        Object service = bundleContext.getService(ref);
 
-        DefaultMotechDataService service = (DefaultMotechDataService) entitiesContext.getBean(beanName);
-        String actualService = service.getClass().getSimpleName();
-        actualService = actualService.substring(0, actualService.indexOf("$"));
-        String expectedService = beanName.concat("Impl");
-        assertEquals(actualService, expectedService);
+        Bundle entitiesBundle = OsgiBundleUtils.findBundleBySymbolicName(bundleContext, MDS_BUNDLE_ENTITIES_SYMBOLIC_NAME);
 
+        Class<?> serviceClass = entitiesBundle.loadClass("org.motechproject.mds.entity.service.FooService");
+        //Class<?> serviceInterfaceClass = getClass().getClassLoader().loadClass("org.motechproject.mds.entity.service.FooService");
+        assertTrue(serviceClass.isInstance(service));
 
-        Class clazz = service.loadClass("org.motechproject.mdsgenerated.entity.Foo");
-        Object o = clazz.newInstance();
-        //assertTrue(PersistenceCapable.class.isAssignableFrom(clazz));
+        //Class<?> objectClass = (Class<?>) MethodUtils.invokeMethod(service, "loadClass", FOO_CLASS);
+        Class<?> objectClass = entitiesBundle.loadClass(FOO_CLASS);
+        Object instance = objectClass.newInstance();
 
-        service.create(o);
-        assertFalse(service.retrieveAll().isEmpty());
+        MethodUtils.invokeMethod(service, "create", instance);
+
+        List list = (List) MethodUtils.invokeMethod(service, "retrieveAll", null);
+        assertFalse(list.isEmpty());
     }
 
     @Override
@@ -136,6 +133,12 @@ public class MdsBundleIT extends BaseOsgiIT {
         return platform;
     }
 
+    private void clearEntities() {
+        for (EntityDto entity : entityService.listEntities()) {
+            entityService.deleteEntity(entity.getId());
+        }
+    }
+
     private WebApplicationContext getContext(String bundleName) throws InvalidSyntaxException, InterruptedException {
         WebApplicationContext theContext = null;
 
@@ -165,6 +168,7 @@ public class MdsBundleIT extends BaseOsgiIT {
     protected List<String> getImports() {
         return asList(
                "org.motechproject.mds.repository", "org.motechproject.mds.service", "org.motechproject.mds.service.impl", "org.motechproject.commons.sql.service"
+                //,Constants.PackagesGenerated.ENTITY + ";resolution:=optional", Constants.PackagesGenerated.SERVICE + ";resolution:=optional"
         );
     }
 

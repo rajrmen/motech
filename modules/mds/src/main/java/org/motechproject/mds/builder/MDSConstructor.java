@@ -1,8 +1,6 @@
-package org.motechproject.mds.service;
+package org.motechproject.mds.builder;
 
 import org.motechproject.mds.domain.Entity;
-
-import javax.jdo.metadata.JDOMetadata;
 
 /**
  * This interface provide method to create a class for the given entity. The implementation of this
@@ -11,9 +9,7 @@ import javax.jdo.metadata.JDOMetadata;
  */
 public interface MDSConstructor {
 
-    JDOMetadata getCurrentMetadata();
-
     void constructEntity(Entity entity);
 
-    void generateAllEntities();
+    void constructAllEntities();
 }

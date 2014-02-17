@@ -27,7 +27,7 @@
         </property>
     </bean>
 
-    <bean id="entityService" class="org.motechproject.mds.service.impl.internal.EntityServiceImpl" />
+    <bean id="packageAdmin" class="org.motechproject.mds.testutil.MockPackageAdmin"/>
 
     <util:properties id="sqlProperties" location="classpath:/datanucleus.properties" />
 </beans>

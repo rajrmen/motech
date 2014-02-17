@@ -70,7 +70,7 @@ public class InstanceServiceImpl extends BaseMdsService implements InstanceServi
             DefaultMotechDataService service = (DefaultMotechDataService) serviceClass.newInstance();
             service.setRepository(repository);
 
-            list = service.getAll(page, rows);
+            list = service.retrieveAll(page, rows);
 
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
             LOGGER.error(e.getMessage());

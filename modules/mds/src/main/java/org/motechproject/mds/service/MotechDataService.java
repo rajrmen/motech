@@ -18,12 +18,11 @@ public interface MotechDataService<T> {
 
     List<T> retrieveAll();
 
-    List<T> getAll(int page, int onPage);
+    List<T> retrieveAll(int page, int onPage);
 
     T update(T object);
 
     void delete(T object);
 
     void delete(String primaryKeyName, Object value);
-
 }

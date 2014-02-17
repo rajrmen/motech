@@ -3,6 +3,7 @@ package org.motechproject.mds.service.impl.internal;
 import javassist.CannotCompileException;
 import javassist.CtClass;
 import javassist.NotFoundException;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
@@ -10,15 +11,14 @@ import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.runtime.RuntimeConstants;
 import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 import org.eclipse.gemini.blueprint.util.OsgiBundleUtils;
-import org.motechproject.mds.domain.Entity;
+import org.motechproject.mds.builder.ClassData;
 import org.motechproject.mds.ex.MdsException;
 import org.motechproject.mds.javassist.JavassistHelper;
 import org.motechproject.mds.javassist.MotechClassPool;
-import org.motechproject.mds.repository.AllEntities;
+import org.motechproject.mds.repository.MetadataHolder;
 import org.motechproject.mds.service.BaseMdsService;
 import org.motechproject.mds.service.JarGeneratorService;
-import org.motechproject.mds.service.MDSConstructor;
-import org.motechproject.osgi.web.BundleHeaders;
+import org.motechproject.osgi.web.util.BundleHeaders;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
@@ -48,7 +48,6 @@ import java.util.jar.JarOutputStream;
 
 import static java.util.jar.Attributes.Name;
 import static org.apache.commons.lang.StringUtils.isBlank;
-import static org.motechproject.mds.util.ClassName.getEntityName;
 import static org.motechproject.mds.util.ClassName.getInterfaceName;
 import static org.motechproject.mds.util.ClassName.getRepositoryName;
 import static org.motechproject.mds.util.ClassName.getServiceName;
@@ -59,10 +58,9 @@ import static org.motechproject.mds.util.Constants.Manifest;
  */
 @Service
 public class JarGeneratorServiceImpl extends BaseMdsService implements JarGeneratorService {
-    private AllEntities allEntities;
     private BundleHeaders bundleHeaders;
     private BundleContext bundleContext;
-    private MDSConstructor mdsConstructor;
+    private MetadataHolder metadataHolder;
 
     @Override
     @Transactional
@@ -85,6 +83,9 @@ public class JarGeneratorServiceImpl extends BaseMdsService implements JarGenera
             }
 
             dataBundle.start();
+
+            // TODO: remove
+            FileUtils.copyFile(tmpBundleFile, new File("/home/pawel/motech/genbundle.jar"));
         } catch (IOException e) {
             throw new MdsException("Unable to read temporary entities bundle", e);
         } catch (BundleException e) {
@@ -105,33 +106,36 @@ public class JarGeneratorServiceImpl extends BaseMdsService implements JarGenera
         FileOutputStream fileOutput = new FileOutputStream(tempFile.toFile());
 
         try (JarOutputStream output = new JarOutputStream(fileOutput, manifest)) {
-            List<Entity> entities = allEntities.retrieveAll();
             List<String> classNames = new ArrayList<>();
 
-            for (Entity entity : entities) {
-                if (!entity.isDraft() && !entity.isReadOnly()) {
-                    String className = entity.getClassName();
-                    classNames.add(className);
+            for (ClassData classData : MotechClassPool.getEnhancedClasses()) {
+                String className = classData.getClassName();
+                classNames.add(className);
 
-                    String[] classes = new String[]{
-                            getEntityName(className), getInterfaceName(className),
-                            getServiceName(className), getRepositoryName(className)
-                    };
+                // insert entity class
+                JarEntry entityEntry = new JarEntry(JavassistHelper.toClassPath(className));
+                output.putNextEntry(entityEntry);
+                output.write(classData.getBytecode());
 
-                    for (String c : classes) {
-                        CtClass clazz = MotechClassPool.getDefault().get(c);
+                // insert infrastructure
+                String[] classes = new String[]{
+                        getInterfaceName(className),
+                        getServiceName(className), getRepositoryName(className)
+                };
 
-                        JarEntry entry = new JarEntry(createClassPath(c));
-                        output.putNextEntry(entry);
-                        output.write(clazz.toBytecode());
-                        output.closeEntry();
-                    }
+                for (String c : classes) {
+                    CtClass clazz = MotechClassPool.getDefault().get(c);
+
+                    JarEntry entry = new JarEntry(JavassistHelper.toClassPath(c));
+                    output.putNextEntry(entry);
+                    output.write(clazz.toBytecode());
+                    output.closeEntry();
                 }
             }
 
             JarEntry jdoEntry = new JarEntry("META-INF/package.jdo");
             output.putNextEntry(jdoEntry);
-            output.write(mdsConstructor.getCurrentMetadata().toString().getBytes());
+            output.write(metadataHolder.getJdoMetadata().toString().getBytes());
             output.closeEntry();
 
             String blueprint = mergeTemplate(classNames, "/velocity/templates/blueprint-template.vm");
@@ -166,10 +170,10 @@ public class JarGeneratorServiceImpl extends BaseMdsService implements JarGenera
     }
 
     private String mergeTemplate(List<String> classNames, String templatePath) {
-        List allClassesList = new ArrayList();
+        List<Map<String, String>> allClassesList = new ArrayList<>();
 
         for (String className : classNames) {
-            Map map = new HashMap();
+            Map<String, String> map = new HashMap<>();
             map.put("name", className.substring(className.lastIndexOf(".") + 1));
             map.put("className", className);
             map.put("interface", getInterfaceName(className));
@@ -213,6 +217,7 @@ public class JarGeneratorServiceImpl extends BaseMdsService implements JarGenera
         attributes.putValue(Constants.BUNDLE_VERSION, bundleHeaders.getVersion());
         attributes.putValue(Constants.EXPORT_PACKAGE, exports);
         attributes.putValue(Constants.IMPORT_PACKAGE, "com.googlecode.flyway.core," +
+                "                            javax.jdo," +
                 "                            javax.jdo.spi," +
                 "                            net.sf.cglib.core," +
                 "                            net.sf.cglib.proxy," +
@@ -289,15 +294,6 @@ public class JarGeneratorServiceImpl extends BaseMdsService implements JarGenera
         return builder.toString();
     }
 
-    private String createClassPath(String className) {
-        return JavassistHelper.toClassPath(className) + ".class";
-    }
-
-    @Autowired
-    public void setAllEntities(AllEntities allEntities) {
-        this.allEntities = allEntities;
-    }
-
     @Autowired
     public void setBundleContext(BundleContext bundleContext) {
         this.bundleContext = bundleContext;
@@ -305,7 +301,7 @@ public class JarGeneratorServiceImpl extends BaseMdsService implements JarGenera
     }
 
     @Autowired
-    public void setMdsConstructor(MDSConstructor mdsConstructor) {
-        this.mdsConstructor = mdsConstructor;
+    public void setMetadataHolder(MetadataHolder metadataHolder) {
+        this.metadataHolder = metadataHolder;
     }
 }

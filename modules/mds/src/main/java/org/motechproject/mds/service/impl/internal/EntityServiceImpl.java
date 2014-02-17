@@ -16,8 +16,11 @@ import org.motechproject.mds.dto.EntityDto;
 import org.motechproject.mds.dto.FieldBasicDto;
 import org.motechproject.mds.dto.FieldDto;
 import org.motechproject.mds.dto.FieldInstanceDto;
+import org.motechproject.mds.dto.FieldValidationDto;
 import org.motechproject.mds.dto.LookupDto;
 import org.motechproject.mds.dto.SecuritySettingsDto;
+import org.motechproject.mds.dto.SettingDto;
+import org.motechproject.mds.dto.ValidationCriterionDto;
 import org.motechproject.mds.ex.EntityAlreadyExistException;
 import org.motechproject.mds.ex.EntityNotFoundException;
 import org.motechproject.mds.ex.EntityReadOnlyException;
@@ -28,7 +31,7 @@ import org.motechproject.mds.repository.AllEntityDrafts;
 import org.motechproject.mds.repository.AllTypes;
 import org.motechproject.mds.service.BaseMdsService;
 import org.motechproject.mds.service.EntityService;
-import org.motechproject.mds.service.MDSConstructor;
+import org.motechproject.mds.builder.MDSConstructor;
 import org.motechproject.mds.util.ClassName;
 import org.motechproject.mds.util.Constants;
 import org.motechproject.mds.util.FieldHelper;
@@ -207,7 +210,6 @@ public class EntityServiceImpl extends BaseMdsService implements EntityService {
         Entity parent = draft.getParentEntity();
 
         parent.updateFromDraft(draft);
-
         allEntityDrafts.delete(draft);
     }
 
@@ -425,6 +427,38 @@ public class EntityServiceImpl extends BaseMdsService implements EntityService {
             );
             field.setType(type);
 
+            if (type.hasSettings()) {
+                for (TypeSetting setting : type.getSettings()) {
+                    SettingDto settingDto = fieldDto.getSetting(setting.getName());
+                    FieldSetting fieldSetting = new FieldSetting(field, setting);
+
+                    if (null != settingDto) {
+                        fieldSetting.setValue(settingDto.getValueAsString());
+                    }
+
+                    field.addSetting(fieldSetting);
+                }
+            }
+
+            if (type.hasValidation()) {
+                for (TypeValidation validation : type.getValidations()) {
+                    FieldValidation fieldValidation = new FieldValidation(field, validation);
+
+                    FieldValidationDto validationDto = fieldDto.getValidation();
+                    if (null != validationDto) {
+                        ValidationCriterionDto criterion = validationDto
+                                .getCriterion(validation.getDisplayName());
+
+                        if (null != criterion) {
+                            fieldValidation.setValue(criterion.valueAsString());
+                            fieldValidation.setEnabled(criterion.isEnabled());
+                        }
+                    }
+
+                    field.addValidation(fieldValidation);
+                }
+            }
+
             entity.addField(field);
         }
     }
@@ -471,6 +505,13 @@ public class EntityServiceImpl extends BaseMdsService implements EntityService {
         }
     }
 
+    @Transactional
+    public void generateDde(Long entityId) {
+        Entity entity = allEntities.retrieveById(entityId);
+        assertEntityExists(entity);
+        constructor.constructEntity(entity);
+    }
+
     private void assertEntityExists(Entity entity) {
         if (entity == null) {
             throw new EntityNotFoundException();
@@ -480,7 +521,7 @@ public class EntityServiceImpl extends BaseMdsService implements EntityService {
     private void assertWritableEntity(Entity entity) {
         assertEntityExists(entity);
 
-        if (entity.isReadOnly()) {
+        if (entity.isDDE()) {
             throw new EntityReadOnlyException();
         }
     }
@@ -504,5 +545,4 @@ public class EntityServiceImpl extends BaseMdsService implements EntityService {
     public void setAllEntityDrafts(AllEntityDrafts allEntityDrafts) {
         this.allEntityDrafts = allEntityDrafts;
     }
-
 }
