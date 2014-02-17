@@ -34,6 +34,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.StringWriter;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
@@ -58,6 +59,9 @@ import static org.motechproject.mds.util.Constants.Manifest;
  */
 @Service
 public class JarGeneratorServiceImpl extends BaseMdsService implements JarGeneratorService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(JarGeneratorServiceImpl.class);
+
     private BundleHeaders bundleHeaders;
     private BundleContext bundleContext;
     private MetadataHolder metadataHolder;
@@ -83,18 +87,12 @@ public class JarGeneratorServiceImpl extends BaseMdsService implements JarGenera
             }
 
             dataBundle.start();
-
-            // TODO: remove
-            FileUtils.copyFile(tmpBundleFile, new File("/home/pawel/motech/genbundle.jar"));
         } catch (IOException e) {
             throw new MdsException("Unable to read temporary entities bundle", e);
         } catch (BundleException e) {
             throw new MdsException("Unable to start the entities bundle", e);
         }
     }
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(JarGeneratorServiceImpl.class);
-
 
     @Override
     @Transactional
@@ -133,37 +131,40 @@ public class JarGeneratorServiceImpl extends BaseMdsService implements JarGenera
                 }
             }
 
-            JarEntry jdoEntry = new JarEntry("META-INF/package.jdo");
+            JarEntry jdoEntry = new JarEntry(PACKAGE_JDO);
             output.putNextEntry(jdoEntry);
             output.write(metadataHolder.getJdoMetadata().toString().getBytes());
             output.closeEntry();
 
-            String blueprint = mergeTemplate(classNames, "/velocity/templates/blueprint-template.vm");
-            String context = mergeTemplate(classNames, "/velocity/templates/mdsEntitiesContext-template.vm");
+            String blueprint = mergeTemplate(classNames, BLUEPRINT_TEMPLATE);
+            String context = mergeTemplate(classNames, MDS_ENTITIES_CONTEXT_TEMPLATE);
 
-            JarEntry blueprintEntry = new JarEntry("META-INF/spring/blueprint.xml");
+            JarEntry blueprintEntry = new JarEntry(BLUEPRINT_XML);
             output.putNextEntry(blueprintEntry);
             output.write(blueprint.getBytes());
             output.closeEntry();
 
-            JarEntry contextEntry = new JarEntry("META-INF/motech/mdsEntitiesContext.xml");
+            JarEntry contextEntry = new JarEntry(MDS_ENTITIES_CONTEXT);
             output.putNextEntry(contextEntry);
             output.write(context.getBytes());
             output.closeEntry();
 
-            JarEntry commonContextEntry = new JarEntry("META-INF/motech/mdsCommonContext.xml");
+            JarEntry commonContextEntry = new JarEntry(MDS_COMMON_CONTEXT);
             output.putNextEntry(commonContextEntry);
-            output.write(IOUtils.toByteArray(getClass().getClassLoader().getResourceAsStream("META-INF/motech/mdsCommonContext.xml")));
+            writeResourceToStream(MDS_COMMON_CONTEXT, output);
 
-            JarEntry dnproperties = new JarEntry("datanucleus.properties");
-            output.putNextEntry(dnproperties);
-            output.write(IOUtils.toByteArray(getClass().getClassLoader().getResourceAsStream("datanucleus.properties")));
+            JarEntry dnProperties = new JarEntry(DATANUCLEUS_PROPERTIES);
+            output.putNextEntry(dnProperties);
+            writeResourceToStream(DATANUCLEUS_PROPERTIES, output);
 
-            JarEntry mdsproperties = new JarEntry("motech-mds.properties");
-            output.putNextEntry(mdsproperties);
-            output.write(IOUtils.toByteArray(getClass().getClassLoader().getResourceAsStream("motech-mds.properties")));
+            JarEntry mdsProperties = new JarEntry(MOTECH_MDS_PROPERTIES);
+            output.putNextEntry(mdsProperties);
+            writeResourceToStream(MOTECH_MDS_PROPERTIES, output);
 
             output.closeEntry();
+
+            // TODO: remove
+            FileUtils.copyFile(tempFile.toFile(), new File("/home/pawel/motech/genbundle.jar"));
 
             return tempFile.toFile();
         }
@@ -201,7 +202,7 @@ public class JarGeneratorServiceImpl extends BaseMdsService implements JarGenera
         return writer.toString();
     }
 
-    private java.util.jar.Manifest createManifest() {
+    private java.util.jar.Manifest createManifest() throws IOException {
         java.util.jar.Manifest manifest = new java.util.jar.Manifest();
         Attributes attributes = manifest.getMainAttributes();
 
@@ -216,48 +217,8 @@ public class JarGeneratorServiceImpl extends BaseMdsService implements JarGenera
         attributes.putValue(Constants.BUNDLE_SYMBOLICNAME, createSymbolicName());
         attributes.putValue(Constants.BUNDLE_VERSION, bundleHeaders.getVersion());
         attributes.putValue(Constants.EXPORT_PACKAGE, exports);
-        attributes.putValue(Constants.IMPORT_PACKAGE, "com.googlecode.flyway.core," +
-                "                            javax.jdo," +
-                "                            javax.jdo.spi," +
-                "                            net.sf.cglib.core," +
-                "                            net.sf.cglib.proxy," +
-                "                            net.sf.cglib.reflect," +
-                "                            org.aopalliance.aop," +
-                "                            org.datanucleus," +
-                "                            org.datanucleus.api.jdo," +
-                "                            org.datanucleus.state," +
-                "                            org.datanucleus.store.rdbms.datasource.dbcp," +
-                "                            org.eclipse.gemini.blueprint.config," +
-                "                            org.motechproject.config.service," +
-                "                            org.motechproject.osgi.web," +
-                "                            org.motechproject.security.annotations," +
-                "                            org.motechproject.security.model," +
-                "                            org.motechproject.security.service," +
-                "                            org.motechproject.server.config," +
-                "                            org.motechproject.commons.sql.service," +
-                "                            org.motechproject.mds.builder," +
-                "                            org.motechproject.mds.repository," +
-                "                            org.motechproject.mds.service," +
-                "                            org.motechproject.mds.service.impl," +
-                "                            org.springframework.aop," +
-                "                            org.springframework.aop.aspectj.annotation," +
-                "                            org.springframework.aop.framework," +
-                "                            org.springframework.beans.factory.config," +
-                "                            org.springframework.beans.factory.xml," +
-                "                            org.springframework.context.config," +
-                "                            org.springframework.context.support," +
-                "                            org.springframework.orm.jdo," +
-                "                            org.springframework.security.config," +
-                "                            org.springframework.web.context," +
-                "                            org.springframework.web.context.support," +
-                "                            org.springframework.web.multipart.commons," +
-                "                            org.springframework.web.servlet," +
-                "                            org.springframework.web.servlet.config," +
-                "                            org.springframework.web.servlet.mvc," +
-                "                            org.springframework.web.servlet.support," +
-                "                            org.springframework.web.servlet.view," +
-                "                            *");
-
+        // load imports from a handy file and remove line breaks
+        attributes.putValue(Constants.IMPORT_PACKAGE, loadResourceAsString(BUNDLE_IMPORTS).replaceAll("\\r|\\n", ""));
         return manifest;
     }
 
@@ -292,6 +253,18 @@ public class JarGeneratorServiceImpl extends BaseMdsService implements JarGenera
         }
 
         return builder.toString();
+    }
+
+    private String loadResourceAsString(String resource) throws IOException {
+        try (InputStream in = getClass().getClassLoader().getResourceAsStream(resource)) {
+            return IOUtils.toString(in);
+        }
+    }
+
+    private void writeResourceToStream(String resource, OutputStream output) throws IOException {
+        try (InputStream in = getClass().getClassLoader().getResourceAsStream(resource)) {
+            IOUtils.copy(in, output);
+        }
     }
 
     @Autowired
