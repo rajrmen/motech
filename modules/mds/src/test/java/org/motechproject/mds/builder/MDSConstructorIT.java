@@ -10,6 +10,7 @@ import org.motechproject.commons.date.util.DateUtil;
 import org.motechproject.mds.BaseIT;
 import org.motechproject.mds.domain.Entity;
 import org.motechproject.mds.dto.EntityDto;
+import org.motechproject.mds.javassist.MotechClassPool;
 import org.motechproject.mds.repository.AllEntities;
 import org.motechproject.mds.repository.MetadataHolder;
 import org.motechproject.mds.repository.MotechDataRepository;
@@ -53,6 +54,8 @@ public class MDSConstructorIT extends BaseIT {
     @After
     public void tearDown() throws Exception {
         clearDB();
+        MotechClassPool.unregisterEnhancedData(CLASS_NAME);
+        MotechClassPool.unregisterEnhancedData(ENTITY_WITH_FIELDS);
     }
 
     @Test

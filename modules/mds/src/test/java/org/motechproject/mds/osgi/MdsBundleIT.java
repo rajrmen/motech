@@ -9,9 +9,9 @@ import org.apache.log4j.Logger;
 import org.eclipse.gemini.blueprint.test.platform.OsgiPlatform;
 import org.eclipse.gemini.blueprint.util.OsgiBundleUtils;
 import org.motechproject.mds.dto.EntityDto;
-import org.motechproject.mds.repository.AllEntities;
 import org.motechproject.mds.service.EntityService;
 import org.motechproject.mds.service.JarGeneratorService;
+import org.motechproject.mds.util.ClassName;
 import org.motechproject.mds.util.Constants;
 import org.motechproject.testing.osgi.BaseOsgiIT;
 import org.osgi.framework.Bundle;
@@ -47,14 +47,12 @@ public class MdsBundleIT extends BaseOsgiIT {
     private static final String BAR_CLASS = String.format("%s.%s", Constants.PackagesGenerated.ENTITY, BAR);
 
     private EntityService entityService;
-    private AllEntities allEntities;
     private JarGeneratorService jarGeneratorService;
 
     @Override
     public void onSetUp() throws Exception {
         WebApplicationContext context = getContext(MDS_BUNDLE_SYMBOLIC_NAME);
         entityService = (EntityService) context.getBean("entityServiceImpl");
-        allEntities = (AllEntities) context.getBean("allEntities");
         jarGeneratorService = (JarGeneratorService) context.getBean("jarGeneratorServiceImpl");
 
         clearEntities();
@@ -66,27 +64,22 @@ public class MdsBundleIT extends BaseOsgiIT {
     }
 
     public void testEntitiesBundleInstallsProperly() throws NotFoundException, CannotCompileException, IOException, InvalidSyntaxException, InterruptedException, ClassNotFoundException, IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
+        final String serviceInterface = ClassName.getInterfaceName(FOO_CLASS);
+
         entityService.createEntity(new EntityDto(null, EXAMPLE));
         entityService.createEntity(new EntityDto(null, FOO));
         entityService.createEntity(new EntityDto(null, BAR));
 
         jarGeneratorService.regenerateMdsDataBundle();
 
-
-        WebApplicationContext entitiesContext = getContext(MDS_BUNDLE_ENTITIES_SYMBOLIC_NAME);
-
-        assertNotNull(entitiesContext);
-
-        ServiceReference ref = bundleContext.getServiceReference("org.motechproject.mds.entity.service.FooService");
-        Object service = bundleContext.getService(ref);
-
         Bundle entitiesBundle = OsgiBundleUtils.findBundleBySymbolicName(bundleContext, MDS_BUNDLE_ENTITIES_SYMBOLIC_NAME);
+        assertNotNull(entitiesBundle);
 
-        Class<?> serviceClass = entitiesBundle.loadClass("org.motechproject.mds.entity.service.FooService");
-        //Class<?> serviceInterfaceClass = getClass().getClassLoader().loadClass("org.motechproject.mds.entity.service.FooService");
+        Object service = getService(serviceInterface);
+
+        Class<?> serviceClass = entitiesBundle.loadClass(serviceInterface);
         assertTrue(serviceClass.isInstance(service));
 
-        //Class<?> objectClass = (Class<?>) MethodUtils.invokeMethod(service, "loadClass", FOO_CLASS);
         Class<?> objectClass = entitiesBundle.loadClass(FOO_CLASS);
         Object instance = objectClass.newInstance();
 
@@ -98,6 +91,7 @@ public class MdsBundleIT extends BaseOsgiIT {
 
     @Override
     protected String[] getTestBundlesNames() {
+        // Paranamer-sources is not parsed properly by the base class, so we remove it from our dependencies
         String[] names = super.getTestBundlesNames();
 
         int paranamerSourcesIndex = -1;
@@ -164,11 +158,32 @@ public class MdsBundleIT extends BaseOsgiIT {
         return theContext;
     }
 
+    private Object getService(String className) throws InterruptedException {
+        Object service = null;
+
+        int tries = 0;
+
+        do {
+            ServiceReference ref = bundleContext.getServiceReference(className);
+
+            if (ref != null) {
+                service = bundleContext.getService(ref);
+                break;
+            }
+
+            ++tries;
+            Thread.sleep(5000);
+        } while (tries < 5);
+
+        assertNotNull("Unable to retrieve the service " + className, service);
+
+        return service;
+    }
+
     @Override
     protected List<String> getImports() {
         return asList(
-               "org.motechproject.mds.repository", "org.motechproject.mds.service", "org.motechproject.mds.service.impl", "org.motechproject.commons.sql.service"
-                //,Constants.PackagesGenerated.ENTITY + ";resolution:=optional", Constants.PackagesGenerated.SERVICE + ";resolution:=optional"
+               "org.motechproject.mds.repository", "org.motechproject.mds.service", "org.motechproject.mds.util"
         );
     }
 
