@@ -36,15 +36,9 @@ public class MdsBundleIT extends BaseOsgiIT {
     private static final String MDS_BUNDLE_SYMBOLIC_NAME = "org.motechproject." + MDS_BUNDLE_NAME;
     private static final String MDS_BUNDLE_ENTITIES_SYMBOLIC_NAME = "org.motechproject." + MDS_BUNDLE_ENTITIES_NAME;
 
-    private static final String SAMPLE = "Sample";
-    private static final String EXAMPLE = "Example";
-    private static final String FOO = "Foo";
-    private static final String BAR = "Bar";
 
-    private static final String SAMPLE_CLASS = String.format("%s.%s", Constants.PackagesGenerated.ENTITY, SAMPLE);
-    private static final String EXAMPLE_CLASS = String.format("%s.%s", Constants.PackagesGenerated.ENTITY, EXAMPLE);
+    private static final String FOO = "Foo";
     private static final String FOO_CLASS = String.format("%s.%s", Constants.PackagesGenerated.ENTITY, FOO);
-    private static final String BAR_CLASS = String.format("%s.%s", Constants.PackagesGenerated.ENTITY, BAR);
 
     private EntityService entityService;
     private JarGeneratorService jarGeneratorService;
@@ -66,9 +60,7 @@ public class MdsBundleIT extends BaseOsgiIT {
     public void testEntitiesBundleInstallsProperly() throws NotFoundException, CannotCompileException, IOException, InvalidSyntaxException, InterruptedException, ClassNotFoundException, IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
         final String serviceInterface = ClassName.getInterfaceName(FOO_CLASS);
 
-        entityService.createEntity(new EntityDto(null, EXAMPLE));
         entityService.createEntity(new EntityDto(null, FOO));
-        entityService.createEntity(new EntityDto(null, BAR));
 
         jarGeneratorService.regenerateMdsDataBundle();
 

@@ -16,7 +16,6 @@
 
     <tx:annotation-driven transaction-manager="transactionManager"/>
 
-
     <bean id="mdsSettings" class="org.motechproject.server.config.SettingsFacade" autowire="byType">
         <property name="moduleName" value="motech-mds"/>
         <property name="configFiles">

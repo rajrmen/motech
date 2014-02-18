@@ -35,7 +35,13 @@ public abstract class DefaultMotechDataService<T> implements MotechDataService<T
     @Override
     @Transactional
     public T retrieve(String primaryKeyName, Object value) {
-        return repository.retrieve(primaryKeyName, value);
+        ClassLoader oldClassLoader = Thread.currentThread().getContextClassLoader();
+        try {
+            Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+            return repository.retrieve(primaryKeyName, value);
+        } finally {
+            Thread.currentThread().setContextClassLoader(oldClassLoader);
+        }
     }
 
     @Override
@@ -56,25 +62,49 @@ public abstract class DefaultMotechDataService<T> implements MotechDataService<T
         long fromIncl = page * rows - rows + 1;
         long toExcl = page * rows;
 
-        return repository.retrieveAll(fromIncl, toExcl);
+        ClassLoader oldClassLoader = Thread.currentThread().getContextClassLoader();
+        try {
+            Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+            return repository.retrieveAll(fromIncl, toExcl);
+        } finally {
+            Thread.currentThread().setContextClassLoader(oldClassLoader);
+        }
     }
 
     @Override
     @Transactional
     public T update(T object) {
-        return repository.update(object);
+        ClassLoader oldClassLoader = Thread.currentThread().getContextClassLoader();
+        try {
+            Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+            return repository.update(object);
+        } finally {
+            Thread.currentThread().setContextClassLoader(oldClassLoader);
+        }
     }
 
     @Override
     @Transactional
     public void delete(T object) {
-        repository.delete(object);
+        ClassLoader oldClassLoader = Thread.currentThread().getContextClassLoader();
+        try {
+            Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+            repository.delete(object);
+        } finally {
+            Thread.currentThread().setContextClassLoader(oldClassLoader);
+        }
     }
 
     @Override
     @Transactional
     public void delete(String primaryKeyName, Object value) {
-        repository.delete(primaryKeyName, value);
+        ClassLoader oldClassLoader = Thread.currentThread().getContextClassLoader();
+        try {
+            Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+            repository.delete(primaryKeyName, value);
+        } finally {
+            Thread.currentThread().setContextClassLoader(oldClassLoader);
+        }
     }
 
     @Autowired
