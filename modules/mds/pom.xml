@@ -239,6 +239,7 @@
                         <Import-Package>
                             com.googlecode.flyway.core,
                             javax.jdo.spi,
+                            javax.validation.constraints,
                             net.sf.cglib.core,
                             net.sf.cglib.proxy,
                             net.sf.cglib.reflect,
@@ -416,7 +417,7 @@
                             <disallowIncrAndDecr>true</disallowIncrAndDecr>
                             <requireUseStrict>true</requireUseStrict>
                             <predefinedVars>
-                                _, $, angular, isBlank, handleResponse, camelCase, blockUI,
+                                _, $, angular, angularHandler, isBlank, handleResponse, camelCase, blockUI,
                                 motechAlert, unblockUI, motechConfirm, cloneArray, find,
                                 arraysEqual, validateDecimal, cloneObj, alertHandler, window
                             </predefinedVars>

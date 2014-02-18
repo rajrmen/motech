@@ -5,7 +5,6 @@ import javassist.NotFoundException;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.reflect.MethodUtils;
-import org.apache.log4j.Logger;
 import org.eclipse.gemini.blueprint.test.platform.OsgiPlatform;
 import org.eclipse.gemini.blueprint.util.OsgiBundleUtils;
 import org.motechproject.mds.dto.EntityDto;
@@ -17,6 +16,8 @@ import org.motechproject.testing.osgi.BaseOsgiIT;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.io.IOException;
@@ -28,7 +29,7 @@ import java.util.Properties;
 import static java.util.Arrays.asList;
 
 public class MdsBundleIT extends BaseOsgiIT {
-    private Logger logger = Logger.getLogger(this.getClass());
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private static final String SYSTEM_PACKAGES = "org.osgi.framework.system.packages";
     private static final String MDS_BUNDLE_NAME = "motech-dataservices";

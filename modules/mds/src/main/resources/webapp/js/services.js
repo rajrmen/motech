@@ -31,7 +31,8 @@
             { id: '@id' },
             {
                 getHistory: { method: 'GET', params: { action: 'history' } },
-                getPreviousVersion: { method: 'GET', params: { action: 'previousVersion' }, isArray: true }
+                getPreviousVersion: { method: 'GET', params: { action: 'previousVersion' }, isArray: true },
+                newInstance: { method: 'GET', params: { action: 'new' }}
             }
         );
     });

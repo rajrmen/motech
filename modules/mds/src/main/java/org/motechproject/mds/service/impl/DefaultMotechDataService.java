@@ -2,6 +2,7 @@ package org.motechproject.mds.service.impl;
 
 import org.motechproject.mds.repository.MotechDataRepository;
 import org.motechproject.mds.service.MotechDataService;
+import org.motechproject.mds.util.Order;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -59,13 +60,27 @@ public abstract class DefaultMotechDataService<T> implements MotechDataService<T
     @Override
     @Transactional
     public List<T> retrieveAll(int page, int rows) {
+        return retrieveAllImpl(page, rows, null);
+    }
+
+    @Override
+    @Transactional
+    public List<T> retrieveAll(int page, int rows, Order order) {
+        return retrieveAllImpl(page, rows, order);
+    }
+
+    private List<T> retrieveAllImpl(int page, int rows, Order order) {
         long fromIncl = page * rows - rows + 1;
-        long toExcl = page * rows;
+        long toExcl = page * rows + 1;
 
         ClassLoader oldClassLoader = Thread.currentThread().getContextClassLoader();
         try {
             Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
-            return repository.retrieveAll(fromIncl, toExcl);
+            if (order == null) {
+                return repository.retrieveAll(fromIncl, toExcl);
+            } else {
+                return repository.retrieveAll(fromIncl, toExcl, order);
+            }
         } finally {
             Thread.currentThread().setContextClassLoader(oldClassLoader);
         }
@@ -102,6 +117,18 @@ public abstract class DefaultMotechDataService<T> implements MotechDataService<T
         try {
             Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
             repository.delete(primaryKeyName, value);
+        } finally {
+            Thread.currentThread().setContextClassLoader(oldClassLoader);
+        }
+    }
+
+    @Override
+    @Transactional
+    public long count() {
+        ClassLoader oldClassLoader = Thread.currentThread().getContextClassLoader();
+        try {
+            Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+            return repository.count();
         } finally {
             Thread.currentThread().setContextClassLoader(oldClassLoader);
         }

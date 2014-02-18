@@ -1,5 +1,6 @@
 package org.motechproject.mds.repository;
 
+import org.motechproject.mds.util.Order;
 import org.motechproject.mds.util.QueryUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -73,6 +74,15 @@ public abstract class MotechDataRepository<T> {
         return cast(collection);
     }
 
+    public List<T> retrieveAll(long fromIncl, long toExcl, Order order) {
+        Query query = getPersistenceManager().newQuery(classType);
+        query.setRange(fromIncl, toExcl);
+        query.setOrdering(order.toString());
+        Collection collection = (Collection) query.execute();
+
+        return cast(collection);
+    }
+
     public T retrieve(String property, Object value) {
         return retrieve(new String[]{property}, new Object[]{value});
     }
@@ -127,6 +137,12 @@ public abstract class MotechDataRepository<T> {
         Collection collection = (Collection) query.executeWithArray(values);
 
         getPersistenceManager().deletePersistentAll(collection);
+    }
+
+    public long count() {
+        Query query = getPersistenceManager().newQuery(classType);
+        query.setResult("count(this)");
+        return (long) query.execute();
     }
 
     /**

@@ -1509,20 +1509,6 @@
         };
 
         /**
-        * Construct appropriate url according with a field type for form used to set correct
-        * value of default value property.
-        *
-        * @param {string} type The type of a field.
-        * @return {string} url to appropriate form.
-        */
-        $scope.loadDefaultValueForm = function (type) {
-            var value = $scope.getTypeSingleClassName(type);
-
-            return '../mds/resources/partials/widgets/field-basic-defaultValue-{0}.html'
-                .format(value.substring(value.toLowerCase()));
-        };
-
-        /**
         * Check if the given number has appropriate precision and scale.
         *
         * @param {number} number The number to validate.
@@ -1873,6 +1859,8 @@
         */
         $scope.loadedFields = [];
 
+        $scope.currentRecord = undefined;
+
         /**
         * Initializes a map of all entities in MDS indexed by module name
         */
@@ -1893,8 +1881,10 @@
                 param:  module,
                 params: entityName},
                 function () {
-                    $scope.fields = Entities.getFields({id: $scope.addedEntity.id},function () {
-                    unblockUI();
+                    Instances.newInstance({id: $scope.addedEntity.id}, function(data) {
+                        $scope.currentRecord = data;
+                        $scope.fields = data.fields;
+                        unblockUI();
                     });
                 });
         };
@@ -1944,9 +1934,11 @@
         *
         */
         $scope.addEntityInstance = function () {
-                Instances.save(function () {
-
-                });
+            blockUI();
+            $scope.currentRecord.$save(function() {
+                $scope.unselectAdd();
+                unblockUI();
+            }, angularHandler('mds.error', 'mds.error'));
         };
 
 
@@ -1994,7 +1986,6 @@
             blockUI();
             $http.get('../mds/entities/getEntity/' + module + '/' + entityName).success(function (data) {
                 $scope.selectedEntity = data;
-                $scope.fields = Entities.getFields({id: $scope.selectedEntity.id});
                 unblockUI();
             });
 
@@ -2138,14 +2129,8 @@
         */
         $scope.loadEditValueForm = function (field) {
             var value = $scope.getTypeSingleClassName(field.type);
-            if ($scope.getFieldValue(field.basic.displayName) || $scope.previousInstance) {
-              return '../mds/resources/partials/widgets/field-edit-Value-{0}.html'
-                              .format(value.substring(value.toLowerCase()));
-            }
-            else {
-              return '../mds/resources/partials/widgets/field-basic-defaultValue-{0}.html'
-                              .format(value.substring(value.toLowerCase()));
-            }
+            return '../mds/resources/partials/widgets/field-edit-Value-{0}.html'
+                          .format(value.substring(value.toLowerCase()));
         };
 
         /*
