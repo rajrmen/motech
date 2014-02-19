@@ -1,9 +1,9 @@
 package org.motechproject.mds.testutil;
 
 import org.motechproject.commons.date.model.Time;
-import org.motechproject.mds.domain.AvailableType;
 import org.motechproject.mds.domain.Field;
 import org.motechproject.mds.domain.Type;
+import org.motechproject.mds.util.TypeHelper;
 
 import java.util.List;
 
@@ -27,7 +27,7 @@ public final class FieldTestHelper {
         // we only need the name, type and default value
         field.setName(name);
         field.setType(type);
-        field.setDefaultValue(type.format(defaultVal));
+        field.setDefaultValue(TypeHelper.format(defaultVal));
 
         return field;
     }

@@ -1,11 +1,8 @@
 package org.motechproject.mds.domain;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.reflect.MethodUtils;
-import org.joda.time.DateTime;
-import org.motechproject.commons.date.model.Time;
 import org.motechproject.mds.dto.TypeDto;
+import org.motechproject.mds.util.TypeHelper;
 
 import javax.jdo.annotations.Element;
 import javax.jdo.annotations.IdGeneratorStrategy;
@@ -15,9 +12,6 @@ import javax.jdo.annotations.NotPersistent;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -70,48 +64,8 @@ public class Type {
 
     @NotPersistent
     public Object parse(String str) {
-        String className = typeClass.getName();
-
-        if (StringUtils.isBlank(str)) {
-            return (String.class.getName().equals(className)) ? "" : null;
-        }
-
-        if (DateTime.class.getName().equals(className)) {
-            return new DateTime(str);
-        } else if (Date.class.getName().equals(className)) {
-            return new DateTime(str).toDate();
-        }
-
-        try {
-            Class<?> clazz = getClass().getClassLoader().loadClass(className);
-
-            if (clazz.isAssignableFrom(List.class)) {
-                List list = new ArrayList();
-
-                list.addAll(Arrays.asList(StringUtils.split(str, '\n')));
-
-                return list;
-            } else {
-                return MethodUtils.invokeStaticMethod(clazz, "valueOf", str);
-            }
-        } catch (Exception e) {
-            throw new IllegalStateException("Unable to parse value", e);
-        }
+        return TypeHelper.parseString(str, typeClass);
     }
-
-    @NotPersistent
-    public String format(Object obj) {
-        if (obj instanceof List) {
-            return StringUtils.join((List) obj, '\n');
-        } else if (obj instanceof Time) {
-            return ((Time) obj).timeStr();
-        } else if (obj instanceof Date) {
-            return new DateTime(((Date) obj).getTime()).toString();
-        } else {
-            return (obj == null) ? "" : obj.toString();
-        }
-    }
-
 
     public Long getId() {
         return id;

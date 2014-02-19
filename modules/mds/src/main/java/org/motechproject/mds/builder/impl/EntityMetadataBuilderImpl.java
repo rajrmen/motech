@@ -4,6 +4,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.motechproject.mds.builder.EntityMetadataBuilder;
 import org.motechproject.mds.domain.Entity;
+import org.motechproject.mds.domain.Field;
 import org.motechproject.mds.util.ClassName;
 import org.springframework.stereotype.Component;
 
@@ -14,6 +15,8 @@ import javax.jdo.metadata.ClassPersistenceModifier;
 import javax.jdo.metadata.FieldMetadata;
 import javax.jdo.metadata.JDOMetadata;
 import javax.jdo.metadata.PackageMetadata;
+
+import java.util.List;
 
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 
@@ -39,6 +42,15 @@ public class EntityMetadataBuilderImpl implements EntityMetadataBuilder {
         FieldMetadata idFieldMd = cmd.newFieldMetadata("id");
         idFieldMd.setValueStrategy(IdGeneratorStrategy.IDENTITY);
         idFieldMd.setPrimaryKey(true);
+
+        for (Field field : entity.getFields()) {
+            // we want to fetch lists in the default group so they are attached
+            // to detached objects
+            if (List.class.isAssignableFrom(field.getType().getTypeClass())) {
+                FieldMetadata fmd = cmd.newFieldMetadata(field.getName());
+                fmd.setDefaultFetchGroup(true);
+            }
+        }
     }
 
     private static ClassMetadata getClassMetadata(PackageMetadata pmd, String className) {

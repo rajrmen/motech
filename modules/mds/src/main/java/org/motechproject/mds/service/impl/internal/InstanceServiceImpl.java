@@ -14,6 +14,7 @@ import org.motechproject.mds.service.InstanceService;
 import org.motechproject.mds.service.MotechDataService;
 import org.motechproject.mds.util.ClassName;
 import org.motechproject.mds.util.Order;
+import org.motechproject.mds.util.TypeHelper;
 import org.motechproject.mds.web.ExampleData;
 import org.motechproject.mds.web.domain.EntityRecord;
 import org.motechproject.mds.web.domain.FieldRecord;
@@ -164,8 +165,6 @@ public class InstanceServiceImpl extends BaseMdsService implements InstanceServi
 
     @Override
     public EntityRecord newInstance(Long entityId) {
-        EntityDto entity = getEntity(entityId);
-
         // TODO: not from draft
         List<FieldDto> fields = entityService.getFields(entityId);
         List<FieldRecord> fieldRecords = new ArrayList<>();
@@ -227,7 +226,11 @@ public class InstanceServiceImpl extends BaseMdsService implements InstanceServi
     private void updateFields(Object instance, List<FieldRecord> fieldRecords) {
         try {
             for (FieldRecord fieldRecord : fieldRecords) {
-                    PropertyUtils.setProperty(instance, fieldRecord.getName(), fieldRecord.getValue());
+                Object value = fieldRecord.getValue();
+
+                Object parsedValue = TypeHelper.parse(value, fieldRecord.getType().getTypeClass());
+
+                PropertyUtils.setProperty(instance, fieldRecord.getName(), parsedValue);
             }
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             // TODO : better error handling
