@@ -7,9 +7,11 @@ import org.motechproject.mds.domain.Entity;
 import org.motechproject.mds.util.ClassName;
 import org.springframework.stereotype.Component;
 
+import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.IdentityType;
 import javax.jdo.metadata.ClassMetadata;
 import javax.jdo.metadata.ClassPersistenceModifier;
+import javax.jdo.metadata.FieldMetadata;
 import javax.jdo.metadata.JDOMetadata;
 import javax.jdo.metadata.PackageMetadata;
 
@@ -31,8 +33,12 @@ public class EntityMetadataBuilderImpl implements EntityMetadataBuilder {
 
         cmd.setTable(getTableName(entity));
         cmd.setDetachable(true);
-        cmd.setIdentityType(IdentityType.DATASTORE);
+        cmd.setIdentityType(IdentityType.APPLICATION);
         cmd.setPersistenceModifier(ClassPersistenceModifier.PERSISTENCE_CAPABLE);
+
+        FieldMetadata idFieldMd = cmd.newFieldMetadata("id");
+        idFieldMd.setValueStrategy(IdGeneratorStrategy.IDENTITY);
+        idFieldMd.setPrimaryKey(true);
     }
 
     private static ClassMetadata getClassMetadata(PackageMetadata pmd, String className) {

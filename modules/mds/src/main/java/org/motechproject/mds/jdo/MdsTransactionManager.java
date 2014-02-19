@@ -13,13 +13,11 @@ public class MdsTransactionManager extends JdoTransactionManager {
     @Override
     protected void doBegin(Object transaction, TransactionDefinition definition) {
         Thread.currentThread().setContextClassLoader(MDSClassLoader.getInstance());
-        System.out.println("ONE");
         super.doBegin(transaction, definition);
     }
 
     @Override
     protected void doCleanupAfterCompletion(Object transaction) {
-        System.out.println("TWO");
         try {
             super.doCleanupAfterCompletion(transaction);
         } finally {

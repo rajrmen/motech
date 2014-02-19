@@ -1894,13 +1894,16 @@
         */
         $scope.editInstance = function(id) {
             blockUI();
-            $scope.loadedFields = Entities.selectInstance({
+            $scope.loadedFields = Instances.selectInstance({
                 id: $scope.selectedEntity.id,
-                 param: id},
-                function () {
+                param: id
+                },
+                function (data) {
                     $scope.selectedInstance = id;
+                    $scope.currentRecord = data;
+                    $scope.fields = data.fields;
                     unblockUI();
-                });
+                }, angularHandler('mds.error', 'mds.error'));
         };
 
         /**
@@ -1962,7 +1965,7 @@
                 unblockUI();
                 $scope.previousInstance = undefined;
                 $scope.instanceId = id;
-            });
+            }, angularHandler('', ''));
         };
 
         $scope.backToInstance = function() {

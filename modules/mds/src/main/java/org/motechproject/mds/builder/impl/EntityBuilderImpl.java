@@ -52,6 +52,8 @@ public class EntityBuilderImpl implements EntityBuilder {
 
             addFields(ctClass, entity.getFields());
 
+            addId(ctClass);
+
             return new ClassData(className, ctClass.toBytecode());
         } catch (Exception e) {
             throw new EntityCreationException(e);
@@ -164,5 +166,11 @@ public class EntityBuilderImpl implements EntityBuilder {
 
     private CtField.Initializer newInitializer(String type, Object defaultValue) {
         return CtField.Initializer.byExpr("new " + type + '(' + defaultValue.toString() + ')');
+    }
+
+    private void addId(CtClass ctClass) throws NotFoundException, CannotCompileException {
+        CtClass longType = classPool.get(Long.class.getName());
+        CtField idField = new CtField(longType, "id", ctClass);
+        ctClass.addField(idField);
     }
 }

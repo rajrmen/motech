@@ -933,7 +933,7 @@
                                 sort: 'sortColumn',
                                 order: 'sortDirection'
                             },
-                            onSelectRow: function (id) {
+                            onSelectRow: function (id, status, e) {
                                 scope.editInstance(id);
                             },
                             shrinkToFit: true,

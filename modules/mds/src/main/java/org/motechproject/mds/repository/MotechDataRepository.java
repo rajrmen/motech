@@ -103,9 +103,7 @@ public abstract class MotechDataRepository<T> {
     }
 
     public T update(T object) {
-        throw new UnsupportedOperationException(
-                "This method should be overridden by inherited class"
-        );
+        return getPersistenceManager().makePersistent(object);
     }
 
     public void delete(T object) {

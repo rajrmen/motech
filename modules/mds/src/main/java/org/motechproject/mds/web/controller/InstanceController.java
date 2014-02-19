@@ -1,9 +1,5 @@
 package org.motechproject.mds.web.controller;
 
-import org.apache.log4j.Logger;
-import org.codehaus.jackson.JsonFactory;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.type.TypeReference;
 import org.motechproject.commons.api.CsvConverter;
 import org.motechproject.mds.dto.FieldDto;
 import org.motechproject.mds.dto.FieldInstanceDto;
@@ -11,7 +7,6 @@ import org.motechproject.mds.ex.EntityNotFoundException;
 import org.motechproject.mds.service.EntityService;
 import org.motechproject.mds.service.InstanceService;
 import org.motechproject.mds.util.Order;
-import org.motechproject.mds.web.comparator.EntityRecordComparator;
 import org.motechproject.mds.web.comparator.HistoryRecordComparator;
 import org.motechproject.mds.web.domain.EntityRecord;
 import org.motechproject.mds.web.domain.FieldRecord;
@@ -32,14 +27,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.lang.reflect.Field;
-import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import static org.apache.commons.lang.CharEncoding.UTF_8;
 import static org.motechproject.mds.util.Constants.Roles;
@@ -63,7 +53,15 @@ public class InstanceController extends MdsController {
     @PreAuthorize(Roles.HAS_DATA_ACCESS)
     @ResponseStatus(HttpStatus.OK)
     public void saveInstance(@RequestBody EntityRecord record) {
-        instanceService.createInstance(record);
+        instanceService.saveInstance(record);
+    }
+
+    // TODO: is this ok?
+    @RequestMapping(value = "/instances/{instanceId}", method = RequestMethod.POST)
+    @PreAuthorize(Roles.HAS_DATA_ACCESS)
+    @ResponseStatus(HttpStatus.OK)
+    public void updateInstance(@RequestBody EntityRecord record) {
+        instanceService.saveInstance(record);
     }
 
     @RequestMapping(value = "/instances/{entityId}/new")
@@ -93,7 +91,7 @@ public class InstanceController extends MdsController {
             );
         }
 
-        return new Records<>(settings.getPage(), settings.getRows(), historyRecordsList);
+        return new Records<>(0, 1, historyRecordsList);
     }
 
     @RequestMapping(value = "/instances/{instanceId}/previousVersion/{historyId}", method = RequestMethod.GET)
@@ -109,17 +107,11 @@ public class InstanceController extends MdsController {
         throw new EntityNotFoundException();
     }
 
-    @RequestMapping(value = "/entities/{entityId}/instance/{instanceId}", method = RequestMethod.GET)
+    @RequestMapping(value = "/instances/{entityId}/instance/{instanceId}", method = RequestMethod.GET)
     @PreAuthorize(Roles.HAS_DATA_ACCESS)
     @ResponseBody
-    public List<FieldRecord> getInstance(@PathVariable Long entityId, @PathVariable Long instanceId) {
-        List<EntityRecord> entityList = instanceService.getEntityRecords(entityId);
-        for (EntityRecord record : entityList) {
-            if (record.getId().equals(instanceId)) {
-                return record.getFields();
-            }
-        }
-        throw new EntityNotFoundException();
+    public EntityRecord getInstance(@PathVariable Long entityId, @PathVariable Long instanceId) {
+        return instanceService.getEntityInstance(entityId, instanceId);
     }
 
     @RequestMapping(value = "/entities/{entityId}/exportInstances", method = RequestMethod.GET)
@@ -174,7 +166,7 @@ public class InstanceController extends MdsController {
                 order);
 
         long recordCount = instanceService.countRecords(entityId);
-        int rowCount = (int) (recordCount / (long) settings.getRows());
+        int rowCount = (int) Math.ceil(recordCount / (double) settings.getRows());
 
         return new Records<>(settings.getPage(), rowCount, entityRecords);
     }

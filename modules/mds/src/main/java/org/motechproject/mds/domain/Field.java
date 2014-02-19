@@ -27,7 +27,7 @@ import java.util.Set;
 /**
  * The <code>Field</code> class contains information about a single field.
  */
-@PersistenceCapable(identityType = IdentityType.DATASTORE)
+@PersistenceCapable(identityType = IdentityType.DATASTORE, detachable = "true")
 @Unique(name = "ENTITY_FIELDNAME_IDX", members = {"entity", "name"})
 public class Field {
 

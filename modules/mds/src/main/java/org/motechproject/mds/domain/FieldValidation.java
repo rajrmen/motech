@@ -13,7 +13,7 @@ import javax.jdo.annotations.PrimaryKey;
  * The <code>FieldValidation</code> class contains the value that is related with the correct
  * type validation and information about that whether the given validation is enabled or not.
  */
-@PersistenceCapable(identityType = IdentityType.DATASTORE)
+@PersistenceCapable(identityType = IdentityType.DATASTORE, detachable = "true")
 public class FieldValidation {
 
     @PrimaryKey

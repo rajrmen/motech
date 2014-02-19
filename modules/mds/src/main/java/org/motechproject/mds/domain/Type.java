@@ -24,7 +24,7 @@ import java.util.List;
  * The <code>Type</code> class contains information about a single type in mds system. The mds
  * type can have a settings and validations that can be assigned to field with the same type.
  */
-@PersistenceCapable(identityType = IdentityType.DATASTORE)
+@PersistenceCapable(identityType = IdentityType.DATASTORE, detachable = "true")
 public class Type {
 
     @Persistent(valueStrategy = IdGeneratorStrategy.INCREMENT)

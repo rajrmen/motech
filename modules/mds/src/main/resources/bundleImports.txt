@@ -1,5 +1,6 @@
 javax.jdo,
 javax.jdo.spi,
+javax.jdo.identity,
 net.sf.cglib.core,
 net.sf.cglib.proxy,
 net.sf.cglib.reflect,

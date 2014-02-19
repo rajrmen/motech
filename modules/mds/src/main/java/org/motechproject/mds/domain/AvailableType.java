@@ -13,7 +13,7 @@ import javax.jdo.annotations.PrimaryKey;
  * The <code>AvailableType</code> class contains a default name for a field with the given type. It
  * should be used only on MDS UI.
  */
-@PersistenceCapable(identityType = IdentityType.DATASTORE)
+@PersistenceCapable(identityType = IdentityType.DATASTORE, detachable = "true")
 public class AvailableType {
 
     @Persistent(valueStrategy = IdGeneratorStrategy.INCREMENT)

@@ -18,7 +18,7 @@ public interface InstanceService {
 
     long countRecords(Long entityId);
 
-    Object createInstance(EntityRecord entityRecord);
+    Object saveInstance(EntityRecord entityRecord);
 
     List<EntityRecord> getEntityRecords(Long entityId);
 
@@ -29,4 +29,6 @@ public interface InstanceService {
     List<PreviousRecord> getPreviousRecords(Long instanceId);
 
     EntityRecord newInstance(Long entityId);
+
+    EntityRecord getEntityInstance(Long entityId, Long instanceId);
 }

@@ -70,17 +70,21 @@ public abstract class DefaultMotechDataService<T> implements MotechDataService<T
     }
 
     private List<T> retrieveAllImpl(int page, int rows, Order order) {
-        long fromIncl = page * rows - rows + 1;
+        long fromIncl = page * rows - rows;
         long toExcl = page * rows + 1;
+
+        List<T> result;
 
         ClassLoader oldClassLoader = Thread.currentThread().getContextClassLoader();
         try {
             Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
             if (order == null) {
-                return repository.retrieveAll(fromIncl, toExcl);
+                result =  repository.retrieveAll(fromIncl, toExcl);
             } else {
-                return repository.retrieveAll(fromIncl, toExcl, order);
+                result = repository.retrieveAll(fromIncl, toExcl, order);
             }
+
+            return result;
         } finally {
             Thread.currentThread().setContextClassLoader(oldClassLoader);
         }

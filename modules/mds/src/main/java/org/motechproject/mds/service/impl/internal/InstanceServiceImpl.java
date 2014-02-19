@@ -1,6 +1,7 @@
 package org.motechproject.mds.service.impl.internal;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.lang.reflect.FieldUtils;
 import org.motechproject.mds.builder.MDSClassLoader;
 import org.motechproject.mds.dto.EntityDto;
 import org.motechproject.mds.dto.FieldDto;
@@ -24,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +46,7 @@ public class InstanceServiceImpl extends BaseMdsService implements InstanceServi
 
     @Override
     @Transactional
-    public Object createInstance(EntityRecord entityRecord) {
+    public Object saveInstance(EntityRecord entityRecord) {
         EntityDto entity = getEntity(entityRecord.getEntitySchemaId());
 
         String className = entity.getClassName();
@@ -53,11 +55,24 @@ public class InstanceServiceImpl extends BaseMdsService implements InstanceServi
             MotechDataService service = getServiceForEntity(entity);
 
             Class<?> entityClass = MDSClassLoader.getInstance().loadClass(ClassName.getEntityName(className));
-            Object instance = entityClass.newInstance();
+
+            boolean newObject = entityRecord.getId() == null;
+
+            Object instance;
+            if (newObject) {
+                instance = entityClass.newInstance();
+            } else {
+                // TODO hardcoded id
+                instance = service.retrieve("id", entityRecord.getId());
+            }
 
             updateFields(instance, entityRecord.getFields());
 
-            return service.create(instance);
+            if (newObject) {
+                return service.create(instance);
+            } else {
+                return service.update(instance);
+            }
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException  e) {
             // TODO: better error handling
             throw new MdsException(e.getLocalizedMessage());
@@ -70,15 +85,6 @@ public class InstanceServiceImpl extends BaseMdsService implements InstanceServi
     @Transactional
     public List<EntityRecord> getEntityRecordsPaged(Long entityId, int page, int rows, Order order) {
         return retrieveRecords(entityId, page, rows, order);
-    }
-
-    @Override
-    public long countRecords(Long entityId) {
-        EntityDto entity = getEntity(entityId);
-
-        MotechDataService service = getServiceForEntity(entity);
-
-        return service.count();
     }
 
     @Override
@@ -117,6 +123,16 @@ public class InstanceServiceImpl extends BaseMdsService implements InstanceServi
 
     @Override
     @Transactional
+    public long countRecords(Long entityId) {
+        EntityDto entity = getEntity(entityId);
+
+        MotechDataService service = getServiceForEntity(entity);
+
+        return service.count();
+    }
+
+    @Override
+    @Transactional
     public List<FieldInstanceDto> getInstanceFields(Long entityId, Long instanceId) {
         EntityDto entity = entityService.getEntity(entityId);
 
@@ -148,9 +164,7 @@ public class InstanceServiceImpl extends BaseMdsService implements InstanceServi
 
     @Override
     public EntityRecord newInstance(Long entityId) {
-        EntityDto entity = entityService.getEntity(entityId);
-
-        assertEntityExists(entity);
+        EntityDto entity = getEntity(entityId);
 
         // TODO: not from draft
         List<FieldDto> fields = entityService.getFields(entityId);
@@ -161,6 +175,39 @@ public class InstanceServiceImpl extends BaseMdsService implements InstanceServi
         }
 
         return new EntityRecord(null, entityId, fieldRecords);
+    }
+
+    @Override
+    public EntityRecord getEntityInstance(Long entityId, Long instanceId) {
+        EntityDto entity = getEntity(entityId);
+
+        MotechDataService service = getServiceForEntity(entity);
+
+        // TODO keyname
+        Object instance = service.retrieve("id", instanceId);
+
+        // TODO
+        if (instance == null) {
+            throw new MdsException("d");
+        }
+
+        try {
+            List<FieldDto> fields = entityService.getFields(entityId);
+            List<FieldRecord> fieldRecords = new ArrayList<>();
+            for (FieldDto field : fields) {
+                FieldRecord fieldRecord = new FieldRecord(field);
+
+                Object value = PropertyUtils.getProperty(instance, fieldRecord.getName());
+                fieldRecord.setValue(value);
+
+                fieldRecords.add(fieldRecord);
+            }
+
+            return new EntityRecord(instanceId, entityId, fieldRecords);
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            // TODO
+            throw new MdsException("e");
+        }
     }
 
     private EntityDto getEntity(Long entityId) {
@@ -189,9 +236,9 @@ public class InstanceServiceImpl extends BaseMdsService implements InstanceServi
     }
 
     private EntityRecord instanceToRecord(Object instance, EntityDto entityDto, List<FieldDto> fields) {
-        List<FieldRecord> fieldRecords = new ArrayList<>();
-
         try {
+            List<FieldRecord> fieldRecords = new ArrayList<>();
+
             for (FieldDto field : fields) {
                 Object value = PropertyUtils.getProperty(instance, field.getBasic().getName());
 
@@ -200,13 +247,16 @@ public class InstanceServiceImpl extends BaseMdsService implements InstanceServi
 
                 fieldRecords.add(fieldRecord);
             }
+
+            // TODO: id !!!
+            Field idField = FieldUtils.getDeclaredField(instance.getClass(), "id", true);
+            Long id = (Long) idField.get(instance);
+
+            return new EntityRecord(id, entityDto.getId(), fieldRecords);
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             // TODO: errors
             throw new MdsException(e.getMessage());
         }
-
-        // TODO: id !!!
-        return new EntityRecord(1L, entityDto.getId(), fieldRecords);
     }
 
     private void assertEntityExists(EntityDto entity) {
