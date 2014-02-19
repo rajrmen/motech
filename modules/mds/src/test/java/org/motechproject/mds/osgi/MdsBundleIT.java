@@ -3,13 +3,12 @@ package org.motechproject.mds.osgi;
 import javassist.CannotCompileException;
 import javassist.NotFoundException;
 import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.reflect.MethodUtils;
 import org.eclipse.gemini.blueprint.test.platform.OsgiPlatform;
 import org.eclipse.gemini.blueprint.util.OsgiBundleUtils;
 import org.motechproject.mds.dto.EntityDto;
 import org.motechproject.mds.service.EntityService;
 import org.motechproject.mds.service.JarGeneratorService;
+import org.motechproject.mds.service.MotechDataService;
 import org.motechproject.mds.util.ClassName;
 import org.motechproject.mds.util.Constants;
 import org.motechproject.testing.osgi.BaseOsgiIT;
@@ -59,7 +58,7 @@ public class MdsBundleIT extends BaseOsgiIT {
     }
 
     public void testEntitiesBundleInstallsProperly() throws NotFoundException, CannotCompileException, IOException, InvalidSyntaxException, InterruptedException, ClassNotFoundException, IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
-        final String serviceInterface = ClassName.getInterfaceName(FOO_CLASS);
+        final String serviceName = ClassName.getInterfaceName(FOO_CLASS);
 
         entityService.createEntity(new EntityDto(null, FOO));
 
@@ -68,40 +67,26 @@ public class MdsBundleIT extends BaseOsgiIT {
         Bundle entitiesBundle = OsgiBundleUtils.findBundleBySymbolicName(bundleContext, MDS_BUNDLE_ENTITIES_SYMBOLIC_NAME);
         assertNotNull(entitiesBundle);
 
-        Object service = getService(serviceInterface);
-
-        Class<?> serviceClass = entitiesBundle.loadClass(serviceInterface);
-        assertTrue(serviceClass.isInstance(service));
+        MotechDataService service = (MotechDataService) getService(serviceName);
 
         Class<?> objectClass = entitiesBundle.loadClass(FOO_CLASS);
         Object instance = objectClass.newInstance();
 
-        MethodUtils.invokeMethod(service, "create", instance);
+        service.create(instance);
 
-        List list = (List) MethodUtils.invokeMethod(service, "retrieveAll", null);
+        List list = service.retrieveAll();
         assertFalse(list.isEmpty());
     }
 
     @Override
     protected String[] getTestBundlesNames() {
         // Paranamer-sources is not parsed properly by the base class, so we remove it from our dependencies
+        // Apache Felix Framework seem to be duplicated somewhere what causes exception, so we remove additional one
         String[] names = super.getTestBundlesNames();
+        String[] toRemove = {"com.thoughtworks.paranamer,paranamer,sources",
+                "org.apache.felix,org.apache.felix.framework,3.2.0"};
 
-        int paranamerSourcesIndex = -1;
-
-        for (int i = 0; i < names.length; i++) {
-            String name = names[i];
-            if (StringUtils.equals(name, "com.thoughtworks.paranamer,paranamer,sources")) {
-                paranamerSourcesIndex = i;
-                break;
-            }
-        }
-
-        if (paranamerSourcesIndex >= 0) {
-            names = (String[]) ArrayUtils.remove(names, paranamerSourcesIndex);
-        }
-
-        return names;
+        return removeTestBundles(names, toRemove);
     }
 
     @Override
@@ -118,6 +103,13 @@ public class MdsBundleIT extends BaseOsgiIT {
         }
 
         return platform;
+    }
+
+    private String[] removeTestBundles(String[] initialArray, String[] toRemove) {
+        for (String bundle : toRemove) {
+            initialArray = (String[]) ArrayUtils.removeElement(initialArray, bundle);
+        }
+        return initialArray;
     }
 
     private void clearEntities() {

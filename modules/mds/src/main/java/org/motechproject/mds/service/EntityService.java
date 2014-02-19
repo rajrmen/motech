@@ -57,6 +57,7 @@ public interface EntityService {
     SecuritySettingsDto getSecuritySettings(Long entityId);
 
     List<EntityRecord> getEntityRecords(Long entityId);
+
     List<FieldInstanceDto> getInstanceFields(Long instanceId);
 
     List<HistoryRecord> getInstanceHistory(Long instanceId);

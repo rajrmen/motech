@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * javadoc
+ * Default implementation of the {@link org.motechproject.mds.service.InstanceService} interface.
  */
 @Service
 public class InstanceServiceImpl extends BaseMdsService implements InstanceService {

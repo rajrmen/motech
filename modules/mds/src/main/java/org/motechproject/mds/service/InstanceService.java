@@ -8,6 +8,10 @@ import org.motechproject.mds.web.domain.PreviousRecord;
 
 import java.util.List;
 
+/**
+ * The <code>InstanceService</code> interface, defines methods responsible for executing actions on the
+ * instances of the entity.
+ */
 public interface InstanceService {
 
     List<EntityRecord> getEntityRecordsPaged(Long entityId, int page, int rows, Order order);

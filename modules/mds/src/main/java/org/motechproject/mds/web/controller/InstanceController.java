@@ -1,5 +1,9 @@
 package org.motechproject.mds.web.controller;
 
+import org.apache.log4j.Logger;
+import org.codehaus.jackson.JsonFactory;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.type.TypeReference;
 import org.motechproject.commons.api.CsvConverter;
 import org.motechproject.mds.dto.FieldDto;
 import org.motechproject.mds.dto.FieldInstanceDto;
@@ -7,6 +11,7 @@ import org.motechproject.mds.ex.EntityNotFoundException;
 import org.motechproject.mds.service.EntityService;
 import org.motechproject.mds.service.InstanceService;
 import org.motechproject.mds.util.Order;
+import org.motechproject.mds.web.comparator.EntityRecordComparator;
 import org.motechproject.mds.web.comparator.HistoryRecordComparator;
 import org.motechproject.mds.web.domain.EntityRecord;
 import org.motechproject.mds.web.domain.FieldRecord;
@@ -27,9 +32,14 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import static org.apache.commons.lang.CharEncoding.UTF_8;
 import static org.motechproject.mds.util.Constants.Roles;
@@ -168,46 +178,6 @@ public class InstanceController extends MdsController {
 
         return new Records<>(settings.getPage(), rowCount, entityRecords);
     }
-
- /*   private List<?> filterByLookup(List<?> entityList, Map<String, Object> lookups) {
-        for (Map.Entry<String, Object> entry : lookups.entrySet()) {
-            Iterator<?> it = entityList.iterator();
-            while (it.hasNext()) {
-                Object record = it.next();
-                for (Field field : record.getClass().getFields()) {
-                    if (entry.getKey().equals(field.getName()) &&
-                            !entry.getValue().toString().equalsIgnoreCase(field.toString())) {
-                        it.remove();
-                    }
-                }
-            }
-        }
-
-        return entityList;
-    }*/
-
-/*    private Map<String, Object> getLookupMap(String url) {
-        final String fields = "fields=";
-
-        int fieldsParam = url.indexOf(fields) + fields.length();
-        String jsonFields = url.substring(fieldsParam, url.indexOf('&', fieldsParam));
-
-        JsonFactory factory = new JsonFactory();
-        ObjectMapper mapper = new ObjectMapper(factory);
-        TypeReference<HashMap<String, Object>> typeRef
-                = new TypeReference<
-                HashMap<String, Object>
-                >() {
-        };
-        try {
-            jsonFields = URLDecoder.decode(jsonFields, "UTF-8");
-            return mapper.readValue(jsonFields, typeRef);
-        } catch (IOException e) {
-            Logger.getLogger(EntityController.class).error("Failed to retrieve and/or parse lookup object from JSON" + e);
-        }
-
-        return new HashMap<>();
-    }*/
 
     @Autowired
     public void setEntityService(EntityService entityService) {

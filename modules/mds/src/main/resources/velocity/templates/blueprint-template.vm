@@ -17,6 +17,6 @@
 
    #foreach( $service in $list )
    <osgi:service id="$service.get('name')ServiceOsgi" ref="$service.get('name')Service"
-      interface="$service.get('interface')" />
+      interface="$service.get('interface')" auto-export="interfaces" />
    #end
 </beans>
