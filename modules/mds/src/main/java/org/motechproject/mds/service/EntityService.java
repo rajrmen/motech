@@ -10,6 +10,7 @@ import org.motechproject.mds.web.DraftData;
 import org.motechproject.mds.web.domain.EntityRecord;
 import org.motechproject.mds.web.domain.HistoryRecord;
 import org.motechproject.mds.web.domain.PreviousRecord;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.List;
@@ -38,6 +39,9 @@ public interface EntityService {
 
     // TODO: replace with entity.getFields
     List<FieldDto> getFields(Long entityId);
+
+    @Transactional
+    List<FieldDto> getEntityFields(Long entityId);
 
     // TODO: replace with entity.findField
     FieldDto findFieldByName(Long entityId, String name);

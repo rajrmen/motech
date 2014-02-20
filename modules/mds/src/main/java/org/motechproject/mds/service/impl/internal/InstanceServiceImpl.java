@@ -12,6 +12,7 @@ import org.motechproject.mds.dto.FieldDto;
 import org.motechproject.mds.dto.FieldInstanceDto;
 import org.motechproject.mds.ex.EntityNotFoundException;
 import org.motechproject.mds.ex.MdsException;
+import org.motechproject.mds.ex.ObjectNotFoundException;
 import org.motechproject.mds.service.BaseMdsService;
 import org.motechproject.mds.service.EntityService;
 import org.motechproject.mds.service.InstanceService;
@@ -26,6 +27,8 @@ import org.motechproject.mds.web.domain.HistoryRecord;
 import org.motechproject.mds.web.domain.PreviousRecord;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,7 +45,7 @@ import java.util.List;
 @Service
 public class InstanceServiceImpl extends BaseMdsService implements InstanceService {
 
-    //private static final Logger LOGGER = LoggerFactory.getLogger(InstanceServiceImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(InstanceServiceImpl.class);
 
     private static final DateTimeFormatter DTF = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm Z");
 
@@ -82,10 +85,8 @@ public class InstanceServiceImpl extends BaseMdsService implements InstanceServi
                 return service.update(instance);
             }
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException  e) {
-            // TODO: better error handling
+            LOG.error("Unable to save object instance", e);
             throw new MdsException(e.getLocalizedMessage());
-        } catch (RuntimeException e) {
-            throw new MdsException(e.getMessage());
         }
     }
 
@@ -146,8 +147,7 @@ public class InstanceServiceImpl extends BaseMdsService implements InstanceServi
 
         assertEntityExists(entity);
 
-        // TODO: not from draft
-        List<FieldDto> fields = entityService.getFields(entityId);
+        List<FieldDto> fields = entityService.getEntityFields(entityId);
 
         List<FieldInstanceDto> result = new ArrayList<>();
         for (FieldDto field : fields) {
@@ -172,8 +172,7 @@ public class InstanceServiceImpl extends BaseMdsService implements InstanceServi
 
     @Override
     public EntityRecord newInstance(Long entityId) {
-        // TODO: not from draft
-        List<FieldDto> fields = entityService.getFields(entityId);
+        List<FieldDto> fields = entityService.getEntityFields(entityId);
         List<FieldRecord> fieldRecords = new ArrayList<>();
         for (FieldDto field : fields) {
             FieldRecord fieldRecord = new FieldRecord(field);
@@ -192,9 +191,8 @@ public class InstanceServiceImpl extends BaseMdsService implements InstanceServi
         // TODO keyname
         Object instance = service.retrieve("id", instanceId);
 
-        // TODO
         if (instance == null) {
-            throw new MdsException("d");
+            throw new ObjectNotFoundException();
         }
 
         List<FieldDto> fields = entityService.getFields(entityId);
