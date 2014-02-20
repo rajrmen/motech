@@ -52,7 +52,7 @@ public class EntityMetadataBuilderImpl implements EntityMetadataBuilder {
                 FieldMetadata fmd = cmd.newFieldMetadata(field.getName());
                 fmd.setDefaultFetchGroup(true);
             } else if (Time.class.isAssignableFrom(typeClass)) {
-                // for time we register our convert which persists as string
+                // for time we register our converter which persists as string
                 FieldMetadata fmd = cmd.newFieldMetadata(field.getName());
                 fmd.setPersistenceModifier(PersistenceModifier.PERSISTENT);
                 fmd.setDefaultFetchGroup(true);

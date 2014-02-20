@@ -13,6 +13,8 @@ import org.motechproject.mds.dto.FieldInstanceDto;
 import org.motechproject.mds.ex.EntityNotFoundException;
 import org.motechproject.mds.ex.MdsException;
 import org.motechproject.mds.ex.ObjectNotFoundException;
+import org.motechproject.mds.ex.ObjectUpdateException;
+import org.motechproject.mds.ex.ServiceNotFoundException;
 import org.motechproject.mds.service.BaseMdsService;
 import org.motechproject.mds.service.EntityService;
 import org.motechproject.mds.service.InstanceService;
@@ -65,7 +67,7 @@ public class InstanceServiceImpl extends BaseMdsService implements InstanceServi
         try {
             MotechDataService service = getServiceForEntity(entity);
 
-            Class<?> entityClass = MDSClassLoader.getInstance().loadClass(ClassName.getEntityName(className));
+            Class<?> entityClass = MDSClassLoader.getInstance().loadClass(className);
 
             boolean newObject = entityRecord.getId() == null;
 
@@ -75,6 +77,9 @@ public class InstanceServiceImpl extends BaseMdsService implements InstanceServi
             } else {
                 // TODO hardcoded id
                 instance = service.retrieve("id", entityRecord.getId());
+                if (instance == null) {
+                    throw new ObjectNotFoundException();
+                }
             }
 
             updateFields(instance, entityRecord.getFields());
@@ -86,7 +91,7 @@ public class InstanceServiceImpl extends BaseMdsService implements InstanceServi
             }
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException  e) {
             LOG.error("Unable to save object instance", e);
-            throw new MdsException(e.getLocalizedMessage());
+            throw new ObjectUpdateException();
         }
     }
 
@@ -195,7 +200,7 @@ public class InstanceServiceImpl extends BaseMdsService implements InstanceServi
             throw new ObjectNotFoundException();
         }
 
-        List<FieldDto> fields = entityService.getFields(entityId);
+        List<FieldDto> fields = entityService.getEntityFields(entityId);
 
         return instanceToRecord(instance, entity, fields);
     }
@@ -209,7 +214,7 @@ public class InstanceServiceImpl extends BaseMdsService implements InstanceServi
     private MotechDataService getServiceForEntity(EntityDto entity) {
         ServiceReference ref = bundleContext.getServiceReference(ClassName.getInterfaceName(entity.getClassName()));
         if (ref == null) {
-            throw new EntityNotFoundException();
+            throw new ServiceNotFoundException();
         }
         return (MotechDataService) bundleContext.getService(ref);
     }
@@ -224,8 +229,8 @@ public class InstanceServiceImpl extends BaseMdsService implements InstanceServi
                 PropertyUtils.setProperty(instance, fieldRecord.getName(), parsedValue);
             }
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            // TODO : better error handling
-            throw new MdsException("eh");
+            LOG.error("Error while updating fields", e);
+            throw new ObjectUpdateException();
         }
     }
 

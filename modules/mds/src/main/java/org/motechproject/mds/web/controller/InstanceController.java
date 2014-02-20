@@ -56,7 +56,6 @@ public class InstanceController extends MdsController {
         instanceService.saveInstance(record);
     }
 
-    // TODO: is this ok?
     @RequestMapping(value = "/instances/{instanceId}", method = RequestMethod.POST)
     @PreAuthorize(Roles.HAS_DATA_ACCESS)
     @ResponseStatus(HttpStatus.OK)
