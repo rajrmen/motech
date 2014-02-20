@@ -2,6 +2,10 @@ package org.motechproject.mds.service.impl.internal;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.reflect.FieldUtils;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+import org.motechproject.commons.date.model.Time;
 import org.motechproject.mds.builder.MDSClassLoader;
 import org.motechproject.mds.dto.EntityDto;
 import org.motechproject.mds.dto.FieldDto;
@@ -29,6 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -38,6 +43,8 @@ import java.util.List;
 public class InstanceServiceImpl extends BaseMdsService implements InstanceService {
 
     //private static final Logger LOGGER = LoggerFactory.getLogger(InstanceServiceImpl.class);
+
+    private static final DateTimeFormatter DTF = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm Z");
 
     // TODO remove this once everything is in db
     private ExampleData exampleData = new ExampleData();
@@ -190,23 +197,9 @@ public class InstanceServiceImpl extends BaseMdsService implements InstanceServi
             throw new MdsException("d");
         }
 
-        try {
-            List<FieldDto> fields = entityService.getFields(entityId);
-            List<FieldRecord> fieldRecords = new ArrayList<>();
-            for (FieldDto field : fields) {
-                FieldRecord fieldRecord = new FieldRecord(field);
+        List<FieldDto> fields = entityService.getFields(entityId);
 
-                Object value = PropertyUtils.getProperty(instance, fieldRecord.getName());
-                fieldRecord.setValue(value);
-
-                fieldRecords.add(fieldRecord);
-            }
-
-            return new EntityRecord(instanceId, entityId, fieldRecords);
-        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            // TODO
-            throw new MdsException("e");
-        }
+        return instanceToRecord(instance, entity, fields);
     }
 
     private EntityDto getEntity(Long entityId) {
@@ -244,6 +237,15 @@ public class InstanceServiceImpl extends BaseMdsService implements InstanceServi
 
             for (FieldDto field : fields) {
                 Object value = PropertyUtils.getProperty(instance, field.getBasic().getName());
+
+                // turn dates to string format
+                if (value instanceof DateTime) {
+                    value = DTF.print((DateTime) value);
+                } else if (value instanceof Date) {
+                    value = DTF.print(((Date) value).getTime());
+                } else if (value instanceof Time) {
+                    value = ((Time) value).timeStr();
+                }
 
                 FieldRecord fieldRecord = new FieldRecord(field);
                 fieldRecord.setValue(value);
