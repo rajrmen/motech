@@ -103,6 +103,6 @@ public class EntityMetadataBuilderImpl implements EntityMetadataBuilder {
 
         builder.append(simpleName);
 
-        return builder.toString().toUpperCase();
+        return builder.toString().replace(' ', '_').toUpperCase();
     }
 }

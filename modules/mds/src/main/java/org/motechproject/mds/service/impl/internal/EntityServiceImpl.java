@@ -2,6 +2,7 @@ package org.motechproject.mds.service.impl.internal;
 
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
+import org.motechproject.mds.builder.MDSConstructor;
 import org.motechproject.mds.domain.Entity;
 import org.motechproject.mds.domain.EntityDraft;
 import org.motechproject.mds.domain.Field;
@@ -12,6 +13,7 @@ import org.motechproject.mds.domain.Type;
 import org.motechproject.mds.domain.TypeSetting;
 import org.motechproject.mds.domain.TypeValidation;
 import org.motechproject.mds.dto.AdvancedSettingsDto;
+import org.motechproject.mds.dto.DraftResult;
 import org.motechproject.mds.dto.EntityDto;
 import org.motechproject.mds.dto.FieldBasicDto;
 import org.motechproject.mds.dto.FieldDto;
@@ -22,6 +24,7 @@ import org.motechproject.mds.dto.SecuritySettingsDto;
 import org.motechproject.mds.dto.SettingDto;
 import org.motechproject.mds.dto.ValidationCriterionDto;
 import org.motechproject.mds.ex.EntityAlreadyExistException;
+import org.motechproject.mds.ex.EntityChangedException;
 import org.motechproject.mds.ex.EntityNotFoundException;
 import org.motechproject.mds.ex.EntityReadOnlyException;
 import org.motechproject.mds.ex.FieldNotFoundException;
@@ -31,7 +34,6 @@ import org.motechproject.mds.repository.AllEntityDrafts;
 import org.motechproject.mds.repository.AllTypes;
 import org.motechproject.mds.service.BaseMdsService;
 import org.motechproject.mds.service.EntityService;
-import org.motechproject.mds.builder.MDSConstructor;
 import org.motechproject.mds.util.ClassName;
 import org.motechproject.mds.util.Constants;
 import org.motechproject.mds.util.FieldHelper;
@@ -40,6 +42,8 @@ import org.motechproject.mds.web.ExampleData;
 import org.motechproject.mds.web.domain.EntityRecord;
 import org.motechproject.mds.web.domain.HistoryRecord;
 import org.motechproject.mds.web.domain.PreviousRecord;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
@@ -66,6 +70,8 @@ public class EntityServiceImpl extends BaseMdsService implements EntityService {
     private AllTypes allTypes;
     private AllEntityDrafts allEntityDrafts;
 
+    private static final Logger LOG = LoggerFactory.getLogger(EntityServiceImpl.class);
+
     // TODO remove this once everything is in db
     private ExampleData exampleData = new ExampleData();
 
@@ -88,6 +94,7 @@ public class EntityServiceImpl extends BaseMdsService implements EntityService {
         Entity entity = allEntities.create(entityDto);
 
         if (fromUI) {
+            LOG.info("Entity from UI - constructing");
             constructor.constructEntity(entity);
         }
 
@@ -96,7 +103,7 @@ public class EntityServiceImpl extends BaseMdsService implements EntityService {
 
     @Override
     @Transactional
-    public boolean saveDraftEntityChanges(Long entityId, DraftData draftData) {
+    public DraftResult saveDraftEntityChanges(Long entityId, DraftData draftData) {
         EntityDraft draft = getEntityDraft(entityId);
 
         if (draftData.isCreate()) {
@@ -107,7 +114,7 @@ public class EntityServiceImpl extends BaseMdsService implements EntityService {
             draftRemove(draft, draftData);
         }
 
-        return draft.getChangesMade() != null && draft.getChangesMade();
+        return new DraftResult(draft.isChangesMade(), draft.isOutdated());
     }
 
 
@@ -207,27 +214,25 @@ public class EntityServiceImpl extends BaseMdsService implements EntityService {
     @Transactional
     public void commitChanges(Long entityId) {
         EntityDraft draft = getEntityDraft(entityId);
-        Entity parent = draft.getParentEntity();
 
+        if (draft.isOutdated()) {
+            throw new EntityChangedException();
+        }
+
+        Entity parent = draft.getParentEntity();
         parent.updateFromDraft(draft);
         allEntityDrafts.delete(draft);
     }
-
 
     @Override
     @Transactional
     public List<EntityDto> listWorkInProgress() {
         String username = getUsername();
-
-        if (username == null) {
-            throw new AccessDeniedException("Cannot retrieve work in progress - no user");
-        }
-
         List<EntityDraft> drafts = allEntityDrafts.retrieveAll(username);
 
         List<EntityDto> entityDtoList = new ArrayList<>();
         for (EntityDraft draft : drafts) {
-            if (draft.getChangesMade() != null && draft.getChangesMade()) {
+            if (draft.isChangesMade()) {
                 entityDtoList.add(draft.toDto());
             }
         }
@@ -486,6 +491,17 @@ public class EntityServiceImpl extends BaseMdsService implements EntityService {
             Field field = entity.getField(fieldName);
             field.setUIFilterable(true);
         }
+    }
+
+    @Override
+    @Transactional
+    public EntityDto updateDraft(Long entityId) {
+        Entity entity = allEntities.retrieveById(entityId);
+        EntityDraft draft = getEntityDraft(entityId);
+
+        allEntityDrafts.setProperties(draft, entity);
+
+        return draft.toDto();
     }
 
     @Override
