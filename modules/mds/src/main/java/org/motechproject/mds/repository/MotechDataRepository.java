@@ -1,5 +1,6 @@
 package org.motechproject.mds.repository;
 
+import org.motechproject.mds.builder.MDSClassLoader;
 import org.motechproject.mds.util.Order;
 import org.motechproject.mds.util.QueryUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +29,12 @@ public abstract class MotechDataRepository<T> {
     private Class<T> classType;
 
     protected MotechDataRepository(Class<T> classType) {
-        this.classType = classType;
+        try {
+            // we want the class definition to come from the MDS classloader
+            this.classType = (Class<T>) MDSClassLoader.getInstance().loadClass(classType.getName());
+        } catch (ClassNotFoundException e) {
+            this.classType = classType;
+        }
     }
 
     protected Class<T> getClassType() {

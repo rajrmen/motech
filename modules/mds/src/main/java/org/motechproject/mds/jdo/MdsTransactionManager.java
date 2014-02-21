@@ -5,6 +5,11 @@ import org.motechproject.mds.builder.MDSClassLoader;
 import org.springframework.orm.jdo.JdoTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 
+/**
+ * We override springs transaction for classloader control. We store context classloaders
+ * as thread local variables, and switch them with the MDS classloader for the transaction.
+ * Since we only allow operations in transactions, this entry point for classloader switching is enough.
+ */
 public class MdsTransactionManager extends JdoTransactionManager {
 
     private static final long serialVersionUID = 3817917722565508554L;
