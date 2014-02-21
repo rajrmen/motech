@@ -12,6 +12,7 @@ import java.util.List;
 public class FieldRecord {
     private String name;
     private String displayName;
+    private String tooltip;
     private Object value;
     private TypeDto type;
     private List<SettingDto> settings;
@@ -35,6 +36,7 @@ public class FieldRecord {
         this.type = fieldDto.getType();
         this.id = fieldDto.getId();
         this.settings = fieldDto.getSettings();
+        this.tooltip = fieldDto.getBasic().getTooltip();
     }
 
     public String getDisplayName() {
@@ -83,5 +85,13 @@ public class FieldRecord {
 
     public void setSettings(List<SettingDto> settings) {
         this.settings = settings;
+    }
+
+    public String getTooltip() {
+        return tooltip;
+    }
+
+    public void setTooltip(String tooltip) {
+        this.tooltip = tooltip;
     }
 }
