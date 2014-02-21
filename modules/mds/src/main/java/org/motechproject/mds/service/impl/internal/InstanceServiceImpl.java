@@ -11,8 +11,8 @@ import org.motechproject.mds.dto.EntityDto;
 import org.motechproject.mds.dto.FieldDto;
 import org.motechproject.mds.dto.FieldInstanceDto;
 import org.motechproject.mds.ex.EntityNotFoundException;
-import org.motechproject.mds.ex.MdsException;
 import org.motechproject.mds.ex.ObjectNotFoundException;
+import org.motechproject.mds.ex.ObjectReadException;
 import org.motechproject.mds.ex.ObjectUpdateException;
 import org.motechproject.mds.ex.ServiceNotFoundException;
 import org.motechproject.mds.service.BaseMdsService;
@@ -91,7 +91,7 @@ public class InstanceServiceImpl extends BaseMdsService implements InstanceServi
             }
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException  e) {
             LOG.error("Unable to save object instance", e);
-            throw new ObjectUpdateException();
+            throw new ObjectUpdateException(e);
         }
     }
 
@@ -230,7 +230,7 @@ public class InstanceServiceImpl extends BaseMdsService implements InstanceServi
             }
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             LOG.error("Error while updating fields", e);
-            throw new ObjectUpdateException();
+            throw new ObjectUpdateException(e);
         }
     }
 
@@ -268,8 +268,8 @@ public class InstanceServiceImpl extends BaseMdsService implements InstanceServi
 
             return new EntityRecord(id, entityDto.getId(), fieldRecords);
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            // TODO: errors
-            throw new MdsException(e.getMessage());
+            LOG.error("Unable to read object", e);
+            throw new ObjectReadException(e);
         }
     }
 

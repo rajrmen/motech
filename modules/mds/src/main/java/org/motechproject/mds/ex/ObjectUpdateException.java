@@ -10,4 +10,8 @@ public class ObjectUpdateException extends MdsException {
     public ObjectUpdateException() {
         super("mds.error.objectUpdateError");
     }
+
+    public ObjectUpdateException(Throwable cause) {
+        super("mds.error.objectUpdateError", cause);
+    }
 }

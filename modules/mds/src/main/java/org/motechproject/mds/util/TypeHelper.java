@@ -40,7 +40,7 @@ public final class TypeHelper {
     public static Object parse(Object val, String toClass) {
         if (val == null || val.getClass().getName().equals(toClass)) {
             return val;
-        } if (val instanceof String) {
+        } else if (val instanceof String) {
             return parseString((String) val, toClass);
         } else if (val instanceof Integer && Boolean.class.getName().equals(toClass)) {
             return parseIntToBool((Integer) val);

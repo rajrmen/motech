@@ -430,7 +430,6 @@ public class Field {
             FieldSetting setting = getSettingByName(settingDto.getName());
 
             if (setting != null) {
-                Type valueType = setting.getDetails().getValueType();
                 Object value = settingDto.getValue();
                 setting.setValue(TypeHelper.format(value));
             }
