@@ -1562,6 +1562,20 @@
         };
 
         /**
+        * Construct appropriate url according with a field type for form used to set correct
+        * value of default value property.
+        *
+        * @param {string} type The type of a field.
+        * @return {string} url to appropriate form.
+        */
+        $scope.loadDefaultValueForm = function (type) {
+            var value = $scope.getTypeSingleClassName(type);
+
+            return '../mds/resources/partials/widgets/field-basic-defaultValue-{0}.html'
+                .format(value.substring(value.toLowerCase()));
+        };
+
+        /**
         * Check if the given number has appropriate precision and scale.
         *
         * @param {number} number The number to validate.
