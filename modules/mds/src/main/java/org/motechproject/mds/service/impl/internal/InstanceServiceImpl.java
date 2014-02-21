@@ -248,6 +248,12 @@ public class InstanceServiceImpl extends BaseMdsService implements InstanceServi
                     value = DTF.print(((Date) value).getTime());
                 } else if (value instanceof Time) {
                     value = ((Time) value).timeStr();
+                // TODO: temporary solution for single value select combobox
+                } else if (value instanceof List) {
+                    List list = (List) value;
+                    if (!list.isEmpty()) {
+                        value = list.get(0);
+                    }
                 }
 
                 FieldRecord fieldRecord = new FieldRecord(field);
