@@ -24,37 +24,19 @@ public abstract class DefaultMotechDataService<T> implements MotechDataService<T
     @Override
     @Transactional
     public T create(T object) {
-        ClassLoader oldClassLoader = Thread.currentThread().getContextClassLoader();
-        try {
-            Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
-            return repository.create(object);
-        } finally {
-            Thread.currentThread().setContextClassLoader(oldClassLoader);
-        }
+        return repository.create(object);
     }
 
     @Override
     @Transactional
     public T retrieve(String primaryKeyName, Object value) {
-        ClassLoader oldClassLoader = Thread.currentThread().getContextClassLoader();
-        try {
-            Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
-            return repository.retrieve(primaryKeyName, value);
-        } finally {
-            Thread.currentThread().setContextClassLoader(oldClassLoader);
-        }
+        return repository.retrieve(primaryKeyName, value);
     }
 
     @Override
     @Transactional
     public List<T> retrieveAll() {
-        ClassLoader oldClassLoader = Thread.currentThread().getContextClassLoader();
-        try {
-            Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
-            return repository.retrieveAll();
-        } finally {
-            Thread.currentThread().setContextClassLoader(oldClassLoader);
-        }
+        return repository.retrieveAll();
     }
 
     @Override
@@ -75,55 +57,37 @@ public abstract class DefaultMotechDataService<T> implements MotechDataService<T
 
         List<T> result;
 
-        ClassLoader oldClassLoader = Thread.currentThread().getContextClassLoader();
-        try {
-            Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
-            if (order == null) {
-                result =  repository.retrieveAll(fromIncl, toExcl);
-            } else {
-                result = repository.retrieveAll(fromIncl, toExcl, order);
-            }
-
-            return result;
-        } finally {
-            Thread.currentThread().setContextClassLoader(oldClassLoader);
+        if (order == null) {
+            result = repository.retrieveAll(fromIncl, toExcl);
+        } else {
+            result = repository.retrieveAll(fromIncl, toExcl, order);
         }
+
+        return result;
     }
 
     @Override
     @Transactional
     public T update(T object) {
-        ClassLoader oldClassLoader = Thread.currentThread().getContextClassLoader();
-        try {
-            Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
-            return repository.update(object);
-        } finally {
-            Thread.currentThread().setContextClassLoader(oldClassLoader);
-        }
+        return repository.update(object);
     }
 
     @Override
     @Transactional
     public void delete(T object) {
-        ClassLoader oldClassLoader = Thread.currentThread().getContextClassLoader();
-        try {
-            Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
-            repository.delete(object);
-        } finally {
-            Thread.currentThread().setContextClassLoader(oldClassLoader);
-        }
+        repository.delete(object);
     }
 
     @Override
     @Transactional
     public void delete(String primaryKeyName, Object value) {
-        ClassLoader oldClassLoader = Thread.currentThread().getContextClassLoader();
-        try {
-            Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
-            repository.delete(primaryKeyName, value);
-        } finally {
-            Thread.currentThread().setContextClassLoader(oldClassLoader);
-        }
+        repository.delete(primaryKeyName, value);
+    }
+
+    @Override
+    @Transactional
+    public long count() {
+        return repository.count();
     }
 
     @Override

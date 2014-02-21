@@ -231,6 +231,7 @@
                             org.motechproject.mds.dto;version=${project.version},
                             org.motechproject.mds.enhancer;version=${project.version},
                             org.motechproject.mds.ex;version=${project.version},
+                            org.motechproject.mds.jdo;version=${project.version},
                             org.motechproject.mds.repository;version=${project.version},
                             org.motechproject.mds.service;version=${project.version},
                             org.motechproject.mds.service.impl;version=${project.version},

@@ -97,7 +97,7 @@ public abstract class MotechDataRepository<T> {
         Query query = createQuery(properties, values);
         query.setUnique(true);
 
-        return classType.cast(query.executeWithArray(values));
+        return (T) query.executeWithArray(values);
     }
 
     public boolean exists(String property, Object value) {
@@ -150,23 +150,13 @@ public abstract class MotechDataRepository<T> {
     }
 
     /**
-     * Converts the no generic collection into generic list with the given type. In the final list
-     * there will be only elements that pass the <code>instanceOf</code> test, other elements
-     * are ignored.
+     * Converts the no generic collection into generic list with the given type.
      *
      * @param collection an instance of {@link java.util.Collection} that contains objects.
      * @return a instance of {@link java.util.List} that contains object that are the given type.
      */
     protected List<T> cast(Collection collection) {
-        List<T> list = new ArrayList<>(collection.size());
-
-        for (Object obj : collection) {
-            if (classType.isInstance(obj)) {
-                list.add(classType.cast(obj));
-            }
-        }
-
-        return list;
+        return new ArrayList<T>(collection);
     }
 
     private Query createQuery(String[] properties, Object[] values) {

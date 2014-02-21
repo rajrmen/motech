@@ -11,10 +11,6 @@ public class TimeTypeConverter implements TypeConverter<Time, String> {
 
     private static final long serialVersionUID = 4777820253513893758L;
 
-    public TimeTypeConverter() {
-        System.out.print("TIME");
-    }
-
     @Override
     public String toDatastoreType(Time memberValue) {
         return memberValue.timeStr();
