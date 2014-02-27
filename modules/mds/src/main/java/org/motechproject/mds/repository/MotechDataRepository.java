@@ -32,7 +32,7 @@ public abstract class MotechDataRepository<T> {
         this.classType = classType;
     }
 
-    protected Class<T> getClassType() {
+    public Class<T> getClassType() {
         return classType;
     }
 

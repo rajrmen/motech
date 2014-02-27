@@ -1,13 +1,20 @@
 package org.motechproject.mds.service.impl;
 
+import org.motechproject.mds.domain.Entity;
+import org.motechproject.mds.ex.SecurityException;
+import org.motechproject.mds.repository.AllEntities;
 import org.motechproject.mds.repository.MotechDataRepository;
 import org.motechproject.mds.service.MotechDataService;
 import org.motechproject.mds.util.QueryParams;
+import org.motechproject.mds.util.SecurityMode;
+import org.motechproject.security.domain.MotechUserProfile;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * This is a basic implementation of {@link org.motechproject.mds.service.MotechDataService}. Mainly
@@ -20,10 +27,12 @@ import java.util.List;
 @Service
 public abstract class DefaultMotechDataService<T> implements MotechDataService<T> {
     private MotechDataRepository<T> repository;
+    private AllEntities allEntities;
 
     @Override
     @Transactional
     public T create(T object) {
+        validateCredentials();
         return repository.create(object);
     }
 
@@ -84,8 +93,41 @@ public abstract class DefaultMotechDataService<T> implements MotechDataService<T
         return repository.count();
     }
 
+    private void validateCredentials() {
+        Class clazz = repository.getClassType();
+        Entity entity = allEntities.retrieveByClassName(clazz.getName());
+        SecurityMode mode = entity.getSecurityMode();
+
+        boolean authorized = false;
+
+        if (mode.equals(SecurityMode.EVERYONE)) {
+            authorized = true;
+        } else if (mode.equals(SecurityMode.USERS)) {
+            Set<String> users = entity.getSecurityMembers();
+            if (users.contains(SecurityContextHolder.getContext().getAuthentication().getName())) {
+                authorized = true;
+            }
+        } else if (mode.equals(SecurityMode.ROLES)) {
+            Set<String> roles = entity.getSecurityMembers();
+            for (String role : ((MotechUserProfile) SecurityContextHolder.getContext().getAuthentication().getDetails()).getRoles()) {
+                if (roles.contains(role)) {
+                    authorized = true;
+                }
+            }
+        }
+
+        if (!authorized) {
+            throw new SecurityException();
+        }
+    }
+
     @Autowired
     public void setRepository(MotechDataRepository<T> repository) {
         this.repository = repository;
+    }
+
+    @Autowired
+    public void setAllEntities(AllEntities allEntities) {
+        this.allEntities = allEntities;
     }
 }
