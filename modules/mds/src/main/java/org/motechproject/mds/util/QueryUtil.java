@@ -61,7 +61,7 @@ public final class QueryUtil {
         }
 
         // append a restriction either by user or by creator
-        if (restriction != null && restriction.isEmpty()) {
+        if (restriction != null && !restriction.isEmpty()) {
             if (properties.length > 0) {
                 filter.append(FILTER_AND);
             }
@@ -120,7 +120,7 @@ public final class QueryUtil {
         }
 
         // append a restriction either by user or by creator
-        if (restriction != null && restriction.isEmpty()) {
+        if (restriction != null && !restriction.isEmpty()) {
             if (values.length > 0) {
                 parameters.append(DECLARE_PARAMETERS_COMMA);
             }

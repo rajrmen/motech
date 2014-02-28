@@ -39,7 +39,7 @@ public abstract class DefaultMotechDataService<T> implements MotechDataService<T
     private MotechDataRepository<T> repository;
     private AllEntities allEntities;
 
-    private final static String ID = "id";
+    private static final String ID = "id";
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -156,7 +156,7 @@ public abstract class DefaultMotechDataService<T> implements MotechDataService<T
             }
         }
 
-        if (!authorized) {
+        if (!authorized && !mode.isIntanceRestriction()) {
             throw new SecurityException();
         }
 
@@ -169,7 +169,8 @@ public abstract class DefaultMotechDataService<T> implements MotechDataService<T
 
 
     private InstanceSecurityRestriction checkInstanceAccess(T instance, InstanceSecurityRestriction restriction) {
-        String creator = null, owner = null;
+        String creator = null;
+        String owner = null;
 
         T fromDb = repository.retrieve(getId(instance));
 
@@ -230,7 +231,7 @@ public abstract class DefaultMotechDataService<T> implements MotechDataService<T
     }
 
     protected Object getId(T instance) {
-        Field field = FieldUtils.getField(instance.getClass(), ID);
+        Field field = FieldUtils.getField(instance.getClass(), ID, true);
         try {
             return field.get(instance);
         } catch (IllegalAccessException e) {

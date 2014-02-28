@@ -49,7 +49,7 @@ public abstract class MotechDataRepository<T> {
     }
 
     public T retrieve(Object key) {
-        return (T) getPersistenceManager().getObjectById(key);
+        return getPersistenceManager().getObjectById(classType, key);
     }
 
     public T create(T object) {
@@ -154,7 +154,7 @@ public abstract class MotechDataRepository<T> {
 
     public void deleteAll(String[] properties, Object[] values, InstanceSecurityRestriction restriction) {
         Query query = createQuery(properties, values, restriction);
-        Collection collection = (Collection) QueryUtil.executeWithArray(query, values, restriction);;
+        Collection collection = (Collection) QueryUtil.executeWithArray(query, values, restriction);
 
         getPersistenceManager().deletePersistentAll(collection);
     }

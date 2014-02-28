@@ -25,6 +25,6 @@ public class InstanceSecurityRestriction {
     }
 
     public boolean isEmpty() {
-        return byCreator || byOwner;
+        return !byCreator && !byOwner;
     }
 }
