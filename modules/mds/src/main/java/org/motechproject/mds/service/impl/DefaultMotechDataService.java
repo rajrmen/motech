@@ -1,5 +1,6 @@
 package org.motechproject.mds.service.impl;
 
+import org.apache.commons.beanutils.MethodUtils;
 import org.motechproject.mds.domain.Entity;
 import org.motechproject.mds.ex.SecurityException;
 import org.motechproject.mds.repository.AllEntities;
@@ -8,11 +9,13 @@ import org.motechproject.mds.service.MotechDataService;
 import org.motechproject.mds.util.QueryParams;
 import org.motechproject.mds.util.SecurityMode;
 import org.motechproject.security.domain.MotechUserProfile;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Set;
 
@@ -29,6 +32,8 @@ public abstract class DefaultMotechDataService<T> implements MotechDataService<T
     private MotechDataRepository<T> repository;
     private AllEntities allEntities;
 
+    private final static String ID = "id";
+
     @Override
     @Transactional
     public T create(T object) {
@@ -39,7 +44,9 @@ public abstract class DefaultMotechDataService<T> implements MotechDataService<T
     @Override
     @Transactional
     public T retrieve(String primaryKeyName, Object value) {
-        return repository.retrieve(primaryKeyName, value);
+        T instance = repository.retrieve(primaryKeyName, value);
+        validateCredentials(instance);
+        return instance;
     }
 
     @Override
@@ -72,19 +79,34 @@ public abstract class DefaultMotechDataService<T> implements MotechDataService<T
     @Override
     @Transactional
     public T update(T object) {
+        try {
+            retrieve(ID, MethodUtils.invokeMethod(object, "getId", null));
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+            LoggerFactory.getLogger(DefaultMotechDataService.class).
+                    error("Failed to resolve ID. Instance lacks necessary field.");
+        }
+        // If retrieve doesn't throw exception, it means the user has got necessary credentials.
         return repository.update(object);
     }
 
     @Override
     @Transactional
     public void delete(T object) {
+        try {
+            retrieve(ID, MethodUtils.invokeMethod(object, "getId", null));
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+            LoggerFactory.getLogger(DefaultMotechDataService.class).
+                    error("Failed to resolve ID. Instance lacks necessary field.");
+        }
+        // If retrieve doesn't throw exception, it means the user has got necessary credentials.
         repository.delete(object);
     }
 
     @Override
     @Transactional
     public void delete(String primaryKeyName, Object value) {
-        repository.delete(primaryKeyName, value);
+        T instance = retrieve(primaryKeyName, value);
+        repository.delete(instance);
     }
 
     @Override
@@ -94,6 +116,10 @@ public abstract class DefaultMotechDataService<T> implements MotechDataService<T
     }
 
     private void validateCredentials() {
+        validateCredentials(null);
+    }
+
+    private void validateCredentials(T instance) {
         Class clazz = repository.getClassType();
         Entity entity = allEntities.retrieveByClassName(clazz.getName());
         SecurityMode mode = entity.getSecurityMode();
@@ -116,9 +142,31 @@ public abstract class DefaultMotechDataService<T> implements MotechDataService<T
             }
         }
 
+        if (instance != null && !authorized) {
+            authorized = hasCredentialsForInstance(instance, mode);
+        }
+
         if (!authorized) {
             throw new SecurityException();
         }
+    }
+
+    private boolean hasCredentialsForInstance(T instance, SecurityMode mode) {
+        String creator = null, owner = null;
+        try {
+            creator = (String) MethodUtils.invokeMethod(instance, "getCreator", null);
+            owner = (String) MethodUtils.invokeMethod(instance, "getOwner", null);
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+            LoggerFactory.getLogger(DefaultMotechDataService.class).
+                    error("Failed to resolve object creator or owner. Instance lacks necessary fields.");
+        }
+
+        if (mode.equals(SecurityMode.OWNER)) {
+            return owner.equals(SecurityContextHolder.getContext().getAuthentication().getName());
+        } else if (mode.equals(SecurityMode.CREATOR)) {
+            return creator.equals(SecurityContextHolder.getContext().getAuthentication().getName());
+        }
+        return false;
     }
 
     @Autowired
