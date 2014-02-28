@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.jdo.PersistenceManagerFactory;
+import javax.jdo.annotations.Transactional;
 import javax.jdo.metadata.JDOMetadata;
 import java.util.Iterator;
 import java.util.List;
@@ -37,15 +38,28 @@ public class MDSConstructorImpl implements MDSConstructor {
     private static final Logger LOG = LoggerFactory.getLogger(MDSConstructorImpl.class);
 
     private SettingsFacade settingsFacade;
-    private BundleContext bundleContext;
     private AllEntities allEntities;
     private EntityBuilder entityBuilder;
     private EntityInfrastructureBuilder infrastructureBuilder;
     private EntityMetadataBuilder metadataBuilder;
     private MetadataHolder metadataHolder;
     private PersistenceManagerFactory persistenceManagerFactory;
+    private BundleContext bundleContext;
 
     @Override
+    public void updateEntities() {
+        LOG.info("Regenerating all entities");
+
+        // To be able to register updated class, we need to reload class loader
+        // and therefore add all the classes again
+        MotechClassPool.clearEnhancedData();
+        MDSClassLoader.reloadClassLoader();
+
+        constructAllEntities();
+    }
+
+    @Override
+    @Transactional
     public void constructEntity(Entity entity) {
         LOG.info("Constructing {}", entity.getClassName());
         // we need an jdo enhancer and a temporary classloader
@@ -60,7 +74,7 @@ public class MDSConstructorImpl implements MDSConstructor {
         metadataBuilder.addEntityMetadata(jdoMetadata, entity);
         metadataBuilder.addEntityMetadata(tmpMetadata, entity);
 
-        ClassData classData = entityBuilder.build(entity);
+        ClassData classData = buildClass(entity);
 
         tmpClassLoader.defineClass(classData);
         enhancer.addClass(classData);

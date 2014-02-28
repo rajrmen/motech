@@ -401,6 +401,7 @@ public class Field {
         setName(field.getBasic().getName());
         setRequired(field.getBasic().isRequired());
         setTooltip(field.getBasic().getTooltip());
+        setReadOnly(field.isReadOnly());
 
         if (field.getBasic().getDefaultValue() != null) {
             this.setDefaultValue(field.getBasic().getDefaultValue().toString());
@@ -445,12 +446,14 @@ public class Field {
     }
 
     private void updateSettings(List<SettingDto> settingsList) {
-        for (SettingDto settingDto : settingsList) {
-            FieldSetting setting = getSettingByName(settingDto.getName());
+        if (settingsList != null) {
+            for (SettingDto settingDto : settingsList) {
+                FieldSetting setting = getSettingByName(settingDto.getName());
 
-            if (setting != null) {
-                Object value = settingDto.getValue();
-                setting.setValue(TypeHelper.format(value));
+                if (setting != null) {
+                    Object value = settingDto.getValue();
+                    setting.setValue(TypeHelper.format(value));
+                }
             }
         }
     }

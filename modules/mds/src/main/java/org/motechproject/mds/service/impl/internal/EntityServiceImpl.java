@@ -18,7 +18,6 @@ import org.motechproject.mds.dto.DraftResult;
 import org.motechproject.mds.dto.EntityDto;
 import org.motechproject.mds.dto.FieldBasicDto;
 import org.motechproject.mds.dto.FieldDto;
-import org.motechproject.mds.dto.FieldInstanceDto;
 import org.motechproject.mds.dto.FieldValidationDto;
 import org.motechproject.mds.dto.LookupDto;
 import org.motechproject.mds.dto.SettingDto;
@@ -35,15 +34,12 @@ import org.motechproject.mds.repository.AllEntityDrafts;
 import org.motechproject.mds.repository.AllTypes;
 import org.motechproject.mds.service.BaseMdsService;
 import org.motechproject.mds.service.EntityService;
+import org.motechproject.mds.service.JarGeneratorService;
 import org.motechproject.mds.util.ClassName;
 import org.motechproject.mds.util.Constants;
 import org.motechproject.mds.util.FieldHelper;
 import org.motechproject.mds.util.SecurityMode;
 import org.motechproject.mds.web.DraftData;
-import org.motechproject.mds.web.ExampleData;
-import org.motechproject.mds.web.domain.EntityRecord;
-import org.motechproject.mds.web.domain.HistoryRecord;
-import org.motechproject.mds.web.domain.PreviousRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,6 +53,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -76,11 +74,9 @@ public class EntityServiceImpl extends BaseMdsService implements EntityService {
     private AllTypes allTypes;
     private AllEntityDrafts allEntityDrafts;
     private AllEntityAudits allEntityAudits;
+    private JarGeneratorService jarGeneratorService;
 
     private static final Logger LOG = LoggerFactory.getLogger(EntityServiceImpl.class);
-
-    // TODO remove this once everything is in db
-    private ExampleData exampleData = new ExampleData();
 
     @Override
     @Transactional
@@ -112,6 +108,8 @@ public class EntityServiceImpl extends BaseMdsService implements EntityService {
         if (username != null) {
             allEntityAudits.createAudit(entity, username);
         }
+
+        jarGeneratorService.regenerateMdsDataBundle();
 
         return entity.toDto();
     }
@@ -262,6 +260,9 @@ public class EntityServiceImpl extends BaseMdsService implements EntityService {
         }
 
         allEntityDrafts.delete(draft);
+
+        constructor.updateEntities();
+        jarGeneratorService.regenerateMdsDataBundle();
     }
 
     @Override
@@ -278,12 +279,6 @@ public class EntityServiceImpl extends BaseMdsService implements EntityService {
         }
 
         return entityDtoList;
-    }
-
-    @Override
-    @Transactional
-    public List<EntityRecord> getEntityRecords(Long entityId) {
-        return exampleData.getEntityRecordsById(entityId);
     }
 
     @Override
@@ -319,6 +314,12 @@ public class EntityServiceImpl extends BaseMdsService implements EntityService {
 
         while (iterator.hasNext()) {
             Lookup lookup = iterator.next();
+
+            // don't remove user defined lookups
+            if (!lookup.isReadOnly()) {
+                continue;
+            }
+
             boolean found = false;
 
             for (LookupDto lookupDto : lookups) {
@@ -349,24 +350,6 @@ public class EntityServiceImpl extends BaseMdsService implements EntityService {
                 lookup.update(lookupDto, lookupFields);
             }
         }
-    }
-
-    @Override
-    @Transactional
-    public List<FieldInstanceDto> getInstanceFields(Long instanceId) {
-        return exampleData.getInstanceFields(instanceId);
-    }
-
-    @Override
-    @Transactional
-    public List<HistoryRecord> getInstanceHistory(Long instanceId) {
-        return exampleData.getInstanceHistoryRecordsById(instanceId);
-    }
-
-    @Override
-    @Transactional
-    public List<PreviousRecord> getPreviousRecords(Long instanceId) {
-        return exampleData.getPreviousRecordsById(instanceId);
     }
 
     @Override
@@ -429,7 +412,27 @@ public class EntityServiceImpl extends BaseMdsService implements EntityService {
 
         assertEntityExists(entity);
 
-        List<Field> fields = entity.getFields();
+        // the returned collection is unmodifiable
+        List<Field> fields = new ArrayList<>(entity.getFields());
+
+        // for data browser purposes, we sort the fields by their ui display order
+        if (!forDraft) {
+            Collections.sort(fields, new Comparator<Field>() {
+                @Override
+                public int compare(Field o1, Field o2) {
+                    Long position1 = o1.getUIDisplayPosition();
+                    Long position2 = o2.getUIDisplayPosition();
+
+                    if (position1 == null) {
+                        return -1;
+                    } else if (position2 == null) {
+                        return 1;
+                    } else {
+                        return (position1 > position2) ? 1 : -1;
+                    }
+                }
+            });
+        }
 
         List<FieldDto> fieldDtos = new ArrayList<>();
         for (Field field : fields) {
@@ -525,6 +528,12 @@ public class EntityServiceImpl extends BaseMdsService implements EntityService {
 
         while (iterator.hasNext()) {
             Field field = iterator.next();
+
+            // don't remove user defined fields
+            if (!field.isReadOnly()) {
+                continue;
+            }
+
             boolean found = false;
 
             for (FieldDto fieldDto : fields) {
@@ -622,6 +631,22 @@ public class EntityServiceImpl extends BaseMdsService implements EntityService {
 
     @Override
     @Transactional
+    public List<FieldDto> getDisplayFields(Long entityId) {
+        Entity entity = allEntities.retrieveById(entityId);
+        assertEntityExists(entity);
+
+        List<FieldDto> displayFields = new ArrayList<>();
+        for (Field field : entity.getFields()) {
+            if (field.isUIDisplayable()) {
+                displayFields.add(field.toDto());
+            }
+        }
+
+        return displayFields;
+    }
+
+    @Override
+    @Transactional
     public void addDisplayedFields(EntityDto entityDto, Map<String, Long> positions) {
         Entity entity = allEntities.retrieveById(entityDto.getId());
 
@@ -658,6 +683,7 @@ public class EntityServiceImpl extends BaseMdsService implements EntityService {
         Entity entity = allEntities.retrieveById(entityId);
         assertEntityExists(entity);
         constructor.constructEntity(entity);
+        jarGeneratorService.regenerateMdsDataBundle();
     }
 
     private void assertEntityExists(Entity entity) {
@@ -714,5 +740,10 @@ public class EntityServiceImpl extends BaseMdsService implements EntityService {
     @Autowired
     public void setAllEntityAudits(AllEntityAudits allEntityAudits) {
         this.allEntityAudits = allEntityAudits;
+    }
+
+    @Autowired
+    public void setJarGeneratorService(JarGeneratorService jarGeneratorService) {
+        this.jarGeneratorService = jarGeneratorService;
     }
 }
