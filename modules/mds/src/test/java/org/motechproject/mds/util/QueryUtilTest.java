@@ -32,6 +32,9 @@ public class QueryUtilTest {
 
         actual = QueryUtil.createFilter(new String[]{"abc", "def"});
         assertEquals(DOUBLE_FILTER, actual);
+
+        actual = QueryUtil.createFilter(new String[]{"abc", "def"});
+        assertEquals(DOUBLE_FILTER, actual);
     }
 
     @Test

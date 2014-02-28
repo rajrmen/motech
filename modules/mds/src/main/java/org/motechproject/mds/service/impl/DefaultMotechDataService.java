@@ -1,21 +1,28 @@
 package org.motechproject.mds.service.impl;
 
-import org.apache.commons.beanutils.MethodUtils;
+import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.reflect.FieldUtils;
 import org.motechproject.mds.domain.Entity;
 import org.motechproject.mds.ex.SecurityException;
 import org.motechproject.mds.repository.AllEntities;
 import org.motechproject.mds.repository.MotechDataRepository;
 import org.motechproject.mds.service.MotechDataService;
+import org.motechproject.mds.util.InstanceSecurityRestriction;
 import org.motechproject.mds.util.QueryParams;
 import org.motechproject.mds.util.SecurityMode;
 import org.motechproject.security.domain.MotechUserProfile;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -34,10 +41,13 @@ public abstract class DefaultMotechDataService<T> implements MotechDataService<T
 
     private final static String ID = "id";
 
+    private final Logger logger = LoggerFactory.getLogger(getClass());
+
     @Override
     @Transactional
     public T create(T object) {
         validateCredentials();
+        setOwnerCreator(object);
         return repository.create(object);
     }
 
@@ -52,53 +62,46 @@ public abstract class DefaultMotechDataService<T> implements MotechDataService<T
     @Override
     @Transactional
     public List<T> retrieveAll() {
-        return repository.retrieveAll();
+        InstanceSecurityRestriction securityRestriction = validateCredentials();
+        return repository.retrieveAll(securityRestriction);
     }
 
     @Transactional
     protected List<T> retrieveAll(String[] parameters, Object[] values) {
-        return repository.retrieveAll(parameters, values);
+        InstanceSecurityRestriction securityRestriction = validateCredentials();
+        return repository.retrieveAll(parameters, values, securityRestriction);
     }
 
     @Transactional
     protected List<T> retrieveAll(String[] parameters, Object[] values, QueryParams queryParams) {
-        return repository.retrieveAll(parameters, values, queryParams);
+        InstanceSecurityRestriction securityRestriction = validateCredentials();
+        return repository.retrieveAll(parameters, values, queryParams, securityRestriction);
     }
 
     @Transactional
     protected long count(String[] parameters, Object[] values) {
-        return repository.count(parameters, values);
+        InstanceSecurityRestriction securityRestriction = validateCredentials();
+        return repository.count(parameters, values, securityRestriction);
     }
 
     @Override
     @Transactional
     public List<T> retrieveAll(QueryParams queryParams) {
-        return repository.retrieveAll(queryParams);
+        InstanceSecurityRestriction securityRestriction = validateCredentials();
+        return repository.retrieveAll(queryParams, securityRestriction);
     }
 
     @Override
     @Transactional
     public T update(T object) {
-        try {
-            retrieve(ID, MethodUtils.invokeMethod(object, "getId", null));
-        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-            LoggerFactory.getLogger(DefaultMotechDataService.class).
-                    error("Failed to resolve ID. Instance lacks necessary field.");
-        }
-        // If retrieve doesn't throw exception, it means the user has got necessary credentials.
+        validateCredentials(object);
         return repository.update(object);
     }
 
     @Override
     @Transactional
     public void delete(T object) {
-        try {
-            retrieve(ID, MethodUtils.invokeMethod(object, "getId", null));
-        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-            LoggerFactory.getLogger(DefaultMotechDataService.class).
-                    error("Failed to resolve ID. Instance lacks necessary field.");
-        }
-        // If retrieve doesn't throw exception, it means the user has got necessary credentials.
+        validateCredentials(object);
         repository.delete(object);
     }
 
@@ -112,61 +115,128 @@ public abstract class DefaultMotechDataService<T> implements MotechDataService<T
     @Override
     @Transactional
     public long count() {
-        return repository.count();
+        InstanceSecurityRestriction securityRestriction = validateCredentials();
+        return repository.count(securityRestriction);
     }
 
-    private void validateCredentials() {
-        validateCredentials(null);
+    protected InstanceSecurityRestriction validateCredentials() {
+        return checkNonInstanceAccess();
     }
 
-    private void validateCredentials(T instance) {
+    protected InstanceSecurityRestriction validateCredentials(T instance) {
+        InstanceSecurityRestriction restriction = checkNonInstanceAccess();
+        if (!restriction.isEmpty()) {
+            restriction = checkInstanceAccess(instance, restriction);
+        }
+        return restriction;
+    }
+
+    private InstanceSecurityRestriction checkNonInstanceAccess() {
         Class clazz = repository.getClassType();
         Entity entity = allEntities.retrieveByClassName(clazz.getName());
         SecurityMode mode = entity.getSecurityMode();
 
         boolean authorized = false;
 
+        String username = getUsername();
+
         if (mode.equals(SecurityMode.EVERYONE)) {
             authorized = true;
         } else if (mode.equals(SecurityMode.USERS)) {
             Set<String> users = entity.getSecurityMembers();
-            if (users.contains(SecurityContextHolder.getContext().getAuthentication().getName())) {
+            if (users.contains(username)) {
                 authorized = true;
             }
         } else if (mode.equals(SecurityMode.ROLES)) {
             Set<String> roles = entity.getSecurityMembers();
-            for (String role : ((MotechUserProfile) SecurityContextHolder.getContext().getAuthentication().getDetails()).getRoles()) {
+            for (String role : getUserRoles()) {
                 if (roles.contains(role)) {
                     authorized = true;
                 }
             }
         }
 
-        if (instance != null && !authorized) {
-            authorized = hasCredentialsForInstance(instance, mode);
+        if (!authorized) {
+            throw new SecurityException();
+        }
+
+        InstanceSecurityRestriction restriction = new InstanceSecurityRestriction();
+        restriction.setByOwner(mode == SecurityMode.OWNER);
+        restriction.setByOwner(mode == SecurityMode.CREATOR);
+
+        return restriction;
+    }
+
+
+    private InstanceSecurityRestriction checkInstanceAccess(T instance, InstanceSecurityRestriction restriction) {
+        String creator = null, owner = null;
+
+        T fromDb = repository.retrieve(getId(instance));
+
+        try {
+            creator = (String) PropertyUtils.getProperty(fromDb, "creator");
+            owner = (String) PropertyUtils.getProperty(fromDb, "owner");
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+            logger.error("Failed to resolve object creator or owner. Instance lacks necessary fields.", e);
+        }
+
+        String username = getUsername();
+
+        boolean authorized = false;
+
+        if (restriction.isByOwner()) {
+            authorized = StringUtils.equals(username, owner);
+        } else if (restriction.isByCreator()) {
+            authorized = StringUtils.equals(username, creator);
         }
 
         if (!authorized) {
             throw new SecurityException();
         }
+
+        return restriction;
     }
 
-    private boolean hasCredentialsForInstance(T instance, SecurityMode mode) {
-        String creator = null, owner = null;
-        try {
-            creator = (String) MethodUtils.invokeMethod(instance, "getCreator", null);
-            owner = (String) MethodUtils.invokeMethod(instance, "getOwner", null);
-        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-            LoggerFactory.getLogger(DefaultMotechDataService.class).
-                    error("Failed to resolve object creator or owner. Instance lacks necessary fields.");
+    protected String getUsername() {
+        String username = null;
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null) {
+            username = authentication.getName();
         }
 
-        if (mode.equals(SecurityMode.OWNER)) {
-            return owner.equals(SecurityContextHolder.getContext().getAuthentication().getName());
-        } else if (mode.equals(SecurityMode.CREATOR)) {
-            return creator.equals(SecurityContextHolder.getContext().getAuthentication().getName());
+        return username;
+    }
+
+    protected List<String> getUserRoles() {
+        List<String> roles = new ArrayList<>();
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null) {
+            roles.addAll(((MotechUserProfile) authentication.getDetails()).getRoles());
         }
-        return false;
+
+        return roles;
+    }
+
+    protected void setOwnerCreator(T instance) {
+        try {
+            String username = getUsername();
+            PropertyUtils.setProperty(instance, "creator", username);
+            PropertyUtils.setProperty(instance, "owner", username);
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            logger.error("Unable to set objects creator", e);
+        }
+    }
+
+    protected Object getId(T instance) {
+        Field field = FieldUtils.getField(instance.getClass(), ID);
+        try {
+            return field.get(instance);
+        } catch (IllegalAccessException e) {
+            logger.error("Unable to retrieve object id", e);
+            return null;
+        }
     }
 
     @Autowired
