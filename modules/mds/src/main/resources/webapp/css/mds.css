@@ -247,8 +247,8 @@
     float: left;
 }
 
-.lookup-field {
-    width: 250px;
+.lookup-dialog {
+    width: 450px;
 }
 
 .form-field .btn-group {
@@ -601,4 +601,12 @@
 .security-content {
     margin-left: 20px;
     margin-top: 20px;
+}
+
+.mds .popover {
+    min-width: 200px;
+}
+
+.mds .popover .popover-content {
+    color: #333;
 }
