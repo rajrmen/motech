@@ -19,6 +19,7 @@ public class FieldRecord {
     private List<MetadataDto> metadata;
     private List<SettingDto> settings;
     private Long id;
+    private boolean required;
 
     public FieldRecord() {
         this(null, null, null, null);
@@ -40,6 +41,7 @@ public class FieldRecord {
         this.metadata = fieldDto.getMetadata();
         this.settings = fieldDto.getSettings();
         this.tooltip = fieldDto.getBasic().getTooltip();
+        this.required = fieldDto.getBasic().isRequired();
     }
 
     public String getDisplayName() {
@@ -104,5 +106,13 @@ public class FieldRecord {
 
     public void setTooltip(String tooltip) {
         this.tooltip = tooltip;
+    }
+
+    public boolean isRequired() {
+        return required;
+    }
+
+        public void setRequired(boolean required) {
+        this.required = required;
     }
 }

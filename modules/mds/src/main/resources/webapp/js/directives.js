@@ -937,20 +937,24 @@
                             autowidth: true,
                             rownumbers: true,
                             loadonce: false,
-                            rowNum: 2,
-                            rowList: [2, 5, 10, 20, 50],
+                            rowNum: 10,
+                            rowList: [10, 20, 50],
                             colModel: colModel,
                             pager: '#' + attrs.entityInstancesGrid,
                             width: '100%',
                             height: 'auto',
                             viewrecords: true,
                             gridComplete: function () {
+                                $('#entityInstancesTable').children('div').each(function() {
+                                    $(this).find('table').width('100%');
+                                });
                                 $('#entityInstancesTable').children('div').width('100%');
                                 $('.ui-jqgrid-htable').addClass('table-lightblue');
                                 $('.ui-jqgrid-btable').addClass("table-lightblue");
                                 $('.ui-jqgrid-htable').width('100%');
                                 $('.ui-jqgrid-bdiv').width('100%');
                                 $('.ui-jqgrid-hdiv').width('100%');
+                                $('div.ui-jqgrid-hbox').css({'padding-right':'0'});
                                 $('.ui-jqgrid-hbox').width('100%');
                                 $('.ui-jqgrid-view').width('100%');
                                 $('#t_resourceTable').width('auto');
@@ -1096,8 +1100,8 @@
                             shrinkToFit: true,
                             autowidth: true,
                             rownumbers: true,
-                            rowNum: 2,
-                            rowList: [2, 5, 10, 20, 50],
+                            rowNum: 10,
+                            rowList: [10, 20, 50],
                             colModel: colModel,
                             pager: '#' + attrs.instanceHistoryGrid,
                             width: '100%',

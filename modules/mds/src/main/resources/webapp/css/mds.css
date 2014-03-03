@@ -602,3 +602,11 @@
     margin-left: 20px;
     margin-top: 20px;
 }
+
+.mds .popover {
+    min-width: 200px;
+}
+
+.mds .popover .popover-content {
+    color: #333;
+}

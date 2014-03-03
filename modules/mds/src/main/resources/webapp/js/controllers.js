@@ -1940,6 +1940,8 @@
 
         $scope.allEntityFields = [];
 
+        $scope.validatePattern = '';
+
         /**
         * Initializes a map of all entities in MDS indexed by module name
         */
@@ -2205,12 +2207,33 @@
                 return answer;
         };
 
+        /*
+        * Gets information about type of pattern.
+        */
+        $scope.getPattern = function (field) {
+            var value = $scope.getTypeSingleClassName(field.type),
+            validationPattern = '';
+
+            if (value === 'decimal') {
+                validationPattern = '/^(([0-9]{1,})|([0-9]{1,}(\\.([0-9]{1,}))))+$/';
+            }
+            if (value === 'integer') {
+                validationPattern = '/^([0-9])+$/';
+            }
+            return validationPattern;
+        };
+
         /**
         * Construct appropriate url according with a field type for form used to set correct
         * value of edit value property.
         */
         $scope.loadEditValueForm = function (field) {
             var value = $scope.getTypeSingleClassName(field.type);
+            if (value === 'combobox') {
+                if (find(field.settings, [{field: 'name', value: 'mds.form.label.allowUserSupplied'}], true).value) {
+                    value = 'combobox2';
+                }
+            }
             return '../mds/resources/partials/widgets/field-edit-Value-{0}.html'
                           .format(value.substring(value.toLowerCase()));
         };
@@ -2230,6 +2253,16 @@
         */
         $scope.getComboboxValues = function (settings) {
             return find(settings, [{field: 'name', value: 'mds.form.label.values'}], true).value;
+        };
+
+        /**
+        * Add new option to combobox.
+        */
+
+        $scope.addFieldCombobox = function (id, field, newFieldValue) {
+            $scope.fields[id].settings[0].value.push(newFieldValue);
+            //$scope.currentRecord.fields[id].settings[0].value.push(newFieldValue);
+
         };
 
         /**
