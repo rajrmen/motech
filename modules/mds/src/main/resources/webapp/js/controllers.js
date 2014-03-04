@@ -2220,6 +2220,9 @@
             if (value === 'integer') {
                 validationPattern = '/^([0-9])+$/';
             }
+            if (value === 'string' && field.regexp.value.length > 0) {
+                validationPattern = field.regexp.value;
+            }
             return validationPattern;
         };
 
