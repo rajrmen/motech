@@ -2,6 +2,7 @@ package org.motechproject.mds.web.domain;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.motechproject.mds.dto.FieldDto;
+import org.motechproject.mds.dto.FieldValidationDto;
 import org.motechproject.mds.dto.MetadataDto;
 import org.motechproject.mds.dto.SettingDto;
 import org.motechproject.mds.dto.TypeDto;
@@ -23,6 +24,7 @@ public class FieldRecord {
     private List<MetadataDto> metadata;
     private List<SettingDto> settings;
     private Long id;
+    private FieldValidationDto validation;
     private boolean required;
 
     public FieldRecord() {
@@ -45,6 +47,7 @@ public class FieldRecord {
         this.settings = fieldDto.getSettings();
         this.tooltip = fieldDto.getBasic().getTooltip();
         this.required = fieldDto.getBasic().isRequired();
+        this.validation = fieldDto.getValidation();
         setValue(fieldDto.getBasic().getDefaultValue());
     }
 
@@ -122,6 +125,14 @@ public class FieldRecord {
 
     public void setRequired(boolean required) {
         this.required = required;
+    }
+
+    public FieldValidationDto getValidation() {
+        return validation;
+    }
+
+    public void setValidation(FieldValidationDto validation) {
+        this.validation = validation;
     }
 
     private void extendOptionsIfNecessary() {
