@@ -2224,7 +2224,7 @@
             else if (value === 'integer') {
                 validationPattern = '/^([0-9])+$/';
             }
-            else if (value === 'string' && field.validation.criteria[0].value.length > 0) {
+            else if (value === 'string' && field.validation !== null && field.validation.criteria[0].value.length > 110) {
                 validationPattern = field.validation.criteria[0].value;
             }
             return validationPattern;

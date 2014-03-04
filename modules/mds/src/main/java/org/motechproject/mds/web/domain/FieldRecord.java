@@ -63,7 +63,7 @@ public class FieldRecord {
         return value;
     }
 
-    public void setValue(Object value) {
+    public final void setValue(Object value) {
         this.value = value;
         // we must include a user supplied value in the options for lists
         if (List.class.getName().equals(type.getTypeClass())) {
