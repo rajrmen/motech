@@ -99,7 +99,7 @@
 
     <bean id="persistenceManagerFactory" class="org.springframework.orm.jdo.TransactionAwarePersistenceManagerFactoryProxy" depends-on="flyway">
         <property name="targetPersistenceManagerFactory" ref="persistenceManagerFactoryBean"/>
-        <property name="allowCreate" value="false"/>
+        <property name="allowCreate" value="true"/>
     </bean>
 
     <bean id="transactionManager" class="org.motechproject.mds.jdo.MdsTransactionManager" depends-on="flyway">
