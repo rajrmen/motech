@@ -77,7 +77,8 @@ public class MdsPerformanceIT extends BaseOsgiIT {
         clearEntities();
     }
 
-    public void testPerformance() throws NotFoundException, CannotCompileException, IOException, InvalidSyntaxException, InterruptedException, ClassNotFoundException, IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
+    // To run performance check, remove "ignored" from the method name
+    public void ignoredTestPerformance() throws NotFoundException, CannotCompileException, IOException, InvalidSyntaxException, InterruptedException, ClassNotFoundException, IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
         final String serviceName = ClassName.getInterfaceName(FOO_CLASS);
 
         prepareTestEntity();
