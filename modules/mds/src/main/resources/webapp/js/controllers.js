@@ -2217,11 +2217,11 @@
             if (value === 'decimal') {
                 validationPattern = '/^(([0-9]{1,})|([0-9]{1,}(\\.([0-9]{1,}))))+$/';
             }
-            if (value === 'integer') {
+            else if (value === 'integer') {
                 validationPattern = '/^([0-9])+$/';
             }
-            if (value === 'string' && field.regexp.value.length > 0) {
-                validationPattern = field.regexp.value;
+            else if (value === 'string' && field.validation.criteria[0].value.length > 0) {
+                validationPattern = field.validation.criteria[0].value;
             }
             return validationPattern;
         };
