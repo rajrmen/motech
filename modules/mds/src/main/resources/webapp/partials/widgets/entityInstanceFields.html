@@ -7,15 +7,14 @@
             </span>
         </label>
         <div class="col-md-8 col-sm-7 form-inline">
-            <ng-form name="{{field.name}}" ng-init="validatePattern=getPattern(field)">{{field.settings}}
+            <ng-form name="{{field.name}}" ng-init="validatePattern=getPattern(field)">
                 <div ng-include="loadEditValueForm(field)"></div>
                 <span class="text-danger" ng-show="{{field.name}}.$error.required && !{{field.name}}.$pristine">{{msg('mds.error.requiredField')}}</span>
-                <span class="text-danger" ng-show="{{field.name}}.$error.pattern && !{{field.name}}.$pristine">{{msg('mds.error.noValidatePattern')}}</span>
             </ng-form>
-            <span  ng-if="getTypeSingleClassName(field.type) === 'combobox'">
+            <div class="margin-before" ng-if="getTypeSingleClassName(field.type) === 'combobox' && field.settings[1].value">
                 <input class="form-control input-auto" ng-model="newFieldValue" />
-                <a class="btn btn-default" ng-click="addFieldCombobox($index, field, newFieldValue)"><span class="icon icon-plus"></span></a>  {{$index}}
-            </span>
+                <a class="btn btn-default" ng-click="addFieldCombobox($index, field, newFieldValue)"><span class="icon icon-plus"></span></a>
+            </div>
         </div>
     </div>
     <div ng-if="historyFields">

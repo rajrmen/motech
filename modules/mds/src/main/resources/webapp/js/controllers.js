@@ -2220,6 +2220,9 @@
             if (value === 'integer') {
                 validationPattern = '/^([0-9])+$/';
             }
+            if (value === 'string' && field.regexp.value.length > 0) {
+                validationPattern = field.regexp.value;
+            }
             return validationPattern;
         };
 
@@ -2229,8 +2232,8 @@
         */
         $scope.loadEditValueForm = function (field) {
             var value = $scope.getTypeSingleClassName(field.type);
-            if (value === 'combobox') {
-                if (find(field.settings, [{field: 'name', value: 'mds.form.label.allowUserSupplied'}], true).value) {
+            if (value === 'combobox' && field.settings[2].value) {
+                if (find(field.settings, [{field: 'name', value: 'mds.form.label.allowMultipleSelections'}], true).value) {
                     value = 'combobox2';
                 }
             }
