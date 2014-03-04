@@ -8,20 +8,15 @@ import org.apache.commons.lang.RandomStringUtils;
 import org.eclipse.gemini.blueprint.test.platform.OsgiPlatform;
 import org.eclipse.gemini.blueprint.util.OsgiBundleUtils;
 import org.ektorp.CouchDbConnector;
-import org.ektorp.impl.NameConventions;
 import org.ektorp.impl.StdCouchDbConnector;
-import org.ektorp.support.DesignDocumentFactory;
-import org.ektorp.util.Assert;
-import org.ektorp.util.Documents;
+import org.ektorp.support.View;
+import org.motechproject.commons.couchdb.dao.MotechBaseRepository;
 import org.motechproject.mds.dto.EntityDto;
 import org.motechproject.mds.dto.FieldBasicDto;
 import org.motechproject.mds.dto.FieldDto;
 import org.motechproject.mds.dto.TypeDto;
-import org.motechproject.mds.repository.AllEntities;
-import org.motechproject.mds.repository.MotechDataRepository;
 import org.motechproject.mds.service.EntityService;
 import org.motechproject.mds.service.MotechDataService;
-import org.motechproject.mds.service.impl.DefaultMotechDataService;
 import org.motechproject.mds.util.ClassName;
 import org.motechproject.mds.util.Constants;
 import org.motechproject.testing.osgi.BaseOsgiIT;
@@ -37,14 +32,12 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.security.core.userdetails.User;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 import java.util.Random;
@@ -63,20 +56,17 @@ public class MdsPerformanceIT extends BaseOsgiIT {
     private static final String FOO = "Foo";
     private static final String FOO_CLASS = String.format("%s.%s", Constants.PackagesGenerated.ENTITY, FOO);
 
-    private static final int TEST_INSTANCES = 10;
+    private static final int TEST_INSTANCES = 50;
 
     private EntityService entityService;
-    private AllEntities allEntities;
-    private CouchMdsRepository couchMdsRepository;
-    //private PersistenceManagerFactory persistenceManagerFactory;
 
+    private List<Object> testInstances = new ArrayList<>();
+    private List<CouchFoo> couchInstances = new ArrayList<>();
 
     @Override
     public void onSetUp() throws Exception {
         WebApplicationContext context = getContext(MDS_BUNDLE_SYMBOLIC_NAME);
         entityService = (EntityService) context.getBean("entityServiceImpl");
-        allEntities = (AllEntities) context.getBean("allEntities");
-        //persistenceManagerFactory = (PersistenceManagerFactory) context.getBean("persistenceManagerFactory");
 
         clearEntities();
         setUpSecurityContext();
@@ -87,7 +77,6 @@ public class MdsPerformanceIT extends BaseOsgiIT {
         clearEntities();
     }
 
-    @Transactional
     public void testPerformance() throws NotFoundException, CannotCompileException, IOException, InvalidSyntaxException, InterruptedException, ClassNotFoundException, IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
         final String serviceName = ClassName.getInterfaceName(FOO_CLASS);
 
@@ -102,86 +91,88 @@ public class MdsPerformanceIT extends BaseOsgiIT {
         logger.info("Loaded class: " + objectClass.getName());
 
         StdCouchDbConnector couchDbConnector = (StdCouchDbConnector) getApplicationContext().getBean("testMdsDbConnector");
-        couchMdsRepository = new CouchMdsRepository(objectClass, couchDbConnector);
+        CouchMdsRepository couchMdsRepository = new CouchMdsRepository(couchDbConnector);
 
-        DefaultMotechDataService defaultMotechDataService = new CouchMdsService();
-        defaultMotechDataService.setRepository(couchMdsRepository);
-        defaultMotechDataService.setAllEntities(allEntities);
-
-        compareCreating(service, objectClass, defaultMotechDataService);
-        compareRetrieval(service);
-        compareDeleting(service);
+        compareCreating(service, objectClass, couchMdsRepository);
+        compareRetrieval(service, couchMdsRepository);
+        compareUpdating(service, couchMdsRepository);
+        compareDeleting(service, couchMdsRepository);
     }
 
-    @Transactional
-    private void compareCreating(MotechDataService service, Class clazz, DefaultMotechDataService couchMdsService) throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
-        List<Object> instances = prepareInstances(clazz);
+    private void compareCreating(MotechDataService service, Class clazz, CouchMdsRepository couchMdsRepository) throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+        prepareInstances(clazz);
 
         Long startTime = System.nanoTime();
-
-        for (Object instance : instances) {
+        for (Object instance : testInstances) {
             service.create(instance);
         }
-
         Long endTime = (System.nanoTime() - startTime) / 10000000;
 
         logger.info("MDS Service: Creating " + TEST_INSTANCES + " instances took " + endTime + "ms.");
 
         startTime = System.nanoTime();
-
-        for (Object instance : instances) {
-            couchMdsService.create(instance);
+        for (CouchFoo instance : couchInstances) {
+            couchMdsRepository.add(instance);
         }
-
         endTime = (System.nanoTime() - startTime) / 10000000;
-        logger.info("CouchDB Service: Creating " + TEST_INSTANCES + " instances took " + endTime + "ms.");
+
+        logger.info("CouchDB Repo: Creating " + TEST_INSTANCES + " instances took " + endTime + "ms.");
     }
 
-    private void compareRetrieval(MotechDataService service) {
+    private void compareRetrieval(MotechDataService service, CouchMdsRepository couchMdsRepository) {
+
         Long startTime = System.nanoTime();
-
         service.retrieveAll();
-
         Long endTime = (System.nanoTime() - startTime) / 10000000;
 
         logger.info("MDS Service: Retrieving all instances took " + endTime + "ms.");
+
+        startTime = System.nanoTime();
+        couchMdsRepository.getAll();
+        endTime = (System.nanoTime() - startTime) / 10000000;
+
+        logger.info("CouchDB repo: Retrieving all instances took " + endTime + "ms.");
     }
 
-    private void compareDeleting(MotechDataService service) {
-
-    }
-
-    private void verifyInstanceUpdating(MotechDataService<Object> service) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+    private void compareUpdating(MotechDataService service, CouchMdsRepository couchMdsRepository) {
         List<Object> allObjects = service.retrieveAll();
-        assertEquals(allObjects.size(), 2);
+        List<CouchFoo> allCouchFoos = couchMdsRepository.getAll();
 
-        Object retrieved = allObjects.get(0);
+        Long startTime = System.nanoTime();
+        for (Object object : allObjects) {
+            service.update(object);
+        }
+        Long endTime = (System.nanoTime() - startTime) / 10000000;
 
-        MethodUtils.invokeMethod(retrieved, "setSomeString", "anotherString");
-        MethodUtils.invokeMethod(retrieved, "setSomeBoolean", false);
-        MethodUtils.invokeMethod(retrieved, "setSomeList", Arrays.asList(4, 5));
+        logger.info("MDS Service: Updating " + TEST_INSTANCES + " instances took " + endTime + "ms.");
 
-        service.update(retrieved);
-        Object updated = service.retrieveAll().get(0);
+        startTime = System.nanoTime();
+        for (CouchFoo object : allCouchFoos) {
+            couchMdsRepository.update(object);
+        }
+        endTime = (System.nanoTime() - startTime) / 10000000;
 
-        assertEquals(MethodUtils.invokeMethod(updated, "getSomeString", null), "anotherString");
-        assertEquals(MethodUtils.invokeMethod(updated, "getSomeBoolean", null), false);
-        assertEquals(MethodUtils.invokeMethod(updated, "getSomeList", null), Arrays.asList(4, 5));
+        logger.info("CouchDB repo: Updating " + TEST_INSTANCES + " instances took " + endTime + "ms.");
     }
 
-    private void verifyInstanceDeleting(MotechDataService<Object> service) throws IllegalAccessException, InstantiationException {
-        List<Object> objects = service.retrieveAll();
-        assertEquals(objects.size(), 2);
+    private void compareDeleting(MotechDataService service, CouchMdsRepository couchMdsRepository) {
 
-        service.delete(objects.get(0));
-        assertEquals(service.retrieveAll().size(), 1);
+        Long startTime = System.nanoTime();
+        for (Object object : service.retrieveAll()) {
+            service.delete(object);
+        }
+        Long endTime = (System.nanoTime() - startTime) / 10000000;
 
-        service.delete(objects.get(1));
-        assertTrue(service.retrieveAll().isEmpty());
+        logger.info("MDS Service: Deleting " + TEST_INSTANCES + " instances took " + endTime + "ms.");
+
+        startTime = System.nanoTime();
+        couchMdsRepository.bulkDelete(couchMdsRepository.getAll());
+        endTime = (System.nanoTime() - startTime) / 10000000;
+
+        logger.info("CouchDB repo: Deleting " + TEST_INSTANCES + " instances took " + endTime + "ms.");
     }
 
-    private List<Object> prepareInstances(Class<?> clazz) throws IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
-        List<Object> instances = new ArrayList<>();
+    private void prepareInstances(Class<?> clazz) throws IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
         Integer someInt = -TEST_INSTANCES/2;
         String someString = "";
         Random random = new Random(System.currentTimeMillis());
@@ -191,13 +182,14 @@ public class MdsPerformanceIT extends BaseOsgiIT {
             Object instance = clazz.newInstance();
             MethodUtils.invokeMethod(instance, "setSomeString", someString);
             MethodUtils.invokeMethod(instance, "setSomeInt", someInt);
-            instances.add(instance);
+
+            testInstances.add(instance);
+            couchInstances.add(new CouchFoo(someInt, someString));
+
             someInt++;
             int chars = 1 + random.nextInt(253);
             someString = RandomStringUtils.random(chars);
         }
-
-        return instances;
     }
 
     private void prepareTestEntity() throws IOException {
@@ -324,14 +316,7 @@ public class MdsPerformanceIT extends BaseOsgiIT {
     @Override
     protected List<String> getImports() {
         return asList(
-                "org.motechproject.commons.sql.service",
-                "org.motechproject.server.config",
-                "org.datanucleus",
-                "org.datanucleus.state",
-                "org.datanucleus.api.jdo",
-                "org.datanucleus.store.rdbms.datasource.dbcp",
-                "com.googlecode.flyway.core",
-                "org.springframework.orm.jdo",
+                "org.motechproject.commons.couchdb.model",
                 "org.motechproject.commons.couchdb.service",
                 "org.motechproject.mds.builder",
                 "org.motechproject.mds.domain",
@@ -347,46 +332,12 @@ public class MdsPerformanceIT extends BaseOsgiIT {
         return new String[]{ "testMdsAndCouchContext.xml" };
     }
 
-    private class CouchMdsService extends DefaultMotechDataService {
+    @View(name = "all", map = "function(doc) { emit(doc._id, doc); }")
+    private class CouchMdsRepository extends MotechBaseRepository<CouchFoo> {
 
-        @Override
-        @Transactional
-        public Object create(Object object) {
-            return super.create(object);
+        public CouchMdsRepository(CouchDbConnector db) {
+            super(CouchFoo.class, db);
         }
-
-    }
-
-    private class CouchMdsRepository<T> extends MotechDataRepository {
-
-        protected final CouchDbConnector db;
-        protected final Class<T> type;
-
-        protected final String stdDesignDocumentId;
-
-        private DesignDocumentFactory designDocumentFactory;
-
-        protected CouchMdsRepository(Class<T> classType, CouchDbConnector couchDbConnector) {
-            super(classType);
-            Assert.notNull(couchDbConnector, "CouchDbConnector may not be null");
-            Assert.notNull(classType);
-            this.db = couchDbConnector;
-            this.type = classType;
-            db.createDatabaseIfNotExists();
-
-            stdDesignDocumentId = NameConventions.designDocName(type);
-        }
-
-        public void add(T entity) {
-            assertEntityNotNull(entity);
-            Assert.isTrue(Documents.isNew(entity), "entity must be new");
-            db.create(entity);
-        }
-
-        private void assertEntityNotNull(T entity) {
-            Assert.notNull(entity, "entity may not be null");
-        }
-
     }
 
 }
