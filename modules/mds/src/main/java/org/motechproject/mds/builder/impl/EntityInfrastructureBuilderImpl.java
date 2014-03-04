@@ -8,10 +8,12 @@ import javassist.CtMethod;
 import javassist.CtNewConstructor;
 import javassist.CtNewMethod;
 import javassist.NotFoundException;
+import javassist.bytecode.AnnotationsAttribute;
+import javassist.bytecode.ConstPool;
+import javassist.bytecode.annotation.Annotation;
 import org.apache.commons.lang.ArrayUtils;
 import org.motechproject.mds.builder.ClassData;
 import org.motechproject.mds.builder.EntityInfrastructureBuilder;
-import org.motechproject.mds.builder.MDSClassLoader;
 import org.motechproject.mds.domain.Entity;
 import org.motechproject.mds.domain.Field;
 import org.motechproject.mds.domain.Lookup;
@@ -24,9 +26,14 @@ import org.motechproject.mds.service.impl.DefaultMotechDataService;
 import org.motechproject.mds.util.ClassName;
 import org.motechproject.mds.util.LookupName;
 import org.motechproject.mds.util.QueryParams;
+import org.motechproject.osgi.web.util.WebBundleUtil;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -48,45 +55,28 @@ public class EntityInfrastructureBuilderImpl implements EntityInfrastructureBuil
 
     private final ClassPool classPool = MotechClassPool.getDefault();
 
+    private BundleContext bundleContext;
+
     @Override
     public List<ClassData> buildInfrastructure(Entity entity) {
         List<ClassData> list = new ArrayList<>();
 
-
         // create a repository(dao) for the entity
-        String repositoryClassName = ClassName.getRepositoryName(entity.getClassName());
-        if (!existsInClassPath(repositoryClassName)) {
-            byte[] repositoryCode = getRepositoryCode(repositoryClassName, entity.getClassName());
-            list.add(new ClassData(repositoryClassName, repositoryCode));
-        }
+        String repositoryClassName = MotechClassPool.getRepositoryName(entity.getClassName());
+        byte[] repositoryCode = getRepositoryCode(repositoryClassName, entity.getClassName());
+        list.add(new ClassData(repositoryClassName, repositoryCode));
 
         // create an interface for the service
-        String interfaceClassName = ClassName.getInterfaceName(entity.getClassName());
-        if (!existsInClassPath(interfaceClassName)) {
-            byte[] interfaceCode = getInterfaceCode(interfaceClassName, entity.getClassName(), entity);
-            list.add(new ClassData(interfaceClassName, interfaceCode));
-        }
+        String interfaceClassName = MotechClassPool.getInterfaceName(entity.getClassName());
+        byte[] interfaceCode = getInterfaceCode(interfaceClassName, entity);
+        list.add(new ClassData(interfaceClassName, interfaceCode, true));
 
         // create the implementation of the service
-        String serviceClassName = ClassName.getServiceName(entity.getClassName());
-        if (!existsInClassPath(serviceClassName)) {
-            byte[] serviceCode = getServiceCode(serviceClassName, interfaceClassName, entity);
-            list.add(new ClassData(serviceClassName, serviceCode));
-        }
+        String serviceClassName = MotechClassPool.getServiceImplName(entity.getClassName());
+        byte[] serviceCode = getServiceCode(serviceClassName, interfaceClassName, entity);
+        list.add(new ClassData(serviceClassName, serviceCode));
 
         return list;
-    }
-
-    private static boolean existsInClassPath(String className) {
-        boolean exists;
-
-        try {
-            exists = MDSClassLoader.getInstance().loadClass(className) != null;
-        } catch (ClassNotFoundException e) {
-            exists = false;
-        }
-
-        return exists;
     }
 
     private byte[] getRepositoryCode(String repositoryClassName, String typeName) {
@@ -112,26 +102,44 @@ public class EntityInfrastructureBuilderImpl implements EntityInfrastructureBuil
         }
     }
 
-    private byte[] getInterfaceCode(String interfaceClassName, String typeName, Entity entity) {
+    private byte[] getInterfaceCode(String interfaceClassName, Entity entity) {
         try {
-            CtClass superInterface = classPool.getCtClass(MotechDataService.class.getName());
-            superInterface.setGenericSignature(getGenericSignature(typeName));
+            String className = entity.getClassName();
+            // the interface can come from the developer for DDE, but it doesn't have to
+            // in which case it will be generated from scratch
+            CtClass superInterface = null;
 
-            CtClass newInterface = createOrRetrieveInterface(interfaceClassName, superInterface);
+            if (MotechClassPool.isServiceInterfaceRegistered(className)) {
+                String ddeInterfaceName = MotechClassPool.getServiceInterface(className);
+                Bundle declaringBundle = WebBundleUtil.findBundleByName(bundleContext, entity.getModule());
+                if (declaringBundle == null) {
+                    LOG.error("Unable to find bundle declaring the DDE interface for {}", className);
+                } else {
+                    superInterface = JavassistHelper.loadClass(declaringBundle, ddeInterfaceName, classPool);
+                }
+            }
+
+            // standard super interface - MotechDataService, for EUDE or DDE without an interface
+            if (superInterface == null) {
+                superInterface = classPool.getCtClass(MotechDataService.class.getName());
+                superInterface.setGenericSignature(getGenericSignature(className));
+            }
+
+            CtClass interfaceClass = createOrRetrieveInterface(interfaceClassName, superInterface);
 
             // clear lookup methods before adding the new ones
-            removeExistingMethods(newInterface);
+            removeExistingMethods(interfaceClass);
 
             // for each lookup we generate three methods - normal lookup, lookup with query params and
             // a count method for the lookup
             for (Lookup lookup : entity.getLookups()) {
                 for (LookupType lookupType : LookupType.values()) {
-                    CtMethod lookupMethod = generateLookupInterface(entity, lookup, newInterface, lookupType);
-                    newInterface.addMethod(lookupMethod);
+                    CtMethod lookupMethod = generateLookupInterface(entity, lookup, interfaceClass, lookupType);
+                    interfaceClass.addMethod(lookupMethod);
                 }
             }
 
-            return newInterface.toBytecode();
+            return interfaceClass.toBytecode();
         } catch (NotFoundException | IOException | CannotCompileException e) {
             throw new EntityInfrastructureException(e);
         }
@@ -182,8 +190,8 @@ public class EntityInfrastructureBuilderImpl implements EntityInfrastructureBuil
             throws CannotCompileException {
         final String className = entity.getClassName();
         final String lookupName = (lookupType == LookupType.COUNT) ?
-                LookupName.lookupCountMethod(lookup.getLookupName()) :
-                LookupName.lookupMethod(lookup.getLookupName());
+                LookupName.lookupCountMethod(lookup.getMethodName()) :
+                lookup.getMethodName();
 
         StringBuilder sb = new StringBuilder("");
 
@@ -204,7 +212,7 @@ public class EntityInfrastructureBuilderImpl implements EntityInfrastructureBuil
 
         // query params at the end for ordering/paging
         if (lookupType == LookupType.WITH_QUERY_PARAMS) {
-            sb.append(", ").append(QueryParams.class.getName()).append(" queryParams");
+            sb.append(queryParamsParam(lookup));
         }
 
         sb.append(");");
@@ -219,8 +227,8 @@ public class EntityInfrastructureBuilderImpl implements EntityInfrastructureBuil
             throws CannotCompileException {
         final String className = entity.getClassName();
         final String lookupName = (lookupType == LookupType.COUNT) ?
-                LookupName.lookupCountMethod(lookup.getLookupName()) :
-                LookupName.lookupMethod(lookup.getLookupName());
+                LookupName.lookupCountMethod(lookup.getMethodName()) :
+                lookup.getMethodName();
 
         // main method builder
         StringBuilder sb = new StringBuilder("public ");
@@ -253,17 +261,38 @@ public class EntityInfrastructureBuilderImpl implements EntityInfrastructureBuil
 
         // ordering and paging param comes last
         if (lookupType == LookupType.WITH_QUERY_PARAMS) {
-            sb.append(", ").append(QueryParams.class.getName()).append(" queryParams");
+            sb.append(queryParamsParam(lookup));
         }
 
         paramsSb.append("}");
         valuesSb.append("}");
 
-        String callStr = paramsSb.toString() + ", " + valuesSb.toString();
+        // we call retrieveAll() if there are no params
+        String callStr = (lookup.getFields().isEmpty()) ? "" : paramsSb.toString() + ", " + valuesSb.toString();
 
         sb.append(") {");
 
         // method body
+        sb.append(buildMethodBody(entity, lookup, lookupType, callStr));
+
+        sb.append(";}");
+
+        CtMethod method = CtNewMethod.make(sb.toString(), serviceClass);
+
+        // count method doesn't need a generic signature
+        if (lookupType != LookupType.COUNT) {
+            method.setGenericSignature(buildGenericSignature(entity, lookup));
+        }
+
+        // we add @Transactional so that other modules can call these methods without their own persistence manager
+        addTransactionalAnnotation(serviceClass, method);
+
+        return method;
+    }
+
+    private String buildMethodBody(Entity entity, Lookup lookup, LookupType lookupType, String callStr) {
+        StringBuilder sb = new StringBuilder();
+
         if (lookupType == LookupType.COUNT) {
             if (lookup.isSingleObjectReturn()) {
                 // single object returns always return only 1
@@ -278,27 +307,23 @@ public class EntityInfrastructureBuilderImpl implements EntityInfrastructureBuil
             sb.append("retrieveAll(").append(callStr);
 
             if (lookupType == LookupType.WITH_QUERY_PARAMS) {
-                sb.append(", queryParams");
+                // append comma only if there were any params to start with
+                if (!lookup.getFields().isEmpty()) {
+                    sb.append(", ");
+                }
+                sb.append("queryParams");
             }
 
             sb.append(");");
 
             if (lookup.isSingleObjectReturn()) {
-                sb.append("return list.isEmpty() ? null : (").append(className).append(") list.get(0)");
+                sb.append("return list.isEmpty() ? null : (").append(entity.getClassName()).append(") list.get(0)");
             } else {
                 sb.append("return list");
             }
         }
-        sb.append(";}");
 
-        CtMethod method = CtNewMethod.make(sb.toString(), serviceClass);
-
-        // count method doesn't need a generic signature
-        if (lookupType != LookupType.COUNT) {
-            method.setGenericSignature(buildGenericSignature(entity, lookup));
-        }
-
-        return method;
+        return sb.toString();
     }
 
     private String buildGenericSignature(Entity entity, Lookup lookup) {
@@ -351,9 +376,9 @@ public class EntityInfrastructureBuilderImpl implements EntityInfrastructureBuil
     private void removeExistingMethods(CtClass ctClass) {
         // we remove methods declared in the given class(not inherited)
         // that way we clear all lookups
-        CtMethod[] methods = ctClass.getMethods();
-        for (CtMethod method : methods) {
-            if (method.getDeclaringClass().equals(ctClass)) {
+        CtMethod[] methods = ctClass.getDeclaredMethods();
+        if (ArrayUtils.isNotEmpty(methods)) {
+            for (CtMethod method : methods) {
                 try {
                     ctClass.removeMethod(method);
                 } catch (NotFoundException e) {
@@ -387,6 +412,26 @@ public class EntityInfrastructureBuilderImpl implements EntityInfrastructureBuil
         }
     }
 
+    private String queryParamsParam(Lookup lookup) {
+        StringBuilder sb = new StringBuilder();
+        if (!lookup.getFields().isEmpty()) {
+            sb.append(", ");
+        }
+        sb.append(QueryParams.class.getName()).append(" queryParams");
+        return sb.toString();
+    }
+
+    private void addTransactionalAnnotation(CtClass ctClass, CtMethod ctMethod) {
+        ConstPool constPool = ctClass.getClassFile().getConstPool();
+
+        AnnotationsAttribute attribute = new AnnotationsAttribute(constPool, AnnotationsAttribute.visibleTag);
+        Annotation transactionalAnnotation = new Annotation(Transactional.class.getName(), constPool);
+
+        attribute.addAnnotation(transactionalAnnotation);
+
+        ctMethod.getMethodInfo().addAttribute(attribute);
+    }
+
     /**
      * Represents the three lookup methods generated
      * 1) simple retrieving
@@ -395,5 +440,10 @@ public class EntityInfrastructureBuilderImpl implements EntityInfrastructureBuil
      */
     private static enum LookupType {
         SIMPLE, WITH_QUERY_PARAMS, COUNT
+    }
+
+    @Autowired
+    public void setBundleContext(BundleContext bundleContext) {
+        this.bundleContext = bundleContext;
     }
 }

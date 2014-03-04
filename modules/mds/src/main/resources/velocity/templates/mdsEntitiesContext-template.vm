@@ -13,6 +13,8 @@
 
     <mvc:annotation-driven/>
 
+    <bean id="allEntities" class="org.motechproject.mds.repository.AllEntities" />
+
   #foreach ( $entry in $list )
   <bean id="$entry.get('name')Repository" class="$entry.get('repository')" />
 
@@ -22,4 +24,10 @@
     </property>
   </bean>
   #end
+
+  <!-- We override the allowCreate from mds, we must create persistence managers for OSGi callers -->
+  <bean id="persistenceManagerFactory" class="org.springframework.orm.jdo.TransactionAwarePersistenceManagerFactoryProxy">
+      <property name="targetPersistenceManagerFactory" ref="persistenceManagerFactoryBean"/>
+      <property name="allowCreate" value="true"/>
+  </bean>
 </beans>

@@ -1,5 +1,7 @@
 package org.motechproject.mds.builder;
 
+import javassist.CannotCompileException;
+import javassist.CtClass;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.joda.time.DateTime;
 import org.junit.After;
@@ -22,6 +24,7 @@ import org.motechproject.mds.util.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.jdo.Query;
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
@@ -67,20 +70,24 @@ public class MDSConstructorIT extends BaseIT {
     @Test
     public void testConstructEntity() throws Exception {
         Type longType = allTypes.retrieveByClassName(Long.class.getName());
+        Type stringType = allTypes.retrieveByClassName(String.class.getName());
 
         Entity temp = new Entity();
         temp.setClassName(CLASS_NAME);
 
         temp.addField(new Field(temp, "id", longType, true, true));
+        temp.addField(new Field(temp, "creator", stringType, true, true));
+        temp.addField(new Field(temp, "owner", stringType, true, true));
 
         constructor.constructEntity(temp);
 
         MDSClassLoader mdsClassLoader = MDSClassLoader.getInstance();
 
         Class<?> entityClass = mdsClassLoader.loadClass(CLASS_NAME);
-        Class<?> repositoryClass = mdsClassLoader.loadClass(REPOSITORY_NAME);
-        Class<?> interfaceClass = mdsClassLoader.loadClass(INTERFACE_NAME);
-        Class<?> serviceClass = mdsClassLoader.loadClass(SERVICE_NAME);
+        // infrastructure is not defined
+        Class<?> repositoryClass = defineAndLoadClass(REPOSITORY_NAME, mdsClassLoader);
+        Class<?> interfaceClass = defineAndLoadClass(INTERFACE_NAME, mdsClassLoader);
+        Class<?> serviceClass = defineAndLoadClass(SERVICE_NAME, mdsClassLoader);
 
         assertNotNull(entityClass);
         assertNotNull(repositoryClass);
@@ -96,6 +103,9 @@ public class MDSConstructorIT extends BaseIT {
 
             MotechDataRepository repository = (MotechDataRepository) repositoryClass.newInstance();
             DefaultMotechDataService service = (DefaultMotechDataService) serviceClass.newInstance();
+
+            // normally this is injected by the context of the generated bundle
+            PropertyUtils.setProperty(service, "allEntities", allEntities);
 
             repository.setPersistenceManagerFactory(getPersistenceManagerFactory());
             service.setRepository(repository);
@@ -165,5 +175,11 @@ public class MDSConstructorIT extends BaseIT {
         } finally {
             Thread.currentThread().setContextClassLoader(oldClassLoader);
         }
+    }
+
+    private Class<?> defineAndLoadClass(String className, MDSClassLoader classLoader) throws IOException, CannotCompileException {
+        CtClass ctClass = MotechClassPool.getDefault().getOrNull(className);
+        assertNotNull(ctClass);
+        return classLoader.defineClass(className, ctClass.toBytecode());
     }
 }

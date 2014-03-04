@@ -1,6 +1,6 @@
 package org.motechproject.mds.service.impl.internal;
 
-import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.reflect.FieldUtils;
 import org.apache.commons.lang.reflect.MethodUtils;
 import org.joda.time.DateTime;
@@ -20,11 +20,12 @@ import org.motechproject.mds.ex.ObjectNotFoundException;
 import org.motechproject.mds.ex.ObjectReadException;
 import org.motechproject.mds.ex.ObjectUpdateException;
 import org.motechproject.mds.ex.ServiceNotFoundException;
+import org.motechproject.mds.javassist.MotechClassPool;
 import org.motechproject.mds.service.BaseMdsService;
 import org.motechproject.mds.service.EntityService;
 import org.motechproject.mds.service.InstanceService;
 import org.motechproject.mds.service.MotechDataService;
-import org.motechproject.mds.util.ClassName;
+import org.motechproject.mds.util.Constants;
 import org.motechproject.mds.util.LookupName;
 import org.motechproject.mds.util.QueryParams;
 import org.motechproject.mds.util.TypeHelper;
@@ -38,11 +39,13 @@ import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -135,7 +138,7 @@ public class InstanceServiceImpl extends BaseMdsService implements InstanceServi
         args.add(queryParams);
 
         try {
-            String methodName = LookupName.lookupMethod(lookupName);
+            String methodName = lookup.getMethodName();
 
             Object result = MethodUtils.invokeMethod(service, methodName, args.toArray(new Object[args.size()]));
 
@@ -169,7 +172,8 @@ public class InstanceServiceImpl extends BaseMdsService implements InstanceServi
         EntityDto entity = getEntity(entityId);
         LookupDto lookup = getLookupByName(entityId, lookupName);
         List<FieldDto> fields = entityService.getEntityFields(entityId);
-        String methodName = LookupName.lookupCountMethod(lookupName);
+
+        String methodName = LookupName.lookupCountMethod(lookup.getMethodName());
 
         List<Object> args = getLookupArgs(lookup, fields, lookupMap);
 
@@ -222,6 +226,8 @@ public class InstanceServiceImpl extends BaseMdsService implements InstanceServi
             FieldRecord fieldRecord = new FieldRecord(field);
             fieldRecords.add(fieldRecord);
         }
+        populateDefaultFields(fieldRecords);
+
 
         return new EntityRecord(null, entityId, fieldRecords);
     }
@@ -242,6 +248,15 @@ public class InstanceServiceImpl extends BaseMdsService implements InstanceServi
         List<FieldDto> fields = entityService.getEntityFields(entityId);
 
         return instanceToRecord(instance, entity, fields);
+    }
+
+    private void populateDefaultFields(List<FieldRecord> fieldRecords) {
+        for (FieldRecord record : fieldRecords) {
+            if (Constants.Util.CREATOR_FIELD_NAME.equals(record.getName()) ||
+                    Constants.Util.OWNER_FIELD_NAME.equals(record.getName())) {
+                record.setValue(SecurityContextHolder.getContext().getAuthentication().getName());
+            }
+        }
     }
 
     private LookupDto getLookupByName(Long entityId, String lookupName) {
@@ -272,7 +287,7 @@ public class InstanceServiceImpl extends BaseMdsService implements InstanceServi
     }
 
     private MotechDataService getServiceForEntity(EntityDto entity) {
-        ServiceReference ref = bundleContext.getServiceReference(ClassName.getInterfaceName(entity.getClassName()));
+        ServiceReference ref = bundleContext.getServiceReference(MotechClassPool.getInterfaceName(entity.getClassName()));
         if (ref == null) {
             throw new ServiceNotFoundException();
         }
@@ -282,12 +297,9 @@ public class InstanceServiceImpl extends BaseMdsService implements InstanceServi
     private void updateFields(Object instance, List<FieldRecord> fieldRecords) {
         try {
             for (FieldRecord fieldRecord : fieldRecords) {
-                Object value = fieldRecord.getValue();
-                Object parsedValue = TypeHelper.parse(value, fieldRecord.getType().getTypeClass());
-
-                PropertyUtils.setProperty(instance, fieldRecord.getName(), parsedValue);
+                setProperty(instance, fieldRecord);
             }
-        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+        } catch (Exception e) {
             LOG.error("Error while updating fields", e);
             throw new ObjectUpdateException(e);
         }
@@ -310,7 +322,7 @@ public class InstanceServiceImpl extends BaseMdsService implements InstanceServi
             List<FieldRecord> fieldRecords = new ArrayList<>();
 
             for (FieldDto field : fields) {
-                Object value = PropertyUtils.getProperty(instance, field.getBasic().getName());
+                Object value = getProperty(instance, field);
 
                 // turn dates to string format
                 if (value instanceof DateTime) {
@@ -356,6 +368,41 @@ public class InstanceServiceImpl extends BaseMdsService implements InstanceServi
             }
         }
         throw new FieldNotFoundException();
+    }
+
+    private void setProperty(Object instance, FieldRecord fieldRecord)
+            throws IllegalAccessException, NoSuchMethodException, InvocationTargetException, ClassNotFoundException {
+        Object value = fieldRecord.getValue();
+
+        Object parsedValue = TypeHelper.parse(value, fieldRecord.getType().getTypeClass());
+        String methodName = "set" + StringUtils.capitalize(fieldRecord.getName());
+        Class<?> propertyClass = MDSClassLoader.getInstance().loadClass(fieldRecord.getType().getTypeClass());
+
+        Method method = MethodUtils.getAccessibleMethod(instance.getClass(), methodName, propertyClass);
+        if (method == null) {
+            throw new NoSuchMethodException(String.format("No setter %s for field %s", methodName, fieldRecord.getName()));
+        }
+
+        method.invoke(instance, parsedValue);
+    }
+
+    private Object getProperty(Object instance, FieldDto field)
+            throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        String fieldName = field.getBasic().getName();
+        String methodName = "get" + StringUtils.capitalize(fieldName);
+
+        Method method = MethodUtils.getAccessibleMethod(instance.getClass(), methodName, new Class[]{});
+        // for booleans try the 'is' getter
+        if (method == null && field.getType().getTypeClass().equals(Boolean.class.getName())) {
+            methodName = "is" + StringUtils.capitalize(fieldName);
+            method = MethodUtils.getAccessibleMethod(instance.getClass(), methodName, new Class[]{});
+        }
+
+        if (method == null) {
+            throw new NoSuchMethodException(String.format("No getter %s for field %s", methodName, fieldName));
+        }
+
+        return method.invoke(instance);
     }
 
     @Autowired

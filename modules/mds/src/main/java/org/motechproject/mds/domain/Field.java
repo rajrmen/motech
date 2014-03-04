@@ -1,6 +1,7 @@
 package org.motechproject.mds.domain;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.motechproject.mds.dto.FieldBasicDto;
 import org.motechproject.mds.dto.FieldDto;
 import org.motechproject.mds.dto.FieldValidationDto;
@@ -286,6 +287,15 @@ public class Field {
         return found;
     }
 
+    public FieldMetadata getMetadata(String key) {
+        for (FieldMetadata meta : metadata) {
+            if (StringUtils.equals(key, meta.getKey())) {
+                return meta;
+            }
+        }
+        return null;
+    }
+
     public List<FieldSetting> getSettings() {
         return settings;
     }
@@ -401,6 +411,7 @@ public class Field {
         setName(field.getBasic().getName());
         setRequired(field.getBasic().isRequired());
         setTooltip(field.getBasic().getTooltip());
+        setReadOnly(field.isReadOnly());
 
         if (field.getBasic().getDefaultValue() != null) {
             this.setDefaultValue(field.getBasic().getDefaultValue().toString());
@@ -445,12 +456,14 @@ public class Field {
     }
 
     private void updateSettings(List<SettingDto> settingsList) {
-        for (SettingDto settingDto : settingsList) {
-            FieldSetting setting = getSettingByName(settingDto.getName());
+        if (settingsList != null) {
+            for (SettingDto settingDto : settingsList) {
+                FieldSetting setting = getSettingByName(settingDto.getName());
 
-            if (setting != null) {
-                Object value = settingDto.getValue();
-                setting.setValue(TypeHelper.format(value));
+                if (setting != null) {
+                    Object value = settingDto.getValue();
+                    setting.setValue(TypeHelper.format(value));
+                }
             }
         }
     }

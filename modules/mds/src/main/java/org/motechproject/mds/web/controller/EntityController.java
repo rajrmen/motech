@@ -170,6 +170,20 @@ public class EntityController extends MdsController {
         return entityService.getFields(entityId);
     }
 
+    @RequestMapping(value = "/entities/{entityId}/entityFields", method = RequestMethod.GET)
+    @PreAuthorize(Roles.HAS_DATA_OR_SCHEMA_ACCESS)
+    @ResponseBody
+    public List<FieldDto> getEntityFields(@PathVariable Long entityId) {
+        return entityService.getEntityFields(entityId);
+    }
+
+    @RequestMapping(value = "/entities/{entityId}/displayFields", method = RequestMethod.GET)
+    @PreAuthorize(Roles.HAS_DATA_OR_SCHEMA_ACCESS)
+    @ResponseBody
+    public List<FieldDto> getDisplayFields(@PathVariable Long entityId) {
+        return entityService.getDisplayFields(entityId);
+    }
+
     @RequestMapping(value = "entities/{entityId}/fields/{name}", method = RequestMethod.GET)
     @PreAuthorize(Roles.HAS_DATA_OR_SCHEMA_ACCESS)
     @ResponseBody
@@ -182,6 +196,13 @@ public class EntityController extends MdsController {
     @ResponseBody
     public AdvancedSettingsDto getAdvanced(@PathVariable final Long entityId) {
         return entityService.getAdvancedSettings(entityId);
+    }
+
+    @RequestMapping(value = "/entities/{entityId}/advancedCommited", method = RequestMethod.GET)
+    @PreAuthorize(Roles.HAS_DATA_OR_SCHEMA_ACCESS)
+    @ResponseBody
+    public AdvancedSettingsDto getCommitedAdvanced(@PathVariable final Long entityId) {
+        return entityService.getAdvancedSettings(entityId, true);
     }
 
     @Autowired
