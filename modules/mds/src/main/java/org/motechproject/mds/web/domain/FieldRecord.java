@@ -7,6 +7,7 @@ import org.motechproject.mds.dto.MetadataDto;
 import org.motechproject.mds.dto.SettingDto;
 import org.motechproject.mds.dto.TypeDto;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -34,20 +35,20 @@ public class FieldRecord {
     public FieldRecord(String name, String displayName, Object value, TypeDto type) {
         this.name = name;
         this.displayName = displayName;
-        this.value = value;
-        this.type = type;
+        setType(type);
+        setValue(value);
     }
 
     public FieldRecord(FieldDto fieldDto) {
         this.name = fieldDto.getBasic().getName();
         this.displayName = fieldDto.getBasic().getDisplayName();
-        this.type = fieldDto.getType();
         this.id = fieldDto.getId();
         this.metadata = fieldDto.getMetadata();
-        this.settings = fieldDto.getSettings();
         this.tooltip = fieldDto.getBasic().getTooltip();
         this.required = fieldDto.getBasic().isRequired();
         this.validation = fieldDto.getValidation();
+        setSettings(fieldDto.getSettings());
+        setType(fieldDto.getType());
         setValue(fieldDto.getBasic().getDefaultValue());
     }
 
@@ -65,10 +66,7 @@ public class FieldRecord {
 
     public final void setValue(Object value) {
         this.value = value;
-        // we must include a user supplied value in the options for lists
-        if (List.class.getName().equals(type.getTypeClass())) {
-            extendOptionsIfNecessary();
-        }
+        extendOptionsIfNecessary();
     }
 
     public String getName() {
@@ -83,8 +81,9 @@ public class FieldRecord {
         return type;
     }
 
-    public void setType(TypeDto type) {
+    public final void setType(TypeDto type) {
         this.type = type;
+        extendOptionsIfNecessary();
     }
 
     public Long getId() {
@@ -107,8 +106,9 @@ public class FieldRecord {
         return settings;
     }
 
-    public void setSettings(List<SettingDto> settings) {
+    public final void setSettings(List<SettingDto> settings) {
         this.settings = settings;
+        extendOptionsIfNecessary();
     }
 
     public String getTooltip() {
@@ -136,8 +136,8 @@ public class FieldRecord {
     }
 
     private void extendOptionsIfNecessary() {
-        // don't add null or empty string
-        if (value == null || value.equals("")) {
+        // don't add null or empty string, only for list types
+        if (!canExtendOptions()) {
             return;
         }
 
@@ -155,11 +155,16 @@ public class FieldRecord {
         // add the value
         if (listValuesOption != null) {
             if (listValuesOption.getValue() instanceof List) {
-                List listValues = (List) listValuesOption.getValue();
+                List listValues = new ArrayList((List) listValuesOption.getValue());
                 if (!listValues.contains(value)) {
                     listValues.add(value);
+                    listValuesOption.setValue(listValues);
                 }
             }
         }
+    }
+
+    private boolean canExtendOptions() {
+        return value != null && !"".equals(value) && type != null && List.class.getName().equals(type.getTypeClass());
     }
 }
