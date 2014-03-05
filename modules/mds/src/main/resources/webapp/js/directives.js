@@ -1339,7 +1339,7 @@
                         if (checked) {
                             optionElement.attr('selected', 'selected');
                         }
-                        element.change(); console.log('directive');
+                        element.change();
                     }
             });
 
