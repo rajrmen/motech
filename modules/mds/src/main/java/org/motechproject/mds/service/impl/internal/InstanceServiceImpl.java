@@ -113,7 +113,7 @@ public class InstanceServiceImpl extends BaseMdsService implements InstanceServi
     @Transactional
     public List<EntityRecord> getEntityRecords(Long entityId, QueryParams queryParams) {
         EntityDto entity = getEntity(entityId);
-        List<FieldDto> fields = entityService.getFields(entityId);
+        List<FieldDto> fields = entityService.getEntityFields(entityId);
 
         MotechDataService service = getServiceForEntity(entity);
 
