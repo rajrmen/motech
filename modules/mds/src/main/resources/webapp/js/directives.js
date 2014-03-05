@@ -1321,4 +1321,39 @@
         };
     });
 
+    mds.directive('multiselectList', function () {
+        return {
+            restrict: 'A',
+            require : 'ngModel',
+            link: function (scope, element, attrs) {
+                element.multiselect({
+                    buttonClass : 'btn btn-default',
+                    buttonWidth : 'auto',
+                    buttonContainer : '<div class="btn-group" />',
+                    maxHeight : false,
+                    buttonText : function() {
+                            return scope.msg('mds.btn.fields');
+                    },
+                    onChange: function (optionElement, checked) {
+                        optionElement.removeAttr('selected');
+                        if (checked) {
+                            optionElement.attr('selected', 'selected');
+                        }
+                        element.change(); console.log('directive');
+                    }
+            });
+
+                scope.$watch(function () {
+                    return element[0].length;
+                }, function () {
+                    element.multiselect('rebuild');
+                });
+
+                scope.$watch(attrs.ngModel, function () {
+                    element.multiselect('refresh');
+                });
+            }
+        };
+    });
+
 }());
