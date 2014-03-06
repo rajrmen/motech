@@ -1958,10 +1958,19 @@
         };
 
         /**
+        * Sets module and entity name
+        */
+        $scope.setModuleEntity = function (module, entityName) {
+            $scope.tmpModuleName = module;
+            $scope.tmpEntityName = entityName;
+        }
+
+        /**
         * Sets selected entity by module and entity name
         */
         $scope.addInstance = function(module, entityName) {
             blockUI();
+            $scope.setModuleEntity(module, entityName);
             $scope.addedEntity = Entities.getEntity({
                 param:  module,
                 params: entityName},
@@ -2024,6 +2033,7 @@
         $scope.addEntityInstance = function () {
             blockUI();
             $scope.currentRecord.$save(function() {
+                $scope.selectEntity($scope.tmpModuleName, $scope.tmpEntityName);
                 $scope.unselectAdd();
                 unblockUI();
             }, angularHandler('mds.error', 'mds.error'));
