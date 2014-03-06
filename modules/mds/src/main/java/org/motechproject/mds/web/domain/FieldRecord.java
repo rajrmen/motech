@@ -1,6 +1,8 @@
 package org.motechproject.mds.web.domain;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.motechproject.mds.dto.FieldDto;
 import org.motechproject.mds.dto.FieldValidationDto;
 import org.motechproject.mds.dto.MetadataDto;
@@ -15,7 +17,7 @@ import java.util.List;
  */
 public class FieldRecord {
 
-    private static final String FORM_VALUES = "mds.form.label.values";
+    public static final String FORM_VALUES = "mds.form.label.values";
 
     private String name;
     private String displayName;
@@ -106,8 +108,23 @@ public class FieldRecord {
         return settings;
     }
 
+    @JsonIgnore
+    public final SettingDto getSettingByName(String name) {
+        if (CollectionUtils.isNotEmpty(settings)) {
+            for (SettingDto setting : settings) {
+                if (StringUtils.equals(setting.getName(), name)) {
+                    return setting;
+                }
+            }
+        }
+        return null;
+    }
+
     public final void setSettings(List<SettingDto> settings) {
-        this.settings = settings;
+        this.settings = new ArrayList<>();
+        for (SettingDto setting : settings) {
+            this.settings.add(setting.copy());
+        }
         extendOptionsIfNecessary();
     }
 
@@ -142,24 +159,27 @@ public class FieldRecord {
         }
 
         // find the correct option
-        SettingDto listValuesOption = null;
-        if (CollectionUtils.isNotEmpty(settings)) {
-            for (SettingDto setting : settings) {
-                if (FORM_VALUES.equals(setting.getName())) {
-                    listValuesOption = setting;
-                    break;
-                }
-            }
-        }
+        SettingDto listValuesOption = getSettingByName(FORM_VALUES);
 
         // add the value
         if (listValuesOption != null) {
             if (listValuesOption.getValue() instanceof List) {
+                // copy current values to avoid running into unmodifiable lists
                 List listValues = new ArrayList((List) listValuesOption.getValue());
-                if (!listValues.contains(value)) {
-                    listValues.add(value);
-                    listValuesOption.setValue(listValues);
+                // for lists, we add all not included
+                if (List.class.isAssignableFrom(value.getClass())) {
+                    for (Object objectFromValueList : (List) value) {
+                        if (!listValues.contains(objectFromValueList)) {
+                            listValues.add(objectFromValueList);
+                        }
+                    }
+                // a case for single select comboboxes, just add the value
+                } else {
+                    if (!listValues.contains(value)) {
+                        listValues.add(value);
+                    }
                 }
+                listValuesOption.setValue(listValues);
             }
         }
     }
