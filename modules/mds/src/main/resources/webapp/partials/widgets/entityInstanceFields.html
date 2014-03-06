@@ -12,8 +12,11 @@
                 <span class="text-danger" ng-show="{{field.name}}.$error.required && !{{field.name}}.$pristine">{{msg('mds.error.requiredField')}}</span>
             </ng-form>
             <div class="margin-before" ng-if="getTypeSingleClassName(field.type) === 'combobox' && field.settings[1].value">
-                <input class="form-control input-auto" ng-model="newFieldValue" />
-                <a class="btn btn-default" ng-click="addFieldCombobox($index, field, newFieldValue)"><span class="icon icon-plus"></span></a>
+                <a class="btn btn-default" ng-click="showAddOptionInput()"><span class="icon icon-plus"></span>&nbsp;{{msg('mds.form.label.addOption')}}</a>
+               <span id="showAddOptionInput" class="hidden">
+                    <input id="entityOptionNewValue" ng-change="change(newOptionValue)" class="form-control input-auto" ng-model="newOptionValue" />
+                    <a ng-disabled="!optionValueStatus" class="btn btn-default"  ng-click="addOptionCombobox($index, field, newOptionValue)">{{msg('mds.btn.save')}}</a>
+                </span>
             </div>
         </div>
     </div>

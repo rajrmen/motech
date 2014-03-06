@@ -1339,9 +1339,9 @@
                         if (checked) {
                             optionElement.attr('selected', 'selected');
                         }
-                        element.change(); console.log('directive');
+                        element.change();
                     }
-            });
+                });
 
                 scope.$watch(function () {
                     return element[0].length;

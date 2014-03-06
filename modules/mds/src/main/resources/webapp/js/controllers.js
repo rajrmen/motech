@@ -1942,6 +1942,10 @@
 
         $scope.validatePattern = '';
 
+        $scope.optionValueStatus = false;
+
+        $scope.optionValue='';
+
         /**
         * Initializes a map of all entities in MDS indexed by module name
         */
@@ -2221,13 +2225,22 @@
             if (value === 'decimal') {
                 validationPattern = '/^(([0-9]{1,})|([0-9]{1,}(\\.([0-9]{1,}))))+$/';
             }
-            else if (value === 'integer') {
-                validationPattern = '/^([0-9])+$/';
-            }
-            else if (value === 'string' && field.validation !== null && field.validation.criteria[0].value.length > 110) {
+            else if (value === 'string' && field.validation !== null && field.validation.criteria[0].value.length > 0) {
                 validationPattern = field.validation.criteria[0].value;
             }
             return validationPattern;
+        };
+
+        /*
+        * Gets validation criteria values.
+        */
+        $scope.getValidationCriteria = function (field, id) {
+            var validationCriteria = '';
+
+            if (field.validation !== null && field.validation.criteria[id].enabled) {
+               validationCriteria = field.validation.criteria[id].value;
+            }
+            return validationCriteria;
         };
 
         /**
@@ -2238,7 +2251,7 @@
             var value = $scope.getTypeSingleClassName(field.type);
             if (value === 'combobox' && field.settings[2].value) {
                 if (find(field.settings, [{field: 'name', value: 'mds.form.label.allowMultipleSelections'}], true).value) {
-                    value = 'combobox2';
+                    value = 'combobox-multi';
                 }
             }
             return '../mds/resources/partials/widgets/field-edit-Value-{0}.html'
@@ -2265,11 +2278,22 @@
         /**
         * Add new option to combobox.
         */
-
-        $scope.addFieldCombobox = function (id, field, newFieldValue) {
-            $scope.fields[id].settings[0].value.push(newFieldValue);
-            //$scope.currentRecord.fields[id].settings[0].value.push(newFieldValue);
-
+        $scope.change = function (newOptionValue) {
+            if ($scope.optionValue !== newOptionValue) {
+                $scope.optionValueStatus = true;
+            }
+        };
+        $scope.showAddOptionInput = function () {
+           $('#showAddOptionInput').removeClass('hidden');
+        };
+        $scope.addOptionCombobox = function (id, field, newOptionValue) {
+            //$scope.fields[id].settings[0].value.push(newOptionValue);
+            $scope.currentRecord.fields[id].settings[0].value.push(newOptionValue);
+            $('#entityOptionNewValue').val('');
+            $('#showAddOptionInput').addClass('hidden');
+            $scope.newOptionValue = '';
+            $scope.optionValueStatus = false;
+            $scope.optionValue = newOptionValue;
         };
 
         /**
