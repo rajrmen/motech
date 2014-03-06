@@ -4,7 +4,7 @@ import org.codehaus.jackson.annotate.JsonProperty;
 import org.ektorp.support.TypeDiscriminator;
 import org.motechproject.commons.couchdb.model.MotechBaseDataObject;
 
-@TypeDiscriminator("doc.type == 'CouchFoo'")
+@TypeDiscriminator("doc.type === 'CouchFoo'")
 public class CouchFoo extends MotechBaseDataObject {
     private static final long serialVersionUID = -34316443819706508L;
 
@@ -25,19 +25,19 @@ public class CouchFoo extends MotechBaseDataObject {
         this.couchString = couchString;
     }
 
-    private String getCouchString() {
+    public String getCouchString() {
         return couchString;
     }
 
-    private void setCouchString(String couchString) {
+    public void setCouchString(String couchString) {
         this.couchString = couchString;
     }
 
-    private int getCouchInt() {
+    public int getCouchInt() {
         return couchInt;
     }
 
-    private void setCouchInt(int couchInt) {
+    public void setCouchInt(int couchInt) {
         this.couchInt = couchInt;
     }
 

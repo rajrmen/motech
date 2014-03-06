@@ -78,7 +78,7 @@ public class MdsPerformanceIT extends BaseOsgiIT {
     }
 
     // To run performance check, remove "ignored" from the method name
-    public void testPerformance() throws NotFoundException, CannotCompileException, IOException, InvalidSyntaxException, InterruptedException, ClassNotFoundException, IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
+    public void ignoredtestPerformance() throws NotFoundException, CannotCompileException, IOException, InvalidSyntaxException, InterruptedException, ClassNotFoundException, IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
         final String serviceName = ClassName.getInterfaceName(FOO_CLASS);
 
         prepareTestEntity();
@@ -96,8 +96,8 @@ public class MdsPerformanceIT extends BaseOsgiIT {
 
         compareCreating(service, objectClass, couchMdsRepository);
         compareRetrieval(service, couchMdsRepository);
-        //compareUpdating(service, couchMdsRepository);
-        //compareDeleting(service, couchMdsRepository);
+        compareUpdating(service, couchMdsRepository);
+        compareDeleting(service, couchMdsRepository);
     }
 
     private void compareCreating(MotechDataService service, Class clazz, CouchMdsRepository couchMdsRepository) throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
