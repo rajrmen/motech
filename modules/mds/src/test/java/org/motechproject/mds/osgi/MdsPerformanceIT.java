@@ -56,7 +56,7 @@ public class MdsPerformanceIT extends BaseOsgiIT {
     private static final String FOO = "Foo";
     private static final String FOO_CLASS = String.format("%s.%s", Constants.PackagesGenerated.ENTITY, FOO);
 
-    private static final int TEST_INSTANCES = 50;
+    private static final int TEST_INSTANCES = 10;
 
     private EntityService entityService;
 
@@ -78,7 +78,7 @@ public class MdsPerformanceIT extends BaseOsgiIT {
     }
 
     // To run performance check, remove "ignored" from the method name
-    public void ignoredTestPerformance() throws NotFoundException, CannotCompileException, IOException, InvalidSyntaxException, InterruptedException, ClassNotFoundException, IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
+    public void testPerformance() throws NotFoundException, CannotCompileException, IOException, InvalidSyntaxException, InterruptedException, ClassNotFoundException, IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
         final String serviceName = ClassName.getInterfaceName(FOO_CLASS);
 
         prepareTestEntity();
@@ -96,8 +96,8 @@ public class MdsPerformanceIT extends BaseOsgiIT {
 
         compareCreating(service, objectClass, couchMdsRepository);
         compareRetrieval(service, couchMdsRepository);
-        compareUpdating(service, couchMdsRepository);
-        compareDeleting(service, couchMdsRepository);
+        //compareUpdating(service, couchMdsRepository);
+        //compareDeleting(service, couchMdsRepository);
     }
 
     private void compareCreating(MotechDataService service, Class clazz, CouchMdsRepository couchMdsRepository) throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
@@ -317,6 +317,7 @@ public class MdsPerformanceIT extends BaseOsgiIT {
     @Override
     protected List<String> getImports() {
         return asList(
+                "org.codehaus.jackson",
                 "org.motechproject.commons.couchdb.model",
                 "org.motechproject.commons.couchdb.service",
                 "org.motechproject.mds.builder",

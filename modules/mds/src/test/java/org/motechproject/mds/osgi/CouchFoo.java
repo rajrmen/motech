@@ -6,6 +6,7 @@ import org.motechproject.commons.couchdb.model.MotechBaseDataObject;
 
 @TypeDiscriminator("doc.type == 'CouchFoo'")
 public class CouchFoo extends MotechBaseDataObject {
+    private static final long serialVersionUID = -34316443819706508L;
 
     @JsonProperty
     int couchInt;
@@ -38,5 +39,13 @@ public class CouchFoo extends MotechBaseDataObject {
 
     private void setCouchInt(int couchInt) {
         this.couchInt = couchInt;
+    }
+
+    @Override
+    public String toString() {
+        return "CouchFoo{" +
+                "couchInt=" + couchInt +
+                ", couchString='" + couchString + '\'' +
+                '}';
     }
 }
