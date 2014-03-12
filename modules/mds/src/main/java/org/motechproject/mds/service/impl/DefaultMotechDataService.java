@@ -5,6 +5,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.reflect.FieldUtils;
 import org.motechproject.mds.domain.Entity;
 import org.motechproject.mds.ex.SecurityException;
+import org.motechproject.mds.filter.Filter;
 import org.motechproject.mds.repository.AllEntities;
 import org.motechproject.mds.repository.MotechDataRepository;
 import org.motechproject.mds.service.HistoryService;
@@ -148,6 +149,26 @@ public abstract class DefaultMotechDataService<T> implements MotechDataService<T
     public long count() {
         InstanceSecurityRestriction securityRestriction = validateCredentials();
         return repository.count(securityRestriction);
+    }
+
+    @Override
+    @Transactional
+    public List<T> filter(Filter filter) {
+        return filter(filter, null);
+    }
+
+    @Override
+    @Transactional
+    public List<T> filter(Filter filter, QueryParams queryParams) {
+        InstanceSecurityRestriction securityRestriction = validateCredentials();
+        return repository.filter(filter, queryParams, securityRestriction);
+    }
+
+    @Override
+    @Transactional
+    public long countForFilter(Filter filter) {
+        InstanceSecurityRestriction securityRestriction = validateCredentials();
+        return repository.countForFilter(filter, securityRestriction);
     }
 
     protected InstanceSecurityRestriction validateCredentials() {

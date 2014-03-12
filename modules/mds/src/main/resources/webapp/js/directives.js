@@ -978,7 +978,8 @@
                             $('#' + attrs.id).jqGrid('setGridParam', {
                                 postData: {
                                     fields: JSON.stringify(scope.lookupBy),
-                                    lookup: (scope.selectedLookup) ? scope.selectedLookup.lookupName : ""
+                                    lookup: (scope.selectedLookup) ? scope.selectedLookup.lookupName : "",
+                                    filter: (scope.filterBy) ? scope.filterBy : ""
                                 }
                             }).trigger('reloadGrid');
                         });

@@ -51,6 +51,14 @@
         </div>
     </div>
 </div>
+
+<div ng-repeat="filter in filters">
+    <span>{{filter.field}}</span>
+    <div ng-repeat="filterType in filter.types">
+        <a ng-click="selectFilter(filter.field, filterType)">{{msgForFilter(filterType)}}</a>
+    </div>
+</div>
+
 <div id="entityInstancesTable" class="overrideJqgridTable">
     <table id="resourceTable" entity-instances-grid="pageResourceTable"></table>
     <div id="pageResourceTable"></div>

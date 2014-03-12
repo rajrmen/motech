@@ -1970,6 +1970,11 @@
         $scope.lookupBy = {};
 
         /**
+        * Object that represents selected filter
+        */
+        $scope.filterBy = {};
+
+        /**
         * This variable is set after user clicks "Add" button next to chosen entity.
         */
         $scope.addedEntity= undefined;
@@ -2002,7 +2007,9 @@
 
         $scope.optionValueStatus = false;
 
-        $scope.optionValue='';
+        $scope.optionValue = '';
+
+        $scope.filters = [];
 
         $scope.fieldValue = [];
 
@@ -2147,10 +2154,28 @@
             $http.get('../mds/entities/getEntity/' + module + '/' + entityName).success(function (data) {
                 $scope.selectedEntity = data;
 
-                $scope.entityAdvanced = Entities.getAdvancedCommited({id: $scope.selectedEntity.id});
-
                 $http.get('../mds/entities/'+$scope.selectedEntity.id+'/entityFields').success(function (data) {
                     $scope.allEntityFields = data;
+
+                    Entities.getAdvancedCommited({id: $scope.selectedEntity.id}, function(data) {
+                        $scope.entityAdvanced = data;
+
+                        $scope.filters = [];
+
+                        var filterableFields = $scope.entityAdvanced.browsing.filterableFields;
+                        for (var i = 0; i < $scope.allEntityFields.length; i++) {
+                            var field = $scope.allEntityFields[i];
+                            if ($.inArray(field.id, filterableFields) >= 0) {
+                                var types = $scope.filtersForField(field);
+
+                                $scope.filters.push({
+                                    field: field.basic.name,
+                                    types: types
+                                });
+                            }
+                        }
+                    });
+
                     Entities.getDisplayFields({id: $scope.selectedEntity.id}, function(data) {
                         $scope.selectedFields = data;
                         $scope.updateInstanceGridFields();
@@ -2159,6 +2184,19 @@
                 unblockUI();
             });
         };
+
+        $scope.filtersForField = function(field) {
+            var type = field.type.typeClass;
+            if (type === "java.lang.Boolean") {
+                return new Array('ALL', 'YES', 'NO');
+            } else if (type === "java.util.Date" || type === "org.joda.time.DateTime") {
+                return new Array('ALL', 'TODAY', 'PAST_7_DAYS', 'THIS_MONTH', 'THIS_YEAR');
+            }
+        };
+
+        $scope.msgForFilter = function(filter) {
+            return $scope.msg("mds.filter." + filter.toLowerCase());
+        }
 
         /**
         * Marks passed lookup as selected. Sets fields that belong to the given lookup and resets lookupBy object
@@ -2169,6 +2207,7 @@
 
             $scope.selectedLookup = lookup;
             $scope.lookupFields = [];
+            $scope.filterBy = {};
             $scope.lookupBy = {};
 
             for(i=0; i<$scope.allEntityFields.length; i+=1) {
@@ -2200,6 +2239,10 @@
         */
         $scope.filterInstancesByLookup = function() {
             $scope.showLookupDialog();
+            $scope.refreshGrid();
+        };
+
+        $scope.refreshGrid = function() {
             $scope.lookupRefresh = !$scope.lookupRefresh;
         };
 
@@ -2218,6 +2261,19 @@
         */
         $scope.unselectEntity = function () {
             $scope.selectedEntity = undefined;
+        };
+
+        $scope.selectFilter = function(field, filterType) {
+            $scope.lookupBy = {};
+            $scope.selectedLookup = undefined;
+            $scope.lookupFields = [];
+
+            $scope.filterBy = {
+                field: field,
+                type: filterType
+            };
+
+            $scope.refreshGrid();
         };
 
         /**

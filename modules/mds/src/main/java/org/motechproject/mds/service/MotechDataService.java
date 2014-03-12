@@ -1,5 +1,6 @@
 package org.motechproject.mds.service;
 
+import org.motechproject.mds.filter.Filter;
 import org.motechproject.mds.util.QueryParams;
 
 import java.util.List;
@@ -29,4 +30,10 @@ public interface MotechDataService<T> {
     void delete(String primaryKeyName, Object value);
 
     long count();
+
+    List<T> filter(Filter filter);
+
+    List<T> filter(Filter filter, QueryParams queryParams);
+
+    long countForFilter(Filter filter);
 }
