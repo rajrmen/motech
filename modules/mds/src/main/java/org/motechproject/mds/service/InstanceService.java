@@ -1,6 +1,7 @@
 package org.motechproject.mds.service;
 
 import org.motechproject.mds.dto.FieldInstanceDto;
+import org.motechproject.mds.filter.Filter;
 import org.motechproject.mds.util.QueryParams;
 import org.motechproject.mds.web.domain.EntityRecord;
 import org.motechproject.mds.web.domain.HistoryRecord;
@@ -26,6 +27,8 @@ public interface InstanceService {
     List<EntityRecord> getEntityRecordsFromLookup(Long entityId, String lookupName, Map<String, String> lookupMap,
                                                   QueryParams queryParams);
 
+    List<EntityRecord> getEntityRecordsWithFilter(Long entityId, Filter filter, QueryParams queryParams);
+
     List<FieldInstanceDto> getInstanceFields(Long entityId, Long instanceId);
 
     List<HistoryRecord> getInstanceHistory(Long instanceId);
@@ -37,4 +40,6 @@ public interface InstanceService {
     EntityRecord getEntityInstance(Long entityId, Long instanceId);
 
     long countRecordsByLookup(Long entityId, String lookupName, Map<String, String> lookupMap);
+
+    long countRecordsWithFilter(Long entityId, Filter filter);
 }

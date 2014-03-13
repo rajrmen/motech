@@ -2162,11 +2162,13 @@
 
                         $scope.filters = [];
 
-                        var filterableFields = $scope.entityAdvanced.browsing.filterableFields;
-                        for (var i = 0; i < $scope.allEntityFields.length; i++) {
-                            var field = $scope.allEntityFields[i];
+                        var filterableFields = $scope.entityAdvanced.browsing.filterableFields,
+                            i, field, types;
+                        for (i = 0; i < $scope.allEntityFields.length; i += 1) {
+                            field = $scope.allEntityFields[i];
+
                             if ($.inArray(field.id, filterableFields) >= 0) {
-                                var types = $scope.filtersForField(field);
+                                types = $scope.filtersForField(field);
 
                                 $scope.filters.push({
                                     field: field.basic.name,
@@ -2188,15 +2190,15 @@
         $scope.filtersForField = function(field) {
             var type = field.type.typeClass;
             if (type === "java.lang.Boolean") {
-                return new Array('ALL', 'YES', 'NO');
+                return ['ALL', 'YES', 'NO'];
             } else if (type === "java.util.Date" || type === "org.joda.time.DateTime") {
-                return new Array('ALL', 'TODAY', 'PAST_7_DAYS', 'THIS_MONTH', 'THIS_YEAR');
+                return ['ALL', 'TODAY', 'PAST_7_DAYS', 'THIS_MONTH', 'THIS_YEAR'];
             }
         };
 
         $scope.msgForFilter = function(filter) {
             return $scope.msg("mds.filter." + filter.toLowerCase());
-        }
+        };
 
         /**
         * Marks passed lookup as selected. Sets fields that belong to the given lookup and resets lookupBy object
@@ -2273,7 +2275,9 @@
                 type: filterType
             };
 
+            blockUI();
             $scope.refreshGrid();
+            unblockUI();
         };
 
         /**

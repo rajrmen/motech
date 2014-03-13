@@ -1,7 +1,5 @@
 package org.motechproject.mds.web.domain;
 
-import org.motechproject.mds.filter.Filter;
-
 /**
  * Settings used by jqGrid to properly show entity instances list
  */
@@ -12,7 +10,7 @@ public class GridSettings {
     private String sortDirection;
     private String lookup;
     private String fields;
-    private Filter filter;
+    private String filter;
 
     public Integer getRows() {
         return rows;
@@ -62,11 +60,11 @@ public class GridSettings {
         this.fields = fields;
     }
 
-    public Filter getFilter() {
+    public String getFilter() {
         return filter;
     }
 
-    public void setFilter(Filter filter) {
+    public void setFilter(String filter) {
         this.filter = filter;
     }
 }

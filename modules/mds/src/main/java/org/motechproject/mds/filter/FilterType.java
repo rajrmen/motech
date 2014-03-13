@@ -1,5 +1,6 @@
 package org.motechproject.mds.filter;
 
+import org.codehaus.jackson.annotate.JsonCreator;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 import org.motechproject.commons.date.util.DateUtil;
@@ -80,5 +81,10 @@ public enum FilterType {
             default:
                 return Collections.emptyList();
         }
+    }
+
+    @JsonCreator
+    public static FilterType fromString(String str) {
+        return FilterType.valueOf(str);
     }
 }

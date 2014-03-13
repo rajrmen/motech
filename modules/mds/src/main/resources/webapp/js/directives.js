@@ -979,7 +979,7 @@
                                 postData: {
                                     fields: JSON.stringify(scope.lookupBy),
                                     lookup: (scope.selectedLookup) ? scope.selectedLookup.lookupName : "",
-                                    filter: (scope.filterBy) ? scope.filterBy : ""
+                                    filter: (scope.filterBy) ? JSON.stringify(scope.filterBy) : ""
                                 }
                             }).trigger('reloadGrid');
                         });
