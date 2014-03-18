@@ -630,12 +630,12 @@
      box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(102, 175, 233, 0.6);
 }
 
-.mds #inner-east fieldset {
+.mds#inner-east fieldset {
     border-top: 1px solid #B2D8F8;
     border-radius: 0;
 }
 
-.mds #inner-east legend  {
+.mds#inner-east legend  {
     border: none;
     color: #165384;
     display: block;
