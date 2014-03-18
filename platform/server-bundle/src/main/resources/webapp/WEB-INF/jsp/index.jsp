@@ -3,7 +3,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <!DOCTYPE html>
-<html np-app="motech-dashboard">
+<html ng-app="motech-dashboard">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <title>MOTECH - Mobile Technology for Community Health</title>
