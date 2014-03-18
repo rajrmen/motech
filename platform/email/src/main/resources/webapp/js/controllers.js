@@ -2,9 +2,9 @@
     'use strict';
 
     /* Controllers */
-    var emailModule = angular.module('motech-email');
+    var controllers = angular.module('email.controllers', []);
 
-    emailModule.controller('SendEmailController', function ($scope, SendEmailService) {
+    controllers.controller('SendEmailController', function ($scope, SendEmailService) {
         $scope.mail = {};
         $scope.innerLayout.hide('east');
 
@@ -22,7 +22,7 @@
         };
     });
 
-    emailModule.controller('EmailLoggingController', function($scope, EmailAuditService) {
+    controllers.controller('EmailLoggingController', function($scope, EmailAuditService) {
 
         $scope.innerLayout.show('east');
         $scope.innerLayout.addToggleBtn("#email-logging-filters", "east");
@@ -69,7 +69,7 @@
 
     });
 
-    emailModule.controller('SettingsController', function ($scope, SettingsService) {
+    controllers.controller('SettingsController', function ($scope, SettingsService) {
         $scope.settings = SettingsService.get();
         $scope.innerLayout.hide('east');
 

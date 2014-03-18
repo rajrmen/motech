@@ -18,7 +18,7 @@
         <constructor-arg name="moduleName" value="admin.module"/>
         <constructor-arg name="angularModules">
             <list>
-                <value>motech-admin</value>
+                <value>admin</value>
             </list>
         </constructor-arg>
         <constructor-arg name="i18n">

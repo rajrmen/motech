@@ -1,5 +1,7 @@
 package org.motechproject.server.web.controller;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.motechproject.commons.api.CastUtils;
@@ -29,14 +31,16 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.apache.commons.collections.CollectionUtils.isEmpty;
 import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.apache.commons.lang.StringUtils.equalsIgnoreCase;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.springframework.util.CollectionUtils.isEmpty;
 
 @Controller
 public class ModuleController {
@@ -66,7 +70,7 @@ public class ModuleController {
         String criticalMessage = null;
 
         if (isNotBlank(moduleName)) {
-            ModuleRegistrationData data = uiFrameworkService.getModuleData(moduleName);
+            ModuleRegistrationData data = uiFrameworkService.getModuleDataByAngular(moduleName);
 
             if (null != data) {
                 criticalMessage = data.getCriticalMessage();
@@ -93,21 +97,16 @@ public class ModuleController {
             ModuleRegistrationData data = uiFrameworkService.getModuleDataByBundle(bundle);
 
             if (null != data) {
-                Map<String, String> scripts = new HashMap<>();
-                List<String> requires = new ArrayList<>();
+                Map<String, String> scripts = findScripts(bundle);
 
-                findScripts(bundle, scripts, requires);
+                for (Map.Entry<String, String> script : scripts.entrySet()) {
+                    addConfig(configuration, data, script.getKey(), script.getValue());
+                }
 
                 List<String> angularModules = data.getAngularModules();
                 String name = isEmpty(angularModules) ? null : angularModules.get(0);
 
                 addConfig(configuration, data, name, "/js/app.js", data.getUrl());
-
-                for (String require : requires) {
-                    if (scripts.containsKey(require)) {
-                        addConfig(configuration, data, require, scripts.get(require));
-                    }
-                }
             }
         }
 
@@ -122,8 +121,10 @@ public class ModuleController {
         return new UserInfo(userName, securityLaunch, lang);
     }
 
-    private void findScripts(Bundle bundle, Map<String, String> scripts, List<String> requires) {
+    private Map<String, String> findScripts(Bundle bundle) {
         List<URL> entries = getEntries(bundle);
+        Map<String, String> scripts = new HashMap<>();
+        List<String> requires = new ArrayList<>();
 
         for (URL entry : entries) {
             String content = getContent(entry);
@@ -145,6 +146,17 @@ public class ModuleController {
                 }
             }
         }
+
+        Iterator<String> keyIterator = scripts.keySet().iterator();
+        while (keyIterator.hasNext()) {
+            String key = keyIterator.next();
+
+            if (!requires.contains(key)) {
+                keyIterator.remove();
+            }
+        }
+
+        return scripts;
     }
 
     private void addConfig(List<ModuleConfig> configuration, ModuleRegistrationData data,
@@ -160,6 +172,10 @@ public class ModuleController {
         config.setTemplate(template);
 
         if (isNotBlank(name)) {
+            if (containsConfig(configuration, name)) {
+                throw new IllegalStateException("The angular module name have to be unique");
+            }
+
             configuration.add(config);
         }
     }
@@ -199,6 +215,22 @@ public class ModuleController {
         requires = requires.replaceAll("('|\"|\\s+)", "");
 
         return requires.split(",");
+    }
+
+    private boolean containsConfig(List<ModuleConfig> configuration, final String name) {
+        return CollectionUtils.exists(configuration, new Predicate() {
+            @Override
+            public boolean evaluate(Object object) {
+                boolean match = object instanceof ModuleConfig;
+
+                if (match) {
+                    ModuleConfig config = (ModuleConfig) object;
+                    match = equalsIgnoreCase(name, config.getName());
+                }
+
+                return match;
+            }
+        });
     }
 
     @Autowired

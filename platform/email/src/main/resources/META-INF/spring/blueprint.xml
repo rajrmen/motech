@@ -40,7 +40,7 @@
         <constructor-arg name="moduleName" value="email"/>
         <constructor-arg name="angularModules">
             <list>
-                <value>motech-email</value>
+                <value>email</value>
             </list>
         </constructor-arg>
         <constructor-arg name="i18n">

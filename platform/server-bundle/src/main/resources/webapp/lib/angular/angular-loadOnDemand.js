@@ -12,14 +12,15 @@
     } ]);
 
     aModule.provider('$loadOnDemand',
-        ['$controllerProvider', '$provide', '$compileProvider', '$filterProvider',
-            function ($controllerProvider, $provide, $compileProvider, $filterProvider) {
+        ['$controllerProvider', '$provide', '$compileProvider', '$filterProvider', '$injector',
+            function ($controllerProvider, $provide, $compileProvider, $filterProvider, $injector) {
                 
                 var modules = { },
                     providers = {
                         $controllerProvider: $controllerProvider,
                         $compileProvider: $compileProvider,
                         $filterProvider: $filterProvider,
+                        $injector: $injector,
                         $provide: $provide // other things
                     };
                 this.$get = ['scriptCache', '$timeout', '$log', '$document', '$injector',
@@ -119,7 +120,7 @@
                                     loadScript(config.script, function () {
                                         moduleCache.push(name);
                                         loadDependencies(name, function () {
-                                            register($injector, providers, moduleCache);
+                                            register($injector, $log, providers, moduleCache);
                                             $timeout(function () {
                                                 callback(false);
                                             });
@@ -223,13 +224,13 @@
         try {
             angular.module(moduleName);
         } catch (e) {
-            if (/No module/.test(e)) {
+            if (/injector:nomod/.test(e)) {
                 return false;
             }
         }
         return true;
     }
-    function register($injector, providers, registerModules) {
+    function register($injector, $log, providers, registerModules) {
         var i, ii, k, invokeQueue, moduleName, moduleFn, invokeArgs, provider;
         if (registerModules) {
             var runBlocks = [];

@@ -3,7 +3,7 @@
 
     var serverModule = angular.module('motech-dashboard');
 
-    serverModule.controller('MasterCtrl', function ($scope, $http, i18nService, $cookieStore, $q, BrowserDetect, Menu) {
+    serverModule.controller('MasterCtrl', function ($scope, $http, i18nService, $cookieStore, $q, BrowserDetect, Menu, Critical) {
         var handle = function () {
                 if (!$scope.$$phase) {
                     $scope.$digest();
@@ -183,9 +183,16 @@
             return defer.promise;
         };
 
-        $scope.loadModule = function (moduleName) {
-            $scope.moduleCriticalMessage = Critical.get({moduleName : moduleName});
-            $scope.moduleToLoad = moduleName;
+        $scope.loadModule = function (moduleName, url) {
+            if (moduleName) {
+                Critical.get({moduleName : moduleName}, function (message) {
+                    if (message && message !== '') {
+                        $scope.moduleCriticalMessage = message;
+                    }
+                });
+
+                $scope.moduleToLoad = moduleName;
+            }
         };
 
         $scope.resetItemsPagination = function () {
@@ -313,6 +320,7 @@
             $scope.userLang = $scope.getLanguage(toLocale($scope.user.lang));
             moment.lang($scope.user.lang);
             $scope.loadI18n($scope.i18n);
+            $scope.loadModule($scope.getCurrentModuleName());
         });
 
         $scope.$on('lang.refresh', function () {

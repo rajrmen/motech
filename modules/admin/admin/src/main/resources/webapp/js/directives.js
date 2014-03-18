@@ -3,9 +3,9 @@
 
     /* Directives */
 
-    var widgetModule = angular.module('motech-admin');
+    var directives = angular.module('admin.directives', []);
 
-    widgetModule.directive('innerlayout', function() {
+    directives.directive('innerlayout', function() {
          return {
              link: function(scope, elm, attrs) {
                  var eastSelector;
@@ -50,7 +50,7 @@
          };
     });
 
-    widgetModule.directive('sidebar', function () {
+    directives.directive('sidebar', function () {
        return function (scope, element, attrs) {
            $(element).sidebar({
                position:"right"
@@ -58,7 +58,7 @@
        };
     });
 
-    widgetModule.directive('clearForm', function () {
+    directives.directive('clearForm', function () {
         return {
             restrict: 'A',
             link: function (scope, element, attrs) {
@@ -69,7 +69,7 @@
         };
     });
 
-    widgetModule.directive('gridDatePickerFrom', function() {
+    directives.directive('gridDatePickerFrom', function() {
         return {
             restrict: 'A',
             link: function(scope, element, attrs) {
@@ -89,7 +89,7 @@
         };
     });
 
-    widgetModule.directive('gridDatePickerTo', function() {
+    directives.directive('gridDatePickerTo', function() {
         return {
             restrict: 'A',
             link: function(scope, element, attrs) {

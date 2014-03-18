@@ -48,7 +48,7 @@
                         <div class="clearfix"></div>
                     </div>
                     <div id="criticalNotification" class="alert alert-danger" ng-if="moduleCriticalMessage">
-                        ${moduleCriticalMessage}
+                        {{moduleCriticalMessage}}
                     </div>
                     <div id="module-content" ng-show="ready" load-on-demand="moduleToLoad"></div>
                     </c:otherwise>

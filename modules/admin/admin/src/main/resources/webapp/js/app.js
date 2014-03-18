@@ -3,9 +3,11 @@
 
     /* App Module */
 
-    angular.module('motech-admin', ['motech-dashboard', 'bundleServices', 'messageServices', 'configurationServices',
-        'moduleSettingsServices', 'logService', 'ngCookies', 'ngRoute', "notificationRuleServices", "notificationRuleDtoServices"])
-        .config(['$routeProvider', function($routeProvider) {
+    var app = angular.module('admin', ['motech-dashboard', 'admin.filters', 'admin.controllers',
+        'admin.directives', 'admin.services', 'ngCookies', 'ngRoute']);
+
+
+    app.config(['$routeProvider', function($routeProvider) {
           $routeProvider.
               when('/bundles', {templateUrl: '../admin/partials/bundles.html', controller: 'BundleListCtrl'}).
               when('/messages', {templateUrl: '../admin/partials/messages.html', controller: 'StatusMsgCtrl'}).
@@ -18,9 +20,5 @@
               when('/logOptions', {templateUrl: '../admin/partials/logOptions.html', controller: 'ServerLogOptionsCtrl'}).
               when('/notificationRules', {templateUrl: '../admin/partials/notificationRules.html', controller: 'NotificationRuleCtrl'}).
               otherwise({redirectTo: '/bundles'});
-    }]).filter('moduleName', function () {
-        return function (input) {
-            return input.replace(/(motech\s|\sapi|\sbundle)/ig, '');
-        };
-    });
+    }]);
 }());

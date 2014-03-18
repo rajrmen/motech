@@ -1,9 +1,9 @@
 (function () {
     'use strict';
 
-    var emailModule = angular.module('motech-email');
+    var directives = angular.module('email.directives', []);
 
-    emailModule.directive('innerlayout', function() {
+    directives.directive('innerlayout', function() {
         return {
             restrict: 'EA',
             link: function(scope, elm, attrs) {
@@ -50,7 +50,7 @@
         };
     });
 
-    emailModule.directive('richTextEditor', function() {
+    directives.directive('richTextEditor', function() {
         return {
             restrict : "A",
             require : 'ngModel',
@@ -93,7 +93,9 @@
                 });
             }
         };
-    }).directive('purgeTime', function(){
+    });
+
+    directives.directive('purgeTime', function(){
         return {
             require: 'ngModel',
             link: function(scope, element, attrs, modelCtrl) {
@@ -115,7 +117,7 @@
         };
     });
 
-    emailModule.directive('gridDatePickerFrom', function() {
+    directives.directive('gridDatePickerFrom', function() {
         return {
             restrict: 'A',
             link: function(scope, element, attrs) {
@@ -136,7 +138,7 @@
         };
     });
 
-    emailModule.directive('gridDatePickerTo', function() {
+    directives.directive('gridDatePickerTo', function() {
         return {
             restrict: 'A',
             link: function(scope, element, attrs) {
@@ -157,7 +159,7 @@
         };
     });
 
-    emailModule.directive('autoComplete', function () {
+    directives.directive('autoComplete', function () {
         return {
             restrict: 'A',
             link: function (scope, element, attrs) {
@@ -173,7 +175,7 @@
         };
     });
 
-    emailModule.directive('exportDatePickerFrom', function() {
+    directives.directive('exportDatePickerFrom', function() {
         return {
             restrict: 'A',
             link: function(scope, element, attrs) {
@@ -221,7 +223,7 @@
         };
     });
 
-    emailModule.directive('jqgridSearch', function () {
+    directives.directive('jqgridSearch', function () {
         return {
             restrict: 'A',
             link: function (scope, element, attrs) {
@@ -307,7 +309,7 @@
         };
     });
 
-    emailModule.directive('emailloggingGrid', function($compile, $http, $templateCache) {
+    directives.directive('emailloggingGrid', function($compile, $http, $templateCache) {
         return {
             restrict: 'A',
             link: function(scope, element, attrs) {
