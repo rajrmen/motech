@@ -1,6 +1,7 @@
 package org.motechproject.osgi.web;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
+import org.motechproject.osgi.web.util.BundleHeaders;
 import org.osgi.framework.Bundle;
 
 import java.util.ArrayList;
@@ -26,6 +27,7 @@ public class ModuleRegistrationData {
     private String criticalMessage;
     private String settingsURL;
     private Bundle bundle;
+    private String resourcePath;
 
     private List<String> roleForAccess = new ArrayList<>();
     private List<String> angularModules = new ArrayList<>();
@@ -245,5 +247,15 @@ public class ModuleRegistrationData {
     @JsonIgnore
     public void setSettingsURL(String settingsURL) {
         this.settingsURL = settingsURL;
+    }
+
+    @JsonIgnore
+    public String getResourcePath() {
+        return resourcePath;
+    }
+
+    @JsonIgnore
+    public void setResourcePath(String resourcePath) {
+        this.resourcePath = resourcePath;
     }
 }

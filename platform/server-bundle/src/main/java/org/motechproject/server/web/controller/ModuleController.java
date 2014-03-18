@@ -5,7 +5,6 @@ import org.apache.commons.io.IOUtils;
 import org.motechproject.commons.api.CastUtils;
 import org.motechproject.osgi.web.ModuleRegistrationData;
 import org.motechproject.osgi.web.UIFrameworkService;
-import org.motechproject.osgi.web.util.BundleHeaders;
 import org.motechproject.server.web.dto.ModuleConfig;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -62,7 +61,6 @@ public class ModuleController {
             ModuleRegistrationData data = uiFrameworkService.getModuleDataByBundle(bundle);
 
             if (null != data) {
-                BundleHeaders headers = new BundleHeaders(bundle);
                 Map<String, String> scripts = new HashMap<>();
                 List<String> requires = new ArrayList<>();
 
@@ -71,11 +69,11 @@ public class ModuleController {
                 List<String> angularModules = data.getAngularModules();
                 String name = isEmpty(angularModules) ? null : angularModules.get(0);
 
-                addConfig(configuration, headers, name, "/js/app.js", data.getUrl());
+                addConfig(configuration, data, name, "/js/app.js", data.getUrl());
 
                 for (String require : requires) {
                     if (scripts.containsKey(require)) {
-                        addConfig(configuration, headers, require, scripts.get(require));
+                        addConfig(configuration, data, require, scripts.get(require));
                     }
                 }
             }
@@ -109,16 +107,16 @@ public class ModuleController {
         }
     }
 
-    private void addConfig(List<ModuleConfig> configuration, BundleHeaders headers, String name,
-                           String script) {
-        addConfig(configuration, headers, name, script, null);
+    private void addConfig(List<ModuleConfig> configuration, ModuleRegistrationData data,
+                           String name, String script) {
+        addConfig(configuration, data, name, script, null);
     }
 
-    private void addConfig(List<ModuleConfig> configuration, BundleHeaders headers, String name,
-                           String script, String template) {
+    private void addConfig(List<ModuleConfig> configuration, ModuleRegistrationData data,
+                           String name, String script, String template) {
         ModuleConfig config = new ModuleConfig();
         config.setName(name);
-        config.setScript("../" + headers.getResourcePath() + script);
+        config.setScript("../" + data.getResourcePath() + script);
         config.setTemplate(template);
 
         if (isNotBlank(name)) {

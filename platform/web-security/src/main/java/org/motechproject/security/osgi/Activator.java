@@ -162,6 +162,7 @@ public class Activator implements BundleActivator {
         regData.addSubMenu("#/dynamicURL", "securtiy.manageURL", PermissionNames.VIEW_SECURITY);
         regData.addI18N("messages", "../websecurity/messages/");
         regData.setBundle(bundleContext.getBundle());
+        regData.setResourcePath(RESOURCE_URL_MAPPING);
 
         Header header = new Header(bundleContext);
         header.setResourcePath(RESOURCE_URL_MAPPING);
