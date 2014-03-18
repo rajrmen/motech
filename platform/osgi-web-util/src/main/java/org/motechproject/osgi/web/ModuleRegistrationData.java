@@ -33,25 +33,30 @@ public class ModuleRegistrationData {
     private Map<String, String> i18n = new HashMap<>();
 
     public ModuleRegistrationData() {
-        this(null, (String) null);
+        this(null, null, null, null, null);
+    }
+
+    public ModuleRegistrationData(String moduleName, String url) {
+        this(moduleName, url, null, null, null);
+    }
+
+    public ModuleRegistrationData(String moduleName, List<String> angularModules,
+                                  Map<String, String> i18n) {
+        this(moduleName, null, angularModules, i18n, null);
     }
 
     public ModuleRegistrationData(String moduleName, String url, List<String> angularModules, Map<String, String> i18n, Header header) {
         this.moduleName = moduleName;
         this.url = url;
-        this.angularModules = angularModules;
-        this.i18n = i18n;
-        this.header = header.asString();
-    }
+        this.header = header != null ? header.asString() : "";
 
-    public ModuleRegistrationData(String moduleName, String url) {
-        this.moduleName = moduleName;
-        this.url = url;
-    }
+        if (null != angularModules) {
+            this.angularModules.addAll(angularModules);
+        }
 
-    public ModuleRegistrationData(String moduleName, Map<String, String> i18n) {
-        this.moduleName = moduleName;
-        this.i18n = i18n;
+        if (null != i18n) {
+            this.i18n.putAll(i18n);
+        }
     }
 
     @JsonIgnore

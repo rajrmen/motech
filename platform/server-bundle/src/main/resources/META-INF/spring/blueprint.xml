@@ -17,6 +17,11 @@
 
     <bean id="moduleRegistrationData" class="org.motechproject.osgi.web.ModuleRegistrationData">
         <constructor-arg name="moduleName" value="server-bundle"/>
+        <constructor-arg name="angularModules">
+            <list>
+                <value>motech-dashboard</value>
+            </list>
+        </constructor-arg>
         <constructor-arg name="i18n">
             <map>
                 <entry key="messages" value="../server/resources/messages/"/>
