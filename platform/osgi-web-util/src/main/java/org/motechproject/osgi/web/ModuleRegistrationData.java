@@ -42,9 +42,8 @@ public class ModuleRegistrationData {
         this(moduleName, url, null, null, null);
     }
 
-    public ModuleRegistrationData(String moduleName, List<String> angularModules,
-                                  Map<String, String> i18n) {
-        this(moduleName, null, angularModules, i18n, null);
+    public ModuleRegistrationData(String moduleName, Map<String, String> i18n) {
+        this(moduleName, null, null, i18n, null);
     }
 
     public ModuleRegistrationData(String moduleName, String url, List<String> angularModules, Map<String, String> i18n, Header header) {

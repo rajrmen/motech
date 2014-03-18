@@ -5,17 +5,23 @@ import org.apache.commons.io.IOUtils;
 import org.motechproject.commons.api.CastUtils;
 import org.motechproject.osgi.web.ModuleRegistrationData;
 import org.motechproject.osgi.web.UIFrameworkService;
+import org.motechproject.server.ui.LocaleService;
 import org.motechproject.server.web.dto.ModuleConfig;
+import org.motechproject.server.web.dto.ModuleMenu;
+import org.motechproject.server.web.form.UserInfo;
+import org.motechproject.server.web.helper.MenuBuilder;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.net.URL;
@@ -50,11 +56,37 @@ public class ModuleController {
     private static final Pattern PATTERN = Pattern.compile(REGEXP);
 
     private UIFrameworkService uiFrameworkService;
+    private LocaleService localeService;
     private BundleContext bundleContext;
+    private MenuBuilder menuBuilder;
+
+    @RequestMapping(value = "/module/critical/{moduleName}", method = RequestMethod.GET)
+    @ResponseBody
+    public String getCriticalMessage(@PathVariable String moduleName) {
+        String criticalMessage = null;
+
+        if (isNotBlank(moduleName)) {
+            ModuleRegistrationData data = uiFrameworkService.getModuleData(moduleName);
+
+            if (null != data) {
+                criticalMessage = data.getCriticalMessage();
+                uiFrameworkService.moduleBackToNormal(moduleName);
+            }
+        }
+
+        return criticalMessage;
+    }
+
+    @RequestMapping(value = "/module/menu", method = RequestMethod.GET)
+    @ResponseBody
+    public ModuleMenu getMenu(HttpServletRequest request) {
+        String username = getUser(request).getUserName();
+        return menuBuilder.buildMenu(username);
+    }
 
     @RequestMapping(value = "/module/config", method = RequestMethod.GET)
     @ResponseBody
-    public List<ModuleConfig> getModuleConfig() throws IOException {
+    public List<ModuleConfig> getConfig() throws IOException {
         List<ModuleConfig> configuration = new ArrayList<>();
 
         for (Bundle bundle : bundleContext.getBundles()) {
@@ -80,6 +112,14 @@ public class ModuleController {
         }
 
         return configuration;
+    }
+
+    public UserInfo getUser(HttpServletRequest request) {
+        String lang = localeService.getUserLocale(request).getLanguage();
+        boolean securityLaunch = request.getUserPrincipal() != null;
+        String userName = securityLaunch ? request.getUserPrincipal().getName() : "Admin Mode";
+
+        return new UserInfo(userName, securityLaunch, lang);
     }
 
     private void findScripts(Bundle bundle, Map<String, String> scripts, List<String> requires) {
@@ -169,5 +209,15 @@ public class ModuleController {
     @Autowired
     public void setBundleContext(BundleContext bundleContext) {
         this.bundleContext = bundleContext;
+    }
+
+    @Autowired
+    public void setLocaleService(LocaleService localeService) {
+        this.localeService = localeService;
+    }
+
+    @Autowired
+    public void setMenuBuilder(MenuBuilder menuBuilder) {
+        this.menuBuilder = menuBuilder;
     }
 }

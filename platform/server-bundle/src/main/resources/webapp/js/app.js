@@ -3,9 +3,12 @@
 
     /* App Module */
 
-    var serverModule = angular.module('motech-dashboard', ['localization', 'ngCookies', 'ui', 'motech-widgets',
-        'browserDetect', 'uiServices']).config(['$httpProvider', function($httpProvider) {
-        var interceptor = ['$rootScope','$q', function(scope, $q) {
+    var serverModule = angular.module('motech-dashboard', ['localization', 'ngCookies', 'ui',
+        'motech-widgets', 'browserDetect', 'uiServices', 'loadOnDemand']
+    );
+
+    serverModule.config(['$httpProvider', function($httpProvider) {
+        var interceptor = ['$q', function($q) {
             function success(response) {
                 return response;
             }
@@ -22,8 +25,19 @@
                 return promise.then(success, error);
             };
 
-            }];
-            $httpProvider.responseInterceptors.push(interceptor);
+        }];
+
+        $httpProvider.responseInterceptors.push(interceptor);
+    }]);
+
+    serverModule.config(['$loadOnDemandProvider', function ($loadOnDemandProvider) {
+        $.ajax({
+            url: '../server/module/config',
+            success:  function (data) {
+                $loadOnDemandProvider.config(data);
+            },
+            async: false
+        });
     }]);
 }());
 

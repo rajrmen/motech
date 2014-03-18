@@ -3,27 +3,22 @@ package org.motechproject.server.web.controller;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormatter;
-import org.motechproject.osgi.web.ModuleRegistrationData;
-import org.motechproject.osgi.web.UIFrameworkService;
 import org.motechproject.server.startup.StartupManager;
 import org.motechproject.server.ui.LocaleService;
 import org.motechproject.server.web.dto.ModuleMenu;
 import org.motechproject.server.web.form.UserInfo;
 import org.motechproject.server.web.helper.MenuBuilder;
-import org.osgi.framework.BundleContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.management.ManagementFactory;
 import java.util.Locale;
-import java.util.regex.Pattern;
 
 import static org.joda.time.format.DateTimeFormat.forPattern;
 import static org.motechproject.commons.date.util.DateUtil.now;
@@ -34,24 +29,12 @@ import static org.motechproject.commons.date.util.DateUtil.now;
  */
 @Controller
 public class DashboardController {
-    @Autowired
     private StartupManager startupManager;
-
-    @Autowired
-    private UIFrameworkService uiFrameworkService;
-
-    @Autowired
     private LocaleService localeService;
-
-    @Autowired
-    private MenuBuilder menuBuilder;
-
-    @Autowired
-    @Qualifier("mainHeaderStr")
     private String mainHeader;
 
     @RequestMapping({"/index", "/", "/home"})
-    public ModelAndView index(@RequestParam(required = false) String moduleName, final HttpServletRequest request) {
+    public ModelAndView index(final HttpServletRequest request) {
         ModelAndView mav;
 
         // check if this is the first run
@@ -69,15 +52,6 @@ public class DashboardController {
             } else if (StringUtils.isBlank(contextPath) || "/".equals(contextPath)) {
                 mav.addObject("contextPath", "");
             }
-
-            if (moduleName != null) {
-                ModuleRegistrationData currentModule = uiFrameworkService.getModuleData(moduleName);
-                if (currentModule != null) {
-                    mav.addObject("currentModule", currentModule);
-                    mav.addObject("criticalNotification", currentModule.getCriticalMessage());
-                    uiFrameworkService.moduleBackToNormal(moduleName);
-                }
-            }
         }
 
         return mav;
@@ -85,17 +59,10 @@ public class DashboardController {
 
     @RequestMapping(value = "/accessdenied", method = RequestMethod.GET)
     public ModelAndView accessdenied(final HttpServletRequest request) {
-        ModelAndView view = index(null, request);
+        ModelAndView view = index(request);
         view.addObject("isAccessDenied", true);
         view.addObject("loginPage", false);
         return view;
-    }
-
-    @RequestMapping(value = "/modulemenu", method = RequestMethod.GET)
-    @ResponseBody
-    public ModuleMenu getModuleMenu(HttpServletRequest request) {
-        String username = getUser(request).getUserName();
-        return menuBuilder.buildMenu(username);
     }
 
     @RequestMapping(value = "/gettime", method = RequestMethod.POST)
@@ -120,5 +87,21 @@ public class DashboardController {
         String userName = securityLaunch ? request.getUserPrincipal().getName() : "Admin Mode";
 
         return new UserInfo(userName, securityLaunch, lang);
+    }
+
+    @Autowired
+    public void setStartupManager(StartupManager startupManager) {
+        this.startupManager = startupManager;
+    }
+
+    @Autowired
+    public void setLocaleService(LocaleService localeService) {
+        this.localeService = localeService;
+    }
+
+    @Autowired
+    @Qualifier("mainHeaderStr")
+    public void setMainHeader(String mainHeader) {
+        this.mainHeader = mainHeader;
     }
 }

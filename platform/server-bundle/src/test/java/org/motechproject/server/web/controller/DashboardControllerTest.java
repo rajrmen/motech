@@ -83,7 +83,7 @@ public class DashboardControllerTest {
 
     @Test
     public void testDashboardNoModule() {
-        ModelAndView result = controller.index(null, request);
+        ModelAndView result = controller.index(request);
 
         Assert.assertEquals("index", result.getViewName());
         Assert.assertNull(result.getModelMap().get(CURRENT_MODULE));
@@ -93,7 +93,7 @@ public class DashboardControllerTest {
     public void testDashboardWithModule() {
         when(uiFrameworkService.getModuleData(MODULE_NAME)).thenReturn(moduleRegistrationData);
 
-        ModelAndView result = controller.index(MODULE_NAME, request);
+        ModelAndView result = controller.index(request);
 
         Assert.assertEquals("index", result.getViewName());
         Assert.assertEquals(moduleRegistrationData, result.getModelMap().get(CURRENT_MODULE));

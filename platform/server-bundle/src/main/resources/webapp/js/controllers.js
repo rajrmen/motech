@@ -29,6 +29,9 @@
             anonymous: true
         };
 
+        $scope.moduleToLoad = undefined;
+        $scope.moduleCriticalMessage = undefined;
+
         $scope.loginViewData = {};
         $scope.resetViewData = {};
         $scope.startupViewData = {};
@@ -178,6 +181,11 @@
                 });
 
             return defer.promise;
+        };
+
+        $scope.loadModule = function (moduleName) {
+            $scope.moduleCriticalMessage = Critical.get({moduleName : moduleName});
+            $scope.moduleToLoad = moduleName;
         };
 
         $scope.resetItemsPagination = function () {
