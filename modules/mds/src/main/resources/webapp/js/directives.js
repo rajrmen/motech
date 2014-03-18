@@ -889,6 +889,45 @@
     });
 
     /**
+    * Initializes filterable checkbox and sets a watch in the filterable scope to track changes
+    * in "advancedSettings.browsing.filterableFields".
+    */
+    mds.directive('clickfilter', function () {
+        return {
+            restrict: 'A',
+            link: function (scope, element, attrs) {
+                var elm = angular.element(element);
+                elm.click(function (e) {
+                    if (elm.children().hasClass("icon-ok")) {
+                        if (elm.text().trim() === 'ALL') {
+                            elm.parent().children().each(function(i) {
+                               $(this).children().removeClass('icon-ok icon-ban-circle').addClass("icon-ban-circle");
+                               $(elm.parent().children()[i]).removeClass('active');
+                            });
+                        } else {
+                            elm.children().removeClass('icon-ok').addClass("icon-ban-circle");
+                            elm.removeClass('active');
+                            $(elm.parent().children()[0]).removeClass('active');
+                            $(elm.parent().children()[0]).children().removeClass('icon-ok').addClass("icon-ban-circle");
+                        }
+                    }
+                    else {
+                        if (elm.text().trim() === 'ALL') {
+                            elm.parent().children().each(function(i) {
+                               $(this).children().removeClass('icon-ok icon-ban-circle').addClass("icon-ok");
+                               $(elm.parent().children()[i]).addClass('active');
+                            });
+                        } else {
+                            elm.children().addClass('icon-ok').removeClass('icon-ban-circle');
+                            elm.addClass('active');
+                        }
+                    }
+                });
+            }
+        };
+    });
+
+    /**
     * Displays entity instances data using jqGrid
     */
     mds.directive('entityInstancesGrid', function () {
@@ -1121,6 +1160,7 @@
                                 $('.ui-jqgrid-htable').width('100%');
                                 $('.ui-jqgrid-bdiv').width('100%');
                                 $('.ui-jqgrid-hdiv').width('100%');
+                                $('div.ui-jqgrid-hbox').css({'padding-right':'0'});
                                 $('.ui-jqgrid-hbox').width('100%');
                                 $('.ui-jqgrid-view').width('100%');
                                 $('#t_historyTable').width('auto');
@@ -1297,7 +1337,7 @@
                     togglerTip_open: "Close This Pane",
                     togglerTip_closed: "Open This Pane",
                     east__initClosed: true,
-                    initHidden: true
+                    initHidden: false
                 };
 
                 // create the page-layout, which will ALSO create the tabs-wrapper child-layout

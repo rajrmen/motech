@@ -73,6 +73,8 @@
     mds.controller('SchemaEditorCtrl', function ($scope, $timeout, Entities, Users, Roles) {
         var setAdvancedSettings, setRest, setBrowsing, setSecuritySettings, setIndexesLookupsTab;
 
+        $scope.innerLayout.hide('east');
+
         workInProgress.setList(Entities);
 
         if (loadEntity) {
@@ -1939,7 +1941,7 @@
     /**
     * The DataBrowserCtrl controller is used on the 'Data Browser' view.
     */
-    mds.controller('DataBrowserCtrl', function ($scope, $http, Entities, Instances, $timeout) {
+    mds.controller('DataBrowserCtrl', function ($rootScope, $scope, $http, Entities, Instances, $timeout) {
         workInProgress.setActualEntity(Entities, undefined);
 
         /**
@@ -1957,7 +1959,7 @@
         */
         $scope.selectedEntity = undefined;
 
-        $scope.selectedFields = [];
+        $rootScope.selectedFields = [];
 
         /**
         * Fields that belong to a certain lookup
@@ -2009,9 +2011,12 @@
 
         $scope.optionValue = '';
 
-        $scope.filters = [];
+        $rootScope.filters = [];
 
         $scope.fieldValue = [];
+
+        $scope.innerLayout.show('east');
+
 
         /**
         * Initializes a map of all entities in MDS indexed by module name
@@ -2159,8 +2164,8 @@
 
                     Entities.getAdvancedCommited({id: $scope.selectedEntity.id}, function(data) {
                         $scope.entityAdvanced = data;
-
-                        $scope.filters = [];
+                        $scope.innerLayout.addToggleBtn("#mds-filters", "east");
+                        $rootScope.filters = [];
 
                         var filterableFields = $scope.entityAdvanced.browsing.filterableFields,
                             i, field, types;
@@ -2170,7 +2175,7 @@
                             if ($.inArray(field.id, filterableFields) >= 0) {
                                 types = $scope.filtersForField(field);
 
-                                $scope.filters.push({
+                                $rootScope.filters.push({
                                     field: field.basic.name,
                                     types: types
                                 });
@@ -2196,7 +2201,7 @@
             }
         };
 
-        $scope.msgForFilter = function(filter) {
+        $rootScope.msgForFilter = function(filter) {
             return $scope.msg("mds.filter." + filter.toLowerCase());
         };
 
@@ -2265,7 +2270,7 @@
             $scope.selectedEntity = undefined;
         };
 
-        $scope.selectFilter = function(field, filterType) {
+        $rootScope.selectFilter = function(field, filterType) {
             $scope.lookupBy = {};
             $scope.selectedLookup = undefined;
             $scope.lookupFields = [];
@@ -2567,6 +2572,13 @@
     });
 
     /**
+    * The FilterCtrl controller is used on the 'Data Browser' view for the right panel.
+    */
+    mds.controller('FilterCtrl', function ($rootScope, $scope) {
+
+    });
+
+    /**
     * The SettingsCtrl controller is used on the 'Settings' view.
     */
     mds.controller('SettingsCtrl', function ($scope, Entities, MdsSettings) {
@@ -2581,6 +2593,7 @@
             $scope.msg('mds.dataRetention.months'),
             $scope.msg('mds.dataRetention.years')];
         $scope.entities = Entities.query();
+        $scope.innerLayout.hide('east');
 
         /**
         * This function is used to get entity metadata from controller and convert it for further usage

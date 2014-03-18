@@ -14,6 +14,9 @@
         <span class="glyphicon glyphicon-export"></span>
         {{msg('mds.btn.exportCsv')}}
     </button>
+    <button type="button" class="btn btn-info" id="mds-filters">
+        <i class="icon-filter icon-white"></i>&nbsp;{{msg('mds.filters')}}
+    </button>
 </div>
 
 <div id="lookup-dialog" class="popover bottom inside lookup-dialog" ng-style="lookupDialogStyle()">
@@ -49,13 +52,6 @@
                 </button>
             </div>
         </div>
-    </div>
-</div>
-
-<div ng-repeat="filter in filters">
-    <span>{{filter.field}}</span>
-    <div ng-repeat="filterType in filter.types">
-        <a ng-click="selectFilter(filter.field, filterType)">{{msgForFilter(filterType)}}</a>
     </div>
 </div>
 
