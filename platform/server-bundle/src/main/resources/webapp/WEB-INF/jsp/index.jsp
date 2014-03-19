@@ -32,7 +32,7 @@
             </div>
         </div>
 
-        <div innerlayout id="outer-center" class="outer-center ui-layout-pane ui-layout-pane-center ui-layout-container">
+        <div id="outer-center" class="outer-center ui-layout-pane ui-layout-pane-center ui-layout-container">
             <div id="main-content">
                 <c:choose>
                     <c:when test="${isAccessDenied}">

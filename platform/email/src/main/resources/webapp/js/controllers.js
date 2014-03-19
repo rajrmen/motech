@@ -6,7 +6,6 @@
 
     controllers.controller('SendEmailController', function ($scope, SendEmailService) {
         $scope.mail = {};
-        $scope.innerLayout.hide('east');
 
         $scope.sendEmail = function () {
             SendEmailService.save(
@@ -20,12 +19,18 @@
                 }
             );
         };
+
+        innerLayout({
+            spacing_closed: 30,
+            east__minSize: 200,
+            east__maxSize: 350
+        }, function (elem) {
+            // BIND events to hard-coded buttons
+            elem.addCloseBtn( "#tbarCloseEast", "east" );
+        });
     });
 
     controllers.controller('EmailLoggingController', function($scope, EmailAuditService) {
-
-        $scope.innerLayout.show('east');
-        $scope.innerLayout.addToggleBtn("#email-logging-filters", "east");
         $scope.availableRange = ['all','table', 'month'];
         $scope.loggingRange = $scope.availableRange[0];
 
@@ -67,11 +72,20 @@
             $scope.change('all');
         };
 
+        innerLayout({
+            spacing_closed: 30,
+            east__minSize: 200,
+            east__maxSize: 350
+        }, function (elem) {
+            // BIND events to hard-coded buttons
+            elem.addCloseBtn( "#tbarCloseEast", "east" );
+            elem.addToggleBtn("#email-logging-filters", "east");
+            elem.show('east');
+        });
     });
 
     controllers.controller('SettingsController', function ($scope, SettingsService) {
         $scope.settings = SettingsService.get();
-        $scope.innerLayout.hide('east');
 
         $scope.timeMultipliers = {
             'hours': $scope.msg('email.settings.log.units.hours'),
@@ -108,5 +122,13 @@
             }
         };
 
+        innerLayout({
+            spacing_closed: 30,
+            east__minSize: 200,
+            east__maxSize: 350
+        }, function (elem) {
+            // BIND events to hard-coded buttons
+            elem.addCloseBtn( "#tbarCloseEast", "east" );
+        });
     });
 }());
