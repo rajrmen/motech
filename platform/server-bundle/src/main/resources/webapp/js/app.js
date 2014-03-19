@@ -4,7 +4,7 @@
     /* App Module */
 
     var serverModule = angular.module('motech-dashboard', ['localization', 'ngCookies', 'ui',
-        'motech-widgets', 'browserDetect', 'uiServices', 'loadOnDemand']
+        'motech-widgets', 'browserDetect', 'uiServices', 'loadOnDemand', 'ui.router']
     );
 
     serverModule.config(['$httpProvider', function($httpProvider) {

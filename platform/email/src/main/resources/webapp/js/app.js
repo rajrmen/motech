@@ -18,16 +18,21 @@
     var app = angular.module('email', ['motech-dashboard', 'ngCookies', 'ngRoute',
         'email.controllers', 'email.directives', 'email.services']);
 
-    app.config(['$routeProvider', function ($routeProvider) {
-        $routeProvider.when('/send', {
+    app.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $urlRouterProvider) {
+        $urlRouterProvider.otherwise("/send");
+
+        $stateProvider.state('email.send', {
+            url: '/send',
             templateUrl: '../email/resources/partials/sendEmail.html',
-            controller: 'SendEmailController',
-        }).when('/logging', {
+            controller: 'SendEmailController'
+        }).state('email.logging', {
+            url: '/logging',
             templateUrl: '../email/resources/partials/emailLogging.html',
             controller: 'EmailLoggingController'
-        }).when('/settings', {
+        }).state('email.settings', {
+            url: '/settings',
             templateUrl: '../email/resources/partials/settings.html',
             controller: 'SettingsController'
-        }).otherwise({redirectTo: '/send'});
+        });
     }]);
 }());

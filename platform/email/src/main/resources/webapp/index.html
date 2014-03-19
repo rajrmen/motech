@@ -10,15 +10,15 @@
     </div>
     <div class="header-footer">
         <ul id="content-tabs" class="nav nav-tabs tasks ">
-            <li ng-class="active('#/send')"><a  href="#/send" >{{msg('email.send')}}</a></li>
-            <li ng-class="active('#/logging')"><a href="#/logging" >{{msg('email.logging')}}</a></li>
-            <li ng-class="active('#/settings')"><a  href="#/settings" >{{msg('email.settings')}}</a></li>
+            <li ng-class="active('#/send')"><a  ui-sref="email.send" >{{msg('email.send')}}</a></li>
+            <li ng-class="active('#/logging')"><a ui-sref="email.logging" >{{msg('email.logging')}}</a></li>
+            <li ng-class="active('#/settings')"><a  ui-sref="email.settings" >{{msg('email.settings')}}</a></li>
         </ul>
     </div>
     <div class="ui-layout-content">
         <div class="tab-content" id="tab-content">
             <div id="main-content" class="tab-pane active">
-                <div ng-view></div>
+                <div ui-view></div>
             </div>
         </div>
     </div>

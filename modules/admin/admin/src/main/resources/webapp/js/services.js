@@ -3,7 +3,7 @@
 
     /* Services */
 
-    var services = angular.module('admin.services', ['ngResource');
+    var services = angular.module('admin.services', ['ngResource']);
 
     services.factory('Bundle', function($resource) {
         return $resource('../admin/api/bundles/:bundleId/:action', {bundleId:'@bundleId'}, {
