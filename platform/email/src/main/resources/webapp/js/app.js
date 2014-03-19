@@ -3,36 +3,24 @@
 
     /* App Module */
 
-    function safeApply(rootScope, fun) {
-        var phase = rootScope.$$phase;
-
-        if (phase === '$apply' || phase === '$digest') {
-            if(fun && (typeof(fun) === 'function')) {
-                fun();
-            }
-        } else {
-            scope.$apply(fun);
-        }
-    }
-
     var app = angular.module('email', ['motech-dashboard', 'ngCookies', 'ngRoute',
         'email.controllers', 'email.directives', 'email.services']);
 
-    app.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $urlRouterProvider) {
-        $urlRouterProvider.otherwise("/send");
-
-        $stateProvider.state('email.send', {
+    app.config(function ($stateProvider, $urlRouterProvider) {
+        $stateProvider.state('email_send', {
             url: '/send',
             templateUrl: '../email/resources/partials/sendEmail.html',
             controller: 'SendEmailController'
-        }).state('email.logging', {
+        }).state('email_logging', {
             url: '/logging',
             templateUrl: '../email/resources/partials/emailLogging.html',
             controller: 'EmailLoggingController'
-        }).state('email.settings', {
+        }).state('email_settings', {
             url: '/settings',
             templateUrl: '../email/resources/partials/settings.html',
             controller: 'SettingsController'
         });
-    }]);
+
+        $urlRouterProvider.otherwise('/send');
+    });
 }());
