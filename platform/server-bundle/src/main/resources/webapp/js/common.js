@@ -143,14 +143,14 @@ function innerLayout(conf, callback) {
         },
         element = angular.element('#outer-center'),
         options = {},
-        innerLayout;
+        layout;
 
     $.extend(options, defaults, config);
 
     // create the page-layout, which will ALSO create the tabs-wrapper child-layout
-    innerLayout = element.layout(options);
+    layout = element.layout(options);
 
     if (_.isFunction(callback)) {
-        callback(innerLayout);
+        callback(layout);
     }
 }

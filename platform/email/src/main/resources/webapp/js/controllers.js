@@ -27,6 +27,7 @@
         }, function (elem) {
             // BIND events to hard-coded buttons
             elem.addCloseBtn( "#tbarCloseEast", "east" );
+            elem.hide('east');
         });
     });
 
@@ -129,6 +130,7 @@
         }, function (elem) {
             // BIND events to hard-coded buttons
             elem.addCloseBtn( "#tbarCloseEast", "east" );
+            elem.hide('east');
         });
     });
 }());
