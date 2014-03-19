@@ -1,9 +1,10 @@
-﻿/*global angular*/
+﻿/*copyright: https://github.com/AndyGrom/loadOnDemand*/
+/*global angular*/
 (function () {
     'use strict';
-    var regModules = ["ng"];
+    var regModules = ['ng','ngAnimate'];
     
-    var aModule = angular.module('loadOnDemand', []);
+    var aModule = angular.module('loadOnDemand', ['ng']);
 
     aModule.factory('scriptCache', ['$cacheFactory', function ($cacheFactory) {
         return $cacheFactory('scriptCache', {
@@ -12,7 +13,7 @@
     } ]);
 
     aModule.provider('$loadOnDemand',
-        ['$controllerProvider', '$provide', '$compileProvider', '$filterProvider', '$injector',
+        ['$controllerProvider', '$provide', '$compileProvider', '$filterProvider','$injector',
             function ($controllerProvider, $provide, $compileProvider, $filterProvider, $injector) {
                 
                 var modules = { },
@@ -20,8 +21,8 @@
                         $controllerProvider: $controllerProvider,
                         $compileProvider: $compileProvider,
                         $filterProvider: $filterProvider,
-                        $injector: $injector,
-                        $provide: $provide // other things
+                        $provide: $provide, // other things
+                        $injector: $injector
                     };
                 this.$get = ['scriptCache', '$timeout', '$log', '$document', '$injector',
                     function (scriptCache, $timeout, $log, $document, $injector) {
@@ -38,7 +39,7 @@
                                     resourceId = 'script:' + config.script,
                                     moduleCache = [];
                                 moduleCache.push = function (value) {
-                                    if (this.indexOf(value) == -1) {
+                                    if (this.indexOf(value) === -1) {
                                         Array.prototype.push.apply(this, arguments);
                                     }
                                 };
@@ -49,27 +50,32 @@
                                 }
 
                                 function loadScript(url, onLoadScript) {
-                                    var scriptId = 'script:' + url,
-                                        scriptElement;
-                                    if (!scriptCache.get(scriptId)) {
-                                        scriptElement = $document[0].createElement('script');
-                                        scriptElement.src = url;
-                                        scriptElement.onload = onLoadScript;
-                                        scriptElement.onerror = function () {
-                                            $log.error('Error loading "' + url + '"');
-                                            scriptCache.remove(scriptId);
-                                        };
-                                        $document[0].documentElement.appendChild(scriptElement);
-                                        scriptCache.put(scriptId, 1);
+                                    if (typeof url !== 'undefined') {
+                                        var scriptId = 'script:' + url,
+                                            scriptElement;
+                                        if (!scriptCache.get(scriptId)) {
+                                            scriptElement = $document[0].createElement('script');
+                                            scriptElement.src = url;
+                                            scriptElement.onload = onLoadScript;
+                                            scriptElement.onerror = function () {
+                                                $log.error('Error loading "' + url + '"');
+                                                scriptCache.remove(scriptId);
+                                            };
+                                            $document[0].documentElement.appendChild(scriptElement);
+                                            scriptCache.put(scriptId, 1);
+                                        } else {
+                                            $timeout(onLoadScript);
+                                        }
                                     } else {
-                                        $timeout(onLoadScript);
-                                    }
+                                        callback(true);
+                                    }                                        
                                 }
 
                                 function loadDependencies(moduleName, allDependencyLoad) {
                                     if (regModules.indexOf(moduleName) > -1) {
                                         return allDependencyLoad();
                                     }
+                                    
                                     var loadedModule = angular.module(moduleName),
                                         requires = getRequires(loadedModule);
                                     
@@ -97,7 +103,7 @@
                                         }
                                         
                                         var requireModuleConfig = self.getConfig(requireModule);
-                                        if (requireModuleConfig) {
+                                        if (requireModuleConfig && (typeof requireModuleConfig.script !== 'undefined')) {
                                             loadScript(requireModuleConfig.script, function() {
                                                 loadDependencies(requireModule, function requireModuleLoaded(name) {
                                                     onModuleLoad(name);
@@ -110,7 +116,7 @@
                                         return null;
                                     });
 
-                                    if (requireNeeded.length == 0) {
+                                    if (requireNeeded.length === 0) {
                                         onModuleLoad();
                                     }
                                     return null;
@@ -120,7 +126,7 @@
                                     loadScript(config.script, function () {
                                         moduleCache.push(name);
                                         loadDependencies(name, function () {
-                                            register($injector, $log, providers, moduleCache);
+                                            register($injector, providers, moduleCache, $log);
                                             $timeout(function () {
                                                 callback(false);
                                             });
@@ -151,6 +157,7 @@
         function ($http, scriptCache, $log, $loadOnDemand, $compile, $timeout) {
             return {
                 link: function (scope, element, attr) {
+                    $log.error('executing link on ', element[0].tagName, attr);
                     var srcExp = attr.loadOnDemand,
                         childScope;
 
@@ -163,50 +170,55 @@
                     }
 
                     function loadTemplate(url, callback) {
-                        var resourceId = 'view:' + url,
-                            view;
-                        if (!scriptCache.get(resourceId)) {
-                            $http.get(url).
-                                success(function(data) {
-                                    scriptCache.put(resourceId, data);
-                                    callback(data);
-                                })
-                                .error(function(data) {
-                                    $log.error('Error load template "' + url + "': " + data);
+                        scope.$apply(function() {
+                            var resourceId = 'view:' + url,
+                                view;
+                            if (!scriptCache.get(resourceId)) {
+                                $http.get(url).
+                                    success(function(data) {
+                                        scriptCache.put(resourceId, data);
+                                        scope.$evalAsync(function() {
+                                            callback(data);
+                                        });                                    
+                                    })
+                                    .error(function(data) {
+                                        $log.error('Error load template "' + url + "': " + data);
+                                    });
+                            } else {
+                                view = scriptCache.get(resourceId);
+                                scope.$evalAsync(function() {
+                                    callback(view);
                                 });
-                        } else {
-                            view = scriptCache.get(resourceId);
-                            $timeout(function() {
-                                callback(view);
-                            }, 0);
-                        }
+                            }
+                        });
                     }
 
-                    scope.$watch(srcExp, function(moduleName) {
-                        var moduleConfig = $loadOnDemand.getConfig(moduleName);
-
-                        if (moduleName) {
-                            $loadOnDemand.load(moduleName, function() {
-                                if (!moduleConfig.template) {
-                                    return;
-                                }
-                                loadTemplate(moduleConfig.template, function(template) {
-
-                                    childScope = scope.$new();
-                                    element.html(template);
-
-                                    var content = element.contents(),
-                                        linkFn = $compile(content);
-
-                                    linkFn(childScope);
+                    if (typeof srcExp !== 'undefined') {
+                        $log.warn('registering loadOnDemand.$watch for expr "' + srcExp + '"');
+                        scope.$watch(srcExp, function(moduleName) {
+                            var moduleConfig = $loadOnDemand.getConfig(moduleName);
+                            if (moduleName) {
+                                $loadOnDemand.load(moduleName, function() {
+                                    if (!moduleConfig.template) {
+                                        return;
+                                    }
+                                    loadTemplate(moduleConfig.template, function(template) {
+    
+                                        childScope = scope.$new();
+                                        element.html(template);
+    
+                                        var content = element.contents();
+                                        var linkFn = $compile(content);
+                                        $timeout(function() {
+                                            linkFn(childScope);
+                                        });
+                                    });
                                 });
-
-                            });
-                        } else {
-                            clearContent();
-                        }
-                    });
-
+                            } else {
+                                clearContent();
+                            }
+                        });
+                    }
                 }
             };
         }]);
@@ -214,7 +226,7 @@
     function getRequires(module) {
         var requires = [];
         angular.forEach(module.requires, function (requireModule) {
-            if (regModules.indexOf(requireModule) == -1) {
+            if (regModules.indexOf(requireModule) === -1) {
                 requires.push(requireModule);
             }
         });
@@ -224,13 +236,13 @@
         try {
             angular.module(moduleName);
         } catch (e) {
-            if (/injector:nomod/.test(e)) {
+            if (/No module/.test(e) || (e.message.indexOf('$injector:nomod') > -1)) {
                 return false;
             }
         }
         return true;
     }
-    function register($injector, $log, providers, registerModules) {
+    function register($injector, providers, registerModules, $log) {
         var i, ii, k, invokeQueue, moduleName, moduleFn, invokeArgs, provider;
         if (registerModules) {
             var runBlocks = [];
@@ -274,7 +286,7 @@
             NG_APP_CLASS_REGEXP = /\sng[:\-]app(:\s*([\w\d_]+);?)?\s/;
 
         function append(elm) {
-            elm && elements.push(elm);
+            return (elm && elements.push(elm));
         }
 
         angular.forEach(names, function (name) {
@@ -307,7 +319,7 @@
         });
         if (appElement) {
             (function addReg(module) {
-                if (regModules.indexOf(module) == -1) {
+                if (regModules.indexOf(module) === -1) {
                     regModules.push(module);
                     var mainModule = angular.module(module);
                     angular.forEach(mainModule.requires, addReg);
@@ -317,5 +329,3 @@
     }
 
 })();
-
-
