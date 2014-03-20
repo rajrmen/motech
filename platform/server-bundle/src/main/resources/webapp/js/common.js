@@ -161,5 +161,6 @@ function defaultView(view) {
         indexOfHash = location.indexOf('#'),
         to = (indexOfHash < 0) ? location.length : indexOfHash;
 
+    window.location += '?';
     window.location = location.substr(0, to) + '#' + view;
 }
