@@ -4,7 +4,9 @@ import org.motechproject.security.ex.InvalidTokenException;
 import org.motechproject.security.service.PasswordRecoveryService;
 import org.motechproject.server.web.dto.ResetViewData;
 import org.motechproject.server.web.form.ResetForm;
+import org.motechproject.server.web.helper.Header;
 import org.motechproject.server.web.validator.ResetFormValidator;
+import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,13 +36,12 @@ public class ResetController {
     private ResetFormValidator resetFormValidator;
 
     @Autowired
-    @Qualifier("mainHeaderStr")
-    private String mainHeader;
+    private BundleContext bundleContext;
 
     @RequestMapping(value = "/forgotreset", method = RequestMethod.GET)
     public ModelAndView resetView(HttpServletRequest request) {
         ModelAndView mav = new ModelAndView("reset");
-        mav.addObject("mainHeader", mainHeader);
+        mav.addObject("mainHeader", Header.generateHeader(bundleContext.getBundle()));
 
         return mav;
     }

@@ -22,7 +22,6 @@ public class ModuleRegistrationData {
 
     private String moduleName;
     private String url;
-    private String header;
     private boolean needsAttention;
     private String criticalMessage;
     private String settingsURL;
@@ -35,21 +34,20 @@ public class ModuleRegistrationData {
     private Map<String, String> i18n = new HashMap<>();
 
     public ModuleRegistrationData() {
-        this(null, null, null, null, null);
+        this(null, null, null, null);
     }
 
     public ModuleRegistrationData(String moduleName, String url) {
-        this(moduleName, url, null, null, null);
+        this(moduleName, url, null, null);
     }
 
     public ModuleRegistrationData(String moduleName, Map<String, String> i18n) {
-        this(moduleName, null, null, i18n, null);
+        this(moduleName, null, null, i18n);
     }
 
-    public ModuleRegistrationData(String moduleName, String url, List<String> angularModules, Map<String, String> i18n, Header header) {
+    public ModuleRegistrationData(String moduleName, String url, List<String> angularModules, Map<String, String> i18n) {
         this.moduleName = moduleName;
         this.url = url;
-        this.header = header != null ? header.asString() : "";
 
         if (null != angularModules) {
             this.angularModules.addAll(angularModules);
@@ -130,14 +128,6 @@ public class ModuleRegistrationData {
         return i18n;
     }
 
-    public String getHeader() {
-        return header;
-    }
-
-    public void setHeader(String header) {
-        this.header = header;
-    }
-
     public boolean isNeedsAttention() {
         return needsAttention;
     }
@@ -199,10 +189,6 @@ public class ModuleRegistrationData {
 
         ModuleRegistrationData that = (ModuleRegistrationData) o;
 
-        if (header != null ? !header.equals(that.header) : that.header != null) {
-            return false;
-        }
-
         if (moduleName != null ? !moduleName.equals(that.moduleName) : that.moduleName != null) {
             return false;
         }
@@ -218,7 +204,6 @@ public class ModuleRegistrationData {
     public int hashCode() {
         int result = moduleName != null ? moduleName.hashCode() : 0;
         result = 31 * result + (url != null ? url.hashCode() : 0);
-        result = 31 * result + (header != null ? header.hashCode() : 0);
         result = 31 * result + (angularModules != null ? angularModules.hashCode() : 0);
         return result;
     }

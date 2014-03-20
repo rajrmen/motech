@@ -11,8 +11,6 @@
 
     <context:annotation-config/>
 
-    <bean id="header" class="org.motechproject.osgi.web.Header"/>
-
     <bean id="moduleRegistrationData" class="org.motechproject.osgi.web.ModuleRegistrationData">
         <constructor-arg name="url" value="../admin/index.html"/>
         <constructor-arg name="moduleName" value="admin.module"/>
@@ -26,7 +24,6 @@
                 <entry key="messages" value="../admin/messages/"/>
             </map>
         </constructor-arg>
-        <constructor-arg name="header" ref="header"/>
         <property name="subMenu">
             <map>
                 <entry key="admin.manageModules" value="#/bundles"/>

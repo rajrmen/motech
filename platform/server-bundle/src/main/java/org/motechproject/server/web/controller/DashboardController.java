@@ -7,7 +7,9 @@ import org.motechproject.server.startup.StartupManager;
 import org.motechproject.server.ui.LocaleService;
 import org.motechproject.server.web.dto.ModuleMenu;
 import org.motechproject.server.web.form.UserInfo;
+import org.motechproject.server.web.helper.Header;
 import org.motechproject.server.web.helper.MenuBuilder;
+import org.osgi.framework.BundleContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
@@ -31,7 +33,7 @@ import static org.motechproject.commons.date.util.DateUtil.now;
 public class DashboardController {
     private StartupManager startupManager;
     private LocaleService localeService;
-    private String mainHeader;
+    private BundleContext bundleContext;
 
     @RequestMapping({"/index", "/", "/home"})
     public ModelAndView index(final HttpServletRequest request) {
@@ -44,7 +46,7 @@ public class DashboardController {
             mav = new ModelAndView("index");
             mav.addObject("isAccessDenied", false);
             mav.addObject("loginPage", false);
-            mav.addObject("mainHeader", mainHeader);
+            mav.addObject("mainHeader", Header.generateHeader(bundleContext.getBundle()));
             String contextPath = request.getSession().getServletContext().getContextPath();
 
             if (StringUtils.isNotBlank(contextPath) && !"/".equals(contextPath)) {
@@ -100,8 +102,7 @@ public class DashboardController {
     }
 
     @Autowired
-    @Qualifier("mainHeaderStr")
-    public void setMainHeader(String mainHeader) {
-        this.mainHeader = mainHeader;
+    public void setBundleContext(BundleContext bundleContext) {
+        this.bundleContext = bundleContext;
     }
 }

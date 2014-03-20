@@ -1,7 +1,6 @@
 package org.motechproject.security.osgi;
 
 import org.apache.felix.http.api.ExtHttpService;
-import org.motechproject.osgi.web.Header;
 import org.motechproject.osgi.web.ModuleRegistrationData;
 import org.motechproject.osgi.web.MotechOsgiWebApplicationContext;
 import org.motechproject.osgi.web.UIFrameworkService;
@@ -163,10 +162,6 @@ public class Activator implements BundleActivator {
         regData.addI18N("messages", "../websecurity/messages/");
         regData.setBundle(bundleContext.getBundle());
         regData.setResourcePath(RESOURCE_URL_MAPPING);
-
-        Header header = new Header(bundleContext);
-        header.setResourcePath(RESOURCE_URL_MAPPING);
-        regData.setHeader(header.asString());
 
         service.registerModule(regData);
         LOGGER.debug("Web Security registered in UI framework");

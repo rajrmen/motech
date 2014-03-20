@@ -4,7 +4,7 @@
     /* App Module */
 
     var serverModule = angular.module('motech-dashboard', ['localization', 'ngCookies', 'ui',
-        'motech-widgets', 'browserDetect', 'uiServices', 'loadOnDemand', 'ui.router']
+        'motech-widgets', 'browserDetect', 'uiServices', 'loadOnDemand']
     );
 
     serverModule.config(['$httpProvider', function($httpProvider) {
@@ -35,8 +35,7 @@
             url: '../server/module/config',
             success:  function (data) {
                 $loadOnDemandProvider.config(data);
-            },
-            async: false
+            }
         });
     }]);
 }());

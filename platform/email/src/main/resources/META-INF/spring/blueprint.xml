@@ -48,9 +48,6 @@
                 <entry key="messages" value="../email/resources/messages/"/>
             </map>
         </constructor-arg>
-        <constructor-arg name="header">
-            <bean class="org.motechproject.osgi.web.Header"/>
-        </constructor-arg>
         <property name="roleForAccess">
             <list>
                 <value>viewBasicEmailLogs</value>

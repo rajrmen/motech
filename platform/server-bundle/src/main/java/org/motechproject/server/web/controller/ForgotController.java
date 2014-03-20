@@ -7,6 +7,8 @@ import org.motechproject.server.config.SettingsFacade;
 import org.motechproject.server.config.domain.LoginMode;
 import org.motechproject.server.startup.StartupManager;
 import org.motechproject.server.web.dto.ForgotViewData;
+import org.motechproject.server.web.helper.Header;
+import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,8 +43,7 @@ public class ForgotController {
     private CookieLocaleResolver cookieLocaleResolver;
 
     @Autowired
-    @Qualifier("mainHeaderStr")
-    private String mainHeader;
+    private BundleContext bundleContext;
 
     @RequestMapping(value = "/forgot", method = RequestMethod.GET)
     public ModelAndView login(final HttpServletRequest request) {
@@ -55,7 +56,7 @@ public class ForgotController {
         }
 
         ModelAndView view = new ModelAndView("forgot");
-        view.addObject("mainHeader", mainHeader);
+        view.addObject("mainHeader", Header.generateHeader(bundleContext.getBundle()));
         view.addObject("error", request.getParameter("error"));
 
         return view;
