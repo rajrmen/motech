@@ -16,7 +16,7 @@
         <constructor-arg name="moduleName" value="tasks"/>
         <constructor-arg name="angularModules">
             <list>
-                <value>motech-tasks</value>
+                <value>tasks</value>
             </list>
         </constructor-arg>
         <constructor-arg name="i18n">

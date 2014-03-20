@@ -1,6 +1,6 @@
 <div class="row create-edit-task">
-    <h4 ng-hide="task._id" class="frame-title">{{msg('task.section.newTask')}} <a href="#/task/" type="button" class="btn btn-sm btn-danger btn-in-frame-header pull-right"><i class="icon-remove icon-white"></i></a></h4>
-    <h4 ng-show="task._id" class="frame-title">{{msg('task.section.editTask')}} <a href="#/task/" type="button" class="btn btn-sm btn-primary btn-in-frame-header pull-right"><i class="icon-mail-reply icon-white"></i></a></h4>
+    <h4 ng-hide="task._id" class="frame-title">{{msg('task.section.newTask')}} <a href="#/tasks/task/" type="button" class="btn btn-sm btn-danger btn-in-frame-header pull-right"><i class="icon-remove icon-white"></i></a></h4>
+    <h4 ng-show="task._id" class="frame-title">{{msg('task.section.editTask')}} <a href="#/tasks/task/" type="button" class="btn btn-sm btn-primary btn-in-frame-header pull-right"><i class="icon-mail-reply icon-white"></i></a></h4>
     <div class="inside">
         <div ng-show="task.validationErrors.length" class="alert alert-block alert-danger">
             <strong>{{msg('task.header.taskErrors')}}:</strong>
@@ -471,7 +471,7 @@
                         <div class="form-group centered inside">
                             <button ng-disabled="!task.name" ng-click="save(true)" class="btn btn-primary">{{msg('task.button.saveAndEnable')}}</button>
                             <button ng-disabled="!task.name" ng-click="save(false)" class="btn btn-success">{{msg('task.button.save')}}</button>
-                            <a href="#/task/" class="btn btn-default"> {{msg('task.button.cancel')}}</a>
+                            <a href="#/tasks/task/" class="btn btn-default"> {{msg('task.button.cancel')}}</a>
                         </div>
                     </div>
                 </div>

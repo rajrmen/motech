@@ -3,18 +3,9 @@
 
     /* Directives */
 
-    var widgetModule = angular.module('motech-tasks');
+    var directives = angular.module('tasks.directives', []);
 
-    widgetModule.directive('innerlayout', defaultLayout({
-        spacing_closed: 30,
-        east__minSize: 200,
-        east__maxSize: 350
-    }, function (innerLayout) {
-        // BIND events to hard-coded buttons in the NORTH toolbar
-        innerLayout.addCloseBtn( "#tbarCloseEast", "east" );
-    }));
-
-    widgetModule.directive('overflowChange', function () {
+    directives.directive('overflowChange', function () {
         return {
             restrict: 'A',
             link: function (scope, element, attrs) {
@@ -36,7 +27,7 @@
         };
     });
 
-    widgetModule.directive('expandAccordion', function () {
+    directives.directive('expandAccordion', function () {
         return {
             restrict: 'A',
             link: function (scope, element, attrs) {
@@ -59,7 +50,7 @@
         };
     });
 
-    widgetModule.directive('draggable', function () {
+    directives.directive('draggable', function () {
         return {
             restrict: 'A',
             link: function (scope, element, attrs) {
@@ -76,7 +67,7 @@
     });
 
 
-    widgetModule.directive('droppable', function (ManageTaskUtils, $compile) {
+    directives.directive('droppable', function (ManageTaskUtils, $compile) {
         return {
             restrict: 'A',
             link: function (scope, element, attrs) {
@@ -226,7 +217,7 @@
         };
     });
 
-    widgetModule.directive('integer', function () {
+    directives.directive('integer', function () {
         return {
             restrict: 'A',
             link: function (scope, element, attrs) {
@@ -240,7 +231,7 @@
         };
     });
 
-    widgetModule.directive('double', function () {
+    directives.directive('double', function () {
         return {
             restrict: 'A',
             link: function (scope, element, attrs) {
@@ -254,7 +245,7 @@
         };
     });
 
-    widgetModule.directive('readOnly', function () {
+    directives.directive('readOnly', function () {
         return {
             restrict: 'A',
             link: function (scope, element, attrs) {
@@ -265,7 +256,7 @@
         };
     });
 
-    widgetModule.directive('contenteditable', function ($compile) {
+    directives.directive('contenteditable', function ($compile) {
         return {
             restrict: 'A',
             require: '?ngModel',
@@ -361,7 +352,7 @@
         };
     });
 
-    widgetModule.directive('editableContent', function ($compile, $timeout, $http, $templateCache) {
+    directives.directive('editableContent', function ($compile, $timeout, $http, $templateCache) {
         var templateLoader;
 
         return {
@@ -394,7 +385,7 @@
         };
     });
 
-    widgetModule.directive('manipulationpopover', function ($compile, $templateCache, $http) {
+    directives.directive('manipulationpopover', function ($compile, $templateCache, $http) {
         return {
             restrict: 'A',
             link: function (scope, el, attrs) {
@@ -576,7 +567,7 @@
         };
     });
 
-    widgetModule.directive('datetimePicker', function () {
+    directives.directive('datetimePicker', function () {
         return {
             restrict: 'A',
             link: function(scope, element, attrs) {
@@ -587,7 +578,7 @@
         };
     });
 
-    widgetModule.directive('datetimePickerInput', function () {
+    directives.directive('datetimePickerInput', function () {
         return {
             restrict: 'A',
             link: function (scope, element, attrs) {
@@ -613,7 +604,7 @@
         };
     });
 
-    widgetModule.directive('timePickerInput', function () {
+    directives.directive('timePickerInput', function () {
         return {
             restrict: 'A',
             link: function (scope, element, attrs) {
@@ -637,7 +628,7 @@
         };
     });
 
-    widgetModule.directive('setmanipulation', function () {
+    directives.directive('setmanipulation', function () {
         return {
             restrict : 'A',
             require: '?ngModel',
@@ -765,7 +756,7 @@
         };
     });
 
-    widgetModule.directive('joinUpdate', function () {
+    directives.directive('joinUpdate', function () {
         return {
             restrict : 'A',
             require: '?ngModel',
@@ -784,7 +775,7 @@
         };
     });
 
-    widgetModule.directive('splitUpdate', function () {
+    directives.directive('splitUpdate', function () {
         return {
             restrict : 'A',
             require: '?ngModel',
@@ -803,7 +794,7 @@
         };
     });
 
-    widgetModule.directive('substringUpdate', function () {
+    directives.directive('substringUpdate', function () {
         return {
             restrict : 'A',
             require: '?ngModel',
@@ -822,7 +813,7 @@
         };
     });
 
-    widgetModule.directive('dateUpdate', function () {
+    directives.directive('dateUpdate', function () {
         return {
             restrict : 'A',
             require: '?ngModel',
@@ -841,7 +832,7 @@
         };
     });
 
-    widgetModule.directive('daysUpdate', function () {
+    directives.directive('daysUpdate', function () {
         return {
             restrict : 'A',
             require: '?ngModel',
@@ -860,7 +851,7 @@
         };
     });
 
-    widgetModule.directive('ngTrigger', function (ManageTaskUtils, $compile) {
+    directives.directive('ngTrigger', function (ManageTaskUtils, $compile) {
         return function(scope, elem, attrs) {
             elem.bind("focusout keyup", function(event) {
                     scope.$apply(attrs.ngTrigger);
@@ -868,7 +859,7 @@
         };
     });
 
-    widgetModule.directive('selectEvent', function() {
+    directives.directive('selectEvent', function() {
         return function(scope, element, attrs) {
             $(element).click(function (event) {
                 var li = $(element).parent('li'),
@@ -914,7 +905,7 @@
         };
     });
 
-    widgetModule.directive('helpPopover', function($compile, $http) {
+    directives.directive('helpPopover', function($compile, $http) {
         return function(scope, element, attrs) {
             var msgScope = scope;
 
@@ -940,7 +931,7 @@
         };
     });
 
-    widgetModule.directive('divPlaceholder', function() {
+    directives.directive('divPlaceholder', function() {
         return {
             restrict: 'A',
             link: function(scope, element, attrs) {
@@ -971,7 +962,7 @@
         };
     });
 
-    widgetModule.directive('actionSortableCursor', function () {
+    directives.directive('actionSortableCursor', function () {
        return {
            restrict: 'A',
            link: function (scope, element, attrs) {
@@ -987,7 +978,7 @@
        };
     });
 
-    widgetModule.directive('actionsPopover', function () {
+    directives.directive('actionsPopover', function () {
        return {
            restrict: 'A',
            link: function (scope, element, attrs) {
@@ -1022,7 +1013,7 @@
        };
     });
 
-    widgetModule.directive('triggerPopover', function () {
+    directives.directive('triggerPopover', function () {
         return {
             restrict: 'A',
             link: function (scope, element, attrs) {
