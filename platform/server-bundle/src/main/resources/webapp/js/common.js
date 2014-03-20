@@ -159,8 +159,12 @@ function defaultView(view) {
     'use strict';
     var location = window.location.href,
         indexOfHash = location.indexOf('#'),
-        to = (indexOfHash < 0) ? location.length : indexOfHash;
+        to = (indexOfHash < 0) ? location.length : indexOfHash,
+        newLocation = location.substr(0, to) + '#' + view;
 
-    window.location += '?';
-    window.location = location.substr(0, to) + '#' + view;
+    if (newLocation === location) {
+        window.location += '#';
+    }
+
+    window.location = newLocation;
 }
