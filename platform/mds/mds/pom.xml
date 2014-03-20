@@ -12,7 +12,7 @@
     <artifactId>motech-platform-dataservices</artifactId>
     <version>0.23-SNAPSHOT</version>
     <packaging>bundle</packaging>
-    <name>MOTECH Data Services</name>
+    <name>MOTECH Platform Data Services</name>
     <properties>
         <modules.root.dir>${basedir}/../../..</modules.root.dir>
     </properties>
