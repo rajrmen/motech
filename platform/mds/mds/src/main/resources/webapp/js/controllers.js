@@ -2043,8 +2043,6 @@
 
         $scope.fieldValue = [];
 
-        $scope.innerLayout.show('east');
-
         $scope.instanceEditMode = false;
 
         /**
@@ -2222,6 +2220,8 @@
         $scope.selectEntity = function (module, entityName) {
             blockUI();
 
+            $scope.innerLayout.show('east');
+
             // get entity, fields, display fields
             $http.get('../mds/entities/getEntity/' + module + '/' + entityName).success(function (data) {
                 $scope.selectedEntity = data;
@@ -2334,6 +2334,7 @@
         * Unselects entity to allow user to return to entities list by modules
         */
         $scope.unselectEntity = function () {
+            $scope.innerLayout.hide('east');
             $scope.selectedEntity = undefined;
         };
 
