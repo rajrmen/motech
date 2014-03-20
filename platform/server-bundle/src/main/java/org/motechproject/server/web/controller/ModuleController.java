@@ -6,6 +6,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.motechproject.commons.api.CastUtils;
 import org.motechproject.osgi.web.ModuleRegistrationData;
+import org.motechproject.osgi.web.SubmenuInfo;
 import org.motechproject.osgi.web.UIFrameworkService;
 import org.motechproject.server.ui.LocaleService;
 import org.motechproject.server.web.dto.ModuleConfig;
@@ -55,7 +56,7 @@ public class ModuleController {
             "\\[(?<%s>[^\\]]*)\\]", DEPENDENCIES_GROUP
     );
     private static final String REGEXP = String.format(
-            "angular\\.module\\(%s(,\\s+%s)?\\)", MODULE_NAME, DEPENDENCIES
+            "angular\\.module\\(%s(,\\s*%s)?\\s*\\)", MODULE_NAME, DEPENDENCIES
     );
     private static final Pattern PATTERN = Pattern.compile(REGEXP);
 
@@ -100,13 +101,13 @@ public class ModuleController {
                 Map<String, String> scripts = findScripts(bundle);
 
                 for (Map.Entry<String, String> script : scripts.entrySet()) {
-                    addConfig(configuration, data, script.getKey(), script.getValue());
+                    addConfig(configuration, script.getKey(), getPath(data, script.getValue()));
                 }
 
                 List<String> angularModules = data.getAngularModules();
                 String name = isEmpty(angularModules) ? null : angularModules.get(0);
 
-                addConfig(configuration, data, name, "/js/app.js", data.getUrl());
+                addConfig(configuration, name, getPath(data, "/js/app.js"), data.getUrl());
             }
         }
 
@@ -159,16 +160,15 @@ public class ModuleController {
         return scripts;
     }
 
-    private void addConfig(List<ModuleConfig> configuration, ModuleRegistrationData data,
-                           String name, String script) {
-        addConfig(configuration, data, name, script, null);
+    private void addConfig(List<ModuleConfig> configuration, String name, String script) {
+        addConfig(configuration, name, script, null);
     }
 
-    private void addConfig(List<ModuleConfig> configuration, ModuleRegistrationData data,
-                           String name, String script, String template) {
+    private void addConfig(List<ModuleConfig> configuration, String name, String script,
+                           String template) {
         ModuleConfig config = new ModuleConfig();
         config.setName(name);
-        config.setScript("../" + data.getResourcePath() + script);
+        config.setScript(script);
         config.setTemplate(template);
 
         if (isNotBlank(name)) {
@@ -203,6 +203,16 @@ public class ModuleController {
         }
 
         return path;
+    }
+
+    private String getPath(ModuleRegistrationData data, String path) {
+        String p = path;
+
+        if (!p.startsWith("/")) {
+            p = "/" + p;
+        }
+
+        return "../" + data.getResourcePath() + p;
     }
 
     private List<URL> getEntries(Bundle bundle) {

@@ -1,5 +1,4 @@
 <div class="row">
-    <!--<a href="#/log" class="btn btn-sm btn-primary btn-in-header pull-right"><i class="icon-remove icon-white"></i></a>-->
     <div class="box-content log-options">
         <form id="changeLogLevels" class="form-vertical" name="logForm">
             <div class="form-group log">
@@ -61,7 +60,7 @@
                 <div class="form-inline">
                     <button ng-click="add()" class="btn btn-success"><i class="icon-plus icon-white"></i> {{ msg('admin.log.add.addAnotherLog') }}</button>
                     <input ng-disabled="logForm.$invalid" type="button" class="btn btn-primary" ng-click="save()" value="{{msg('admin.save')}}"/>
-                    <a class="btn btn-default" href="#/log">{{msg('admin.cancel')}}</a>
+                    <a class="btn btn-default" href="#/admin/log">{{msg('admin.cancel')}}</a>
                 </div>
             </div>
             <div class="form-actions"></div>

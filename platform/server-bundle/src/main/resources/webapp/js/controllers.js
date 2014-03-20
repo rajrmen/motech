@@ -3,7 +3,7 @@
 
     var serverModule = angular.module('motech-dashboard');
 
-    serverModule.controller('MasterCtrl', function ($scope, $http, i18nService, $cookieStore, $q, BrowserDetect, Menu) {
+    serverModule.controller('MasterCtrl', function ($scope, $http, i18nService, $cookieStore, $q, BrowserDetect, Menu, $location, $timeout) {
         var handle = function () {
                 if (!$scope.$$phase) {
                     $scope.$digest();
@@ -184,6 +184,8 @@
 
         $scope.loadModule = function (moduleName, url) {
             if (moduleName) {
+                blockUI();
+
                 $http.get('../server/module/critical/' + moduleName).success(function (message) {
                     if (message) {
                         jAlert(message, $scope.msg('error'));
@@ -191,6 +193,15 @@
                 });
 
                 $scope.moduleToLoad = moduleName;
+
+                if (url) {
+                    $timeout(function () {
+                        $location.path(url);
+                        unblockUI();
+                    }, 100);
+                } else {
+                    unblockUI();
+                }
             }
         };
 

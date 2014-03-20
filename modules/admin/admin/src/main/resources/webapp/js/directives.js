@@ -5,13 +5,6 @@
 
     var directives = angular.module('admin.directives', []);
 
-    directives.directive('innerlayout', defaultLayout({
-        spacing_closed: 30,
-        east__minSize: 200,
-        east__maxSize: 350,
-        center__size: 100
-    }));
-
     directives.directive('sidebar', function () {
        return function (scope, element, attrs) {
            $(element).sidebar({

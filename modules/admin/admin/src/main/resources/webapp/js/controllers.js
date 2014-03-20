@@ -4,7 +4,7 @@
 
     /* Controllers */
 
-    var controllers = angular.module('admin.controllers');
+    var controllers = angular.module('admin.controllers', []);
 
     controllers.controller('BundleListCtrl', function($scope, Bundle, i18nService, $routeParams, $http, $timeout) {
 

@@ -132,9 +132,4 @@
             }
         };
     });
-
-    webSecurityModule.directive('innerlayout', defaultLayout({
-        east__minSize: 200,
-        east__maxSize: 350
-    }));
 }());
