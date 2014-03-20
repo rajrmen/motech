@@ -432,7 +432,7 @@
                             <predefinedVars>
                                 _, $, angular, angularHandler, isBlank, handleResponse, blockUI,
                                 motechAlert, unblockUI, motechConfirm, cloneArray, arraysEqual,
-                                cloneObj, alertHandler, window
+                                cloneObj, alertHandler, window, defaultLayout, moment
                             </predefinedVars>
                             <failOnIssues>${jslint.enable}</failOnIssues>
                         </configuration>
