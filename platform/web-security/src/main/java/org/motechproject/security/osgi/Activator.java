@@ -154,11 +154,11 @@ public class Activator implements BundleActivator {
         ModuleRegistrationData regData = new ModuleRegistrationData();
         regData.setModuleName(MODULE_NAME);
         regData.setUrl("../websecurity/index.html");
-        regData.addAngularModule("motech-web-security");
-        regData.addSubMenu("#/users", "security.manageUsers", PermissionNames.MANAGE_USER_PERMISSION);
-        regData.addSubMenu("#/roles", "security.manageRoles", PermissionNames.MANAGE_ROLE_PERMISSION);
-        regData.addSubMenu("#/permissions", "security.managePermissions", PermissionNames.MANAGE_ROLE_PERMISSION);
-        regData.addSubMenu("#/dynamicURL", "securtiy.manageURL", PermissionNames.VIEW_SECURITY);
+        regData.addAngularModule("webSecurity");
+        regData.addSubMenu("/webSecurity/users", "security.manageUsers", PermissionNames.MANAGE_USER_PERMISSION);
+        regData.addSubMenu("/webSecurity/roles", "security.manageRoles", PermissionNames.MANAGE_ROLE_PERMISSION);
+        regData.addSubMenu("/webSecurity/permissions", "security.managePermissions", PermissionNames.MANAGE_ROLE_PERMISSION);
+        regData.addSubMenu("/webSecurity/dynamicURL", "securtiy.manageURL", PermissionNames.VIEW_SECURITY);
         regData.addI18N("messages", "../websecurity/messages/");
         regData.setBundle(bundleContext.getBundle());
         regData.setResourcePath(RESOURCE_URL_MAPPING);

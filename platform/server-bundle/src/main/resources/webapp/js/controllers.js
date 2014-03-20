@@ -198,7 +198,7 @@
                     $timeout(function () {
                         $location.path(url);
                         unblockUI();
-                    }, 100);
+                    }, 500);
                 } else {
                     unblockUI();
                 }

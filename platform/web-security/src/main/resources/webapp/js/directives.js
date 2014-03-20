@@ -1,9 +1,9 @@
 (function () {
     'use strict';
 
-    var webSecurityModule = angular.module('motech-web-security');
+    var directives = angular.module('webSecurity.directives', []);
 
-    webSecurityModule.directive('roleNameValidate', function(){
+    directives.directive('roleNameValidate', function(){
         return {
             require: 'ngModel',
             link: function(scope, elm, attrs, ctrl) {
@@ -29,7 +29,7 @@
         };
     });
 
-    webSecurityModule.directive('permNameValidate', function(){
+    directives.directive('permNameValidate', function(){
         return {
             require: 'ngModel',
             link: function(scope, elm, attrs, ctrl) {
@@ -52,7 +52,7 @@
         };
     });
 
-    webSecurityModule.directive('userNameValidate', function(){
+    directives.directive('userNameValidate', function(){
         return {
             require: 'ngModel',
             link: function(scope, elm, attrs, ctrl) {
@@ -75,7 +75,7 @@
         };
     });
 
-    webSecurityModule.directive('confirmPassword', function(){
+    directives.directive('confirmPassword', function(){
         return {
             restrict: 'A',
             require: 'ngModel',
@@ -106,7 +106,7 @@
         };
     });
 
-    webSecurityModule.directive('expandAccordion', function () {
+    directives.directive('expandAccordion', function () {
         return {
             restrict: 'A',
             link: function (scope, element, attr) {
