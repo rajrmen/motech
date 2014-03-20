@@ -3,7 +3,7 @@
 
     var serverModule = angular.module('motech-dashboard');
 
-    serverModule.controller('MasterCtrl', function ($scope, $http, i18nService, $cookieStore, $q, BrowserDetect, Menu, Critical) {
+    serverModule.controller('MasterCtrl', function ($scope, $http, i18nService, $cookieStore, $q, BrowserDetect, Menu) {
         var handle = function () {
                 if (!$scope.$$phase) {
                     $scope.$digest();
@@ -30,7 +30,6 @@
         };
 
         $scope.moduleToLoad = undefined;
-        $scope.moduleCriticalMessage = undefined;
 
         $scope.loginViewData = {};
         $scope.resetViewData = {};
@@ -185,9 +184,9 @@
 
         $scope.loadModule = function (moduleName, url) {
             if (moduleName) {
-                Critical.get({moduleName : moduleName}, function (message) {
-                    if (message && message !== '') {
-                        $scope.moduleCriticalMessage = message;
+                $http.get('../server/module/critical/' + moduleName).success(function (message) {
+                    if (message) {
+                        jAlert(message, $scope.msg('error'));
                     }
                 });
 
@@ -275,9 +274,7 @@
         };
 
         $scope.active = function(url) {
-            var address = '?moduleName={0}{1}'.format($scope.getCurrentModuleName(), url);
-
-            if (window.location.href.indexOf(address) !== -1) {
+            if (window.location.href.indexOf(url) !== -1) {
                 return "active";
             }
         };
@@ -320,7 +317,6 @@
             $scope.userLang = $scope.getLanguage(toLocale($scope.user.lang));
             moment.lang($scope.user.lang);
             $scope.loadI18n($scope.i18n);
-            $scope.loadModule($scope.getCurrentModuleName());
         });
 
         $scope.$on('lang.refresh', function () {

@@ -47,10 +47,7 @@
                         <div class="splash-msg"></div>
                         <div class="clearfix"></div>
                     </div>
-                    <div id="criticalNotification" class="alert alert-danger" ng-if="moduleCriticalMessage">
-                        {{moduleCriticalMessage}}
-                    </div>
-                    <div id="module-content" ng-show="ready" load-on-demand="moduleToLoad"></div>
+                    <div id="module-content" load-on-demand="moduleToLoad"></div>
                     </c:otherwise>
                 </c:choose>
             </div>

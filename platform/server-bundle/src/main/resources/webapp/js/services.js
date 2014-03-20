@@ -7,8 +7,4 @@
         return $resource('module/menu');
     });
 
-    uiServices.factory('Critical', function($resource) {
-        return $resource('module/critical/:moduleName');
-    });
-
 }());
