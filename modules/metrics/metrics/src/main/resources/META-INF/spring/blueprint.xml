@@ -16,7 +16,7 @@
         <constructor-arg name="moduleName" value="metrics"/>
         <constructor-arg name="angularModules">
             <list>
-                <value>motech-platform-metrics</value>
+                <value>metrics</value>
             </list>
         </constructor-arg>
         <constructor-arg name="i18n">

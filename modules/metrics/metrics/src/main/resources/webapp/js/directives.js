@@ -1,16 +1,9 @@
 (function () {
     'use strict';
 
-    var metricsModule = angular.module('motech-platform-metrics');
+    var directives = angular.module('metrics.directives', []);
 
-    metricsModule.directive('innerlayout', defaultLayout({
-        spacing_closed: 30,
-        center__showOverflowOnHover: true,
-        east__minSize: 200,
-        east__maxSize: 350
-    }));
-
-    metricsModule.directive('multiselectDropdown', function () {
+    directives.directive('multiselectDropdown', function () {
         return {
             restrict: 'A',
             require : 'ngModel',
@@ -51,7 +44,7 @@
         };
     });
 
-    metricsModule.directive('double', function () {
+    directives.directive('double', function () {
         return {
             restrict: 'A',
             link: function (scope, element, attrs) {
@@ -65,7 +58,7 @@
         };
     });
 
-   metricsModule.directive('integer', function () {
+   directives.directive('integer', function () {
        return {
            restrict: 'A',
            link: function (scope, element, attrs) {
