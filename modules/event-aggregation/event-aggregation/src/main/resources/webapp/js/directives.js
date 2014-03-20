@@ -1,8 +1,9 @@
 (function () {
     'use strict';
 
-    angular.module('event-aggregation').directive('tagsInput', function() {
+    var directives = angular.module('eventAggregation.directives', []);
 
+    directives.directive('tagsInput', function() {
         return {
             restrict: 'A',
             require: 'ngModel',
@@ -12,8 +13,7 @@
         };
     });
 
-    angular.module('event-aggregation').directive('datetimePicker', function() {
-
+    directives.directive('datetimePicker', function() {
         var momentDateFormat = 'DD MMM YYYY HH:mm Z';
 
         function fromFormattedDate(formattedDate) {
@@ -46,8 +46,7 @@
         };
     });
 
-    angular.module('event-aggregation').directive('cronMaker', function() {
-
+    directives.directive('cronMaker', function() {
         return {
             restrict: 'A',
             require: 'ngModel',
@@ -62,8 +61,7 @@
         };
     });
 
-    angular.module('event-aggregation').directive('tooltip', function() {
-
+    directives.directive('tooltip', function() {
         return {
             restrict: 'A',
             require: 'ngModel',
@@ -78,12 +76,6 @@
             }
         };
     });
-
-    angular.module('event-aggregation').directive('innerlayout', defaultLayout({
-        center__showOverflowOnHover: true,
-        east__minSize: 200,
-        east__maxSize: 350,
-    }));
 
 }());
 

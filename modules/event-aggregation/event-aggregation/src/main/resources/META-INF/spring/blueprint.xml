@@ -12,7 +12,7 @@
         <constructor-arg name="moduleName" value="event-aggregation"/>
         <constructor-arg name="angularModules">
             <list>
-                <value>event-aggregation</value>
+                <value>eventAggregation</value>
             </list>
         </constructor-arg>
         <constructor-arg name="i18n">
