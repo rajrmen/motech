@@ -901,23 +901,34 @@
                     if (elm.children().hasClass("icon-ok")) {
                         if (elm.text().trim() === 'ALL') {
                             elm.parent().children().each(function(i) {
-                               $(this).children().removeClass('icon-ok icon-ban-circle').addClass("icon-ban-circle");
-                               $(elm.parent().children()[i]).removeClass('active');
+                               $(elm.parent().children()[i]).children().removeClass('icon-ban-circle').addClass("icon-ok");
+                               $(elm.parent().children()[i]).addClass('active');
                             });
                         } else {
-                            elm.children().removeClass('icon-ok').addClass("icon-ban-circle");
-                            elm.removeClass('active');
-                            $(elm.parent().children()[0]).removeClass('active');
-                            $(elm.parent().children()[0]).children().removeClass('icon-ok').addClass("icon-ban-circle");
+                            elm.parent().children().each(function(i) {
+                                $(elm.parent().children()[i]).children().removeClass('icon-ok').addClass("icon-ban-circle");
+                                $(elm.parent().children()[i]).removeClass('active');
+                            });
+                            $(this).children().removeClass('icon-ban-circle').addClass('icon-ok');
+                            $(this).addClass('active');
+                            //elm.children().removeClass('icon-ok').addClass("icon-ban-circle");
+                            //elm.removeClass('active');
+                            //$(elm.parent().children()[0]).removeClass('active');
+                            //$(elm.parent().children()[0]).children().removeClass('icon-ok').addClass("icon-ban-circle");
                         }
                     }
                     else {
                         if (elm.text().trim() === 'ALL') {
                             elm.parent().children().each(function(i) {
-                               $(this).children().removeClass('icon-ok icon-ban-circle').addClass("icon-ok");
+                               $(elm.parent().children()[i]).children().removeClass('icon-ban-circle').addClass("icon-ok");
                                $(elm.parent().children()[i]).addClass('active');
                             });
                         } else {
+                            elm.parent().children().each(function(i) {
+                               $(elm.parent().children()[i]).children().removeClass('icon-ok');
+                               $(elm.parent().children()[i]).children().addClass("icon-ban-circle");
+                               $(elm.parent().children()[i]).removeClass('active');
+                            });
                             elm.children().addClass('icon-ok').removeClass('icon-ban-circle');
                             elm.addClass('active');
                         }

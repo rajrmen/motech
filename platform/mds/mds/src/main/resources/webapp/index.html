@@ -52,8 +52,8 @@
             <fieldset class="inside" ng-repeat="filter in filters">
                 <legend>{{filter.field}}</legend>
                 <div class="form-group btn-group-vertical">
-                    <button clickfilter ng-repeat="filterType in filter.types"  class="btn btn-info btn-sm active"
-                            type="button" ng-click="selectFilter(filter.field, filterType)"><i class="icon-white icon-ok"></i> {{msgForFilter(filterType)}}</button>
+                    <button clickfilter ng-repeat="filterType in filter.types"  class="btn btn-info btn-sm"
+                            type="button" ng-click="selectFilter(filter.field, filterType)"><i class="icon-white icon-ban-circle"></i> {{msgForFilter(filterType)}}</button>
                 </div>
             </fieldset>
         </div>
