@@ -154,3 +154,12 @@ function innerLayout(conf, callback) {
         callback(layout);
     }
 }
+
+function defaultView(view) {
+    'use strict';
+    var location = window.location.href,
+        indexOfHash = location.indexOf('#'),
+        to = (indexOfHash < 0) ? location.length : indexOfHash;
+
+    window.location = location.substr(0, to) + '#' + view;
+}
