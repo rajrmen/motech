@@ -911,10 +911,6 @@
                             });
                             $(this).children().removeClass('icon-ban-circle').addClass('icon-ok');
                             $(this).addClass('active');
-                            //elm.children().removeClass('icon-ok').addClass("icon-ban-circle");
-                            //elm.removeClass('active');
-                            //$(elm.parent().children()[0]).removeClass('active');
-                            //$(elm.parent().children()[0]).children().removeClass('icon-ok').addClass("icon-ban-circle");
                         }
                     }
                     else {
