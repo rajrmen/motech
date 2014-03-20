@@ -3,18 +3,9 @@
 
     /* Directives */
 
-    var widgetModule = angular.module('motech-scheduler');
+    var directives = angular.module('scheduler.directives', []);
 
-    widgetModule.directive('innerlayout', defaultLayout({
-        spacing_closed: 30,
-        east__minSize: 250,
-        east__maxSize: 350
-    }, function (innerLayout) {
-        // BIND events to hard-coded buttons
-        innerLayout.addCloseBtn( "#tbarCloseEast", "east" );
-    }));
-
-    widgetModule.directive('sidebar', function () {
+    directives.directive('sidebar', function () {
         return function (scope, element, attrs) {
             $(element).sidebar({
                 position:"right"
@@ -22,7 +13,7 @@
         };
     });
 
-    widgetModule.directive('clearForm', function () {
+    directives.directive('clearForm', function () {
         return {
             restrict: 'A',
             link: function (scope, element, attrs) {
@@ -34,7 +25,7 @@
     });
 
 
-    widgetModule.directive('gridDatePickerFrom', function() {
+    directives.directive('gridDatePickerFrom', function() {
         return {
             restrict: 'A',
             link: function(scope, element, attrs) {
@@ -55,7 +46,7 @@
         };
     });
 
-    widgetModule.directive('gridDatePickerTo', function() {
+    directives.directive('gridDatePickerTo', function() {
         return {
             restrict: 'A',
             link: function(scope, element, attrs) {
@@ -75,7 +66,7 @@
         };
     });
 
-    widgetModule.directive('jqgridSearch', function () {
+    directives.directive('jqgridSearch', function () {
         return {
             restrict: 'A',
             link: function (scope, element, attrs) {
@@ -161,7 +152,7 @@
         };
     });
 
-    widgetModule.directive('schedulerGrid', function($compile, $http, $templateCache, MotechScheduler) {
+    directives.directive('schedulerGrid', function($compile, $http, $templateCache, MotechScheduler) {
         return {
             restrict: 'A',
             link: function(scope, element, attrs) {

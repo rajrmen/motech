@@ -12,7 +12,7 @@
         <constructor-arg name="url" value="../scheduler/index.html"/>
         <constructor-arg name="angularModules">
             <list>
-                <value>motech-scheduler</value>
+                <value>scheduler</value>
             </list>
         </constructor-arg>
         <constructor-arg name="i18n">
