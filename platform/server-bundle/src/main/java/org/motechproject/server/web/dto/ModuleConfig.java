@@ -6,6 +6,7 @@ public class ModuleConfig implements Serializable {
     private String name;
     private String script;
     private String template;
+    private String css;
 
     public String getName() {
         return name;
@@ -29,5 +30,13 @@ public class ModuleConfig implements Serializable {
 
     public void setTemplate(String template) {
         this.template = template;
+    }
+
+    public String getCss() {
+        return css;
+    }
+
+    public void setCss(String css) {
+        this.css = css;
     }
 }

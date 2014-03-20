@@ -4,9 +4,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
-import org.motechproject.commons.api.CastUtils;
 import org.motechproject.osgi.web.ModuleRegistrationData;
-import org.motechproject.osgi.web.SubmenuInfo;
 import org.motechproject.osgi.web.UIFrameworkService;
 import org.motechproject.server.ui.LocaleService;
 import org.motechproject.server.web.dto.ModuleConfig;
@@ -41,6 +39,7 @@ import java.util.regex.Pattern;
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.apache.commons.lang.StringUtils.equalsIgnoreCase;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.motechproject.commons.api.CastUtils.cast;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 @Controller
@@ -107,7 +106,14 @@ public class ModuleController {
                 List<String> angularModules = data.getAngularModules();
                 String name = isEmpty(angularModules) ? null : angularModules.get(0);
 
-                addConfig(configuration, name, getPath(data, "/js/app.js"), data.getUrl());
+                List<URL> css = cast(URL.class, bundle.findEntries("/webapp/css/", "*.css", true));
+                String cssPath = null;
+
+                if (!css.isEmpty() && !bundle.getSymbolicName().equalsIgnoreCase("org.motechproject.motech-platform-server-bundle")) {
+                    cssPath = getPath(data, getCSSPath(css.get(0)));
+                }
+
+                addConfig(configuration, name, getPath(data, "/js/app.js"), data.getUrl(), cssPath);
             }
         }
 
@@ -129,7 +135,7 @@ public class ModuleController {
 
         for (URL entry : entries) {
             String content = getContent(entry);
-            String path = getPath(entry);
+            String path = getJSPath(entry);
             String filename = FilenameUtils.getBaseName(path);
 
             Matcher matcher = PATTERN.matcher(content);
@@ -161,15 +167,16 @@ public class ModuleController {
     }
 
     private void addConfig(List<ModuleConfig> configuration, String name, String script) {
-        addConfig(configuration, name, script, null);
+        addConfig(configuration, name, script, null, null);
     }
 
     private void addConfig(List<ModuleConfig> configuration, String name, String script,
-                           String template) {
+                           String template, String css) {
         ModuleConfig config = new ModuleConfig();
         config.setName(name);
         config.setScript(script);
         config.setTemplate(template);
+        config.setCss(css);
 
         if (isNotBlank(name)) {
             if (containsConfig(configuration, name)) {
@@ -194,9 +201,20 @@ public class ModuleController {
         return content.replace("\n", "");
     }
 
-    private String getPath(URL url) {
+    private String getJSPath(URL url) {
         String path = url.getPath();
         int idx = path.indexOf("/js/");
+
+        if (idx > 0) {
+            path = path.substring(idx);
+        }
+
+        return path;
+    }
+
+    private String getCSSPath(URL url) {
+        String path = url.getPath();
+        int idx = path.indexOf("/css/");
 
         if (idx > 0) {
             path = path.substring(idx);
@@ -217,7 +235,7 @@ public class ModuleController {
 
     private List<URL> getEntries(Bundle bundle) {
         Enumeration enumeration = bundle.findEntries("/webapp/js", "*.js", true);
-        return CastUtils.cast(URL.class, enumeration);
+        return cast(URL.class, enumeration);
     }
 
     private String[] getDependencies(Matcher matcher) {

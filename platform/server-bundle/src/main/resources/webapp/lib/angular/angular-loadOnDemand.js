@@ -12,6 +12,12 @@
         });
     } ]);
 
+    aModule.factory('cssCache', ['$cacheFactory', function ($cacheFactory) {
+        return $cacheFactory('cssCache', {
+            capacity: 10
+        });
+    } ]);
+
     aModule.provider('$loadOnDemand',
         ['$controllerProvider', '$provide', '$compileProvider', '$filterProvider','$injector',
             function ($controllerProvider, $provide, $compileProvider, $filterProvider, $injector) {
@@ -153,8 +159,8 @@
                 };
             }]);
 
-    aModule.directive('loadOnDemand', ['$http', 'scriptCache', '$log', '$loadOnDemand', '$compile', '$timeout',
-        function ($http, scriptCache, $log, $loadOnDemand, $compile, $timeout) {
+    aModule.directive('loadOnDemand', ['$http', 'scriptCache', 'cssCache', '$log', '$loadOnDemand', '$compile', '$timeout', '$document',
+        function ($http, scriptCache, cssCache, $log, $loadOnDemand, $compile, $timeout, $document) {
             return {
                 link: function (scope, element, attr) {
                     $log.error('executing link on ', element[0].tagName, attr);
@@ -179,7 +185,7 @@
                                         scriptCache.put(resourceId, data);
                                         scope.$evalAsync(function() {
                                             callback(data);
-                                        });                                    
+                                        });
                                     })
                                     .error(function(data) {
                                         $log.error('Error load template "' + url + "': " + data);
@@ -193,6 +199,26 @@
                         });
                     }
 
+                    function loadCSS(url) {
+                        if (typeof url !== 'undefined') {
+                            var cssId = 'script:' + url,
+                                cssElement;
+
+                            if (!cssCache.get(cssId)) {
+                                cssElement = $document[0].createElement('link');
+                                cssElement.rel = 'stylesheet';
+                                cssElement.type = 'text/css'
+                                cssElement.href = url;
+                                cssElement.onerror = function () {
+                                    $log.error('Error loading "' + url + '"');
+                                    cssCache.remove(cssId);
+                                };
+                                $document[0].documentElement.appendChild(cssElement);
+                                cssCache.put(cssId, 1);
+                            }
+                        }
+                    }
+
                     if (typeof srcExp !== 'undefined') {
                         $log.warn('registering loadOnDemand.$watch for expr "' + srcExp + '"');
                         scope.$watch(srcExp, function(moduleName) {
@@ -202,6 +228,11 @@
                                     if (!moduleConfig.template) {
                                         return;
                                     }
+
+                                    if (moduleConfig.css) {
+                                        loadCSS(moduleConfig.css);
+                                    }
+
                                     loadTemplate(moduleConfig.template, function(template) {
     
                                         childScope = scope.$new();
