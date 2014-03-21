@@ -195,10 +195,8 @@
                 $scope.moduleToLoad = moduleName;
 
                 if (url) {
-                    $timeout(function () {
-                        $location.path(url);
-                        unblockUI();
-                    }, 500);
+                    $location.path(url);
+                    unblockUI();
                 } else {
                     unblockUI();
                 }

@@ -157,6 +157,10 @@ function innerLayout(conf, callback) {
 
 function defaultView(view) {
     'use strict';
+    if (!view) {
+        view = window.location.hash.substring(2, window.location.hash.length);
+    }
+
     var location = window.location.href,
         indexOfHash = location.indexOf('#'),
         to = (indexOfHash < 0) ? location.length : indexOfHash,
