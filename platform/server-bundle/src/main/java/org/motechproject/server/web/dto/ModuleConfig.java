@@ -3,6 +3,8 @@ package org.motechproject.server.web.dto;
 import java.io.Serializable;
 
 public class ModuleConfig implements Serializable {
+    private static final long serialVersionUID = 848322990033591043L;
+
     private String name;
     private String script;
     private String template;

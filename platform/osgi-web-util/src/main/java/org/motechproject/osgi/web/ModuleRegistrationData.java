@@ -1,7 +1,6 @@
 package org.motechproject.osgi.web;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
-import org.motechproject.osgi.web.util.BundleHeaders;
 import org.osgi.framework.Bundle;
 
 import java.util.ArrayList;
