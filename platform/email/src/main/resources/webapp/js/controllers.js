@@ -24,10 +24,6 @@
             spacing_closed: 30,
             east__minSize: 200,
             east__maxSize: 350
-        }, function (elem) {
-            // BIND events to hard-coded buttons
-            elem.addCloseBtn( "#tbarCloseEast", "east" );
-            elem.hide('east');
         });
     });
 
@@ -77,11 +73,9 @@
             spacing_closed: 30,
             east__minSize: 200,
             east__maxSize: 350
-        }, function (elem) {
-            // BIND events to hard-coded buttons
-            elem.addCloseBtn( "#tbarCloseEast", "east" );
-            elem.addToggleBtn("#email-logging-filters", "east");
-            elem.show('east');
+        }, {
+            show: true,
+            button: '#email-logging-filters'
         });
     });
 
@@ -127,10 +121,6 @@
             spacing_closed: 30,
             east__minSize: 200,
             east__maxSize: 350
-        }, function (elem) {
-            // BIND events to hard-coded buttons
-            elem.addCloseBtn( "#tbarCloseEast", "east" );
-            elem.hide('east');
         });
     });
 }());

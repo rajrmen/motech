@@ -12,11 +12,9 @@
             spacing_closed: 30,
             east__minSize: 200,
             east__maxSize: 350
-        }, function (elem) {
-            // BIND events to hard-coded buttons
-             elem.show('east');
-             elem.addCloseBtn( "#tbarCloseEast", "east" );
-             elem.addToggleBtn("#scheduler-filters", "east");
+        }, {
+            show: true,
+            button: '#scheduler-filters'
         });
     });
 

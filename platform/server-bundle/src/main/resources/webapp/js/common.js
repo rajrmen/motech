@@ -110,7 +110,7 @@ function captureTyping(callback) {
     typingTimer = setTimeout(callback, doneTypingInterval);
 }
 
-function innerLayout(conf, callback) {
+function innerLayout(conf, eastConfig) {
     'use strict';
 
     var config = conf || {},
@@ -142,17 +142,32 @@ function innerLayout(conf, callback) {
             initHidden: true
         },
         element = angular.element('#outer-center'),
+        button = angular.element(eastConfig && eastConfig.button),
         options = {},
         layout;
 
-    $.extend(options, defaults, config);
+    element.livequery(function () {
+        $.extend(options, defaults, config);
 
-    // create the page-layout, which will ALSO create the tabs-wrapper child-layout
-    layout = element.layout(options);
+        layout = element.layout(options);
+        layout.destroy();
+        layout = element.layout(options);
 
-    if (_.isFunction(callback)) {
-        callback(layout);
-    }
+        layout.addCloseBtn("#tbarCloseEast", "east");
+
+        if (eastConfig && eastConfig.show) {
+            button.livequery(function () {
+                layout.addToggleBtn(eastConfig.button, "east");
+                button.expire();
+            });
+
+            layout.show('east');
+        } else {
+            layout.hide('east');
+        }
+
+        element.expire();
+    });
 }
 
 function defaultView(view) {

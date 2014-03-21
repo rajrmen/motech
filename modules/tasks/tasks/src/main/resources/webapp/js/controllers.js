@@ -55,11 +55,9 @@
             spacing_closed: 30,
             east__minSize: 200,
             east__maxSize: 350
-        }, function (elem) {
-            // BIND events to hard-coded buttons
-            elem.addCloseBtn( "#tbarCloseEast", "east" );
-            elem.show('east');
-            elem.addOpenBtn("#tasks-filters", "east");
+        }, {
+            show: true,
+            button: '#tasks-filters'
         });
 
         $("#tasks-filters").bind('click', function () {
@@ -272,10 +270,6 @@
             spacing_closed: 30,
             east__minSize: 200,
             east__maxSize: 350
-        }, function (elem) {
-            // BIND events to hard-coded buttons
-            elem.addCloseBtn( "#tbarCloseEast", "east" );
-            elem.hide('east');
         });
 
         $q.all([$scope.util.doQuery($q, Channels), $scope.util.doQuery($q, DataSources)]).then(function(data) {
@@ -1329,10 +1323,6 @@
             spacing_closed: 30,
             east__minSize: 200,
             east__maxSize: 350
-        }, function (elem) {
-            // BIND events to hard-coded buttons
-            elem.addCloseBtn( "#tbarCloseEast", "east" );
-            elem.hide('east');
         });
 
         if ($routeParams.taskId !== undefined) {
@@ -1407,10 +1397,6 @@
             spacing_closed: 30,
             east__minSize: 200,
             east__maxSize: 350
-        }, function (elem) {
-            // BIND events to hard-coded buttons
-            elem.addCloseBtn( "#tbarCloseEast", "east" );
-            elem.hide('east');
         });
 
         $scope.submit = function() {
