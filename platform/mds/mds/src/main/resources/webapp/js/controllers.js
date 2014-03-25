@@ -96,7 +96,11 @@
     controllers.controller('SchemaEditorCtrl', function ($scope, $timeout, Entities, Users, Roles, MDSUtils) {
         var setAdvancedSettings, setRest, setBrowsing, setSecuritySettings, setIndexesLookupsTab;
 
-        $scope.innerLayout.hide('east');
+        innerLayout({
+            spacing_closed: 30,
+            east__minSize: 200,
+            east__maxSize: 350
+        });
 
         workInProgress.setList(Entities);
 
@@ -1956,7 +1960,7 @@
     /**
     * The DataBrowserCtrl controller is used on the 'Data Browser' view.
     */
-    controllers.controller('DataBrowserCtrl', function ($rootscope, $scope, $http, Entities, Instances, History, $timeout, MDSUtils) {
+    controllers.controller('DataBrowserCtrl', function ($rootScope, $scope, $http, Entities, Instances, History, $timeout, MDSUtils) {
         workInProgress.setActualEntity(Entities, undefined);
 
         /**
@@ -2207,7 +2211,14 @@
         $scope.selectEntity = function (module, entityName) {
             blockUI();
 
-            $scope.innerLayout.show('east');
+            innerLayout({
+                spacing_closed: 30,
+                east__minSize: 200,
+                east__maxSize: 350
+            }, {
+                show: true,
+                button: '#mds-filters'
+            });
 
             // get entity, fields, display fields
             $http.get('../mds/entities/getEntity/' + module + '/' + entityName).success(function (data) {
@@ -2218,7 +2229,6 @@
 
                     Entities.getAdvancedCommited({id: $scope.selectedEntity.id}, function(data) {
                         $scope.entityAdvanced = data;
-                        $scope.innerLayout.addToggleBtn("#mds-filters", "east");
                         $rootScope.filters = [];
 
                         var filterableFields = $scope.entityAdvanced.browsing.filterableFields,
@@ -2321,7 +2331,11 @@
         * Unselects entity to allow user to return to entities list by modules
         */
         $scope.unselectEntity = function () {
-            $scope.innerLayout.hide('east');
+            innerLayout({
+                spacing_closed: 30,
+                east__minSize: 200,
+                east__maxSize: 350
+            });
             $scope.selectedEntity = undefined;
         };
 
@@ -2618,7 +2632,7 @@
     /**
     * The FilterCtrl controller is used on the 'Data Browser' view for the right panel.
     */
-    mds.controller('FilterCtrl', function ($rootScope, $scope) {
+    controllers.controller('FilterCtrl', function ($rootScope, $scope) {
 
     });
 
@@ -2626,7 +2640,11 @@
     * The SettingsCtrl controller is used on the 'Settings' view.
     */
     controllers.controller('SettingsCtrl', function ($scope, Entities, MdsSettings) {
-        $scope.innerLayout.hide('east');
+        innerLayout({
+            spacing_closed: 30,
+            east__minSize: 200,
+            east__maxSize: 350
+        });
         workInProgress.setActualEntity(Entities, undefined);
 
         var result = [];

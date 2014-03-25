@@ -892,7 +892,7 @@
     * Initializes filterable checkbox and sets a watch in the filterable scope to track changes
     * in "advancedSettings.browsing.filterableFields".
     */
-    mds.directive('clickfilter', function () {
+    directives.directive('clickfilter', function () {
         return {
             restrict: 'A',
             link: function (scope, element, attrs) {
