@@ -84,6 +84,15 @@ public class EntityServiceImpl extends BaseMdsService implements EntityService {
 
     @Override
     @Transactional
+    public Long getCurrentSchemaVersion(String className) {
+        Entity entity = allEntities.retrieveByClassName(className);
+        assertEntityExists(entity);
+
+        return entity.getEntityVersion();
+    }
+
+    @Override
+    @Transactional
     public EntityDto createEntity(EntityDto entityDto) throws IOException {
         String packageName = ClassName.getPackage(entityDto.getClassName());
         boolean fromUI = StringUtils.isEmpty(packageName);
@@ -380,7 +389,7 @@ public class EntityServiceImpl extends BaseMdsService implements EntityService {
         List<EntityDto> entityDtos = new ArrayList<>();
 
         for (Entity entity : allEntities.retrieveAll()) {
-            if (!entity.isDraft()) {
+            if (entity.isActualEntity()) {
                 entityDtos.add(entity.toDto());
             }
         }

@@ -2,11 +2,13 @@
 
     'use strict';
 
+    var services = angular.module('mds.services', ['ngResource']);
+
     /**
     * Creates the entity service that will connect to the server and execute appropriate
     * methods on an entity schema.
     */
-    angular.module('entityService', ['ngResource']).factory('Entities', function ($resource) {
+    services.factory('Entities', function ($resource) {
         return $resource(
             '../mds/entities/:id/:action/:param/:params',
             { id: '@id' },
@@ -27,7 +29,7 @@
         );
     });
 
-    angular.module('instanceService', ['ngResource']).factory('Instances', function ($resource) {
+    services.factory('Instances', function ($resource) {
         return $resource(
             '../mds/instances/:id/:action/:param',
             { id: '@id' },
@@ -35,12 +37,13 @@
                 newInstance: { method: 'GET', params: { action: 'new' }},
                 selectInstance: { method: 'GET', params: { action: 'instance' }},
                 deleteInstance: { method: 'DELETE', params: { action: 'delete' }},
+                getTrash: { method : 'GET', params : { action: 'trash' }},
                 revertInstanceFromTrash: { method: 'GET', params: {action: 'revertFromTrash'}}
             }
         );
     });
 
-    angular.module('historyService', ['ngResource']).factory('History', function ($resource) {
+    services.factory('History', function ($resource) {
             return $resource(
                 '../mds/instances/:entityId/:instanceId/:action/:param',
                 {
@@ -55,7 +58,7 @@
             );
         });
 
-    angular.module('mdsSettingsService', ['ngResource']).factory('MdsSettings', function ($resource) {
+    services.factory('MdsSettings', function ($resource) {
         return $resource(
             '../mds/settings/:action/', {},
             {
@@ -67,11 +70,4 @@
         );
     });
 
-    angular.module('roleService', ['ngResource']).factory('Roles', function($resource) {
-        return $resource('../websecurity/api/web-api/roles');
-    });
-
-    angular.module('userService', ['ngResource']).factory('Users', function($resource) {
-        return $resource('../websecurity/api/users');
-    });
 }());

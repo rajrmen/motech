@@ -27,6 +27,7 @@ import org.motechproject.mds.service.EntityService;
 import org.motechproject.mds.service.HistoryService;
 import org.motechproject.mds.service.InstanceService;
 import org.motechproject.mds.service.MotechDataService;
+import org.motechproject.mds.service.TrashService;
 import org.motechproject.mds.util.Constants;
 import org.motechproject.mds.util.LookupName;
 import org.motechproject.mds.util.QueryParams;
@@ -69,6 +70,7 @@ public class InstanceServiceImpl extends BaseMdsService implements InstanceServi
     private EntityService entityService;
     private BundleContext bundleContext;
     private HistoryService historyService;
+    private TrashService trashService;
 
     @Override
     @Transactional
@@ -122,6 +124,19 @@ public class InstanceServiceImpl extends BaseMdsService implements InstanceServi
         List instances = service.retrieveAll(queryParams);
 
         return instancesToRecords(instances, entity, fields);
+    }
+
+    @Override
+    @Transactional
+    public List<EntityRecord> getTrashRecords(Long entityId) {
+        EntityDto entity = getEntity(entityId);
+
+        List<FieldDto> fields = entityService.getEntityFields(entityId);
+        Collection collection = trashService.getInstancesFromTrash(entity.getClassName());
+
+        List<EntityRecord> records = instancesToRecords(collection, entity, fields);
+
+        return records;
     }
 
     @Override
@@ -516,6 +531,11 @@ public class InstanceServiceImpl extends BaseMdsService implements InstanceServi
     @Autowired
     public void setEntityService(EntityService entityService) {
         this.entityService = entityService;
+    }
+
+    @Autowired
+    public void setTrashService(TrashService trashService) {
+        this.trashService = trashService;
     }
 
     @Autowired

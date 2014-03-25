@@ -25,7 +25,7 @@
         return found && _.isEqual(found.value, value);
     }
 
-    var mds = angular.module('mds'),
+    var controllers = angular.module('mds.controllers', []),
         workInProgress = {
             list: [],
             actualEntity: undefined,
@@ -39,8 +39,8 @@
         },
         loadEntity;
 
-    mds.controller('MdsBasicCtrl', function ($scope, $location, $route, Entities) {
-        var schemaEditorPath = '/{0}'.format($scope.AVAILABLE_TABS[0]);
+    controllers.controller('MdsBasicCtrl', function ($scope, $location, $route, Entities) {
+        var schemaEditorPath = '/mds/{0}'.format($scope.AVAILABLE_TABS[0]);
 
         workInProgress.setList(Entities);
 
@@ -93,7 +93,7 @@
     /**
     * The SchemaEditorCtrl controller is used on the 'Schema Editor' view.
     */
-    mds.controller('SchemaEditorCtrl', function ($scope, $timeout, Entities, Users, Roles) {
+    controllers.controller('SchemaEditorCtrl', function ($scope, $timeout, Entities, Users, Roles, MDSUtils) {
         var setAdvancedSettings, setRest, setBrowsing, setSecuritySettings, setIndexesLookupsTab;
 
         $scope.innerLayout.hide('east');
@@ -802,7 +802,7 @@
         */
         $scope.uniqueMetadataKey = function (field, key) {
             return !_.isUndefined(key)
-                && find(field.metadata, [{ field: 'key', value: key}], false).length === 1;
+                && MDSUtils.find(field.metadata, [{ field: 'key', value: key}], false).length === 1;
         };
 
         /**
@@ -1559,7 +1559,7 @@
         * @return {Array} array of lookups with the given name.
         */
         $scope.findLookupByName = function (name, array) {
-            var lookup = find(array, [{ lookup: 'lookupName', value: name}], false);
+            var lookup = MDSUtils.find(array, [{ lookup: 'lookupName', value: name}], false);
             return $.isArray(lookup) ? lookup[0] : lookup;
         };
 
@@ -1587,7 +1587,7 @@
         * @return {object} unique field with the given id.
         */
         $scope.findFieldById = function (id) {
-            return find($scope.fields, [{ field: 'id', value: id}], true);
+            return MDSUtils.find($scope.fields, [{ field: 'id', value: id}], true);
         };
 
         /**
@@ -1618,7 +1618,7 @@
         * @return {Array} array of fields with the given id.
         */
         $scope.findFieldInArrayById = function (id, array) {
-            var field = find(array, [{ field: 'id', value: id}], false);
+            var field = MDSUtils.find(array, [{ field: 'id', value: id}], false);
             return $.isArray(field) ? field[0] : field;
         };
 
@@ -1629,7 +1629,7 @@
         * @return {Array} array of fields with the given name.
         */
         $scope.findFieldsByName = function (name) {
-            return find($scope.fields, [{ field: 'basic.name', value: name}], false);
+            return MDSUtils.find($scope.fields, [{ field: 'basic.name', value: name}], false);
         };
 
         /**
@@ -1640,7 +1640,7 @@
         * @return {object} found criterion with given name or null if no such criterion exists.
         */
         $scope.findCriterionByName = function (validationCriteria, name) {
-            return find(validationCriteria, [{ field: 'displayName', value: name}], true);
+            return MDSUtils.find(validationCriteria, [{ field: 'displayName', value: name}], true);
         };
 
         /**
@@ -1651,7 +1651,7 @@
         * @return {object} a single object which represent setting with the given name.
         */
         $scope.findSettingByName = function (settings, name) {
-            return find(settings, [{field: 'name', value: name}], true);
+            return MDSUtils.find(settings, [{field: 'name', value: name}], true);
         };
 
         /*
@@ -1691,7 +1691,7 @@
                 scale = $scope.findSettingByName(settings, 'mds.form.label.scale');
 
             return _.isNumber(number)
-                ? validateDecimal(number, precision.value, scale.value)
+                ? MDSUtils.validateDecimal(number, precision.value, scale.value)
                 : true;
         };
 
@@ -1716,7 +1716,7 @@
         * @return {Array} A array of possible combobox values.
         */
         $scope.getComboboxValues = function (settings) {
-            return find(settings, [{field: 'name', value: 'mds.form.label.values'}], true).value;
+            return MDSUtils.find(settings, [{field: 'name', value: 'mds.form.label.values'}], true).value;
         };
 
         /**
@@ -1951,25 +1951,12 @@
                 $scope.securitySettings.roles.removeObject(value);
             }
         };
-
-        // check every 5 seconds if the entity is outdated
-        setInterval(function () {
-            var entity;
-            if ($scope.selectedEntity) {
-                entity = Entities.get({id: $scope.selectedEntity.id },  function () {
-                    if ($scope.selectedEntity) {
-                        $scope.selectedEntity.modified = entity.modified;
-                        $scope.selectedEntity.outdated = entity.outdated;
-                    }
-                });
-            }
-        }, 5 * 1000);
     });
 
     /**
     * The DataBrowserCtrl controller is used on the 'Data Browser' view.
     */
-    mds.controller('DataBrowserCtrl', function ($rootScope, $scope, $http, Entities, Instances, History, $timeout) {
+    controllers.controller('DataBrowserCtrl', function ($rootscope, $scope, $http, Entities, Instances, History, $timeout, MDSUtils) {
         workInProgress.setActualEntity(Entities, undefined);
 
         /**
@@ -2182,7 +2169,7 @@
         * @return {object} a single object which represent setting with the given name.
         */
         $scope.findSettingByName = function (settings, name) {
-            return find(settings, [{field: 'name', value: name}], true);
+            return MDSUtils.find(settings, [{field: 'name', value: name}], true);
         };
 
         /**
@@ -2457,7 +2444,7 @@
         $scope.loadEditValueForm = function (field) {
             var value = $scope.getTypeSingleClassName(field.type);
             if (value === 'combobox' && field.settings[2].value) {
-                if (find(field.settings, [{field: 'name', value: 'mds.form.label.allowMultipleSelections'}], true).value) {
+                if (MDSUtils.find(field.settings, [{field: 'name', value: 'mds.form.label.allowMultipleSelections'}], true).value) {
                     value = 'combobox-multi';
                 }
             }
@@ -2479,7 +2466,7 @@
         * @return {Array} A array of possible combobox values.
         */
         $scope.getComboboxValues = function (settings) {
-            return find(settings, [{field: 'name', value: 'mds.form.label.values'}], true).value;
+            return MDSUtils.find(settings, [{field: 'name', value: 'mds.form.label.values'}], true).value;
         };
 
         /**
@@ -2540,7 +2527,7 @@
                 scale = $scope.findSettingByName(settings, 'mds.form.label.scale');
 
             return _.isNumber(number)
-                ? validateDecimal(number, precision.value, scale.value)
+                ? MDSUtils.validateDecimal(number, precision.value, scale.value)
                 : true;
         };
 
@@ -2638,9 +2625,8 @@
     /**
     * The SettingsCtrl controller is used on the 'Settings' view.
     */
-    mds.controller('SettingsCtrl', function ($scope, Entities, MdsSettings) {
+    controllers.controller('SettingsCtrl', function ($scope, Entities, MdsSettings) {
         $scope.innerLayout.hide('east');
-
         workInProgress.setActualEntity(Entities, undefined);
 
         var result = [];
