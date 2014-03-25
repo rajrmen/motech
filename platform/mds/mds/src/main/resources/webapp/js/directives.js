@@ -889,8 +889,7 @@
     });
 
     /**
-    * Initializes filterable checkbox and sets a watch in the filterable scope to track changes
-    * in "advancedSettings.browsing.filterableFields".
+    * Filtering entity by selected filter.
     */
     directives.directive('clickfilter', function () {
         return {
