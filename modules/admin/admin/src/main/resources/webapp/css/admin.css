@@ -294,13 +294,25 @@ div.sidebar-container {
     background-image: none;
 }
 
-.messages.form-group, #notificationRulesForm > div,
 #changeLogLevels > div {
     background-color: #EBF7FF;
     border-top: 1px solid #D4E1F9;
     margin: 0 -10px 0px;
     padding: 5px 5px 5px 10px;
 }
+
+.messages {
+    background-color: #EBF7FF;
+    border-top: 1px solid #D4E1F9;
+    padding: 5px 5px 5px 0;
+}
+
+#notificationRulesForm > div {
+    background-color: #EBF7FF;
+    border-top: 1px solid #D4E1F9;
+    padding: 5px 5px 5px 15px;
+}
+
 #changeLogLevels  > div.form-actions {
     border-left: none;
 }
@@ -320,8 +332,7 @@ div.sidebar-container {
 }
 
 #notificationRulesForm > div:last-child {
-    padding: 20px 5px 20px 10px;
-    margin: 0 -10px -10px;
+    padding: 20px 5px 20px 15px;
 }
 
 p#settingsMsg:empty {

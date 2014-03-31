@@ -309,8 +309,8 @@
             });
         return result;
         },
-        checkDateTime = function (mDateTime, dateTimeFrom, dateTimeTo) {
-            var result, messageDateTime = parseInt(mDateTime, 10), filterDateTimeFrom = parseInt(dateTimeFrom, 10), filterDateTimeTo = parseInt(dateTimeTo, 10);
+        checkDateTime = function (mDateTime, fDateTimeFrom, fDateTimeTo) {
+            var result, messageDateTime = parseInt(mDateTime, 10), filterDateTimeFrom = parseInt(fDateTimeFrom, 10), filterDateTimeTo = parseInt(fDateTimeTo, 10);
             if (!filterDateTimeFrom) {
                 if (!filterDateTimeTo) {
                     result = true;
@@ -339,13 +339,9 @@
         return result;
         },
         searchMatch = function (message, searchQuery) {
-        var result;
-        //console.log('000--searchQuery-[' +searchQuery + ']--filterLevel-[' + $rootScope.filterLevel + ']--filterModule-[' + $rootScope.filterModule+']');
-        //console.log('000--filterDateTimeFrom-[' + $rootScope.filterDateTimeFrom + ']--messagedate-[' +message.date +  ']--filterDateTimeTo-[' + $rootScope.filterDateTimeTo+']');
-        //console.log(message.date +'--'+ $rootScope.filterDateTimeFrom +'--'+ $rootScope.filterDateTimeTo + ' ---true');
-            if (!searchQuery) {     //console.log('search Query - true');
+            var result;
+            if (!searchQuery) {
                 if (checkDateTime(message.date, $rootScope.filterDateTimeFrom, $rootScope.filterDateTimeTo)) {
-                //console.log($rootScope.filterDateTimeFrom +'--'+ message.date +'--'+ $rootScope.filterDateTimeTo + ' ---true');
                     if ($rootScope.filterModule === '') {
                         if($rootScope.filterLevel && $rootScope.filterLevel.length === 0) {
                             result = true;
@@ -363,7 +359,7 @@
                             result = false;
                         }
                     }
-                } else { //console.log($rootScope.filterDateTimeFrom +'--'+ message.date +'--'+ $rootScope.filterDateTimeTo + ' ---false');
+                } else {
                     result = false;
                 }
             } else if (searchQuery && message.text.toLowerCase().indexOf(searchQuery.toLowerCase()) !== -1) {
@@ -391,8 +387,6 @@
             } else {
                 result = false;
             }
-
-            //console.log('result == '+ result);
             return result;
         },
         messageFilter = function (data) {
@@ -445,9 +439,6 @@
         $scope.ignoredMessages = $cookieStore.get(IGNORED_MSGS);
         $scope.messages = [];
 
-
-
-
         StatusMessage.query(function (data) {
             messageFilter(data);
         });
@@ -455,9 +446,17 @@
         $scope.getCssClass = function (msg) {
             var cssClass = 'msg';
             if (msg.level === 'ERROR') {
-                cssClass += ' error';
+                cssClass += ' badge-important';
             } else if (msg.level === 'OK') {
-                cssClass += ' ok';
+                cssClass += ' badge-info';
+            } else if (msg.level === 'CRITICAL') {
+                cssClass += ' badge-important';
+            } else if (msg.level === 'WARN') {
+                cssClass += ' badge-warning';
+            } else if (msg.level === 'DEBUG') {
+                cssClass += ' badge-success';
+            } else if (msg.level === 'INFO') {
+                cssClass += ' badge-info';
             }
             return cssClass;
         };
@@ -500,7 +499,6 @@
             $scope.filteredItems = $filter('filter')($scope.messages, function (item) {
                 return item && searchMatch(item, $rootScope.query);
             });
-            //console.log('searched filtered items == ' + $scope.filteredItems);
             $scope.setCurrentPage(0);
             $scope.groupToPages($scope.filteredItems, $scope.itemsPerPage);
         };
@@ -900,17 +898,12 @@
 
         $scope.ignoredMessages = $cookieStore.get(IGNORED_MSGS);
         $scope.messages = [];
-        $scope.dateTimeTo = '';
         $scope.messagesLevels = ['critical', 'error', 'debug', 'info', 'warn'];
         $scope.filterModule = '';
 
         StatusMessage.query(function (data) {
             messageFilter(data);
         });
-
-        StatusMessage.prototype.getDate = function () {
-            return new Date(this.date);
-        };
 
         $scope.search = function() {
             $rootScope.query = $scope.query;
@@ -954,15 +947,17 @@
 
         $scope.setDateTimeFilter = function(messageDateTimeFrom, messageDateTimeTo) {
             if (messageDateTimeFrom !== null && messageDateTimeTo === null) {
-                $rootScope.filterDateTimeFrom = moment(messageDateTimeFrom).toDate().getTime();//console.log(messageDateTimeFrom + '>>' + $rootScope.filterDateTimeFrom + '<<');
+                $rootScope.filterDateTimeFrom = moment(messageDateTimeFrom).toDate().getTime();
+                $rootScope.$apply();
                 messageDateTimeTo = '';
             }
             if (messageDateTimeTo !== null && messageDateTimeFrom === null) {
                 $rootScope.filterDateTimeTo = moment(messageDateTimeTo).toDate().getTime();
+                $rootScope.$apply();
                 messageDateTimeFrom = '';
             }
             $scope.search();
-            //console.log($rootScope.filterDateTimeFrom +'--'+ $rootScope.filterDateTimeTo + ' --setDateTime exit');
+            $scope.$apply();
         };
 
         $timeout(update, UPDATE_INTERVAL);

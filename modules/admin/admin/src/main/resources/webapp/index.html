@@ -44,7 +44,7 @@
             </div>
         </div>
     </div>
-    <div ng-controller="PaginationMessageCtrl" class="header-footer pagination-centered" ng-show="pagedItems.length &gt; 0 && !active('#/admin/messagesSettings')">
+    <div ng-controller="PaginationMessageCtrl" class="header-footer pagination-centered" ng-show="pagedItems.length &gt; 0 && active('#/admin/messages') && !active('#/admin/messagesSettings')">
         <ul class="pagination pagination-sm lightblue">
             <li ng-class="{disabled: currentPage == 0}"><a ng-click="firstPage()">{{msg('server.pagination.first')}}</a></li>
             <li ng-class="{disabled: currentPage == 0}"><a ng-click="prevPage()">{{msg('server.pagination.prev')}}</a></li>
@@ -78,10 +78,10 @@
                     <fieldset class="inside">
                         <legend>{{msg('admin.messages.date')}}</legend>
                         <div class="form-group">
-                            <input id="dateTimeFrom" ng-model="dateTimeFrom"  ng-change="search()" messages-date-picker-from="" type="datetime" class="form-control input-sm search-query" placeholder="{{msg('admin.messages.from')}}" >
+                            <input id="dateTimeFrom" ng-model="dateTimeFrom" messages-date-picker-from="" type="datetime" class="form-control input-sm search-query" placeholder="{{msg('admin.messages.from')}}" >
                         </div>
                         <div class="form-group">
-                            <input id="dateTimeTo" ng-model="dateTimeTo" ng-click="search()" messages-date-picker-to="" type="datetime" class="form-control input-sm search-query" placeholder="{{msg('admin.messages.to')}}">
+                            <input id="dateTimeTo" ng-model="dateTimeTo" messages-date-picker-to="" type="datetime" class="form-control input-sm search-query" placeholder="{{msg('admin.messages.to')}}">
                         </div>
                     </fieldset>
                     <fieldset class="inside">

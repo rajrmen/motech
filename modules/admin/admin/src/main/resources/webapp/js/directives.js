@@ -38,10 +38,7 @@
                     timeFormat: "HH:mm:ss",
                     onSelect: function (selectedDateTime){
                         endDateTextBox.datetimepicker('option', 'minDate', elem.datetimepicker('getDate') );
-                        //scope.setDateTimeFilter(selectedDateTime, null);
-                    },
-                    onClose: function(dateText, inst) {
-                        scope.setDateTimeFilter(dateText, null);
+                        scope.setDateTimeFilter(selectedDateTime, null);
                     }
                 });
             }
@@ -62,10 +59,7 @@
                     timeFormat: "HH:mm:ss",
                     onSelect: function (selectedDateTime){
                         startDateTextBox.datetimepicker('option', 'maxDate', elem.datetimepicker('getDate') );
-                        //scope.setDateTimeFilter(null, selectedDateTime);
-                    },
-                    onClose: function(dateText, inst) {
-                        scope.setDateTimeFilter(null, dateText);
+                        scope.setDateTimeFilter(null, selectedDateTime);
                     }
                 });
             }
