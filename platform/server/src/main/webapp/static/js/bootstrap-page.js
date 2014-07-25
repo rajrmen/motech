@@ -21,7 +21,7 @@ function verifyDbConnection(connectionType) {
 
     $.ajax({
         type: 'POST',
-        url: (connectionType == 1) ? 'verifyCouchDb' : 'verifySql',
+        url: 'verifySql',
         timeout: 8000,
         data: $('form.bootstrap-config-form').serialize(),
         success: function(data) {
