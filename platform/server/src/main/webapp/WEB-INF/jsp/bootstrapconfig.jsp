@@ -143,7 +143,7 @@
                             <div class="form-group">
                                 <label class="col-sm-3 control-label"><img id="loader" alt="loading" src="static/img/load.gif" style="display:none"/></label>
                                 <div class="col-sm-9">
-                                    <input class="btn btn-primary" type="button" name="VERIFYSQL" ng-disabled="bcform.sqlUrl.$error.required || bcform.sqlDriver.$error.required" value="<spring:message code="server.bootstrap.verifySql"/>" onclick="verifyDbConnection(2)"/>
+                                    <input class="btn btn-primary" type="button" name="VERIFYSQL" ng-disabled="bcform.sqlUrl.$error.required || bcform.sqlDriver.$error.required" value="<spring:message code="server.bootstrap.verifySql"/>" onclick="verifyDbConnection()"/>
                                     <input class="btn btn-success" type="submit" name="BOOTSTRAP" ng-disabled="bcform.sqlUrl.$error.required || bcform.sqlDriver.$error.required"  value="<spring:message code="server.bootstrap.submit"/>"/>
                                 </div>
                             </div>
@@ -155,9 +155,6 @@
                                         </c:forEach>
                                     </div>
                                 </c:if>
-                                <div class="alert alert-success" id="verify-info" style="display:none">
-                                    <spring:message code="server.bootstrap.verify.success"/>
-                                </div>
                                 <div class="alert alert-success" id="verifySql-info" style="display:none">
                                     <spring:message code="server.bootstrap.verifySql.success"/>
                                 </div>
