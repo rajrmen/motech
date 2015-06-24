@@ -3,7 +3,8 @@ Deployment
 ==========
 
 .. toctree::
-    :maxdepth: 1
+		:maxdepth: 1
 
-    sticky_session_apache
-    multibyte_characters
+		sticky_session_apache
+		multibyte_characters
+		troubleshooting
